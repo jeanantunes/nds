@@ -93,13 +93,13 @@ var PESSOA = {
 		
 		autoCompletarPorNomeTransportador : function(idCampoNome, workspace) {
 			
-			var nomeEntregador = $(idCampoNome,workspace).val();
+			var nomeTransportador = $(idCampoNome,workspace).val();
 			
-			nomeEntregador = $.trim(nomeEntregador);
+			nomeTransportador = $.trim(nomeTransportador);
 			
 			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
-			if (nomeEntregador && nomeEntregador.length > 2) {
+			if (nomeTransportador && nomeTransportador.length > 2) {
 				
 				$.postJSON(
 					contextPath + "/pessoa/autoCompletarPorNomeTransportador", {nomeTransportador:nomeTransportador},
@@ -113,13 +113,13 @@ var PESSOA = {
 		
 		autoCompletarPorNomeFantasiaTransportador : function(idCampoNome, workspace) {
 			
-			var apelidoEntregador = $(idCampoNome,workspace).val();
+			var nomeFantasia = $(idCampoNome,workspace).val();
 			
-			apelidoEntregador = $.trim(apelidoEntregador);
+			nomeFantasia = $.trim(nomeFantasia);
 			
 			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
-			if (apelidoEntregador && apelidoEntregador.length > 2) {
+			if (nomeFantasia && nomeFantasia.length > 2) {
 				
 				$.postJSON(
 					contextPath + "/pessoa/autoCompletarPorNomeFantasiaTransportador", {nomeFantasia:nomeFantasia},

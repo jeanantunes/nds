@@ -362,6 +362,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setChamadaCapa(input.getChamadaCapa());
 		edicao.setOrigem(Origem.INTERFACE);
 		edicao.setNomeComercial(input.getNomeComercial());
+		
+		boolean isParcial = false;
+		
+		if(input.getRegimeRecolhimento()!= null){
+			isParcial = ("P".equals(input.getRegimeRecolhimento().toUpperCase()));
+		}
+		
+		edicao.setParcial(isParcial);
 
 		this.getSession().persist(edicao);
 		

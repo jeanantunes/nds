@@ -12,7 +12,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
  * @author InfoA2
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Rules {
 
 	public Permissao value();

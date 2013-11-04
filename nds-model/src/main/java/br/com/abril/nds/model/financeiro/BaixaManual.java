@@ -21,13 +21,13 @@ public class BaixaManual extends BaixaCobranca {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
 	
-	@Column(name = "VALOR_JUROS", nullable = true)
+	@Column(name = "VALOR_JUROS", nullable = true, precision=18, scale=4)
 	private BigDecimal valorJuros;
 
-	@Column(name = "VALOR_MULTA", nullable = true)
+	@Column(name = "VALOR_MULTA", nullable = true, precision=18, scale=4)
 	private BigDecimal valorMulta;
 	
-	@Column(name = "VALOR_DESCONTO", nullable = true)
+	@Column(name = "VALOR_DESCONTO", nullable = true, precision=18, scale=4)
 	private BigDecimal valorDesconto;
 	
 	@Enumerated(EnumType.STRING)

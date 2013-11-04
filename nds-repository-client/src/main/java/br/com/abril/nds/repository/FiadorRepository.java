@@ -51,4 +51,6 @@ public interface FiadorRepository extends Repository<Fiador, Long> {
 	public abstract Fiador obterPorCpfCnpj(String doc);
 
 	List<Pessoa> obterFiadorPorNome(String nomeFiador);
+	
+	List<Pessoa> obterFiadorPorNome(String nomeFiador, Integer qtdMaxResul);
 }

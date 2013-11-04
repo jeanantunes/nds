@@ -21,6 +21,19 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
 
+	
+	/**
+	 * Obtem dados financeiros de débito da cota,
+	 * relativos a negociação não avulsa adicionado
+	 * de encargos.
+	 * 
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota);
+	
 	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
@@ -31,7 +44,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 	Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual);
 
-
+	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 	/**
@@ -127,6 +140,15 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
 	
 	Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro);
+	
+	/**
+	 * Obtém o movimento financeiro relativo a uma operação de conferencia de encalhe.
+	 * 
+	 * @param idControleConfEncalheCota
+	 * 
+	 * @return MovimentoFinanceiroCota
+	 */
+	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota);
 	
 	BigDecimal obterSaldoDistribuidor(Date data, 
 							 	      TipoCota tipoCota, 

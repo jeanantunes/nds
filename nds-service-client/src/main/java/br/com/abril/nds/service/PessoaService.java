@@ -23,6 +23,8 @@ public interface PessoaService {
 	
 	List<Pessoa> obterPessoasPorNome(String nomePessoa);
 	
+	List<Pessoa> obterPessoasPorNome(String nomePessoa, Integer qtdMaxResult);
+	
 	void validarCPF(String cpf);
 	
 	void validarCNPJ(String cnpj);

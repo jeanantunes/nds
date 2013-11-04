@@ -22,7 +22,7 @@ public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrad
 	void inserirNotaFiscal(NotaFiscalEntrada notaFiscal);
 	
 	
-	List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
+	List<NotaFiscalEntrada> obterNotaFiscalEntrada(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 
 	List<ItemDTO<Long, String>> obterListaFornecedorNotaFiscal(List<Long> listaIdNotaFiscal);
 	

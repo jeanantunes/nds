@@ -96,6 +96,8 @@ public class PdvDTO implements Serializable {
     
     private boolean possuiImagem;
     
+    private Integer reparte;
+    
 	/**
 	 * @return the expositor
 	 */
@@ -636,5 +638,15 @@ public class PdvDTO implements Serializable {
 	    }
 	    this.maps.add(materialPromocional);
 	}
+
+	public Integer getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(Integer reparte) {
+		this.reparte = reparte;
+	}
+	
+	
 	
 }

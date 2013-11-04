@@ -11,7 +11,6 @@ import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
@@ -149,11 +148,9 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 	@Transactional
 	public void realizarAprovacaoMovimento(Movimento movimento, Usuario usuario) {
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
 		movimento.setStatus(StatusAprovacao.APROVADO);
 		movimento.setAprovador(usuario);
-		movimento.setDataAprovacao(distribuidor.getDataOperacao());
+		movimento.setDataAprovacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		this.movimentoRepository.merge(movimento);
 		

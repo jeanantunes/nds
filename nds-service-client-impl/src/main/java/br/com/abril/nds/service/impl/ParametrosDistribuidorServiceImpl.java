@@ -1,8 +1,12 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -714,9 +718,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
 		
-		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+		TipoMovimentoEstoque tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		tipoMovimentoEstoque.setAprovacaoAutomatica(!parametrosDistribuidor.getDevolucaoFornecedor());
+		this.tipoMovimentoEstoqueRepository.merge(tipoMovimentoEstoque);
+		
+		/*this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
 				 					 		this.getGruposMovimentoEstoqueDevolucaoFornecedor(),
-				 					 		!parametrosDistribuidor.getDevolucaoFornecedor());
+				 					 		!parametrosDistribuidor.getDevolucaoFornecedor());*/
 		
 		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
 		
@@ -985,9 +993,22 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			inputStream = couchDbClient.find(
 					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
 					+ "/" + ATTACHMENT_LOGOTIPO);
+		
 		} catch (NoDocumentException e) {
 			
-			return null;
+			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
+			
+			File noImage = new File(url.getPath());
+			
+			try {
+			
+				inputStream = new FileInputStream(noImage);
+			
+			} catch (FileNotFoundException e1) {
+				
+				return null;
+			}
+			
 		}
 		
 		return inputStream;

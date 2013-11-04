@@ -27,38 +27,41 @@ public class DiferencaVO implements Serializable {
 
 	private Long id;
 	
-	@Export(label = "Data", alignment = Alignment.CENTER, exhibitionOrder = 1)
+	@Export(label = "Data", alignment = Alignment.CENTER, exhibitionOrder = 1, fontSize = 9, widthPercent = 7)
 	private String dataLancamento;
 	
-	@Export(label = "Código", alignment = Alignment.CENTER, exhibitionOrder = 2)
+	@Export(label = "Código", alignment = Alignment.CENTER, exhibitionOrder = 2, fontSize = 9, widthPercent = 7)
 	private String codigoProduto;
 	
-	@Export(label = "Produto", exhibitionOrder = 3)
+	@Export(label = "Produto", exhibitionOrder = 3, fontSize = 9, widthPercent = 20)
 	private String descricaoProduto;
 	
-	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4)
+	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4, fontSize = 9, widthPercent = 6)
 	private String numeroEdicao;
 	
-	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5)
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize = 9, widthPercent = 10)
 	private String precoVenda;
 	
 	private String pacotePadrao;
 	
-	@Export(label = "Exemplar", alignment = Alignment.RIGHT, exhibitionOrder = 9)
+	@Export(label = "Exemplar", alignment = Alignment.RIGHT, exhibitionOrder = 9, fontSize = 9, widthPercent = 7)
 	private BigInteger quantidade;
 	
-	@Export(label = "Tipo de Diferença", exhibitionOrder = 7)
+	@Export(label = "Tipo de Diferença", exhibitionOrder = 7, fontSize = 9, widthPercent = 11)
 	private String descricaoTipoDiferenca;
 	
-	@Export(label = "Nota", exhibitionOrder = 8)
+	@Export(label = "Nota", exhibitionOrder = 8, fontSize = 9)
 	private String numeroNotaFiscal;
 	
-	@Export(label = "Status", exhibitionOrder = 10, alignment = Alignment.CENTER)
+	@Export(label = "Status", exhibitionOrder = 10, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
 	private String statusAprovacao;
+	
+	@Export(label = "StatusIntegracao", exhibitionOrder = 11, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
+	private String statusIntegracao;
 	
 	private String motivoAprovacao;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 11)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 12, fontSize = 9)
 	private String valorTotalDiferenca;
 	
 	private BigInteger qtdeEstoqueAtual;
@@ -80,6 +83,7 @@ public class DiferencaVO implements Serializable {
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
 	
 	private TipoDiferenca tipoDiferenca;
+	
 
 	/**
 	 * Construtor padrão.
@@ -305,6 +309,20 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setStatusAprovacao(String statusAprovacao) {
 		this.statusAprovacao = statusAprovacao;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getStatusIntegracao() {
+		return statusIntegracao;
+	}
+
+	/**
+	 * @param statusIntegracao
+	 */
+	public void setStatusIntegracao(String statusIntegracao) {
+		this.statusIntegracao = statusIntegracao;
 	}
 
 	/**
@@ -565,6 +583,5 @@ public class DiferencaVO implements Serializable {
 	public void setExistemRateios(boolean existemRateios) {
 		this.existemRateios = existemRateios;
 	}
-
 
 }

@@ -51,7 +51,6 @@ public class TipoProduto implements Serializable {
 	@Column(name = "CODIGO_NBM")
 	private String codigoNBM;
 	
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "GRUPO_PRODUTO", nullable = false)
 	private GrupoProduto grupoProduto;

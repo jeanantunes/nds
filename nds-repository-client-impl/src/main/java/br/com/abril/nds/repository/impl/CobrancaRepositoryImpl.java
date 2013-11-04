@@ -13,12 +13,12 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
-import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CobrancaRepository;
 
@@ -43,18 +43,86 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {		
+	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean naoObtemCobrancaOrigemNegociacao) {		
 		
 		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
+		
 		criteria.createAlias("cobranca.cota", "cota");
 		
+		if(naoObtemCobrancaOrigemNegociacao) {
+			
+			criteria.createAlias("cobranca.divida", "divida");
+			
+			criteria.add(Restrictions.eq("divida.origemNegociacao", false));
+			
+		}
+		
 		criteria.add(Restrictions.eq("cota.id", idCota));
+		
 		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
 		
 		criteria.addOrder(Order.asc("dataVencimento"));
 		
 		return criteria.list();				
 	}
+	
+	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota) {
+		
+		StringBuffer sql = new StringBuffer();
+			
+		sql.append(" SELECT cobranca.VALOR as valor, cobranca.DT_EMISSAO as dataLancamento FROM COBRANCA cobranca ");
+		
+		sql.append(" inner join DIVIDA d on ( 	");
+		sql.append(" 	cobranca.DIVIDA_ID = d.id 	");
+		sql.append(" ) ");
+		
+		if(idControleConfEncCota != null) {
+
+			sql.append(" left join COBRANCA_CONTROLE_CONFERENCIA_ENCALHE_COTA cc on ( ");
+			sql.append(" 	cc.CONTROLE_CONF_ENCALHE_COTA_ID = :idControleConfEncCota and	");
+			sql.append(" 	cc.COBRANCA_ID = cobranca.ID	");
+			sql.append(" )	");
+			
+		}
+		
+		
+		sql.append(" inner join COTA cota on ( 	");
+		sql.append(" 	cota.ID =  cobranca.COTA_ID	");
+		sql.append(" ) ");
+		
+		sql.append(" WHERE ");
+		
+		sql.append(" cobranca.STATUS_COBRANCA = :statusCobranca and ");
+
+		sql.append(" cota.id = :idCota and ");
+		
+		sql.append(" d.ORIGEM_NEGOCIACAO = :origemNegociacao  ");
+		
+		if(idControleConfEncCota != null) {
+			sql.append(" and cc.id is null ");
+		}
+		
+		
+		sql.append(" GROUP BY cobranca.id ORDER BY cobranca.DT_VENCIMENTO ASC ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		
+		query.setParameter("idCota", idCota);
+		
+		if(idControleConfEncCota != null) {
+			query.setParameter("idControleConfEncCota", idControleConfEncCota);
+		}
+		
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO.name());
+		
+		query.setParameter("origemNegociacao", false);
+		
+		return query.list();
+		
+	}
+	
 	
 	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
 		
@@ -267,11 +335,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	@Override
 	public BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota){
 		
-		BigDecimal valorPagoBaixaCobranca = this.obterValorPagoBaixaCobrancaCota(numeroCota);
-		
 		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
-		
-		return valorCobrancaNaoPago!=null?valorCobrancaNaoPago.subtract(valorPagoBaixaCobranca!=null?valorPagoBaixaCobranca:BigDecimal.ZERO):BigDecimal.ZERO;
+
+		return valorCobrancaNaoPago != null ? valorCobrancaNaoPago : BigDecimal.ZERO;
 	}
 	
 	/**
@@ -286,53 +352,24 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	private BigDecimal obterValorNaoPagoCobranca(Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select sum(cobranca.valor) ")
-			.append(" from Cobranca cobranca inner join cobranca.cota cota ")
+
+		hql.append(" select sum(cobranca.valor + coalesce(cobranca.encargos, 0)) ")
+			.append(" from Cobranca cobranca, Distribuidor distribuidor ")
+			.append(" inner join cobranca.cota cota ")
 			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ");
-		
+			.append(" and cobranca.statusCobranca =  :status ")
+			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ")
+			.append(" and (cobranca.divida.origemNegociacao = :origemNegociacao ")
+			.append(" 	or cobranca.divida.origemNegociacao is null) ");
+
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
 		query.setParameter("numeroCota", numeroCota);
-		
-		return   (BigDecimal) query.uniqueResult();
-	}
-	
-	/**
-	 * Retorna o valor total pago das baixas de cobrança em aberto de uma determinda cota.
-	 * 
-	 * @param dataVencimento - data de vencimento da cobrança
-	 * 
-	 * @param numeroCota - numero da cota
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorPagoBaixaCobrancaCota(Integer numeroCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select sum(baixa.valorPago) ")
-			.append(" from Cobranca cobranca ")
-			.append(" inner join cobranca.cota cota  ")
-			.append(" inner join cobranca.baixasCobranca baixa ")
-			.append(" where cota.numeroCota		   = :numeroCota ")
-			.append(" and cobranca.statusCobranca  = :status ")
-			.append(" and baixa.status 			   IN (:statusBaixa) ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameter("numeroCota", numeroCota);
-		query.setParameterList("statusBaixa", 
-								new StatusBaixa[]{StatusBaixa.PAGAMENTO_PARCIAL,
-												  StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO,
-												  StatusBaixa.PAGO_DIVERGENCIA_DATA,
-												  StatusBaixa.PAGO_DIVERGENCIA_VALOR,
-												  StatusBaixa.PAGO});
-		
+		query.setParameter("origemNegociacao", false);
+
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao) {

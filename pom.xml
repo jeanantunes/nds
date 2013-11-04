@@ -308,6 +308,11 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-ehcache</artifactId>
+				<version>4.1.7.Final</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -370,11 +375,16 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
 			<id>nexus</id>
+			<!-- url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url -->
 			<url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url>
 		</repository>
 		<repository>

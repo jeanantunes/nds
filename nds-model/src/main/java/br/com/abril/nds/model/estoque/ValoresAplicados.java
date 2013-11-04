@@ -24,13 +24,13 @@ public class ValoresAplicados implements Serializable {
 		this.valorDesconto = valorDesconto;
 	}
 	
-	@Column(name = "PRECO_VENDA")
+	@Column(name = "PRECO_VENDA", precision=18, scale=4)
 	private BigDecimal precoVenda;
 	
-	@Column(name = "PRECO_COM_DESCONTO")
+	@Column(name = "PRECO_COM_DESCONTO", precision=18, scale=4)
 	private BigDecimal precoComDesconto;
 	
-	@Column(name = "VALOR_DESCONTO")
+	@Column(name = "VALOR_DESCONTO", precision=18, scale=4)
 	private BigDecimal valorDesconto;
 	
 	

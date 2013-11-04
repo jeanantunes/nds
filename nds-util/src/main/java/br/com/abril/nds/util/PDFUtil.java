@@ -3,7 +3,6 @@ package br.com.abril.nds.util;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +40,10 @@ public class PDFUtil {
 		return null;
 	}
 
-	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles, boolean paginate) throws FileNotFoundException {
+	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles, boolean paginate) throws Exception {
 
-		String file = "temp.pdf";
+		File file = File.createTempFile("pdfUtil", "pdf");		
+		
 		
 		OutputStream outputStream = new FileOutputStream(file);
 		
@@ -107,12 +107,10 @@ public class PDFUtil {
 			
 			byte[] retorno = IOUtils.toByteArray(new FileInputStream(file));
 			
-			new File(file).delete();
+			file.delete();
 			
-			return retorno;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+			return retorno;			
+		
 		} finally {
 			if (document.isOpen())
 				document.close();
@@ -123,6 +121,5 @@ public class PDFUtil {
 				ioe.printStackTrace();
 			}
 		}
-		return null;
 	}
 }

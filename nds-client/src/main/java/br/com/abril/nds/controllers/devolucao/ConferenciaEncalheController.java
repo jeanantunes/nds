@@ -1,9 +1,9 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,11 +39,14 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
@@ -51,11 +54,13 @@ import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.TXTUtil;
+import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.ZipFileUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -65,11 +70,16 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 public class ConferenciaEncalheController extends BaseController {
 	
-	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
+	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
 	
-	private static final String ID_BOX_LOGADO = "idBoxLogado";
+	public ConferenciaEncalheController(ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr){
+		this.conferenciaEncalheSessionScopeAttr = conferenciaEncalheSessionScopeAttr;
+	}
+	
+	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
 	private static final String INFO_CONFERENCIA = "infoCoferencia";
 	
@@ -123,15 +133,35 @@ public class ConferenciaEncalheController extends BaseController {
 	private HttpSession session;
 	
 	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private BoxService boxService;
+
+	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		
 		this.result.include(
 				"dataOperacao", 
 				DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
+		
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE!=null) {
+			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
+		}
+		
+		//Obter box usuário
+		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
+				this.getUsuarioLogado().getBox().getId() != null){
+			
+			if(conferenciaEncalheSessionScopeAttr != null){
+				conferenciaEncalheSessionScopeAttr.setIdBoxLogado(this.getUsuarioLogado().getBox().getId());
+			}
+		}
 		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
@@ -168,11 +198,13 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void salvarIdBoxSessao(Long idBox){
 		
-		this.limparDadosSessao();
-		
 		if (idBox != null){
 		
-			this.session.setAttribute(ID_BOX_LOGADO, idBox);
+			conferenciaEncalheSessionScopeAttr.setIdBoxLogado(idBox);
+			
+			this.result.include("boxes", idBox);
+			
+			alterarBoxUsuario(idBox);
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento é obrigatório.");
@@ -180,9 +212,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
-	
-	
-	
+
 	class StatusConferenciaEncalheCota {
 		
 		private boolean indConferenciaEncalheCotaSalva;
@@ -217,8 +247,8 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
-	 * Verifica se a cota cuja conferência esta sendo realizada esta salva ou com 
-	 * dados em session alterados pelo usuário
+	 * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de uma cota 
+	 * sem ter salvo (ou finalizado) os dados de uma conferência em andamento.
 	 * 
 	 * @param numeroCota
 	 */
@@ -274,7 +304,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
-		if (this.session.getAttribute(ID_BOX_LOGADO) == null){
+		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 		}
 		
@@ -293,9 +323,11 @@ public class ConferenciaEncalheController extends BaseController {
 			this.conferenciaEncalheService.verificarChamadaEncalheCota(numeroCota);
 			
 		} catch (ConferenciaEncalheExistenteException e) {
-			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "REABERTURA"), "result").recursive().serialize();
-		
+
+			this.result.use(CustomMapJson.class)
+			.put("IND_COTA_RECOLHE_NA_DATA", "S")
+			.put("IND_REABERTURA", "S").serialize();
+
 			return;
 		
 		} catch (ChamadaEncalheCotaInexistenteException e) {
@@ -303,9 +335,22 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
 		}
 		
+		boolean indCotaComRecolhimento = conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota);
+
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
 		
-		this.result.use(Results.json()).from("").serialize();
+		if(!indCotaComRecolhimento) {
+			
+			this.result.use(CustomMapJson.class)
+			.put("IND_COTA_RECOLHE_NA_DATA", "N")
+			.put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
+			
+		} else {
+			
+			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
+			
+		}
+		
 	}
 	
 	/**
@@ -483,24 +528,10 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
 		}
 
-		List<ProdutoEdicao> produtosEdicao = new ArrayList<ProdutoEdicao>();
-
-		produtosEdicao = this.produtoEdicaoService.buscarProdutoPorCodigoBarras(codigoBarra);
-		
-		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+		List<ItemAutoComplete> listaProdutos = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
+		if (listaProdutos == null || listaProdutos.isEmpty()) {
 			
-			this.result.nothing();
-			
-			return;
-		}
-
-		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-
-		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
-
-			listaProdutos.add(new ItemAutoComplete(
-					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
-					null, new Object[]{produtoEdicao.getId()}));
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
 		}
 
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
@@ -564,7 +595,7 @@ public class ConferenciaEncalheController extends BaseController {
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} else if (conferenciaEncalheDTO == null){
-			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false);
+			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 		}
 		
 		if (idProdutoEdicaoAnterior != null && quantidade != null){
@@ -572,10 +603,10 @@ public class ConferenciaEncalheController extends BaseController {
 			conferenciaEncalheDTO = getConferenciaEncalheDTOFromSession(idProdutoEdicaoAnterior, null);
 
 			if (conferenciaEncalheDTO != null){
-				BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
+				BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade, false);
 				conferenciaEncalheDTO.setQtdExemplar(qtde);
 			} else {
-				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false);
+				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 			}
 		
 		}
@@ -625,7 +656,7 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} else if (conferenciaEncalheDTO == null){
 			
-			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false);
+			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 		}
 		
 		if (idProdutoEdicaoAnterior != null && quantidade != null){
@@ -634,12 +665,12 @@ public class ConferenciaEncalheController extends BaseController {
 
 			if (conferenciaEncalheDTO != null){
 				
-				BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
+				BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade, false);
 				
 				conferenciaEncalheDTO.setQtdExemplar(qtde);
 			} else {
 				
-				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false);
+				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 			}
 		
 		}
@@ -655,7 +686,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param qtd
 	 * @return List<ConferenciaEncalheDTO>
 	 */
-	private List<ConferenciaEncalheDTO> atualizarProdutoRepetido(long idProdutoEdicao, BigInteger qtd){
+	private List<ConferenciaEncalheDTO> atualizarProdutoRepetido(long idProdutoEdicao, BigInteger qtd, boolean indConferenciaContingencia){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
@@ -663,7 +694,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if (ceDTO.getIdProdutoEdicao().equals(idProdutoEdicao)){
 				
-				this.validarExcedeReparte(ceDTO.getQtdInformada().add(qtd).longValue(), ceDTO);
+				this.validarExcedeReparte(ceDTO.getQtdInformada().add(qtd).longValue(), ceDTO, indConferenciaContingencia);
 				
 				ceDTO.setQtdExemplar(ceDTO.getQtdInformada().add(qtd));
 				
@@ -678,7 +709,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void adicionarProdutoConferido(Long idProdutoEdicao, String quantidade, Boolean juramentada) {
+	public void adicionarProdutoConferido(Long idProdutoEdicao, String quantidade, Boolean juramentada, boolean indConferenciaContingencia) {
 		
 		if (idProdutoEdicao == null){
 			
@@ -709,15 +740,15 @@ public class ConferenciaEncalheController extends BaseController {
 
 		if (conferenciaEncalheDTOSessao != null){
 			
-			BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTOSessao, quantidade);
+			BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTOSessao, quantidade, indConferenciaContingencia);
 			
 			conferenciaEncalheDTOSessao.setQtdExemplar(qtde);
 			
-			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(idProdutoEdicao, qtde));
+			this.setListaConferenciaEncalheToSession(this.atualizarProdutoRepetido(idProdutoEdicao, qtde, indConferenciaContingencia));
 			
 		} else {
 			
-			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, quantidade, true);
+			conferenciaEncalheDTOSessao = this.criarConferenciaEncalhe(produtoEdicao, quantidade, true, indConferenciaContingencia);
 		}
 		
 		if (juramentada != null) {
@@ -730,12 +761,14 @@ public class ConferenciaEncalheController extends BaseController {
 		this.carregarListaConferencia(null, false, false);
 	}
 	
+	
+	
 	/**
 	 * Valida se a quantidade informada excede a quantidade especificada no reparte
 	 * @param qtdExemplares
 	 * @param dto
 	 */
-	private void validarExcedeReparte(Long qtdExemplares, ConferenciaEncalheDTO dto){
+	private void validarExcedeReparte(Long qtdExemplares, ConferenciaEncalheDTO dto, boolean indConferenciaContingencia){
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
 		
@@ -748,11 +781,12 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
 		} 
 		
-		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null);
+		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
+				conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null, indConferenciaContingencia);
 	}
 	
 	@Post
-	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa){
+	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa, boolean indConferenciaContingencia){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
@@ -768,7 +802,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
 					
-					this.validarExcedeReparte(qtdExemplares, dto);
+					this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia);
 					
 					dto.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
 					dto.setQtdInformada(BigInteger.valueOf(qtdExemplares));
@@ -894,7 +928,7 @@ public class ConferenciaEncalheController extends BaseController {
 		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 				
 		Box boxEncalhe = new Box();
-		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+		boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 		
 		controleConfEncalheCota.setBox(boxEncalhe);
 		
@@ -910,7 +944,8 @@ public class ConferenciaEncalheController extends BaseController {
 					controleConfEncalheCota, 
 					listaConferenciaEncalheCotaToSave, 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado());
+					this.getUsuarioLogado(),
+					indConferenciaContingencia);
 			
 			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
 			
@@ -962,15 +997,35 @@ public class ConferenciaEncalheController extends BaseController {
 
 	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
-		try {
+		Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
+		
+		boolean isUtilizaBoleto = dtoDoc.isUtilizaBoleto();
+		
+		boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
+		
+		List<byte[]> arquivos = new ArrayList<byte[]>();
+		
+		Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
+		
+		if(dtoDoc.isUtilizaBoletoSlip()) {
 				
-			Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
+				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+							idControleConferenciaEncalheCota, 
+							null, 
+							TipoDocumentoConferenciaEncalhe.SLIP));
 			
-			boolean isUtilizaBoleto = dtoDoc.isUtilizaSlipBoleto();
-			
-			boolean isUtilizaSlip = true;//TODO: voltar apos testes...dtoDoc.isUtilizaSlip();
-			
-			List<byte[]> arquivos = new ArrayList<byte[]>();
+				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
+
+					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+							idControleConferenciaEncalheCota, 
+							nossoNumero,
+							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+				}
+				
+				byte[] arquivo = PDFUtil.mergePDFs(arquivos);
+				mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
+				
+		} else {
 			
 			if (isUtilizaSlip) {
 				
@@ -978,41 +1033,52 @@ public class ConferenciaEncalheController extends BaseController {
 							idControleConferenciaEncalheCota, 
 							null, 
 							TipoDocumentoConferenciaEncalhe.SLIP));
+			
+				byte[] arquivoSlip = PDFUtil.mergePDFs(arquivos);
+				mapFileNameFile.put("arquivos_cobranca_slip.pdf", arquivoSlip);
+				arquivos.clear();
 			}
 			
 			if(isUtilizaBoleto) {
 				
-				for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
 
 					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
 							idControleConferenciaEncalheCota, 
 							nossoNumero,
 							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
 					
+					byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
 				}
-				
 			} 
-
-			//byte[] retorno = PDFUtil.mergePDFs(arquivos);
-			byte[] retorno = TXTUtil.mergeTXTs(arquivos);
-			
-			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, retorno);
-			
-		} catch (Exception e) {
-			
-			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), 
-					e);
 		}
+
+		this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void imprimirDocumentosCobranca() throws IOException{
 		
-		Object docs = this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+			
+		byte[] fileBytes = null;
+		String fileName = null;
 		
-		if (docs instanceof byte[]){
+		if(arquivos != null && !arquivos.isEmpty()) {
+									
+			if (arquivos.size() > 1){
+				fileBytes  = ZipFileUtil.getZipFile(arquivos);
+				fileName = "arquivos_cobranca.zip";
+			} else {
+				
+				for(Map.Entry<String, byte[]> arquivo : arquivos.entrySet()) {
+					fileName  = arquivo.getKey();
+					fileBytes = arquivo.getValue();
+				}
+			}
 			
-			this.escreverArquivoParaResponse((byte[]) docs, "arquivosCobranca");
-			
+			this.escreverArquivoParaResponse(fileBytes, fileName);
 			this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 			
 		} else {
@@ -1020,7 +1086,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.use(Results.nothing());
 		}
 	}
-	
+
 	@Post
 	public void veificarCobrancaGerada(){
 		
@@ -1075,9 +1141,7 @@ public class ConferenciaEncalheController extends BaseController {
 			} catch (Exception e) {
 			
 				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na execução do sistema.");
-			
 			}
-			
 		}
 		
 		return newListaConferenciaEncalheCota;
@@ -1127,7 +1191,7 @@ public class ConferenciaEncalheController extends BaseController {
 			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 			Box boxEncalhe = new Box();
-			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+			boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
@@ -1142,36 +1206,43 @@ public class ConferenciaEncalheController extends BaseController {
 							controleConfEncalheCota, 
 							listaConferenciaEncalheCotaToSave, 
 							this.getSetConferenciaEncalheExcluirFromSession(), 
-							this.getUsuarioLogado());
+							this.getUsuarioLogado(),
+							indConferenciaContingencia);
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
-			if(dadosDocumentacaoConfEncalheCota!=null ) {
-				Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
-				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			}
-				
+			Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
 			
-			if(dadosDocumentacaoConfEncalheCota!=null) {
+			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
 				
-				try {
-					
-					this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-					
-				} catch (Exception e){
-					
-					throw new Exception("Cobrança efetuada, erro ao gerar arquivo(s) de cobrança - " + e.getMessage());
-				}
-
-				
+			try {
+				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
+			} catch (Exception e){
+				throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
 			}
-			
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			
-			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
+			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
+				
+				dados.put("listaMensagens", dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca().getListaMensagens());
+				
+			} else {
+
+				String msgSucess = "";
+				
+				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+					msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+				} else {
+					msgSucess = "Operação efetuada com sucesso.";
+				}
+				
+				dados.put("listaMensagens", 	new String[]{msgSucess});
+				
+			}
+			
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			
@@ -1188,19 +1259,17 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
-		/*this.httpResponse.setContentType("application/txt");
+		this.httpResponse.setContentType("application/octet-stream");
+		this.httpResponse.setHeader("Content-Disposition", 
+									"attachment; filename="+nomeArquivo);
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".txt");
-
 		OutputStream output = this.httpResponse.getOutputStream();
 		
 		output.write(arquivo);
 
-		httpResponse.getOutputStream().close();
-		
-		result.use(Results.nothing());*/
-		result.use(Results.json()).from(new String(arquivo, Charset.forName("UTF-8")), "resultado").serialize();
-		
+		output.close();
+
+		result.use(Results.nothing());
 	}
 
 	
@@ -1400,35 +1469,51 @@ public class ConferenciaEncalheController extends BaseController {
 	 * ao valor de encalhe conferido na operação. 
 	 * 
 	 * @param valorCEInformado
+	 * @param qtdCEInformado
 	 */
 	@Post
-	public void verificarValorTotalCE(BigDecimal valorCEInformado) {
-		
+	public void verificarValorTotalCE(BigDecimal valorCEInformado, BigInteger qtdCEInformado) {
+
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
-		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
-			
-			resultadoValidacao.put("valorCEInformadoValido", false);
-			
-			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
-			
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE == null) {
+			resultadoValidacao.put("valorCEInformadoValido", true);
 			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
-
-		} else {
-
-			TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+			return;
+		}
+		
+		if(TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
 			
-			if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+				resultadoValidacao.put("valorCEInformadoValido", false);
+				resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
+				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
+				return;
+			} 
+			
+		} else {
+			
+			if (qtdCEInformado == null || BigInteger.ZERO.compareTo(qtdCEInformado) >= 0 ){
 				
-				this.comparValorTotalCEMonetario(valorCEInformado);
-				
-			} else {
-				
-				this.comparValorTotalCEQuantidade(valorCEInformado);
-				
-			}
+				resultadoValidacao.put("valorCEInformadoValido", false);
+				resultadoValidacao.put("mensagemConfirmacao", "Qtde CE jornaleiro informada inválido. Deseja continuar?");
+				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
+				return;
+
+			} 
 			
 		}
+
+			
+		if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			this.comparValorTotalCEMonetario(valorCEInformado);
+		} else {
+			this.comparValorTotalCEQuantidade(qtdCEInformado);
+		}
+			
+		
 		
 	}
 	
@@ -1439,15 +1524,13 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param valorTotalCEQuantidade
 	 */
 
-	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
+	private void comparValorTotalCEQuantidade(BigInteger valorTotalCEQuantidade) {
 		
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
-		BigInteger qtde = BigInteger.valueOf(valorTotalCEQuantidade.longValue());
-		
 		BigInteger qtdeItensConferenciaEncalhe = obterQtdeItensConferenciaEncalhe();
 
-		if (qtdeItensConferenciaEncalhe.compareTo(qtde)!=0){
+		if (qtdeItensConferenciaEncalhe.compareTo(valorTotalCEQuantidade)!=0){
 
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			
@@ -1531,7 +1614,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void limparDadosSessao() {
 		
-		this.session.removeAttribute(ID_BOX_LOGADO);
 		this.session.removeAttribute(NUMERO_COTA);
 		this.session.removeAttribute(INFO_CONFERENCIA);
 		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
@@ -1654,15 +1736,13 @@ public class ConferenciaEncalheController extends BaseController {
 						continue;
 					}
 					
-					if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					if(OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 					}
 						
-					if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					if(OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
 					}
-					
-					
 				}
 			}
 		}
@@ -1701,7 +1781,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @return quantidade
 	 */
 	private BigInteger processarQtdeExemplar(Long idProdutoEdicao,
-			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade) {
+			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade, boolean indConferenciaContingencia) {
 		
 		Long pacotePadrao = (long) conferenciaEncalheDTO.getPacotePadrao();
 		
@@ -1738,12 +1818,14 @@ public class ConferenciaEncalheController extends BaseController {
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
 		} 
-		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null);
+		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
+				conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null, indConferenciaContingencia);
 		
 		return  qtd;
 	}
 
-	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, String quantidade, boolean adicionarGrid) {
+	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, String quantidade, 
+														  boolean adicionarGrid, boolean indConferenciaContingencia) {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
@@ -1774,7 +1856,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (quantidade != null){
 			
-			BigInteger qtd = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
+			BigInteger qtd = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade, indConferenciaContingencia);
 			
 			conferenciaEncalheDTO.setQtdExemplar(qtd);
 			conferenciaEncalheDTO.setQtdInformada(qtd);
@@ -1882,4 +1964,14 @@ public class ConferenciaEncalheController extends BaseController {
 		return numeroCota;
 	}
 	
+	private void alterarBoxUsuario(Long idBox) {
+		
+		Box box = this.boxService.buscarPorId(idBox);
+		
+		Usuario usuarioLogado = this.getUsuarioLogado();
+		
+		usuarioLogado.setBox(box);
+		
+		usuarioService.salvar(usuarioLogado);
+	}
 }

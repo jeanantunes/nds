@@ -230,6 +230,8 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 						valorFatura);
 		
 		
+		notaFiscalSaidaFornecedor.setEmitente(fornecedorDinap.getJuridica());
+		
 		save(notaFiscalSaidaFornecedor);
 		
 		String 		NCMProduto               = "3424";
@@ -268,7 +270,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 	@Test
 	public void testObterListaItemNotaFiscalSaidaDadosDanfe() {
 		
-		List<ItemDanfe> result =  itemNotaFiscalSaidaRepository.obterListaItemNotaFiscalSaidaDadosDanfe(notaFiscalSaidaFornecedor.getId());
+		List<ItemDanfe> result =  itemNotaFiscalSaidaRepository.obterListaItemNotaFiscalSaidaDadosDanfe(1L);
 		
 		Assert.assertEquals(1, result.size());
 		

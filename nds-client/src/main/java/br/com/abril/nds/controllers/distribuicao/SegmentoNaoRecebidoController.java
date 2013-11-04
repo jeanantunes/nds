@@ -42,6 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicao/segmentoNaoRecebido")
 @Resource
+@Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO)
 public class SegmentoNaoRecebidoController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroSegmentoNaoRecebido";
@@ -68,7 +69,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO)
+	@Path("/")
 	public void index(){
 		// POPULANDO FILTROS
 		List<TipoSegmentoProduto> listaTipoSegmentoProduto = segmentoNaoRecebidoService.obterTipoSegmentoProduto();

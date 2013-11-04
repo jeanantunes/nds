@@ -41,7 +41,6 @@ import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -87,6 +86,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/entregador")
+@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR)
 public class EntregadorController extends BaseController {
 
 	@Autowired
@@ -136,7 +136,6 @@ public class EntregadorController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR)
 	public void index() { }
 	
 	/**
@@ -430,6 +429,7 @@ public class EntregadorController extends BaseController {
 	 * 
 	 * @param idEntregador - Id do entregador a ser editado.
 	 */
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void editarEntregador(Long idEntregador) {
 
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
@@ -504,6 +504,7 @@ public class EntregadorController extends BaseController {
 	 * 
 	 * @param idEntregador
 	 */
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void removerEntregador(Long idEntregador) {
 
 		if (idEntregador == null) {
@@ -521,6 +522,7 @@ public class EntregadorController extends BaseController {
 	/**
 	 * Método que prepara a tela para um novo cadastro.
 	 */
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void novoCadastro() {
 		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
@@ -528,14 +530,8 @@ public class EntregadorController extends BaseController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		boolean utilizaSugestaoIncrementoCodigo = false;
-		
-		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
-			
-			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
-		}
+		boolean utilizaSugestaoIncrementoCodigo = 
+				this.distribuidorService.utilizaSugestaoIncrementoCodigo();
 		
 		Long novoCodigoEntregador = null;
 		

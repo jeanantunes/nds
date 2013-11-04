@@ -7,7 +7,6 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoRepository;
 
@@ -50,7 +49,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	}
 	
 	@Override
-	public void alterarStatusEstudos(List<Long> listIdEstudos, StatusEstudo status) {
+	public void liberarEstudo(List<Long> listIdEstudos, boolean liberado) {
 		
 		StringBuilder hql = new StringBuilder("update Estudo set");
 		hql.append(" status = :statusEstudo")
@@ -58,12 +57,41 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		Query query = this.getSession().createQuery(hql.toString());
 
-		query.setParameter("statusEstudo", status);
+		query.setParameter("statusEstudo", (liberado)?1:0);
 		
 		query.setParameterList("listIdEstudos", listIdEstudos);
 		
 		query.executeUpdate();
 	}
 	
+	@Override
+	public Estudo obterEstudoECotasPorIdEstudo(Long idEstudo) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select estudoCota.estudo from EstudoCota estudoCota");
+		hql.append(" where estudoCota.estudo.id = :estudo");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("estudo", idEstudo);
+		
+		Estudo estudo = (Estudo)query.uniqueResult();
+		
+		return estudo;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Estudo");
+		hql.append(" where dataCadastro between :dateStart and :dateEnd ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("dateStart", dataStart);
+		query.setParameter("dateEnd", dataEnd);
+		
+		return (List<Estudo>)query.list();
+	}
 
 }

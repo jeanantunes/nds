@@ -2,6 +2,7 @@ package br.com.abril.nds.util;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Currency;
 import java.util.Locale;
@@ -19,6 +20,9 @@ public abstract class CurrencyUtil {
 
 	public static final String SIMBOLO_BRL = "R$";
 	
+	
+	public static DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("pt","BR"));
+	
 	/**
 	 * Formata um valor de moeda sem símbolo monetário.
 	 * 
@@ -33,7 +37,7 @@ public abstract class CurrencyUtil {
 			return null;
 		}
 
-		return new DecimalFormat("#,##0.00").format(valor);
+		return new DecimalFormat("#,##0.00",symbols).format(valor);
 	}
 
 	/**
@@ -50,7 +54,7 @@ public abstract class CurrencyUtil {
 			return null;
 		}
 
-		return new DecimalFormat("#,##0").format(valor);
+		return new DecimalFormat("#,##0",symbols).format(valor);
 	}
 	
 	/**
@@ -97,7 +101,7 @@ public abstract class CurrencyUtil {
 			
 		} else {
 			
-			decimalFormat = new DecimalFormat("#,##0.00");
+			decimalFormat = new DecimalFormat("#,##0.00",symbols);
 		}
 		
 		try {

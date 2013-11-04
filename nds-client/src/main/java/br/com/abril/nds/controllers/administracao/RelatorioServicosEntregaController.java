@@ -35,6 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/relatorioServicosEntrega")
+@Rules(Permissao.ROLE_ADMINISTRACAO_RELATORIO_SERVICO_ENTREGA)
 public class RelatorioServicosEntregaController extends BaseController {
 	
 	@Autowired
@@ -60,7 +61,6 @@ public class RelatorioServicosEntregaController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_RELATORIO_SERVICO_ENTREGA)
 	public void index(){
 		
 		List<Transportador> listTransportadores = this.transportadorService.buscarTransportadores();

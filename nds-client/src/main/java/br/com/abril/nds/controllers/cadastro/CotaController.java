@@ -46,7 +46,6 @@ import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -85,6 +84,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/cota")
+@Rules(Permissao.ROLE_CADASTRO_COTA)
 public class CotaController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoCota";
@@ -155,7 +155,6 @@ public class CotaController extends BaseController {
 	private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_COTA)
 	public void index() {
 		
 		this.financeiroController.preCarregamento();
@@ -192,6 +191,13 @@ public class CotaController extends BaseController {
 	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+	}
+	
+	public void verificarTipoConvencional(Long idCota) {
+		
+		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
+		
+		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
 	}
 
     private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
@@ -313,7 +319,7 @@ public class CotaController extends BaseController {
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
 		if(numeroCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota deve ser informado!");
 		}
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
@@ -333,6 +339,7 @@ public class CotaController extends BaseController {
 				cotaVO.setCodigoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 			}
 			
+			cotaVO.setSituacaoCadastro(cota.getSituacaoCadastro());
 			if (cota.getSituacaoCadastro() != null) {
 
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
@@ -543,6 +550,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/incluirNovoCNPJ")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void prepararDadosInclusaoCotaCNPJ(){
 		
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
@@ -553,6 +561,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/incluirNovoCPF")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void prepararDadosInclusaoCota(){
 		
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
@@ -764,6 +773,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/editar")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void editar(Long idCota){
 		
 		carregarDadosEnderecoETelefone(idCota);
@@ -781,6 +791,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/excluir")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void excluir(Long idCota){
 		
 		cotaService.excluirCota(idCota); 
@@ -1061,8 +1072,7 @@ public class CotaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		filtro.setPaginacao(null);
-		
+				
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<CotaDTO> listaCotas = null;
@@ -1680,11 +1690,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void distribuidorUtilizaTermoAdesao(){
 		
-		Boolean utilizaTermo = false;
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false;
+		Boolean utilizaTermo = this.distribuidorService.utilizaTermoAdesao();
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
@@ -1692,11 +1698,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void distribuidorUtilizaProcuracao(){
 		
-		Boolean utilizaTermo = false;
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.isUtilizaProcuracaoEntregadores():false;
+		Boolean utilizaTermo = this.distribuidorService.utilizaProcuracaoEntregadores();
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}

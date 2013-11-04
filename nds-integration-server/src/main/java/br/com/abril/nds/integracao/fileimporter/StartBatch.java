@@ -6,7 +6,7 @@ import java.util.Locale;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
+import br.com.abril.nds.integracao.model.InterfaceEnum;
 
 /**
  * Classe principal para executar as interfaces por linha de comando.<br>

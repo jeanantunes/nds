@@ -70,7 +70,7 @@ public class ParametroCobrancaTransportador implements Serializable {
 	@Column(name = "MODELIDADE_COBRANCA")
 	private ModalidadeCobranca modalidadeCobranca;
 	
-	@Column(name = "VALOR")
+	@Column(name = "VALOR", precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Column(name = "POR_ENTREGA")

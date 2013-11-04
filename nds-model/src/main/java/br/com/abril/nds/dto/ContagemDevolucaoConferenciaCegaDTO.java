@@ -2,8 +2,8 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -26,7 +26,7 @@ public class ContagemDevolucaoConferenciaCegaDTO implements Serializable {
 	@Export(label = "Edição")
 	private Long numeroEdicao;
 
-	@Export(label = "Preço Capa R$")
+	@Export(label = "Preço Capa R$", columnType=ColumType.MOEDA)
 	private BigDecimal precoVenda;	
 
 	@Export(label = "Exemplar Nota")

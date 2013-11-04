@@ -67,6 +67,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/devolucao/chamadaEncalheAntecipada")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO)
 public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroChamadaAntecipadaEncalhe";
@@ -104,7 +105,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	private PdvService pdvService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO)
 	public void index(){
 		
 		result.include("listaFornecedores",obterFornecedores(null));

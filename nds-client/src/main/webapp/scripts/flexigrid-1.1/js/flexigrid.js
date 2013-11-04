@@ -304,10 +304,20 @@
 				this.rePosDrag();
 			},
 			addData: function (data) { //parse data
+				
+				if(data.mensagens && data.mensagens.tipoMensagem=='ERROR'){
+					exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+					$('.pReload', this.pDiv).removeClass('loading');
+					$('.pPageStat', this.pDiv).html('');
+					this.loading = false;
+					return;
+				}
+				
 				if (p.dataType == 'json') {
 					data = $.extend({rows: [], page: 0, total: 0}, data);
 				}
 				if (p.preProcess) {
+					
 					data = p.preProcess(data);
 				}
 				$('.pReload', this.pDiv).removeClass('loading');

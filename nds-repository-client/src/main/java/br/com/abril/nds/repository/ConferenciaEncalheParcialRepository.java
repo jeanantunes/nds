@@ -32,5 +32,8 @@ public interface ConferenciaEncalheParcialRepository extends Repository<Conferen
 			Date dataMovimento);
 	
 	public ConferenciaEncalheParcial obterConferenciaEncalheParcialPor(Long idProduto, Date dataMovimento);
-	
+
+
+	public boolean verificarDevolucao(Date dataOperacao,
+			StatusAprovacao status);
 }

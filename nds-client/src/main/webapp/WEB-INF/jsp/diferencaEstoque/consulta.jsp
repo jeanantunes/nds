@@ -32,6 +32,28 @@
 </head>
 
 <body>
+    <div class="areaBts">
+		<div class="area">
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/estoque/diferenca/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/estoque/diferenca/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />					
+				</a>
+			</span>
+		</div>
+	</div>
+	
+	<br clear="all"/>
+	
+	<div class="container">
+	    
+	<br />
+
 	<fieldset class="classFieldset">
 		<legend>Pesquisar Faltas e Sobras</legend>
 		
@@ -125,29 +147,7 @@
 		<legend>Faltas e Sobras Cadastradas</legend>
 		<div class="grids" style="display: none;">
 			<table class="consultaFaltasSobrasGrid"></table>
-			
-			<table width="100%" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<td width="70%">
-						<span class="bt_novos" title="Gerar Arquivo">
-							<a href="${pageContext.request.contextPath}/estoque/diferenca/exportar?fileType=XLS">
-								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-								Arquivo
-							</a>
-						</span>
-						<span class="bt_novos" title="Imprimir">
-							<a href="${pageContext.request.contextPath}/estoque/diferenca/exportar?fileType=PDF">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-								Imprimir
-							</a>
-						</span>
-					</td>
-					<td width="5%"><strong>Total:</strong></td>
-				    <td id="qtdeTotalDiferencas" width="7%" align="right" />
-				    <td id="valorTotalDiferencas" width="16%" align="right" />
-				    <td width="2%">&nbsp;</td>
-				</tr>
-			</table>
+	
 		</div>
 
 	</fieldset>
@@ -193,5 +193,6 @@
 			</fieldset>		
 		</div>
 	</form>
+	</div>
 	
 </body>

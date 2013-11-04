@@ -74,6 +74,10 @@ public class Lancamento implements Serializable {
 	@Column(name = "DATA_REC_DISTRIB", nullable = false)
 	private Date dataRecolhimentoDistribuidor;
 	
+	@Temporal(value=TemporalType.DATE)
+	@Column(name = "DATA_FIN_MAT_DISTRIB")
+	private Date dataFinMatDistrib;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -380,4 +384,12 @@ public class Lancamento implements Serializable {
 		this.alteradoInteface = alteradoInteface;
 	}
 
+	public Date getDataFinMatDistrib() {
+		return dataFinMatDistrib;
+	}
+
+	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
+		this.dataFinMatDistrib = dataFinMatDistrib;
+	}
+	
 }

@@ -42,6 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/suspensaoCota")
+@Rules(Permissao.ROLE_FINANCEIRO_SUSPENSAO_COTA)
 public class SuspensaoCotaController extends BaseController {
 
 	protected static final String WARNING_SUSPENSAO_COTA_SUSPENSA = "Não foi possível realizar a suspensão pois a cota já estava suspensa.";
@@ -77,7 +78,7 @@ public class SuspensaoCotaController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_FINANCEIRO_SUSPENSAO_COTA)
+	@Path("/")
 	public void index() {
 		
 		session.setAttribute("selecionados",null);
@@ -85,7 +86,9 @@ public class SuspensaoCotaController extends BaseController {
 
 	private void verificarBaixaBancariaNaData() {
 		
-		boolean existeBaixa = baixaBancariaSerivice.verificarBaixaBancariaNaData(distribuidorService.obter().getDataOperacao());
+		boolean existeBaixa = 
+				this.baixaBancariaSerivice.verificarBaixaBancariaNaData(
+						this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		if ( !existeBaixa ) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));

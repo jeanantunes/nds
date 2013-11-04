@@ -52,6 +52,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/nfe/painelMonitorNFe")
+@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE)
 public class PainelMonitorNFEController extends BaseController {
 
 	@Autowired
@@ -81,7 +82,6 @@ public class PainelMonitorNFEController extends BaseController {
 	private static final String NFES_PARA_IMPRESSAO_DANFES= "nfesParaImpressaoDanfes";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE)
 	public void index(){
 		
 		carregarComboSituacaoNfe();

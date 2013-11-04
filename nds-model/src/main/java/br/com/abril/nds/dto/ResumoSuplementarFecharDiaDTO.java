@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -18,6 +19,7 @@ public class ResumoSuplementarFecharDiaDTO implements Serializable {
 	
 	private BigDecimal saldo;
 
+	
 	public BigDecimal getTotalEstoqueLogico() {
 		return totalEstoqueLogico;
 	}
@@ -48,6 +50,22 @@ public class ResumoSuplementarFecharDiaDTO implements Serializable {
 
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+
+	public String getTotalEstoqueLogicoFormatado() {
+		return CurrencyUtil.formatarValor(totalEstoqueLogico);
+	}
+
+	public String getTotalTransferenciaFormatado() {
+		return CurrencyUtil.formatarValor(totalTransferencia);
+	}
+
+	public String getTotalVendaFormatado() {
+		return CurrencyUtil.formatarValor(totalVenda);
+	}
+
+	public String getSaldoFormatado() {
+		return CurrencyUtil.formatarValor(saldo);
 	}
 
 }

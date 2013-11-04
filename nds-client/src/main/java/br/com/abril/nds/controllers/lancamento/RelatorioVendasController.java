@@ -61,6 +61,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/lancamento/relatorioVendas")
+@Rules(Permissao.ROLE_LANCAMENTO_RELATORIO_VENDAS)
 public class RelatorioVendasController extends BaseController {
 
 	@Autowired
@@ -107,7 +108,6 @@ public class RelatorioVendasController extends BaseController {
 	 * Inicializa a página, populando os combos
 	 */
 	@Path("/")
-	@Rules(Permissao.ROLE_LANCAMENTO_RELATORIO_VENDAS)
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);

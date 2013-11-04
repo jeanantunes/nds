@@ -51,7 +51,7 @@ public abstract class HistoricoTitularidadeCotaDesconto implements Serializable 
     /**
      * Porcentagem do desconto
      */
-    @Column(name = "DESCONTO", nullable = false)
+    @Column(name = "DESCONTO", nullable = false, precision=18, scale=4)
     protected BigDecimal desconto;
     
     @ManyToOne(cascade = {CascadeType.ALL})

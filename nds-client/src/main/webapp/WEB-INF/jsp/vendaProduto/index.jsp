@@ -36,6 +36,24 @@ $(function(){
    
     </div>
     </form>
+    
+    <div class="areaBts">
+		<div class="area">
+   	
+   			<span class="bt_arq" >
+  				<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=principal" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+    		</span>
+
+			<span class="bt_arq" >
+				<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=PDF&tipoExportacao=principal" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
+				</a>
+			</span>
+   	
+		</div>
+   	</div>
 
 <div class="corpo">  
     <br clear="all"/>
@@ -74,19 +92,6 @@ $(function(){
 		      <div class="linha_separa_fields">&nbsp;</div>
 		      <fieldset class="classFieldset">
 		        	<table class="parciaisGrid"></table>
-		            <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup();"><img src="../images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>-->
-		            <span class="bt_novos" title="Gerar Arquivo">
-		            	<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=XLS&tipoExportacao=principal">
-		            		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-		            		Arquivo
-		            	</a>
-		            </span>
-					<span class="bt_novos" title="Imprimir">
-						<a href="${pageContext.request.contextPath}/lancamento/vendaProduto/exportar?fileType=PDF&tipoExportacao=principal">
-							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-							Imprimir
-						</a>
-					</span>	        
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>
 	      </div>

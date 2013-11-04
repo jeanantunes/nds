@@ -26,25 +26,25 @@ public class FechamentoDiarioConsolidadoEncalhe implements Serializable{
     @Column(name = "ID")
     private Long id;
 	
-	@Column(name = "VALOR_LOGICO")
+	@Column(name = "VALOR_LOGICO", precision=18, scale=4)
 	private BigDecimal valorLogico;
 	
-	@Column(name = "VALOR_FISICO")
+	@Column(name = "VALOR_FISICO", precision=18, scale=4)
 	private BigDecimal valorFisico;
 	
-	@Column(name = "VALOR_JURAMENTADO")
+	@Column(name = "VALOR_JURAMENTADO", precision=18, scale=4)
 	private BigDecimal valorJuramentado;
 	
-	@Column(name = "VALOR_VENDA")
+	@Column(name = "VALOR_VENDA", precision=18, scale=4)
 	private BigDecimal valorVenda;
 	
-	@Column(name = "VALOR_SOBRA_EM")
+	@Column(name = "VALOR_SOBRA_EM", precision=18, scale=4)
 	private BigDecimal valorSobraEM;
 	
-	@Column(name = "VALOR_FALTA_EM")
+	@Column(name = "VALOR_FALTA_EM", precision=18, scale=4)
 	private BigDecimal valorFaltaEM;
 	
-	@Column(name = "SALDO")
+	@Column(name = "SALDO", precision=18, scale=4)
 	private BigDecimal saldo;
 	
 	@OneToOne(optional = false)

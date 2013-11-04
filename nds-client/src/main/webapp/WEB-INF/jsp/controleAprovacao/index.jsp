@@ -1,8 +1,12 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
+
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/controleAprovacao.js"></script>
 <script>
 $(function(){
 	controleAprovacaoController.inicializar();
+	bloquearItensEdicao(controleAprovacaoController.workspace);
+
 });
 </script>
 

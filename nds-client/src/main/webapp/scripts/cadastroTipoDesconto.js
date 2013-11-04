@@ -184,7 +184,7 @@ var tipoDescontoController = $.extend(true,  {
 			
 			if(row.cell.numeroEdicao == null) row.cell.numeroEdicao = '*';
 			
-			var linkExcluir = '<a href="javascript:;" onclick="tipoDescontoController.exibirDialogExclusao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
+			var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="tipoDescontoController.exibirDialogExclusao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
 							   	 '<img title="Excluir Desconto" src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0px" />' +
 							   '</a>';
 			

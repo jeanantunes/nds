@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -175,8 +176,10 @@ public interface FornecedorService {
 	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface);
 
 	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
+	
+	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor, Integer qtdMaxResult);
 
 	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
-
-
+	
+	List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, Origem origem);
 }

@@ -125,9 +125,9 @@ public class EmailServiceImpl implements EmailService {
 		try {
 			
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true,"UTF-8");
-			mimeMessageHelper.setSubject(assunto);
+			mimeMessageHelper.setSubject(assunto == null ? "" : assunto);
 			mimeMessageHelper.setTo(destinatarios);
-			mimeMessageHelper.setText(mensagem,isHtml);
+			mimeMessageHelper.setText(mensagem == null ? "" : mensagem, isHtml);
 			mimeMessageHelper.setFrom(mailSender.getUsername());
 			
 			if(anexos!= null && !anexos.isEmpty()){

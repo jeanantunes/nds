@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -38,7 +40,7 @@ public class LogExecucaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<ConsultaInterfacesDTO> listaInterfaces;
 		
-		listaInterfaces = logExecucaoRepositoryImpl.obterInterfaces(null);
+		listaInterfaces = logExecucaoRepositoryImpl.obterInterfaces(new FiltroInterfacesDTO());
 		
 		Assert.assertNotNull(listaInterfaces);
 		
@@ -64,7 +66,7 @@ public class LogExecucaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Long codigoLogExecucao = 1L;
 		
-		listaMensagens = logExecucaoRepositoryImpl.obterMensagensErroLogInterface(codigoLogExecucao, new Date(), null);
+		listaMensagens = logExecucaoRepositoryImpl.obterMensagensErroLogInterface(codigoLogExecucao, new Date(), new FiltroDetalheProcessamentoDTO());
 		
 		Assert.assertNotNull(listaMensagens);
 		

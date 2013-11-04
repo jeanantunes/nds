@@ -179,16 +179,30 @@ fieldset label {
 
 				<td colspan="3">Semana:</td>
 
-				<td width="89"><input type="text" id="semanaRecolhimentoBox"
-					style="width: 70px;" /></td>
+				<td width="100">
+					<input type="text" id="semanaRecolhimentoBox"
+						style="width: 70px;" />
+				</td>
+				
+				<td colspan="3">Sugerir Semana:</td>
 
+				<td width="50">
+					<input type="checkbox" checked="checked" id="sugerirSemana" />
+				</td>
+				
 				<td colspan="3">Data Recolhimento:</td>
+				
+				<td width="150">
+					<input type="text" id="dataRecolhimentoBox" style="width: 70px;" />
+				</td>
 
-				<td width="99"><input type="text" id="dataRecolhimentoBox"
-					style="width: 70px;" /></td>
-
-				<td width="294"><span class="bt_novos"><a
-						href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+				<td width="105">
+					<span class="bt_novos">
+						<a href="javascript:;" id="btnPesquisar">
+							<img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" />
+						</a>
+					</span>
+				</td>
 
 			</tr>
 		</table>

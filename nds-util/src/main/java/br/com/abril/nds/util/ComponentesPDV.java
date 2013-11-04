@@ -25,5 +25,5 @@ public enum ComponentesPDV {
 		this.descricao = descricao;
 	}
 	
-	
 }
+

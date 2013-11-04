@@ -5,6 +5,8 @@ var emissaoBandeiraController = $.extend(true, {
 		this.iniciarGrid();
 		$("#semanaPesquisa", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
+		
+		$(".areaBts",this.workspace).hide();
 				
 	},
 	
@@ -69,7 +71,7 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexReload();
 				
-
+		$(".areaBts",this.workspace).show();
 	},
 	
 	executarPreProcessamento : function(resultado) {

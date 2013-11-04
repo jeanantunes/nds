@@ -38,6 +38,7 @@ public abstract class Constantes {
 	
 	public static final Integer MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL = 9999;
 	
+	public static final Integer QTD_MAX_REGISTROS_AUTO_COMPLETE = 20;
 }
 
 

@@ -1047,4 +1047,11 @@ public class FiadorServiceImpl implements FiadorService {
 		
 		return fiadorRepository.obterFiadorPorNome(nomeFiador);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Pessoa> obterFiadorPorNome(String nomeFiador, Integer qtdMaxResul) {
+		
+		return fiadorRepository.obterFiadorPorNome(nomeFiador, qtdMaxResul);
+	}
 }

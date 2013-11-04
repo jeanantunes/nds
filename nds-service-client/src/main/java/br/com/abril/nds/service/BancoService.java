@@ -43,6 +43,8 @@ public interface BancoService {
 	List<ItemDTO<Integer, String>> getComboBancos(Boolean ativo);
 
 	List<Banco> obterBancosPorNome(String nomeBanco);
+	
+	List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult);
 
 	void excluirBanco(long idBanco);
 }

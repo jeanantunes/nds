@@ -17,13 +17,13 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 	
 	private Long quantidadeAtivas;
 	
-	private List<Cota> ausentesExpedicaoReparte;
+	private List<CotaResumoDTO> ausentesExpedicaoReparte;
 	
-	private List<Cota> ausentesRecolhimentoEncalhe;
+	private List<CotaResumoDTO> ausentesRecolhimentoEncalhe;
 	
-	private List<Cota> novas;
+	private List<CotaResumoDTO> novas;
 	
-	private List<Cota> inativas;
+	private List<CotaResumoDTO> inativas;
 
 	/**
 	 * Construtor padrão.
@@ -43,9 +43,9 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 	 * @param inativas - cotas inativas
 	 */
 	public ResumoFechamentoDiarioCotasDTO(Long quantidadeTotal, Long quantidadeAtivas,
-										  List<Cota> ausentesExpedicaoReparte,
-										  List<Cota> ausentesRecolhimentoEncalhe,
-										  List<Cota> novas, List<Cota> inativas) {
+										  List<CotaResumoDTO> ausentesExpedicaoReparte,
+										  List<CotaResumoDTO> ausentesRecolhimentoEncalhe,
+										  List<CotaResumoDTO> novas, List<CotaResumoDTO> inativas) {
 		
 		this.quantidadeTotal = quantidadeTotal;
 		this.quantidadeAtivas = quantidadeAtivas;
@@ -164,21 +164,21 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 	/**
 	 * @return the ausentesExpedicaoReparte
 	 */
-	public List<Cota> getAusentesExpedicaoReparte() {
+	public List<CotaResumoDTO> getAusentesExpedicaoReparte() {
 		return ausentesExpedicaoReparte;
 	}
 
 	/**
 	 * @param ausentesExpedicaoReparte the ausentesExpedicaoReparte to set
 	 */
-	public void setAusentesExpedicaoReparte(List<Cota> ausentesExpedicaoReparte) {
+	public void setAusentesExpedicaoReparte(List<CotaResumoDTO> ausentesExpedicaoReparte) {
 		this.ausentesExpedicaoReparte = ausentesExpedicaoReparte;
 	}
 
 	/**
 	 * @return the ausentesRecolhimentoEncalhe
 	 */
-	public List<Cota> getAusentesRecolhimentoEncalhe() {
+	public List<CotaResumoDTO> getAusentesRecolhimentoEncalhe() {
 		return ausentesRecolhimentoEncalhe;
 	}
 
@@ -186,35 +186,35 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 	 * @param ausentesRecolhimentoEncalhe the ausentesRecolhimentoEncalhe to set
 	 */
 	public void setAusentesRecolhimentoEncalhe(
-			List<Cota> ausentesRecolhimentoEncalhe) {
+			List<CotaResumoDTO> ausentesRecolhimentoEncalhe) {
 		this.ausentesRecolhimentoEncalhe = ausentesRecolhimentoEncalhe;
 	}
 
 	/**
 	 * @return the novas
 	 */
-	public List<Cota> getNovas() {
+	public List<CotaResumoDTO> getNovas() {
 		return novas;
 	}
 
 	/**
 	 * @param novas the novas to set
 	 */
-	public void setNovas(List<Cota> novas) {
+	public void setNovas(List<CotaResumoDTO> novas) {
 		this.novas = novas;
 	}
 
 	/**
 	 * @return the inativas
 	 */
-	public List<Cota> getInativas() {
+	public List<CotaResumoDTO> getInativas() {
 		return inativas;
 	}
 
 	/**
 	 * @param inativas the inativas to set
 	 */
-	public void setInativas(List<Cota> inativas) {
+	public void setInativas(List<CotaResumoDTO> inativas) {
 		this.inativas = inativas;
 	}
 	

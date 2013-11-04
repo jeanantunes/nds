@@ -2,7 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 
@@ -10,7 +10,7 @@ public class FechamentoCEIntegracaoVO implements Serializable {
 
 	private static final long serialVersionUID = 2253692708185468228L;
 
-	private TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> listaFechamento;
+	private TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> listaFechamento;
 
 	private boolean semanaFechada;
 
@@ -20,12 +20,12 @@ public class FechamentoCEIntegracaoVO implements Serializable {
 
 	private String totalLiquido;
 
-	public TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> getListaFechamento() {
+	public TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> getListaFechamento() {
 		return listaFechamento;
 	}
 
 	public void setListaFechamento(
-			TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> listaFechamento) {
+			TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> listaFechamento) {
 		this.listaFechamento = listaFechamento;
 	}
 

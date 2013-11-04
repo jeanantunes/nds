@@ -14,6 +14,8 @@ var jsExtratoEdicao = $.extend(true, {
 		
 		jsExtratoEdicao.carregarExtratoEdicaoGrid();
 		
+		$(".areaBts",jsExtratoEdicao.workspace).hide();
+		
 	},
 	
 	pesquisarExtratoEdicao : function() {
@@ -38,6 +40,8 @@ var jsExtratoEdicao = $.extend(true, {
 		});
 		
 		$(".extratoEdicaoGrid", jsExtratoEdicao.workspace).flexReload();
+		
+		$(".areaBts",jsExtratoEdicao.workspace).show();
 
 	},	
 	

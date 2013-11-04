@@ -13,9 +13,11 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -25,13 +27,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
@@ -46,8 +50,10 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.envio.nota.StatusNotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -60,6 +66,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamen
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -70,8 +77,7 @@ import br.com.abril.nds.util.Intervalo;
  * 
  */
 @Repository
-public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
-		implements CotaRepository {
+public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> implements CotaRepository {
 	
     private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
@@ -1035,8 +1041,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
@@ -1297,10 +1301,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
+	public List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro) {
 		
-		StringBuilder hql = new StringBuilder(" from Cota cota ");
+		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero  from Cota cota ");
 
+		hql.append(" join cota.pessoa pessoa ");
+		
 		if (situacaoCadastro != null) {
 			
 			hql.append(" where cota.situacaoCadastro = :situacao ");
@@ -1313,15 +1319,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("situacao", situacaoCadastro);
 		}
 		
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+	public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
 		
-		StringBuilder hql = new StringBuilder(" from Cota cota ");
+		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero from Cota cota ");
 
+		hql.append(" join cota.pessoa pessoa ");
+		
 		if (dataInicioAtividade != null) {
 			
 			hql.append(" where cota.inicioAtividade = :dataInicioAtividade ");
@@ -1334,20 +1344,25 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("dataInicioAtividade", dataInicioAtividade);
 		}
 		
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 		
-		StringBuilder hql = new StringBuilder(" select cotaAusente.cota from CotaAusente cotaAusente ");
+		StringBuilder hql = new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
 		
-		hql.append(" where ativo = true");
+		hql.append(" join cotaAusente.cota cota ");
+		
+		hql.append(" join cota.pessoa pessoa ");
+				
 		
 		if (dataExpedicaoReparte != null) {
 			
-			hql.append(" and cotaAusente.data = :dataExpedicaoReparte ");
+			hql.append(" where cotaAusente.data = :dataExpedicaoReparte ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -1357,15 +1372,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("dataExpedicaoReparte", dataExpedicaoReparte);
 		}
 		
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 		
 		StringBuilder hql = 
-			new StringBuilder(" select chamadaEncalheCota.cota from ChamadaEncalheCota chamadaEncalheCota ");
+			new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
+		
+		hql.append(" join chamadaEncalheCota.cota cota ");
+		
+		hql.append(" join cota.pessoa pessoa ");
 		
 		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
 		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
@@ -1380,6 +1401,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
 		query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
 
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 
@@ -1388,15 +1411,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro
+	public List<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro
 										, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page) {
 		
-		Set<Long> listaIdCotas = new HashSet<Long>();
-		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
-		criteria.createAlias("box", "box");
+		criteria.createAlias("box", "box", JoinType.LEFT_OUTER_JOIN);
 		criteria.createAlias("pdvs", "pdvs");
-		criteria.setProjection(Projections.id());
+		criteria.setProjection(Projections.distinct(Projections.id()));
 		
 		if (intervaloCota != null && intervaloCota.getDe() != null) {
 			
@@ -1417,11 +1438,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			criteria.add(Restrictions.in("situacaoCadastro", situacoesCadastro));
 		}
 		
-		if(idRoteiro != null || idRota != null){
-			criteria.createAlias("pdvs.rotas", "rotaPdv");
-		    criteria.createAlias("rotaPdv.rota", "rota");
-			criteria.createAlias("rota.roteiro", "roteiro");
-		}		
+		criteria.createAlias("pdvs.rotas", "rotaPdv", JoinType.LEFT_OUTER_JOIN);
+	    criteria.createAlias("rotaPdv.rota", "rota", JoinType.LEFT_OUTER_JOIN);
+		criteria.createAlias("rota.roteiro", "roteiro", JoinType.LEFT_OUTER_JOIN);
+				
 		
 		if (idRoteiro != null){
 			
@@ -1432,64 +1452,302 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			
 			criteria.add(Restrictions.eq("rota.id", idRota));
 		}
-				
-		listaIdCotas.addAll(criteria.list());
 		
-		return listaIdCotas;
+		criteria.addOrder(Order.asc("box.codigo"));
+		criteria.addOrder(Order.asc("roteiro.ordem"));
+		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
+		criteria.addOrder(Order.asc("rota.ordem"));
+		criteria.addOrder(Order.asc("rota.descricaoRota"));
+		criteria.addOrder(Order.asc("numeroCota"));
+		
+		return criteria.list();
 	}
-	
+
 	@Override
-	public Integer obterCountCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro) {
-		
+	public Integer obterDadosCotasComNotaEnvioEmitidasCount(FiltroConsultaNotaEnvioDTO filtro) {
+
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append( " select count(*) from ( select cota_.ID ");
+		sql.append( " select count(*) from ( ");
 		
-		Query query = queryCotasComNotaEnvioEntre(filtro, sql, true);	 	
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, true, StatusNotaEnvio.EMITIDA);
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		sql.append(" ) rs1 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 	 	
+		
+		montarParametrosFiltroNotasEnvio(filtro, query, true);	
+		
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
+		
 	}
-	
-	
+
 	@Override
+	public Integer obterDadosCotasComNotaEnvioAEmitirCount(FiltroConsultaNotaEnvioDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append( " select count(*) from ( ");
+		
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, true, StatusNotaEnvio.NAO_EMITIDA);
+		
+		sql.append(" ) rs1 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 	 	
+		
+		montarParametrosFiltroNotasEnvio(filtro, query, true);	
+		
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
+		
+	}
+
+	@Override
+	public Integer obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(FiltroConsultaNotaEnvioDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append( " select count(*) from ( ");
+		
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, true, null);
+		
+		sql.append(" ) rs1 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 	 	
+		
+		montarParametrosFiltroNotasEnvio(filtro, query, true);	
+		
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
+		
+		
+	}
+
+	
 	@SuppressWarnings("unchecked")
-	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvio(FiltroConsultaNotaEnvioDTO filtro) {
-		
+	@Override
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro) {
+
 		StringBuilder sql = new StringBuilder();
-		
-		sql.append( " select "
-		+ "	        cota_.ID as idCota, "
-		+ "	        cota_.NUMERO_COTA as numeroCota, "
-		+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
-		+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-		+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
-		+ "	        SUM(ec_.QTDE_EFETIVA*pe_.PRECO_VENDA) as total, "
-		+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
-		
-		Query query = queryCotasComNotaEnvioEntre(filtro, sql, false);		
-		
-		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
-			query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-		}
-		
-		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
 
-			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-
-		}	
-	
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, false, StatusNotaEnvio.EMITIDA);
+		
+		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		montarParametrosFiltroNotasEnvio(filtro, query, false);	
+		
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
 		return query.list();
+		
 	}
 	
-	private Query queryCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioAEmitir(FiltroConsultaNotaEnvioDTO filtro) {
 		
+		StringBuilder sql = new StringBuilder();
+
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, false, StatusNotaEnvio.NAO_EMITIDA);
 		
+		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		montarParametrosFiltroNotasEnvio(filtro, query, false);	
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
+		
+		return query.list();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidasEAEmitir(
+			FiltroConsultaNotaEnvioDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
+		sql.append( " union all ");
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro,sql, false, null);
+		
+		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		montarParametrosFiltroNotasEnvio(filtro, query, false);	
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
+		
+		return query.list();
+		
+	}
+	
+	private void montarQueryReparteCotaAusente(FiltroConsultaNotaEnvioDTO filtro, 
+			StringBuilder sql, boolean isCount, StatusNotaEnvio status) {
+		
+		if(isCount) {
+			sql.append( " select cota_.ID ");
+		} else {
+			sql.append( " select "
+				+ "	        cota_.ID as idCota, "
+				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+				+ "	        SUM(mec.QTDE) as exemplares, "
+				+ "	        SUM(mec.QTDE * pe_.PRECO_VENDA) as total, "
+				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
+		}
+		sql.append( "   from "
+				+ "	        COTA cota_ " 
+				+ "	    left outer join "
+				+ "	        BOX box1_  "
+				+ "	            on cota_.BOX_ID=box1_.ID  "
+				+ "	    inner join "
+				+ "	        MOVIMENTO_ESTOQUE_COTA mec  "
+				+ "	            on cota_.ID=mec.COTA_ID  "
+				+ "	    inner join "
+				+ "	        TIPO_MOVIMENTO tm  "
+				+ "	            on mec.TIPO_MOVIMENTO_ID=tm.ID  "
+				+ "	    inner join "
+				+ "	        LANCAMENTO lancamento_  "
+				+ "	            on mec.LANCAMENTO_ID=lancamento_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO_EDICAO pe_  "
+				+ "	            on mec.PRODUTO_EDICAO_ID=pe_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO p_  "
+				+ "	            on pe_.PRODUTO_ID=p_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO_FORNECEDOR pf_  "
+				+ "	            on p_.ID=pf_.PRODUTO_ID  "
+				+ "	    inner join "
+				+ "	        FORNECEDOR f_  "
+				+ "	            on pf_.fornecedores_ID=f_.ID  "
+				+ "	    inner join "
+				+ "	        PDV pdv_  "
+				+ "	            on cota_.ID=pdv_.COTA_ID  "
+				+ "	    left outer join "
+				+ "        ROTA_PDV rota_pdv_  "
+				+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
+				+ "	    left outer join "
+				+ "	        ROTA rota_  "
+				+ "	            on rota_pdv_.rota_ID=rota_.ID  "
+				+ "	    left outer join "
+				+ "	        ROTEIRO roteiro_  "
+				+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
+				+ "	    inner join "
+				+ "	        PESSOA pessoa_cota_  "
+				+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  ");
+				
+				String joinType = " left outer join ";
+				
+				if(StatusNotaEnvio.EMITIDA.equals(status)){
+					joinType = " inner join ";
+				}
+				
+				sql.append(joinType+"   NOTA_ENVIO_ITEM nei " 
+		        + "    				on ( nei.SEQUENCIA = mec.NOTA_ENVIO_ITEM_SEQUENCIA " 
+		        + "                  	 and nei.NOTA_ENVIO_ID = mec.NOTA_ENVIO_ITEM_NOTA_ENVIO_ID )"
+				+ "	   	where "
+				+ "	        lancamento_.STATUS in (:status)  "
+				+ "	        and mec.ESTUDO_COTA_ID is null  "
+				+ "    	and tm.GRUPO_MOVIMENTO_ESTOQUE = 'RATEIO_REPARTE_COTA_AUSENTE'  "
+				+ "		and pdv_.ponto_principal = :principal ");
+		
+				if(StatusNotaEnvio.NAO_EMITIDA.equals(status)){
+					sql.append( "  and mec.NOTA_ENVIO_ITEM_SEQUENCIA is null  ");
+				}
+				
+				if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+					sql.append(
+					  "	        and ( "
+					+ "	            f_.ID is null  "
+					+ "	            or f_.ID in (:idFornecedores) "
+					+ "	        )  ");
+				}
+				
+				if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+					if (filtro.getIntervaloCota().getAte() != null) {
+						
+						sql.append("   and cota_.NUMERO_COTA between :numeroCotaDe and :numeroCotaAte  ");
+						
+					} else {
+						
+						sql.append("   and cota_.NUMERO_COTA=:numeroCota ");
+					}
+			
+				}
+				
+				if (filtro.getIntervaloBox() != null 
+						&& filtro.getIntervaloBox().getDe() != null 
+						&&  filtro.getIntervaloBox().getAte() != null) {
+					sql.append(" and box1_.CODIGO between :boxDe and :boxAte  ");
+				}
+				
+				if (filtro.getIdRoteiro() != null){
+					sql.append(" and roteiro_.ID=:idRoteiro  ");
+				}
+				
+				if (filtro.getIdRota() != null){
+					sql.append(" and rota_.ID=:idRota  ");
+				}
+				
+				if (filtro.getIntervaloMovimento() != null 
+						&& filtro.getIntervaloMovimento().getDe() != null 
+						&& filtro.getIntervaloMovimento().getAte() != null) {
+					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+				}
+				
+				sql.append(
+				  "	    group by cota_.ID ");
+		
+	}
+	
+	
+	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
+		
+		if(isCount) {
+			sql.append( " select cota_.ID ");
+		} else {
+			sql.append( " select "
+			+ "	        cota_.ID as idCota, "
+			+ "	        cota_.NUMERO_COTA as numeroCota, "
+			+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+			+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+			+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
+			+ "	        SUM(coalesce(nei.reparte, 0) * pe_.PRECO_VENDA) as total, "
+			+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
+		}
 		sql.append( 
 		  "	    from "
 		+ "	        COTA cota_ " 
-		+ "	    inner join "
+		+ "	    left outer join "
 		+ "	        BOX box1_  "
 		+ "	            on cota_.BOX_ID=box1_.ID  "
 		+ "	    inner join "
@@ -1517,22 +1775,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		+ "	    inner join "
 		+ "	        PDV pdv_  "
 		+ "	            on cota_.ID=pdv_.COTA_ID  "
-		+ "	     inner join "
+		+ "	    left outer join "
 		+ "        ROTA_PDV rota_pdv_  "
 		+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
-		+ "	    inner join "
+		+ "	    left outer join "
 		+ "	        ROTA rota_  "
 		+ "	            on rota_pdv_.rota_ID=rota_.ID  "
-		+ "	    inner join "
+		+ "	    left outer join "
 		+ "	        ROTEIRO roteiro_  "
 		+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
 		+ "	    inner join "
 		+ "	        PESSOA pessoa_cota_  "
 		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
-		+ "		left outer join NOTA_ENVIO_ITEM nei " 
+		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
-		+ "	   where "
-		+ "	        lancamento_.STATUS in (:status)  ");
+		+ "	   	where "
+		+ "	        lancamento_.STATUS in (:status) "
+		+ "		and pdv_.ponto_principal = :principal ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			sql.append(
@@ -1577,17 +1836,123 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		sql.append(
 		  "	    group by cota_.ID ");
 		
-		if(isCount) 
-			sql.append(" ) as dados ");
-		else
-			orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
-					filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
-		 
 		
+	}
 		
-		Query query = getSession().createSQLQuery(sql.toString());
+	private void montarQueryCotasComNotasEnvioNaoEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		
+		if(isCount) {
+			sql.append( " select cota_.ID ");
+		} else {
+			sql.append( " select "
+				+ "	        cota_.ID as idCota, "
+				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
+				+ "	        SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) as total, "
+				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
+		}
+		sql.append( "   from "
+				+ "	        COTA cota_ " 
+				+ "	    left outer join "
+				+ "	        BOX box1_  "
+				+ "	            on cota_.BOX_ID=box1_.ID  "
+				+ "	    inner join "
+				+ "	        ESTUDO_COTA ec_  "
+				+ "	            on cota_.ID=ec_.COTA_ID  "
+				+ "	    inner join "
+				+ "	        ESTUDO e_  "
+				+ "	            on ec_.ESTUDO_ID=e_.ID  "
+				+ "	    inner join "
+				+ "	        LANCAMENTO lancamento_  "
+				+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
+				+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+				+ "	    inner join "
+				+ "	        PRODUTO_EDICAO pe_  "
+				+ "	            on e_.PRODUTO_EDICAO_ID=pe_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO p_  "
+				+ "	            on pe_.PRODUTO_ID=p_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO_FORNECEDOR pf_  "
+				+ "	            on p_.ID=pf_.PRODUTO_ID  "
+				+ "	    inner join "
+				+ "	        FORNECEDOR f_  "
+				+ "	            on pf_.fornecedores_ID=f_.ID  "
+				+ "	    inner join "
+				+ "	        PDV pdv_  "
+				+ "	            on cota_.ID=pdv_.COTA_ID  "
+				+ "	    left outer join "
+				+ "        ROTA_PDV rota_pdv_  "
+				+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
+				+ "	    left outer join "
+				+ "	        ROTA rota_  "
+				+ "	            on rota_pdv_.rota_ID=rota_.ID  "
+				+ "	    left outer join "
+				+ "	        ROTEIRO roteiro_  "
+				+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
+				+ "	    inner join "
+				+ "	        PESSOA pessoa_cota_  "
+				+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
+				+ "		left outer join NOTA_ENVIO_ITEM nei " 
+		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
+				+ "	   	where "
+				+ "	        lancamento_.STATUS in (:status)  "
+				+ "    	and  nei.estudo_cota_id is null "
+				+ "		and pdv_.ponto_principal = :principal ");
+				
+				if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+					sql.append(
+					  "	        and ( "
+					+ "	            f_.ID is null  "
+					+ "	            or f_.ID in (:idFornecedores) "
+					+ "	        )  ");
+				}
+				
+				if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+					if (filtro.getIntervaloCota().getAte() != null) {
+						
+						sql.append("   and cota_.NUMERO_COTA between :numeroCotaDe and :numeroCotaAte  ");
+						
+					} else {
+						
+						sql.append("   and cota_.NUMERO_COTA=:numeroCota ");
+					}
+			
+				}
+				
+				if (filtro.getIntervaloBox() != null 
+						&& filtro.getIntervaloBox().getDe() != null 
+						&&  filtro.getIntervaloBox().getAte() != null) {
+					sql.append(" and box1_.CODIGO between :boxDe and :boxAte  ");
+				}
+				
+				if (filtro.getIdRoteiro() != null){
+					sql.append(" and roteiro_.ID=:idRoteiro  ");
+				}
+				
+				if (filtro.getIdRota() != null){
+					sql.append(" and rota_.ID=:idRota  ");
+				}
+				
+				if (filtro.getIntervaloMovimento() != null 
+						&& filtro.getIntervaloMovimento().getDe() != null 
+						&& filtro.getIntervaloMovimento().getAte() != null) {
+					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+				}
+				
+				sql.append(
+				  "	    group by cota_.ID ");
+		
+	}
+
+	private void montarParametrosFiltroNotasEnvio(
+			FiltroConsultaNotaEnvioDTO filtro, Query query, boolean isCount) {
+		
+		query.setParameter("principal", true);
 		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
+		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
@@ -1629,18 +1994,29 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
 		}
 		
-		return 	query;
-	}
+		if(!isCount) {
+			
+			if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+			
+		}
 		
+	}
+	
 	private void orderByCotasComNotaEnvioEntre(StringBuilder sql,
 			String sortName, String sortOrder) {
 		
 		if("numeroCota".equals(sortName)) {
-			sql.append(" order by  cota_.NUMERO_COTA " + sortOrder);
+			sql.append(" order by numeroCota " + sortOrder +", notaImpressa ");
 		}
 		
 		if("nomeCota".equals(sortName)) {
-			sql.append(" order by  coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) " + sortOrder);
+			sql.append(" order by  nomeCota " + sortOrder);
 		}
 				
 		if("exemplares".equals(sortName)) {
@@ -1688,10 +2064,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cota.id as idCota, ");
-		hql.append(" 		cota.numeroCota as numCota, ");
-		hql.append(" 		pessoa.nome as nome, ");
-		hql.append(" 		endereco.cidade as municipio, ");
-		hql.append(" 		endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
+		hql.append(" cota.numeroCota as numCota, ");
+		hql.append(" case pessoa.class ");
+		hql.append(" when 'F' then pessoa.nome ");
+		hql.append(" when 'J' then pessoa.razaoSocial end as nome,");
+		hql.append(" endereco.cidade as municipio, ");
+		hql.append(" endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
 		
 		gerarWhereFromObterCotaPorTipo(hql);
 		
@@ -1903,6 +2281,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return (Cota) query.uniqueResult();
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasQuePossuemRangeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1924,14 +2303,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(" WHERE ");
 		
 		if (cotasAtivas) {
-			hql.append(" cota.situacaoCadastro = :statusCota");
+			hql.append(" cota.situacaoCadastro = :statusCota and ");
 			parameters.put("statusCota", SituacaoCadastro.ATIVO);
 		}
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
 			// Populando o in ('','') do código produto
-			hql.append(" and produto.codigo in ( ");
+			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
 				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
@@ -1959,7 +2338,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		hql.append(" GROUP BY cota.numeroCota ");
 		
-		if (qtdReparteInicial != null && qtdReparteInicial.intValue() > 0 && qtdReparteFinal != null && qtdReparteFinal.intValue() > 0 ) {
+		if (qtdReparteInicial != null && qtdReparteInicial.intValue() >= 0 && qtdReparteFinal != null && qtdReparteFinal.intValue() >= 0 ) {
 			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
 			parameters.put("reparteInicial", qtdReparteInicial.doubleValue());
 			parameters.put("reparteFinal", qtdReparteFinal.doubleValue());
@@ -1980,9 +2359,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasQuePossuemRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal,List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
-Map<String, Object> parameters = new HashMap<String, Object>();
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -1994,21 +2374,20 @@ Map<String, Object> parameters = new HashMap<String, Object>();
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
-		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
 		
 		if (cotasAtivas) {
-			hql.append(" cota.situacaoCadastro = :statusCota");
+			hql.append(" cota.situacaoCadastro = :statusCota and");
 			parameters.put("statusCota", SituacaoCadastro.ATIVO);
 		}
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
 			// Populando o in ('','') do código produto
-			hql.append(" and produto.codigo in ( ");
+			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
 				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
@@ -2036,10 +2415,10 @@ Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		hql.append(" GROUP BY cota.numeroCota ");
 		
-		if (qtdVendaInicial != null && qtdVendaInicial.intValue() > 0 && qtdVendaFinal != null && qtdVendaFinal.intValue() > 0 ) {
-			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
-			parameters.put("reparteInicial", qtdVendaInicial.doubleValue());
-			parameters.put("reparteFinal", qtdVendaFinal.doubleValue());
+		if (qtdVendaInicial != null && qtdVendaInicial.intValue() >= 0 && qtdVendaFinal != null && qtdVendaFinal.intValue() >= 0 ) {
+			hql.append(" HAVING avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) between :qtdVendaInicial and :qtdVendaFinal");
+			parameters.put("qtdVendaInicial", qtdVendaInicial.doubleValue());
+			parameters.put("qtdVendaFinal", qtdVendaFinal.doubleValue());
 		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
@@ -2050,5 +2429,408 @@ Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		return query.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentualVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		
+		if (cotasAtivas) {
+			hql.append(" cota.situacaoCadastro = :statusCota and");
+			parameters.put("statusCota", SituacaoCadastro.ATIVO);
+		}
+		
+		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" produto.codigo in ( ");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+
+			// Populando o in ('','') do numero Edição
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append(listProdutoEdicaoDto.get(i).getNumeroEdicao());
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(",");
+				}
+			}
+			
+			hql.append(")");
+		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
+		
+		if (percentualVenda != null && percentualVenda.doubleValue() >= 0) {
+			hql.append(" HAVING (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) / sum(estoqueProdutoCota.qtdeRecebida))>= (:percentualVenda / 100)");
+			parameters.put("percentualVenda", percentualVenda.intValue());
+		}
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		
+		if (cotasAtivas) {
+			hql.append(" cota.situacaoCadastro = :statusCota and");
+			parameters.put("statusCota", SituacaoCadastro.ATIVO);
+		}
+		
+		if (cotaDto != null ) {
+			if (cotaDto.getNumeroCota() != null && !cotaDto.getNumeroCota().equals(0)) {
+				hql.append(" cota.numeroCota = :numeroCota and ");
+				parameters.put("numeroCota", cotaDto.getNumeroCota());
+			}
+			else if (cotaDto.getNomePessoa() != null && !cotaDto.getNomePessoa().isEmpty()) {
+				hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa and ");
+				parameters.put("nomePessoa", cotaDto.getNomePessoa());
+			}
+		}
+		
+		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" produto.codigo in ( ");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+
+			// Populando o in ('','') do numero Edição
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append(listProdutoEdicaoDto.get(i).getNumeroEdicao());
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(",");
+				}
+			}
+			
+			hql.append(")");
+		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto,	boolean cotasAtivas) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		StringBuilder whereParameter = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		switch (componente) {
+		case TipoPontodeVenda:
+			hql.append(" LEFT JOIN cota.pdvs pdvs ");
+			hql.append(" LEFT JOIN pdvs.segmentacao as segmentacao ");
+			hql.append(" LEFT JOIN segmentacao.tipoPontoPDV tipoPontoPDV ");
+
+			whereParameter.append(" tipoPontoPDV.id = :codigoTipoPontoPDV AND");
+			parameters.put("codigoTipoPontoPDV", Long.parseLong(elemento));
+
+			break;
+		case Area_de_Influência:
+
+			hql.append(" LEFT JOIN cota.pdvs pdvs ");
+			hql.append(" LEFT JOIN pdvs.segmentacao as segmentacao ");
+			hql.append(" LEFT JOIN segmentacao.areaInfluenciaPDV areaInfluenciaPDV ");
+
+			whereParameter.append(" areaInfluenciaPDV.id = :codigoAreaInfluenciaPDV AND ");
+			parameters.put("codigoAreaInfluenciaPDV", Long.parseLong(elemento));
+			break;
+
+		case Bairro:
+
+			hql.append(" LEFT JOIN cota.pdvs pdvs ");
+			hql.append(" LEFT JOIN pdvs.enderecos enderecosPdv ");
+			hql.append(" LEFT JOIN enderecosPdv.endereco endereco ");
+			
+			whereParameter.append(" enderecosPdv.principal = true and endereco.bairro = :bairroPDV AND ");
+			parameters.put("bairroPDV", elemento);
+
+			break;
+		case Distrito:
+			hql.append(" LEFT JOIN cota.pdvs pdvs ");
+			hql.append(" LEFT JOIN pdvs.enderecos enderecosPdv ");
+			hql.append(" LEFT JOIN enderecosPdv.endereco endereco ");
+
+			whereParameter.append(" enderecosPdv.principal = true and endereco.uf = :ufSigla AND");
+			parameters.put("ufSigla", elemento);
+
+			break;
+		case GeradorDeFluxo:
+
+			hql.append(" LEFT JOIN cota.pdvs pdvs ");
+			hql.append(" LEFT JOIN pdvs.geradorFluxoPDV geradorFluxoPdvs ");
+			hql.append(" INNER JOIN geradorFluxoPdvs.principal geradorPrincipal ");
+
+			whereParameter.append(" geradorPrincipal.id = :idGeradorFluxoPDV AND ");
+			parameters.put("idGeradorFluxoPDV",	Long.parseLong(elemento));
+
+			break;
+		case CotasAVista:
+			hql.append(" LEFT JOIN cota.parametroCobranca as parametroCobranca ");
+			
+			whereParameter.append(" parametroCobranca.tipoCota = :tipoCota AND");
+			parameters.put("tipoCota",TipoCota.A_VISTA);
+			
+			break;
+		case CotasNovasRetivadas:
+			whereParameter.append(" cota.id in (SELECT cotaBase.cota.id FROM CotaBase as cotaBase) AND ");
+			
+			break;
+		case Região:
+			whereParameter.append(" cota.id in (SELECT registro.cota.id FROM RegistroCotaRegiao as registro WHERE regiao.id = :regiaoId) AND ");
+			parameters.put("regiaoId",Long.parseLong(elemento));
+			
+			break;
+		default:
+			break;
+		}
+		
+		
+		hql.append(" WHERE ");
+		
+		// adiciona os parâmetros feitos dentro so switch
+		hql.append(whereParameter.toString());
+		
+		if (cotasAtivas) {
+			hql.append(" cota.situacaoCadastro = :statusCota and");
+			parameters.put("statusCota", SituacaoCadastro.ATIVO);
+		}
+		
+		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" produto.codigo in ( ");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+
+			// Populando o in ('','') do numero Edição
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append(listProdutoEdicaoDto.get(i).getNumeroEdicao());
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(",");
+				}
+			}
+			
+			hql.append(")");
+		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" cota.situacaoCadastro as statusCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
+		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
+		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
+		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia ");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		hql.append(" tipoMovimento.id = 21 and ");
+		
+		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" produto.codigo in ( ");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+
+			// Populando o in ('','') do numero Edição
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append(listProdutoEdicaoDto.get(i).getNumeroEdicao());
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(",");
+				}
+			}
+			
+			hql.append(")");
+		}
+		
+		if (cotas != null && cotas.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" and cota.numeroCota in ( ");
+			for (int i = 0; i < cotas.size(); i++) {
+				
+				hql.append(cotas.get(i).getNumeroCota());
+				
+				if (cotas.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
+		
+		return query.list();
+	}
+
+	@Override
+	public HistoricoVendaPopUpCotaDto buscarCota(Integer numero) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		hql.append(" rankingFaturamento.id as rankId, ");
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
+		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
+		hql.append(" rankingFaturamento.faturamento as faturamento, ");
+		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as  dataGeracao ");
+		
+		hql.append(" FROM RankingFaturamento rankingFaturamento ");
+		hql.append(" INNER JOIN rankingFaturamento.rankingFaturamentoGerado as rankingFaturamentoGerado ");
+		hql.append(" RIGHT JOIN rankingFaturamento.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		hql.append(" cota.numeroCota = ");
+		hql.append(numero);
+		
+		hql.append(" GROUP BY rankingFaturamento.cota ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(HistoricoVendaPopUpCotaDto.class));
+		
+		return (HistoricoVendaPopUpCotaDto) query.uniqueResult();
 	
+	}
+
 }

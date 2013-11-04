@@ -1,18 +1,22 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 
@@ -22,54 +26,84 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 	public VendaProdutoRepositoryImpl() {
 		super(MovimentoEstoque.class);
 	}
-
-	private StringBuilder getMovimentosReparte(){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT COALESCE(sum(COALESCE(mec.qtde,0)),0) ");
-		hql.append(" FROM MovimentoEstoqueCota mec ");
-		hql.append(" WHERE mec = movEstCota ");
-		
-		return hql;
-	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
+		        
+        hql.append(" SELECT ");
+        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+        hql.append(" 	  			THEN movimentoEstoque.QTDE ");
+        hql.append("         	ELSE 0 ");
+        hql.append("     		END ");
+        hql.append(" 	 ) as reparte, ");
+		    
+        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+        hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
+        hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
+        hql.append(" 			END ");
+        hql.append(" 	 ) AS venda, ");
+		    
+        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+        hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
+        hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
+        hql.append(" 			END ");
+        hql.append(" 	 ) * 100 / ");
+        hql.append(" 	 SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+        hql.append(" 	  			THEN movimentoEstoque.QTDE ");
+        hql.append("         	ELSE 0 ");
+        hql.append("     		END ");
+        hql.append(" 	 ) AS percentualVenda, ");
+		    
+        hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+        hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
+        hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
+        hql.append(" 			END ");
+        hql.append(" 	 ) * produtoEdicao.PRECO_VENDA AS total, ");
+		    
+        hql.append(" 	 produtoEdicao.NUMERO_EDICAO AS numEdicao, ");
+        hql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
+        hql.append("     lancamento.DATA_REC_DISTRIB AS dataRecolhimento, ");
+        hql.append("     produtoEdicao.PRECO_VENDA AS precoCapa, ");
+        hql.append("     produtoEdicao.CHAMADA_CAPA AS chamadaCapa, ");
+        hql.append("     produtoEdicao.PARCIAL AS parcial, ");
+        hql.append("     produto.CODIGO AS codigoProduto ");
+        
+		hql.append(this.getSqlFromEWhereVendaPorProduto(filtro));
 		
-		hql.append(" select ");
-		hql.append(" estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append(" 	 GROUP BY produtoEdicao.ID ");		
 		
-		hql.append(" ( ");
-		hql.append( this.getMovimentosReparte() );
-		hql.append(" ) as reparte, ");				
+		hql.append(this.getOrderByVenda(filtro));
 		
-		hql.append(" COALESCE((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe), 0)  as venda, ");
-		hql.append(" COALESCE(ROUND((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe) / ("+this.getMovimentosReparte()+")), 0) as percentagemVenda, ");
-		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
-		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-		hql.append(" COALESCE((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda, 0)  as total ");
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
+		query.addScalar("numEdicao", StandardBasicTypes.LONG);
+		query.addScalar("dataLancamento");
+		query.addScalar("dataRecolhimento");
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("venda", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("percentualVenda");
+		query.addScalar("precoCapa");
+		query.addScalar("chamadaCapa");
+		query.addScalar("total");
+		query.addScalar("parcial", StandardBasicTypes.BOOLEAN);
+		query.addScalar("codigoProduto");
 		
-		hql.append(getSqlFromEWhereVendaPorProduto(filtro));
+		HashMap<String, Object> param = this.buscarParametrosVendaProduto(filtro);
 		
-		hql.append(getOrderByPorEdicoes(filtro));
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		HashMap<String, Object> param = buscarParametrosVendaProduto(filtro);
+		HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto();
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				VendaProdutoDTO.class));
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, (List) paramList.get(key));
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(VendaProdutoDTO.class));
 		
 		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
@@ -83,37 +117,101 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 	private String getSqlFromEWhereVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-	
-		hql.append(" from EstoqueProduto estoqueProduto ");
-		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao ");
-		hql.append(" JOIN estoqueProduto.produtoEdicao.lancamentos as lancamento ");		
-		hql.append(" JOIN estoqueProduto.produtoEdicao.produto.fornecedores as fornecedor ");
-		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movEstCota ");
-		hql.append(" JOIN movEstCota.tipoMovimento tipoMovimento ");
 		
-		boolean usarAnd = false;
+		hql.append(" FROM ");
+		hql.append("     MOVIMENTO_ESTOQUE movimentoEstoque ");
+		hql.append(" INNER JOIN ");
+		hql.append(" 	  TIPO_MOVIMENTO tipoMovimento ");
+		hql.append(" 			ON movimentoEstoque.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO_EDICAO produtoEdicao ");          
+		hql.append("         ON movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO produto ");
+		hql.append("         ON produtoEdicao.PRODUTO_ID = produto.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO_FORNECEDOR produtoFornecedor ");          
+		hql.append("         ON produto.ID = produtoFornecedor.PRODUTO_ID ");  
+		hql.append(" INNER JOIN ");
+		hql.append("     FORNECEDOR fornecedor ");          
+		hql.append("         ON produtoFornecedor.fornecedores_ID = fornecedor.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append(" LANCAMENTO lancamento ");
+		hql.append("     ON lancamento.ID = ( ");
+		hql.append("     	CASE WHEN (produtoEdicao.PARCIAL) ");
+		hql.append(" 				THEN (SELECT ID FROM LANCAMENTO WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		hql.append(" 							ORDER BY ID ASC LIMIT 1) ");
+		hql.append(" 				ELSE (SELECT ID FROM LANCAMENTO WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		hql.append(" 							ORDER BY ID DESC LIMIT 1) ");
+		hql.append(" 			END ");
+		hql.append("   		) ");
+		hql.append(" LEFT JOIN ");
+		hql.append("  	  FECHAMENTO_ENCALHE fechamentoEncalhe ");
+		hql.append(" 			ON (fechamentoEncalhe.DATA_ENCALHE = lancamento.DATA_REC_DISTRIB ");
+		hql.append(" 				AND fechamentoEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID) ");
+		
+		hql.append(" WHERE tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN ( ");
+		hql.append("   		:gruposMovimentoEstoque ");
+		hql.append(" ) ");
 		
 		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
-			hql.append( (usarAnd ? " and ":" where ") + "produtoEdicao.produto.codigo = :codigo ");
-			usarAnd = true;
+			hql.append(" AND produto.CODIGO = :codigo ");
 		}
 		if(filtro.getEdicao() !=null){
-			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao = :edicao ");
-			usarAnd = true;
+			hql.append(" AND produtoEdicao.NUMERO_EDICAO = :edicao ");
 		}
 		if(filtro.getIdFornecedor() !=null && filtro.getIdFornecedor() != -1){
-			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id = :idFornecedor ");
-			usarAnd = true;
+			hql.append(" AND fornecedor.ID = :idFornecedor ");
 		}
-		
-		hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
-		
-		hql.append("  AND tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
 		
 		return hql.toString();
 	}
 	
-	private String getOrderByPorEdicoes(FiltroVendaProdutoDTO filtro){
+	private String getSqlFromEWhereDetalheVendaPorProduto() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" FROM ");
+		hql.append("     MOVIMENTO_ESTOQUE movimentoEstoque ");
+		hql.append(" INNER JOIN ");
+		hql.append(" 	  TIPO_MOVIMENTO tipoMovimento ");
+		hql.append(" 			ON movimentoEstoque.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO_EDICAO produtoEdicao ");          
+		hql.append("         ON movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO produto ");
+		hql.append("         ON produtoEdicao.PRODUTO_ID = produto.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO_FORNECEDOR produtoFornecedor ");          
+		hql.append("         ON produto.ID = produtoFornecedor.PRODUTO_ID ");  
+		hql.append(" INNER JOIN ");
+		hql.append("     FORNECEDOR fornecedor ");          
+		hql.append("         ON produtoFornecedor.fornecedores_ID = fornecedor.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     LANCAMENTO lancamento ");
+		hql.append("         ON lancamento.ID = ( ");
+		hql.append(" 	  			SELECT ID FROM LANCAMENTO ");
+		hql.append(" 	  				WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		hql.append(" 					AND movimentoEstoque.DATA between DATA_LCTO_DISTRIBUIDOR and DATA_REC_DISTRIB ");
+		hql.append(" 					ORDER BY DATA_REC_DISTRIB LIMIT 1 ");
+		hql.append(" 	  		) ");
+		hql.append("  LEFT JOIN ");
+		hql.append("  	  FECHAMENTO_ENCALHE fechamentoEncalhe ");
+		hql.append(" 			ON (fechamentoEncalhe.DATA_ENCALHE = lancamento.DATA_REC_DISTRIB ");
+		hql.append(" 				AND fechamentoEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID) ");
+		
+		hql.append("  WHERE produtoEdicao.PARCIAL = :produtoParcial ");
+		hql.append("  	  AND produto.CODIGO = :codigo ");
+		hql.append("      AND produtoEdicao.NUMERO_EDICAO = :edicao ");
+		hql.append("      AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN ( ");
+		hql.append("   		:gruposMovimentoEstoque ");
+		hql.append(" 	  ) ");
+		
+		return hql.toString();
+	}
+	
+	private String getOrderByVenda(FiltroVendaProdutoDTO filtro) {
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
@@ -123,25 +221,27 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" group by lancamento ");
-		
-		switch (coluna) {
-			case EDICAO:	
-				hql.append(" order by estoqueProduto.produtoEdicao.numeroEdicao ");
-				break;
-				
-			case CHAMADA_CAPA:	
-				hql.append(" order by chamadaCapa ");
-				break;
-		}
+		hql.append(" ORDER BY " + coluna);
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			hql.append(" " + filtro.getPaginacao().getOrdenacao().toString());
 		}
 		
 		return hql.toString();
 	}
 	
+	private HashMap<String,Object> buscarParametrosDetalhesVendaProduto(FiltroDetalheVendaProdutoDTO filtro){
+		
+		HashMap<String,Object> param = new HashMap<String, Object>();
+		
+		param.put("codigo", filtro.getCodigo());
+		param.put("edicao", filtro.getEdicao());
+		param.put("operacaoEstoqueEntrada", OperacaoEstoque.ENTRADA.name());
+		param.put("operacaoEstoqueSaida", OperacaoEstoque.SAIDA.name());
+		param.put("produtoParcial", true);
+		
+		return param;
+	}
 	
 	private HashMap<String,Object> buscarParametrosVendaProduto(FiltroVendaProdutoDTO filtro){
 		
@@ -157,90 +257,93 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		param.put("operacaoEstoqueSaida", OperacaoEstoque.SAIDA.name());
+		
+		return param;
+	}
+	
+	private HashMap<String,Object> buscarParametrosListVendaProduto() {
+		
+		HashMap<String,Object> param = new HashMap<String, Object>();
+		
+		List<String> lista = new ArrayList<>();
+		
+		lista.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		lista.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name());
+		lista.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
+		lista.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.name());
+		lista.add(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO.name());
+		lista.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
+		lista.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.name());
+		lista.add(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name());
+		lista.add(GrupoMovimentoEstoque.VENDA_ENCALHE.name());
+		lista.add(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name());
+		lista.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.name());
+		lista.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name());				
+		
+		param.put("gruposMovimentoEstoque", lista);
 		
 		return param;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<LancamentoPorEdicaoDTO> buscarLancamentoPorEdicao(
-			FiltroVendaProdutoDTO filtro) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<LancamentoPorEdicaoDTO> buscarLancamentoPorEdicao(FiltroDetalheVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT DISTINCT lancamento.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append(" SELECT ");
+		hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+		hql.append(" 	  			THEN movimentoEstoque.QTDE ");
+		hql.append("         	ELSE 0 ");
+		hql.append("     		END ");
+		hql.append(" 	 ) as reparte, ");
+			  
+		hql.append(" 	 SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueEntrada) ");
+		hql.append(" 	  			THEN movimentoEstoque.QTDE ");
+		hql.append("         	ELSE 0 ");
+		hql.append("     		END ");
+		hql.append(" 	 ) as encalhe, ");
+	        
+		hql.append("     SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoqueSaida) ");
+		hql.append(" 	  			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoque.QTDE ELSE 0 END) ");
+		hql.append(" 				ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoque.QTDE ELSE 0 END) ");
+		hql.append(" 			END ");
+		hql.append(" 	 ) AS venda, ");
+			  
+			  
+		hql.append(" 	 produtoEdicao.NUMERO_EDICAO AS numEdicao, ");
+		hql.append("     lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
+		hql.append("     lancamento.DATA_REC_DISTRIB AS dataRecolhimento ");
 		
-		hql.append(" ( ");
-		hql.append( this.getMovimentosReparte() );
-		hql.append(" ) as reparte, ");		
+		hql.append(this.getSqlFromEWhereDetalheVendaPorProduto());
 		
-		hql.append(" estoqueProduto.qtdeDevolucaoEncalhe  as encalhe, ");
-		hql.append(" (("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe)  as venda, ");
-		hql.append(" (("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe)  as vendaAcumulada, ");
-		hql.append(" ROUND(((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe) / ("+this.getMovimentosReparte()+"))) as percentualVenda ");
+		hql.append(" GROUP BY lancamento.ID ");
+		hql.append(" ORDER BY dataLancamento ");
 		
-		hql.append(getSqlFromEWhereLancamentoPorEdicao(filtro));
+		SQLQuery query =  getSession().createSQLQuery(hql.toString());
 		
-		Query query =  getSession().createQuery(hql.toString());
+		query.addScalar("dataLancamento");
+		query.addScalar("dataRecolhimento");
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("venda", StandardBasicTypes.BIG_INTEGER);
 		
-		HashMap<String, Object> param = buscarParametrosLancamentoPorEdicao(filtro);
+		HashMap<String, Object> param = this.buscarParametrosDetalhesVendaProduto(filtro);
+		
+		HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto();
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				LancamentoPorEdicaoDTO.class));
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, (List) paramList.get(key));
+		}
 		
+		query.setResultTransformer(new AliasToBeanResultTransformer(LancamentoPorEdicaoDTO.class));
+				
 		return query.list();
-	}
-	
-	private String getSqlFromEWhereLancamentoPorEdicao(FiltroVendaProdutoDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-	
-		hql.append(" from Lancamento lancamento ");
-		hql.append(" JOIN lancamento.produtoEdicao as produtoEdicao ");
-		hql.append(" JOIN lancamento.produtoEdicao.produto as produto ");
-		hql.append(" JOIN lancamento.produtoEdicao.movimentoEstoques as movimentoEstoque ");
-		hql.append(" JOIN movimentoEstoque.estoqueProduto as estoqueProduto ");
-		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movEstCota ");
-		hql.append(" JOIN movEstCota.tipoMovimento tipoMovimento ");
-		
-		boolean usarAnd = false;
-		
-		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
-			hql.append( (usarAnd ? " and ":" where ") + "produto.codigo = :codigo ");
-			usarAnd = true;
-		}
-		if(filtro.getEdicao() !=null){
-			hql.append( (usarAnd ? " and ":" where ") + " produtoEdicao.numeroEdicao = :edicao ");
-			usarAnd = true;
-		}
-		
-        hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
-		
-		hql.append("  AND tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
-
-		return hql.toString();
-	}
-	
-	private HashMap<String,Object> buscarParametrosLancamentoPorEdicao(FiltroVendaProdutoDTO filtro){
-		
-		HashMap<String,Object> param = new HashMap<String, Object>();
-		
-		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()){ 
-			param.put("codigo", filtro.getCodigo());
-		}
-		if(filtro.getEdicao() != null){ 
-			param.put("edicao", filtro.getEdicao());
-		}		
-		
-		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-	
-		return param;
 	}
 
 }

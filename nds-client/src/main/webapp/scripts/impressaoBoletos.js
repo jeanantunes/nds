@@ -180,38 +180,6 @@ var impressaoBoletosController = $.extend(true, {
 
 	},
 	
-	/**
-		Executa o método de geração de dividas
-	**/
-	gerarDivida : function (){
-		$("#aguarde", impressaoBoletosController.workspace).dialog({
-			title: 'Processando',
-			resizable: false,
-			height:60,
-			width:50,
-			modal: true,
-			open: function (){
-					$(this).parent().children().children('.ui-dialog-titlebar-close').remove();
-				  },
-			form: $("#aguarde", this.workspace).parents("form")
-		});
-		
-		$("#aguarde", impressaoBoletosController.workspace).show();
-		
-		$.postJSON(
-			contextPath + '/financeiro/impressaoBoletos/gerarDivida',
-			null,
-			function(result) {
-				$("#aguarde", impressaoBoletosController.workspace).dialog("close");
-				mostrar();
-			},
-			function(result) {
-				$("#aguarde", impressaoBoletosController.workspace).dialog("close");
-			},
-			false
-		);
-	},
-	
 	pesquisarCotaErrorCallBack:function(){
 		$("#box", impressaoBoletosController.workspace).val("");
 		$("#rota", impressaoBoletosController.workspace).val("");
@@ -294,60 +262,7 @@ recarregarComboRoteiroRotas:function(idBox){
 			$("#rota", impressaoBoletosController.workspace).html(comboRotas);
 			$("#roteiro", impressaoBoletosController.workspace).html(comboRoteiros);
 		});
-	},
-
-	habilitarAcaoGeracaoDivida:function(valor){
-		
-		$.postJSON(contextPath + "/financeiro/impressaoBoletos/habilitarAcaoGeracaoDivida",
-				[{name:"dataPesquisa",value:valor}], function(result){
-			
-			//if(result.isAcaoGeraDivida == true){
-			if(result == true){
-				$("#divGerarDivida", impressaoBoletosController.workspace).show();	
-			}
-			else{
-				$("#divGerarDivida", impressaoBoletosController.workspace).hide();
-			}
-		});
-	},
-	
-	veificarCobrancaGerada: function(){
-		
-		$.postJSON(contextPath + '/financeiro/impressaoBoletos/veificarCobrancaGerada', null,
-		
-			function(conteudo){
-			
-				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
-					
-					$("#msgRegerarCobranca", impressaoBoletosController.workspace).text(conteudo.listaMensagens[0]);
-					
-					$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog({
-						resizable : false,
-						height : 'auto',
-						width : 680,
-						modal : true,
-						buttons : {
-							"Confirmar" : function() {
-								
-								$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog("close");
-								impressaoBoletosController.gerarDivida();
-							},
-							"Cancelar" : function(){
-							
-								$("#dialog-confirmar-regerar-cobranca", impressaoBoletosController.workspace).dialog("close");
-							}
-						},
-						form: $("#dialog-confirmar-regerar-cobranca", this.workspace).parents("form")
-					});
-					
-				} else {
-					
-					impressaoBoletosController.gerarDivida();
-				}
-				
-			}, null, true, "dialog-confirmar-regerar-cobranca"
-		);
 	}
-
+	
 }, BaseController);
 //@ sourceURL=impressaoBoletos.js

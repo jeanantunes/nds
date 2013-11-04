@@ -17,6 +17,8 @@ public class VendaFechamentoDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 2126291233836764519L;
 	
+	private Long idProdutoEdicao;
+	
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
@@ -130,6 +132,14 @@ public class VendaFechamentoDiaDTO implements Serializable {
 		} else if (!numeroEdicao.equals(other.numeroEdicao))
 			return false;
 		return true;
+	}
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 	
 	

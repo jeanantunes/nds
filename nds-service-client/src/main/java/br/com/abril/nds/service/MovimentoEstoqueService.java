@@ -19,11 +19,11 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao,Long idUsuario,BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 	
-	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao);
 
 	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
 
-	void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
+	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota, List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
 
 	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 							 	 MovimentoEstoque movimentoEstoque);
@@ -33,7 +33,7 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 
-	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput);
+	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput, Date dataOperacao);
 	
 	/**
 	 * Gera movimento para cancelamento de nota, 
@@ -59,4 +59,12 @@ public interface MovimentoEstoqueService {
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem);
 	
 	public BigInteger obterReparteDistribuidoProduto(String codigoProduto);
+
+	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao,
+			Long idUsuario, BigInteger quantidade,
+			TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
+			boolean isImportacao);
+
+	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque, MovimentoEstoque movimentoEstoque, boolean isImportacao);
+	
 }

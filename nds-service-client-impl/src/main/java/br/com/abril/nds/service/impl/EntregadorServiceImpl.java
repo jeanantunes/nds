@@ -121,11 +121,10 @@ public class EntregadorServiceImpl implements EntregadorService {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Entregador não encontrado.");
 		}
-		
-		if (entregador.getEnderecos() != null && !entregador.getEnderecos().isEmpty()) {
+
+		entregador.setEnderecos(null);
 			
-			this.enderecoEntregadorRepository.removerEnderecosEntregadorPorIdEntregador(idEntregador);
-		}
+		this.enderecoEntregadorRepository.removerEnderecosEntregadorPorIdEntregador(idEntregador);
 		
 		if (entregador.getTelefones() != null && !entregador.getTelefones().isEmpty()) {
 			
@@ -434,8 +433,22 @@ public class EntregadorServiceImpl implements EntregadorService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador, Integer qtdMaxResult) {
+		
+		return entregadorRepository.obterEntregadorPorApelido(apelidoEntregador, qtdMaxResult);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador) {
 		
 		return entregadorRepository.obterEntregadorPorNome(nomeEntregador);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador, Integer qtdMaxResult) {
+		
+		return entregadorRepository.obterEntregadorPorNome(nomeEntregador, qtdMaxResult);
 	}
 }

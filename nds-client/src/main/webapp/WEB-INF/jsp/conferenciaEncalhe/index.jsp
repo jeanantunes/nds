@@ -1,3 +1,4 @@
+
 <head>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -21,10 +22,21 @@
 	</style>
 	
 	<script type="text/javascript">
-	
-	$(function(){
-		ConferenciaEncalhe.init();
-	});
+		var ID_BOX_LOGADO = "${conferenciaEncalheSessionScopeAttr.idBoxLogado}";
+		$('#boxLogado option[value="${conferenciaEncalheSessionScopeAttr.idBoxLogado}"]').attr("selected","selected");
+		
+		var VEIO_DO_BT_BOX_ENCALHE = false;
+		
+		//Solicita seleção do box caso usuário não esteja associado.
+		if(ID_BOX_LOGADO == ""){
+			ConferenciaEncalhe.popup_logado();
+		}else{
+			focusSelectRefField($('#numeroCota', ConferenciaEncalhe.workspace));
+		}
+		
+		$(function(){
+			ConferenciaEncalhe.init();
+		});
 	</script>
 	
 </head>
@@ -42,13 +54,20 @@
 				<fieldset class="classFieldset" style="height:25px">
 					<table width="950" border="0" cellspacing="1" cellpadding="1">
 						<tr>
-							<td width="126">
+							<td width="20">
 								<span class="bt_novos">
 									<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="ContingÃªncia">
-										<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
+										<img border="0" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
 									</a>
 								</span>
-							</td>
+							</td>			
+							<td width="80">
+								<span class="bt_novos">
+									<a href="javascript:;" onclick="ConferenciaEncalhe.abrirModalLogadoDoBotao()" rel="tipsy" title="Alterar BOX Encalhe">
+										<img border="0" width="40" height="16" src="${pageContext.request.contextPath}/images/bt_operacao_box.png" />
+									</a>
+								</span>
+							</td>											
 							<td width="314">&nbsp;</td>
 							<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
 							<td width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
@@ -79,13 +98,41 @@
 					</td>
 					
 					<td width="44"><span class="dadosFiltro">Status:</span></td>
+					
 					<td width="91"><span class="dadosFiltro" id="statusCota"></span></td>
-					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
-					<td width="100">
+					
+					<td width="144">
+
 						<span class="dadosFiltro">
-							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+									Valor CE Jornaleiro R$:
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+									Qtde CE Jornaleiro:
+								</c:when>
+							</c:choose>
 						</span>
+						
 					</td>
+					
+					<td width="100">
+						
+						<span class="dadosFiltro">
+
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+							</c:choose>
+							
+						</span>
+						
+					</td>
+					
 				</tr>
 			</table>
 			

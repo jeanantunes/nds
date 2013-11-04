@@ -36,6 +36,12 @@ init : function() {
 			sortable : true,
 			align : 'left'
 		}, {
+			display : 'Nota de Envio',
+			name : 'numeroNotaEnvio',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
 			display : 'Data de Emissão',
 			name : 'dataEmissao',
 			width : 100,
@@ -136,6 +142,9 @@ processarResultadoConsultaNF : function (data) {
 	var i;
 
 	for (i = 0; i < data.rows.length; i++) {
+		
+		data.rows[i].cell.numeroNotaEnvio = 
+			(data.rows[i].cell.numeroNotaEnvio == undefined) ? "" : data.rows[i].cell.numeroNotaEnvio;
 		
 		data.rows[i].cell.acao = '<a href="javascript:;" onclick="consultaNotasController.pesquisarDetalhesNota('
 				+ data.rows[i].cell.id

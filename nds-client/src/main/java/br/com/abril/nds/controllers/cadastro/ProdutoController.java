@@ -42,8 +42,8 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -62,6 +62,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/produto")
+@Rules(Permissao.ROLE_CADASTRO_PRODUTO)
 public class ProdutoController extends BaseController {
 
 	private Result result;
@@ -120,7 +121,6 @@ public class ProdutoController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_PRODUTO)
 	public void index() {
 		
 		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
@@ -134,6 +134,10 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
+		
+		if(codigoProduto == null || "".equals(codigoProduto.trim()))
+				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
+		
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
@@ -149,7 +153,7 @@ public class ProdutoController extends BaseController {
 
 	@Post
 	public void autoCompletarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto);
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -335,6 +339,7 @@ public class ProdutoController extends BaseController {
 	 * Carrega os combos do modal de inclusão/edição do Produto.
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarDadosProduto() {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
@@ -413,19 +418,10 @@ public class ProdutoController extends BaseController {
 	 * @param id
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void removerProduto(Long id) {
 		
-		try {
-			
-			this.produtoService.removerProduto(id);
-			
-		} catch (UniqueConstraintViolationException e) {
-			
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()), 
-					"result").recursive().serialize();
-			throw new ValidacaoException();
-		}
+		this.produtoService.removerProduto(id);
 			
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"), 
@@ -482,6 +478,7 @@ public class ProdutoController extends BaseController {
 	 * @param id
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarProdutoParaEdicao(Long id) {
 		
 		if (id == null) {
@@ -563,6 +560,12 @@ public class ProdutoController extends BaseController {
 			
 			if (produto.getDesconto() == null){
 				listaMensagens.add("O preenchimento do campo [% Desconto] é obrigatório!");
+			}
+			
+			if (produto.getDesconto() != null && 
+					(produto.getDesconto().compareTo(new BigDecimal(100)) > 0 ||
+					produto.getDesconto().compareTo(BigDecimal.ZERO) < 0)){
+				listaMensagens.add("O percentual de desconto deve estar entre 0% e 100%.");
 			}
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {

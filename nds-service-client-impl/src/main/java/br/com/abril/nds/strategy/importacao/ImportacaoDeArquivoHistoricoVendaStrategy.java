@@ -1,6 +1,7 @@
 package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,11 +30,11 @@ public class ImportacaoDeArquivoHistoricoVendaStrategy extends ImportacaoAbstrac
 	}
 		
 	@Override
-	protected void processarDados(Object input) {
+	protected void processarDados(Object input, Date dataOperacao) {
 		
 		HistoricoVendaInput vendaInput = (HistoricoVendaInput) input;
 		vendaInput.setIdUsuario(2L); //Usuario de Importacao
-		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput);
+		movimentoEstoqueService.processarRegistroHistoricoVenda(vendaInput, dataOperacao);
 	}
 	
 }

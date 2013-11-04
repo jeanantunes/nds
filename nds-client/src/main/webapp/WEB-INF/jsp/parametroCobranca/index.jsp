@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -9,6 +10,7 @@
 
     $(function() {
     	parametroCobrancaController.init();
+    	bloquearItensEdicao(parametroCobrancaController.workspace);
     });
 
 </script>
@@ -103,11 +105,13 @@
                                 <table class="tdMulta" width="100%" border="0" cellspacing="0"
                                     cellpadding="0">
                                     <tr>
-                                        <td width="31%"><input type="text" readonly="true"
-                                            name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;" /></td>
+                                        <td width="31%"><input type="text"
+                                            name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;" 
+                                            readonly="readonly"/></td>
                                         <td width="40%">&nbsp;ou R$:</td>
-                                        <td width="29%"><input type="text" readonly="true"
-                                            name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;" /></td>
+                                        <td width="29%"><input type="text"
+                                            name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;" 
+                                            readonly="readonly"/></td>
                                     </tr>
                                 </table>
                             </td>
@@ -123,8 +127,9 @@
     
                         <tr>
                             <td><label class="tdJuros" for="taxaJuros">Juros %:</label></td>
-                            <td><input class="tdJuros" type="text" readonly="true"
-                                name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" /></td>
+                            <td><input class="tdJuros" type="text"
+                                name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" 
+                                	  readonly="readonly"/></td>
                             <td>Impress&atilde;o:</td>
                             <td>
                                 <div id="formasEmissao" />
@@ -280,8 +285,11 @@
 		</jsp:include>
 		<div class="areaBts">
 			<div class="area">
-			<span class="bt_novos" id="bt_novo" title="Novo"><a
-				href="javascript:;" onclick="parametroCobrancaController.popup();"><img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif"></a></span>
+			<span class="bt_novos" id="bt_novo" title="Novo">
+			<a isEdicao="true" href="javascript:;" onclick="parametroCobrancaController.popup();">
+				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
+			</a>
+			</span>
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>

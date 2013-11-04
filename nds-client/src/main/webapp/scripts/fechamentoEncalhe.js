@@ -639,7 +639,7 @@ var fechamentoEncalheController = $.extend(true, {
 				form: $("#dialog-postergar", this.workspace).parents("form")
 			});
 	
-			carregarDataPostergacao();
+			fechamentoEncalheController.carregarDataPostergacao();
 			
 		} else {
 			

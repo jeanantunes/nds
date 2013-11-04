@@ -1,6 +1,7 @@
 package br.com.abril.nds.strategy.importacao;
 
 import java.io.File;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,11 +22,11 @@ public class ImportacaoDeArquivoHistoricoFinanceiroStrategy extends ImportacaoAb
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 		
 	@Override
-	protected void processarDados(Object input) {
+	protected void processarDados(Object input, Date dataOperacao) {
 		
 		HistoricoFinanceiroInput vendaInput = (HistoricoFinanceiroInput) input;
 		
-		movimentoFinanceiroCotaService.processarRegistrohistoricoFinanceiro(vendaInput);
+		movimentoFinanceiroCotaService.processarRegistrohistoricoFinanceiro(vendaInput, dataOperacao);
 	}
 
 	@Override

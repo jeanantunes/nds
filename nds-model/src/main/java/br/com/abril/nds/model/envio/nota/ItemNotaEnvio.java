@@ -3,15 +3,19 @@ package br.com.abril.nds.model.envio.nota;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
 @Entity
@@ -48,16 +52,19 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name="REPARTE", precision=15, scale=2 , nullable=false)
 	private BigInteger reparte;
 	
-	@Column(name="PRECO_CAPA",precision=21, scale=2 , nullable=false)
+	@Column(name="PRECO_CAPA", precision=18, scale=4, nullable=false)
 	private BigDecimal precoCapa;
 	
-	@Column(name="DESCONTO",precision=21, scale=2 , nullable=false)
+	@Column(name="DESCONTO", precision=18, scale=4, nullable=false)
 	private BigDecimal desconto;
 	
-	@ManyToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
-
+	
+	@OneToMany(mappedBy="itemNotaEnvio", cascade={CascadeType.MERGE, CascadeType.PERSIST})
+	private List<MovimentoEstoqueCota> movimentosProdutoSemEstudo;
+	
 	/**
 	 * @return the produtoEdicao
 	 */
@@ -183,4 +190,13 @@ public class ItemNotaEnvio implements Serializable {
 		this.estudoCota = estudoCota;
 	}
 
+	public List<MovimentoEstoqueCota> getMovimentosProdutoSemEstudo() {
+		return movimentosProdutoSemEstudo;
+	}
+
+	public void setMovimentosProdutoSemEstudo(
+			List<MovimentoEstoqueCota> movimentosProdutoSemEstudo) {
+		this.movimentosProdutoSemEstudo = movimentosProdutoSemEstudo;
+	}
+	
 }

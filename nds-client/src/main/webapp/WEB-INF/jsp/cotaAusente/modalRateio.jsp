@@ -11,11 +11,11 @@
     	<legend>Nota de Envio</legend>
         <table id="idMovimentos" width="350" border="0" cellspacing="2" cellpadding="2">
       <tr id="idCabecalhoMovimentos" align="center">
-        <td width="49" bgcolor="#F5F5F5"><strong>Código</strong></td>
-        <td width="112" bgcolor="#F5F5F5"><strong>Produto</strong></td>
-        <td width="61" bgcolor="#F5F5F5"><strong>Edição</strong></td>
-        <td width="62" align="center" bgcolor="#F5F5F5"><strong>Reparte</strong></td>
-        <td width="34" bgcolor="#F5F5F5">&nbsp;</td>
+        <td width="49"  style="background:#F5F5F5;" ><strong>Código</strong></td>
+        <td width="112" style="background:#F5F5F5;"><strong>Produto</strong></td>
+        <td width="61"  style="background:#F5F5F5; text-align:center;"><strong>Edição</strong></td>
+        <td width="62"  style="background:#F5F5F5; text-align:center;"><strong>Reparte</strong></td>
+        <td width="34"  style="background:#F5F5F5; text-align:center;">&nbsp;</td>
       </tr>
       
     </table>

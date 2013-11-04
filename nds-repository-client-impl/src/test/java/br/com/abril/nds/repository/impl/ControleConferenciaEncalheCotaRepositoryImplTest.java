@@ -383,5 +383,16 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		Assert.assertNotNull(controleConferencia);
 		
 	}
+	
+	@Test
+	public void testObterStatusControleConferenciaEncalheCota() {
+		
+		Long idControleConferenciaEncalheCota = 1L;
+		
+		controleConferenciaEncalheCotaRepository.obterStatusControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
+		
+		
+	}
+	
 
 }

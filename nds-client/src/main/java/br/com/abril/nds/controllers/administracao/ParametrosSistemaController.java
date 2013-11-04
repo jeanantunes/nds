@@ -17,6 +17,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/parametrosSistema")
+@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA)
 public class ParametrosSistemaController extends BaseController {
 
 	@Autowired
@@ -33,7 +34,6 @@ public class ParametrosSistemaController extends BaseController {
 	 */
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA)
 	public ParametroSistemaGeralDTO index() {
 		
 		ParametroSistemaGeralDTO dto = psService.buscarParametroSistemaGeral();
@@ -46,6 +46,7 @@ public class ParametrosSistemaController extends BaseController {
 	 * @param dto
 	 * @param imgLogoSistema
 	 */
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA_ALTERACAO)
 	public void salvar(ParametroSistemaGeralDTO dto) {
 			
 		// Salvar:

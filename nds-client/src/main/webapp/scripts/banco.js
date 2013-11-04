@@ -75,18 +75,16 @@ var bancoController = $.extend(true, {
 				height : 180
 			});
 		
-			$("#numero", this.workspace).numeric();	
-			$("#cedente", this.workspace).numeric();	
+			$("#numero", this.workspace).numeric();		
 			
 			$("#newNumero", this.workspace).numeric();	
-			$("#newCodigoCedente", this.workspace).numeric();	
+			
 			$("#newAgencia", this.workspace).numeric();	
 			$("#newConta", this.workspace).numeric();	
 			//$("#newDigito", this.workspace).numeric();
 			$("#newCarteira", this.workspace).numeric();
 			
 			$("#alterNumero", this.workspace).numeric();	
-			$("#alterCodigoCedente", this.workspace).numeric();	
 			$("#alterAgencia", this.workspace).numeric();	
 			$("#alterConta", this.workspace).numeric();	
 			//$("#alterDigito", this.workspace).numeric();	
@@ -94,9 +92,22 @@ var bancoController = $.extend(true, {
 			$("#alterMulta", this.workspace).numeric();
 			$("#alterVrMulta", this.workspace).numeric();
 			
-			$("#nome", this.workspace).autocomplete({source: ""});
+			$("#nome", this.workspace).autocomplete({source: []});
 			
 			bancoController.formatarValores();
+			
+			$(document).ready(function(){
+				
+				focusSelectRefField($("#nome", this.workspace));
+				
+				$(document.body).keydown(function(e) {
+					if(keyEventEnterAux(e)){
+						bancoController.mostrarGridConsulta();
+					}
+					
+					return true;
+				});
+			});
 		},
 		
 		formatarValores : function(){
@@ -140,7 +151,10 @@ var bancoController = $.extend(true, {
 		},
 		
 	    popup : function() {
-		
+	    	
+	    	if(!verificarPermissaoAcesso(this.workspace))
+				return;
+	    	
 	    	bancoController.limparTelaCadastroBanco();
 			
 			$( "#dialog-novo", this.workspace).dialog({
@@ -187,7 +201,8 @@ var bancoController = $.extend(true, {
 		},
 		
 		popup_excluir : function(idBanco) {
-		
+			
+			
 			$( "#dialog-excluir", this.workspace ).dialog({
 				resizable: false,
 				height:170,
@@ -459,29 +474,27 @@ var bancoController = $.extend(true, {
 	    		$("#alterVrMulta", this.workspace).val("");
 	    },
 	    
-		exibirAutoComplete : function(result, idCampoNome) {
-			
-			$(idCampoNome,this.workspace).autocomplete({
-				source: result,
-				minLength: 4,
-				delay : 0,
-			});
-		},
-		
 		autoCompletarPorNomeBanco : function(idCampoNome) {
 			
 			var nomeBanco = $(idCampoNome,this.workspace).val();
 			
 			nomeBanco = $.trim(nomeBanco);
 			
-			$(idCampoNome,this.workspace).autocomplete({source: ""});
-			
 			if (nomeBanco && nomeBanco.length > 2) {
 				
 				$.postJSON(
 					contextPath + "/banco/autoCompletarPorNomeBanco", {nomeBanco:nomeBanco},
 					function(result) { 
-						bancoController.exibirAutoComplete(result, idCampoNome); 
+					
+						$(idCampoNome,this.workspace).autocomplete({
+							source: result,
+							delay : 0,
+						});
+						
+						$(idCampoNome,this.workspace).autocomplete(
+							"search",nomeBanco
+						);
+						
 					},
 					null
 				);

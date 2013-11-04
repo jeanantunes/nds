@@ -44,18 +44,29 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idDistribuidor;
 	
-	private Boolean isNotaRecebida;
+	
+	private Long numeroNotaEnvio;
 
 	private PaginacaoVO paginacao;
 	
-	
+	private NotaRecebidaEnum notaRecebida;
 
 	private List<ColunaOrdenacao> listaColunaOrdenacao;
+	
+	public enum NotaRecebidaEnum {
+		
+		TODAS,
+		SOMENTE_NOTAS_RECEBIDAS,
+		SOMENTE_NOTAS_NAO_RECEBIDAS,
+		NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO
+
+	}
 
 	public enum ColunaOrdenacao {
 
 		NUMERO_NOTA("numero"),
 		SERIE("serie"),
+		NUMERO_NOTA_ENVIO("numeroNotaEnvio"),
 		DATA_EMISSAO("dataEmissao"),
 		DATA_EXPEDICAO("dataExpedicao"),
 		TIPO_NOTA("descricao"),
@@ -75,6 +86,15 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		}
 	}
 	
+	
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
 	/**
 	 * @return the periodo
 	 */
@@ -132,19 +152,19 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	}
 
 	/**
-	 * @return the isNotaRecebida
+	 * @return the notaRecebida
 	 */
-	public Boolean getIsNotaRecebida() {
-		return isNotaRecebida;
+	public NotaRecebidaEnum getNotaRecebida() {
+		return notaRecebida;
 	}
 
 	/**
-	 * @param isNotaRecebida the isNotaRecebida to set
+	 * @param notaRecebida the notaRecebida to set
 	 */
-	public void setIsNotaRecebida(Boolean isNotaRecebida) {
-		this.isNotaRecebida = isNotaRecebida;
+	public void setNotaRecebida(NotaRecebidaEnum notaRecebida) {
+		this.notaRecebida = notaRecebida;
 	}
-	
+
 	@Export(label = "Data Inicial", exhibitionOrder = 2)
 	public String getDataInicial() {
 		
@@ -172,18 +192,25 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	@Export(label = "Nota Recebida", exhibitionOrder = 5)
 	public String getDescricaoNotaRecebida() {
 		
-		if (this.isNotaRecebida == null) {
+		if (this.notaRecebida == null) {
 			
 			return "";
 		}
 		
-		if (this.isNotaRecebida) {
-			
+		switch(this.notaRecebida) {
+		
+		case SOMENTE_NOTAS_RECEBIDAS:
 			return "Sim";
 			
-		} else {
-			
+		case SOMENTE_NOTAS_NAO_RECEBIDAS:
 			return "Não";
+			
+		case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
+			return "Nota de envio.";
+			
+		default:
+			return "";
+			
 		}
 	}
 
@@ -202,7 +229,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 				* result
 				+ ((idTipoNotaFiscal == null) ? 0 : idTipoNotaFiscal.hashCode());
 		result = prime * result
-				+ ((isNotaRecebida == null) ? 0 : isNotaRecebida.hashCode());
+				+ ((notaRecebida == null) ? 0 : notaRecebida.hashCode());
 		result = prime * result
 				+ ((paginacao == null) ? 0 : paginacao.hashCode());
 		result = prime * result + ((periodo == null) ? 0 : periodo.hashCode());
@@ -236,10 +263,10 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 				return false;
 		} else if (!idTipoNotaFiscal.equals(other.idTipoNotaFiscal))
 			return false;
-		if (isNotaRecebida == null) {
-			if (other.isNotaRecebida != null)
+		if (notaRecebida == null) {
+			if (other.notaRecebida != null)
 				return false;
-		} else if (!isNotaRecebida.equals(other.isNotaRecebida))
+		} else if (!notaRecebida.equals(other.notaRecebida))
 			return false;
 		if (paginacao == null) {
 			if (other.paginacao != null)
@@ -341,6 +368,4 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	public void setIdDistribuidor(Long idDistribuidor) {
 		this.idDistribuidor = idDistribuidor;
 	}
-	
-	
 }

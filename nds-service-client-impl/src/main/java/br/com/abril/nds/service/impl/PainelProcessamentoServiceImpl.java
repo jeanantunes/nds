@@ -121,24 +121,34 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		
 		InterfaceDTO interfaceDTO = null;
 		
-		String extensaoArquivo = "";
-		
 		for (ConsultaInterfacesDTO logExecucao : listaLogExecucao) {
 			interfaceDTO = new InterfaceDTO();
 			interfaceDTO.setIdLogProcessamento(logExecucao.getId().toString());
-			interfaceDTO.setDataProcessmento( sdfData.format(logExecucao.getDataInicio() ));
-			interfaceDTO.setHoraProcessamento( sdfHora.format(logExecucao.getDataInicio() ));
 			
-			//if (logExecucao.getListLogExecucaoMensagem() != null && !logExecucao.getListLogExecucaoMensagem().isEmpty()) {
-				// Teoricamente, todos os registros terão as mesmas extensões. Neste caso, pega o primeiro registro (Caso a lista não seja vazia) e resgata a extensão.
-				//extensaoArquivo = logExecucao.getListLogExecucaoMensagem().get(0).getNomeArquivo();
-				extensaoArquivo = logExecucao.getNomeArquivo();
-				extensaoArquivo = PONTO + extensaoArquivo.split(DELIMITADOR_PONTO)[extensaoArquivo.split(DELIMITADOR_PONTO).length-1];
-				interfaceDTO.setExtensaoArquivo(extensaoArquivo);
-			//}
+			if(logExecucao != null &&  logExecucao.getDataInicio() != null)	{	
+				interfaceDTO.setDataProcessmento( sdfData.format(logExecucao.getDataInicio() ));
+				interfaceDTO.setHoraProcessamento( sdfHora.format(logExecucao.getDataInicio() ));
+			} else {
+				interfaceDTO.setDataProcessmento("");
+				interfaceDTO.setHoraProcessamento("");
+			}
+
+			if(logExecucao != null && logExecucao.getNomeArquivo() != null) {
+				interfaceDTO.setNomeArquivo(logExecucao.getNomeArquivo().split(DELIMITADOR_PONTO)[0]); // logExecucao.getNome());
+				interfaceDTO.setStatus(logExecucao.getStatus().toString());
+			} else {
+				interfaceDTO.setNomeArquivo("");
+			}
 			
+			if(logExecucao != null && logExecucao.getExtensaoArquivo() != null) {
+				interfaceDTO.setExtensaoArquivo(logExecucao.getExtensaoArquivo());
+			} else {
+				interfaceDTO.setExtensaoArquivo("");
+			}
+						
 			interfaceDTO.setNome(logExecucao.getNome());
-			interfaceDTO.setStatus(logExecucao.getStatus().toString());
+			interfaceDTO.setDescricaoInterface(logExecucao.getDescricao());
+			interfaceDTO.setStatus(logExecucao.getStatus());
 			
 			listaInterface.add(interfaceDTO);
 			
@@ -194,7 +204,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	@Override
 	public List<ProcessoDTO> listarProcessos() {
 		
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = this. distribuidorService.obterDataOperacaoDistribuidor();
 		
 		List<ProcessoDTO> processos = new ArrayList<ProcessoDTO>();
 		
@@ -483,7 +493,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 */
 	@Override
 	public String obterEstadoOperacional() {
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
 		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
 		// Se existe um controle de fechamento, significa que o dia já foi encerrado

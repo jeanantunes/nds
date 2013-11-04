@@ -37,6 +37,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/cadastroCalendario")
+@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 public class CadastroCalendarioController extends BaseController {
 	
 	@Autowired
@@ -59,7 +60,6 @@ public class CadastroCalendarioController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 	public void index(){
 		
 		adicionarAnoCorrentePesquisa();
@@ -125,13 +125,14 @@ public class CadastroCalendarioController extends BaseController {
 		}
 	}
 
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
 	public void excluirCadastroFeriado(Long idFeriado) {
 				
 		calendarioService.excluirFeriado(idFeriado);
 		result.use(Results.json()).from("Feriado excluído com sucesso").serialize();
 	}
 
-	
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
 	public void cadastrarFeriado(
 			Long idFeriado,
 			String dtFeriado, 

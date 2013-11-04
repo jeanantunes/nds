@@ -17,7 +17,7 @@ public class RelatorioTiposProdutosVO implements Serializable {
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
-	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 2, widthPercent=35)
 	private String produto;
 	
 	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 3)

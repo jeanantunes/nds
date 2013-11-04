@@ -15,7 +15,8 @@ var parametroCobrancaController = $.extend(true,
 		formatarCampos : function() {
 			$("#valorMinimo", this.workspace).priceFormat({
 				centsSeparator: ',',
-			    thousandsSeparator: '.'
+			    thousandsSeparator: '.',
+			    centsLimit:2	
 			});
 			$("#diasDoMes", this.workspace).numeric();
 			$("#diasDoMes1", this.workspace).numeric();
@@ -31,6 +32,7 @@ var parametroCobrancaController = $.extend(true,
 			$(".parametrosGrid", this.workspace).flexigrid({
 				preProcess: parametroCobrancaController.getDataFromResult,
 				dataType : 'json',
+				onSuccess: function() { bloquearItensEdicao(parametroCobrancaController.workspace);},
 				colModel :[ {
 					display : 'Forma Pagto',
 					name : 'forma',
@@ -120,7 +122,8 @@ var parametroCobrancaController = $.extend(true,
 				         {name:'idBanco', value:$("#filtroBanco", this.worspace).val()},
 				         {name:'tipoCobranca', value:$("#filtroTipoCobranca", this.worspace).val()}
 				        ] ,
-				        newp: 1
+			    newp: 1
+			    
 			});
 			
 			/*RECARREGA GRID CONFORME A EXECUCAO DO METODO COM OS PARAMETROS PASSADOS*/
@@ -144,11 +147,11 @@ var parametroCobrancaController = $.extend(true,
 			
 			$.each(resultado.rows, function(index, row) {
 				
-				var linkEditar = '<a href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
+				var linkEditar = '<a isEdicao="true" href="javascript:;" id="bt_alterar" onclick="parametroCobrancaController.popup_alterar(' + row.cell.idPolitica + ');" style="cursor:pointer; margin-right:10px;">' +
 						     	  	'<img title="Aprovar" src="'+contextPath+'/images/ico_editar.gif" hspace="5" border="0px" />' +
 						  		  '</a>';
 				
-				var linkExcluir = '<a href="javascript:;" id="bt_excluir" onclick="parametroCobrancaController.popup_excluir(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
+				var linkExcluir = '<a isEdicao="true" href="javascript:;" id="bt_excluir" onclick="parametroCobrancaController.popup_excluir(' + row.cell.idPolitica + ');" style="cursor:pointer">' +
 								   	 '<img title="Rejeitar" src="'+contextPath+'/images/ico_excluir.gif" border="0px" />' +
 								   '</a>';
 				
@@ -402,9 +405,9 @@ var parametroCobrancaController = $.extend(true,
 			
 			$("#instrucoes", this.workspace).val(resultado.instrucoes);
 	
-			$("#acumulaDivida", this.workspace).val(resultado.envioEmail?'S':'N');
-			$("#vencimentoDiaUtil", this.workspace).val(resultado.envioEmail?'S':'N');
-			$("#unificada", this.workspace).val(resultado.envioEmail?'S':'N');
+			$("#acumulaDivida", this.workspace).val(resultado.acumulaDivida?'S':'N');
+			$("#vencimentoDiaUtil", this.workspace).val(resultado.vencimentoDiaUtil?'S':'N');
+			$("#unificada", this.workspace).val(resultado.unificada?'S':'N');
 			$("#envioEmail", this.workspace).val(resultado.envioEmail?'S':'N');
 			
 			if(resultado.tipoFormaCobranca == 'MENSAL'){
@@ -468,7 +471,7 @@ var parametroCobrancaController = $.extend(true,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#dBanco", this.workspace).val(),
-					valorMinimo : $("#valorMinimo", this.worspace).unmask()/100,
+					valorMinimo : floatValue($("#valorMinimo").val()),
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
 					taxaJuros : $("#taxaJuros", this.worspace).val(),

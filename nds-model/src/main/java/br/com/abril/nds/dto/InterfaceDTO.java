@@ -16,7 +16,13 @@ public class InterfaceDTO implements Serializable {
 	private String nome;
 	
 	@Export(label="Arquivo")
+	private String nomeArquivo;
+	
+	@Export(label="Extensao")
 	private String extensaoArquivo;
+	
+	@Export(label="Descricao")
+	private String descricaoInterface;
 	
 	@Export(label="Status")
 	private String status;
@@ -73,6 +79,22 @@ public class InterfaceDTO implements Serializable {
 
 	public void setIdLogProcessamento(String idLogProcessamento) {
 		this.idLogProcessamento = idLogProcessamento;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	public String getDescricaoInterface() {
+		return descricaoInterface;
+	}
+
+	public void setDescricaoInterface(String descricaoInterface) {
+		this.descricaoInterface = descricaoInterface;
 	}
 
 }

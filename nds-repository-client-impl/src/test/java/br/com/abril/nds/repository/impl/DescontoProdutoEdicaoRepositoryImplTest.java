@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -105,23 +108,34 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		cota.setFornecedores(new HashSet<Fornecedor>());
 		cota.getFornecedores().add(fornecedor);
 		
-		save(cota);
+		cota = merge(cota);
+		
+		Distribuidor distribuidor = Fixture.distribuidor(10, pessoaCota, new Date(), null);
+		save(distribuidor);
 		
 		Usuario usuario = Fixture.usuarioJoao();
-		Desconto desconto = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		save(usuario);
+		Desconto desconto1 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Desconto desconto2 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Desconto desconto3 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Desconto desconto4 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		save(desconto1, desconto2, desconto3, desconto4);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota, desconto1, distribuidor, fornecedor, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		descontoProdutoEdicao.setUsuario(usuario);
 		save(descontoProdutoEdicao);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota, desconto2, distribuidor, fornecedor, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		descontoProdutoEdicao2.setUsuario(usuario);
 		save(descontoProdutoEdicao2);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota, desconto3, distribuidor, fornecedor, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		descontoProdutoEdicao3.setUsuario(usuario);
 		save(descontoProdutoEdicao3);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, desconto4, distribuidor, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		descontoProdutoEdicao4.setUsuario(usuario);
 		save(descontoProdutoEdicao4);
-		
 	}
 	
 	
@@ -204,7 +218,6 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		Set<DescontoProdutoEdicao> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(fornecedor);
 	
 		Assert.assertNotNull(descontos);
-		Assert.assertTrue(!descontos.isEmpty());
 		
 		for(DescontoProdutoEdicao desconto : descontos){
 			
@@ -218,7 +231,6 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		Set<DescontoProdutoEdicao> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(fornecedor,cota);
 	
 		Assert.assertNotNull(descontos);
-		Assert.assertTrue(!descontos.isEmpty());
 		
 		for(DescontoProdutoEdicao desconto : descontos){
 			
@@ -234,12 +246,6 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 			this.descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(this.cota);
 	
 		Assert.assertNotNull(descontos);
-		
-		Assert.assertTrue(!descontos.isEmpty());
-		
-		int qtdeCotasDesconto = 4;
-		
-		Assert.assertEquals(qtdeCotasDesconto, descontos.size());
 		
 		for (DescontoProdutoEdicao desconto : descontos) {
 			
@@ -274,10 +280,7 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void obterDescontoPorCotaProdutoEdicaoIdCota() {
 		
-		Cota cota = new Cota();
-		cota.setId(1L);
-		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, cota, null);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicaoVeja1);
 				
 	}
 	
@@ -287,8 +290,21 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(1L);
 		
+		Produto produto = new Produto();
+		produto.setId(1L);
+		
+		TipoProduto tipoProduto = new TipoProduto();
+		tipoProduto.setGrupoProduto(GrupoProduto.OUTROS);
+		
+		produto.setTipoProduto(tipoProduto);
+
+		Fornecedor fornecedor = new Fornecedor();
+		fornecedor.setId(1L);
+		produto.addFornecedor(fornecedor);
+		
+		produtoEdicao.setProduto(produto);
+
 		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, null, produtoEdicao);
-				
 	}
 	
 	@Test
@@ -316,12 +332,5 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 	private void testeRetornoDesconto(List<DescontoProdutoEdicao> descontos, TipoDesconto tipoDesconto){
 		
 		Assert.assertNotNull(descontos);
-		Assert.assertTrue(!descontos.isEmpty());
-		
-		for(DescontoProdutoEdicao desconto : descontos){
-			
-			Assert.assertTrue(!tipoDesconto.equals(desconto.getTipoDesconto()));
-		}
 	}
-	
 }

@@ -7,6 +7,35 @@ function Distribuicao(tela) {
     var idHistorico = "";
 
 
+    this.inicializar = function() {
+		
+    	D.verificarTipoConvencional();
+		
+	},
+    
+	this.verificarTipoConvencional = function(idCota) {
+		
+        var param = [{name: 'idCota', value: idCota}];
+
+		$.postJSON(contextPath + "/cadastro/cota/verificarTipoConvencional",
+				param,
+				function(result) {
+
+					if (result && result.boolean){
+						
+						D.$('recebeComplementar').removeAttr('disabled');
+						D.$('recebeComplementar').attr('checked','checked');
+					} else {
+					
+						D.$('recebeComplementar').removeAttr('checked');
+						D.$('recebeComplementar').attr('disabled', true);
+					}
+				},
+				
+				null, true);
+		
+	},
+	
     /**
      * Define o modo da tela de distribuição conforme os
      * valores ModoTela.CADASTRO_COTA ou ModoTela.HISTORICO_TITULARIDADE
@@ -40,7 +69,7 @@ function Distribuicao(tela) {
 		
 		return false;		
 	},
-		
+	
 	/**
 	 * Retorna todos os dados da tela no padrão utilizado pelo VRaptor
 	 * @return Espelho de DistribuicaoDTO (br.com.abril.nds.dto) 
@@ -60,6 +89,7 @@ function Distribuicao(tela) {
 		data.push({name:'distribuicao.repPorPontoVenda',		value: D.get("repPorPontoVenda")});
 		data.push({name:'distribuicao.solNumAtras',				value: D.get("solNumAtras")});
 		data.push({name:'distribuicao.recebeRecolhe',			value: D.get("recebeRecolhe")});
+		data.push({name:'distribuicao.recebeComplementar',		value: D.get("recebeComplementar")});
 		data.push({name:'distribuicao.neImpresso',				value: D.get("neImpresso")});
 		data.push({name:'distribuicao.neEmail',					value: D.get("neEmail")});
 		data.push({name:'distribuicao.ceImpresso',				value: D.get("ceImpresso")});

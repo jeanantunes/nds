@@ -17,6 +17,14 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
 	
 	/**
+	 * Obtém a quantidade de itens da conferencia de encalhe.
+	 * 
+	 * @param idConferenciaEncalhe
+	 * @return
+	 */
+	public BigInteger obterQtdeEncalhe(Long idConferenciaEncalhe);
+	
+	/**
 	 * Obtem uma lista com numeroCota e razao social das cotas que
 	 * possuem conferencia de encalhe salvo mas não finalizado na 
 	 * data pesquisada.

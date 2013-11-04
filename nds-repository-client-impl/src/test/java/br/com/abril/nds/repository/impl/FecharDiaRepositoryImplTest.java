@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
@@ -94,25 +93,13 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterPendenciasDeAprovacaoDataOperacao(){
+	public void existePendenciasDeAprovacaoDataOperacao(){
 		
 		Date dataOperacao = Fixture.criarData(30, Calendar.OCTOBER, 2012);
 		
-		List <ValidacaoControleDeAprovacaoFecharDiaDTO> validacaoControleDeAprovacaoFecharDiaDTOs = 
-				fecharDiaRepositoryImpl.obterPendenciasDeAprovacao(dataOperacao, null);
+		fecharDiaRepositoryImpl.existePendenciasDeAprovacao(dataOperacao, StatusAprovacao.APROVADO, null);
 		
-		Assert.assertNotNull(validacaoControleDeAprovacaoFecharDiaDTOs);
-	}
-	
-	@Test
-	public void obterPendenciasDeAprovacaoStatusAprovacao(){
-		
-		StatusAprovacao status = StatusAprovacao.APROVADO; 
-		
-		List <ValidacaoControleDeAprovacaoFecharDiaDTO> validacaoControleDeAprovacaoFecharDiaDTOs = 
-				fecharDiaRepositoryImpl.obterPendenciasDeAprovacao(null, status);
-		
-		Assert.assertNotNull(validacaoControleDeAprovacaoFecharDiaDTOs);
+		Assert.assertTrue(true);
 	}
 
 	@Test

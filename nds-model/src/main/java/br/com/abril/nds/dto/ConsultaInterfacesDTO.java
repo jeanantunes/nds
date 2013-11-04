@@ -14,7 +14,9 @@ public class ConsultaInterfacesDTO implements Serializable {
 	private String status;
 	private String nome;
 	private Long id;
+	private String descricao;
 	private String nomeArquivo;
+	private String extensaoArquivo;
 	private Date dataInicio;
 	
 	public String getNome() {
@@ -33,12 +35,28 @@ public class ConsultaInterfacesDTO implements Serializable {
 		this.id = id;
 	}
 
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
 	public String getNomeArquivo() {
 		return nomeArquivo;
 	}
 
 	public void setNomeArquivo(String nomeArquivo) {
 		this.nomeArquivo = nomeArquivo;
+	}
+
+	public String getExtensaoArquivo() {
+		return extensaoArquivo;
+	}
+
+	public void setExtensaoArquivo(String extensaoArquivo) {
+		this.extensaoArquivo = extensaoArquivo;
 	}
 
 	public Date getDataInicio() {

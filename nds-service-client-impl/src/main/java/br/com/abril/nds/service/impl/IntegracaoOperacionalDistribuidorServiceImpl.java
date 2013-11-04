@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -114,22 +113,15 @@ public class IntegracaoOperacionalDistribuidorServiceImpl implements IntegracaoO
 	@Transactional(readOnly = true)
 	public OperacaoDistribuidor obterInformacoesOperacionais() {
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
-		if (distribuidor == null) {
-			
-			return null;
-		}
-		
 		OperacaoDistribuidor operacaoDistribuidor = new OperacaoDistribuidor();
 		
-		operacaoDistribuidor.setDataOperacao(distribuidor.getDataOperacao());
-		operacaoDistribuidor.setIdDistribuidorInterface(distribuidor.getCodigoDistribuidorDinap().toString());
+		operacaoDistribuidor.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		operacaoDistribuidor.setIdDistribuidorInterface(this.distribuidorRepository.codigoDistribuidorDinap().toString());
 		
 		EnderecoDistribuidor enderecoDistribuidor = this.distribuidorRepository.obterEnderecoPrincipal();
 		
 		operacaoDistribuidor.setUf(enderecoDistribuidor != null ? enderecoDistribuidor.getEndereco().getUf() : "--");
-		operacaoDistribuidor.setNome(distribuidor.getJuridica().getRazaoSocial());
+		operacaoDistribuidor.setNome(this.distribuidorRepository.obterRazaoSocialDistribuidor());
 		
 		StatusOperacao statusOperacao = new StatusOperacao();
 		statusOperacao.setData(new Date());

@@ -39,6 +39,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/box")
+@Rules(Permissao.ROLE_CADASTRO_BOX)
 public class BoxController extends BaseController {
 
 	private static final String FILTRO_CONSULTA_BOX = "filtroConsultaBox";
@@ -69,7 +70,6 @@ public class BoxController extends BaseController {
 	}
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_BOX)
 	public void index() {
 	}
 
@@ -103,6 +103,7 @@ public class BoxController extends BaseController {
 	}
 	@Post
 	@Path("/buscaPorId.json")
+	@Rules(Permissao.ROLE_CADASTRO_BOX_ALTERACAO)
 	public void buscaPorId(long id) {
 		/*if (boxService.hasAssociacao(id)) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,"Box está em uso e não pode ser editado."));
@@ -121,6 +122,7 @@ public class BoxController extends BaseController {
 
 	@Post
 	@Path("/salvar.json")
+	@Rules(Permissao.ROLE_CADASTRO_BOX_ALTERACAO)
 	public void salvar(Box box) {
 		valida(box);
 		try {
@@ -153,6 +155,7 @@ public class BoxController extends BaseController {
 	
 	@Post
 	@Path("/remove.json")
+	@Rules(Permissao.ROLE_CADASTRO_BOX_ALTERACAO)
 	public void remove(long id){
 		try {
 			boxService.remover(id);

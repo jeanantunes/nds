@@ -31,6 +31,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("lancamento/relatorioTiposProdutos")
+@Rules(Permissao.ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS)
 public class RelatorioTiposProdutosController extends BaseController {
 
 	private static final String FILTRO_RELATORIO_TIPOS_PRODUTOS = "FILTRO_RELATORIO_TIPOS_PRODUTOS";
@@ -60,7 +61,6 @@ public class RelatorioTiposProdutosController extends BaseController {
 
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_LANCAMENTO_RELATORIO_TIPOS_PRODUTOS)
 	public void index()
 	{
 		List<TipoProduto> listTipoProduto = tipoProdutoService.obterTodosTiposProduto();
@@ -115,10 +115,17 @@ public class RelatorioTiposProdutosController extends BaseController {
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
 		filtro.getPaginacaoVO().setQtdResultadosTotal(null);
 		
+		if(filtro.getTipoProduto()!= null){
+
+			TipoProduto tipoProduto = tipoProdutoService.buscaPorId(filtro.getTipoProduto());
+			
+			filtro.setNomeTipoProduto(tipoProduto.getDescricao());
+		}
+		
 		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
 		
 		FileExporter.to("relatorio-tipos-produtos", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+				this.getNDSFileHeader(), filtro, null,
 				list, RelatorioTiposProdutosVO.class,
 				this.httpServletResponse);
 		

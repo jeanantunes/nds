@@ -44,17 +44,13 @@ public class UsuarioDTO implements Serializable {
 
 	private String confirmaSenha;
 
-	private String permissoesSelecionadas;
-
-	private String gruposSelecionados;
-
+	private List<Long> idsGrupos;
+	
 	private List<GrupoPermissaoDTO> grupos;
 
 	private List<Permissao> permissoes;
 
 	private List<GrupoPermissaoDTO> gruposSelecionadosList;
-
-	private List<Permissao> permissoesSelecionadasList;
 
 	public Long getId() {
 		return id;
@@ -168,22 +164,6 @@ public class UsuarioDTO implements Serializable {
 		this.confirmaSenha = confirmaSenha;
 	}
 
-	public String getPermissoesSelecionadas() {
-		return permissoesSelecionadas;
-	}
-
-	public void setPermissoesSelecionadas(String permissoesSelecionadas) {
-		this.permissoesSelecionadas = permissoesSelecionadas;
-	}
-
-	public String getGruposSelecionados() {
-		return gruposSelecionados;
-	}
-
-	public void setGruposSelecionados(String gruposSelecionados) {
-		this.gruposSelecionados = gruposSelecionados;
-	}
-
 	public List<GrupoPermissaoDTO> getGrupos() {
 		return grupos;
 	}
@@ -217,13 +197,13 @@ public class UsuarioDTO implements Serializable {
 		this.gruposSelecionadosList = gruposSelecionadosList;
 	}
 
-	public List<Permissao> getPermissoesSelecionadasList() {
-		return permissoesSelecionadasList;
+
+	public List<Long> getIdsGrupos() {
+		return idsGrupos;
 	}
 
-	public void setPermissoesSelecionadasList(
-			List<Permissao> permissoesSelecionadasList) {
-		this.permissoesSelecionadasList = permissoesSelecionadasList;
+	public void setIdsGrupos(List<Long> idsGrupos) {
+		this.idsGrupos = idsGrupos;
 	}
 	
 }

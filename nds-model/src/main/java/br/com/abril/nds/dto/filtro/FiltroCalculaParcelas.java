@@ -1,10 +1,10 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.DiaSemanaDTO;
-import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -26,13 +26,17 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	
 	private Integer qntdParcelas;
 	
-	private Double valorSelecionado;
+	private BigDecimal valorSelecionado;
 	
 	private List<String> listDividas;
 	
 	private Long idBanco;
 	
 	private Boolean isentaEncargos;
+	
+	private BigDecimal valorSelecionadoSemEncargo;
+	
+	private BigDecimal valorEncargoSelecionado;
 
 	public TipoFormaCobranca getPeriodicidade() {
 		return periodicidade;
@@ -82,11 +86,11 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 		this.qntdParcelas = qntdParcelas;
 	}
 
-	public Double getValorSelecionado() {
+	public BigDecimal getValorSelecionado() {
 		return valorSelecionado;
 	}
 
-	public void setValorSelecionado(Double valorSelecionado) {
+	public void setValorSelecionado(BigDecimal valorSelecionado) {
 		this.valorSelecionado = valorSelecionado;
 	}
 
@@ -120,6 +124,22 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 
 	public void setSemanalDias(List<DiaSemanaDTO> semanalDias) {
 		this.semanalDias = semanalDias;
+	}
+
+	public BigDecimal getValorSelecionadoSemEncargo() {
+		return valorSelecionadoSemEncargo;
+	}
+
+	public void setValorSelecionadoSemEncargo(BigDecimal valorSelecionadoSemEncargo) {
+		this.valorSelecionadoSemEncargo = valorSelecionadoSemEncargo;
+	}
+
+	public BigDecimal getValorEncargoSelecionado() {
+		return valorEncargoSelecionado;
+	}
+
+	public void setValorEncargoSelecionado(BigDecimal valorEncargoSelecionado) {
+		this.valorEncargoSelecionado = valorEncargoSelecionado;
 	}
 
 	

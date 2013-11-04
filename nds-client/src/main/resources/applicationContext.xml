@@ -32,33 +32,32 @@
 
 	<task:annotation-driven />
 
-	<!-- Descomentar abaixo para ligar o bloqueador -->
-	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
+	<bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" />
+	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
+		
+		
 		<property name="hibernateProperties">
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>		
+				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
-				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
-				<prop key="hibernate.c3p0.min_size">5</prop>	
-				<prop key="hibernate.c3p0.max_size">20</prop>	
-				<prop key="hibernate.c3p0.timeout">300</prop>	
-				<prop key="hibernate.c3p0.max_statements">50</prop>	
-				<prop key="hibernate.c3p0.idle_test_period">3000</prop>    
-				<prop key="hibernate.jdbc.batch_size">500</prop>	
+				<!-- prop key="hibernate.hbm2ddl.auto">update</prop-->
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
 			</props>
 		</property>
-		<!-- Descomentar abaixo para ligar o bloqueador -->
-		<!--<property name="entityInterceptor">
+		
+		<!-- <property name="entityInterceptor">
     		<ref local="interceptor" />
-  		</property-->
-  		
+  		</property> -->
 	</bean>
+
 
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">

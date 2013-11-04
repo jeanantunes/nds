@@ -264,7 +264,6 @@ public class FeriadoRepositoryImpl extends
 				"from Feriado where tipoFeriado = :tipoFeriado ");
 		hql.append(" and indRepeteAnualmente = :anual and day(data) = day(:dataPesquisa) ");
 		hql.append(" and month(data) = month(:dataPesquisa)");
-		hql.append(" and year(data) = year(:dataPesquisa)");
 
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("tipoFeriado", tipo);
@@ -318,5 +317,18 @@ public class FeriadoRepositoryImpl extends
 		return (Feriado) query.uniqueResult();
 		
 		
+	}
+	
+	@Override
+	public boolean isFeriado(Date data){
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" count(f.id) from Feriado f ")
+		   .append(" where f.data = :data");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("data", data);
+		
+		return (Long)query.uniqueResult() > 0;
 	}
 }

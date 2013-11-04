@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +56,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
 
 @Service
@@ -129,30 +129,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	*/
 	@Transactional
 	public List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal) {
-		
-		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);
-		
-		if(listaItemRecebimentoFisico == null) {
-			return null;
-		}
-		
-		for(RecebimentoFisicoDTO itemRecebimento : listaItemRecebimentoFisico) {
-			
-			BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
-			
-			BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
-			
-			BigDecimal valorTotal = new BigDecimal(0.0D);
-			
-			if(qtdRepartePrevisto != null && precoCapa != null) {
-				valorTotal = precoCapa.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
-			}
-			
-			itemRecebimento.setValorTotal(valorTotal);
-			
-		}
-		
-		return listaItemRecebimentoFisico;		
+
+		return this.recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);		
 	}
 	
 	/**
@@ -386,8 +364,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);		
 		notaFiscal.setDataRecebimento(new Date());
+		
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
 		notaFiscalRepository.merge(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
@@ -477,9 +457,22 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
+		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
+		
+		if(indNotaEnvio) {
+
+			notaFiscal.setOrigem(Origem.INTERFACE);
+
+			
+		} else {
+			
+			notaFiscal.setOrigem(Origem.MANUAL);
+			
+		}
+
 		notaFiscal.setDataRecebimento(new Date());
 		
-		notaFiscal.setOrigem(Origem.MANUAL);
 		
 		notaFiscal.setUsuario(usuarioLogado);
 		
@@ -577,7 +570,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			Usuario usuario = usuarioService.getUsuarioLogado();
 						
 			if(lancamentoParcial.getPeriodos().isEmpty())
-				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario , distribuidorService.obter());
+				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario);
 			
 			Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 			
@@ -747,13 +740,21 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setDataLancamento(recebimentoDTO.getDataLancamento());
 		itemNota.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
-		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
-		itemNota.setPreco(recebimentoDTO.getPrecoDesconto());
+		itemNota.setPreco(new BigDecimal(recebimentoDTO.getPrecoDesconto()));
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
 		itemNota.setNotaFiscal(notaFiscal);
-		itemNota.setOrigem(Origem.MANUAL);
 		itemNota.setDesconto(desconto);
+		
+		
+		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
+		
+		if(indNotaEnvio) {
+			itemNota.setOrigem(Origem.INTERFACE);
+		} else {
+			itemNota.setOrigem(Origem.MANUAL);
+		}
+		
 		itemNotaFiscalRepository.adicionar(itemNota);
 				
 		return itemNota;		
@@ -786,11 +787,18 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			itemNotaFiscalEntrada.setDataLancamento(recebimentoDTO.getDataLancamento());
 			itemNotaFiscalEntrada.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 			itemNotaFiscalEntrada.setTipoLancamento(recebimentoDTO.getTipoLancamento());
-			itemNotaFiscalEntrada.setQtde(recebimentoDTO.getRepartePrevisto());
 			itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
 			itemNotaFiscalEntrada.setUsuario(usuarioLogado);
 			itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
-			itemNotaFiscalEntrada.setOrigem(Origem.MANUAL);
+			
+			boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
+			
+			if(indNotaEnvio) {
+				itemNotaFiscalEntrada.setOrigem(Origem.INTERFACE);
+			} else {
+				itemNotaFiscalEntrada.setOrigem(Origem.MANUAL);
+			}			
+			
 			itemNotaFiscalRepository.alterar(itemNotaFiscalEntrada);
 
 			return itemNotaFiscalEntrada;
@@ -811,21 +819,13 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			RecebimentoFisico recebimentoFisico) {
 		
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
-		
-		if(Origem.MANUAL.equals(recebimentoDTO.getOrigemItemNota())) {
+
+		BigInteger qtdFisico = obterQtdRecebimentoFisicoPorQtdPacoteQtdExemplar(
+				recebimentoDTO.getPacotePadrao(), 
+				recebimentoDTO.getQtdPacote(), 
+				recebimentoDTO.getQtdExemplar());
 			
-			itemRecebimento.setQtdeFisico(recebimentoDTO.getRepartePrevisto());
-			
-		} else {
-			
-			BigInteger qtdFisico = obterQtdRecebimentoFisicoPorQtdPacoteQtdExemplar(
-					recebimentoDTO.getPacotePadrao(), 
-					recebimentoDTO.getQtdPacote(), 
-					recebimentoDTO.getQtdExemplar());
-			
-			itemRecebimento.setQtdeFisico(qtdFisico);
-			
-		}
+		itemRecebimento.setQtdeFisico(qtdFisico);
 		
 		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
 		
@@ -937,22 +937,36 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Override
 	@Transactional
-	public RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo,
-			String edicao) {
+	public RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo, String edicao) {
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicao);
+		ProdutoEdicao produtoEdicao = 
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				codigo, edicao);
+		
 		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
 		
-		if(produtoEdicao!=null) {
+		if (produtoEdicao!=null) {
 			
 			recebimentoFisicoDTO = new RecebimentoFisicoDTO();
+			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			valorDesconto = valorDesconto.setScale(2, RoundingMode.HALF_EVEN);
-			recebimentoFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
-            recebimentoFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
-		
+			
+			BigDecimal percentualDesconto = 
+				this.produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
+			
+			BigDecimal valorDesconto = 
+				MathUtil.round(
+					MathUtil.calculatePercentageValue(
+						precoVenda, percentualDesconto), 2);
+
+			recebimentoFisicoDTO.setPrecoDesconto(
+				CurrencyUtil.formatarValor(precoVenda.subtract(valorDesconto)));
+			
+            recebimentoFisicoDTO.setRepartePrevisto(
+            	produtoEdicao.getReparteDistribuido());
+            
+            recebimentoFisicoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+            
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A [Edição] informada não existe para este [Produto].");

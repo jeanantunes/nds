@@ -50,7 +50,7 @@ public class FechamentoDiarioDivida implements Serializable {
 	@Column(name="NOSSO_NUMERO")
 	private String nossoNumero;
 	
-	@Column(name="VALOR")
+	@Column(name="VALOR", precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Column(name="DATA_VENCIMENTO")

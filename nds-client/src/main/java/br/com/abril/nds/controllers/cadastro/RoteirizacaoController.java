@@ -62,6 +62,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("cadastro/roteirizacao")
+@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
 public class RoteirizacaoController extends BaseController {
 
 	@Autowired
@@ -94,7 +95,6 @@ public class RoteirizacaoController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO)
 	public void index() {
 		
 		carregarComboBox();
@@ -965,6 +965,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Post
     @Path("/novaRoteirizacao")
+	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO_ALTERACAO)
 	public void novaRoteirizacao() {
 	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);

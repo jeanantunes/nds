@@ -25,8 +25,7 @@ public class DateUtilTest {
 	@Test
 	public void obterNumeroSegundaSemanaAno2012ComInicioNaTerca() {
 		
-		int numeroSemana = 
-			DateUtil.obterNumeroSemanaNoAno(DateUtil.parseDataPTBR("04/01/2012"), Calendar.TUESDAY);
+		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(DateUtil.parseDataPTBR("10/01/2012"), Calendar.TUESDAY);
 		
 		Assert.assertEquals(2, numeroSemana);		
 	}
@@ -34,7 +33,7 @@ public class DateUtilTest {
 	@Test
 	public void obterDataDaPrimeiraSemanaDoAno2012() {
 		
-		Date dataEsperada = DateUtil.parseDataPTBR("01/01/2012");
+		Date dataEsperada = DateUtil.parseDataPTBR("06/01/2013");
 		
 		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY, null);
 		
@@ -80,7 +79,7 @@ public class DateUtilTest {
 	
 	@Test
 	public void obterDataDaSemana01011999() {
-		Integer numeroSemana = 1;
+		Integer numeroSemana = 0;
 		Integer inicioSemana = 4;
 		Date data = DateUtil.parseDataPTBR("01/01/1999");
 

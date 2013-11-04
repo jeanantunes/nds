@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,18 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("nome", "%" + nome + "%");
+		return query.list();
+	}
+	
+	@Override
+	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("nome", "%" + nome + "%");
+		query.setMaxResults(qtdMaxRegRetorno);
 		
 		return query.list();
 	}
@@ -336,5 +349,20 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 	
+	@Override
+	public BigDecimal obterDescontoLogistica(Long idProduto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select p.descontoLogistica.percentualDesconto from Produto p ");
+		hql.append(" where p.id = :idProduto ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProduto",idProduto);
+		
+		return (BigDecimal) query.uniqueResult();
+	
+	}
 	
 }

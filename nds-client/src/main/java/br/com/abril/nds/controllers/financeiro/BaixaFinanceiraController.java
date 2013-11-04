@@ -44,7 +44,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -76,24 +75,25 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path("/financeiro")
+@Path("/financeiro/baixa")
+@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA)
 public class BaixaFinanceiraController extends BaseController {
 
+	@Autowired
 	private Result result;
 	
-	@SuppressWarnings("unused")
-	private Localization localization;
-	
+	@Autowired
 	private HttpSession httpSession;
 	
+	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
 	private ServletContext servletContext;
 	
 	@Autowired
@@ -132,20 +132,9 @@ public class BaixaFinanceiraController extends BaseController {
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaDividas";
 	
 	private static final String FILTRO_DETALHE_BOLETO_SESSION_ATTRIBUTE = "filtroDetalheBoleto";
-	   
-	public BaixaFinanceiraController(Result result, Localization localization,
-									 HttpSession httpSession, ServletContext servletContext,  HttpServletResponse httpResponse) {
-		
-		this.result = result;
-		this.localization = localization;
-		this.httpSession = httpSession;
-		this.servletContext = servletContext;
-		this.httpResponse = httpResponse;
-	}
 		
 	@Get
-	@Path("/baixa")
-	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA)
+	@Path("/")
 	public void baixa() {
 		listaTiposCobranca.clear();
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DINHEIRO, TipoCobranca.DINHEIRO.getDescTipoCobranca()));
@@ -163,14 +152,8 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	private String getDataOperacaoDistribuidor() {
 
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
-		}
-
-		return null;
+		return DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	@Post
@@ -531,10 +514,9 @@ public class BaixaFinanceiraController extends BaseController {
 					              String juros,
 					              String multa) {        
         
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		Date dataNovoMovimento =
-			calendarioService.adicionarDiasUteis(distribuidor.getDataOperacao(), 1);
+			calendarioService.adicionarDiasUteis(
+					this.distribuidorService.obterDataOperacaoDistribuidor(), 1);
 		
         BigDecimal valorConvertido = CurrencyUtil.converterValor(valor);
         BigDecimal jurosConvertido = CurrencyUtil.converterValor(juros);
@@ -558,7 +540,7 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorDesconto(descontoConvertido);
 		
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
-								   null, distribuidor,
+								   null, 
 								   dataNovoMovimento, null, null, new Date());
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -585,11 +567,10 @@ public class BaixaFinanceiraController extends BaseController {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 
-		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-        //CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.NAO_PAGO);
+		//CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaDividasCotaDTO filtroAtual = 
+				new FiltroConsultaDividasCotaDTO(
+						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),StatusCobranca.NAO_PAGO);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
 		filtroAtual.setPaginacao(paginacao);
@@ -648,11 +629,10 @@ public class BaixaFinanceiraController extends BaseController {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 
-		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-        //CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.PAGO);
+		//CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaDividasCotaDTO filtroAtual = 
+				new FiltroConsultaDividasCotaDTO(
+						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,StatusCobranca.PAGO);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setNossoNumero(nossoNumero);
 		filtroAtual.setSomenteBaixadas(true);
@@ -797,17 +777,12 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
+		pagamento.setDataPagamento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
-		try{
-		    this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
-		}
-		catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao efetuar a baixa manual de [Dívida]!("+e.getMessage()+")");
-		}
-		
+		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
 	}
 		

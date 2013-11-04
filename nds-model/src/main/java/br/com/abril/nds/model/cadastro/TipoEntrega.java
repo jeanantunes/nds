@@ -39,7 +39,7 @@ public class TipoEntrega implements Serializable  {
 	@Column(name = "DESCRICAO_TIPO_ENTREGA", nullable = false)
 	private DescricaoTipoEntrega descricaoTipoEntrega;
 	
-	@Column(name = "TAXA_FIXA", nullable = true)
+	@Column(name = "TAXA_FIXA", nullable = true, precision=18, scale=4)
 	private BigDecimal taxaFixa;
 	
 	@Column(name = "PERCENTUAL_FATURAMENTO", nullable = true)

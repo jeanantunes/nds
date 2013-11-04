@@ -31,6 +31,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/lancamento/furoProduto")
+@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO)
 public class FuroProdutoController extends BaseController {
 
 	@Autowired
@@ -50,7 +51,6 @@ public class FuroProdutoController extends BaseController {
 	
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO)
 	public void index(){
 		
 	}
@@ -139,7 +139,7 @@ public class FuroProdutoController extends BaseController {
 		
 		List<Produto> listaProdutoEdicao = null;
 		try {
-			listaProdutoEdicao = this.produtoService.obterProdutoLikeNome(nomeProduto);
+			listaProdutoEdicao = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException){
 				throw e;
@@ -191,6 +191,7 @@ public class FuroProdutoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO)
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
 		

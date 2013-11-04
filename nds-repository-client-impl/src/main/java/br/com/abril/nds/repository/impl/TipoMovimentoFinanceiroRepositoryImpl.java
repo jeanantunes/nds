@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -53,7 +54,6 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
-		query.setMaxResults(1);
 		
 		return query.list();
 	}
@@ -67,5 +67,59 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		criteria.setMaxResults(1);
 		
 		return (TipoMovimentoFinanceiro) criteria.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
+			OperacaoFinaceira operacaoFinaceira, List<TipoMovimentoFinanceiro> movimentosIgnorar){
+		
+		StringBuilder hql = new StringBuilder("select t ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.operacaoFinaceira = :operacaoFinaceira ");
+		
+		if (movimentosIgnorar != null && 
+				!movimentosIgnorar.isEmpty()){
+			
+			hql.append(" and t not in (:movimentosIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("operacaoFinaceira", operacaoFinaceira);
+		
+		if (movimentosIgnorar != null && 
+				!movimentosIgnorar.isEmpty()){
+			
+			query.setParameterList("movimentosIgnorar", movimentosIgnorar);
+		}
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
+			OperacaoFinaceira operacaoFinaceira, List<TipoMovimentoFinanceiro> tiposIgnorar) {
+		
+		StringBuilder hql = new StringBuilder("select t.id ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.operacaoFinaceira = :operacaoFinaceira ");
+		
+		if (tiposIgnorar != null &&
+				!tiposIgnorar.isEmpty()){
+			
+			hql.append(" and t not in (:tiposIgnorar) ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("operacaoFinaceira", operacaoFinaceira);
+		
+		if (tiposIgnorar != null &&
+				!tiposIgnorar.isEmpty()){
+			
+			query.setParameterList("tiposIgnorar", tiposIgnorar);
+		}
+		
+		return query.list();
 	}
 }

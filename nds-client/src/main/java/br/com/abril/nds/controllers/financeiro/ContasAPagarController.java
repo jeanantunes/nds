@@ -53,6 +53,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/contasAPagar")
+@Rules(Permissao.ROLE_FINANCEIRO_CONTAS_A_PAGAR)
 public class ContasAPagarController extends BaseController {
 	private static final String FILTRO_CONTAS_A_PAGAR = "FILTRO_CONTAS_A_PAGAR";
 
@@ -90,7 +91,6 @@ public class ContasAPagarController extends BaseController {
 
 
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_CONTAS_A_PAGAR)
 	public void index() {
 
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);

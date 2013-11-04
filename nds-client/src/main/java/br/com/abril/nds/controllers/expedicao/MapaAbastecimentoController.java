@@ -54,6 +54,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/mapaAbastecimento")
+@Rules(Permissao.ROLE_EXPEDICAO_MAPA_ABASTECIMENTO)
 public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
@@ -94,7 +95,7 @@ public class MapaAbastecimentoController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_EXPEDICAO_MAPA_ABASTECIMENTO)
+	@Path("/")
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
@@ -244,14 +245,16 @@ public class MapaAbastecimentoController extends BaseController {
 		if(filtro.getDataDate() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
 		
-		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
+		if(filtro.getDataLancamento() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
 	}
 
 	@Post
-	public void pesquisarDetalhes(Long idBox, String data, String sortname, String sortorder) {
+	public void pesquisarDetalhes(Long idBox, Integer numeroCota, String data, String sortname, String sortorder) {
 				
 		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);		
+		filtro.setDataLancamento(data);
+		filtro.setCodigoCota(numeroCota);
 		
 		filtro.setPaginacaoDetalhes(new PaginacaoVO(null, null, sortorder, sortname));
 		
@@ -432,7 +435,7 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
 				
-		result.include("distribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		result.include("distribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 		
 		result.include("entregador", entregador);
 		
@@ -533,7 +536,7 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	private void setaNomeParaImpressao() {
-		result.include("nomeDistribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		result.include("nomeDistribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 	}
 	
 	public void impressaoFalha(String mensagemErro){

@@ -13,8 +13,8 @@ public class AbstractRepository {
 	@Autowired
 	private SessionFactory sessionFactory;
 		
-	@Autowired
-	private SessionFactory sessionFactoryIcd;
+	//@Autowired
+	//private SessionFactory sessionFactoryIcd;
 		
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -28,7 +28,8 @@ public class AbstractRepository {
 	}
 	
 	protected Session getSessionIcd() {		
-		return sessionFactoryIcd.getCurrentSession();
+		//return sessionFactoryIcd.getCurrentSession();
+		return null;
 	}
 	
 	/**

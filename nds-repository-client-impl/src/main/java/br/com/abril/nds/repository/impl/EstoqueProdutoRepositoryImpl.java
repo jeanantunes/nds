@@ -43,5 +43,5 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (EstoqueProduto) query.uniqueResult();
 	}
-
+	
 }

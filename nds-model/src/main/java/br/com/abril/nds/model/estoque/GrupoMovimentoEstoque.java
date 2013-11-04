@@ -76,6 +76,11 @@ public enum GrupoMovimentoEstoque  {
 	 * Estorno do reparte da cota ausente
 	 */
 	ESTORNO_REPARTE_COTA_AUSENTE(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.SUPLEMENTAR),
+	
+	/**
+	 * Rateio de reparte da cota ausente
+	 */
+	RATEIO_REPARTE_COTA_AUSENTE(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
 
 	/**
 	 * Estorno do reparte por furo de publicação

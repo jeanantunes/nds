@@ -17,7 +17,7 @@ import br.com.abril.nds.dto.TransferenciaReparteSuplementarDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -27,6 +27,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -74,6 +75,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
+	
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
 		return movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, idCota, grupoMovimentoEstoque);
@@ -101,13 +105,13 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 */
 	@Override
 	@Transactional
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, 
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, 
 			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
 			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(
-						distribuidor, idCota, tipoNotaFiscal.getGrupoNotaFiscal(), listaGrupoMovimentoEstoques, periodo, 
+						parametrosRecolhimentoDistribuidor, idCota, tipoNotaFiscal.getGrupoNotaFiscal(), listaGrupoMovimentoEstoques, periodo, 
 						listaFornecedores, listaProdutos);
 		
 		listaMovimentoEstoqueCota = filtrarMovimentosQueJaPossuemNotas(listaMovimentoEstoqueCota,tipoNotaFiscal);
@@ -184,7 +188,8 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 */
 	@Override
 	@Transactional
-	public void transferirReparteParaSuplementar(Distribuidor distribuidor, List<Long> idsCota, Intervalo<Date> periodo,
+	public void transferirReparteParaSuplementar(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
+												 List<Long> idsCota, Intervalo<Date> periodo,
 												 List<Long> listaIdFornecedores, List<Long> listaIdProduto, 
 												 TipoNotaFiscal tipoNotaFiscal) {
 
@@ -204,6 +209,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 		HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO> mapaEstornoEnvioCota = null;
 
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		for (Long idCota : idsCota) {
 
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
@@ -211,7 +217,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			mapaEstornoEnvioCota = new HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO>();
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
-					this.obterMovimentoEstoqueCotaPor(distribuidor, idCota, tipoNotaFiscal, 
+					this.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, idCota, tipoNotaFiscal, 
 							listaGrupoMovimentoEstoque, periodo, listaIdFornecedores, listaIdProduto);
 
 			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
@@ -221,7 +227,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				ajustarQuantidadeMovimentoPorProdutoEdicao(mapaEstornoEnvioCota, movimentoEstoqueCota);
 			}
 
-			this.gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario);
+			this.gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario, dataOperacao);
 		}
 
 		this.gerarSuplementares(mapaSuplementar, usuario);
@@ -260,7 +266,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 * Método que gera os movimentos de estorno para a cota.
 	 */
 	private void gerarMovimentoEstorno(HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO> mapaEstornoEnvioCota, 
-									   Cota cota, Usuario usuario) {
+									   Cota cota, Usuario usuario, Date dataOperacao) {
 
 		TipoMovimentoEstoque tipoMovimento = 
 			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
@@ -274,7 +280,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				null, produtoEdicao.getId(), cota.getId(), usuario.getId(), 
-					transferencia.getQuantidadeTransferir(), tipoMovimento);
+					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao);
 		}
 	}
 

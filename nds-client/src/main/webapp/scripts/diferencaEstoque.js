@@ -39,25 +39,31 @@ var diferencaEstoqueController = $.extend(true, {
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 80,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Tipo de Diferença',
 				name : 'descricaoTipoDiferenca',
-				width : 130,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Exemplar',
 				name : 'quantidade',
-				width : 80,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Status',
 				name : 'statusAprovacao',
-				width : 80,
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Status Integração',
+				name : 'statusIntegracao',
+				width : 100,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -165,6 +171,10 @@ var diferencaEstoqueController = $.extend(true, {
 		$.each(resultado.tableModel.rows, function(index, row) {
 			
 			diferencaEstoqueController.detalhes.push(row.cell);
+			
+			row.cell.statusIntegracao = (row.cell.statusIntegracao)
+												?row.cell.statusIntegracao
+														:"";
 			
 			if (row.cell.motivoAprovacao) {
 			
@@ -303,6 +313,10 @@ var diferencaEstoqueController = $.extend(true, {
 		data.push({name:'filtro.tipoDiferenca',	   value: resultado.tipoDiferenca});
 		data.push({name:'filtro.quantidade', 	   value: resultado.quantidade});
 		
+		var numeroCota = $("#numeroCota", diferencaEstoqueController.workspace).val();
+		
+		data.push({name:'filtro.numeroCota', 	   value: numeroCota});
+		
 		return data;
 	},
 	
@@ -373,3 +387,4 @@ var diferencaEstoqueController = $.extend(true, {
 
 }, BaseController);
 
+//@ sourceURL=diferencaEstoque.js

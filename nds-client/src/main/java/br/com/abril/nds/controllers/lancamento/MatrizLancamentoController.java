@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -55,6 +54,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
+@Path("/matrizLancamento")
+@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ)
 public class MatrizLancamentoController extends BaseController {
 
 	@Autowired
@@ -84,8 +85,7 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
-	@Path("/matrizLancamento")
-	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ)
+	@Path("/")
 	public void index() {
 		
 		removerAtributoAlteracaoSessao();
@@ -171,6 +171,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -210,6 +211,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void voltarConfiguracaoOriginal() {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -237,6 +239,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
 												   String novaDataFormatada) {
 		
@@ -256,6 +259,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
 		
 		String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
@@ -384,13 +388,6 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor == null) {
-			
-			throw new RuntimeException("Dados do distribuidor inexistentes!");
-		}
-		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);
 		
 		List<String> listaMensagens = new ArrayList<String>();
@@ -398,7 +395,7 @@ public class MatrizLancamentoController extends BaseController {
 		String produtos = "";
 		
 		Integer qtdDiasLimiteParaReprogLancamento =
-				distribuidor.getQtdDiasLimiteParaReprogLancamento();
+				this.distribuidorService.qtdDiasLimiteParaReprogLancamento();
 		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 		
@@ -415,7 +412,7 @@ public class MatrizLancamentoController extends BaseController {
 			
 			Date dataLimiteReprogramacao =
 				DateUtil.subtrairDias(dataRecolhimentoPrevista,
-									  distribuidor.getQtdDiasLimiteParaReprogLancamento());
+									  qtdDiasLimiteParaReprogLancamento);
 			
 			if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
 				
@@ -1082,6 +1079,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void atualizarResumoBalanceamento() {
 				
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 

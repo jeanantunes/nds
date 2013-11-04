@@ -28,8 +28,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.UsuarioService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
@@ -45,6 +43,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/consultaConsignadoCota")
+@Rules(Permissao.ROLE_FINANCEIRO_CONSIGNADO_COTA)
 public class ConsultaConsignadoCotaController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA = "filtroConsultaConsignadoCotaController";
@@ -65,18 +64,11 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	private FornecedorService fornecedorService;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-
-	@Autowired
-	private UsuarioService usuarioService;
-
-	@Autowired
 	private HttpServletResponse httpResponse;
 	
 	private Cota cota = null;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_CONSIGNADO_COTA)
 	public void index(){
 		this.carregarComboFornecedores();		
 	}
@@ -256,6 +248,30 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		FiltroConsultaConsignadoCotaDTO filtro = (FiltroConsultaConsignadoCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
+		if(filtro.getIdCota() != null){
+
+			Cota cota  = cotaService.obterPorId(filtro.getIdCota());
+			
+			if(cota!= null && cota.getPessoa()!= null ){
+				filtro.setNomeCota(cota.getNumeroCota() + " - " +cota.getPessoa().getNome());
+			}
+			
+		}
+		
+		if(filtro.getIdFornecedor() != null){
+			
+			Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(filtro.getIdFornecedor());
+			
+			if(fornecedor!= null && fornecedor.getJuridica()!= null){
+
+				filtro.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
+			}
+			
+		}else{
+			
+			filtro.setNomeFornecedor("Todos");
+		}
+		
 		if(filtro.getIdCota() != null
 				&& filtro.getIdFornecedor() == null) { 
 				
@@ -280,8 +296,6 @@ public class ConsultaConsignadoCotaController extends BaseController {
 					listaConsignadoCota, ConsultaConsignadoCotaPeloFornecedorDTO.class, this.httpResponse);
 			
 		}
-		
-		
 		
 		result.nothing();
 	}

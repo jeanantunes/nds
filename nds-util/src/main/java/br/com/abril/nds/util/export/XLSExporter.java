@@ -85,6 +85,15 @@ public class XLSExporter implements Exporter {
 	private CellStyle labelFooterCellStyleRight;
 	
 	private CellStyle labelFooterCellStyleCenter;
+	
+	private DataFormat brazilianCurrencyDF;
+	
+	private DataFormat decimalValueDF;
+	
+	private static final String decimalValueMask = "0.00";
+	
+	private static final String brazilianCurrencyMask = "R$ #,##0.00";
+	
 
 	@Override
 	public <T, F, FT> void inOutputStream(String name,
@@ -308,24 +317,59 @@ public class XLSExporter implements Exporter {
 				
 				Cell cell = row.createCell(cellNum++);
 				
-				if(ColumType.NUMBER.equals(exportColumn.getColumnType())
-						|| ColumType.INTEGER.equals(exportColumn.getColumnType())
-						|| ColumType.DECIMAL.equals(exportColumn.getColumnType())) {
+				
+				
+				if(	ColumType.NUMBER.equals(exportColumn.getColumnType())  || 
+					ColumType.INTEGER.equals(exportColumn.getColumnType()) || 
+					ColumType.DECIMAL.equals(exportColumn.getColumnType()) || 
+					ColumType.MOEDA.equals(exportColumn.getColumnType()) ) {
 					
 					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-				}	
-				cell.setCellValue(columnString);
+					
+					try {
+						
+						if(columnString.contains(",")) {
+							columnString = columnString.replace(".", "").replace(",",".");
+						}
+						
+						cell.setCellValue(Double.valueOf(columnString));
+
+					} catch(Exception e) {
+						
+						cell.setCellValue(columnString);
+						
+					}
+					
+					
+				} else {
+				
+					cell.setCellValue(columnString);
+				
+				}
 								
 				CellStyle cellStyle = this.getRowColumnCellStyle(
 					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),
 						exportColumn.getAlignment());
 				
+				if(brazilianCurrencyDF == null) {
+					brazilianCurrencyDF = sheet.getWorkbook().createDataFormat();
+				}
+				
+				if(decimalValueDF == null) {
+					decimalValueDF = sheet.getWorkbook().createDataFormat();
+				}
+				
 				if (ColumType.DECIMAL.equals(exportColumn.getColumnType())) {
 					
-					DataFormat df = sheet.getWorkbook().createDataFormat();
+					cellStyle.setDataFormat(decimalValueDF.getFormat(decimalValueMask));
 					
-					cellStyle.setDataFormat(df.getFormat("0.00"));
+				} else if(ColumType.MOEDA.equals(exportColumn.getColumnType())) {
+					
+					cellStyle.setDataFormat(brazilianCurrencyDF.getFormat(brazilianCurrencyMask));
+					
 				}
+				
+			
 				
 				cell.setCellStyle(cellStyle);
 			}
@@ -335,6 +379,8 @@ public class XLSExporter implements Exporter {
 		
 		return startRowNum;
 	}
+	
+	
 	
 	private void createSheetFooter(Sheet sheet,
 								   List<ExportFooter> footers,

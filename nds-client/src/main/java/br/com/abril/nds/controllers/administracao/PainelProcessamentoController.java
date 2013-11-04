@@ -24,7 +24,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -45,6 +44,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/painelProcessamento")
+@Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO)
 public class PainelProcessamentoController extends BaseController {
 
 	@Autowired
@@ -72,7 +72,6 @@ public class PainelProcessamentoController extends BaseController {
 	private static final int PROCESSO  = 2;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO)
 	public void index() {
 	}
 
@@ -154,17 +153,7 @@ public class PainelProcessamentoController extends BaseController {
 
 		FiltroInterfacesDTO filtro = carregarFiltroInterfaces(sortorder, sortname, page, rp);
 		
-		List<InterfaceDTO> resultado = null;
-		try {
-			resultado = painelProcessamentoService.listarInterfaces(filtro);
-		} catch (Exception e) {
-			if (e instanceof ValidacaoException) {
-				throw e;
-			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro ao pesquisar registros: " + e.getMessage());
-			}
-		}
+		List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);
 
 		if (resultado == null || resultado.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -451,7 +440,6 @@ public class PainelProcessamentoController extends BaseController {
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroInterfacesDTO.OrdenacaoColunaConsulta.values(), sortname));
 		}
 	}
-	
 
 	/**
 	 * Executa uma interface
@@ -461,4 +449,14 @@ public class PainelProcessamentoController extends BaseController {
 		interfaceExecucaoService.executarInterface(classeInterface, getUsuarioLogado());
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
+	
+	/**
+	 * Executa uma interface
+	 * @param classeInterface
+	 */
+	public void executarTodasInterfacesEmOrdem() throws Exception {
+		interfaceExecucaoService.executarTodasInterfacesEmOrdem(getUsuarioLogado());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
+	}
+	
 }

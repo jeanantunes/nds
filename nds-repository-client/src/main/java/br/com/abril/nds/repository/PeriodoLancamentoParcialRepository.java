@@ -107,8 +107,8 @@ public interface PeriodoLancamentoParcialRepository extends
 	 * 
 	 * @param idLancamentoParcial
 	 * 
-	 * @return 	List<PeriodoLancamentoParcial>
+	 * @return Long
 	 */
-	List<PeriodoLancamentoParcial> obterPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
+	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
 
 }

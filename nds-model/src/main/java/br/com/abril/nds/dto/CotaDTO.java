@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.EstadoCivil;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 
 public class CotaDTO implements Serializable {
 	
@@ -109,6 +110,8 @@ public class CotaDTO implements Serializable {
 	private List<TitularidadeCotaDTO> proprietarios = new ArrayList<TitularidadeCotaDTO>();
 	
 	private boolean alteracaoTitularidade;
+	
+	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	
 	public String getNumeroRG() {
 		return numeroRG;
@@ -636,5 +639,15 @@ public class CotaDTO implements Serializable {
 	        this.listaClassificacao.add(new ItemDTO<String, String>(classificacao.name(), classificacao.getDescricao()));
 	    }
 	}
+
+	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+	
+	
 
 }

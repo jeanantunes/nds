@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -40,11 +41,14 @@ public class ParametroCobrancaCota implements Serializable {
 	@JoinColumn(name = "COTA_ID", unique = true)
 	private Cota cota;
 	
-	@Column(name = "VALOR_MINIMO_COBRANCA")
+	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
 	private BigDecimal valorMininoCobranca;
 	
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
+	
+	@Column(name = "UNIFICA_COBRANCA")
+	private boolean unificaCobranca;
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -52,6 +56,10 @@ public class ParametroCobrancaCota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COTA")
 	private TipoCota tipoCota;
+	
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_ID")
+	private Fornecedor fornecedorPadrao;
 
 	public Long getId() {
 		return id;
@@ -108,5 +116,20 @@ public class ParametroCobrancaCota implements Serializable {
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
 	}
+	
+	public Fornecedor getFornecedorPadrao() {
+		return fornecedorPadrao;
+	}
+	
+	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
+		this.fornecedorPadrao = fornecedorPadrao;
+	}
 
+	public boolean isUnificaCobranca() {
+		return unificaCobranca;
+	}
+
+	public void setUnificaCobranca(boolean unificaCobranca) {
+		this.unificaCobranca = unificaCobranca;
+	}
 }

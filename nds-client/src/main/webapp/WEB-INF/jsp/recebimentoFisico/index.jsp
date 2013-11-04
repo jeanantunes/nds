@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.js"></script>
@@ -11,6 +13,7 @@
     var pesquisaProdutoRecebimentoFisico = new PesquisaProduto(recebimentoFisicoController.workspace);
 	$(function(){
 		recebimentoFisicoController.init();	
+		bloquearItensEdicao(recebimentoFisicoController.workspace);
     });
 	
 </script>
@@ -27,14 +30,14 @@
 
 <body>
 
-
-	
-	
-
 	<form action="/recebimentoFisico" id="form_novo_item">
 
 		<div id="dialog-valor-nota-divergente" title="Valor Total Nota Fiscal Divergente" style="display: none;">
 			<p>Valor total da [Nota] n&atilde;o confere com o valor total dos [Itens], Deseja prosseguir?</p>
+		</div>
+		
+		<div id="dialog-verificacao-quantidades" title="Verificação de Digitação" style="display: none;">
+			<p>Há itens que não possuem quantidade digitada ou estão com quantidade zerada. Deseja prosseguir mesmo assim?</p>
 		</div>
 
 		<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
@@ -43,7 +46,7 @@
 
 			<table width="341" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-					<td>Código:</td>
+					<td>CÃ³digo:</td>
 					<td width="202">
 						<input 
 						type="text"
@@ -69,7 +72,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Edição:</td>
+					<td>Edi&ccedil;&atilde;o:</td>
 					<td><input 
 						type="text" 
 						id="edicao" maxlength="20"
@@ -78,7 +81,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Data Lançamento:</td>
+					<td>Data LanÃ§amento:</td>
 					<td><input 	type="text" 
 								name="datepickerLancto"
 								id="datepickerLancto" 
@@ -94,7 +97,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Preço R$:</td>
+					<td>Pre&ccedil;o R$:</td>
 					<td><input 	
 								disabled="disabled"
 								type="text" 
@@ -111,7 +114,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Pacote Padrão:</td>
+					<td>Pacote Padr&atilde;o:</td>
 					<td><input 	disabled="disabled"
 								type="text" 
 								id="pacotePadrao"
@@ -127,7 +130,7 @@
 				</tr>
 				<tr>
 					<td>
-						Lançamento: 
+						Lan&ccedil;amento: 
 					</td>				
 					<td>
 						<select name="tipoLancamento"
@@ -163,7 +166,7 @@
 		<div class="area">
 			<div id="botaoNovoProdutoOpaco" style="float:left;">
 							<span class="bt_novos" id="bt_novo_produtoOpaco"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Incluir Novo Produto"> 
+								<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Incluir Novo Produto"> 
 									<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"  />
 								</a> 
 							</span>
@@ -171,7 +174,7 @@
 
 					<div id="botaoNovoProduto" style="float:left;">
 							<span class="bt_novos" id="bt_novo_produto"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();" rel="tipsy" title="Incluir Novo Produto"> 
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();" rel="tipsy" title="Incluir Novo Produto"> 
 									<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"  />
 								</a> 
 							</span>
@@ -179,7 +182,7 @@
 
 					<div id="botaoAdicionar" style="float:left;">
 							<span class="bt_novos" id="bt_adicionar"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();" rel="tipsy" title="Adicionar Nota Fiscal">  
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();" rel="tipsy" title="Adicionar Nota Fiscal">  
 									<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" border="0"  />
 								</a> 
 							</span>
@@ -188,19 +191,19 @@
 					<div id="botoesNormais" style="float:left; width:140px;">	
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()" rel="tipsy" title="Salvar">
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()" rel="tipsy" title="Salvar">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"  border="0" /> 
 							</a> 
 						</span>
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()" rel="tipsy" title="Cancelar">
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()" rel="tipsy" title="Cancelar">
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
 							</a> 
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 							</a>
 						</span>
@@ -209,19 +212,19 @@
 					<div id="botoesOpacos">
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Salvar"> 
+							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Salvar"> 
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"  border="0" />
 							</a> 
 						</span>
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Cancelar"> 
+							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Cancelar"> 
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0" /> 
 							</a> 
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento Físico"> 
+							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento FÃ­sico"> 
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
 							</a>
 						</span>						
@@ -263,11 +266,11 @@
 								style="width: 130px;" disabled="disabled" />
 							</td>
 
-							<td width="76">Nota Fiscal:</td>
+							<td width="85">Nota Fiscal / NE:</td>
 							<td width="123"><input type="text" id=notaFiscal
 								style="width: 100px;" maxlength="9" />
 							</td>
-							<td width="33">Série:</td>
+							<td width="33">S&eacute;rie:</td>
 							<td width="43"><input id="serie" type="text"
 								style="width: 30px;" maxlength="3"/>
 							</td>
@@ -280,24 +283,20 @@
 						<tr>
 							<td colspan="7" height="26">
 
-								<label for="eNF">É uma NF-e?</label>
+								<label for="eNF">&Eacute; uma NF-e?</label>
 
-								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left;  margin-left: 13px; margin-right: 10px;
-    margin-top: 9px;" /> 
+								<input type="checkbox" name="checkbox8" id="eNF" 
+								onchange="recebimentoFisicoController.mostrar_nfes();" 
+								style="float: left;  margin-left: 13px; margin-right: 10px;
+    							margin-top: 9px;" /> 
 
 								<span id="nfes" class="nfes"> 
-
-								Chave de Acesso: 
-
-								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
-								
-							</span>
+									Chave de Acesso: 
+									<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
+								</span>
 
 							</td>
-
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
-							<td></span></td>
+							
 						</tr>
 					</table>
 
@@ -309,7 +308,7 @@
 
 			<fieldset class="fieldGrid">
 
-				<legend>Recebimentos Físico Cadastrados</legend>
+				<legend>Recebimentos F&iacute;sico Cadastrados</legend>
 
 				<div class="grids" style="display: none;">
 
@@ -323,7 +322,7 @@
 
 					<span class="bt_sellAll" style="float:right; margin-right:40px;">
 						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
-						<input type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+						<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
 					</span>
 
 				</div>
@@ -338,13 +337,13 @@
 
 	<div id="div-wrapper-dialog-adicionar">
 
-		<div id="dialog-adicionar" title="Recebimento Físico" style="display: none;" >
+		<div id="dialog-adicionar" title="Recebimento F&iacute;sico" style="display: none;" >
 
 		    <jsp:include page="../messagesDialog.jsp" />
 
-			<fieldset style="width:910px!important;">
+			<fieldset style="width:1000x!important;">
 			  <legend>Dados da Nota</legend>
-			  <table width="885" cellpadding="2" cellspacing="2" style="text-align:left;">
+			  <table width="1000" cellpadding="2" cellspacing="2" style="text-align:left;">
 
 			    <tr style="width: 25%">
 
@@ -368,7 +367,7 @@
 			            <input maxlength="18" type="text" style="width:100px " id="novoNumeroNota" name="novoNumeroNota"  />
 			        </td>
 
-			        <td width="34">Série:</td>
+			        <td width="34">S&eacute;rie:</td>
 			        <td width="97">
 			            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
 			        </td>
@@ -378,22 +377,38 @@
 
 			    <tr style="width: 25%">
 
-			      <td>NF-e:</td>
-			      <td>
-			          <input type="checkbox" id="novoNfe" name="novoNfe" />
-			      </td>
+			       <td>Nota Envio:</td>
+				  
+				  <td colspan="1">
+					<input id="novoNumeroNotaEnvio" type="text" style="width: 100px;"/>
+				  </td>
 
-			      <td>Chave de Acesso:</td>
-			      <td colspan="5">
-			          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
-			      </td>
+			      
+			      
+				  <td colspan="1">
+				  
+						<label for="novoNfe">NF-e:</label>
+						
+						<input  type="checkbox" name="checkbox8" id="novoNfe" 
+								onchange="recebimentoFisicoController.mostrar_chave_acesso_nova();" 
+								style="float: left;  margin-left: 13px; margin-right: 10px;
+    							margin-top: 9px;" /> 
+						
+				  </td>
+				  
+					<td colspan="5">
+						<span id="nfesNovo" class="nfesNovo">
+							Chave de Acesso:
+							<input type="text" maxlength="44" style="width: 365px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
+						</span>
+					</td>
 
 			    </tr>
 
 
 			    <tr style="width: 25%">
 
-			      <td>Data Emissão:</td>
+			      <td>Data Emiss&atilde;o:</td>
 			      <td>
 			          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
 			      </td>
@@ -411,7 +426,7 @@
 			      <td align="right">
 			          <input type="checkbox" id="novoReplicarQtde" name="novoReplicarQtde" />
 			      </td>
-			      <td>Replicar Qtde:</td>
+			      <td>Replicar Qtde</td>
 
 			    </tr>
 
@@ -419,7 +434,7 @@
 			</fieldset>
 
 
-			<fieldset style="width:910px!important; margin-top:10px;">
+			<fieldset style="width:1000px!important; margin-top:10px;">
 			    <form name="formularioItensNota" id="formularioItensNota">
 				    <legend>Itens da Nota</legend>
 				    <table id="tabelaItens" class="novoItemNotaGrid"></table>

@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
@@ -41,12 +42,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		super(Divida.class);
 	}
 	
-	public Divida obterDividaParaAcumuloPorCota(Long idCota, Date diaDivida){
-		Criteria criteria = this.getSession().createCriteria(Divida.class);
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("data", diaDivida));
+	public Divida obterDividaParaAcumuloPorCota(Long idCota){
 		
-		return (Divida) criteria.uniqueResult();
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from Divida d ")
+		   .append(" join d.cota cota ")
+		   .append(" where cota.id = :idCota ")
+		   .append(" and d.status = :status ")
+		   .append(" and d.data = (select max(d2.data) from Divida d2 where d2.cota.id = :idCota) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		query.setParameter("status", StatusDivida.EM_ABERTO);
+		
+		return (Divida) query.uniqueResult();
 	}
 	
 	@Override
@@ -233,9 +242,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" LEFT JOIN pdv.rotas rotaPdv  ")
-		.append(" LEFT JOIN rotaPdv.rota rota  ")
-		.append(" LEFT JOIN rota.roteiro roteiro ")
+		.append(" JOIN pdv.rotas rotaPdv  ")
+		.append(" JOIN rotaPdv.rota rota  ")
+		.append(" JOIN rota.roteiro roteiro ")
 		
 		.append(" WHERE ")
 		
@@ -436,7 +445,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			params.put("statusCota",filtro.getStatusCota());
 		}
 		
-		if (filtro.getSituacaoEmAberto() || filtro.getSituacaoNegociada() || filtro.getSituacaoPaga()) {
+		if (filtro.getSituacaoEmAberto() != null && filtro.getSituacaoEmAberto()  
+				|| filtro.getSituacaoNegociada() != null && filtro.getSituacaoNegociada()  
+				|| filtro.getSituacaoPaga() != null && filtro.getSituacaoPaga()) {
 		
 			sql.append(" AND ( ");
 			
@@ -588,7 +599,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	}
 
 	@Override
-	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
+	public Divida obterDividaPorIdConsolidadoNaoNegociado(Long idConsolidado) {
 		
 		StringBuilder hql = new StringBuilder("select d ");
 		hql.append(" from Divida d ")
@@ -598,7 +609,22 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		   .append(" and cob.id not in ( ")
 		   .append("     select c.id ")
 		   .append("     from Negociacao neg")
-		   .append("     join neg.cobrancasOriginarias c) ");
+		   .append("     join neg.cobrancasOriginarias c) ")
+		   .append(" and d.origemNegociacao = true ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idConsolidado", idConsolidado);
+		
+		return (Divida) query.uniqueResult();
+	}
+	
+	@Override
+	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
+		
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from Divida d ")
+		   .append(" join d.consolidado cons ")
+		   .append(" where cons.id = :idConsolidado ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idConsolidado", idConsolidado);
@@ -858,9 +884,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" where ACUMULADAS_.DIVIDA_RAIZ_ID = divida_.DIVIDA_RAIZ_ID ");
 		sql.append(" or ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
 		sql.append(" END as dividaAcumulada, ");
-		sql.append(" CASE WHEN COBRANCA_.DT_PAGAMENTO IS NULL ");
-		sql.append(" THEN DATEDIFF((select DATA_OPERACAO from DISTRIBUIDOR), COBRANCA_.DT_VENCIMENTO) ");
-		sql.append(" ELSE DATEDIFF(COBRANCA_.DT_PAGAMENTO, COBRANCA_.DT_VENCIMENTO) ");
+		sql.append(" CASE WHEN DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO)<0 THEN 0 ");
+		sql.append(" ELSE DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO) ");
 		sql.append(" END as diasAtraso, ");
 		sql.append(" DIVIDA_.ID as idDivida, ");
 		sql.append(" COTA_.ID AS idCota, ");

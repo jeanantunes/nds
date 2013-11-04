@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/controleAprovacao")
+@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO)
 public class ControleAprovacaoController extends BaseController {
 
 	@Autowired
@@ -66,7 +67,6 @@ public class ControleAprovacaoController extends BaseController {
 	private static final String QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaControleAprovacao";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO)
 	public void index() {
 		
 		carregarComboTipoMovimento();
@@ -138,6 +138,7 @@ public class ControleAprovacaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO_ALTERACAO)
 	public void aprovarMovimento(Long idMovimento) {
 		
 		controleAprovacaoService.aprovarMovimento(idMovimento, obterUsuario());
@@ -151,6 +152,7 @@ public class ControleAprovacaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO_ALTERACAO)
 	public void rejeitarMovimento(Long idMovimento, String motivo) {
 		
 		if (motivo == null || motivo.trim().isEmpty()) {

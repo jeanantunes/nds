@@ -29,4 +29,12 @@ public interface VisaoEstoqueRepository {
 			String tipoEstoque);
 
 	public abstract BigInteger obterQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque);
+
+	Long obterCountVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
+
+	Long obterCountVisaoEstoqueDetalheJuramentado(
+			FiltroConsultaVisaoEstoque filtro);
+
+	Long obterCountVisaoEstoqueDetalheHistorico(
+			FiltroConsultaVisaoEstoque filtro);
 }

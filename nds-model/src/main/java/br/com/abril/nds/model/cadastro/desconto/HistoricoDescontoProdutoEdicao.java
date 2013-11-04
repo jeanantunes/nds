@@ -33,7 +33,7 @@ public class HistoricoDescontoProdutoEdicao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "VALOR")
+	@Column(name = "VALOR", precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)

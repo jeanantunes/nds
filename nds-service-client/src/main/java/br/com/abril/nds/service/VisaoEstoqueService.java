@@ -23,5 +23,7 @@ public interface VisaoEstoqueService {
 
 	public abstract BigInteger obtemQuantidadeEstoque(long idProdutoEdicao, String tipoEstoque,
 			Date dataMovimentacao);
+
+	Long obterCountVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro);
 	
 }

@@ -13,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
@@ -79,6 +82,15 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		movimentoFinanceiroCotaDTO.setUsuario(usuario);
 		
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+		
+		Fornecedor fornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+		
+		if (fornecedor == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+		}
+		
+		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
 
 		return movimentoFinanceiroCotaDTO;
 	}

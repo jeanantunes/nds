@@ -10,6 +10,10 @@ public class ExportFooter {
 	
 	private String headerToAlign;
 	
+	private ColumType columnType;
+	
+	private Float fontSize;
+	
 	private boolean verticalPrinting;
 
 	/**
@@ -87,6 +91,22 @@ public class ExportFooter {
 	 */
 	public void setVerticalPrinting(boolean verticalPrinting) {
 		this.verticalPrinting = verticalPrinting;
+	}
+
+	public ColumType getColumnType() {
+		return columnType;
+	}
+
+	public void setColumnType(ColumType columnType) {
+		this.columnType = columnType;
+	}
+
+	public Float getFontSize() {
+		return fontSize;
+	}
+
+	public void setFontSize(Float fontSize) {
+		this.fontSize = fontSize;
 	}
 
 }

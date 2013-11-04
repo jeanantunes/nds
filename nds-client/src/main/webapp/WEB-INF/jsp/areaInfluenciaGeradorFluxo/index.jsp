@@ -12,7 +12,7 @@
 
 <body>
 	<div class="corpo">
-		<!-- In�cio da pesquisa -->
+		<!-- Início da pesquisa -->
 		<br clear="all" /> <br />
 
 		<div class="container">

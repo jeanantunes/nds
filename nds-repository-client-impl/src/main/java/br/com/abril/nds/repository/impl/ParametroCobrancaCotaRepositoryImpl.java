@@ -28,6 +28,7 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		hql.append(" SELECT distinct parametro.valorMininoCobranca ");
 		hql.append(" FROM ParametroCobrancaCota parametro ");
+		hql.append(" WHERE parametro.valorMininoCobranca is not null ");
 		hql.append(" ORDER BY parametro.valorMininoCobranca ASC ");
 
 		Query query = getSession().createQuery(hql.toString());

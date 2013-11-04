@@ -1,5 +1,7 @@
 package br.com.abril.nds.exception;
 
+import br.com.abril.nds.vo.ValidacaoVO;
+
 public class GerarCobrancaValidacaoException extends Exception {
 
 	/**
@@ -7,14 +9,18 @@ public class GerarCobrancaValidacaoException extends Exception {
 	 */
 	private static final long serialVersionUID = -5039379246787865347L;
 	
-	private ValidacaoException validacaoException;
+	private ValidacaoVO validacaoVO;
 	
-	public GerarCobrancaValidacaoException(ValidacaoException validacaoException){
+	public GerarCobrancaValidacaoException(ValidacaoVO validacaoVO){
 		
-		this.validacaoException = validacaoException;
+		this.validacaoVO = validacaoVO;
 	}
 
-	public ValidacaoException getValidacaoException() {
-		return validacaoException;
+	public ValidacaoVO getValidacaoVO() {
+		return validacaoVO;
+	}
+
+	public void setValidacaoVO(ValidacaoVO validacaoVO) {
+		this.validacaoVO = validacaoVO;
 	}
 }

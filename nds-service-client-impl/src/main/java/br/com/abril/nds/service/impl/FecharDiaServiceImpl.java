@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
@@ -22,7 +24,6 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
@@ -40,13 +41,14 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
@@ -72,9 +74,12 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.Movimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoCotaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoDividaRepository;
@@ -98,7 +103,10 @@ import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -206,6 +214,21 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Autowired
 	private DiferencaEstoqueRepository diferencaRepository;
 	
+	@Autowired 
+	private CalendarioService calendarioService;
+	
+	@Autowired
+	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
+	
 	@Override
 	@Transactional
 	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
@@ -252,9 +275,101 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	@Override
 	@Transactional
-	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente) {
-		 
-		return this.fecharDiaRepository.obterPendenciasDeAprovacao(dataOperacao,pendente);
+	public boolean existePendenciasDeAprovacao(Date dataOperacao) {
+		
+		if (this.distribuidorRepository.utilizaControleAprovacao()){
+			
+			ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor =
+					this.distribuidorRepository.parametrosAprovacaoDistribuidor();
+			
+			List<TipoMovimento> movimentosVerificaAprovacao = new ArrayList<TipoMovimento>();
+			
+			if (parametrosAprovacaoDistribuidor != null){
+				
+				if (parametrosAprovacaoDistribuidor.isDevolucaoFornecedor()){
+					
+					if (this.conferenciaEncalheParcialRepository.verificarDevolucao(
+							dataOperacao, StatusAprovacao.PENDENTE)){
+						
+						return true;
+					}
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isAjusteEstoque()){
+					
+					movimentosVerificaAprovacao.addAll(
+						
+						this.tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(
+							Arrays.asList(
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
+								GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR,
+								GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
+								GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS
+							)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isDebitoCredito()){
+					
+					movimentosVerificaAprovacao.addAll(
+						
+						this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+							Arrays.asList(
+								GrupoMovimentoFinaceiro.CREDITO,
+								GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+								GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+							)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isFaltasSobras()){
+					
+					movimentosVerificaAprovacao.addAll(
+							
+						this.tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(
+							Arrays.asList(
+								GrupoMovimentoEstoque.FALTA_EM,
+								GrupoMovimentoEstoque.FALTA_DE,
+								GrupoMovimentoEstoque.SOBRA_EM,
+								GrupoMovimentoEstoque.SOBRA_DE
+							)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isNegociacao()){
+					
+					movimentosVerificaAprovacao.addAll(
+						this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+							Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isPostergacaoCobranca()){
+					
+					movimentosVerificaAprovacao.addAll(
+						this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+							Arrays.asList(
+								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
+								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO
+							)
+						)
+					);
+				}
+			}
+			
+			return this.fecharDiaRepository.existePendenciasDeAprovacao(
+					dataOperacao, StatusAprovacao.PENDENTE, movimentosVerificaAprovacao);
+		} else {
+			
+			return false;
+		}
 	}
 
 	@Override
@@ -305,15 +420,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		Long quantidadeAtivas = this.cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO);
 		
-		List<Cota> ausentesExpedicaoReparte = 
+		List<CotaResumoDTO> ausentesExpedicaoReparte = 
 			this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataFechamento);
 		
-		List<Cota> ausentesRecolhimentoEncalhe = 
+		List<CotaResumoDTO> ausentesRecolhimentoEncalhe = 
 			this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataFechamento);
 		
-		List<Cota> novas = this.cotaRepository.obterCotasComInicioAtividadeEm(dataFechamento);
+		List<CotaResumoDTO> novas = this.cotaRepository.obterCotasComInicioAtividadeEm(dataFechamento);
 		
-		List<Cota> inativas = this.cotaRepository.obterCotas(SituacaoCadastro.INATIVO);
+		List<CotaResumoDTO> inativas = this.cotaRepository.obterCotas(SituacaoCadastro.INATIVO);
 		
 		return new ResumoFechamentoDiarioCotasDTO(
 			quantidadeTotal, quantidadeAtivas, ausentesExpedicaoReparte, 
@@ -434,8 +549,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
     	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
     	
-    	usuario = usuarioRepository.buscarPorId(usuario.getId());
-    	
     	validarDadosFechamentoDiario(usuario, "Usúario não identificado para operação de fechamento do dia!");
     	
     	FechamentoDiario fechamento = new FechamentoDiario();
@@ -478,9 +591,29 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     }
 
     private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+    	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
-		distribuidor.setDataOperacao(DateUtil.adicionarDias(dataFechamento, 1));
+		
+		List<Integer> dias = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
+		
+		Date novaData = obterDataValida(distribuidor.getDataOperacao(), dias);
+				
+		distribuidor.setDataOperacao(novaData);
+		
 		distribuidorRepository.alterar(distribuidor);
+		
+	}
+		
+	public Date obterDataValida(Date dataAtual, List<Integer> dias) {
+		
+		Date novaData = DateUtil.adicionarDias(dataAtual, 1);
+		
+		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+
+		if (dias.contains(codigoDiaCorrente))
+			return novaData;
+		else
+			return obterDataValida(novaData, dias);
 		
 	}
 
@@ -636,16 +769,16 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 	}
 
-	private void incluirCotasFechamentoDiario(List<Cota> cotas, TipoSituacaoCota tipoDetalheCota,FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota) {
+	private void incluirCotasFechamentoDiario(List<CotaResumoDTO> cotas, TipoSituacaoCota tipoDetalheCota,FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota) {
 		
 		if(cotas!= null && !cotas.isEmpty()){
 			
-			for(Cota item : cotas ){
+			for(CotaResumoDTO item : cotas ){
 				
 				FechamentoDiarioCota cotaFechamentoDiario = new FechamentoDiarioCota();
 				
-				cotaFechamentoDiario.setNomeCota(item.getPessoa().getNome());
-				cotaFechamentoDiario.setNumeroCota(item.getNumeroCota());
+				cotaFechamentoDiario.setNomeCota(item.getNome());
+				cotaFechamentoDiario.setNumeroCota(item.getNumero());
 				cotaFechamentoDiario.setTipoSituacaoCota(tipoDetalheCota);
 				cotaFechamentoDiario.setFechamentoDiarioConsolidadoCota(fechamentoDiarioConsolidadoCota);
 				
@@ -771,9 +904,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioLancamentoSuplementar lancamentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
+				lancamentoSuplementar.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil().longValue());
 				
@@ -793,9 +924,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioMovimentoVendaSuplementar vendaSuplementar = new FechamentoDiarioMovimentoVendaSuplementar();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				vendaSuplementar.setProdutoEdicao(produtoEdicao);
+				vendaSuplementar.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				vendaSuplementar.setQuantidade(item.getQtde());
 				vendaSuplementar.setValor(item.getValor());
 				vendaSuplementar.setDataRecebimento(DateUtil.parseDataPTBR(item.getDataRecolhimento()));
@@ -847,9 +976,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioLancamentoEncalhe lancamentoEncalhe = new FechamentoDiarioLancamentoEncalhe();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
+				lancamentoEncalhe.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				lancamentoEncalhe.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
 				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtdeVendaEncalhe(),0).intValue());
 				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtdeLogico(),0).intValue());
@@ -871,9 +998,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioMovimentoVendaEncalhe movimentoVendaEncalhe = new FechamentoDiarioMovimentoVendaEncalhe();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				movimentoVendaEncalhe.setProdutoEdicao(produtoEdicao);
+				movimentoVendaEncalhe.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				movimentoVendaEncalhe.setQuantidade(item.getQtde());
 				movimentoVendaEncalhe.setValor(item.getValor());
 				movimentoVendaEncalhe.setDataRecebimento(DateUtil.parseDataPTBR(item.getDataRecolhimento()));
@@ -921,9 +1046,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		    	
 		    	FechamentoDiarioLancamentoReparte movimentoReparte = new FechamentoDiarioLancamentoReparte();
 		    	
-		    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-		    	
-		    	movimentoReparte.setProdutoEdicao(produtoEdicao);
+		    	movimentoReparte.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdeDistribuir().intValue());
 		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
 		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdeDistribuido(),0).intValue());
@@ -944,12 +1067,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	private void processarControleDeAprovacao() {
 
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
 
 		List<Movimento> movimentosPendentes = this.fecharDiaRepository.obterMovimentosPorStatusData(
-				null, gruposMovimentoFinanceiro, distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
+				null, gruposMovimentoFinanceiro, this.distribuidorRepository.obterDataOperacaoDistribuidor(), 
+				StatusAprovacao.PENDENTE);
 
 		for (Movimento movimento : movimentosPendentes) {
 
@@ -994,7 +1116,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
 		processarControleDeAprovacao();
-		
+				
 		try {
 		
 			return salvarResumoFechamentoDiario(usuario, dataFechamento);

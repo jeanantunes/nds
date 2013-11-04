@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -20,9 +22,9 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -30,6 +32,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -53,6 +56,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("devolucao/fechamentoEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 public class FechamentoEncalheController extends BaseController {
 
 	@Autowired
@@ -81,6 +85,8 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private HttpSession session;
@@ -88,14 +94,12 @@ public class FechamentoEncalheController extends BaseController {
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 	public void index() {
 		
-		Distribuidor dist = distribuidorService.obter();
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
 		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.ENCALHE);
 		
-		result.include("dataOperacao", DateUtil.formatarDataPTBR(dist.getDataOperacao()));
+		result.include("dataOperacao", DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
 	}
@@ -106,13 +110,29 @@ public class FechamentoEncalheController extends BaseController {
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
+		
+		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 			
 		if (listaEncalhe.isEmpty()) {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
-			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
 		}
 	}
+	
+	private int quantidadeItensFechamentoEncalhe(
+			String dataEncalhe, Long fornecedorId, Long boxId,
+			Boolean aplicaRegraMudancaTipo) {
+		
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		
+		int quantidadeFechamentoEncalhe = this.fechamentoEncalheService.buscarQuantidadeConferenciaEncalhe(filtro);
+		
+		return quantidadeFechamentoEncalhe;
+	}	
 
 	private List<FechamentoFisicoLogicoDTO> consultarItensFechamentoEncalhe(
 			String dataEncalhe, Long fornecedorId, Long boxId,
@@ -273,7 +293,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas, boolean cobrarTodasCotas) {//TODO
+	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas, boolean cobrarTodasCotas) {
 
 		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
 			this.result.use(Results.json()).from(
@@ -284,8 +304,19 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			
 			if (cobrarTodasCotas) {
+				List<Integer> listNumeroCota =  new ArrayList<Integer>();
+				
+				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				
+				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
 			
-				this.fechamentoEncalheService.cobrarTodasCotas(dataOperacao, getUsuarioLogado());
+				if(!listNumeroCota.isEmpty()){					
+					String cotas = "[" +StringUtils.join(listNumeroCota, ", ")+"]";					
+					this.result.use(Results.json()).from(
+							new ValidacaoVO(TipoMensagem.WARNING, "Atenção algumas cotas não foram processadas por não atimgirem o valor mínimo. Cotas " + cotas ), "result").recursive().serialize();		
+					return;
+				}
 				
 			} else {
 			
@@ -295,9 +326,9 @@ public class FechamentoEncalheController extends BaseController {
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 			return;
-		} catch (Exception e) {
+		} catch (GerarCobrancaValidacaoException e) {
 			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar: " + e.getMessage()), "result").recursive().serialize();
+				new ValidacaoException(TipoMensagem.WARNING, e.getValidacaoVO().getListaMensagens()).getValidacao(), "result").recursive().serialize();
 			return;
 		}
 		
@@ -311,7 +342,7 @@ public class FechamentoEncalheController extends BaseController {
 			int rp, int page, FileType fileType) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, 0, 0);
 
 		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
 		
@@ -549,6 +580,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(FlexiGridJson.class).from(listVO).total(totalRegistro).page(page).serialize();
 	}
+	
 	
 	@Get
 	@Path("/imprimirArquivoAnaliticoEncalhe")

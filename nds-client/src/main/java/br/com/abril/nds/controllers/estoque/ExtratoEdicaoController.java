@@ -43,6 +43,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/estoque/extratoEdicao")
+@Rules(Permissao.ROLE_ESTOQUE_EXTRATO_EDICAO)
 public class ExtratoEdicaoController extends BaseController {
 	
 	private static final String GRID_RESULT = "gridResult";
@@ -71,7 +72,7 @@ public class ExtratoEdicaoController extends BaseController {
 		this.session = session;
 	}
 	
-	@Rules(Permissao.ROLE_ESTOQUE_EXTRATO_EDICAO)
+	@Path("/")
 	public void index(){
 		
 		this.session.removeAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);

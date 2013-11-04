@@ -210,6 +210,7 @@ var controleAprovacaoController = $.extend(true, {
 
 	executarAposProcessamento : function() {
 		$("span[name='status']", controleAprovacaoController.workspace).tooltip();
+		bloquearItensEdicao(controleAprovacaoController.workspace);
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -245,11 +246,11 @@ var controleAprovacaoController = $.extend(true, {
 															
 			}		
 				
-			linkAprovar = '<a href="javascript:;" class="'+classLink+'" onclick="'+aprovarMovimento+'" style="'+cursor+'">' +
+			linkAprovar = '<a isEdicao="true" href="javascript:;" class="'+classLink+'" onclick="'+aprovarMovimento+'" style="'+cursor+'">' +
 				     	  	'<img title="Aprovar" src="' + contextPath + '/images/ico_check.gif" hspace="5" border="0px" />' +
 				  		  '</a>';
 			
-			linkRejeitar = '<a href="javascript:;" class="'+classLink+'" onclick="'+rejeitarMovimento+'" style="'+cursor+'">' +
+			linkRejeitar = '<a isEdicao="true" href="javascript:;" class="'+classLink+'" onclick="'+rejeitarMovimento+'" style="'+cursor+'">' +
 						   	 '<img title="Rejeitar" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 						   '</a>';
 			

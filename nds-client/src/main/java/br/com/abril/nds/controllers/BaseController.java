@@ -3,10 +3,10 @@ package br.com.abril.nds.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.UsuarioService;
@@ -39,12 +39,12 @@ public abstract class BaseController {
 		
 		NDSFileHeader ndsFileHeader = new NDSFileHeader();
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		List<String> dadosDistribuidor = this.distribuidorService.obterNomeCNPJDistribuidor();
 		
-		if (distribuidor != null) {
+		if (dadosDistribuidor != null) {
 			
-			ndsFileHeader.setNomeDistribuidor(distribuidor.getJuridica().getRazaoSocial());
-			ndsFileHeader.setCnpjDistribuidor(distribuidor.getJuridica().getCnpj());
+			ndsFileHeader.setNomeDistribuidor(dadosDistribuidor.get(0));
+			ndsFileHeader.setCnpjDistribuidor(dadosDistribuidor.get(1));
 		}
 		
 		ndsFileHeader.setData( (data == null) ?  new Date() : data);

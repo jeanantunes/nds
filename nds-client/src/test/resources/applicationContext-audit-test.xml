@@ -22,7 +22,7 @@
 		<property name="password" value="${testDataSourcePassword}" />
     </bean> 
 
-	<bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />
+	<bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" />
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -33,7 +33,6 @@
 	        	<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
 		<property name="entityInterceptor">

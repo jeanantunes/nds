@@ -6,8 +6,13 @@ import java.security.InvalidParameterException;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -180,4 +185,61 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		return retorno.doubleValue();
 	}
+	
+public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
+		
+		StringBuilder sql = new StringBuilder("");
+
+		sql.append(" select  produto_edicao.NUMERO_EDICAO as edicao, ");
+		sql.append("  	estoque_produto_cota.QTDE_RECEBIDA as reparte,");
+		sql.append("  	ifnull(estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA, 0 ) as venda, ");
+		sql.append("  	historico_lancamento.STATUS as status, ");
+		sql.append("  	lancamento.DATA_LCTO_PREVISTA as dataLancamento, ");
+		sql.append(" 	lancamento.DATA_REC_PREVISTA as dataRecolhimento");
+		sql.append("  		 from estoque_produto_cota  ");
+		sql.append(" 			join produto_edicao on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
+		sql.append("  			join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
+		sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
+		sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
+		sql.append(" where produto.codigo = :produtoBusca ");
+		sql.append("	group by produto_edicao.NUMERO_EDICAO limit 6");
+		
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("produtoBusca", produto.getCodigo());
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				FixacaoReparteDTO.class));
+		
+		return query.list();
+	}
+		
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota){
+			
+			StringBuilder sql = new StringBuilder("");
+	
+			sql.append(" select  produto_edicao.NUMERO_EDICAO as edicao, ");
+			sql.append("  	estoque_produto_cota.QTDE_RECEBIDA as reparte,");
+			sql.append("  	ifnull(estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA, 0 ) as venda, ");
+			sql.append("  	historico_lancamento.STATUS as status, ");
+			sql.append("  	lancamento.DATA_LCTO_PREVISTA as dataLancamento, ");
+			sql.append(" 	lancamento.DATA_REC_PREVISTA as dataRecolhimento");
+			sql.append("  		 from estoque_produto_cota  ");
+			sql.append(" 			join produto_edicao on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
+			sql.append("  			join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
+			sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
+			sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
+			sql.append(" where cota_id = :cotaBusca ");
+			sql.append("	group by edicao order by dataLancamento desc limit 6");
+			
+			
+			SQLQuery query = getSession().createSQLQuery(sql.toString());
+			
+			query.setParameter("cotaBusca", cota.getId());
+			query.setResultTransformer(new AliasToBeanResultTransformer(
+					FixacaoReparteDTO.class));
+			
+			return query.list();
+	}
+	
 }

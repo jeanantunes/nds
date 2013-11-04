@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -73,7 +74,7 @@ public interface DiferencaEstoqueService {
 	
 	Diferenca obterDiferenca(Long id);
 	
-	Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque);
+	Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque, StatusAprovacao statusAprovacao);
 
 	/**
 	 * Método que retorna os detalhes de diferença por cota.

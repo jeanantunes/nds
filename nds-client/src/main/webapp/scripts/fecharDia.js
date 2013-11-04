@@ -646,12 +646,26 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
+	atualizarDataOperacao : function() {
+		
+		$.postJSON(
+				contextPath + "/administracao/fecharDia/obterDataOperacao",
+				null, 
+				function(result){
+					$('#dataDaOperacao').html(result.string);
+					$('.grids').find('legend').html('Confirmação de Valores em: ' + result.string);
+				});
+				
+		
+	},
+	
 	confirmarFechamento:function(){
 		
 		$.postJSON(
 				contextPath + "/administracao/fecharDia/confirmar",
 				null, 
 				function(){
+					fecharDiaController.atualizarDataOperacao();
 				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {
                         httpMethod : "POST",
                         cookiePath : contextPath,
@@ -662,7 +676,10 @@ var fecharDiaController =  $.extend(true, {
                             exibirMensagem("ERROR", ["Erro na geração do Relatório de Fechamento Diário!"]);
                         }
                     });
-		        }
+				    
+				    $(".grids").hide();
+				}
+				
 			);
 	},
 	
@@ -917,7 +934,8 @@ var fecharDiaController =  $.extend(true, {
 	
 	iniciarValidacoes : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
-				function(result){					
+				function(result){	
+					$('#tabela-validacao').clear();
 					fecharDiaController.validacaoBaixaBancaria(result);
 					fecharDiaController.validacaoGeracaoCobranca(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
@@ -1028,9 +1046,12 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoFechamentoDeEncalhe : function(result){
+		
+		var img = (result.fechamentoEncalhe ? '/images/ico_check.gif' : '/images/ico_bloquear.gif');
+		
 		var fechamentoDeEncalhe = "<tr class='class_linha_1' id='fechamentoDeEncalhe'>" + 
         "<td>Fechamento de Encalhe:</td>" +
-        "<td align='center'><img src='"+ contextPath +"/images/ico_check.gif' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
+        "<td align='center'><img src='"+ contextPath + img + "' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
         "</tr>";
 		$('#tabela-validacao').append(fechamentoDeEncalhe);
 	},
@@ -1073,15 +1094,22 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoControleDeAprovacao : function(result){
-		if(result.controleDeAprovacao){
+		if(result.controleDeAprovacao===true){
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoControleDeAprovacao", null,
 					function(result){
-						if(result){							
-							var conferenciaDeAprovacao = "<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
-							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
-						}
 						
+						var conferenciaDeAprovacao = 
+							"<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
+						
+						var imagem = "<td align='center'><img src='"+ contextPath;
+						if(result.boolean===true){							
+							
+							imagem += "/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+						} else {
+							
+							imagem += "/images/ico_check.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+						}
+						$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
 					}
 				);
 		}
@@ -1120,10 +1148,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoSuplementar : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
-					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogico);
-					$("#totalSuplementarTransferencia").html(result.totalTransferencia);
-					$("#totalSuplementarVenda").html(result.totalVenda);
-					$("#totalSuplementarSaldo").html(result.saldo);
+					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogicoFormatado);
+					$("#totalSuplementarTransferencia").html(result.totalTransferenciaFormatado);
+					$("#totalSuplementarVenda").html(result.totalVendaFormatado);
+					$("#totalSuplementarSaldo").html(result.saldoFormatado);
 				}
 			);
 	},
@@ -1417,3 +1445,4 @@ var fecharDiaController =  $.extend(true, {
 	}
 
 }, BaseController);
+//@ sourceURL=fecharDia.js

@@ -13,6 +13,7 @@
 	
 	<http entry-point-ref="ajaxAwareAuthenticationEntryPoint">
 		<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?error=1"  />
+		<logout logout-success-url="/login.jsp" />
 
 		<intercept-url pattern="/images/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/scripts/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />

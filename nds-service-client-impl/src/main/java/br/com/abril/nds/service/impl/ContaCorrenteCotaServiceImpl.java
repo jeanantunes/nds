@@ -39,14 +39,19 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 			data = null;
 		}
 		
-		List<TipoMovimentoFinanceiro> tiposDebitoCredito = Arrays.asList(
-				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.CREDITO),
-						
-				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.DEBITO)
-		);
-		
+		List<TipoMovimentoFinanceiro> tiposDebitoCredito = 
+				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.CREDITO, 
+						GrupoMovimentoFinaceiro.DEBITO,
+						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
+						GrupoMovimentoFinaceiro.VENDA_TOTAL,
+						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS
+					)
+				);
+
 		return this.movimentoFinanceiroCotaRepository.obterCreditoDebitoCota(
 				idConsolidado, data, numeroCota, tiposDebitoCredito, sortorder, sortname);
 	}

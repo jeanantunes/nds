@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -62,6 +61,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/fornecedor")
+@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR)
 public class FornecedorController extends BaseController {
 
 	@Autowired
@@ -95,7 +95,6 @@ public class FornecedorController extends BaseController {
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR)
 	public void index() {
 
 		obterTiposFornecedor();
@@ -135,6 +134,7 @@ public class FornecedorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR_ALTERACAO)
 	public void excluirFornecedor(Long idFornecedor) {
 		
 		if (idFornecedor == null) {
@@ -213,6 +213,7 @@ public class FornecedorController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR_ALTERACAO)
 	public void editarFornecedor(Long idFornecedor) {
 		
 		if (idFornecedor == null) {
@@ -257,18 +258,13 @@ public class FornecedorController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR_ALTERACAO)
 	public void novoCadastro() {
 
 		limparDadosSessao();
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		boolean utilizaSugestaoIncrementoCodigo = false;
-		
-		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
-			
-			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
-		}
+		boolean utilizaSugestaoIncrementoCodigo = 
+				this.distribuidorService.utilizaSugestaoIncrementoCodigo();
 		
 		Integer novoCodigoInterface = null;
 		

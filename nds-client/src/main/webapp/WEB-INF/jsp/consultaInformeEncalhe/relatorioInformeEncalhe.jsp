@@ -242,7 +242,7 @@
 											
 											<c:if test="${contains}">
 												<td align="right">
-													${dado.precoVenda}
+													${dado.precoVendaFormatado}
 												</td>
 											</c:if>
 											

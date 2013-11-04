@@ -201,12 +201,17 @@ public abstract class Util {
 		
 		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
 		
+		if (nomeBanco == null){
+			
+			return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+		}
+		
 		switch (nomeBanco) {
 			case BANCO_ABN_AMRO_REAL:
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_BRADESCO:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return padLeft(codSacado + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor), "0", 11);
 			
 			case BANCO_DO_BRASIL:
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);

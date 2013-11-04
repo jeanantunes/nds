@@ -1,4 +1,4 @@
-
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <style>

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,7 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -103,6 +105,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 	
 	@Autowired
 	private ParametroSistemaService parametroSistemaService;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
     
     private HttpServletResponse httpResponse;
 	
@@ -371,6 +376,10 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		if(parametroCobranca.getTipoCota()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
+		}
+		
+		if(parametroCobranca.getIdFornecedor()==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
 		}
 		
 		this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);	
@@ -716,6 +725,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 			}
 		}
 		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(Integer.valueOf(numeroCota));
+		
+		contrato.setIdCota(cota.getId());
 		contrato.setTempFile(arquivo);
 		contrato.setRecebido(true);
 		this.session.setAttribute(CONTRATO_UPLOADED, contrato);
@@ -805,7 +817,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
 				}
 			}
-			
 		}
 		
 		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
@@ -817,7 +828,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
 				}
 			}
-			
 		}
 		
 		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
@@ -876,27 +886,37 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		if ((formaCobranca.getFornecedoresId()!=null)&&(formaCobranca.getFornecedoresId().size()>0)){
 
-			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
-			if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-				if (!this.parametroCobrancaCotaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), formaCobranca.getDiaDoMes())){
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO SEMANAL
+			if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
+									                                       formaCobranca.getIdCota(), 
+									                                       formaCobranca.getFornecedoresId(), 
+									                                       formaCobranca.getTipoFormaCobranca(),
+																		   formaCobranca.isDomingo(),
+																		   formaCobranca.isSegunda(),
+																		   formaCobranca.isTerca(),
+																		   formaCobranca.isQuarta(),
+																		   formaCobranca.isQuinta(),
+																		   formaCobranca.isSexta(),
+																		   formaCobranca.isSabado())){
+					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 				}
 			}
 			
-			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
-			if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-				if (!this.parametroCobrancaCotaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
-						                                                formaCobranca.getIdCota(),formaCobranca.getTipoCobranca(), formaCobranca.getFornecedoresId(), 
-																		formaCobranca.isDomingo(),
-																	    formaCobranca.isSegunda(),
-																	    formaCobranca.isTerca(),
-																	    formaCobranca.isQuarta(),
-																	    formaCobranca.isQuinta(),
-																	    formaCobranca.isSexta(),
-																	    formaCobranca.isSabado())){
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO MENSAL
+			else{
+				if (!this.formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
+				                                                          formaCobranca.getIdCota(), 
+				                                                          formaCobranca.getFornecedoresId(), 
+				                                                          formaCobranca.getTipoFormaCobranca(),
+				                                                          Arrays.asList(formaCobranca.getDiaDoMes(),
+				                                                        		        formaCobranca.getPrimeiroDiaQuinzenal(),
+				                                                        		        formaCobranca.getSegundoDiaQuinzenal()))){
+					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 				}
-			}	
+			}
 		}	
 	}
 	

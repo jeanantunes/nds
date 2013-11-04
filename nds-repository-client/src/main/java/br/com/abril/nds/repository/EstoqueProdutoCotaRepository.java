@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
+import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 
 public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoCota, Long>{
@@ -38,5 +41,7 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	
 	BigInteger obterTotalEmEstoqueProdutoCota(Long idCota, Long idProdutoEdicao);
 	
+	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto);
 	
+	List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota);
 }

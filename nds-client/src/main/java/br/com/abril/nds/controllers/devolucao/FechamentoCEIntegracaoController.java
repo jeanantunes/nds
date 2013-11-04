@@ -2,24 +2,27 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO.ColunaOrdenacaoFechamentoCEIntegracao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -27,8 +30,10 @@ import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -42,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("devolucao/fechamentoCEIntegracao")
+@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 public class FechamentoCEIntegracaoController extends BaseController{
 	
 	private static final String BOLETO_GERADO = "boletoDistribuidorGerado";
@@ -73,7 +79,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 	public void index(){
 		
 		this.carregarComboFornecedores();
@@ -106,45 +111,83 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	}
 	
 	@Post
+	public void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro){
+		
+		validarAnoSemana(filtro.getSemana());
+		
+		String mensagemReaberturaNaoRealizada = fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro); 
+		
+		if (mensagemReaberturaNaoRealizada!= null){
+						
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,mensagemReaberturaNaoRealizada),"result").recursive().serialize();
+		}
+		else{
+
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Reabertura realizada com sucesso."),"result").recursive().serialize();
+		}
+	}
+	
+	@Post
 	@Path("/pesquisaPrincipal")
 	public void pesquisaPrincipal(FiltroFechamentoCEIntegracaoDTO filtro, String sortorder, String sortname, int page, int rp){
 		
+		validarAnoSemana(filtro.getSemana());
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(ColunaOrdenacaoFechamentoCEIntegracao.values(),sortname));
 		
 		this.tratarFiltro(filtro);
 
-		if(filtro.getSemana() != null){
-			filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana().intValue()));
-		}
-
-		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro); 
+		FechamentoCEIntegracaoDTO fechamentoCEIntegracao = fechamentoCEIntegracaoService.obterCEIntegracaoFornecedor(filtro); 
 		
-		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracaoVO).recursive().serialize();
+		FechamentoCEIntegracaoVO retornoPesquisa = renderizarPesquisa(fechamentoCEIntegracao, filtro);
+		
+		result.use(Results.json()).withoutRoot().from(retornoPesquisa).recursive().serialize();
 		
 	}
 	
-	private Intervalo<Date> obterDataDaSemana(int semana) {
+	private FechamentoCEIntegracaoVO renderizarPesquisa(FechamentoCEIntegracaoDTO dto, FiltroFechamentoCEIntegracaoDTO filtro){
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					semana, distribuidor.getInicioSemana().getCodigoDiaSemana(), distribuidor.getDataOperacao());
-			
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<ItemFechamentoCEIntegracaoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(dto.getItensFechamentoCE()));
 		
-		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		return periodoRecolhimento;
+		tableModel.setTotal(dto.getQntItensCE());
+		
+		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
+
+		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = dto.getConsolidado();
+		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
+		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));
+		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto().subtract(totalFechamento.getTotalDesconto())));
+		
+		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
+		
+		fechamentoCEIntegracaoVO.setSemanaFechada(dto.isSemanaFechada());
+		
+		return fechamentoCEIntegracaoVO;
 		
 	}
-
+	
+	private void validarAnoSemana(String anoSemana) {
+		
+		if(StringUtils.isEmpty(anoSemana) || !StringUtils.isNumeric(anoSemana) || 
+				StringUtils.isBlank(anoSemana) || anoSemana.length() != 6) { 
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite um ano e semana valido (AAAASS). Ex: 201309");
+		}
+	}
+	
 	@Post
 	@Path("fecharCE")
-	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao, String idFornecedor, String semana){
-		String listaEncalhePronta[] = listaEncalhe[0].split(",");		
-		String listaIdProdutoEdicaoPronta[] = listaIdProdutoEdicao[0].split(",");		
+	public void fecharCE(){
 		
-		fechamentoCEIntegracaoService.fecharCE(listaEncalhePronta, listaIdProdutoEdicaoPronta, idFornecedor, new Integer(semana));
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		fechamentoCEIntegracaoService.fecharCE(filtro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
@@ -211,14 +254,17 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		List<FechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
+		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
 		FileExporter.to("fechamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-				listaFechamento, FechamentoCEIntegracaoDTO.class, this.httpResponse);
+				listaFechamento, ItemFechamentoCEIntegracaoDTO.class, this.httpResponse);
 			
 		
 		result.nothing();
@@ -248,6 +294,29 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
+	}
+	
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
+		
+		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
+			idItemChamadaFornecedor, encalhe, venda);
+		
+		FiltroFechamentoCEIntegracaoDTO filtro =
+			(FiltroFechamentoCEIntegracaoDTO)
+				session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		filtro.setPaginacao(null);
+		
+		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
+		
+		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
+			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+		
+		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
+		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
+		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
+		
+		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
 
 }

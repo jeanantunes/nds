@@ -2,6 +2,7 @@ var messageTimeout;
 var messageDialogTimeout;
 
 $(document).ready(function(){
+	
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
 	    var valFocus;
@@ -26,6 +27,107 @@ $(document).ready(function(){
 	        });
 	    }
 	});
+	
+	var pressedCtrl = false;
+	$(document).keyup(function (e) {
+		var eventoJs= e;
+		var keycode = e.which;
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+		
+		if(keycode == 17){
+			pressedCtrl=false; 
+		}
+	})
+	
+	$(document.body).keydown(function(e) {
+		
+		var eventoJs= e;
+		var keycode = e.which;
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+		
+		if (keycode == 32 && ($("#effectWarning").css("display") == "block" || $("#effectError").css("display") == "block"
+				|| $("#effectSuccess").css("display") == "block")) {
+			esconde(false, $('#effectWarning'));
+			esconde(false, $('#effectError'));
+			esconde(false, $('#effectSuccess'));
+
+			focusFirstContentView(this);
+			
+		}else if( keycode == $.ui.keyCode.ENTER ) {
+			
+			//Confirmação genérica para modais por tec ENTER
+			
+			var refButtonsDialog = $(".ui-dialog:visible").find("button");
+			
+			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
+			if( refButtonsDialog.size()==2 ) {
+
+				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
+				if(eventoJs.target!=refButtonsDialog[1]){
+					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
+				}
+				return true;
+		    }
+		}else{
+			
+			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
+			
+			var refTabs = $("li", $('.ui-tabs-nav'));
+			var qtdAbasAbertas =  $('.ui-corner-top').size()
+			if(qtdAbasAbertas > 1){
+				
+				if(keycode == 17){
+					pressedCtrl = true; 
+				}
+
+				if(keycode == 37 || keycode == 39){
+					
+					var indexSecionado = $('.ui-tabs-selected').index();
+					var indexSelecionar = indexSecionado;
+					
+					if(keycode == 37 && pressedCtrl == true) {//Esquerda
+						if(indexSecionado == 0){
+							indexSelecionar == qtdAbasAbertas-1;
+						}else{
+							indexSelecionar--;
+						}
+					}else if(keycode == 39 && pressedCtrl == true) {//Direita
+						if(indexSecionado == (qtdAbasAbertas-1)){
+							indexSelecionar = 0;
+						}else{
+							indexSelecionar++;
+						}
+					}
+					
+					if(indexSelecionar != -1){
+						refTabs.children('a')[indexSelecionar].click();
+					}
+				}
+			}
+		}
+	});
+	
+	//Move foco para primeiro campo do modal ao abrir modal
+	$(document).bind("dialogopen", function() {
+		focusFirstContentModal();
+	});
+	
+	//Move foco para primeiro campo ao fechar modal
+	$(document).bind("dialogclose", function() {
+		focusFirstContentView(this);
+	});	
+	
+	
+	//Foco primeiro campo ao carregar aba 
+//	$("#workspace").bind('focus',function(){
+//		focusFirstContentView(document);
+//	});
 });
 
 function exibirMensagem(tipoMensagem, mensagens) {
@@ -84,7 +186,9 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 							    divWarning, textWarning,
 							    divError, textError, isPopUp) {
 	
-	$("<div id='disabledBackground' class='ui-widget-overlay' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
+	if(!$('#disabledBackground') || $('#disabledBackground').size() < 1) {
+		$("<div id='disabledBackground' class='ui-widget-overlay disabledBackground' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
+	}
 	
 	var campoTexto;
 
@@ -386,3 +490,68 @@ function onlyNumeric(event){
         }
 }
 
+function focusSelectRefField(objectField){
+	setTimeout (function () {objectField.focus();objectField.select()}, 500);
+}
+
+function focusFirstContentView(context){
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus()}, 1);
+}
+
+function focusFirstContentModal(){
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus()}, 1);
+}
+
+function keyEventEnterAux(e){
+	var eventoJs= e;
+	var keycode = e.which;
+	if (window.event) {
+		eventoJs = window.event;
+		keycode = eventoJs.keyCode;
+	}
+	
+	if( keycode == $.ui.keyCode.ENTER ) {
+		if(eventoJs.target!=":input"){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+function visibleOverlay(){
+	return $("div.ui-widget-overlay").val()=="";
+}
+
+function bloquearItensEdicao(workspace) {
+
+	if($('#permissaoAlteracao',workspace).val()=="true")
+		return;
+	
+	$('a[isEdicao="true"]',workspace).each(function() {
+		this.href="#";
+		$(this).removeAttr("onClick");
+		$(this).click(function(e){
+			exibirAcessoNegado();
+		});
+	});
+	
+	$('input[isEdicao="true"]',workspace).each(function() {
+		$(this).attr("disabled",true);
+		$(this).removeAttr("onClick");
+	});
+}
+
+function exibirAcessoNegado() {
+	exibirMensagem('WARNING',['Acesso Negado.']);
+}
+
+function verificarPermissaoAcesso(workspace) {
+	
+	if($('#permissaoAlteracao',workspace).val()=="true")
+		return true;
+	
+	exibirAcessoNegado();
+	
+	return false;
+}

@@ -23,10 +23,10 @@ import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
@@ -56,6 +56,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/nfe/impressaoNFE")
+@Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
 public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
@@ -92,7 +93,6 @@ public class ImpressaoNFEController extends BaseController {
 	private Result result;
 
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
 	public void index() {
 
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
@@ -217,16 +217,17 @@ public class ImpressaoNFEController extends BaseController {
 		filtroPesquisa.setPaginacao(null);
 		//List<NotasCotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
 
-		Distribuidor distribuidor = this.distribuidorService.obter();
-
 		byte[] arquivo = null; 
 		String nomeArquivo = "";
+		
+		TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE =
+				this.distribuidorService.tipoImpressaoNENECADANFE();
 
-		if(distribuidor.getObrigacaoFiscal() != null) {
+		if(this.distribuidorService.obrigacaoFiscal() != null) {
 
 			List<NotaFiscal> nfs = impressaoNFEService.buscarNotasParaImpressaoNFe(filtroPesquisa);
 
-			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
+			switch(tipoImpressaoNENECADANFE) {
 
 				case DANFE:
 					arquivo = nfeService.obterDanfesPDF(nfs, false);
@@ -248,7 +249,7 @@ public class ImpressaoNFEController extends BaseController {
 
 			List<NotaEnvio> nes = impressaoNFEService.buscarNotasEnvioParaImpressaoNFe(filtroPesquisa);
 
-			switch(distribuidor.getTipoImpressaoNENECADANFE()) {
+			switch(tipoImpressaoNENECADANFE) {
 
 				case MODELO_1:
 					arquivo = nfeService.obterNEsPDF(nes, false);

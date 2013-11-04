@@ -9,6 +9,7 @@ var confirmaExpedicaoController = $.extend(true, {
 		$('#idDataLancamento', confirmaExpedicaoController.workspace).focus();
 
 		$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexigrid($.extend({},{
+			onSuccess: function() {bloquearItensEdicao(confirmaExpedicaoController.workspace);},
 			colModel : [ {
 				display : 'Data Entrada',
 				name : 'dataEntrada',
@@ -114,6 +115,7 @@ var confirmaExpedicaoController = $.extend(true, {
 		html+= ' id="'+id+'"';
 		html+= ' name="'+name+'"';
 		html+= ' type="checkbox"';
+		html+= ' isEdicao="true"';
 		html+= ' onclick="confirmaExpedicaoController.adicionarSelecao('+idLancamento+',this);"';
 		html+= ' style="float: left;"';
 		
@@ -244,7 +246,7 @@ var confirmaExpedicaoController = $.extend(true, {
 		$.postJSON(contextPath + "/confirmacaoExpedicao/verificarExpedicao", 
 			null,
 			function(result) {
-				$('#mensagemLoading').text(result)
+				$('#mensagemLoading').text(result);
 				
 				if(result=='FINALIZADO') {
 					$('#mensagemLoading').text('Aguarde, carregando ...');

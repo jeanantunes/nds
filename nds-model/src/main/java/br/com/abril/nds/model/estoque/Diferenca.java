@@ -322,7 +322,7 @@ public class Diferenca implements Serializable {
 	    BigDecimal totalReal = getValorTotal();
         return tipoDiferenca.isSobra() ? totalReal : totalReal.negate();
 	}
-	
-	
+
+
 	
 }

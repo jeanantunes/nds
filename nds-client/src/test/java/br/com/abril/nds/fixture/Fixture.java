@@ -276,6 +276,11 @@ public class Fixture {
 				"fc@mail.com", "99.999-9");
 	}
 	
+	public static PessoaJuridica juridicaTreelog() {
+		return pessoaJuridica("Treelog", "61438248000123", "1234",
+				"treelog@mail.com", null);
+	}
+	
 	public static CotaAusente cotaAusenteAtivo(){
 		Box box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
 		Pessoa manoel = Fixture.pessoaFisica("123.456.789-00",
@@ -311,6 +316,10 @@ public class Fixture {
 				"acme@mail.com", "99.999-7");
 	}
 
+	public static Fornecedor fornecedorTreelog(TipoFornecedor tipoFornecedor) {
+		return fornecedor(juridicaTreelog(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
+	}
+	
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
 		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999998);
 	}
@@ -488,7 +497,6 @@ public class Fixture {
 			boolean ativo,
 			Cota cota){
 		CotaAusente cotaAusente = new CotaAusente();
-		cotaAusente.setAtivo(ativo);
 		cotaAusente.setCota(cota);
 		cotaAusente.setData(data);
 		return cotaAusente;

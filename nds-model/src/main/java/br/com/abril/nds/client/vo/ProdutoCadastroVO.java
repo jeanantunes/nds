@@ -443,7 +443,6 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		long codigoTipoDesconto = produto.getDescontoLogistica() != null ? 
 				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
-		
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), 
 			produto.getCodigo(), 

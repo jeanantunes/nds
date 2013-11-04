@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -13,9 +12,9 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 
 	private static final long serialVersionUID = 4133061212097872582L;
 	
-	private long idFornecedor;
+	private Long idFornecedor;
 	
-	private Long semana;
+	private String semana;
 	
 	private PaginacaoVO paginacao;
 	
@@ -56,19 +55,19 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		}
 	}
 
-	public long getIdFornecedor() {
+	public Long getIdFornecedor() {
 		return idFornecedor;
 	}
 
-	public void setIdFornecedor(long idFornecedor) {
+	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
 
-	public Long getSemana() {
+	public String getSemana() {
 		return semana;
 	}
 
-	public void setSemana(Long semana) {
+	public void setSemana(String semana) {
 		this.semana = semana;
 	}
 
@@ -95,6 +94,20 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 
 	public void setPeriodoRecolhimento(Intervalo<Date> periodoRecolhimento) {
 		this.periodoRecolhimento = periodoRecolhimento;
+	}
+	
+	public Integer getAnoReferente(){
+		
+		return (semana == null)
+				? null
+						: Integer.parseInt(semana.substring(0,4));
+	}
+	
+	public Integer getNumeroSemana(){
+	
+		return (semana == null || semana.length() < 4)
+				? null
+						: Integer.parseInt(semana.substring(4));
 	}
 
 }

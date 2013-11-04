@@ -35,6 +35,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	    Objects.requireNonNull(data, "Data para consulta dos produtos conferidos no encalhe não deve ser nula!");
 	    
 	    StringBuilder hql = new StringBuilder("select new map(produto.codigo as codigo, ");
+	    hql.append("produtoEdicao.id as idProdutoEdicao, ");
         hql.append("produto.nome as nomeProduto, ");
         hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
         hql.append("produtoEdicao.precoVenda as precoVenda, ");
@@ -80,6 +81,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         List<EncalheFecharDiaDTO> lista = new ArrayList<>(maps.size());
         
         for (Map<String, Object> map : maps) {
+        	Long idProdutoEdicao = (Long) map.get("idProdutoEdicao");
             String codigo = (String) map.get("codigo");
             String nomeProduto = (String) map.get("nomeProduto");
             Long numeroEdicao = (Long) map.get("numeroEdicao");
@@ -93,7 +95,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
             //Diferenca = Lógico - (Físico + Lógico Juramentado) - Venda de Encalhe;
             BigInteger qtdeDiferenca = qtdeLogico.subtract(qtdeFisicoLogicoJuramentado).subtract(qtdeVendaEncalhe);
             
-            EncalheFecharDiaDTO encalheDTO = new EncalheFecharDiaDTO(codigo, nomeProduto, numeroEdicao, precoVenda, qtdeLogico,
+            EncalheFecharDiaDTO encalheDTO = new EncalheFecharDiaDTO(idProdutoEdicao, codigo, nomeProduto, numeroEdicao, precoVenda, qtdeLogico,
                     qtdeLogicoJuramentado, qtdeFisico, qtdeVendaEncalhe, qtdeDiferenca);
             
             lista.add(encalheDTO);
@@ -124,7 +126,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao, PaginacaoVO paginacao) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" SELECT pe.id as idProdutoEdicao , p.codigo as codigo,  ");
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" ve.qntProduto as qtde, ");

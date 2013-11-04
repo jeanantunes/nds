@@ -42,8 +42,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append("       pessoa.nome as nomeJornaleiro, ");
 		hql.append("       pdv.contato as responsavel, ");
 		hql.append("       contrato.dataTermino as dataVencimento, ");
-		hql.append("       'Contrato' as tipo, ");
-		hql.append("       0.0 as valor ");
+		hql.append("       'Contrato' as tipo ");
 		hql.append(" from Cota as cota, ");
 		hql.append("      Distribuidor as distribuidor ");
 		hql.append(" JOIN cota.contratoCota as contrato ");
@@ -57,11 +56,14 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao() != null) {
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -94,11 +96,13 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null){
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -128,11 +132,14 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao() != null) {
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -164,11 +171,13 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -181,22 +190,25 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append(" , pessoa.nome as nomeJornaleiro ");
 		hql.append(" , pdv.contato as responsavel");
 		hql.append(" , 'Cota Distribuicao' as tipo ");
-		hql.append(" , 0.0 as valor ");
 		hql.append(" from Cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
 		hql.append(" WHERE  ( cota.parametroDistribuicao.utilizaTermoAdesao = true and cota.parametroDistribuicao.termoAdesaoRecebido= false )    ");
 		hql.append("  or  ( cota.parametroDistribuicao.utilizaProcuracao = true and cota.parametroDistribuicao.procuracaoRecebida = false )    ");
+
 		Query query =  getSession().createQuery(hql.toString());		
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null) {
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -210,7 +222,6 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append("SELECT cota.numeroCota as numeroCota, ");
 		hql.append("pessoa.nome as nomeJornaleiro, ");
 		hql.append(" 'Fornecedores' as tipo, ");
-		hql.append(" 0.0 as valor, ");
 		hql.append(" fornecedores.validadeContrato as dataVencimento, ");
 		hql.append(" pdv.contato as responsavel ");
 		
@@ -222,17 +233,18 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		
 		hql.append(" WHERE    fornecedores.possuiContrato = true   and   datediff( fornecedores.validadeContrato, sysdate()) < distribuidor.prazoFollowUp ");
 		
-		
 		Query query =  getSession().createQuery(hql.toString());		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}

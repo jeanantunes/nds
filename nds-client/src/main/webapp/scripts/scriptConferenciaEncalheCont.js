@@ -43,14 +43,18 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#numeroCota", ConferenciaEncalheCont.workspace).numeric();
 		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).numeric();
+		
 		$("#vlrCE", ConferenciaEncalheCont.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
+		
+		$("#qtdCE", ConferenciaEncalheCont.workspace).numeric();
+		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
+		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
 			
 			if (e.keyCode == 13) {
 				
@@ -58,7 +62,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}
 		});
 		
-		$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
+		$("#lstProdutos", ConferenciaEncalheCont.workspace).keyup(function(e){
 			
 			ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
 		});
@@ -80,6 +84,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 	
 	atribuirAtalhos: function(){
+		$(document.body).unbind();
 		
 		$(document.body).bind('keydown.adicionarProduto', jwerty.event('F2',function() {
 			
@@ -131,7 +136,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarReabertura", data,
 			function(result){
 				
-				if (result.listaMensagens && result.listaMensagens[0] == "REABERTURA"){
+				if (typeof result.IND_REABERTURA != 'undefined' && result.IND_REABERTURA == 'S'){
 					
 					ConferenciaEncalheCont.modalAberta = true;
 					
@@ -145,7 +150,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								ConferenciaEncalheCont.carregarListaConferencia(data);
-								ConferenciaEncalheCont.popup_alert();
+								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 							},
 							"Não" : function() {
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
@@ -158,12 +163,28 @@ var ConferenciaEncalheCont = $.extend(true, {
 					});
 				} else {
 					
+					if(typeof result.IND_COTA_RECOLHE_NA_DATA != undefined && result.IND_COTA_RECOLHE_NA_DATA == 'N' ) {
+						
+						exibirMensagem('WARNING', [result.msg]);
+						
+					} 
+					
 					ConferenciaEncalheCont.carregarListaConferencia(data);
+					
 					$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
-					ConferenciaEncalheCont.popup_alert();
+					ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
+					
 				}
 			}
 		);
+	},
+	ifCotaEmiteNfe :  function(data, fnCotaEmiteNfe) {
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaEmiteNFe", data, 
+		function(result){
+			if(result.IND_COTA_EMITE_NFE) {
+				fnCotaEmiteNfe();
+			} 
+		});
 	},
 	
 	recalcularValoresFinalizar : function(index){
@@ -288,7 +309,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: parseFloat($("#vlrCE", ConferenciaEncalheCont.workspace).val())}];
+		var data = [{name: "valorCEInformado", value: parseFloat($("#vlrCE", ConferenciaEncalheCont.workspace).val())},
+		            {name: "qtdCEInformado", value: parseFloat($("#qtdCE", ConferenciaEncalheCont.workspace).val())}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
@@ -370,7 +392,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						_class = "class_linha_2 _dadosConfEncalhe";
 					}
 					
-					innerTable += "<tr class='" + _class + " _dados'>";
+					innerTable += "<tr class='" + _class + " _dados' name='linhaConfEncalhe'>";
 					
 					innerTable += "<input type='hidden' id='idProdutoEdicaoGrid_"+index+"' value='" + value.idProdutoEdicao + "'/>";
 					
@@ -407,7 +429,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
+					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -465,6 +487,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).show();
 		$("#nomeCota", ConferenciaEncalheCont.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalheCont.workspace).text(result.situacao);
+		
+		focusSelectRefField($("[name=inputValorExemplares]", ConferenciaEncalhe.workspace).first());
 	},
 	
 	atualizarValores: function(index, valorReal) {
@@ -478,7 +502,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		var data = [
             {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalheCont.workspace).val()},
             {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val()},
-            {name: "juramentada", value: juramentado}
+            {name: "juramentada", value: juramentado}, {name: 'indConferenciaContingencia', value: true}
 		];
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValores", 
@@ -761,11 +785,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	nextInputExemplares : function(curIndex, evt) {
 	
-		if (evt.keyCode == 13) {
+		if (evt.keyCode == 13 || evt.keyCode == 40) {
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			nextElement.select();
 			nextElement.focus();
-		}
+			nextElement.select();
+		}else if (event.keyCode == 38) {
+			var nextElement = $('[tabindex=' + (curIndex - 1) + ']');
+			nextElement.focus();
+			nextElement.select();  
+		} 
 	},
 	
 	abrirDialogNotaFiscalDivergente: function(result){
@@ -921,7 +949,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 				"Não" : function() {
 					
 					$("#dialog-alert", ConferenciaEncalheCont.workspace).dialog("close");
+					
 					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+					
+					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
+					
 				}
 			}, open : function(){
 				
@@ -980,12 +1012,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 							$("#vlrCE", ConferenciaEncalheCont.workspace).val(parseFloat($("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val()).toFixed(2));
 							
 							$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
-						}, null, true, "dialog-notaFiscal"
+
+							$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
+
+							
+					}, null, true, "dialog-notaFiscal"
 					);
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
 				}
 			}, close : function(){
 				
@@ -1031,8 +1068,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
-					var data = [{name: 'indConferenciaContingencia', value: true}];
-					
+					var data = [{name: 'indConferenciaContingencia', value: true}];					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', data,
 						function(result){
 					

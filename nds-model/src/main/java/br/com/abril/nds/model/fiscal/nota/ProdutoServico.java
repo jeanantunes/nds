@@ -16,6 +16,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
@@ -108,41 +111,41 @@ public class ProdutoServico implements Serializable {
 	/**
 	 * vUnCom
 	 */
-	@Column(name="VALOR_UNITARIO_COMERCIAL",precision=21, scale=2 , nullable=false)
+	@Column(name="VALOR_UNITARIO_COMERCIAL", precision=18, scale=4, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=16)})
 	private BigDecimal valorUnitario;
 	
 	/**
 	 * vProd
 	 */
-	@Column(name="VALOR_TOTAL_BRUTO", precision=15, scale=2, nullable=false)
+	@Column(name="VALOR_TOTAL_BRUTO", precision=18, scale=4, nullable=false)
 	private BigDecimal valorTotalBruto;
 	
 	/**
 	 * vFrete
 	 */
-	@Column(name="VALOR_FRETE", precision=15, scale=2, nullable=true)
+	@Column(name="VALOR_FRETE", precision=18, scale=4, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=14, tamanho=15)
 	private BigDecimal valorFrete;
 	
 	/**
 	 * vSeg
 	 */
-	@Column(name="VALOR_SERGURO", precision=15, scale=2, nullable=true)
+	@Column(name="VALOR_SERGURO", precision=18, scale=4, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=15, tamanho=15)
 	private BigDecimal valorSeguro;
 	
 	/**
 	 * vDesc
 	 */
-	@Column(name="VALOR_DESCONTO", precision=15, scale=2, nullable=true)
+	@Column(name="VALOR_DESCONTO", precision=18, scale=4, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=16, tamanho=15)
 	private BigDecimal valorDesconto;
 	
 	/**
 	 * vOutro
 	 */
-	@Column(name="VALOR_OUTROS", precision=15, scale=2, nullable=true)
+	@Column(name="VALOR_OUTROS", precision=18, scale=4, nullable=true)
 	private BigDecimal valorOutros;
 	
 	
@@ -155,6 +158,7 @@ public class ProdutoServico implements Serializable {
 			inverseJoinColumns = {
 			@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID", referencedColumnName="ID")
 	})
+	@Cascade(value = {CascadeType.ALL})
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
 	
 	/**

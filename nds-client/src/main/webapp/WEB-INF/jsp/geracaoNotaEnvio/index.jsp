@@ -56,9 +56,9 @@
     				
     				<td>Data Movimento:</td>
     				<td>
-    					<input type="text" id="geracaoNotaEnvio-filtro-movimentoDe" style="width:76px;" class="input-date">
+    					<input type="text" id="geracaoNotaEnvio-filtro-movimentoDe" name ="movimentoDe" style="width:76px;" class="input-date">
      						&nbsp;&nbsp;Até&nbsp;
-      					<input type="text" id="geracaoNotaEnvio-filtro-movimentoAte" style="width:76px;" class="input-date">
+      					<input type="text" id="geracaoNotaEnvio-filtro-movimentoAte" name ="movimentoAte" style="width:76px;" class="input-date">
       				</td>
     				
     				<td>Data Emissão:</td>
@@ -103,8 +103,14 @@
 						<input id="geracaoNotaEnvio-filtro-boxAte" type="text" style="width:76px;" class="input-numeric">
 					</td>
     					
-   					<td>&nbsp;</td>
-   					<td width="270">&nbsp;</td>
+   					<td>Exibir Notas: </td>
+   					<td width="270">
+   						<select id="geracaoNotaEnvio-filtro-exibirNotasEnvio" style="width:150px; font-size:11px!important">
+      						<option value="AMBAS">Emitidas e a emitir</option>
+      						<option value="EMITIDAS">Emitidas</option>
+      						<option value="AEMITIR">A emitir</option>
+    					</select>
+    				</td>
  					<td width="78">&nbsp;</td>
    					<td width="180">
    						  						

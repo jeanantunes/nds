@@ -430,9 +430,25 @@ var transportadorController = $.extend(true, {
 			$("#razaoSocialPesquisa", transportadorController.workspace).autocomplete({source: ""});
 			$("#nomeFantasiaPesquisa", transportadorController.workspace).autocomplete({source: ""});
 			
+			$(document).ready(function(){
+				
+				focusSelectRefField($("#razaoSocialPesquisa", transportadorController.workspace));
+				
+				$(document.body).keydown(function(e) {
+					
+					if(keyEventEnterAux(e)){
+						transportadorController.pesquisarTransportadores();
+					}
+					
+					return true;
+				});
+			});
 	},
 	
 	popup_novo_transportador : function() {
+		
+		if(!verificarPermissaoAcesso(transportadorController.workspace))
+			return;
 		
 		fecharModalCadastroTransp = false;
 		

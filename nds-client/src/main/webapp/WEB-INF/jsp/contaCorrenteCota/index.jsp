@@ -236,16 +236,22 @@
 			</div>
 		</div>
 	
-		<div class="linha_separa_fields">&nbsp;</div>	
+		<div class="linha_separa_fields">&nbsp;</div>
+		<form id="formPesquisaContaCorrente">
       <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Conta-Corrente</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="33">Cota:</td>
-              <td width="92"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              <td width="92">
+              	<input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              	<input type="hidden" name="filtroViewContaCorrenteCota.cotaHidden" id="cotaHidden"/>
               </td>
               <td width="41">Nome:</td>
-              <td width="240"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
+              <td width="240">
+              	<input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/>
+              	<input type="hidden" name="nomeCotaHidden" id="nomeCotaHidden"/>
+              </td>
               
 			   <td width="10"></td>
 			  
@@ -273,10 +279,11 @@
           </table>
 
       </fieldset>
+      </form>
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display: none;">
 	      <fieldset class="fieldGrid">
-	       	  <legend>Conta-Corrente Selecionado: <span id="cotanome"></span></legend>
+	       	  <legend>Conta-Corrente Selecionado: <span id="cotanomeselecionado"></span></legend>
 	       	  <table class="itemContaCorrenteCotaGrid"></table>
 	      </fieldset>
       </div>

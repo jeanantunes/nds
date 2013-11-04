@@ -132,6 +132,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				//Insere input text para o campo exemplar nota
 				row.cell.qtdNota =  inputDataRecolhimentoDistribuidor + inputExemplarNota;
 				
+				if( !row.cell.precoVenda ){
+					row.cell.precoVenda ='0,00';
+				};
+				
 			});
 			
 			$("#totalGeral", digitacaoContagemDevolucaoController.workspace).html(resultado.valorTotal);

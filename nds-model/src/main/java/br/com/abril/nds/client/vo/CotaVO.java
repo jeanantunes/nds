@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -22,10 +23,10 @@ public class CotaVO implements Serializable {
 
 	private Long idCota;
 	
-	@Export(label = "Código", exhibitionOrder = 0)
+	@Export(label = "Código", exhibitionOrder = 0, widthPercent = 5, fontSize = 9)
 	private Integer numero;
 	
-	@Export(label = "Nome / Razão Social", exhibitionOrder = 1)
+	@Export(label = "Nome / Razão Social", exhibitionOrder = 1, fontSize = 9)
 	private String nome;
 	
 	private BigDecimal qtdeReparte;
@@ -34,23 +35,26 @@ public class CotaVO implements Serializable {
 	
 	private String codigoBox;
 	
-	@Export(label = "CPF / CNPJ", exhibitionOrder = 2)
+	@Export(label = "CPF / CNPJ", exhibitionOrder = 2, widthPercent = 16, fontSize = 9)
 	private String numeroCpfCnpj;
 	
-	@Export(label = "Contato", exhibitionOrder = 4)
+	@Export(label = "Contato", exhibitionOrder = 4, fontSize = 9, widthPercent = 10)
 	private String contato;
 	
-	@Export(label = "Telefone", exhibitionOrder = 5)
+	@Export(label = "Telefone", exhibitionOrder = 5, fontSize = 9, widthPercent = 8)
 	private String telefone;
 	
-	@Export(label = "E-Mail", exhibitionOrder = 6)
+	@Export(label = "E-Mail", exhibitionOrder = 6, fontSize = 9)
 	private String email;
 	
-	@Export(label = "Status", exhibitionOrder = 7)
+	@Export(label = "Status", exhibitionOrder = 7, widthPercent = 5, fontSize = 9)
 	private String status;
 	
-	@Export(label = "Box", exhibitionOrder = 3)
+	@Export(label = "Box", exhibitionOrder = 3, widthPercent = 9, fontSize = 9)
 	private String descricaoBox;
+	
+	
+	private SituacaoCadastro situacaoCadastro;
 	
 	/**
 	 * Construtor padrão.
@@ -253,6 +257,24 @@ public class CotaVO implements Serializable {
 		} else if (!qtdeReparte.equals(other.qtdeReparte))
 			return false;
 		return true;
+	}
+
+
+
+	/**
+	 * @return the situacaoCadastro
+	 */
+	public SituacaoCadastro getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
+
+
+
+	/**
+	 * @param situacaoCadastro the situacaoCadastro to set
+	 */
+	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
 	}
 	
 }

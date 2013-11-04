@@ -15,9 +15,9 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
 @Embeddable
 @AttributeOverrides({
     @AttributeOverride(name="cst", column=@Column(name="CST_IPI", length = 2, nullable = true)),
-    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_IPI", precision = 15, scale = 2, nullable = true)),
-    @AttributeOverride(name="aliquota", column=@Column(name="ALIQUOTA_IPI", precision = 5, scale = 2, nullable = true)),
-    @AttributeOverride(name="valor", column=@Column(name="VLR_IPI", precision = 15, scale = 2, nullable = true))
+    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_IPI", precision=18, scale=4, nullable = true)),
+    @AttributeOverride(name="aliquota", column=@Column(name="ALIQUOTA_IPI", precision=18, scale=4, nullable = true)),
+    @AttributeOverride(name="valor", column=@Column(name="VLR_IPI", precision=18, scale=4, nullable = true))
 })
 public class IPI extends ImpostoProduto implements Serializable {
 

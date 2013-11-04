@@ -21,6 +21,8 @@ var visaoEstoqueController = $.extend(true, {
 		visaoEstoqueController.initGridVisaoEstoqueDetalheJuramentado();
 		visaoEstoqueController.initGridVisaoEstoqueTransferencia();
 		visaoEstoqueController.initGridVisaoEstoqueInventario();
+		
+		$(".areaBts", this.workspace).hide();
 	},
 	
 	
@@ -35,6 +37,8 @@ var visaoEstoqueController = $.extend(true, {
 		});
 		
 		$(".visaoEstoqueGrid", this.workspace).flexReload();
+		
+		$(".areaBts", this.workspace).show();
 	},
 	
 	
@@ -328,6 +332,8 @@ var visaoEstoqueController = $.extend(true, {
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
+		params +="&filtro.paginar=false";
+		
 		$(".visaoEstoqueTransferenciaGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params, 
 			preProcess : visaoEstoqueController.montaInputTransferencia,
@@ -364,6 +370,8 @@ var visaoEstoqueController = $.extend(true, {
 		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		params +="&filtro.paginar=false";
 		
 		$(".visaoEstoqueInventarioGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params,
@@ -505,7 +513,10 @@ var visaoEstoqueController = $.extend(true, {
 			sortname : "codigo",
 			sortorder : "asc",
 			width : 795,
-			height : 200
+			height : 200,
+			usepager : true,
+			useRp : true,
+			rp : 15
 		});
 	},
 	
@@ -577,7 +588,10 @@ var visaoEstoqueController = $.extend(true, {
 			sortname : "codigo",
 			sortorder : "asc",
 			width : 795,
-			height : 200
+			height : 200,
+			usepager : true,
+			useRp : true,
+			rp : 15
 		});
 	},
 	

@@ -42,28 +42,28 @@ public class ViewContaCorrenteCota  implements Serializable{
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
-	@Column(name = "VALOR_POSTERGADO", nullable = true)
+	@Column(name = "VALOR_POSTERGADO", nullable = true, precision=18, scale=4)
 	private BigDecimal valorPostergado;
 		
-	@Column(name = "CONSIGNADO", nullable = true)
+	@Column(name = "CONSIGNADO", nullable = true, precision=18, scale=4)
 	private BigDecimal consignado;
 	
-	@Column(name = "ENCALHE", nullable = true)
+	@Column(name = "ENCALHE", nullable = true, precision=18, scale=4)
 	private BigDecimal encalhe;
 	
-	@Column(name = "VENDA_ENCALHE", nullable = true)
+	@Column(name = "VENDA_ENCALHE", nullable = true, precision=18, scale=4)
 	private BigDecimal vendaEncalhe;
 	
-	@Column(name = "DEBITO_CREDITO", nullable = true)
+	@Column(name = "DEBITO_CREDITO", nullable = true, precision=18, scale=4)
 	private BigDecimal debitoCredito;
 	
-	@Column(name = "ENCARGOS", nullable = true)
+	@Column(name = "ENCARGOS", nullable = true, precision=18, scale=4)
 	private BigDecimal encargos;
 	
-	@Column(name = "PENDENTE", nullable = true)
+	@Column(name = "PENDENTE", nullable = true, precision=18, scale=4)
 	private BigDecimal pendente;
 	
-	@Column(name = "TOTAL", nullable = true)
+	@Column(name = "TOTAL", nullable = true, precision=18, scale=4)
 	private BigDecimal total;
 	
 	@Temporal(TemporalType.DATE)
@@ -74,7 +74,7 @@ public class ViewContaCorrenteCota  implements Serializable{
 	@Column(name="DT_RAIZ_PENDENTE")
 	private Date dataRaizPendente;
 	
-	@Column(name="VALOR_PAGO",nullable = true)
+	@Column(name="VALOR_PAGO",nullable = true, precision=18, scale=4)
 	private BigDecimal valorPago;
 	
 	@Column(name="SALDO",nullable = true)

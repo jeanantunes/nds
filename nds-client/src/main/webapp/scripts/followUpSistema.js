@@ -50,7 +50,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 	    }));
 
@@ -101,7 +101,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 
@@ -152,7 +152,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 
@@ -203,7 +203,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 
@@ -261,7 +261,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		});
 		
@@ -294,7 +294,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 		
@@ -309,6 +309,13 @@ var followUpSistemaController = $.extend(true, {
 		
 		if(resultado.rows.length == 0){
 			$('#botoesArquivoNegociacao').hide();
+		}
+		
+		if (resultado.total > 0){
+			$('.areaBtsNegociacao', followUpSistemaController.workspace).show();
+		}
+		else{
+			$('.areaBtsNegociacao', followUpSistemaController.workspace).hide();
 		}
 		
 		return resultado;
@@ -396,7 +403,22 @@ var followUpSistemaController = $.extend(true, {
 		if(resultado.rows.length == 0){
 			$('#botoesArquivoCadastroParcial').hide();
 		}
+		
+		if (resultado.total > 0){
+			$('.areaBtsParcial', followUpSistemaController.workspace).show();
+		}
+		else{
+			$('.areaBtsParcial', followUpSistemaController.workspace).hide();
+		}
+		
 		return resultado;
+	},
+	
+	toggleButtons : function(idDivActive) {
+		
+		$(".divButtonsWrapper",  followUpSistemaController.workspace).hide();
+		$("#"+idDivActive,  followUpSistemaController.workspace).show();
+		
 	}
 	
 }, BaseController);

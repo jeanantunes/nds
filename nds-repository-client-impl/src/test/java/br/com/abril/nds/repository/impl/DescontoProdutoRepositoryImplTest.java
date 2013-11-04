@@ -261,8 +261,10 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 	@Test
 	public void buscarQuantidadeTipoDescontoProduto() {
 
+		FiltroTipoDescontoProdutoDTO filtro = new FiltroTipoDescontoProdutoDTO();
+		
 		Integer quantidadeTiposDescontoProduto = 
-				this.descontoProdutoRepository.buscarQuantidadeTipoDescontoProduto(null);
+				this.descontoProdutoRepository.buscarQuantidadeTipoDescontoProduto(filtro);
 		
 		Assert.assertNotNull(quantidadeTiposDescontoProduto);
 		

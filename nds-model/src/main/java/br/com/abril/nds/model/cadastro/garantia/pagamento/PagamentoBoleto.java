@@ -20,7 +20,7 @@ public class PagamentoBoleto extends PagamentoCaucaoLiquida {
 	@Column(name="QNT_PARCELAS")
 	private Integer quantidadeParcelas;
 
-	@Column(name="VALOR_PARCELA")
+	@Column(name="VALOR_PARCELA", precision=18, scale=4)
 	private BigDecimal valorParcela;
 
 	@OneToOne

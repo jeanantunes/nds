@@ -20,8 +20,10 @@ import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 
 @Service
@@ -32,6 +34,12 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	
 	@Autowired
 	FornecedorService fornecedorService;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
@@ -76,15 +84,29 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<Long> tiposMovimentoCredito = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.CREDITO));
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.CREDITO,
+						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+					)
+				);
 		
 		List<Long> tiposMovimentoDebito =
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.DEBITO));
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.DEBITO,
+						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
+						GrupoMovimentoFinaceiro.VENDA_TOTAL,
+						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS
+					)
+				);
 		
 		List<Long> tipoMovimentoEncalhe = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.ENVIO_ENCALHE
+					)
+				);
 		
 		List<Long> tiposMovimentoEncargos =
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(

@@ -203,7 +203,7 @@ public class FeriadoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(feriado);
 		
 		feriado = feriadoRepository.obterFeriadoAnualTipo(
-				DateUtil.parseDataPTBR("07/09/2002"), TipoFeriado.ESTADUAL);
+				DateUtil.parseDataPTBR("07/09/1980"), TipoFeriado.ESTADUAL);
 		Assert.assertNull(feriado);
 	}
 	

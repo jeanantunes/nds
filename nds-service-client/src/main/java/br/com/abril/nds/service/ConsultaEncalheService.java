@@ -2,7 +2,6 @@ package br.com.abril.nds.service;
 
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 
@@ -28,12 +27,4 @@ public interface ConsultaEncalheService {
 	 */
 	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
-	/**
-	 * Obtém resultados sumarizados da consulta de encalhe.
-	 * 
-	 * @param filtro
-	 * 
-	 * @return
-	 */
-	TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 }

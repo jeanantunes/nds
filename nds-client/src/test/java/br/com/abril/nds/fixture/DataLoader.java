@@ -423,6 +423,7 @@ public class DataLoader {
 	public static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
+	private static Fornecedor fornecedorTreelog;
 	private static Fornecedor fornecedorFc;
 	public static Distribuidor distribuidor;
 
@@ -5937,18 +5938,21 @@ public class DataLoader {
 	private static void criarFornecedoresClean(Session session) {
 
 		fornecedorDinap = Fixture.fornecedorDinap(tipoFornecedorPublicacao);
-		fornecedorDinap.setCodigoInterface(9999999);
 		fornecedorDinap.setResponsavel("Maria");
-		fornecedorDinap.setOrigem(Origem.MANUAL);
+		fornecedorDinap.setOrigem(Origem.INTERFACE);
 		fornecedorDinap.setEmailNfe("maria@email.com");
+		
 		fornecedorFc = Fixture.fornecedorFC(tipoFornecedorPublicacao);
-		fornecedorFc.setCodigoInterface(9999998);
 		fornecedorFc.setResponsavel("Sebastião");
-		fornecedorFc.setEmailNfe("sebastiao@email.com");
+		fornecedorFc.setOrigem(Origem.INTERFACE);
+		fornecedorFc.setEmailNfe("acme@acme.com");
+		
+		fornecedorTreelog = Fixture.fornecedorTreelog(tipoFornecedorPublicacao);
+		fornecedorFc.setResponsavel("Magali Coelho");
 		fornecedorFc.setOrigem(Origem.MANUAL);
 		fornecedorFc.setEmailNfe("acme@acme.com");
 
-		save(session, fornecedorDinap, fornecedorFc);
+		save(session, fornecedorDinap, fornecedorFc, fornecedorTreelog);
 
 		Endereco enderecoPrincipal = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-500", "Rua Marechal", "50", "Centro", "Mococa", "SP",3530508);

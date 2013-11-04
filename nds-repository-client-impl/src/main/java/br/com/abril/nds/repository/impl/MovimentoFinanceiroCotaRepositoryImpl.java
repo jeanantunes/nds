@@ -42,6 +42,57 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" SELECT  ");
+		
+		sql.append(" SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor,    	");
+		sql.append(" PN.DATA_VENCIMENTO AS dataVencimento,    		");
+		sql.append(" MFC.DATA as dataLancamento                    ");
+		
+		sql.append(" FROM  PARCELA_NEGOCIACAO PN                                     ");
+		
+		sql.append(" INNER JOIN NEGOCIACAO N ON (                                    ");
+		sql.append(" 	N.ID = PN.NEGOCIACAO_ID                                      ");
+		sql.append(" )                                                               ");
+		
+		sql.append(" INNER JOIN MOVIMENTO_FINANCEIRO_COTA MFC ON (                   ");
+		sql.append(" 	PN.MOVIMENTO_FINANCEIRO_ID = MFC.ID                          ");
+		sql.append(" )                                                               ");
+
+		sql.append(" INNER JOIN COTA ON (                    						 ");
+		sql.append(" 	COTA.ID = MFC.COTA_ID                           			 ");
+		sql.append(" )                                                               ");
+
+		sql.append(" LEFT JOIN CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC ON (            ");
+		sql.append(" 	CMFC.MVTO_FINANCEIRO_COTA_ID = MFC.ID                        ");
+		sql.append(" )                                                               ");
+		
+		sql.append(" LEFT JOIN CONSOLIDADO_FINANCEIRO_COTA CFC ON (                  ");
+		sql.append(" 	CFC.ID = CMFC.CONSOLIDADO_FINANCEIRO_ID                      ");
+		sql.append(" )                                                               ");
+		
+		sql.append(" WHERE                                                           ");
+		
+		sql.append(" N.NEGOCIACAO_AVULSA = false AND     	");
+		sql.append(" COTA.NUMERO_COTA = :numeroCota AND  	");
+		sql.append(" CFC.ID IS NULL							");
+		sql.append(" GROUP BY PN.ID, MFC.ID                 ");
+		
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return query.list();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
 		
 		StringBuilder hql = new StringBuilder("select mfc ");
@@ -96,11 +147,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		   
 		hql.append(" where ");
 		
-		hql.append(" mfc.data = :dataOperacao ");
+		hql.append(" mfc.data = :dataOperacao and ");
 		
-		hql.append(" and mfc.status = :statusAprovado ");
+		hql.append(" mfc.status = :statusAprovado and ");
 		
-		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
+		hql.append(" mfc.cota.numeroCota = :numeroCota ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
 			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
@@ -189,6 +240,36 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		return query.list();
 	}
+								   
+	@SuppressWarnings("unchecked")
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
+
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select mfc from ");
+		
+		hql.append(" ControleConferenciaEncalheCota ccec ");
+
+		hql.append(" inner join ccec.conferenciasEncalhe confEncalhe	");
+
+		hql.append(" inner join confEncalhe.movimentoEstoqueCota mec	");
+		
+		hql.append(" inner join mec.movimentoFinanceiroCota mfc			");
+		
+		hql.append(" where	");
+		
+		hql.append(" ccec.id = :idControleConfEncalheCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConfEncalheCota", idControleConfEncalheCota);
+		
+		query.setMaxResults(1);
+		
+		return query.list();
+		
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override

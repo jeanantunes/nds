@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -137,4 +138,17 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
 
 	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
+	
+	/**
+	 * Obtem Fornecedor Padrao, utilizado para em Movimentos Financeiros sem definição de Distribuidor
+	 * @return Fornecedor
+	 */
+	public Fornecedor obterFornecedorPadrao();
+
+	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor,
+			Integer qtdMaxResult);
+	
+	Fornecedor obterFornecedorPorMovimentoEstoqueCota(Long movimentoEstoqueCotaId);
+	
+	List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, Origem origem);
 }

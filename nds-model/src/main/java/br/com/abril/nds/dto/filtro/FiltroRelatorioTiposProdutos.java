@@ -3,16 +3,30 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+@Exportable
 public class FiltroRelatorioTiposProdutos implements Serializable {
 
 	private static final long serialVersionUID = 104473624178466067L;
 
 	private Long tipoProduto;
+	
+	@Export(label = "Tipo Produto",exhibitionOrder=1)
+	private String nomeTipoProduto;
+	
+	@Export(label = "Lançamento",exhibitionOrder=2)
 	private Date dataLancamentoDe;
+	
+	@Export(label = "Até",exhibitionOrder=3)
 	private Date dataLancamentoAte;
+	
+	@Export(label = "Recolhimento",exhibitionOrder=4)
 	private Date dataRecolhimentoDe;
+	
+	@Export(label = "Até",exhibitionOrder=5)
 	private Date dataRecolhimentoAte;
 	
 	private PaginacaoVO paginacaoVO;
@@ -48,7 +62,13 @@ public class FiltroRelatorioTiposProdutos implements Serializable {
 		}
 		
 	}
-	
+
+	public String getNomeTipoProduto() {
+		return nomeTipoProduto;
+	}
+	public void setNomeTipoProduto(String nomeTipoProduto) {
+		this.nomeTipoProduto = nomeTipoProduto;
+	}
 	public OrdenacaoColuna getOrdenacaoColuna() {
 		return ordenacaoColuna;
 	}

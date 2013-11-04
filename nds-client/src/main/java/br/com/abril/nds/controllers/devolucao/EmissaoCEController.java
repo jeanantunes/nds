@@ -23,11 +23,11 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
@@ -46,6 +46,7 @@ import br.com.caelum.vraptor.Result;
 
 @Resource
 @Path("/emissaoCE")
+@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_CE)
 public class EmissaoCEController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroEmissaoCE";
@@ -81,7 +82,7 @@ public class EmissaoCEController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_CE)
+	@Path("/")
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
@@ -219,11 +220,11 @@ public class EmissaoCEController extends BaseController {
 	
 	public void imprimirCE() {
 						
-		Distribuidor distribuidor = distribuidorService.obter();
+		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
 		
-		if(distribuidor != null && distribuidor.getTipoImpressaoCE()!= null){
+		if(tipoImpressao != null){
 			
-			switch (distribuidor.getTipoImpressaoCE()) {
+			switch (tipoImpressao) {
 				case MODELO_1:
 					result.forwardTo(EmissaoCEController.class).modelo1();
 					break;

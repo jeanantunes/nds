@@ -35,8 +35,10 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 		hql.append( 	 getSubqueryPeridoLancamento()    );
 		hql.append(" ) " );
 		
-		hql.append(" order by "+filtro.getPaginacao().getSortColumn()+" "+filtro.getPaginacao().getOrdenacao().toString() );
-
+		if(filtro.getPaginacao() != null) {
+			hql.append(" order by "+filtro.getPaginacao().getSortColumn()+" "+filtro.getPaginacao().getOrdenacao().toString() );
+		}
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("origem", Origem.MANUAL);
@@ -44,14 +46,15 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroParcialDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-		
-		filtro.getPaginacao().setQtdResultadosTotal(obterConsignadosParaChamadaoTotalRegistros(filtro));
-		
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			
+			filtro.getPaginacao().setQtdResultadosTotal(obterConsignadosParaChamadaoTotalRegistros(filtro));
+		}
 		
 		return query.list();
 		 

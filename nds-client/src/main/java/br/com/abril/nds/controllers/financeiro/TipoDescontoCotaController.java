@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/tipoDescontoCota")
+@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 public class TipoDescontoCotaController extends BaseController {
 	
 	@Autowired
@@ -76,11 +77,11 @@ public class TipoDescontoCotaController extends BaseController {
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 	public void index() {}
 	
 	@Post
 	@Path("/novoDescontoGeral")
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO)
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 
 		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuarioLogado());
@@ -89,6 +90,7 @@ public class TipoDescontoCotaController extends BaseController {
 	}
 		
 	@Post("/novoDescontoEspecifico")
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO)
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
 		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuarioLogado());
@@ -98,6 +100,7 @@ public class TipoDescontoCotaController extends BaseController {
 
 	@Post
 	@Path("/novoDescontoProduto")
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO)
 	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
 		descontoService.incluirDescontoProduto(descontoDTO, getUsuarioLogado());
@@ -174,6 +177,7 @@ public class TipoDescontoCotaController extends BaseController {
 	
 	@Post
 	@Path("/excluirDesconto")
+	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA_ALTERACAO)
 	public void excluirDesconto(Long idDesconto, TipoDesconto tipoDesconto ){
 		
 		descontoService.excluirDesconto(idDesconto, tipoDesconto);

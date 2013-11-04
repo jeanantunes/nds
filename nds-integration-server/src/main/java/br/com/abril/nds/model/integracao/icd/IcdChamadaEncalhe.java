@@ -23,6 +23,9 @@ public class IcdChamadaEncalhe {
 	@Transient
 	private String tipoDocumento;
 	
+	@Transient
+	private String baseDeDados;
+	
 	@Column(name = "COD_DISTRIBUIDOR", nullable = false)
 	private Long codigoDistribuidor;
 	
@@ -42,10 +45,10 @@ public class IcdChamadaEncalhe {
 	private Long codigoNaturezaOperacao;
 	
 	@Column(name = "NUM_SEMANA_REFERENCIA_CHEN")
-	private Long nuemroSemanaReferencia;
+	private Long numeroSemanaReferencia;
 	
 	@Column(name = "NUM_CONTROLE_CHEN")
-	private Long nuemroControle;
+	private Long numeroControle;
 	
 	@Column(name = "DATA_LIMITE_RECEBIMENTO_CHEN")
 	private Date dataLimiteRecebimento;
@@ -105,6 +108,14 @@ public class IcdChamadaEncalhe {
 		this.tipoDocumento = tipoDocumento;
 	}
 
+	public String getBaseDeDados() {
+		return baseDeDados;
+	}
+
+	public void setBaseDeDados(String baseDeDados) {
+		this.baseDeDados = baseDeDados;
+	}
+
 	public Long getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}
@@ -153,20 +164,20 @@ public class IcdChamadaEncalhe {
 		this.codigoNaturezaOperacao = codigoNaturezaOperacao;
 	}
 
-	public Long getNuemroSemanaReferencia() {
-		return nuemroSemanaReferencia;
+	public Long getNumeroSemanaReferencia() {
+		return numeroSemanaReferencia;
 	}
 
-	public void setNuemroSemanaReferencia(Long nuemroSemanaReferencia) {
-		this.nuemroSemanaReferencia = nuemroSemanaReferencia;
+	public void setNumeroSemanaReferencia(Long numeroSemanaReferencia) {
+		this.numeroSemanaReferencia = numeroSemanaReferencia;
 	}
 
-	public Long getNuemroControle() {
-		return nuemroControle;
+	public Long getNumeroControle() {
+		return numeroControle;
 	}
 
-	public void setNuemroControle(Long nuemroControle) {
-		this.nuemroControle = nuemroControle;
+	public void setNumeroControle(Long numeroControle) {
+		this.numeroControle = numeroControle;
 	}
 
 	public Date getDataLimiteRecebimento() {

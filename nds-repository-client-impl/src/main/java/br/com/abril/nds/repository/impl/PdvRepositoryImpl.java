@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
@@ -401,5 +402,63 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
         
 		q.executeUpdate();
 	}
+
+	/**
+	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
+	 */
+	@Override
+	public List<PdvDTO> obterPDVs(Integer numeroCota) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT pdv.id as id, pdv.nome as nomePDV, " )
+				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
+				.append("  ifnull(endereco.logradouro,' ') || ',' || ifnull(endereco.numero,' ') || '-' || ifnull(endereco.bairro,' ') || '-' || ifnull(endereco.cidade, ' ') as  endereco , ")
+				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
+				.append("  pdv.status as statusPDV ,")
+				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento")
+		.append(" FROM PDV pdv ")
+		.append(" JOIN pdv.cota cota ")
+		.append(" LEFT JOIN pdv.enderecos enderecoPdv ")
+		.append(" LEFT JOIN enderecoPdv.endereco endereco ")
+		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
+		.append(" WHERE cota.numeroCota = :numeroCota ")
+		
+		.append(" group by pdv.id");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));
+		
+		return query.list();
+	}
+	
+	@Override
+	@Transactional
+	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota){
+		 StringBuilder hql = new StringBuilder();
+
+			hql.append("SELECT distinct pdv.id as id, pdv.nome as nomePDV, " )
+			.append("  endereco.logradouro  as  endereco , ")
+			.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
+			.append("  pdv.status as statusPDV ,")
+			.append("  cota.id as idCota ")
+			.append(" FROM PDV pdv ")
+			.append(" JOIN pdv.cota cota ")
+			.append("LEFT JOIN pdv.enderecos enderecoPdv ")
+			.append("LEFT JOIN enderecoPdv.endereco endereco ")
+			.append("LEFT JOIN pdv.telefones telefonePdv ")
+			.append("LEFT JOIN telefonePdv.telefone telefone ")
+			.append(" WHERE pdv.cota.id = :idCota ")
+			.append(" and enderecoPdv.principal = true");
+	        	
+		Query q = getSession().createQuery(hql.toString());
+        q.setParameter("idCota", idCota);
+        q.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));
+        return q.list();
+	        		
+	}
 	
 }
+

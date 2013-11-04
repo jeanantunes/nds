@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.EstoqueFecharDiaVO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
@@ -23,6 +22,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.movimentacao.Movimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
@@ -33,7 +33,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 	@Override
 	public boolean existeCobrancaParaFecharDia(Date diaDeOperaoMenosUm) {
 		StringBuilder hql = new StringBuilder();
-		hql.append(" from Cobranca c where ");		
+		hql.append(" select count(c.id) from Cobranca c where ");		
 		hql.append(" c.statusCobranca = :statusCobranca");		
 		hql.append(" and c.dataVencimento = :diaDeOperaoMenosUm ");
 		
@@ -43,7 +43,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		query.setParameter("diaDeOperaoMenosUm", diaDeOperaoMenosUm);
 		
-		return query.list().isEmpty() ? false : true;
+		return (long)query.uniqueResult() == 0L ? false : true;
 	}
 
 	@Override
@@ -117,16 +117,23 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		jpql.append(" FROM Lancamento AS lancamento ");
 		jpql.append(" JOIN lancamento.produtoEdicao AS pe ");
+		jpql.append(" left JOIN lancamento.estudo  estudo ");
 		jpql.append(" JOIN pe.produto AS produto ");
+		jpql.append(" join produto.fornecedores fornecedor ");
 		jpql.append(" WHERE  lancamento.dataLancamentoDistribuidor = :dataOperacaoDistribuidor ");
-		jpql.append(" AND  lancamento.status NOT IN (:status) ");	
+		
+		// jpql.append(" and estudo.status = :statusEstudo ");
+				
+		jpql.append(" AND  lancamento.status=:status ");	
 		jpql.append(" GROUP BY produto.codigo, produto.nome, pe.numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(jpql.toString());
 		
 		List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
-		listaLancamentos.add(StatusLancamento.EXPEDIDO);
-		listaLancamentos.add(StatusLancamento.CANCELADO);
+		listaLancamentos.add(StatusLancamento.BALANCEADO);
+		
+
+		//query.setParameter("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
 		
 		query.setParameterList("status", listaLancamentos);
 		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
@@ -164,26 +171,33 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao statusAprovacao) {
-		StringBuilder jpql = new StringBuilder();
+	public boolean existePendenciasDeAprovacao(Date dataOperacao, StatusAprovacao statusAprovacao, 
+			List<TipoMovimento> tiposMovimentoVerificaAprovacao) {
 		
-		jpql.append("SELECT movimento.tipoMovimento.descricao as descricaoTipoMovimento ");
+		StringBuilder jpql = new StringBuilder("select count(movimento.id) ");
+		jpql.append(" FROM Movimento movimento ");
+		jpql.append(" WHERE  movimento.dataCriacao = :dataOperacao ");
+		jpql.append(" AND  movimento.status = :statusAprovacao");
 		
-		jpql.append("FROM Movimento movimento ");
-		jpql.append("WHERE  movimento.dataCriacao = :dataOperacao ");
-		jpql.append("AND  movimento.status = :statusAprovacao");
+		if (tiposMovimentoVerificaAprovacao != null &&
+				!tiposMovimentoVerificaAprovacao.isEmpty()){
+			
+			jpql.append(" AND movimento.tipoMovimento in (:tiposMovimentoVerificaAprovacao) ");
+		}
 		
 		Query query = getSession().createQuery(jpql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("statusAprovacao", statusAprovacao);
 		
+		if (tiposMovimentoVerificaAprovacao != null &&
+				!tiposMovimentoVerificaAprovacao.isEmpty()){
+			
+			query.setParameterList("tiposMovimentoVerificaAprovacao", tiposMovimentoVerificaAprovacao);
+		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoControleDeAprovacaoFecharDiaDTO.class));
-		
-		return query.list();
+		return (Long)query.uniqueResult() > 0;
 	}
 
 	@SuppressWarnings("unchecked")

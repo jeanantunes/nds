@@ -112,6 +112,14 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 								+ ", de: " + qtdeReparteAtual
 								+ " para: " + qtdeReparteCorrente);
 				estudo.setQtdeReparte(qtdeReparteCorrente);
+			} else {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Remoção dos estudos cotas vinculados ao estudo: "
+								+ estudo.getId()
+								+ ", do Produto: " + estudo.getProdutoEdicao().getProduto().getCodigo()
+								+ " / Edicao: " + estudo.getProdutoEdicao().getNumeroEdicao().toString()
+								+ " realizado com sucesso.");
 			}
 			
 			estudo.setDataAlteracao(new Date());

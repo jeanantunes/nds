@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -45,6 +46,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/banco")
+@Rules(Permissao.ROLE_CADASTRO_BANCO)
 public class BancoController extends BaseController {
 	
 	@Autowired
@@ -75,7 +77,7 @@ public class BancoController extends BaseController {
      * Método de chamada da página
      */
     @Get
-    @Rules(Permissao.ROLE_CADASTRO_BANCO)
+    @Path("/")
     public void bancos(){ 
    		
 	}
@@ -189,6 +191,7 @@ public class BancoController extends BaseController {
 	 */
 	@Post
 	@Path("/novoBanco")
+	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
 	public void novoBanco(String numero,
 						  String nome,
 						  String codigoCedente,
@@ -260,6 +263,7 @@ public class BancoController extends BaseController {
 	 */
 	@Post
 	@Path("/buscaBanco")
+	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
 	public void buscaBanco(long idBanco){
 		BancoVO bancoVO = this.bancoService.obterDadosBanco(idBanco);
 		if (bancoVO==null){
@@ -468,6 +472,7 @@ public class BancoController extends BaseController {
 	 */
 	@Post
 	@Path("/excluirBanco")
+	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
 	public void excluirBanco(long idBanco){
 		
 		Banco banco = this.bancoService.obterBancoPorId(idBanco);
@@ -496,7 +501,7 @@ public class BancoController extends BaseController {
 	@Post
 	public void autoCompletarPorNomeBanco(String nomeBanco){
 		
-		List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco);
+		List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
 		

@@ -40,6 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/confirmacaoExpedicao")
+@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
 public class ConfirmacaoExpedicaoController extends BaseController{
 
 	@Autowired
@@ -95,7 +96,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		/**
 		 * Inicializa dados da tela
 		 */
-		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
+		@Path("/")
 		public void index() {
 			gerarListaFornecedores();
 			gerarDataLancamento();
@@ -111,6 +112,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		 * @param selecionado - true(adiciona a lista) false(remove da lista)
 		 */
 		@Post
+		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void selecionarLancamento(Long idLancamento, Boolean selecionado) {
 			
 			@SuppressWarnings("unchecked")
@@ -140,6 +142,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		 * @param selecionado - true(adiciona todos) false (remove todos)
 		 */
 		@Post
+		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void selecionarTodos(Boolean selecionado){
 			
 			if(selecionado==false) {
@@ -177,6 +180,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		 * @param dtLancamento - data de lançamento
 		 * @param estudo - boolean - possui ou não estudo
 		 */
+		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void confirmarExpedicao( Integer page, Integer rp, String sortname, 
 				String sortorder, Long idFornecedor, 
 				String dtLancamento, Boolean estudo){

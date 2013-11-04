@@ -352,8 +352,17 @@ public class PDFExporter implements Exporter {
         			pdfCell.setBackgroundColor(rowBaseColor);        			
         		}
         		
-        		Paragraph paragraph = 
-        			new Paragraph(StringUtils.defaultString(exportColumn.getValue()));
+        		Paragraph paragraph = null;
+        		
+        		Float fontSize = exportColumn.getFontSize();
+        		if (fontSize != null && fontSize != 0){
+        			
+        			Font font = new Font(Font.FontFamily.TIMES_ROMAN, fontSize);
+        			paragraph = new Paragraph(StringUtils.defaultString(exportColumn.getValue()), font);
+        		} else {
+        			
+        			paragraph = new Paragraph(StringUtils.defaultString(exportColumn.getValue()));
+        		}
 
         		paragraph.setAlignment(exportColumn.getAlignment().getValue());
         		
@@ -465,7 +474,18 @@ public class PDFExporter implements Exporter {
 
         		PdfPCell footerValuePdfCell = new PdfPCell();
         		
-        		Paragraph footerValueParagraph = new Paragraph(exportFooter.getValue());
+        		Float fontSize = exportFooter.getFontSize();
+    			
+    			Paragraph footerValueParagraph;
+    			
+        		if (fontSize != null && fontSize != 0){
+        			
+        			Font font = new Font(Font.FontFamily.TIMES_ROMAN, fontSize);
+        			footerValueParagraph = new Paragraph(StringUtils.defaultString(exportFooter.getValue()), font);
+        		} else {
+        			
+        			footerValueParagraph = new Paragraph(StringUtils.defaultString(exportFooter.getValue()));
+        		}
         		
         		footerValueParagraph.setAlignment(exportFooter.getAlignment().getValue());
         		

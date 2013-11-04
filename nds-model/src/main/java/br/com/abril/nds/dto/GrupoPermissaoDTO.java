@@ -1,6 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.List;
+
+import br.com.abril.nds.model.seguranca.Permissao;
 
 /**
  * @author InfoA2
@@ -13,7 +16,18 @@ public class GrupoPermissaoDTO implements Serializable {
 	
 	private String nome;
 
-	private String permissoesSelecionadas;
+	private List<Permissao> permissoes;
+	
+	public GrupoPermissaoDTO() {
+		
+	}
+		
+	public GrupoPermissaoDTO(Long id, String nome, List<Permissao> permissoes) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.permissoes = permissoes;
+	}
 
 	public String getNome() {
 		return nome;
@@ -21,14 +35,6 @@ public class GrupoPermissaoDTO implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public String getPermissoesSelecionadas() {
-		return permissoesSelecionadas;
-	}
-
-	public void setPermissoesSelecionadas(String permissoesSelecionadas) {
-		this.permissoesSelecionadas = permissoesSelecionadas;
 	}
 
 	public Long getId() {
@@ -59,6 +65,14 @@ public class GrupoPermissaoDTO implements Serializable {
 		} else if (!nome.equals(other.nome))
 			return false;
 		return true;
+	}
+
+	public List<Permissao> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(List<Permissao> permissoes) {
+		this.permissoes = permissoes;
 	}
 	
 }

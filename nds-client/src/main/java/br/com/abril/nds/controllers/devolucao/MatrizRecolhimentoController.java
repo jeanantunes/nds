@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -65,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/devolucao/balanceamentoMatriz")
+@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ)
 public class MatrizRecolhimentoController extends BaseController {
 
 	@Autowired
@@ -99,7 +99,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ)
 	public void index() {
 		
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
@@ -146,8 +145,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
 
 		if(numeroSemana==null && dataPesquisa!=null) {
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			return DateUtil.obterNumeroSemanaNoAno(dataPesquisa, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			
+			return DateUtil.obterNumeroSemanaNoAno(
+					dataPesquisa, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana());
 		}
 		
 		return numeroSemana;
@@ -156,8 +157,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	private Date tratarData(Integer numeroSemana, Date dataPesquisa) {
 
 		if(numeroSemana!=null && dataPesquisa==null) {
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			return DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			
+			return DateUtil.obterDataDaSemanaNoAno(
+					numeroSemana, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
 		}
 		
 		return dataPesquisa;
@@ -790,9 +793,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
 			
-			//precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
-			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto));
-			
+			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
 			
@@ -821,9 +822,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			produtoRecolhimentoVO.setEncalheAtendida(
 				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
-				
-			produtoRecolhimentoVO.setEncalheAlternativo(
-				produtoRecolhimentoDTO.getExpectativaEncalheAlternativo());
 			
 			produtoRecolhimentoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
@@ -941,9 +939,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		produtoRecolhimentoFormatado.setEncalheAtendida(
 			(produtoRecolhimento.getEncalheAtendida() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAtendida(), 0).toString() : null);
 		
-		produtoRecolhimentoFormatado.setEncalheAlternativo(
-			(produtoRecolhimento.getEncalheAlternativo() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAlternativo(), 0).toString() : null);
-			
 		produtoRecolhimentoFormatado.setEncalhe(
 			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		
@@ -1045,15 +1040,8 @@ public class MatrizRecolhimentoController extends BaseController {
 			}
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor == null) {
-			
-			throw new RuntimeException("Dados do distribuidor inexistentes!");
-		}
-		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
+			numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		

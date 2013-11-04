@@ -60,6 +60,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/devolucao/chamadao")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO)
 public class ChamadaoController extends BaseController {
 
 	@Autowired
@@ -92,7 +93,6 @@ public class ChamadaoController extends BaseController {
 	
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO)
 	public void index() {
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =

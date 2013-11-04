@@ -95,24 +95,26 @@ public class RomaneioServiceImpl implements RomaneioService {
 			// Formata os romaneios para o relatório:
 			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()){
 				
-				Long idBox = Long.valueOf(0);
-				Long idRoteiro = Long.valueOf(0);
 				Long idRota = Long.valueOf(0);
+				Long idRoteiro = Long.valueOf(0);
+				Long idBox = Long.valueOf(0);
+				
 				RomaneioModelo01DTO dto = null;
 				for (RomaneioDTO romaeio : lstRomaneioDTO){
 					
 					if (idBox.equals(romaeio.getIdBox())
 							&& idRoteiro.equals(romaeio.getIdRoteiro())
 							&& idRota.equals(romaeio.getIdRota())) {
-						
+
 						dto.getItens().add(romaeio);
+
 					} else {
 						
 						// Novo RomaneioModelo01DTO:
-						idBox = romaeio.getIdBox();
-						idRoteiro = romaeio.getIdRoteiro();
 						idRota = romaeio.getIdRota();
-						
+						idRoteiro = romaeio.getIdRoteiro();
+						idBox = romaeio.getIdBox();
+
 						dto = new RomaneioModelo01DTO();
 						dto.setDataGeracao(filtro.getData());
 						dto.setEntregaBox(romaeio.getNomeBox());

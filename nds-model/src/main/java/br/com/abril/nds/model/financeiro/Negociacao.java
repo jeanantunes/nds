@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,9 +34,10 @@ public class Negociacao {
 	private List<Cobranca> cobrancasOriginarias;
 	
 	@OneToMany(mappedBy="negociacao")
+	@OrderBy("dataVencimento asc")
 	private List<ParcelaNegociacao> parcelas;
 	
-	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA")
+	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA", precision=18, scale=4)
 	private BigDecimal comissaoParaSaldoDivida;
 	
 	@Column(name = "NEGOCIACAO_AVULSA")
@@ -51,7 +53,7 @@ public class Negociacao {
 	@Column(name = "ATIVAR_PAGAMENTO_APOS_PARCELA")
 	private Integer ativarCotaAposParcela;
 	
-	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO")
+	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO", precision=18, scale=4)
 	private BigDecimal valorDividaPagaComissao;
 
 	public Long getId() {

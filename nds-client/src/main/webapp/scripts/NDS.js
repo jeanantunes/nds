@@ -1,8 +1,11 @@
 // JavaScript Document
 $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status == 601) {
-		 window.alert("Sua sessão expirou.\nVocê será redirecionado para a página de login.");
-		 window.location.reload();
+		 exibirMensagem('ERROR',['Sua sessão expirou.\nVocê será redirecionado para a página de login.']);
+		 setTimeout(function() {
+			 window.location.reload();
+		 }, 5000);
+		 
     }
 });
 

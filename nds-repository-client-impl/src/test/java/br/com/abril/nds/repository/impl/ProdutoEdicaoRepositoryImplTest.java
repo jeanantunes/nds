@@ -40,12 +40,13 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
 
 public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private ProdutoEdicaoRepositoryImpl produtoEdicaoRepository;
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 
 	private FormaCobranca formaBoleto;
 	

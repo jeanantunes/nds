@@ -147,9 +147,12 @@ public class ProdutoServicoRepositoryImplTest extends
 		save(produtoServico);
 		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoProdutoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
 		cromoBrasileirao.addFornecedor(fornecedorDinap);
+		save(cromoBrasileirao);
 		
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
 				new Long(50), new BigDecimal(100), new BigDecimal(100), "3333", cromoBrasileirao, null, false,"Cromo Brasileirão");
+		
+		save(cromoBrasileiraoEd1);
 		
 		TipoMovimentoEstoque tipoMovimentoEncalhe = Fixture.tipoMovimentoEnvioEncalhe();
 		save(tipoMovimentoEncalhe);
@@ -172,7 +175,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		listaMovimentoEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 		listaMovimentoEstoqueCota.add(movimento);
 		
-		itemNotaFiscal.setIdProdutoEdicao(1L);
+		itemNotaFiscal.setIdProdutoEdicao(cromoBrasileiraoEd1.getId());
 		itemNotaFiscal.setQuantidade(BigInteger.TEN);
 		itemNotaFiscal.setValorUnitario(BigDecimal.ONE);
 		itemNotaFiscal.setCstICMS("teste");

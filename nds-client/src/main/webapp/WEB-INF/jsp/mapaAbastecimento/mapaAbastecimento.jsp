@@ -40,6 +40,20 @@
 
 <body>
 
+
+    <div class="areaBts">
+	    <div class="area">
+			<span class="bt_arq">
+			    <a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" rel="tipsy" title="Imprimir">
+				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+
 	
 <form id="idEmissaoCEfornecedor">
 	<div id="dialog-pesq-produtos" title="Selecionar Produtos" style="display: none;">
@@ -270,13 +284,7 @@
             </div>
 			
           <br />
-       		<!-- IMPRIMIR MAPA --> 
-			<span class="bt_novos" id="map_1" title="Imprimir">
-				<a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" target="_blank">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-					Imprimir
-				</a>
-			</span>  
+   
         </div>
         
       </fieldset>

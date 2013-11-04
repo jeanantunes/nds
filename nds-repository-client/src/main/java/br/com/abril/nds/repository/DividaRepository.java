@@ -16,7 +16,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface DividaRepository extends Repository<Divida, Long>{
 
-	Divida obterDividaParaAcumuloPorCota(Long idCota, Date diaDivida);
+	Divida obterDividaParaAcumuloPorCota(Long idCota);
 	
 	/**
 	 * Retorna as dividas geradas conforme parametros informados no filtro.
@@ -78,6 +78,8 @@ public interface DividaRepository extends Repository<Divida, Long>{
 	 * @return
 	 */
 	Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro);
+	
+	Divida obterDividaPorIdConsolidadoNaoNegociado(Long idConsolidado);
 	
 	Divida obterDividaPorIdConsolidado(Long idConsolidado);
 	

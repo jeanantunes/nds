@@ -245,7 +245,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
          
 		hql.append("(")
 		   .append(" COALESCE( ")
-		   .append("          ( select sum(mec.qtde * (mec.precoVenda - (mec.precoVenda * mec.valoresAplicados.valorDesconto / 100 )) )  ")
+		   .append("          ( select sum(mec.qtde * (mec.valoresAplicados.precoVenda - (mec.valoresAplicados.precoVenda * mec.valoresAplicados.valorDesconto / 100 )) )  ")
 		   .append("            from MovimentoEstoqueCota mec" )
 		   .append("            where mec.cota = garantia.cota ")
 		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoEntrada")
@@ -253,7 +253,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append("          )")
 		   .append("       ,0)  -  "  )
 		   .append(" COALESCE( ")
-		   .append("          ( select sum(mec.qtde * (mec.precoVenda * mec.valoresAplicados.valorDesconto / 100) )  ")
+		   .append("          ( select sum(mec.qtde * (mec.valoresAplicados.precoVenda * mec.valoresAplicados.valorDesconto / 100) )  ")
 		   .append("            from MovimentoEstoqueCota mec" )
 		   .append("            where mec.cota = garantia.cota ")
 		   .append("            and mec.tipoMovimento.operacaoEstoque = :movimentoSaida")

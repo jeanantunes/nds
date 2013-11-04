@@ -102,6 +102,13 @@ public class PessoaServiceImpl implements PessoaService {
 		return pessoaRepository.buscarPorNome(nomePessoa);
 	}
 	
+	@Transactional(readOnly = true)
+	@Override
+	public List<Pessoa> obterPessoasPorNome(String nomePessoa, Integer qtdMaxResult) {
+		
+		return pessoaRepository.buscarPorNome(nomePessoa, qtdMaxResult);
+	}	
+	
 	/**
 	 * Verifica se todos os numeros são iguais
 	 * @param str

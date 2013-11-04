@@ -357,6 +357,8 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	carregarGridProduto : function(formData) {
 	
+		$('#idFiledResultResumo', this.workspace).html('Resumo Expedição Por Produto');
+		
 		$("#resumoExpedicaoGridProduto", this.workspace).flexOptions({
 			url: contextPath + "/expedicao/resumo/pesquisar/produto",
 			params: formData,
@@ -373,6 +375,8 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	carregarGridbox : function(formData) {
 	
+		$('#idFiledResultResumo', this.workspace).html('Resumo Expedição Por Box');
+		
 		$("#resumoExpedicaoGridBox", this.workspace).flexOptions({
 			url: contextPath + "/expedicao/resumo/pesquisar/box",
 			params: formData,

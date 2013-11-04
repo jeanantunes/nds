@@ -499,6 +499,24 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador, Integer qtdMaxResult) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoa from Entregador ent join ent.pessoa pessoa ")
+		.append(" where  ")
+		
+		 .append(" lower(pessoa.nomeFantasia) like :apelidoEntregador or lower(pessoa.apelido) like :apelidoEntregador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("apelidoEntregador", "%" + apelidoEntregador.toLowerCase() + "%");
+		query.setMaxResults(qtdMaxResult);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -510,6 +528,24 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("nomeEntregador", "%" + nomeEntregador.toLowerCase() + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador, Integer qtdMaxResult) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pessoa from Entregador ent join ent.pessoa pessoa ")
+		.append(" where  ")
+		
+		 .append(" lower(pessoa.nome) like :nomeEntregador or lower(pessoa.razaoSocial) like :nomeEntregador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeEntregador", "%" + nomeEntregador.toLowerCase() + "%");
+		query.setMaxResults(qtdMaxResult);
 		
 		return query.list();
 	}

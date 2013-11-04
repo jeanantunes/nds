@@ -6,7 +6,7 @@
 	<script type="text/javascript">
 
 		var ${param.tela} = new Distribuicao('${param.tela}');
-
+		
 	</script>
 	
 	<style>
@@ -91,6 +91,13 @@
 				<!-- Recebe / Recolhe produtos parciais -->
 				<input id="${param.tela}recebeRecolhe"  name="recebeRecolhe" type="checkbox" value="" style="margin-top:9px;" />
 				<label for="recebeRecolhe" style="width: 190px;">Recebe / Recolhe produtos parciais</label>
+				
+				<br clear="all" />
+				
+				<!-- Recebe Complementar -->
+				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" value="" style="margin-top:9px;" />
+				<label for="recebeComplementar" style="width: 190px;">Recebe Complementar</label> 
+				
     		</td>
     		<td width="10" style="width:10px;">
 

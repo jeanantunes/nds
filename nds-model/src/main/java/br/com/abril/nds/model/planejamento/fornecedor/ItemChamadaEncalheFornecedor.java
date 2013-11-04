@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,11 +40,11 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "NUMERO_DOCUMENTO", nullable = false)
     private Long numeroDocumento;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,fetch=FetchType.LAZY)
     @JoinColumn(name = "CHAMADA_ENCALHE_FORNECEDOR_ID")
     private ChamadaEncalheFornecedor chamadaEncalheFornecedor;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,fetch=FetchType.LAZY)
     @JoinColumn(name = "PRODUTO_EDICAO_ID")
     private ProdutoEdicao produtoEdicao;
 
@@ -64,7 +65,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Enumerated(EnumType.STRING)
     private RegimeRecolhimento regimeRecolhimento;
 
-    @Column(name = "PRECO_UNITARIO", nullable = false)
+    @Column(name = "PRECO_UNITARIO", nullable = false, precision=18, scale=4)
     private BigDecimal precoUnitario;
 
     @Temporal(TemporalType.DATE)
@@ -77,7 +78,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_VENDA_APURADA")
     private Long qtdeVendaApurada;
 
-    @Column(name = "VALOR_VENDA_APURADO")
+    @Column(name = "VALOR_VENDA_APURADO", precision=18, scale=4)
     private BigDecimal valorVendaApurado;
 
     @Column(name = "QTDE_DEVOLUCAO_INFORMADA")
@@ -86,7 +87,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_VENDA_INFORMADA")
     private Long qtdeVendaInformada;
 
-    @Column(name = "VALOR_VENDA_INFORMADO")
+    @Column(name = "VALOR_VENDA_INFORMADO", precision=18, scale=4)
     private BigDecimal valorVendaInformado;
 
     @Column(name = "NUMERO_NOTA_ENVIO", nullable = false)
@@ -104,10 +105,10 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_DEVOLUCAO_PARCIAL")
     private Long qtdeDevolucaoParcial;
 
-    @Column(name = "VALOR_MARGEM_INFORMADO")
+    @Column(name = "VALOR_MARGEM_INFORMADO", precision=18, scale=4)
     private BigDecimal valorMargemInformado;
 
-    @Column(name = "VALOR_MARGEM_APURADO", nullable = false)
+    @Column(name = "VALOR_MARGEM_APURADO", nullable = false, precision=18, scale=4)
     private BigDecimal valorMargemApurado;
     
     /**

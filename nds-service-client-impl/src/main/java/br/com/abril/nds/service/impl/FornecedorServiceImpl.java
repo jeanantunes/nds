@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
@@ -315,8 +316,6 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Transactional
 	public List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
 
-		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
-		
 		return this.fornecedorRepository.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
 	}
 
@@ -327,29 +326,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Transactional
 	public Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
 
-		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
-		
 		return this.fornecedorRepository.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);
 	}
 	
-	/*
-	 * Método que realiza a validação do filtro para consulta de fornecedores.
-	 */
-	private void validarFiltroConsultaFornecedorDTO(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
-
-		if (filtroConsultaFornecedor == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro obrigatório para a pesquisa.");
-		}
-
-		if ((filtroConsultaFornecedor.getCnpj() == null || filtroConsultaFornecedor.getCnpj().isEmpty()) 
-				&& (filtroConsultaFornecedor.getRazaoSocial() == null || filtroConsultaFornecedor.getRazaoSocial().isEmpty())
-				&& (filtroConsultaFornecedor.getNomeFantasia() == null || filtroConsultaFornecedor.getNomeFantasia().isEmpty())) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Digite ao menos um filtro para realizar a pesquisa.");
-		}
-		
-	}
 
 	@Transactional(readOnly=true)
 	@Override
@@ -726,6 +705,13 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public List<Pessoa> obterFornecedorPorNome(String nomeFornecedor, Integer qtdMaxResult) {
+		
+		return fornecedorRepository.obterFornecedorPorNome(nomeFornecedor, qtdMaxResult);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia) {
 		
 		return fornecedorRepository.obterFornecedorPorNomeFantasia(nomeFantasia);
@@ -739,5 +725,14 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public Fornecedor obterPorId(Long idFornecedor) {
 		return this.fornecedorRepository.buscarPorId(idFornecedor);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, 
+																Origem origem) {
+		
+		return this.fornecedorRepository.obterFornecedoresPorSituacaoEOrigem(situacaoCadastro, origem);
+	}
+	
 }
 

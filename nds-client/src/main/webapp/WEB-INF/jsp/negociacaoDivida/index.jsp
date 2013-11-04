@@ -93,15 +93,15 @@
 		
 
 		<%-- POPUPS --%>
-
-		<div id="dialog-detalhe" title="Detalhes da D&iacute;vida" style="display:none;">
-			<fieldset>
-				<legend>Dados da D&iacute;vida</legend>
-				<table class="negociacaoDetalheGrid"></table>
-				<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
-			</fieldset>
+		<form id="dialog-detalhe-form">
+			<div id="dialog-detalhe" title="Detalhes da D&iacute;vida" style="display:none;">
+				<fieldset>
+					<legend>Dados da D&iacute;vida</legend>
+					<table class="negociacaoDetalheGrid"></table>
+					<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
+				</fieldset>
 		</div>
-	
+		</form>
 	<form id="formaPgtoForm">
 		<div id="dialog-NegociacaoformaPgto" title="Negociar D&iacute;vida" style="display:none;">
 			
@@ -123,7 +123,7 @@
 				<legend>Formas de Pagamento</legend>
 
 				<table width="640" border="0" cellspacing="1" cellpadding="1">
-					<tr>
+					<tr id="negociacaoPorComissao-tr">
 						<td width="20"><input name="tipoPgtos" type="radio" value=""
 							id="negociacaoPorComissao" onclick="negociacaoDividaController.comissaoCota();" /></td>
 						<td width="118">Comiss&atilde;o da Cota</td>
@@ -310,7 +310,7 @@
 										<td width="60" align="center" class="header_table">Parcela</td>
 										<td width="64" align="center" class="header_table">Encargos</td>
 										<td width="60" align="center" class="header_table">Parc Total</td>
-										<td width="106" align="center">Ativar ao pagar</td>
+										<td width="106" align="center" id="header_table_Ativar">Ativar ao pagar</td>
 									</tr>
 									
 								</table>

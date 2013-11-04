@@ -180,7 +180,7 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="60">Previsto:</td>
-									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; float:left;" /></td>
+									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; text-align:right; float:left;" /></td>
 									<td width="30">Real:</td>
 									<td width="120"><input type="text" name="precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
 								</tr>
@@ -492,20 +492,12 @@ fieldset {
 					<td width="22">&nbsp;</td>
 					<td width="57">Situa&ccedil;&atilde;o:</td>
 					<td width="113">
-						<select name="select" id="produtoEdicaoController-pSituacaoLancamento" name="pSituacaoLancamento" style="width:130px;">
+					
+						<select name="pSituacaoLancamento" id="produtoEdicaoController-pSituacaoLancamento" style="width:130px;" >
 							<option value="" selected="selected">Selecione...</option>
-							<option value="Transmitido">Transmitido</option>
-							<option value="Previsto">Previsto</option>
-							<option value="C&aacute;lculo Solicitado">C&aacute;lculo Solicitado</option>
-							<option value="Calculado">Calculado</option>
-							<option value="Furo">Furo</option>
-							<option value="Emitido">Emitido</option>
-							<option value="Liberar C&aacute;lculo">Liberar C&aacute;lculo</option>
-							<option value="Confirmado">Confirmado</option>
-							<option value="Lan&ccedil;ado">Lan&ccedil;ado</option>
-							<option value="Em Recolhimento">Em Recolhimento</option>
-							<option value="Recolhido">Recolhido</option>
-							<option value="Fechado">Fechado</option>
+	                        <c:forEach items="${listaStatusLancamento}" var="statusLancamento">
+								<option value="${statusLancamento.key}" >${statusLancamento.value}</option>
+							</c:forEach>
 						</select>
 					</td>
 		

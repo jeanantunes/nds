@@ -7,4 +7,5 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao);
 	
 	EstoqueProduto buscarEstoqueProdutoPorProdutoEdicao(Long idProdutoEdicao);
+
 }

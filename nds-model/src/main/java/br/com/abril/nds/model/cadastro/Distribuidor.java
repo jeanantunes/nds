@@ -67,7 +67,7 @@ public class Distribuidor {
 	@JoinColumn(name = "PJ_ID")
 	private PessoaJuridica juridica;
 	
-	@Column(name = "FATOR_DESCONTO")
+	@Column(name = "FATOR_DESCONTO", precision=18, scale=4)
 	private BigDecimal fatorDesconto;
 	
 	@OneToMany(mappedBy="distribuidor")
@@ -167,7 +167,7 @@ public class Distribuidor {
      * valor consigando total menor ou igual ao informado 
      * nesta coluna.
 	 */
-	@Column(name = "VALOR_CONSIGNADO_SUSPENSAO_COTAS",  nullable = true)
+	@Column(name = "VALOR_CONSIGNADO_SUSPENSAO_COTAS",  nullable = true, precision=18, scale=4)
 	private BigDecimal valorConsignadoSuspensaoCotas;
 	
 	/**
@@ -265,7 +265,7 @@ public class Distribuidor {
 	/**
 	 * Desconto da cota para negociação (Parametros do Distribuidor / Aba de Negociação)
 	 */
-	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO")
+	@Column(name="DESCONTO_COTA_PARA_NEGOCIACAO", precision=18, scale=4)
 	private BigDecimal descontoCotaNegociacao;
 	
 	@Embedded

@@ -26,25 +26,25 @@ public class FechamentoDiarioConsolidadoReparte implements Serializable{
     @Column(name = "ID")
     private Long id;
 
-	@Column(name = "VALOR_REPARTE")
+	@Column(name = "VALOR_REPARTE", precision=18, scale=4)
 	private BigDecimal valorReparte;
 	
-	@Column(name = "VALOR_SOBRAS")
+	@Column(name = "VALOR_SOBRAS", precision=18, scale=4)
 	private BigDecimal valorSobras;
 	
-	@Column(name = "VALOR_FALTAS")	
+	@Column(name = "VALOR_FALTAS", precision=18, scale=4)	
 	private BigDecimal valorFaltas;
 	
-	@Column(name = "VALOR_TRANSFERIDO")
+	@Column(name = "VALOR_TRANSFERIDO", precision=18, scale=4)
 	private BigDecimal valorTransferido;
 	
-	@Column(name = "VALOR_DISTRIBUIDO")
+	@Column(name = "VALOR_DISTRIBUIDO", precision=18, scale=4)
 	private BigDecimal valorDistribuido;
 	
-	@Column(name = "SOBRA_DISTRIBUIDA")
+	@Column(name = "SOBRA_DISTRIBUIDA", precision=18, scale=4)
 	private BigDecimal valorSobraDistribuida;
 	
-	@Column(name = "VALOR_DIFERENCA")
+	@Column(name = "VALOR_DIFERENCA", precision=18, scale=4)
 	private BigDecimal valorDiferenca;
 	
 	@OneToOne(optional = false)

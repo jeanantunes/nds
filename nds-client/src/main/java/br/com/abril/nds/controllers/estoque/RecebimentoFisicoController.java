@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -64,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/recebimentoFisico")
+@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)
 public class RecebimentoFisicoController extends BaseController {
 	
 	private Result result;
@@ -112,7 +113,7 @@ public class RecebimentoFisicoController extends BaseController {
 	/**
 	 * Direciona para a página de recebimento físico.
 	 */
-	@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)
+	@Path("/")
 	public void index() {
 
 		preencherCombos();
@@ -201,15 +202,13 @@ public class RecebimentoFisicoController extends BaseController {
 			setItensRecebimentoFisicoToSession(new LinkedList<RecebimentoFisicoDTO>());
 		}
 		
-		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
-		
 		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
-		
-		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
 		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 		
-		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = 
+			obterListaCellModelKeyValue(
+				getItensRecebimentoFisicoFromSession(), indRecebimentoFisicoConfirmado);
 		
 		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
 				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
@@ -219,24 +218,6 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setPage(1);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
-	}
-	
-	/**
-	 * Recalcula os campos valorTotal e valorDiferenca.
-	 * 
-	 * @param itensRecebimento
-	 */
-	private void recarregarValoresCalculados(List<RecebimentoFisicoDTO> itensRecebimento) {
-		
-		for(RecebimentoFisicoDTO item : itensRecebimento) {
-			
-			carregarValorTotal(item);
-			
-			carregarValorDiferenca(item);
-			
-		}
-		
 	}
 		
 	/**
@@ -255,15 +236,13 @@ public class RecebimentoFisicoController extends BaseController {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
 		
-		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
-		
-		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
-		
-		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());	
+		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);	
 		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(idNotaFiscal);
 		
-		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = 
+			obterListaCellModelKeyValue(
+				getItensRecebimentoFisicoFromSession(), indRecebimentoFisicoConfirmado);
 		
 		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
 				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
@@ -384,7 +363,11 @@ public class RecebimentoFisicoController extends BaseController {
 			} else {
 				filtro.setCnpj(null);
 			}
-				
+			
+			if(filtro.getNumeroNotaEnvio() != null) {
+				return;
+			}
+			
 			if(filtro.getNumeroNota() == null) {
 				
 				if(verificaValidationError("numeroNotaFiscal")) {
@@ -460,7 +443,7 @@ public class RecebimentoFisicoController extends BaseController {
 		String codigo			= recebimentoFisicoDTO.getCodigoProduto();
 		String nomeProduto		= recebimentoFisicoDTO.getNomeProduto();
 		String edicao			= (recebimentoFisicoDTO.getEdicao() 		== null) 	? "" 	: recebimentoFisicoDTO.getEdicao().toString();
-		String precoCapa		= (recebimentoFisicoDTO.getPrecoCapa() 		== null) 	? "0.0" : recebimentoFisicoDTO.getPrecoCapa().toString();
+		String precoItem		= (recebimentoFisicoDTO.getPrecoItem() 		== null) 	? "0.0" : recebimentoFisicoDTO.getPrecoItem().toString();
 		String dataLancamento	= (recebimentoFisicoDTO.getDataLancamento() != null) ? DateUtil.formatarDataPTBR(recebimentoFisicoDTO.getDataLancamento()) : "";
 		String dataRecolhimento = (recebimentoFisicoDTO.getDataRecolhimento() != null) ?  DateUtil.formatarDataPTBR(recebimentoFisicoDTO.getDataRecolhimento()) : "";
 		String repartePrevisto  = (recebimentoFisicoDTO.getRepartePrevisto()!=null) ? recebimentoFisicoDTO.getRepartePrevisto().toString() : "";
@@ -475,7 +458,7 @@ public class RecebimentoFisicoController extends BaseController {
 		recebimentoFisicoVO.setCodigo(codigo);
 		recebimentoFisicoVO.setNomeProduto(nomeProduto);
 		recebimentoFisicoVO.setEdicao(edicao);
-		recebimentoFisicoVO.setPrecoCapa(precoCapa);
+		recebimentoFisicoVO.setPrecoCapa(precoItem);
 		recebimentoFisicoVO.setDataLancamento(dataLancamento);
 		recebimentoFisicoVO.setDataRecolhimento(dataRecolhimento);
 		recebimentoFisicoVO.setRepartePrevisto(repartePrevisto);
@@ -601,23 +584,21 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
 		
-		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		BigInteger qtdeExemplares = itemRecebimento.getQtdExemplar() == null ? BigInteger.ZERO : itemRecebimento.getQtdExemplar();
 		
-		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
+		BigInteger qtdePacote = itemRecebimento.getQtdPacote() == null ? BigInteger.ZERO : itemRecebimento.getQtdPacote();
+		
+		BigInteger qtdePacotePadrao = BigInteger.valueOf(itemRecebimento.getPacotePadrao());
+		
+		BigDecimal precoItem = itemRecebimento.getPrecoItem() == null ? BigDecimal.ZERO :  itemRecebimento.getPrecoItem();
 		
 		BigDecimal valorTotal = new BigDecimal(0.0D);
 		
-		if(qtdRepartePrevisto != null && precoCapa != null) {
-			
-			valorTotal = precoCapa.multiply( new BigDecimal(qtdRepartePrevisto) ) ;
+		BigInteger qtdeTotalItens = qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
 		
-		}
-		  DecimalFormat df = new DecimalFormat("0.##");
-		  
-		  String dx = df.format(valorTotal);
-		  
-		  itemRecebimento.setValorTotal(new BigDecimal(dx.replace(',' , '.')));
-		
+		valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
+  
+		itemRecebimento.setValorTotal(valorTotal);
 	}
 		
 	/**
@@ -627,27 +608,23 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarValorDiferenca(RecebimentoFisicoDTO itemRecebimento) {
 		
-		if(itemRecebimento.getRepartePrevisto() == null) {
+		if (itemRecebimento.getRepartePrevisto() == null) {
+			
 			itemRecebimento.setRepartePrevisto(BigInteger.ZERO);
 		}
-
-		// Realizado em conjunto com Cesar Punk Pop
-		/*if(itemRecebimento.getQtdFisico() == null) {
-			itemRecebimento.setQtdFisico(BigInteger.ZERO);
-		}*/
 
 		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 		
-		//BigInteger valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
 		BigInteger valorDiferenca = BigInteger.ZERO;
+		
 		if (itemRecebimento.getQtdFisico() != null) {
+			
 			valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
 		}
 		
 		itemRecebimento.setDiferenca(valorDiferenca);
-		
 	}
 	
 	/**
@@ -796,14 +773,18 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	/**
 	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
-	 * CNPJ, numero da nota, série e chave de acesso caso a mesma
-	 * seja uma nota fiscal eletrônica. Caso a nota seja encontrada
-	 * o id interno da mesma será colocado na session.
+	 * CNPJ, numero da nota, série e chave de acesso ou ainda por 
+	 * numero da nota de envio caso a mesma seja uma nota fiscal 
+	 * eletrônica. Caso a nota seja encontrada o id interno da mesma 
+	 * será colocado na session.
 	 * 
 	 * @param cnpj
 	 * @param numeroNotaFiscal
 	 * @param serie
+	 * @param indNFe
+	 * @param fornecedor
 	 * @param chaveAcesso
+	 * @param numeroNotaEnvio
 	 */
 	@Post
 	public void verificarNotaFiscalExistente(
@@ -821,14 +802,25 @@ public class RecebimentoFisicoController extends BaseController {
 		String cnpjSemMascara = Util.removerMascaraCnpj(cnpj);
 		
 		filtro.setCnpj(cnpjSemMascara);
-		filtro.setNumeroNota(numeroNotaFiscal);
+		
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		filtro.setNomeFornecedor(fornecedor);
 		
+		boolean isNE = (numeroNotaFiscal != null && serie == null);
+		
+		if (isNE) {
+			
+			filtro.setNumeroNotaEnvio(numeroNotaFiscal);
+			
+		} else {
+			
+			filtro.setNumeroNota(numeroNotaFiscal);
+		}
+		
 		validarDadosNotaFiscal(filtro, fornecedor, indNFe);		
 		
-		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalEntrada(filtro);
 		
 			
 		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
@@ -841,11 +833,18 @@ public class RecebimentoFisicoController extends BaseController {
 			notaFiscal = listaNotaFiscal.get(0);
 		} 
 		
-		if(notaFiscal == null){	
+		if (notaFiscal == null){	
 						
 			List<String> msgs = new ArrayList<String>();
 			
-			msgs.add("Nota fiscal não encontrada");
+			if (isNE) {
+			
+				msgs.add("Nota de Envio não encontrada");
+				
+			} else {
+			
+				msgs.add("Nota fiscal não encontrada");
+			}
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 													
@@ -950,13 +949,12 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private List<CellModelKeyValue<RecebimentoFisicoVO>> obterListaCellModelKeyValue(
 			List<RecebimentoFisicoDTO> itensRecebimentoFisico, 
-			boolean indNotaInterface, 
 			boolean indRecebimentoFisicoConfirmado) {
 		
 		int counter = 0;
 		
 		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = new LinkedList<CellModelKeyValue<RecebimentoFisicoVO>>();
-		
+
 		for(RecebimentoFisicoDTO dto : itensRecebimentoFisico) {
 			
 			counter++;
@@ -965,12 +963,16 @@ public class RecebimentoFisicoController extends BaseController {
 		
 			carregarValoresQtdPacoteQtdExemplar(dto);
 			
+			carregarValorTotal(dto);
+			
+			carregarValorDiferenca(dto);
+			
 			RecebimentoFisicoVO recebFisico = new RecebimentoFisicoVO();
 			
 			String codigo 		     	 = dto.getCodigoProduto();
 			String nomeProduto 	     	 = dto.getNomeProduto();
 			String edicao 		     	 = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
-			String precoCapa 	     	 = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String precoItem 	     	 = (dto.getPrecoItem() 			== null) 	? "0.0" : dto.getPrecoItem().toString();
 			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0" : dto.getRepartePrevisto().toString();
 			String qtdPacote			 = (dto.getQtdPacote()			== null) 	? "0"	: dto.getQtdPacote().toString(); 
 			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
@@ -1006,7 +1008,7 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setCodigo(codigo);
 			recebFisico.setNomeProduto(nomeProduto);
 			recebFisico.setEdicao(edicao);
-			recebFisico.setPrecoCapa(precoCapa);
+			recebFisico.setPrecoCapa(precoItem);
 			recebFisico.setRepartePrevisto(repartePrevisto);
 			recebFisico.setQtdPacote(qtdPacote);
 			recebFisico.setQtdExemplar(qtdExemplar);
@@ -1019,11 +1021,9 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setDestacarValorNegativo(destacarValorNegativo);
 
 			rows.add(new CellModelKeyValue<RecebimentoFisicoVO>(counter, recebFisico));
-			
 		}
 		
 		return rows;
-		
 	}
 	
 	/**
@@ -1057,7 +1057,9 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarComboFornecedor() {
 		
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
+		List<Fornecedor> fornecedores = 
+			this.fornecedorService.obterFornecedoresPorSituacaoEOrigem(
+				SituacaoCadastro.ATIVO, Origem.MANUAL);
 		
 		if (fornecedores != null) {
 			result.include("listafornecedores", fornecedores);
@@ -1288,12 +1290,16 @@ public class RecebimentoFisicoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Cnpj] é obrigatório!");
 		}
 		
-		if (nota.getNumero()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota Fiscal] é obrigatório!");
-		}
-		
-		if (nota.getSerie()==null || "".equals(nota.getSerie())){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Série] é obrigatório!");
+		if(nota.getNumeroNotaEnvio() == null) {
+
+			if (nota.getNumero()==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota Fiscal] é obrigatório!");
+			}
+			
+			if (nota.getSerie()==null || "".equals(nota.getSerie())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Série] é obrigatório!");
+			}
+			
 		}
 		
 		if (nota.getDataEmissao()==null){
@@ -1369,24 +1375,27 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/validarValorTotalNotaFiscal")
 	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
 		
-		BigDecimal valorInformadoNotaFiscal = new BigDecimal(getValorSemMascara(nota.getValorTotal()));
-		
+		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
+				
 		BigDecimal totalItem = BigDecimal.ZERO;
 		
-		for ( RecebimentoFisicoDTO recebimento : itens ){
-		    totalItem = totalItem.add(recebimento.getValorTotal());
+		for (RecebimentoFisicoDTO recebimento : itens) {
+		    
+			totalItem = totalItem.add(recebimento.getValorTotal());
 	    }
 		
-		if (valorInformadoNotaFiscal.compareTo(totalItem)!=0){
+		if (totalItem.compareTo(valorInformadoNotaFiscal) != 0) {
 			
 			result.use(CustomJson.class).from(
-					new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens], Deseja prosseguir?")
+				new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Valor total da [Nota] não confere com o valor total dos [Itens]. Deseja prosseguir?")
 			).serialize();
 			
 		} else {
+			
 			result.use(Results.json()).from("").serialize();
 		}
-		
 	}
 	
 	/**
@@ -1404,6 +1413,8 @@ public class RecebimentoFisicoController extends BaseController {
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
+		
+		notaFiscal.setNumeroNotaEnvio(nota.getNumeroNotaEnvio());
 		notaFiscal.setNumero(nota.getNumero());
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
@@ -1411,12 +1422,17 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setValorInformado(CurrencyUtil.converterValor(nota.getValorTotal()));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
-		
 		notaFiscal.setFornecedor(fornecedor);
-		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
+		
+		final long codigoTipoNotaFiscalRemessaMercadoriaConsignacao = 5L;
+		
+		notaFiscal.setTipoNotaFiscal(
+			this.tipoNotaService.obterPorId(codigoTipoNotaFiscalRemessaMercadoriaConsignacao));
+		
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-		notaFiscal.setOrigem(Origem.MANUAL);
+        
+        notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
 		notaFiscal.setEmitente(fornecedor.getJuridica());
 		
 		BigDecimal totalItem = BigDecimal.ZERO;
@@ -1441,37 +1457,13 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		notaFiscal.setValorBruto(totalItem);
 		
-		try{
-			
-			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
-		    
-			recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
-		}
-		catch(Exception e){
-			if (e instanceof ValidacaoException) {
-				//throw e;
-			}
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
-		}
-		
+		recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
+	    
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
+
 		List<String> listaMensagens = new ArrayList<String>();
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
-	}
-	
-	private String getValorSemMascara(String valor) {
-
-		String chr = String.valueOf(valor.charAt(valor.length()-3));
-		if (",".equals(chr)){
-		    valor = valor.replaceAll("\\.", "");
-		    valor = valor.replaceAll(",", "\\.");
-		}
-		
-		if (".".equals(chr)){
-		    valor = valor.replaceAll(",", "");
-		}
-
-		return valor;
 	}
 	
 }

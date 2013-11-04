@@ -1,30 +1,40 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
+import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
+import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
@@ -43,26 +53,37 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 
 	@Transactional
-	public List<FechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
-		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
+	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		return this.fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
 	}
 	
 	@Transactional
 	public byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca) {
 		
-		Long numeroSemana = filtro.getSemana();
-		
-		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(null, numeroSemana.intValue(), null);
-		
+		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = 
+				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
 		if(listaChamadaEncalheFornecedor==null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar boleto.");
 			
 		}
 		
-		List<BoletoDistribuidor> listaBoletoDistribuidor = gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, numeroSemana.intValue());
+		List<BoletoDistribuidor> listaBoletoDistribuidor = 
+				gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, filtro.getNumeroSemana());
 		
 		try {
 			
@@ -73,22 +94,65 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar cobrança em boleto para o Distribuidor: " + e.getMessage());
 			
 		}
-		
 	}
 	
 	@Override
 	@Transactional
-	public void fecharCE(String[] listaEncalhePronta, String[] listaIdProdutoEdicaoPronta, String idFornecedor, Integer numeroSemana) {
-		Long encalhe = null;
-		ProdutoEdicao produtoEdicao = null;
+	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		for(int cont = 0; cont < listaEncalhePronta.length; cont++){
-			encalhe = Long.parseLong(listaEncalhePronta[cont]);
-			produtoEdicao = produtoEdicaoService.obterProdutoEdicao(Long.parseLong(listaIdProdutoEdicaoPronta[cont]), false);
-			this.fechamentoCEIntegracaoRepository.fecharCE(encalhe, produtoEdicao, (idFornecedor.equals("-1") ? null : new Long(idFornecedor)),numeroSemana);
+		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+		
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
+				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		
+		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
+		}	
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for(ChamadaEncalheFornecedor item : chamadasFornecedor){
+					
+			if(item.getFornecedor() == null){
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Erro de integridade. Não existe fornecedor associado ao registro!");
+			}
+			
+			BigDecimal totalCreditoApurado = BigDecimal.ZERO;
+			BigDecimal totalCreditoInformado = BigDecimal.ZERO;
+			BigDecimal totalMargemApurado = BigDecimal.ZERO;
+			BigDecimal totalMargemInformado = BigDecimal.ZERO;
+			BigDecimal totalVendaApurada = BigDecimal.ZERO;
+			BigDecimal totalVendaInformada = BigDecimal.ZERO;
+			
+			List<ItemChamadaEncalheFornecedor> itensChamadaEncalheFornecedor = 
+							itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(item.getId(),filtro.getPeriodoRecolhimento());
+			
+			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor){
+				
+				itemFo = this.atualizarItem(itemFo.getQtdeDevolucaoInformada(),itemFo.getQtdeVendaInformada(),itemFo);
+				
+				totalCreditoApurado = totalCreditoApurado.add(itemFo.getValorVendaApurado());
+				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
+				totalMargemApurado = totalMargemApurado.add(itemFo.getValorMargemApurado());
+				totalMargemInformado = totalMargemInformado.add(itemFo.getValorMargemInformado());
+				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf((itemFo.getQtdeDevolucaoApurada()==null)?0:itemFo.getQtdeDevolucaoApurada()));
+				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf( (itemFo.getQtdeVendaApurada()==null)?0:itemFo.getQtdeVendaApurada()));
+			}
+			
+			item.setTotalCreditoApurado(totalCreditoApurado);
+			item.setTotalCreditoInformado(totalCreditoInformado);
+			item.setTotalMargemApurado(totalMargemApurado);
+			item.setTotalMargemInformado(totalMargemInformado);
+			item.setTotalVendaApurada(totalVendaApurada);
+			item.setTotalVendaInformada(totalVendaInformada);
+			item.setStatusCeNDS(StatusCeNDS.FECHADO);
+			item.setDataFechamentoNDS(dataOperacao);
+			
+			chamadaEncalheFornecedorRepository.alterar(item);
 		}
 	}
-
+	
 	@Override
 	@Transactional
 	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {		 
@@ -97,39 +161,164 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Override
 	@Transactional(readOnly=true)
-	public FechamentoCEIntegracaoVO construirFechamentoCEIntegracaoVO(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		List<FechamentoCEIntegracaoDTO> listaFechamento = this.buscarFechamentoEncalhe(filtro);
+		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
 		
-		if(listaFechamento.size() == 0){
+		BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
+		
+		if(qntItens.compareTo(BigInteger.ZERO) == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFechamento));
+		FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
+	
+		fechamentoCEIntegracaoDTO.setQntItensCE(qntItens.intValue());
 		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		fechamentoCEIntegracaoDTO.setItensFechamentoCE( this.buscarItensFechamentoCeIntegracao(filtro));
 		
-		tableModel.setTotal(listaFechamento.size());
+		fechamentoCEIntegracaoDTO.setConsolidado(this.buscarConsolidadoItensFechamentoCeIntegracao(filtro));
 		
-		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
-
-		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = this.buscarFechamentoEncalheTotal(filtro);
-		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
-		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));
-		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalLiquido()));
-
-		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
-		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
-
-		return fechamentoCEIntegracaoVO;
+		fechamentoCEIntegracaoDTO.setSemanaFechada(this.verificarStatusSemana(filtro));
+		
+		return fechamentoCEIntegracaoDTO;
 	}
 
 	@Override
 	@Transactional(readOnly=true)
-	public FechamentoCEIntegracaoConsolidadoDTO buscarFechamentoEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro) {
-		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalheTotal(filtro);
+	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+		
+		return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
 	}
+	
+	@Override
+	@Transactional
+	public String reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
+				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		
+		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não foram encontrados itens para reabertura!");
+		}	
+		
+		StringBuilder fornecedorSemReabertura = new StringBuilder();
+		
+		for(ChamadaEncalheFornecedor item : chamadasFornecedor){
+			
+			if(item.getDataFechamentoNDS().compareTo(dataOperacao)!=0
+					|| StatusIntegracao.INTEGRADO.equals(item.getStatusIntegracao())){
+				
+				fornecedorSemReabertura.append((item.getFornecedor().getJuridica()!= null)
+						? item.getFornecedor().getJuridica().getRazaoSocial()
+								:"").append(",");
+				continue;
+			}
+			
+			item.setStatusCeNDS(StatusCeNDS.ABERTO);
+			chamadaEncalheFornecedorRepository.alterar(item);
+		}
+		
+		return montarMensagemFornecedorSemReabertura(fornecedorSemReabertura);
+	}
+
+	private String montarMensagemFornecedorSemReabertura(StringBuilder nomesFornecedores) {
+		
+		if(nomesFornecedores.length()==0){
+			return null;
+		}
+		
+		StringBuilder mensagem = new StringBuilder();
+		
+		mensagem.append(" Os itens associados ao fornecedor [")
+				.append( nomesFornecedores.delete(nomesFornecedores.length()-1,nomesFornecedores.length()))
+				.append(" ] não puderam  ser reabertos,")
+				.append(" pois a data de operação do distribuidor é diferente da data de fechamento da CE ou a interface de integração já processou os dados!");
+		
+		return mensagem.toString();
+	}
+
+	private Intervalo<Date> obterPeriodoDataRecolhimento(String anoSemana) {
+		
+		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
+		
+		Integer semana = Integer.parseInt(anoSemana.substring(4));
+		
+		Date dataInicioSemana = 
+				DateUtil.obterDataDaSemanaNoAno(
+					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
+			
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		
+		return periodoRecolhimento;
+		
+	}
+	
+	private Date obterDataBase(String anoSemana, Date data) {
+		
+		String ano = anoSemana.substring(0,4);
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.YEAR, Integer.parseInt(ano));
+		
+		return c.getTime();
+	}
+	
+	@Transactional
+	public void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
+		
+		ItemChamadaEncalheFornecedor item = 
+			this.itemChamadaEncalheFornecedorRepository.buscarPorId(idItemChamadaFornecedor);
+
+		atualizarItem(encalhe.longValue(),venda.longValue(),item);
+	}
+
+	private ItemChamadaEncalheFornecedor atualizarItem(Long encalhe,Long vendaParcial ,ItemChamadaEncalheFornecedor item) {
+		
+		encalhe = (encalhe == null)?0:encalhe;
+		vendaParcial = (vendaParcial == null)?0:vendaParcial;
+		
+		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
+			
+			item.setQtdeVendaApurada(vendaParcial);
+		}
+		else{
+			
+			item.setQtdeVendaApurada(item.getQtdeEnviada() - encalhe);
+		}
+		
+		item.setQtdeDevolucaoInformada(encalhe);
+		item.setQtdeDevolucaoApurada(item.getQtdeDevolucaoInformada());
+		item.setQtdeVendaInformada(item.getQtdeVendaApurada());
+		item.setQtdeDevolucaoParcial(0L);
+		
+		BigDecimal desconto = obterPercentualDesconto(item);
+		
+		item.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(item.getPrecoUnitario()).multiply(item.getValorVendaApurado()));
+		item.setValorVendaApurado(item.getPrecoUnitario().multiply(item.getValorVendaApurado()).subtract(item.getValorMargemApurado()));
+		
+		item.setValorMargemInformado(item.getValorMargemApurado());
+		item.setValorVendaInformado(item.getValorVendaApurado());
+			
+		return this.itemChamadaEncalheFornecedorRepository.merge(item);
+	}
+
+	private BigDecimal obterPercentualDesconto(ItemChamadaEncalheFornecedor item) {
+		
+		BigDecimal valorRetorno = produtoEdicaoRepository.obterDescontoLogistica(item.getProdutoEdicao().getId());
+		
+		if(valorRetorno == null){
+			valorRetorno = produtoRepository.obterDescontoLogistica(item.getProdutoEdicao().getProduto().getId());
+		}
+		
+		return (valorRetorno == null)? BigDecimal.ZERO: valorRetorno;
+	}
+
 	
 }

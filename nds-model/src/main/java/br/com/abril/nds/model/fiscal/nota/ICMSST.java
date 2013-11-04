@@ -36,7 +36,7 @@ public class ICMSST extends ICMSBase implements Serializable {
 	/**
 	 * pMVAST
 	 */
-	@Column(name="PERCENTUAL_ADCIONADO_ST", precision=5,scale=2, nullable=true)
+	@Column(name="PERCENTUAL_ADCIONADO_ST", precision=18, scale=4, nullable=true)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.ICMS_ST_10, export = @NFEExport(secao = TipoSecao.N03, posicao = 7)),
 			@NFEWhen(condition = NFEConditions.ICMS_ST_30, export = @NFEExport(secao = TipoSecao.N05, posicao = 3)),

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.filtro.FiltroClassificacaoNaoRecebidaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroDesenglobacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -26,6 +25,7 @@ import br.com.caelum.vraptor.Result;
 
 @Resource
 @Path("/distribuicao/desenglobacao")
+@Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
 public class DesenglobacaoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroDesenglobacaoDTO";
@@ -41,8 +41,7 @@ public class DesenglobacaoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse; 
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
-	@Path("/index")
+	@Path("/")
 	public void desenglobacao(){
 		
 	}

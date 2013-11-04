@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.estoque;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,13 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @Entity
 @Table(name = "ESTOQUE_PRODUTO")
 @SequenceGenerator(name="ESTOQUE_PROD_SEQ", initialValue = 1, allocationSize = 1)
-public class EstoqueProduto {
+public class EstoqueProduto implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(generator = "ESTOQUE_PROD_SEQ")
 	@Column(name = "ID")

@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -19,33 +20,33 @@ public class ContagemDevolucaoDTO implements Serializable {
 
 	private Long idProdutoEdicao;
 	
-	@Export(label="Código")
+	@Export(label="Código", fontSize=9)
 	private String codigoProduto;
 	
-	@Export(label="Produto")
+	@Export(label="Produto", fontSize=9, widthPercent=35)
 	private String nomeProduto;
 	
-	@Export(label="Edição")
+	@Export(label="Edição", fontSize=9)
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$")
+	@Export(label="Preço Capa R$", fontSize=9, columnType=ColumType.MOEDA)
 	private BigDecimal precoVenda;
 	
-	@Export(label="Exemplar Devolução")
+	@Export(label="Exemplar Devolução", fontSize=9)
 	private BigInteger qtdDevolucao;
 	
-	@Export(label="Desconto")
+	@Export(label="Desconto", fontSize=9, columnType=ColumType.MOEDA)
 	private BigDecimal totalComDesconto;
 	
 	private BigDecimal desconto;
 	
-	@Export(label="Total R$")
+	@Export(label="Total R$", fontSize=9, columnType=ColumType.MOEDA)
 	private BigDecimal valorTotal;
 	
-	@Export(label="Exemplar Nota")
+	@Export(label="Exemplar Nota", fontSize=9)
 	private BigInteger qtdNota;
 	
-	@Export(label="Diferença")
+	@Export(label="Diferença", fontSize=9)
 	private BigInteger diferenca;
 	
 	private Date dataMovimento;

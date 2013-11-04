@@ -7,7 +7,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -42,32 +42,32 @@ public class DistribuidorController extends BaseController {
 	@Path("/obterNumeroSemana")
 	public void obterNumeroSemana(Date data) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		DiaSemana diaSemana = this.distribuidorService.inicioSemana();
 		
-		if (distribuidor == null) {
+		if (diaSemana == null) {
 			
-			throw new RuntimeException("Dados do distribuidor inexistentes!");
+			throw new RuntimeException("Dados do distribuidor inexistentes: início semana");
 		}
 		
 		Integer numeroSemana = 
-			DateUtil.obterNumeroSemanaNoAno(data, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			DateUtil.obterNumeroSemanaNoAno(data, diaSemana.getCodigoDiaSemana());
 		
 		result.use(Results.json()).from(numeroSemana).serialize();
 	}
 	
 	@Get
 	@Path("/obterDataDaSemana")
-	public void obterDataDaSemanaNoAno(Integer numeroSemana) {
+	public void obterDataDaSemanaNoAno(Integer numeroSemana,Date dataBase) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		DiaSemana diaSemana = this.distribuidorService.inicioSemana();
 		
-		if (distribuidor == null) {
+		if (diaSemana == null){
 			
-			throw new RuntimeException("Dados do distribuidor inexistentes!");
+			throw new RuntimeException("Dados do distribuidor inexistentes: inicio semana");
 		}
 		
 		Date data = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), dataBase);
 		
 		String dataFormatada = "";
 		

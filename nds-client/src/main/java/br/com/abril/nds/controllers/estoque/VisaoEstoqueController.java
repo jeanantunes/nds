@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -41,6 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("estoque/visaoEstoque")
+@Rules(Permissao.ROLE_ESTOQUE_VISAO_DO_ESTOQUE)
 public class VisaoEstoqueController extends BaseController {
 	
 	private static final String FILTRO_VISAO_ESTOQUE = "FILTRO_VISAO_ESTOQUE";
@@ -71,7 +71,6 @@ public class VisaoEstoqueController extends BaseController {
 
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ESTOQUE_VISAO_DO_ESTOQUE)
 	public void index()
 	{
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();
@@ -103,12 +102,20 @@ public class VisaoEstoqueController extends BaseController {
 		}
 		filtro.setPaginacao(new PaginacaoVO(page, rp,sortorder,sortname));
 		
+		if(filtro.getPaginar()!=null && !filtro.getPaginar()) {
+			filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			filtro.getPaginacao().setPaginaAtual(null);
+		}
+		
 		this.atualizarDataMovimentacao(filtro);
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
+		Long count = visaoEstoqueService.obterCountVisaoEstoqueDetalhe(filtro);
+		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
-		result.use(FlexiGridJson.class).from(listDetalhe).total(listDetalhe.size()).page(page).serialize();
+				
+		result.use(FlexiGridJson.class).from(listDetalhe).total(count.intValue()).page(page).serialize();
 	}
 	
 	
@@ -190,6 +197,8 @@ public class VisaoEstoqueController extends BaseController {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		
+		filtro.setPaginacao(new PaginacaoVO());
+		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		Class clazz = VisaoEstoqueDetalheDTO.class;
 		
@@ -250,9 +259,7 @@ public class VisaoEstoqueController extends BaseController {
 		
 	private void atualizarDataMovimentacao(FiltroConsultaVisaoEstoque filtro) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if (filtro.getDataMovimentacao() == null
 				|| DateUtil.isDataInicialMaiorDataFinal(filtro.getDataMovimentacao(), dataOperacao)) {

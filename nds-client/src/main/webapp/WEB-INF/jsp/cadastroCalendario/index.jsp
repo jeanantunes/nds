@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
@@ -5,6 +6,7 @@
 	<script type="text/javascript">
 		$(function() {
 			CadastroCalendario.init();
+			bloquearItensEdicao(CadastroCalendario.workspace);
 		});
 	</script>
 <style type="text/css">
@@ -19,7 +21,7 @@
 	}
 	
 	.ui-datepicker-inline {
-		width: 950px !important;
+		width: 972px !important;
 	}
 	
 
@@ -34,7 +36,8 @@
 	}
 	
 	.ui-datepicker-group {
-	    height: 170;
+	    height: 170px;
+		width: 152px !important;
 		margin-left: 4px;
 		margin: 0 !important;
 		padding: 5px !important;
@@ -64,7 +67,7 @@
 
 	<form id="form-excluir">
 	<div id="dialog-excluir" title="Excluir Feriado">
-		<p>Confirma a exclusão deste Feriado?</p>
+		<p>Confirma a exclusÃ£o deste Feriado?</p>
 	</div>
 	</form>
 
@@ -127,7 +130,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Descrição:</td>
+					<td>DescriÃ§Ã£o:</td>
 					<td>
 						<input type="text" name="descricaoNovo" id="descricaoNovo" style="width: 230px;" />
 					</td>
@@ -140,7 +143,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Efetua Cobrança?</td>
+					<td>Efetua CobranÃ§a?</td>
 					<td>
 						<input name="indEfetuaCobrancaNovo" type="checkbox" value="" id="indEfetuaCobrancaNovo" />
 					</td>
@@ -157,18 +160,18 @@
 	</form>
 
 	<form id="form-feriado-mes">
-	<div id="dialog-feriado-mes" title="Feriado do mês">
+	<div id="dialog-feriado-mes" title="Feriado do mÃªs">
 	
 		<fieldset style="width: 650px; margin-top: 10px;">
 		
-			<legend>Feriados do mês</legend>
+			<legend>Feriados do mÃªs</legend>
 	
 			<table class="mesFeriadoGrid"></table>
 		
 		</fieldset>
 	
 		<span class="bt_novos">
-			<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" Title="Incluir Novo Feriado">
+			<a isEdicao="true" href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" Title="Incluir Novo Feriado">
 			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /></a>
 		</span>
 		<span class="bt_novos" title="Gerar Arquivo">
@@ -228,7 +231,7 @@
 	    			</select>					
 					
 					</td>
-					<td>Descrição:</td>
+					<td>DescriÃ§Ã£o:</td>
 					<td>
 						<input type="text" name="descricao" id="descricao" style="width: 230px;" />
 						<input type="hidden" name="idFeriado" id="idFeriado" />
@@ -238,7 +241,7 @@
 					<td align="right"><input name="indOpera" type="checkbox" value="" id="indOpera" /></td>
 					<td>Opera? </td>
 					<td align="right"><input name="indEfetuaCobranca" type="checkbox" value="" id="indEfetuaCobranca" /></td>
-					<td>Efetua Cobrança?</td>
+					<td>Efetua CobranÃ§a?</td>
 				</tr>
 				<tr>
 					<td align="right"><input name="indRepeteAnualmente" type="checkbox" value="" id="indRepeteAnualmente" /></td>
@@ -308,7 +311,7 @@
 
 			<fieldset class="fieldGrid">
 			
-				<legend>Calendário de Feriados</legend>
+				<legend>CalendÃ¡rio de Feriados</legend>
 				
 				<div id="feriadosWrapper">
 					

@@ -2608,7 +2608,20 @@ var roteirizacao = $.extend(true, {
             width : 'auto',
             height : 200
         });
-    	
+
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#boxPesquisa"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					roteirizacao.pesquisarRoteirizacao();
+				}
+				
+				return true;
+			});
+		});
     },
     
     limparCamposNovaInclusao : function(){

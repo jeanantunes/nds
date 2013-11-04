@@ -33,6 +33,7 @@ public interface ProdutoService {
 	 */
 	List<Produto> obterProdutoLikeNome(String nome);
 	
+	List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxResult);
 	/**
 	 * Obtém um produto de acordo com o código do produto.
 	 * 
@@ -50,7 +51,7 @@ public interface ProdutoService {
 			String fornecedor, String editor, Long codigoTipoProduto,
 			String sortorder, String sortname, int page, int rp);
 
-	void removerProduto(Long id) throws UniqueConstraintViolationException;
+	void removerProduto(Long id);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto);

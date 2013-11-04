@@ -147,7 +147,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         String templateHqlDiferenca = new StringBuilder("(select sum(%s) from Diferenca diferenca ") 
         .append("where diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDiferenca = :%s) as %s ").toString();
         
-        StringBuilder hql = new StringBuilder("select produto.codigo as codigo, ");
+        StringBuilder hql = new StringBuilder("select produtoEdicao.id as idProdutoEdicao, produto.codigo as codigo, ");
         hql.append("produto.nome as nomeProduto, ");
         hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
         hql.append("produtoEdicao.precoVenda as precoVenda, ");
@@ -203,7 +203,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         try {
             Constructor<ReparteFecharDiaDTO> constructor = ReparteFecharDiaDTO.class
-                    .getConstructor(String.class, String.class, Long.class,
+                    .getConstructor(Long.class,String.class, String.class, Long.class,
                             BigDecimal.class, BigInteger.class,
                             BigInteger.class, BigInteger.class,
                             BigInteger.class, BigInteger.class,

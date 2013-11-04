@@ -8,14 +8,17 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
-public class ProdutoEdicaoDTO implements Serializable {
+public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
 	/**
 	 * serialVersionUID
@@ -34,6 +37,8 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal precoCusto;
 	private Long peso;
 	private String codigoProduto;
+	private PeriodicidadeProduto periodicidade;
+	private Integer numeroPeriodicidade;
 	
 	private String nomeProduto;
 	private String nomeComercial;
@@ -100,7 +105,12 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaSecundario;
 
 	private String dataLancamentoFormatada;
-	private BigDecimal qtdeVendas;
+	private BigInteger qtdeVendas;
+	private BigInteger reparte;
+	private String qtdVendasFormatada = "0";
+	
+	private String precoVendaFormatado;
+	private String precoPrevistoFormatado;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -159,6 +169,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+		this.precoVendaFormatado = CurrencyUtil.formatarValor(precoVenda);
 	}
 	public BigDecimal getDesconto() {
 		return desconto;
@@ -369,6 +380,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
 		this.precoPrevisto = precoPrevisto;
+		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(precoPrevisto);
 	}
 	/**
 	 * @return the dataLancamentoPrevisto
@@ -716,15 +728,79 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.dataLancamentoFormatada = dataLancamentoFormatada;
 	}
 
-	public BigDecimal getQtdeVendas() {
-		
-		if(qtdeVendas == null)
-			qtdeVendas = new BigDecimal(0);
-			
+	public BigInteger getQtdeVendas() {
 		return qtdeVendas;
 	}
 
-	public void setQtdeVendas(BigDecimal qtdeVendas) {
+	public void setQtdeVendas(BigInteger qtdeVendas) {
 		this.qtdeVendas = qtdeVendas;
+		
+		if (qtdeVendas != null) {
+			this.qtdVendasFormatada = qtdeVendas.toString();
+		}
 	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	@Override
+    public int compareTo(ProdutoEdicaoDTO o) {  
+        if (o.getNumeroEdicao() > this.getNumeroEdicao()) {  
+            return -1;  
+        } else if (o.getNumeroEdicao() < this.getNumeroEdicao()){  
+            return 1;  
+        } else {  
+            return 0;  
+        }  
+    }
+
+	public PeriodicidadeProduto getPeriodicidade() {
+		return periodicidade;
+	}
+
+	public void setPeriodicidade(PeriodicidadeProduto periodicidade) {
+		this.periodicidade = periodicidade;
+		this.numeroPeriodicidade = periodicidade.getOrdem();
+	}
+
+	public Integer getNumeroPeriodicidade() {
+		return numeroPeriodicidade;
+	}
+
+	public String getQtdVendasFormatada() {
+		return qtdVendasFormatada;
+	}
+
+	/**
+	 * @return the precoVendaFormatado
+	 */
+	public String getPrecoVendaFormatado() {
+		return precoVendaFormatado;
+	}
+
+	/**
+	 * @param precoVendaFormatado the precoVendaFormatado to set
+	 */
+	public void setPrecoVendaFormatado(String precoVendaFormatado) {
+		this.precoVendaFormatado = precoVendaFormatado;
+	}
+
+	/**
+	 * @return the precoPrevistoFormatado
+	 */
+	public String getPrecoPrevistoFormatado() {
+		return precoPrevistoFormatado;
+	}
+
+	/**
+	 * @param precoPrevistoFormatado the precoPrevistoFormatado to set
+	 */
+	public void setPrecoPrevistoFormatado(String precoPrevistoFormatado) {
+		this.precoPrevistoFormatado = precoPrevistoFormatado;
+	}  
 }

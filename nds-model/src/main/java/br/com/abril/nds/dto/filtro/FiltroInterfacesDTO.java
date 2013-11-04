@@ -13,7 +13,7 @@ public class FiltroInterfacesDTO extends FiltroDTO implements Serializable {
 	
 	public enum OrdenacaoColunaConsulta {
 		
-		NOME("nome"),
+		DESCRICAO_INTERFACE("descricaoInterface"),
 		EXTENSAO_ARQUIVO("extensaoArquivo"),
 		STATUS("status"),
 		DATA_PROCESSAMENTO("dataProcessmento"),

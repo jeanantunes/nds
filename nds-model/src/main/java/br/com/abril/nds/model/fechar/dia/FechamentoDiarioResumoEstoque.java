@@ -42,7 +42,7 @@ public class FechamentoDiarioResumoEstoque implements Serializable {
 	@Column(name="QNT_EXEMPLARES")
 	private Integer quantidadeExemplares;
 	
-	@Column(name="VALOR_TOTAL")
+	@Column(name="VALOR_TOTAL", precision=18, scale=4)
 	private BigDecimal valorTotal;
 	
 	public Long getId() {

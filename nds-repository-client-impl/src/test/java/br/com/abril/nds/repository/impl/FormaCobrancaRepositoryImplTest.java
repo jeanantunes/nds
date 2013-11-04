@@ -442,8 +442,6 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		this.carregarFormasCobrancaCota();
 		
-		List<Long> fornecedoresId = Arrays.asList(fornecedor1.getId(),fornecedor2.getId());
-		
 		data = new Date();
 		
 		valor = new BigDecimal(150);
@@ -455,7 +453,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		FormaCobranca formaCobranca;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(cota.getNumeroCota(), fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(cota.getId(), fornecedor1.getId(), diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -464,7 +462,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = 10;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(cota.getNumeroCota(), fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(cota.getId(), fornecedor2.getId(), diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 	}
@@ -485,29 +483,27 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		FormaCobranca formaCobranca;
 		
-		List<Long> fornecedoresId;
+		Long fornecedorId = fornecedor1.getId();
 		
-		
-        fornecedoresId = Arrays.asList(fornecedor1.getId());
 		
 		diaSemana = DiaSemana.SEGUNDA_FEIRA.getCodigoDiaSemana();
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 		
 		Assert.assertEquals(TipoFormaCobranca.SEMANAL, formaCobranca.getTipoFormaCobranca());
 		
 		
-		fornecedoresId = Arrays.asList(fornecedor3.getId());
+		fornecedorId = fornecedor3.getId();
 		
 		diaSemana = null;
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -516,13 +512,13 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		Assert.assertEquals(formaCobranca4.getId(), formaCobranca.getId());
 		
 		
-		fornecedoresId = null;
+		fornecedorId = null;
 		
 		diaSemana = null;
 		
 		diaMes = 10;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -531,13 +527,13 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		Assert.assertEquals(formaCobranca3.getId(), formaCobranca.getId());
 		
 		
-        fornecedoresId = null;
+        fornecedorId = null;
 		
 		diaSemana = null;
 		
 		diaMes = 16;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -546,13 +542,13 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		Assert.assertEquals(formaCobranca2.getId(), formaCobranca.getId());
 		
 		
-		fornecedoresId = null;
+		fornecedorId = null;
 		
 		diaSemana = DiaSemana.SABADO.getCodigoDiaSemana();
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedoresId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -571,7 +567,6 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		listaFormaCobranca = formaCobrancaRepositoryImpl.obterFormasCobrancaCota(cota);
 		
 		Assert.assertNotNull(listaFormaCobranca);
-		
 	}
 	
 	@Test
@@ -584,7 +579,6 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		quantidadeFormas = formaCobrancaRepositoryImpl.obterQuantidadeFormasCobrancaCota(cota);
 		
 		Assert.assertNotNull(quantidadeFormas);
-		
 	}
 	
 	@Test
@@ -598,7 +592,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 	}
 	
 	@Test
-	public void testarObterPorCotaETipoCobranca() {
+	public void testarObterPorCota() {
 		
 		this.carregarFormasCobrancaCota();
 		
@@ -607,26 +601,23 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		Long idCota = cota.getId();
 		Long idFormaCobranca = formaCobranca1.getId();
 		
-		listaFormaCobranca = formaCobrancaRepositoryImpl.obterPorCotaETipoCobranca(idCota, TipoCobranca.BOLETO, idFormaCobranca);
+		listaFormaCobranca = formaCobrancaRepositoryImpl.obterPorCota(idCota, idFormaCobranca);
 		
-		Assert.assertNotNull(listaFormaCobranca);
-			
+		Assert.assertNotNull(listaFormaCobranca);	
 	}
 	
 	@Test
-	public void testarObterPorDistribuidorETipoCobranca() {
+	public void testarObterPorDistribuidor() {
 		
 		this.carregarFormasCobrancaDistribuidor();
 		
 		List<FormaCobranca> listaFormaCobranca;
 		
-		Long idDistribuidor = distribuidor.getId();
 		Long idFormaCobranca = formaCobranca1.getId();
 		
-		listaFormaCobranca = formaCobrancaRepositoryImpl.obterPorDistribuidorETipoCobranca(idDistribuidor, TipoCobranca.BOLETO, idFormaCobranca);
+		listaFormaCobranca = formaCobrancaRepositoryImpl.obterPorDistribuidor(this.distribuidor.getId(), idFormaCobranca);
 		
 		Assert.assertNotNull(listaFormaCobranca);
-		
 	}
 
 }

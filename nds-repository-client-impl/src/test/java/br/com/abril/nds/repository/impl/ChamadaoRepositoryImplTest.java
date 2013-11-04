@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -124,6 +125,8 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		ChamadaEncalhe chamadaEncalhe = Fixture.chamadaEncalhe(new Date(),
 				produtoEdicaoVeja2, TipoChamadaEncalhe.CHAMADAO);
 
+		chamadaEncalhe.setLancamentos(new HashSet<>(Arrays.asList(lancamentoVeja1)));
+		
 		save(chamadaEncalhe);
 
 		qtdChamadaEncalheVeja2 = BigInteger.TEN;
@@ -191,9 +194,11 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest {
 				.obterResumoConsignadosParaChamadao(filtro);
 
 		Assert.assertNotNull(resumoConsignadoCotaChamadaoDTO);
-
-		Assert.assertTrue(resumoConsignadoCotaChamadaoDTO
-				.getQtdExemplaresTotal().compareTo(qtdEstoqueVeja1) == 0);
+		
+		Assert.assertNotNull(resumoConsignadoCotaChamadaoDTO.getQtdExemplaresTotal());
+		
+		Assert.assertTrue(qtdEstoqueVeja1.compareTo(resumoConsignadoCotaChamadaoDTO
+				.getQtdExemplaresTotal())==0);
 	}
 
 	@Test
@@ -206,8 +211,10 @@ public class ChamadaoRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Assert.assertNotNull(resumoChamadaEncalheChamadaoDTO);
 
-		Assert.assertTrue(resumoChamadaEncalheChamadaoDTO
-				.getQtdExemplaresTotal().compareTo(qtdChamadaEncalheVeja2) == 0);
+		Assert.assertNotNull(resumoChamadaEncalheChamadaoDTO.getQtdExemplaresTotal());
+		
+		Assert.assertTrue(qtdChamadaEncalheVeja2.compareTo(resumoChamadaEncalheChamadaoDTO
+				.getQtdExemplaresTotal()) == 0);
 	}
 
 	private FiltroChamadaoDTO getFiltro() {
