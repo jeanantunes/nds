@@ -3166,9 +3166,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Date dataOperacao = controleConferenciaEncalheCota.getDataOperacao();
 		
-		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = 
-				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
-						idControleConferenciaEncalheCota);
+		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(idControleConferenciaEncalheCota);
 		
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
 	

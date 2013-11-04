@@ -386,7 +386,7 @@ public class BoletoServiceImpl implements BoletoService {
 							valor,
 							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 									GrupoMovimentoFinaceiro.JUROS),
-							"Juros oriundos de cobrança não paga");
+							"Oriundos de cobrança não paga");
 				}
 				
 				valor = this.cobrancaService.calcularMulta(
@@ -405,7 +405,7 @@ public class BoletoServiceImpl implements BoletoService {
 							valor,
 							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 									GrupoMovimentoFinaceiro.MULTA),
-							"Multa oriunda de cobrança não paga");
+							"Oriunda de cobrança não paga");
 				}
 
 				this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
