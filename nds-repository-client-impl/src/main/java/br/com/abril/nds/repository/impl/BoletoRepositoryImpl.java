@@ -736,7 +736,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		Query query = this.obterQueryBoletosInadimplentes(hql.toString(), data);
 
-		query.setParameter("statusPendente", StatusDivida.PENDENTE);
+		query.setParameter("statusPendente", StatusDivida.PENDENTE_INADIMPLENCIA);
 		
 		return query.list();
 	}
