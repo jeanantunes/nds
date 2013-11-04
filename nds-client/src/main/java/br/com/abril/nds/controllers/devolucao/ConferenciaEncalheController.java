@@ -1007,7 +1007,28 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa, boolean indConferenciaContingencia){
+	public void atualizarValoresGridInteira(List<ConferenciaEncalheDTO> listaConferenciaEncalhe, boolean indConferenciaContingencia) {
+		
+		for(ConferenciaEncalheDTO conf : listaConferenciaEncalhe) {
+			
+			Long idConferencia = conf.getIdConferenciaEncalhe();
+			Long qtdExemplares = (conf.getQtdExemplar()!=null) ? conf.getQtdExemplar().longValue() : 0L;
+			Boolean juramentada = conf.getJuramentada();
+			
+			atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, null, indConferenciaContingencia);
+			
+		}
+		
+		this.result.use(Results.json()).from("").serialize();
+		
+	}
+	
+	private ConferenciaEncalheDTO atualizarItemConferenciaEncalhe(
+			Long idConferencia, 
+			Long qtdExemplares, 
+			Boolean juramentada, 
+			BigDecimal valorCapa, 
+			boolean indConferenciaContingencia) {
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
@@ -1056,6 +1077,18 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 		}
 		
+		indicarStatusConferenciaEncalheCotaAlterado();
+		
+		return conf;
+		
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa, boolean indConferenciaContingencia){
+		
+		ConferenciaEncalheDTO conf = atualizarItemConferenciaEncalhe(idConferencia, qtdExemplares, juramentada, valorCapa, indConferenciaContingencia);
+		
 		Map<String, Object> dados = new HashMap<String, Object>();
 		
 		dados.put("conf", conf);
@@ -1065,8 +1098,6 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularValoresMonetarios(dados);
 		
 		this.calcularTotais(dados);
-		
-		indicarStatusConferenciaEncalheCotaAlterado();
 		
 		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
 	}

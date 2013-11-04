@@ -442,7 +442,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalhe.popup_salvarInfos();
+					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.popup_salvarInfos);
 				}, 1000);
 				
 			}
@@ -457,7 +457,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalhe.veificarCobrancaGerada();
+					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.veificarCobrancaGerada);
 				}, 1000);
 				
 			}
@@ -1115,7 +1115,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 	},
 	
-	atualizarValoresGridInteira : function() {
+	atualizarValoresGridInteira : function(executarPosAtualizacaoGrid) {
 		
 		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
 		
@@ -1123,38 +1123,30 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$(listaItemGrid).each(function(index, element){
 			
-			var idConferenciaEncalhe = $(element).find("[id^='idConferenciaEncalheHidden_']").val();
-			var qtdExemplares = $(element).find("[id^='qtdExemplaresGrid_']").val();
-			var juramentado = ( $(element).find("[id^='checkGroupJuramentada_']").attr("checked") == 'checked' );
+			var valorIdConferenciaEncalhe = $(element).find("[id^='idConferenciaEncalheHidden_']").val();
+			var valorQtdExemplares = $(element).find("[id^='qtdExemplaresGrid_']").val();
+			var valorJuramentado = ( $(element).find("[id^='checkGroupJuramentada_']").attr("checked") == 'checked' );
 			
-			data.push([
-						
-	            {name: "idConferencia", value: idConferenciaEncalhe},
-	            {name: "qtdExemplares", value: qtdExemplares},
-	            {name: "juramentada", value: juramentado}
+			data.push({
+				
+				idConferenciaEncalhe: valorIdConferenciaEncalhe,
+				qtdExemplar: valorQtdExemplares,
+	            juramentada: valorJuramentado
 			
-			]);
+			});
 			
 			
 		});
 		
+		var param = serializeArrayToPost('listaConferenciaEncalhe', 
+				data);
+
+		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
-				data, 
+				param, 
 				function(result){
-					
-//					$("#valorTotalConferencia_" + index, ConferenciaEncalhe.workspace).text(parseFloat(result.conf.valorTotal).toFixed(4));
-//					
-//					$("#totalReparte", ConferenciaEncalhe.workspace).text(parseFloat(result.reparte).toFixed(2));
-//					$("#totalEncalhe", ConferenciaEncalhe.workspace).text(parseFloat(result.valorEncalhe).toFixed(2));
-//					$("#valorVendaDia", ConferenciaEncalhe.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
-//					$("#totalOutrosValores", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
-//					$("#valorAPagar", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
-//					$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text(result.qtdRecebida);
-//					
-//					ConferenciaEncalhe.numeroCotaEditavel(false);
 			
-					//TODO: FINALIZAR CONFERENCIA DE ENCALHE
-				
+					executarPosAtualizacaoGrid();
 			
 				}, function(){
 					
