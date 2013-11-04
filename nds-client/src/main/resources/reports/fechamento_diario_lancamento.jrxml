@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_lancamento" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="810" leftMargin="16" rightMargin="16" topMargin="8" bottomMargin="8" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="1037"/>
+	<property name="ireport.x" value="649"/>
 	<property name="ireport.y" value="0"/>
 	<style name="zebrado">
 		<conditionalStyle>
@@ -31,33 +31,33 @@
 	<field name="qtdeFaltaDe" class="java.math.BigInteger"/>
 	<field name="qtdeFaltaEm" class="java.math.BigInteger"/>
 	<field name="qtdeDiferencaLogicoFisico" class="java.math.BigInteger"/>
-	<variable name="totalFisico" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeDistribuido}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalFisico" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeDistribuido}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<variable name="totalLogico" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeDistribuir}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalLogico" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeDistribuir}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<variable name="totalDiferenca" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeDiferencaLogicoFisico}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalDiferenca" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeDiferencaLogicoFisico}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<variable name="totalSobrasDe" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeSobraDe}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalSobrasDe" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeSobraDe}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<variable name="totalSobrasEm" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeSobraEm}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalSobrasEm" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeSobraEm}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<variable name="totalFaltasDe" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeFaltaDe}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalFaltasDe" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeFaltaDe}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
-	<variable name="totalFaltasEm" class="java.math.BigInteger" calculation="Sum">
-		<variableExpression><![CDATA[$F{qtdeFaltaEm}]]></variableExpression>
-		<initialValueExpression><![CDATA[java.math.BigInteger.valueOf(0)]]></initialValueExpression>
+	<variable name="totalFaltasEm" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdeFaltaEm}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<pageHeader>
 		<band height="68" splitType="Stretch">
@@ -97,7 +97,7 @@
 					<textElement textAlignment="Right">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{dataFechamento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{dataFechamento}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="504" y="31" width="298" height="21"/>
@@ -110,7 +110,7 @@
 			</frame>
 			<image>
 				<reportElement x="2" y="8" width="119" height="48"/>
-				<imageExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_2.jpg").toURI().getPath()]]></imageExpression>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo_2.jpg").toURI().getPath()]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -313,7 +313,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{dataFechamento}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{dataFechamento}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="76" y="0" width="64" height="20"/>
@@ -326,7 +326,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{codigo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="140" y="0" width="204" height="20"/>
@@ -339,7 +339,7 @@
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{nomeProduto}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nomeProduto}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="344" y="0" width="40" height="20"/>
@@ -352,20 +352,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" mode="Opaque" x="458" y="0" width="40" height="20"/>
-				<box>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial" isBold="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeSobraDe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="498" y="0" width="40" height="20"/>
@@ -378,7 +365,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeSobraEm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeSobraEm}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="578" y="0" width="40" height="20"/>
@@ -391,7 +378,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeFaltaEm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeFaltaEm}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="538" y="0" width="40" height="20"/>
@@ -404,7 +391,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeFaltaDe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeFaltaDe}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="618" y="0" width="60" height="20"/>
@@ -417,7 +404,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeDistribuir}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeDistribuir}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="678" y="0" width="60" height="20"/>
@@ -430,7 +417,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeDistribuido}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeDistribuido}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="738" y="0" width="64" height="20"/>
@@ -443,7 +430,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{qtdeDiferencaLogicoFisico}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{qtdeDiferencaLogicoFisico}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="zebrado" mode="Opaque" x="384" y="0" width="74" height="20"/>
@@ -456,7 +443,20 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{precoVenda}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{precoVenda}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="zebrado" mode="Opaque" x="458" y="0" width="40" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdeSobraDe}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -473,7 +473,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Total Geral:"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Total Geral:"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="458" y="1" width="40" height="20" backcolor="#CCCCCC"/>
@@ -486,7 +486,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalSobrasDe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalSobrasDe}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="498" y="1" width="40" height="20" backcolor="#CCCCCC"/>
@@ -499,7 +499,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalSobrasEm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalSobrasEm}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="578" y="1" width="40" height="20" backcolor="#CCCCCC"/>
@@ -512,7 +512,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalFaltasEm}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalFaltasEm}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="538" y="1" width="40" height="20" backcolor="#CCCCCC"/>
@@ -525,7 +525,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalFaltasDe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalFaltasDe}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="618" y="1" width="60" height="20" backcolor="#CCCCCC"/>
@@ -538,7 +538,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalLogico}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalLogico}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="678" y="1" width="60" height="20" backcolor="#CCCCCC"/>
@@ -551,7 +551,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalFisico}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalFisico}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="738" y="1" width="64" height="20" backcolor="#CCCCCC"/>
@@ -564,7 +564,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalDiferenca}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalDiferenca}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

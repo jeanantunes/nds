@@ -56,7 +56,7 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		
 		hql.append(" ) ");
 		
-		hql.append(" ) * itemChamadaEncalheFornecedor.qtdeDevolucaoApurada ) ");
+		hql.append(" ) * coalesce(itemChamadaEncalheFornecedor.qtdeDevolucaoApurada, 0) ) ");
 		
 		hql.append(" from ItemChamadaEncalheFornecedor itemChamadaEncalheFornecedor ");
 		
@@ -71,7 +71,7 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idChamadaEncalheFornecedor", idChamadaEncalheFornecedor);
-	
+		
 		return (BigDecimal) query.uniqueResult();
 		
 	}

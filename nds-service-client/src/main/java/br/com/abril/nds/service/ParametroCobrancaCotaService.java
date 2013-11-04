@@ -194,10 +194,4 @@ public interface ParametroCobrancaCotaService {
 	List<BigDecimal> comboValoresMinimos();
 	
 	void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca);
-
-	/**
-	 * Obtem numero de acumulo de dividas e valor da politica de suspensão do distribuidor
-	 * @return ParametroCobrancaCotaDTO
-	 */
-	ParametroCobrancaCotaDTO obterPoliticaSuspensaoDistribuidor();
 }

@@ -454,31 +454,46 @@ var fecharDiaController =  $.extend(true, {
 				display : 'Código',
 				name : 'codigo',
 				width : 60,
-				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 250,
-				sortable : true,
+				width : 200,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 120,
-				sortable : true,
+				width : 60,
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoVenda',
-				width : 100,
-				sortable : true,
+				name : 'precoVendaFormatado',
+				width : 60,
 				align : 'right'
 			}, {
 				display : 'Qtde',
-				name : 'quantidadeContabil',
+				name : 'quantidadeLogico',
 				width : 90,
-				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Entrada Suplementar',
+				name : 'quantidadeTransferenciaEntrada',
+				width : 90,
+				align : 'center'
+			}, {
+				display : 'Saída Suplementar',
+				name : 'quantidadeTransferenciaSaida',
+				width : 90,
+				align : 'center'
+			}, {
+				display : 'Qtde Venda',
+				name : 'quantidadeVenda',
+				width : 90,
+				align : 'center'
+			}, {
+				display : 'Saldo',
+				name : 'saldo',
+				width : 90,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -626,6 +641,18 @@ var fecharDiaController =  $.extend(true, {
 
 			return resultado;
 		}
+
+		$.each(resultado.rows, function(index, row) {
+			
+			var entrada = row.cell.quantidadeTransferenciaEntrada ? parseInt(row.cell.quantidadeTransferenciaEntrada) : 0;
+			var saida = row.cell.quantidadeTransferenciaSaida ? parseInt(row.cell.quantidadeTransferenciaSaida) : 0;
+			var venda = row.cell.quantidadeVenda ? parseInt(row.cell.quantidadeVenda) : 0;
+			var logico = row.cell.quantidadeLogico ? parseInt(row.cell.quantidadeLogico) : 0;
+			
+			row.cell.quantidadeTransferenciaEntrada = entrada;
+			row.cell.quantidadeTransferenciaSaida = saida;
+			row.cell.saldo = logico + entrada - saida - venda;
+		});
 		
 		$("#dialog-suplementares", fecharDiaController.workspace).show();
 		

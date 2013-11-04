@@ -92,7 +92,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" FROM VendaProduto as ve ");		 
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
-		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" WHERE ve.dataOperacao = :dataOperacao ");
 		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
 		hql.append(" AND ve.tipoVenda = :suplementar");
@@ -140,7 +140,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" FROM VendaProduto as ve ");		 
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
-		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" WHERE ve.dataOperacao = :dataOperacao ");
 		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
 		hql.append(" AND ve.tipoVenda = :suplementar");
@@ -203,7 +203,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" where ");
 	    sql.append(" vendaprodu8_.ID_PRODUTO_EDICAO=produtoedi9_.ID ");
 	    sql.append(" and vendaprodu8_.ID_PRODUTO_EDICAO=produtoedi1_.ID ");
-	    sql.append("                 and vendaprodu8_.DATA_VENDA= :data ");
+	    sql.append("                 and vendaprodu8_.DATA_OPERACAO= :data ");
 	    sql.append(" and vendaprodu8_.TIPO_VENDA_ENCALHE=:tipoVendaSuplementar ");
 	    sql.append(" and vendaprodu8_.TIPO_COMERCIALIZACAO_VENDA=:tipoComercializacaoVista ");
 	    sql.append(" ) as quantidadeVenda, ( ");
@@ -308,7 +308,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	@Override
 	public Long contarVendasSuplementar(Date dataOperacao) {
 		StringBuilder hql = new StringBuilder("select count(vendaEncalhe) from VendaProduto vendaEncalhe ");
-        hql.append("where vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        hql.append("where vendaEncalhe.dataOperacao = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
         hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
         
         Query query = getSession().createQuery(hql.toString());

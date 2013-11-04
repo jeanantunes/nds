@@ -196,6 +196,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		ParametroCobrancaCotaDTO parametroCobrancaDTO = null;
 		if (cota != null) {
 			
+			Distribuidor distribuidor = distribuidorRepository.obter();
+			
 			List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaCota(cota);
 			
 			parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
@@ -221,8 +223,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				
 				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor.getPoliticaCobranca();
 				
-				Distribuidor distribuidor = distribuidorRepository.obter();
-								
 				parametroCobranca = new ParametroCobrancaCota();
 
 				parametroCobranca.setCota(cota);
@@ -270,38 +270,22 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				}
 			}
 			
-			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);					
+			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);		
+			
+			if (parametroCobrancaDTO.getVrDividasAberto()==null && parametroCobrancaDTO.getQtdDividasAberto()==null){
+			
+				if(distribuidor.getPoliticaSuspensao()!=null){
+					
+					parametroCobrancaDTO.setVrDividasAberto(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
+					
+					parametroCobrancaDTO.setQtdDividasAberto(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());				
+				}
+			}
 		}
 
 		return parametroCobrancaDTO;
 	}
-	
-	
-	
-	/**
-	 * Obtem numero de acumulo de dividas e valor da politica de suspensão do distribuidor
-	 * @return ParametroCobrancaCotaDTO
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public ParametroCobrancaCotaDTO obterPoliticaSuspensaoDistribuidor(){
-		
-		ParametroCobrancaCotaDTO parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
-		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-        if(distribuidor.getPoliticaSuspensao()!=null){
-			
-			parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
-			
-			parametroCobrancaDTO.setQtdDividasAberto(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());				
-		}
-        
-        return parametroCobrancaDTO;
-	}
-	
-	
-    
+
 	/**
 	 * Método responsável por obter os dados da forma de cobranca
 	 * @param idFormaCobranca: ID da forma de cobranca
