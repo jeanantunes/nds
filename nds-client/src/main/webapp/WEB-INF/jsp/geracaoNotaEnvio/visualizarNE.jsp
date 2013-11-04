@@ -239,10 +239,10 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
-			<td align="right"><strong>DESCONTO %</strong></td>
+			<td align="right"><strong>DESCONTO R$</strong></td>
 			<td align="right" style="border-bottom: 1px solid #000;">
 				<c:if test="${totalPrecoCapa.compareTo(BigDecimal.ZERO)!=0}">
-					<fmt:formatNumber value="${(totalPrecoCapa - totalComDesconto) * 100 / totalPrecoCapa}"  type="NUMBER"  maxFractionDigits="2"/>
+					<fmt:formatNumber value="${(totalPrecoCapa - totalComDesconto)}"  type="NUMBER"  maxFractionDigits="2"/>
 				</c:if>
 				<c:if test="${totalPrecoCapa.compareTo(BigDecimal.ZERO)==0}">
 					0,00
