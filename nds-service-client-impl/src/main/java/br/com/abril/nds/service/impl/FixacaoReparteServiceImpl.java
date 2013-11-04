@@ -201,7 +201,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		FixacaoReparte fixacaoReparte;
 		Cota cota = cotaRepository.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
 		Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
-        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.buscarPorId(NumberUtils.toLong(fixacaoReparteDTO.getClassificacaoProduto()));
+        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.buscarPorId(fixacaoReparteDTO.getClassificacaoProdutoId());
 
         // Esta validação nao faz mais sentido como está... talvez varrer todas as possiveis edições involvidas?
 		validaStatusProduto(fixacaoReparteDTO, produto);
@@ -223,9 +223,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial());
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal());
 
-        Long classificacaoProdutoId = NumberUtils.toLong(fixacaoReparteDTO.getClassificacaoProduto());
+        Long classificacaoProdutoId = fixacaoReparteDTO.getClassificacaoProdutoId();
+        
         if (classificacaoProdutoId.compareTo(NumberUtils.LONG_ZERO) > 0) {
-            TipoClassificacaoProduto tipoClassificacaoProduto = tipoClassificacaoProdutoRepository.buscarPorId(classificacaoProdutoId);
+            TipoClassificacaoProduto tipoClassificacaoProduto = new TipoClassificacaoProduto();
+            tipoClassificacaoProduto.setId(classificacaoProdutoId);
             fixacaoReparte.setClassificacaoProdutoEdicao(tipoClassificacaoProduto);
         }
 

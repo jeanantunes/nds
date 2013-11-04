@@ -848,7 +848,8 @@ var fixacaoReparteController = $.extend(true, {
 			if($("#subtitulo1").text() == 'Cota'){
 				data.push({name:'fixacaoReparteDTO.cotaFixada',value: $("#spanCodigoProduto").text()});
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#codigoModal").val()});
-                data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).val()});
+                data.push({name:'fixacaoReparteDTO.classificacaoProdutoId',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).val()});
+                data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).html()});
 			}
 
 			data.push({name:'fixacaoReparteDTO.edicao', 		value: $('#edicaoDestaque').text()});
