@@ -350,9 +350,9 @@ public class ProdutoEdicaoController extends BaseController {
 						
 						if(prodEdicao.getNumeroEdicao() != null){
 							
-							validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao()+" está inválido. Por favor revise-o.");
+							validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao()+" está inválido. Por favor revise-o."+"\n" + mensagens);
 						}else{
-							validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " está inválido. Por favor revise-o.");
+							validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " está inválido. Por favor revise-o."+"\r\n" + mensagens);
 						}
 						listaEdicaoDtoInvalidos.add(prodEdicao);
 					}
@@ -412,15 +412,11 @@ public class ProdutoEdicaoController extends BaseController {
 		for (ProdutoEdicaoDTO peDTO : listaEdicaoDto) {
 			
 			if(peDTO.getLancamento()!=null){
-				
 				try {
-
-					peDTO.setTipoLancamento(TipoLancamento.valueOf(peDTO.getLancamento()));
-					
+					peDTO.setTipoLancamento(TipoLancamento.valueOf(peDTO.getLancamento().toUpperCase()));
 				} catch (Exception e) {
 					
 				}
-				
 			}
 			
 			if(peDTO.getDtLancPrevisto()!=null)
