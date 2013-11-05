@@ -36,6 +36,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -198,6 +199,9 @@ public class ProdutoEdicao implements Serializable {
 	
     @OneToOne(mappedBy = "produtoEdicao")
     private EstoqueProduto estoqueProduto;
+    
+    @OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
+    private Set<HistoricoEstoqueProduto> historicoEstoqueProduto;
 
 	public ProdutoEdicao() {
 	}
@@ -621,6 +625,15 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
 		this.estoqueProduto = estoqueProduto;
+	}
+	
+	public Set<HistoricoEstoqueProduto> getHistoricoEstoqueProduto() {
+		return historicoEstoqueProduto;
+	}
+
+	public void setHistoricoEstoqueProduto(
+			Set<HistoricoEstoqueProduto> historicoEstoqueProduto) {
+		this.historicoEstoqueProduto = historicoEstoqueProduto;
 	}
 
 	@Override

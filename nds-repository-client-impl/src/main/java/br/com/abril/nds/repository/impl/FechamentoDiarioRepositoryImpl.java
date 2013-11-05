@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
+
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
@@ -11,6 +14,19 @@ public class FechamentoDiarioRepositoryImpl extends AbstractRepositoryModel<Fech
 
 	public FechamentoDiarioRepositoryImpl() {
 		super(FechamentoDiario.class);
+	}
+	
+	public Date obterDataUltimoFechamento(Date dataFechamento){
+		
+		String hql = " select max(fechamentoDiario.dataFechamento) from FechamentoDiario fechamentoDiario where fechamentoDiario.dataFechamento < :dataFechamento ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("dataFechamento", dataFechamento);
+		query.setMaxResults(1);
+		
+		return (Date) query.uniqueResult();
+		
 	}
 	
 }

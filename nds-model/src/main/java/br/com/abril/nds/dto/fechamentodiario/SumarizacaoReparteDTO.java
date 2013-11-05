@@ -44,7 +44,7 @@ public class SumarizacaoReparteDTO implements Serializable {
         this.totalDistribuir = this.totalReparte.add(this.totalSobras)
                 .subtract(this.totalFaltas).add(this.totalTransferencias);
         this.totalSobraDistribuicao = this.totalDistribuir.subtract(this.totalDistribuido);
-        this.totalDiferenca = this.totalDistribuido.subtract(this.totalSobraDistribuicao);
+        this.totalDiferenca = this.totalDistribuir.subtract(this.totalDistribuido).subtract(this.totalSobraDistribuicao);
     }
 
     /**
