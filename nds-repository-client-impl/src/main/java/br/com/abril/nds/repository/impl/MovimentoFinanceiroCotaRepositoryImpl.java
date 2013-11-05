@@ -1389,7 +1389,14 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
 	        
 	           .append(")*(-1)),0) + ")
-	    
+	           
+	           .append(" coalesce(((")
+	       
+	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+
+	           .append(this.movimentoEstoqueCotaRepository.getFromAVistaCotaAVista("c.id"))
+
+	           .append(")*(-1)),0) + ")
 	           
 	           .append(" coalesce((")
 	           
@@ -1533,8 +1540,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
         
         query.setParameter("numeroCota", numeroCota);
         
-        query.setParameterList("gruposMovimentoFinanceiroReparteEncalhe", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE, 
-                															            GrupoMovimentoEstoque.ENVIO_ENCALHE));
+        query.setParameterList("gruposMovimentoFinanceiroReparteEncalhe", Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE, 
+        																				GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
         return query.list();
 	}
 }
