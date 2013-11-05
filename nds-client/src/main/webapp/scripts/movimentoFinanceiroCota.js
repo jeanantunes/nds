@@ -30,7 +30,7 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 60,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			},{
@@ -48,25 +48,19 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 			},{
 				display : 'Valor À Vista',
 				name : 'valorAVista',
-				width : 95,
-				sortable : false,
-				align : 'left'
-			},{
-				display : 'Valor Estornado',
-				name : 'valorEstornado',
-				width : 95,
+				width : 100,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Débitos',
 				name : 'debitos',
-				width : 70,
+				width : 95,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Créditos',
 				name : 'creditos',
-				width : 70,
+				width : 95,
 				sortable : false,
 				align : 'left'
 			},{

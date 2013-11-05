@@ -98,7 +98,7 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.qtdeFalta = this.qtdeFaltaDe.add(this.qtdeFaltaEm);
         this.qtdeDistribuir = this.qtdeReparte.add(this.qtdeSobra).subtract(this.qtdeFalta).add(this.qtdeTransferencia);
         this.qtdeSobraDistribuicao = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
-        this.qtdeDiferenca = this.qtdeDistribuido.subtract(this.qtdeSobraDistribuicao);
+        this.qtdeDiferenca = this.qtdeDistribuir.subtract(this.qtdeDistribuido).subtract(this.qtdeSobraDistribuicao);
         this.qtdeDiferencaLogicoFisico = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
         this.valorPrecoCapaFormatado = (precoVenda == null) ? CurrencyUtil.formatarValor(BigDecimal.ZERO) :  CurrencyUtil.formatarValor(precoVenda);
         

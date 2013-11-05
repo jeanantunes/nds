@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.AbstractRepository;
@@ -32,12 +31,18 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT ");		     
-		hql.append(" SUM( ");		     
-		hql.append(" ep.qtdeSuplementar * pe.precoVenda");
+		hql.append("SELECT ");
+		hql.append(" SUM( ");
+		hql.append(" 	hep.qtdeSuplementar * pe.precoVenda");
 		hql.append(" ) ");
-		hql.append(" FROM EstoqueProduto as ep ");
-		hql.append(" JOIN ep.produtoEdicao as pe ");
+		hql.append(" FROM HistoricoEstoqueProduto as hep ");
+		hql.append(" JOIN hep.produtoEdicao as pe ");
+		hql.append(" WHERE hep.data = ( ");
+		hql.append(" 	select ");
+		hql.append(" 	max(histo.data) ");
+		hql.append(" 	from ");
+		hql.append(" 	HistoricoEstoqueProduto histo ");
+		hql.append(" ) ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -93,7 +98,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
 		hql.append(" WHERE ve.dataOperacao = :dataOperacao ");
-		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
 		hql.append(" AND ve.tipoVenda = :suplementar");
 
@@ -102,8 +106,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		query.setParameter("dataOperacao", dataOperacao);
 		
 		query.setParameter("suplementar", TipoVendaEncalhe.SUPLEMENTAR);
-		
-		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);	
 		
 		BigDecimal total =  (BigDecimal) query.uniqueResult();
 		
@@ -141,7 +143,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
 		hql.append(" WHERE ve.dataOperacao = :dataOperacao ");
-		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
 		hql.append(" AND ve.tipoVenda = :suplementar");
 
@@ -150,8 +151,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		query.setParameter("dataOperacao", dataOperacao);
 		
 		query.setParameter("suplementar", TipoVendaEncalhe.SUPLEMENTAR);
-		
-		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VendaFechamentoDiaDTO.class));
@@ -205,7 +204,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" and vendaprodu8_.ID_PRODUTO_EDICAO=produtoedi1_.ID ");
 	    sql.append("                 and vendaprodu8_.DATA_OPERACAO= :data ");
 	    sql.append(" and vendaprodu8_.TIPO_VENDA_ENCALHE=:tipoVendaSuplementar ");
-	    sql.append(" and vendaprodu8_.TIPO_COMERCIALIZACAO_VENDA=:tipoComercializacaoVista ");
 	    sql.append(" ) as quantidadeVenda, ( ");
 	    sql.append(" select ");
 	    sql.append(" sum(movimentoe10_.QTDE) ");
@@ -266,7 +264,6 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		query.setParameter("data", data);
 		query.setParameter("tipoVendaSuplementar", TipoVendaEncalhe.SUPLEMENTAR.name());
-        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME.name());   
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());   
         
         query.setParameterList("grupoEntradaSuplementar", Arrays.asList(
@@ -309,12 +306,10 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	public Long contarVendasSuplementar(Date dataOperacao) {
 		StringBuilder hql = new StringBuilder("select count(vendaEncalhe) from VendaProduto vendaEncalhe ");
         hql.append("where vendaEncalhe.dataOperacao = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
-        hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
         
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("data", dataOperacao);
-        query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.SUPLEMENTAR);
-        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);        
+        query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.SUPLEMENTAR); 
         
         return (Long) query.uniqueResult();
 	}

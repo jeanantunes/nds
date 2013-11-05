@@ -352,7 +352,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		     .append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 	 ")
 		     .append("  	  and d.TIPO_DIRECIONAMENTO IN ('COTA', 'NOTA') 			 ")
 		
-		     .append("     and rd.data_movimento between innerQuery.dataLancamento ")
+		     .append("     and d.DATA_MOVIMENTACAO between innerQuery.dataLancamento ")
 		     .append("     and COALESCE((select min(data_lcto_distribuidor) ")
 		     .append("	  from lancamento where data_lcto_distribuidor > innerQuery.dataLancamento ")
 		     .append("  	  and produto_edicao_id = produtoEdicaoId and status IN( 'EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')), innerQuery.dataLancamento) ")

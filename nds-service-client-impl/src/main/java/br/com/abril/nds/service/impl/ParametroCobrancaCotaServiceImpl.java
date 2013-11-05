@@ -215,7 +215,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobranca = cota.getParametroCobranca();
 			
-			if (parametroCobranca == null && (formasCobranca == null || formasCobranca.size() == 0)) {
+			if (parametroCobranca == null || (formasCobranca == null || formasCobranca.size() == 0)) {
 				
 				parametroDistribuidor = true;
 				

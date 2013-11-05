@@ -72,7 +72,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	iniciarGridPrevisao : function() {
-		$(".previsaoGrid").flexigrid({
+		$(".previsaoGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
@@ -130,7 +130,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 
 	iniciarGriBoletosBaixados : function() {
-		$(".boletoBaixadoGrid").flexigrid({
+		$(".boletoBaixadoGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
@@ -188,7 +188,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	iniciarGridBaixadosRejeitados : function() {
-		$(".boletoRejeitadoGrid").flexigrid({
+		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
@@ -228,7 +228,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	iniciarGridBaixadosDivergentes : function() {
-		$(".boletoDivergenciaGrid").flexigrid({
+		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
@@ -280,7 +280,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	iniciarGridInadimplentes : function() {
-		$(".inadimplentesGrid").flexigrid({
+		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
@@ -338,7 +338,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	iniciarGridTotalBancario : function() {
-		$(".totalGrid").flexigrid({
+		$(".totalGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResult,
 			dataType : 'json',
 			colModel : [ {
@@ -438,7 +438,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
     popup_baixa_dividas : function() {
-    	baixaFinanceiraController.mostrarBancos($("#formaRecebimentoDividas").val());
+    	baixaFinanceiraController.mostrarBancos($("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val());
 		$( "#dialog-baixa-dividas", baixaFinanceiraController.workspace ).dialog({
 			resizable: false,
 			height:430,
@@ -480,7 +480,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           text:"Confirmar", 
 				           click: function() {
 				        	   
-				        	   var pagamentoAVista = $('#formaRecebimentoDividas').val()==='DINHEIRO';
+				        	   var pagamentoAVista = $('#formaRecebimentoDividas', baixaFinanceiraController.workspace).val()==='DINHEIRO';
 				        	   
 				        	   if(pagamentoAVista)
 				        		   baixaFinanceiraController.baixaManualDividas(false);
@@ -610,8 +610,15 @@ var baixaFinanceiraController = $.extend(true, {
 			onSuccess: function() {bloquearItensEdicao(baixaFinanceiraController.workspace);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'Codigo',
 				name : 'codigo',
+				width : 10,
+				sortable : false,
+				align : 'left',
+				hide: true
+			},{
+				display : 'Cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -679,8 +686,8 @@ var baixaFinanceiraController = $.extend(true, {
 			var elem = $("#textoSelTodos", baixaFinanceiraController.workspace);
 			elem.innerHTML = "Desmarcar todos";
 			
-	        $("#totalDividasSelecionadas", baixaFinanceiraController.workspace).html($("#totalDividas").html());
-		    $("#totalDividasSelecionadasHidden", baixaFinanceiraController.workspace).val($("#totalDividasHidden").val());
+	        $("#totalDividasSelecionadas", baixaFinanceiraController.workspace).html($("#totalDividas", baixaFinanceiraController.workspace).html());
+		    $("#totalDividasSelecionadasHidden", baixaFinanceiraController.workspace).val($("#totalDividasHidden", baixaFinanceiraController.workspace).val());
         }
 		
 		else{
@@ -688,8 +695,8 @@ var baixaFinanceiraController = $.extend(true, {
 			var elem = document.getElementById("textoSelTodos");
 			elem.innerHTML = "Marcar todos";
 			
-			$("#totalDividasSelecionadas").html("0,00");
-			$("#totalDividasSelecionadasHidden").val("0,00");
+			$("#totalDividasSelecionadas", baixaFinanceiraController.workspace).html("0,00");
+			$("#totalDividasSelecionadasHidden", baixaFinanceiraController.workspace).val("0,00");
 		}
 	},
 	
@@ -870,9 +877,9 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		var numCota = $("#filtroNumCota", baixaFinanceiraController.workspace).val();
 		
-		var botoesDividasNaoPagas = $("#botoesDividasNaoPagas");
+		var botoesDividasNaoPagas = $("#botoesDividasNaoPagas", baixaFinanceiraController.workspace);
 		
-		var botoesDividasPagas = $("#botoesDividasPagas");
+		var botoesDividasPagas = $("#botoesDividasPagas", baixaFinanceiraController.workspace);
 	
 		if($("#checkCobrancasBaixadas", baixaFinanceiraController.workspace).is(':checked')){
 			
@@ -1397,7 +1404,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
-		$(".boletoBaixadoGrid").flexOptions({
+		$(".boletoBaixadoGrid", baixaFinanceiraController.workspace).flexOptions({
 			url: contextPath + "/financeiro/baixa/mostrarGridBoletosBaixados",
 			params: [
 		         {name:'data', value: dataBaixa}
@@ -1406,7 +1413,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
 		$(".boletoBaixadoGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-boletos-baixados").dialog({
+		$("#dialog-boletos-baixados", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:800,
@@ -1437,7 +1444,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
 		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-baixados-rejeitados").dialog({
+		$("#dialog-baixados-rejeitados", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:800,
@@ -1468,7 +1475,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
 		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-baixados-divergentes").dialog({
+		$("#dialog-baixados-divergentes", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:800,
@@ -1499,7 +1506,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
 		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-inadimplentes").dialog({
+		$("#dialog-inadimplentes", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:800,
@@ -1530,7 +1537,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
 		$(".totalGrid", baixaFinanceiraController.workspace).flexReload();
 		
-		$("#dialog-total").dialog({
+		$("#dialog-total", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:430,
 			width:600,
@@ -1588,7 +1595,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 
 			$('#resultadoIntegracao', baixaFinanceiraController.workspace).show();
 			
-			$('#tableDados').css({"text-align": ""});
+			$('#tableDados', baixaFinanceiraController.workspace).css({"text-align": ""});
 		}
 	},
 	
@@ -1693,7 +1700,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 				
 	postergarDivida : function() {
 		
-		var isento = $('#checkIsIsento').attr('checked') === 'checked';
+		var isento = $('#checkIsIsento', baixaFinanceiraController.workspace).attr('checked') === 'checked';
 		
 		baixaFinanceiraController.alterarIsencao(isento);
 			
@@ -1751,7 +1758,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 	
 	habilitarIntegracao: function() {
 		
-		if ($("#uploadedFile").val() == "") {
+		if ($("#uploadedFile", baixaFinanceiraController.workspace).val() == "") {
 
 			$("#btnIntegrar", baixaFinanceiraController.workspace).hide();
 			$("#btnExibirResumos", baixaFinanceiraController.workspace).show();

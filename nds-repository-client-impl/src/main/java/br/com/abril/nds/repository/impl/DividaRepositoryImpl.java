@@ -776,17 +776,24 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		hql.append(")")
 		   .append(" from Cobranca cobranca ");
 		
-		if (tipoDivida == TipoDivida.DIVIDA_A_VENCER){
+		if (TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)){
 			
-			hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
+			hql.append(" where cobranca.dataVencimento > :data and cobranca.statusCobranca = :statusNaoPago   ");
+
 		} else {
 			
-			hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ");
+			hql.append(" where cobranca.dataVencimento <= :data  and cobranca.statusCobranca = :statusNaoPago ")
+			.append(" and cobranca.divida.status != :pendenteInadimplente ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
 		query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO);
+		
+		
+    	if(!TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)){
+        	query.setParameter("pendenteInadimplente", StatusDivida.PENDENTE_INADIMPLENCIA);
+    	}
 		
 		List<SumarizacaoDividasDTO> lista = query.list();
 		
@@ -865,12 +872,14 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    
 	    
 	    
-	    if (tipoDivida == TipoDivida.DIVIDA_A_VENCER){
+	    if (TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)){
 			
-			hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
+			hql.append(" where cobranca.dataVencimento > :data and cobranca.statusCobranca = :statusNaoPago   ");
+			
 		} else {
 			
-			hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ");
+			hql.append(" where cobranca.dataVencimento <= :data  and cobranca.statusCobranca = :statusNaoPago ")
+			.append("	and cobranca.divida.status != :pendenteInadimplente	");
 		}
 	    
 	    if (!count) {
@@ -880,6 +889,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    Query query = getSession().createQuery(hql.toString());
 	    query.setParameter("data", data);
     	query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO);
+    	
+    	if(!TipoDivida.DIVIDA_A_VENCER.equals(tipoDivida)){
+        	query.setParameter("pendenteInadimplente", StatusDivida.PENDENTE_INADIMPLENCIA);
+    	}
 	    
 	    if (!count && paginacao != null) {
 	        query.setFirstResult(paginacao.getPosicaoInicial());
