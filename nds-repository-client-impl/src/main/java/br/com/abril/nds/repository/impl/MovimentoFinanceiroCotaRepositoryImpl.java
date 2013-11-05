@@ -1301,6 +1301,62 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
     	
 		return hql.toString();
 	}
+    
+    /**
+   	 * FROM: Movimentos financeiros de Débito Pendentes da cota
+   	 * @param paramIdCota
+   	 * @return String
+   	 */
+    public String getFromPendenteDebitoCota(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+	      .append("  join mfc.cota c4 ")
+	       
+	      .append("  join mfc.tipoMovimento tm ")
+	    
+	      .append("  where mfc.data <= :data ")
+	      
+	      .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
+	       
+	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	       
+	      .append("  and c4.id = ").append(paramIdCota)
+	       
+	      .append("  and (c4.alteracaoTipoCota is not null and c4.alteracaoTipoCota >= mfc.data)");
+    	
+		return hql.toString();
+	}
+    
+    /**
+   	 * FROM: Movimentos financeiros de Crédito Pendentes da cota
+   	 * @param paramIdCota
+   	 * @return String
+   	 */
+    public String getFromPendenteCreditoCota(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+	      .append("  join mfc.cota c4 ")
+	       
+	      .append("  join mfc.tipoMovimento tm ")
+	    
+	      .append("  where mfc.data <= :data ")
+	      
+	      .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
+	       
+	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	       
+	      .append("  and c4.id = ").append(paramIdCota)
+	       
+	      .append("  and (c4.alteracaoTipoCota is not null and c4.alteracaoTipoCota >= mfc.data)");
+    	
+		return hql.toString();
+	}
 	
 	/**
 	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
@@ -1340,8 +1396,26 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
 	       
 	       .append("),0) as valorConsignado, ")
-
 	       
+
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mfc.valor) ")
+	      
+	       .append(this.getFromPendenteDebitoCota("c.id"))
+	       
+	       .append("),0) as valorPendenteDebito, ")
+	       
+	       
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mfc.valor) ")
+	      
+	       .append(this.getFromPendenteCreditoCota("c.id"))
+	       
+	       .append("),0) as valorPendenteCredito, ")
+	       
+
 	       .append(" coalesce((")
 	       
 	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
@@ -1390,6 +1464,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	        
 	           .append(")*(-1)),0) + ")
 	           
+	           
 	           .append(" coalesce(((")
 	       
 	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
@@ -1397,6 +1472,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           .append(this.movimentoEstoqueCotaRepository.getFromAVistaCotaAVista("c.id"))
 
 	           .append(")*(-1)),0) + ")
+	           
 	           
 	           .append(" coalesce((")
 	           
@@ -1427,8 +1503,29 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("),0) ")
 	
-	        .append(") ")
+	        .append(") + ")
+
+	        .append("(")
+	         
+	           .append(" coalesce(((")
+	           
+	           .append("  select sum(coalesce(mfc.valor,0)) ")
+	          
+	           .append(this.getFromPendenteDebitoCota("c.id"))
 	        
+	           .append(")*(-1)),0) + ")
+	           
+	    
+	           .append(" coalesce((")
+	           
+	           .append("  select sum(coalesce(mfc.valor,0)) ")
+	          
+	           .append(this.getFromPendenteCreditoCota("c.id"))
+	           
+	           .append("),0) ")
+	
+	        .append(") ")
+
 	      .append(")*(-1) as saldo ")
 	       
 	       
