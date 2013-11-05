@@ -2692,7 +2692,7 @@ public class CotaServiceImpl implements CotaService {
         }
         
         return cotas;
-  }
+    }
     
     @Transactional
     @Override

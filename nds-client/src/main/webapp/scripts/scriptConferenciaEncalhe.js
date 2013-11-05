@@ -18,6 +18,8 @@ function disableEnterKey(e) {
 
 var ConferenciaEncalhe = $.extend(true, {
 	
+	processandoConferenciaEncalhe: false,
+	
 	modalAberta: false, 
 	
 	idProdutoEdicao: "",
@@ -426,7 +428,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(document.body).bind('keydown.popUpNotaFiscal', jwerty.event('F6',function() {
 			
 			if (!ConferenciaEncalhe.modalAberta){
-				
 				ConferenciaEncalhe.popup_notaFiscal();
 			}
 			
@@ -436,10 +437,12 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (!ConferenciaEncalhe.modalAberta){
 				
+				ConferenciaEncalhe.processandoConferenciaEncalhe = true;
+				
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalhe.popup_salvarInfos();
+					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.popup_salvarInfos);
 				}, 1000);
 				
 			}
@@ -449,10 +452,12 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
 			if (!ConferenciaEncalhe.modalAberta){
 				
+				ConferenciaEncalhe.processandoConferenciaEncalhe = true;
+				
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalhe.veificarCobrancaGerada();
+					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.veificarCobrancaGerada);
 				}, 1000);
 				
 			}
@@ -867,6 +872,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 		}
 		
+		ConferenciaEncalhe.processandoConferenciaEncalhe = false;
+		
 		$(".outrosVlrsGrid", ConferenciaEncalhe.workspace).flexAddData({
 			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: ConferenciaEncalhe.formatarDadosDebitoCredito(result.listaDebitoCredito.rows)
 		});
@@ -1108,7 +1115,60 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#somatorioTotal", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
 	},
 	
+	atualizarValoresGridInteira : function(executarPosAtualizacaoGrid) {
+		
+		var listaItemGrid = $("._dadosConfEncalhe", ConferenciaEncalhe.workspace);
+		
+		var data = [];
+		
+		$(listaItemGrid).each(function(index, element){
+			
+			var valorIdConferenciaEncalhe = $(element).find("[id^='idConferenciaEncalheHidden_']").val();
+			var valorQtdExemplares = $(element).find("[id^='qtdExemplaresGrid_']").val();
+			var valorJuramentado = ( $(element).find("[id^='checkGroupJuramentada_']").attr("checked") == 'checked' );
+			
+			data.push({
+				
+				idConferenciaEncalhe: valorIdConferenciaEncalhe,
+				qtdExemplar: valorQtdExemplares,
+	            juramentada: valorJuramentado
+			
+			});
+			
+			
+		});
+		
+		var param = serializeArrayToPost('listaConferenciaEncalhe', 
+				data);
+
+		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValoresGridInteira", 
+				param, 
+				function(result){
+			
+					executarPosAtualizacaoGrid();
+			
+				}, function(){
+					
+					var data = [
+								  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+								  {name: 'indObtemDadosFromBD', value : false},
+								  {name: 'indConferenciaContingencia', value: false}
+								 ];
+								
+					ConferenciaEncalhe.carregarListaConferencia(data);				
+				}
+			
+		);
+		
+		
+	},
+	
 	atualizarValores : function(index){
+		
+		if(ConferenciaEncalhe.processandoConferenciaEncalhe){
+			return;
+		}
 		
 		var juramentado = false;
 		
