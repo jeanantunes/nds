@@ -233,8 +233,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 		if (filtro.getOrdenacaoColuna() != null) {
 			switch (filtro.getOrdenacaoColuna()) {
-				case CODIGO:
-					hql.append(" order by c.id ");
+				case NUMERO_COTA:
+					hql.append(" order by c.cota.numeroCota ");
 					break;
 				case NOME_COTA:
 					hql.append(" order by c.cota.pessoa.nome ");
