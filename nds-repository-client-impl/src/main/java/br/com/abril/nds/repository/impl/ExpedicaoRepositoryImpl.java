@@ -344,6 +344,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='FALTA_EM' THEN -rd.QTDE ")
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_DE' THEN rd.QTDE  ")
 		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_EM' THEN rd.QTDE  ")
+		     .append(" 		       WHEN d.TIPO_DIFERENCA='SOBRA_EM_DIRECIONADA_COTA' THEN rd.QTDE  ")
 		     .append(" 		       ELSE 0 END) 	 						 		 ")
 		     .append("     from diferenca d 										 ")
 		     .append("     inner join rateio_diferenca rd on (rd.DIFERENCA_ID = d.id) ")
