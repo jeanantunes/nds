@@ -1192,13 +1192,11 @@ public class DescontoServiceImpl implements DescontoService {
 			descontoDTO = descontos.get(key);
 		}
 		
-		if(descontoDTO == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");
-			
+		if(descontoDTO == null) {			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");			
 		}
 		
-		return null;
+		return descontoDTO;
 	}
 
 }

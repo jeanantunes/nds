@@ -393,6 +393,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 																		 descontoDTO.getValor() : BigDecimal.ZERO)
 																 , quantidade);
 			
+			if(estudoCota.getEstudo() != null && estudoCota.getEstudo().getLancamento() != null) {
+				itemNotaEnvio.setSequenciaMatrizLancamento(estudoCota.getEstudo().getLancamento().getSequenciaMatriz());
+			}
+			
 			if(!itemExistente)
 				listItemNotaEnvio.add(itemNotaEnvio);
 					
@@ -579,14 +583,24 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		for(NotaEnvio item : notasEnvio){
 			item.getListaItemNotaEnvio().isEmpty();
+			
+			Collections.sort(item.getListaItemNotaEnvio(), new Comparator<ItemNotaEnvio>(){
+				@Override
+				public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
+				    
+				    	if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null) {
+				    	    return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
+				    	} else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
+				    		&& (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
+	    						o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+	    				}
+	    							    	
+				    	return 0;
+				}
+				
+			});
 		}
-		/*
-		if (listaItemNotaEnvio.isEmpty()) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Não é possível gerar Nota de Envio para a Cota "
-							+ cota.getNumeroCota());
-		}*/
+		
 	}
 	
 	/**
@@ -870,7 +884,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
 		
-		for (Long idCota:idCotas){
+		for (Long idCota:idCotas) {
 
 			this.getNotaEnvioCota(pessoaEmitente,
                                   idCota,  

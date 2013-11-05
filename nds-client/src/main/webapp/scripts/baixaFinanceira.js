@@ -610,8 +610,15 @@ var baixaFinanceiraController = $.extend(true, {
 			onSuccess: function() {bloquearItensEdicao(baixaFinanceiraController.workspace);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'Codigo',
 				name : 'codigo',
+				width : 10,
+				sortable : false,
+				align : 'left',
+				hide: true
+			},{
+				display : 'Cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
