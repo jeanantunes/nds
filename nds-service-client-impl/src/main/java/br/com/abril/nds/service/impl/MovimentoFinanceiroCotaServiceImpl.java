@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
@@ -593,16 +592,18 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	                                                                                                                     maxResults);
 	    
 	    for (ProcessamentoFinanceiroCotaDTO item : informacoesProcessamentoFinanceiroCota){
+	    	
+	    	String debitos = CurrencyUtil.formatarValor(item.getDebitos().add(item.getValorPendenteDebito()));
+	    	
+	    	String creditos = CurrencyUtil.formatarValor(item.getCreditos().add(item.getValorPendenteCredito()).add(item.getValorEstornado()));		
 	      
 	        processamentoFinanceiroVO.add(new ProcessamentoFinanceiroCotaVO(item.getNumeroCota().toString(),
 	                                                                        item.getNomeCota(),
 	                                                                        CurrencyUtil.formatarValor(item.getValorConsignado()),
 	                                                                        CurrencyUtil.formatarValor(item.getValorAVista()),
-	                                                                        CurrencyUtil.formatarValor(item.getValorEstornado()),  
-	                                                                        CurrencyUtil.formatarValor(item.getDebitos()),
-	                                                                        CurrencyUtil.formatarValor(item.getCreditos()),
+	                                                                        debitos,
+	                                                                        creditos,
 	                                                                        CurrencyUtil.formatarValor(item.getSaldo())));
-	
 	    }
 	    
 	    return processamentoFinanceiroVO;
