@@ -1,5 +1,5 @@
 var digitacaoContagemDevolucaoController = $.extend(true, {
-
+		
 		init : function(userProfileOperador) {
 			
 			this.hashInserirEdicoesFechadas = {};
@@ -35,16 +35,14 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				height : 180
 			});
 			
-			if (digitacaoContagemDevolucaoController.isRoleOperador(userProfileOperador)){
-				
-				//Oculta os campos que não serão visíveis pelo perfil de usuário Operador
-				//$("#btnConfirmar", digitacaoContagemDevolucaoController.workspace).hide();
-				//$("#bt_sellAll", digitacaoContagemDevolucaoController.workspace).hide();
-			}
-			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
 			
 			this.montaGridEdicoesFechadas();
+			
+			this.replicar = {
+				all:false,
+				list:[]
+			};
 			
 		},
 		
@@ -82,8 +80,12 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				params: formData,
 				onSuccess: function(){
 					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
+					
 					$(".edicaoFechada").parents("tr").css("background", "#ffeeee");
+					
 					$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();
+					
+					digitacaoContagemDevolucaoController.replicarValores();
 				}
 			});
 			
@@ -108,11 +110,17 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 				return resultado.tableModel;
 			}
+
+			var page = resultado.tableModel.page;
 			
 			// Monta as colunas com os inputs do grid
-			$.each(resultado.tableModel.rows, function(index, row) {
+			for(var index in resultado.tableModel.rows)	{
 				
-				var idInput = "valorExemplarNota" + index ;
+				var row = resultado.tableModel.rows[index];
+
+				var id = page+index;
+				
+				var idInput = "valorExemplarNota" + id ;
 				
 				var classEdicaoFechada = row.cell.isEdicaoFechada ? "edicaoFechada" : "";
 				
@@ -121,18 +129,27 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var corDif = '';
 				
-				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
+				if (!digitacaoContagemDevolucaoController.isRoleOperador()) {
 					
 					inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '
 						+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+
-						'" onchange="digitacaoContagemDevolucaoController.limparCheck('+index+')"/>';
+						'" onchange="digitacaoContagemDevolucaoController.limparCheck(\''+id+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup" ' +
-						'onclick="digitacaoContagemDevolucaoController.replicarValor('+index+')"/>';
+					var checked = (
+							(digitacaoContagemDevolucaoController.replicar.all && 
+							digitacaoContagemDevolucaoController.replicar.list.indexOf(id) < 0) ||
+							
+							(!digitacaoContagemDevolucaoController.replicar.all && 
+							digitacaoContagemDevolucaoController.replicar.list.indexOf(id) >= 0)
+							) ? 'checked':'';
+					
+					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+id+
+						'" class="chBoxReplicar" name="checkgroup" ' + checked + ' data-id="'+id
+						+'" onclick="digitacaoContagemDevolucaoController.replicarValor(\''+id+'\')"/>';
 					
 					row.cell.replicarQtde = inputCheckReplicarValor;
 					
-					row.cell.qtdDevolucao = '<span id="qtdDevolucao_'+index+'">'+ row.cell.qtdDevolucao +'</span>';
+					row.cell.qtdDevolucao = '<span id="qtdDevolucao_'+id+'">'+ row.cell.qtdDevolucao +'</span>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if (row.cell.diferenca < 0){
@@ -140,11 +157,11 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					}
 				}
 				
-				row.cell.diferenca = "<span id='difernca"+index+"' style='"+ corDif +"'>"+row.cell.diferenca+"</span>";
+				row.cell.diferenca = "<span id='difernca"+id+"' style='"+ corDif +"'>"+row.cell.diferenca+"</span>";
 				
 				//Inputs Hidden da grid
 				var inputDataRecolhimentoDistribuidor= '<input name="idDataRecolhimentoDist" type="hidden" value="' + row.cell.dataRecolhimentoDistribuidor + '" />';
-				var inputValorExemplarNotaAux = '<input type="hidden" id="valorExemplarNotaAux'+ index +'" value="'+ row.cell.qtdNota +'" />';
+				var inputValorExemplarNotaAux = '<input type="hidden" id="valorExemplarNotaAux'+ id +'" value="'+ row.cell.qtdNota +'" />';
 				
 				//Insere input text para o campo exemplar nota
 				row.cell.qtdNota =  inputDataRecolhimentoDistribuidor + inputExemplarNota + inputValorExemplarNotaAux;
@@ -153,46 +170,54 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					row.cell.precoVenda ='0,00';
 				};
 				
-			});
+			}
 			
 			$("#totalGeral", digitacaoContagemDevolucaoController.workspace).html(resultado.valorTotal);
 			
 			$("#grids", digitacaoContagemDevolucaoController.workspace).show();
 			
-			digitacaoContagemDevolucaoController.limparCheck('sel');
-				
 			return resultado.tableModel;
 		},
 		
-		replicarValor:function(index){
+		
+		
+		replicarValor:function(id) {
 			
-			if ($("#ch" + index, digitacaoContagemDevolucaoController.workspace).is(":checked")){
-				$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val(
-					$("#qtdDevolucao_" + index, digitacaoContagemDevolucaoController.workspace).text()
+			if ($("#ch" + id, digitacaoContagemDevolucaoController.workspace).is(":checked")){
+				$("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val(
+					$("#qtdDevolucao_" + id, digitacaoContagemDevolucaoController.workspace).text()
 				);
 				
-				$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("0");
+				$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("0");
 			} else {
 				
-				$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
+				$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("");
 				
 				$("#sel", digitacaoContagemDevolucaoController.workspace).attr("checked",false);
 				
 				var valorAux = 
-					$("#valorExemplarNotaAux" + index, digitacaoContagemDevolucaoController.workspace).val();
+					$("#valorExemplarNotaAux" + id, digitacaoContagemDevolucaoController.workspace).val();
 				
 				if (valorAux || valorAux == "0"){
-					$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val(valorAux);
+					$("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val(valorAux);
 					
-					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text(
-						parseInt($("#qtdDevolucao_" + index, digitacaoContagemDevolucaoController.workspace).text())-
+					$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text(
+						parseInt($("#qtdDevolucao_" + id, digitacaoContagemDevolucaoController.workspace).text())-
 						valorAux
 					);
 					
 				} else {
-					$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val("");
-					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
+					$("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val("");
+					$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("");
 				}
+			}
+			
+			if(this.replicar.list.indexOf(id) >= 0) {
+				this.replicar.list.splice(this.replicar.list.indexOf(id), 1);
+			}
+			
+			if(this.replicar.all ^ $("#ch" + id, this.workspace).is(":checked")) {
+				this.replicar.list.push(id);
 			}
 		},
 
@@ -218,32 +243,30 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			
 			$(".chBoxReplicar", digitacaoContagemDevolucaoController.workspace).each( function(index, input) { 
 				
+				var id = input.dataset.id;
 				var row = $(input); 
-				var value = $("#qtdDevolucao_" + index).text();
-				var qtdNota = $("#valorExemplarNota" + index);
+				var value = $("#qtdDevolucao_" + id).text();
+				var qtdNota = $("#valorExemplarNota" + id);
 				
 				
 				if(row.is(":checked")){ 
 					qtdNota.val(value);
-					//qtdNota.prop('disabled', true);
-					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("0");
+					$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("0");
 				} else {
 					
 					var valorAux = 
-						$("#valorExemplarNotaAux" + index, digitacaoContagemDevolucaoController.workspace).val();
+						$("#valorExemplarNotaAux" + id, digitacaoContagemDevolucaoController.workspace).val();
 					
 					if (valorAux || valorAux == "0"){
 						qtdNota.val(valorAux);
-						$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text(value - valorAux);
+						$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text(value - valorAux);
 					} else {
 						qtdNota.val("");
-						$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
+						$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("");
 					}
-					
-					//qtdNota.prop('disabled', false);
 				}
-				
 			});
+			
 		},
 		
 				
@@ -255,6 +278,9 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		checkAllReplicarValor: function (todos, checkgroupName) {
 			
 			$(".chBoxReplicar").attr("checked", todos.checked);
+			
+			this.replicar.all = todos.checked;
+			this.replicar.list = [];
 			
 			digitacaoContagemDevolucaoController.replicarValores();
 		},
@@ -546,7 +572,6 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 							_this.adicionarEdicoesFechadas(true, null);
 							
 						}else{
-							//{codigoProduto:codigoProduto,edicaoProduto:edicaoProduto,parcial:parcial,idProdutoEdicao:idProdutoEdicao}
 							var listInserirEdicoesFechadas = new Array();
 							for ( var id in _this.hashInserirEdicoesFechadas) {
 								listInserirEdicoesFechadas
