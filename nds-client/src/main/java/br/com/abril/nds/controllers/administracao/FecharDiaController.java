@@ -718,7 +718,7 @@ public class FecharDiaController extends BaseController {
     }
     
     private void setFechamentoDiarioDTO(FechamentoDiarioDTO dto) {
-        session.setAttribute(FECHAMENTO_DIARIO_DTO_SESSION_KEY, dto);
+    	session.setAttribute(FECHAMENTO_DIARIO_DTO_SESSION_KEY, dto);
     }
     
     private void clearFechamentoDiarioDTO() {
