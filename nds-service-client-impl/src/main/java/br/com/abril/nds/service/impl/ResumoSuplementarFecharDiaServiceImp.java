@@ -72,7 +72,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 		dto.setTotalVenda(totalVenda);
 		listaDeSuplementares.add(totalVenda);
 		
-		dto.setSaldo(totalEstoqueLogico.subtract(totalTransferencia).subtract(totalVenda));
+		dto.setSaldo(totalEstoqueLogico.add(totalTransferencia).subtract(totalVenda));
 		
 		return dto;
 	}
