@@ -238,6 +238,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 	}
 
+	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void cancelarNfe() {
 
 		result.use(Results.json()).from("").serialize();
@@ -266,6 +267,7 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 
+	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void imprimirDanfes(boolean indEmissaoDepec) {
 		
 		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
@@ -496,7 +498,7 @@ public class PainelMonitorNFEController extends BaseController {
 		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_REPARTE.name(), Processo.SOBRA_REPARTE.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_ENCALHE.name(), Processo.SOBRA_ENCALHE.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.VENDA.name(), Processo.VENDA.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_FORNECEDOR.name(), Processo.DEVOLUCAO_FORNECEDOR.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_AO_FORNECEDOR.name(), Processo.DEVOLUCAO_AO_FORNECEDOR.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.CALCELADA.name(), Processo.CALCELADA.getDescricao()));
 
 		result.include("comboTipoNfe", comboTipoNfe);

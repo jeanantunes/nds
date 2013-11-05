@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author T30541
@@ -105,10 +106,7 @@ public class Lancamento implements Serializable {
 	
 	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
-	
-	@Column(name = "NUMERO_REPROGRAMACOES")
-	private Integer numeroReprogramacoes;
-	
+		
 	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
@@ -135,6 +133,13 @@ public class Lancamento implements Serializable {
 	
 	@Column(name="ALTERADO_INTERFACE", nullable = false)
 	private boolean alteradoInteface = false;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
+	
+	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
+	private Integer numeroLancamento;
 	
 	public Lancamento(Long id) {
 		this.id= id; 
@@ -250,14 +255,6 @@ public class Lancamento implements Serializable {
 	
 	public void addRecebimento(ItemRecebimentoFisico itemRecebimentoFisico) {
 		this.recebimentos.add(itemRecebimentoFisico);
-	}
-	
-	public Integer getNumeroReprogramacoes() {
-		return numeroReprogramacoes;
-	}
-	
-	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
-		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 	
 	public Integer getSequenciaMatriz() {
@@ -384,6 +381,34 @@ public class Lancamento implements Serializable {
 		this.alteradoInteface = alteradoInteface;
 	}
 
+	/**
+	 * @return the usuario
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * @param usuario the usuario to set
+	 */
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	/**
+	 * @return the numeroLancamento
+	 */
+	public Integer getNumeroLancamento() {
+		return numeroLancamento;
+	}
+
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(Integer numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
+	}
+
 	public Date getDataFinMatDistrib() {
 		return dataFinMatDistrib;
 	}
@@ -391,5 +416,4 @@ public class Lancamento implements Serializable {
 	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
 		this.dataFinMatDistrib = dataFinMatDistrib;
 	}
-	
 }

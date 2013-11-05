@@ -23,7 +23,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota);
+	List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data);
 	
 	/**
 	 * Obtem data em que houve a primeira inadimplencia com cobrança ainda em aberto
@@ -39,7 +39,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @param idCota
 	 * @return
 	 */
-	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean naoObtemCobrancaOrigemNegociacao);
+	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean obtemCobrancaOrigemNegociacao);
 	
 	/**
 	 * Obtém a cobrança pelo nosso numero
@@ -84,17 +84,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	List<Cobranca> obterCobrancasPorIDS(List<Long> listaCobrancas);
 
 	BigDecimal obterValorCobrancasQuitadasPorData(Date data);
-	
-	/**
-	 * Retorna o valor de cobrança não pago pela cota.
-	 * 
-	 * @param numeroCota - número da cota
-	 * 
-	 * 
-	 * @return BigDecimal
-	 */
-	BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota);
-	
 	
 	/**
 	 * Retorna as cobranças efetuadas na data de operação do distribuidor.

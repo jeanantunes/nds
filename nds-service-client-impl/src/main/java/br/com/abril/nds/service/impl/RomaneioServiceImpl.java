@@ -100,29 +100,29 @@ public class RomaneioServiceImpl implements RomaneioService {
 				Long idBox = Long.valueOf(0);
 				
 				RomaneioModelo01DTO dto = null;
-				for (RomaneioDTO romaeio : lstRomaneioDTO){
+				for (RomaneioDTO romaneio : lstRomaneioDTO){
 					
-					if (idBox.equals(romaeio.getIdBox())
-							&& idRoteiro.equals(romaeio.getIdRoteiro())
-							&& idRota.equals(romaeio.getIdRota())) {
+					if (idBox != null && idBox.equals(romaneio.getIdBox())
+							&& idRoteiro.equals(romaneio.getIdRoteiro())
+							&& idRota.equals(romaneio.getIdRota())) {
 
-						dto.getItens().add(romaeio);
+						dto.getItens().add(romaneio);
 
 					} else {
 						
 						// Novo RomaneioModelo01DTO:
-						idRota = romaeio.getIdRota();
-						idRoteiro = romaeio.getIdRoteiro();
-						idBox = romaeio.getIdBox();
+						idRota = romaneio.getIdRota();
+						idRoteiro = romaneio.getIdRoteiro();
+						idBox = romaneio.getIdBox();
 
 						dto = new RomaneioModelo01DTO();
 						dto.setDataGeracao(filtro.getData());
-						dto.setEntregaBox(romaeio.getNomeBox());
-						dto.setRota(romaeio.getNomeRota());
-						dto.setRoteiro(romaeio.getNomeRoteiro());
+						dto.setEntregaBox(romaneio.getNomeBox());
+						dto.setRota(romaneio.getNomeRota());
+						dto.setRoteiro(romaneio.getNomeRoteiro());
 						
 						dto.setItens(new ArrayList<RomaneioDTO>());
-						dto.getItens().add(romaeio);
+						dto.getItens().add(romaneio);
 						
 						lstRelatorio.add(dto);
 					}
@@ -133,8 +133,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 			StringBuilder path = new StringBuilder();
 			path.append(diretorioReports.toURI().getPath());
 			
-			final int qtdProdutos = (filtro.getProdutos() == null 
-					? 0 : filtro.getProdutos().size()); 
+			final int qtdProdutos = (filtro.getProdutos() == null ? 0 : filtro.getProdutos().size()); 
 			
 			int qtdColunasProduto = 0;
 			
@@ -153,13 +152,10 @@ public class RomaneioServiceImpl implements RomaneioService {
 					ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 					for (RomaneioModelo01DTO dto :lstRelatorio) {
 						
-						dto.setCodigoProduto(
-								produtoEdicao.getProduto().getCodigo());
-						dto.setNomeProduto(this.tratarNomeProdutoEdicao(
-								produtoEdicao));
+						dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+						dto.setNomeProduto(this.tratarNomeProdutoEdicao(produtoEdicao));
 						dto.setEdicao(produtoEdicao.getNumeroEdicao());
-						dto.setPacotePadrao(
-								Long.valueOf(produtoEdicao.getPacotePadrao()));
+						dto.setPacotePadrao(Long.valueOf(produtoEdicao.getPacotePadrao()));
 					}
 					
 					path.append("/romaneio_modelo02.jasper");
@@ -170,10 +166,9 @@ public class RomaneioServiceImpl implements RomaneioService {
 					
 					List<String> nomesProduto = new ArrayList<>();
 					for (Long idEdicao : filtro.getProdutos()) {
-						nomesProduto.add(
-								this.tratarNomeProdutoEdicao(
-										this.produtoEdicaoRepository.buscarPorId(
-												idEdicao)));
+						
+						nomesProduto.add(this.tratarNomeProdutoEdicao(this.produtoEdicaoRepository.buscarPorId(idEdicao)));
+						
 					}
 					
 					qtdColunasProduto = nomesProduto.size();

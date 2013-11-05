@@ -66,7 +66,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}],
-				sortname : "cota",
+				sortname : "codigoProduto",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -140,8 +140,8 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}],
-				sortname : "codigoProduto",
-				sortorder : "asc",
+				sortname : "dataLancamento",
+				sortorder : "desc",
 				usepager : true,
 				useRp : true,
 				rp : 15,
@@ -222,7 +222,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 	
 	pesquisar : function(){
 		
-		var cota = $('#codigoCota', consultaConsignadoCotaController.workspace).val();
+		var cota = $('#codigoCota', consultaConsignadoCotaController.workspace).val().trim();
 		var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();
 		
 		if(idFornecedor == "-1"){

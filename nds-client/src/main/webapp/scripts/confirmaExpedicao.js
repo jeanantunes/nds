@@ -5,18 +5,21 @@ var confirmaExpedicaoController = $.extend(true, {
 
 	init : function() {
 		definirAcaoPesquisaTeclaEnter();
+		
 		//Define foco inicial no campo Data Lançamento.
 		$('#idDataLancamento', confirmaExpedicaoController.workspace).focus();
 
 		$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexigrid($.extend({},{
 			onSuccess: function() {bloquearItensEdicao(confirmaExpedicaoController.workspace);},
-			colModel : [ {
-				display : 'Data Entrada',
-				name : 'dataEntrada',
-				width : 65,
-				sortable : true,
-				align : 'center'
-			}, {
+			colModel : [ 
+//			{
+//				display : 'Data Entrada',
+//				name : 'dataEntrada',
+//				width : 65,
+//				sortable : true,
+//				align : 'center'
+//			}, 
+			{
 				display : 'C&oacute;digo',
 				name : 'codigo',
 				width : 50,
@@ -53,9 +56,9 @@ var confirmaExpedicaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Reparte',
+				display : 'Rep. Previsto',
 				name : 'reparte',
-				width : 50,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -71,10 +74,16 @@ var confirmaExpedicaoController = $.extend(true, {
 				sortable : false,
 				align : 'left'
 			}, {
+				display : 'Físico',
+				name : 'fisico',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Estudo',
 				name : 'estudo',
 				width : 50,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			}, {
 				display : '',
@@ -119,12 +128,12 @@ var confirmaExpedicaoController = $.extend(true, {
 		html+= ' onclick="confirmaExpedicaoController.adicionarSelecao('+idLancamento+',this);"';
 		html+= ' style="float: left;"';
 		
-		if(selecionado==true) {
-			html+= ' checked="checked" ' ;	
-		}
-		
 		if (desabilitado){
 			html+= ' disabled="disabled" title="Estoque insuficiente." ' ;
+		}else{
+			if(selecionado==true) {
+				html+= ' checked="checked" ' ;	
+			}
 		}
 		
 		html+= ' />';
@@ -160,7 +169,9 @@ var confirmaExpedicaoController = $.extend(true, {
 	},
 			
 	processaRetornoPesquisa : function(data) {
-				
+		
+		$(document.body).unbind('keydown');
+		
 		var grid = data[0];
 		var mensagens = data[1];
 		var status = data[2];
@@ -178,7 +189,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			var cell = grid.rows[i].cell;
 								
 			if(cell.estudo) {
-				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.estoqueLancamentoPE < cell.estudo));
+				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.fisico < cell.estudo));
 			} else {
 				cell.estudo="";
 				cell.selecionado="";
@@ -219,6 +230,15 @@ var confirmaExpedicaoController = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
+					
+					$(document.body).on('keydown', function(e) {
+						
+						if ((e.which || e.keyCode) == 116) {
+							alert('Aguarde o término do processamento!');
+							e.preventDefault(); 
+						}
+						
+					});
 					
 					confirmaExpedicaoController.verificacaoExpedicao = setInterval(confirmaExpedicaoController.atualizarStatusExpedicao,5000);
 					

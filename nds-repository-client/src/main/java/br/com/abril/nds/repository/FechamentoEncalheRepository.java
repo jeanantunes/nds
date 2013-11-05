@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro, String sortorder, String sortname, Integer page, Integer rp);
 	
 	List<FechamentoEncalhe> buscarFechamentoEncalhe(Date dataEncalhe);
+	
+	List<Date> obterDatasControleFechamentoEncalheRealizado(Date dataDe, Date dataAte);
 	
 	Boolean buscaControleFechamentoEncalhe(Date dataEncalhe);
 	
@@ -50,7 +53,31 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 
     List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
     
-    int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
+    int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro);
     
-    BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp );
+    BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+    
+    public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, Integer page, Integer rp);
+
+	public FechamentoFisicoLogicoDTO buscarDescontosLogistica(FechamentoFisicoLogicoDTO fechamento);
+
+	public FechamentoFisicoLogicoDTO buscarDescontosProduto(
+			FechamentoFisicoLogicoDTO fechamento);
+
+	public FechamentoFisicoLogicoDTO buscarDescontosProdutoEdicao(
+			FechamentoFisicoLogicoDTO fechamento);
+
+	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCota(
+			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeIdsProdutoEdicao);
+
+	List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
+			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeCodigosProduto);
+
+	Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
+	
+	boolean verificarExistenciaFechamentoEncalheConsolidado(Date dataEncalhe);
+	
+	Boolean buscaControleConferenciaEncalhe(Date dataEncalhe);
+	
 }

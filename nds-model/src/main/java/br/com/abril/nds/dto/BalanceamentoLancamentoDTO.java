@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -23,11 +24,11 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigInteger capacidadeDistribuicao;
 	
-	private int numeroSemana;
-	
 	private Date dataLancamento;
 	
 	private List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados;
+	
+	private Set<Date> datasExpedicaoConfirmada;
 	
 	/**
 	 * Construtor padrão.
@@ -66,20 +67,6 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the numeroSemana
-	 */
-	public int getNumeroSemana() {
-		return numeroSemana;
-	}
-
-	/**
-	 * @param numeroSemana the numeroSemana to set
-	 */
-	public void setNumeroSemana(int numeroSemana) {
-		this.numeroSemana = numeroSemana;
-	}
-
-	/**
 	 * @return the dataLancamento
 	 */
 	public Date getDataLancamento() {
@@ -106,6 +93,20 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	public void setProdutosLancamentosCancelados(
 			List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados) {
 		this.produtosLancamentosCancelados = produtosLancamentosCancelados;
+	}
+
+	/**
+	 * @return the datasExpedicaoConfirmada
+	 */
+	public Set<Date> getDatasExpedicaoConfirmada() {
+		return datasExpedicaoConfirmada;
+	}
+
+	/**
+	 * @param datasExpedicaoConfirmada the datasExpedicaoConfirmada to set
+	 */
+	public void setDatasExpedicaoConfirmada(Set<Date> datasExpedicaoConfirmada) {
+		this.datasExpedicaoConfirmada = datasExpedicaoConfirmada;
 	}
 	
 }

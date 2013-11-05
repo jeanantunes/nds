@@ -49,7 +49,9 @@ public class ProdutoRecolhimentoFormatadoVO {
 	private String novaData;
 	
 	private boolean bloqueioAlteracaoBalanceamento;
-
+	
+	private boolean aceiteDataNova;
+	
 	/**
 	 * @return the idFornecedor
 	 */
@@ -343,6 +345,24 @@ public class ProdutoRecolhimentoFormatadoVO {
 	 */
 	public void setIdProdutoEdicao(String idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	
+	
+	/**
+	 * @return the aceiteDataNova
+	 */
+	
+	public boolean isAceiteDataNova() {
+		return aceiteDataNova;
+	}
+
+	/**
+	 * @param aceiteDataNova the aceiteDataNova to set
+	 */
+	
+	public void setAceiteDataNova(boolean aceiteDataNova) {
+		this.aceiteDataNova = aceiteDataNova;
 	}
 
 }

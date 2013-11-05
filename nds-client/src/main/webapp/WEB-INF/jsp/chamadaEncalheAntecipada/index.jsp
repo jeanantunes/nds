@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -11,6 +12,8 @@
 		var pesquisaProdutoChamadaAntecipada = new PesquisaProduto(chamdaEncalheAnteipadaController.workspace);
 	
 		chamdaEncalheAnteipadaController.init(pesquisaCotaChamadaAntecipada);
+		
+		bloquearItensEdicao(chamdaEncalheAnteipadaController.workspace);
 		
 	</script>
 			
@@ -42,17 +45,17 @@
 		<div class="areaBts">
 			<div class="area">
 				<span class="bt_novos" id="bt_confirmar_novo">
-			    	<a onclick="chamdaEncalheAnteipadaController.exibirDialogData('Novo');" href="javascript:;" rel="tipsy" title="Gravar">
+			    	<a isEdicao="true" onclick="chamdaEncalheAnteipadaController.exibirDialogData('Novo');" href="javascript:;" rel="tipsy" title="Gravar">
 			    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 			    	</a>
 			    </span>
 			    <span class="bt_novos" id="bt_reprogramar_CE">
-			    	<a onclick="chamdaEncalheAnteipadaController.exibirDialogData('');" href="javascript:;" rel="tipsy" title="Reprogramar">
+			    	<a isEdicao="true" onclick="chamdaEncalheAnteipadaController.exibirDialogData('');" href="javascript:;" rel="tipsy" title="Reprogramar">
 			    		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">
 			    	</a>
 			    </span>   
 				<span class="bt_novos" id="bt_cancelar_programacao">
-					<a onclick="chamdaEncalheAnteipadaController.exibirDialogCancelamentoCE();" href="javascript:;" rel="tipsy" title="Cancelar Programação">
+					<a isEdicao="true" onclick="chamdaEncalheAnteipadaController.exibirDialogCancelamentoCE();" href="javascript:;" rel="tipsy" title="Cancelar Programação">
 						<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">
 					</a>
 				</span>
@@ -269,7 +272,7 @@
 				      			<td width="177" valign="top">
 					        		<span class="bt_sellAll">
 					        			<label for="sel">Selecionar Todos</label>
-					        			<input type="checkbox" name="Todos" id="sel" onclick="chamdaEncalheAnteipadaController.checkAll(this);" style="float:left;"/>
+					        			<input isEdicao="true" type="checkbox" name="Todos" id="sel" onclick="chamdaEncalheAnteipadaController.checkAll(this);" style="float:left;"/>
 					        		</span>
 				    		     </td>
 			      			</tr>

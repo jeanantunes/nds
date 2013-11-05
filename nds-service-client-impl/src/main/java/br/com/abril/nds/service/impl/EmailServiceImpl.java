@@ -120,6 +120,12 @@ public class EmailServiceImpl implements EmailService {
 		
 		autenticarSmtp();
 		
+		ParametroSistema remetente = 
+			this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+				TipoParametroSistema.EMAIL_REMETENTE);
+		
+		validarParametrosAutenticacao(remetente, TipoParametroSistema.EMAIL_PROTOCOLO);
+		
 		MimeMessage message = mailSender.createMimeMessage();
 		
 		try {
@@ -128,7 +134,7 @@ public class EmailServiceImpl implements EmailService {
 			mimeMessageHelper.setSubject(assunto == null ? "" : assunto);
 			mimeMessageHelper.setTo(destinatarios);
 			mimeMessageHelper.setText(mensagem == null ? "" : mensagem, isHtml);
-			mimeMessageHelper.setFrom(mailSender.getUsername());
+			mimeMessageHelper.setFrom(remetente.getValor());
 			
 			if(anexos!= null && !anexos.isEmpty()){
 				
@@ -157,26 +163,37 @@ public class EmailServiceImpl implements EmailService {
 		ParametroSistema host = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_HOST);
 		validarParametrosAutenticacao(host, TipoParametroSistema.EMAIL_HOST);
 		
+		ParametroSistema smtp = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PROTOCOLO);
+		validarParametrosAutenticacao(smtp, TipoParametroSistema.EMAIL_PROTOCOLO);
+		
+		ParametroSistema autenticar = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_AUTENTICAR);
+		validarParametrosAutenticacao(autenticar, TipoParametroSistema.EMAIL_AUTENTICAR);
+		
 		ParametroSistema porta = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PORTA);
 		validarParametrosAutenticacao(porta, TipoParametroSistema.EMAIL_PORTA);
 		
 		ParametroSistema senha =  parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_SENHA);
-		validarParametrosAutenticacao(senha, TipoParametroSistema.EMAIL_SENHA);
-		
-		ParametroSistema smtp = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PROTOCOLO);
-		validarParametrosAutenticacao(smtp, TipoParametroSistema.EMAIL_PROTOCOLO);
-		
 		ParametroSistema usuario = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_USUARIO);
-		validarParametrosAutenticacao(usuario, TipoParametroSistema.EMAIL_USUARIO);
 		
 		mailSender.setPort(Integer.valueOf(porta.getValor()));
 		mailSender.setHost(host.getValor());
-		mailSender.setPassword(senha.getValor());
 		mailSender.setUsername(usuario.getValor());
+		mailSender.setPassword(senha.getValor());
 		mailSender.setProtocol(smtp.getValor());
 		
-		mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
-		mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "true");
+		if (Boolean.valueOf(autenticar.getValor())) {
+			
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "true");
+			
+			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
+			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			
+		} else {
+		
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "false");
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
+		}
 	}
 	
 	/**
@@ -187,7 +204,7 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	private void validarParametrosAutenticacao(ParametroSistema parametroSistema,TipoParametroSistema tipoParametroSistema) throws AutenticacaoEmailException{
 		
-		if(parametroSistema == null || parametroSistema.getValor().isEmpty()){
+		if(parametroSistema == null || parametroSistema.getValor() == null || parametroSistema.getValor().isEmpty()){
 			throw new AutenticacaoEmailException(getMensagemDeErroAutenticacao(tipoParametroSistema));
 		}
 	}

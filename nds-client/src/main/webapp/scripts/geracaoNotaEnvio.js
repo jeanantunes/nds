@@ -338,12 +338,20 @@ var geracaoNotaEnvioController = $.extend({
             $.fileDownload(path, {
                 httpMethod : "POST",
                 failCallback : function(responseHtml, url) {
+                	var response = responseHtml; 
                 	if(responseHtml){
                 		var data =  $.parseJSON($(responseHtml).html());                   	 
                    	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-                	}else{
-                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
+                	} else {
+                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + response]);
                 	}
+                	//document.location = responseHtml;
+//                	if(responseHtml){
+//                		var data =  $.parseJSON($(responseHtml).html());                   	 
+//                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+//                	}else{
+//                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
+//                	}
                     
                 },
                 successCallback : function() {
@@ -378,10 +386,12 @@ var geracaoNotaEnvioController = $.extend({
 		 * Visualizar Nota Envio
 		 */
 		visualizarNE:function(e) {
+			
 			var results = $("#geracaoNotaEnvio-flexigrid-pesquisa tr");
 			
-			if (results.length != 1) {
-				exibirMensagem("WARNING", ["Funcionalidade permitida apenas para pesquisas com um resultado."]);
+			if (results.length == 0) {
+				
+				exibirMensagem("WARNING", ["Funcionalidade permitida apenas para pesquisas com resultado."]);
 				
 				return false;
 			}
@@ -421,6 +431,7 @@ var geracaoNotaEnvioController = $.extend({
 			if (typeof data.mensagens == "object") {
 			
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+				$("#geracaoNotaEnvio-pesquisa", geracaoNotaEnvioController.workspace).hide();
 			
 			} else {
 				
@@ -494,7 +505,147 @@ var geracaoNotaEnvioController = $.extend({
 			return messages;
 			
 		},
+
+		/**
+		 * Recarregar combo
+		 */
+		recarregarCombo : function (comboNameComponent, content, valSelected){
+			
+			comboNameComponent.empty();
+
+			comboNameComponent.append(new Option('Selecione...', '', true, true));
+			
+		    $.each(content, function(index, row) {
+			    	
+		    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+			});
+
+		    if (valSelected) {
+		    	
+		        $(comboNameComponent).val(valSelected);
+		    } else {
+		    	
+		        $(comboNameComponent).val('');
+		    }
+		},
+
+		/**
+		 * Recarregar combos por Box
+		 */
+        changeBox : function(){
+			
+        	var boxDe = $("#geracaoNotaEnvio-filtro-boxDe").val();
+        	
+        	var boxAte = $("#geracaoNotaEnvio-filtro-boxAte").val();
+        	
+        	var idRota = $("#geracaoNotaEnvio-filtro-selectRota").val();
+        	
+        	var idRoteiro = $("#geracaoNotaEnvio-filtro-selectRoteiro").val();
+        	
+        	var params = [{
+				            name : "codigoBoxDe",
+				            value : boxDe	
+						  },{
+							name : "codigoBoxAte",
+							value : boxAte
+						  }];
+        	
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
+				function(result) {
+        		
+        		    var listaRota = result[0];
+        		    
+        		    var listaRoteiro = result[1];
+        		    
+        		    var listaBox = result[2];
+        		
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);
+     		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
+         		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
+        	    }    
+			);
+		},
 		
+		/**
+		 * Recarregar combos por Rota
+		 */
+        changeRota : function(){
+        	
+            var boxDe = $("#geracaoNotaEnvio-filtro-boxDe").val();
+        	
+        	var boxAte = $("#geracaoNotaEnvio-filtro-boxAte").val();
+        	
+        	var idRota = $("#geracaoNotaEnvio-filtro-selectRota").val();
+        	
+        	var idRoteiro = $("#geracaoNotaEnvio-filtro-selectRoteiro").val();
+        	
+        	var params = [{
+				            name : "idRota",
+				            value : idRota	
+						  }];
+		    
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRota', params, 
+				function(result) {
+        		
+        		    var listaRoteiro = result[0];
+        		 
+        		    var listaBox = result[1];
+        		    
+        		    var listaRota = result[2];
+
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
+     		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
+     		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);
+        	    }    
+			);
+		},
+		
+		/**
+		 * Recarregar combos por Roteiro
+		 */
+        changeRoteiro : function(){
+        	
+            var boxDe = $("#geracaoNotaEnvio-filtro-boxDe").val();
+        	
+        	var boxAte = $("#geracaoNotaEnvio-filtro-boxAte").val();
+        	
+        	var idRota = $("#geracaoNotaEnvio-filtro-selectRota").val();
+        	
+        	var idRoteiro = $("#geracaoNotaEnvio-filtro-selectRoteiro").val();
+         	
+         	var params = [{
+ 				            name : "idRoteiro",
+ 				            value : idRoteiro	
+ 						  }];
+         	
+         	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
+				function(result) {
+        		
+        		    var listaRota = result[0];
+        		 
+        		    var listaBox = result[1];
+        		    
+        		    var listaRoteiro = result[2];
+     		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);  
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
+         		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+        	    }    
+			);
+		},
+
 		/**
 		 * objeto utilizado para encapsular as colunas da grid de Cotas Ausentes
 		 */

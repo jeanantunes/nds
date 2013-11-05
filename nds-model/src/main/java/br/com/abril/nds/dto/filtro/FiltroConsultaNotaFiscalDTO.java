@@ -26,7 +26,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idTipoNotaFiscal;
 	
-	@Export(label = "Tipo de Nota", exhibitionOrder = 4)
+//	@Export(label = "Tipo de Nota", exhibitionOrder = 4)
 	private String tipoNotaFiscal;
 	
 	private Long idFornecedor;
@@ -72,7 +72,9 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		TIPO_NOTA("descricao"),
 		FORNECEDOR("razaoSocial"),
 		VALOR("valorTotalNota"),
-		NOTA_RECEBIDA("notaRecebida");		
+		VALOR_COM_DESCONTO("valorTotalNotaComDesconto"),
+		NOTA_RECEBIDA("notaRecebida"), 
+		CHAVE_ACESSO("chaveAcesso");		
 
 		private String nomeColuna;
 		

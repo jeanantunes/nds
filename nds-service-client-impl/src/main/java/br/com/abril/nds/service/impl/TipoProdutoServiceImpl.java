@@ -7,6 +7,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -39,15 +41,6 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	
 	@Autowired
 	private NCMRepository ncmRepository;
-	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.TipoProdutoService#obterPorId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public TipoProduto obterPorId(Long id) {
-		return this.tipoProdutoRepository.buscarPorId(id);
-	}
 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.TipoProdutoService#remover(java.lang.Long)
@@ -252,4 +245,17 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 		return ncm;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro) {
+
+		return this.tipoProdutoRepository.gerarRelatorio(filtro);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQunatidade(FiltroRelatorioTiposProdutos filtro) {
+
+		return this.tipoProdutoRepository.obterQunatidade(filtro);
+	}
 }

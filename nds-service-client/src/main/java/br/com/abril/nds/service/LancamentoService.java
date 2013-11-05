@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -74,6 +75,8 @@ public interface LancamentoService {
 	  */
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
 	
+	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
+	
 	/**
 	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
 	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
@@ -119,10 +122,18 @@ public interface LancamentoService {
 	 */
 	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
 
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
+	
 	public List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
-			Date data, Long idFornecedor);
+			Date data, Long idFornecedor, Boolean isSaldoInsuficiente);
+
+	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
+
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	
+	Date getMaiorDataLancamento(Long idProdutoEdicao);
 	
 }
  

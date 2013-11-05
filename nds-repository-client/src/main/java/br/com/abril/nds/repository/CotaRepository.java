@@ -16,14 +16,15 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -100,7 +101,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return Cotas
      */
     List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
-            String sortColumn, Integer page, Integer rp);
+            String sortColumn, Integer page, Integer rp, Date dataOperacao);
 
     /**
      * Obtém valor dos repartes Consignados a cota em determinado dia
@@ -123,7 +124,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
     List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
 
-    Long obterTotalCotasSujeitasSuspensao();
+    Long obterTotalCotasSujeitasSuspensao(Date dataOperacao);
 
     List<Cota> obterCotaAssociadaFiador(Long idFiador);
 
@@ -217,9 +218,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return TelefoneCota
      */
     TelefoneCota obterTelefonePorTelefoneCota(Long idTelefone, Long idCota);
-
-    ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(
-            FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 
     List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 
@@ -371,4 +369,28 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	
+	/**
+	 * Obtém o número da cota, através de seu ID.
+	 * 
+	 * @param idCota - ID da cota que deseja obter o número.
+	 * 
+	 * @return Número da cota.
+	 */
+	Integer buscarNumeroCotaPorId(Long idCota);
+
+	List<Long> obterIdsCotasPorMunicipio(String municipio);
+
+	List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
+			Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDateRecolhimento);
+	List<ProdutoAbastecimentoDTO> obterCotaPorProdutoEdicaoData(FiltroMapaAbastecimentoDTO filtro);
+
+	BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor);
+
+	/**
+	 * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a data atual
+	 * @param data
+	 * @return List<Cota>
+	 */
+	List<Cota> obterCotasTipoAVista(Date data);
 }

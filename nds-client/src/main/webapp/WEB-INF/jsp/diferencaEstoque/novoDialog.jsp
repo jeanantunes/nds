@@ -31,6 +31,25 @@
 	
 	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 	
+	<fieldset style="width:650px!important;">
+    		<legend>Direcionar para:</legend>
+        	
+        	<table width="220" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+					<td width="20" class="view-estouque">
+						<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
+					</td>
+					<td width="72" class="view-estouque">Estoque</td>
+					<td width="20" class="view-cota">
+						<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
+					</td>
+					<td width="95" class="view-cota">Cota</td>
+				</tr>
+			</table>
+     	</fieldset>
+	
+	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+	
 	<div class="prodSemCota" style="display:block;">
     	
     	<fieldset style="width:650px!important;">
@@ -82,21 +101,6 @@
     		</table>
     	</fieldset> 
     	
-    	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
-    	
-     	<fieldset style="width:650px!important;">
-    		<legend>Direcionar para:</legend>
-        	
-        	<table width="220" border="0" cellspacing="1" cellpadding="1">
-				<tr>
-					<td width="20" class="view-estouque"><input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/></td>
-					<td width="72" class="view-estouque" >Estoque</td>
-					<td width="20"><input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" /></td>
-					<td width="95">Cota</td>
-				</tr>
-			</table>
-     	</fieldset>
-     	
 		<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 		
 		<div id="fieldCota" style="display:none;">
@@ -156,7 +160,7 @@
    	  		
     		<table width="650" border="0" cellspacing="1" cellpadding="1">
 				<tr>
-					<td width="73">Nota de Envio:</td>
+					<td width="73">Data Lancto:</td>
 					<td width="124">
 						<div id="divDataNotaEnvio">
 							<input name="dateNotaEnvio" type="text" style="width:80px;" class="viewNotaEnvio" id="dateNotaEnvio" />
@@ -175,7 +179,7 @@
 							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
 					</td>
 					<td width="16">
-						<img id="incluirNovosProduto" src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
+						<img id="incluirNovosProduto" src="${pageContext.request.contextPath}/images/ico_pesquisar.png" width="16" height="16" alt="Incluir"
 							onclick="lancamentoNovoController.pesquisarProdutosNota();"/>
 					</td>
           		</tr>
@@ -207,6 +211,14 @@
 		});
 	</script>
 </div>
+
+<form id="form-selecionar-tipo-estoque">
+	<div id="dialog-selecionar-tipo-estoque" title="Tipo de Estoque" style="display:none">
+		<p>Nenhum estoque foi selecionado. Será utlilizado o estoque padrão [Lancamento].</p>
+		<br></br>
+		<p>Deseja continuar?</p>
+	</div>
+</form>
 
 <form id="idTipoEstoque">
 		<div id="dialog-tipo-estoque" title="Tipo de Estoque" style="display:none">

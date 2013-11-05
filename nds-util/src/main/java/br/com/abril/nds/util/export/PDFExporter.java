@@ -47,9 +47,11 @@ public class PDFExporter implements Exporter {
 	
 	private static Font valuesFont = new Font(Font.FontFamily.TIMES_ROMAN, 11);
 	
-	private static Font tableHeaderFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.BOLD, BaseColor.WHITE);
+	private static Font tableHeaderFont = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLD, BaseColor.WHITE);
 	
 	private static Font footerLabelFont = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD);
+	
+	private static Font rowValuesFont = new Font(Font.FontFamily.TIMES_ROMAN, 9);
 	
 	private static BaseColor headerBaseColor = new BaseColor(79, 129, 189);
 	
@@ -360,8 +362,7 @@ public class PDFExporter implements Exporter {
         			Font font = new Font(Font.FontFamily.TIMES_ROMAN, fontSize);
         			paragraph = new Paragraph(StringUtils.defaultString(exportColumn.getValue()), font);
         		} else {
-        			
-        			paragraph = new Paragraph(StringUtils.defaultString(exportColumn.getValue()));
+        			paragraph = new Paragraph(StringUtils.defaultString(exportColumn.getValue()), rowValuesFont);
         		}
 
         		paragraph.setAlignment(exportColumn.getAlignment().getValue());

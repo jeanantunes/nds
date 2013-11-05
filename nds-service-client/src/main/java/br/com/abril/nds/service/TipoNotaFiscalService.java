@@ -51,4 +51,6 @@ public interface TipoNotaFiscalService {
 	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
 	
 	List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
+
+	List<TipoNotaFiscal> obterTiposNotaFiscal(TipoAtividade tipoAtividade);
 }

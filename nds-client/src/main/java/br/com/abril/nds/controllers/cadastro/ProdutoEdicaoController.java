@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,8 +17,11 @@ import br.com.abril.nds.client.vo.PeriodoLancamentosProdutoEdicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO.ModoTela;
+import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
@@ -38,7 +43,6 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -162,26 +166,29 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
-	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public void pesquisarEdicoes(FiltroProdutoDTO filtro,
 			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
 			BigDecimal precoAte , StatusLancamento situacaoLancamento,
-			String codigoDeBarras, boolean brinde,
+			String codigoDeBarras, boolean brinde, ModoTela modoTela,
             String sortorder, String sortname, int page, int rp) {
+		
 		Intervalo<BigDecimal> intervaloPreco = null;
 		Intervalo<Date> intervaloLancamento = null;
+		
 		// Validar:
-		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
+		if(dataLancamentoDe == null ^ dataLancamentoAte == null ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
-		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
+		} else if(dataLancamentoDe != null && dataLancamentoAte != null) {
 			if(dataLancamentoDe.after(dataLancamentoAte)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 			}
 			
 			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
 		}
-		if(precoDe == null ^ precoAte == null ){
+		
+		if(precoDe == null ^ precoAte == null ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
-		}else if(precoDe != null && precoAte != null ){
+		} else if(precoDe != null && precoAte != null ) {
 			if(precoDe.compareTo(precoAte) > 0){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
@@ -189,19 +196,23 @@ public class ProdutoEdicaoController extends BaseController {
 		}	
 	
 		// Pesquisar:
-		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
-				codigoProduto, nomeProduto, intervaloLancamento, 
+		Integer qtd = produtoEdicaoService.countPesquisarEdicoes(
+				filtro.getCodigo(), filtro.getNome(), intervaloLancamento, 
 				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
 		
-		if(qtd > 0){		
+		if(qtd > 0) {		
 			
 			List<ProdutoEdicaoDTO> lst = 
-					produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, 
+					produtoEdicaoService.pesquisarEdicoes(filtro.getCodigo(), filtro.getNome(), 
 							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
 							brinde, sortorder, sortname, page, rp);
 			
+			for (ProdutoEdicaoDTO dto : lst) {
+				dto.setModoTela(modoTela);
+			}
+			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
-		}else{
+		} else {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Registros não encontrados."));
 		}
@@ -210,13 +221,14 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
-	public void carregarDadosProdutoEdicao(String codigoProduto, String idProdutoEdicao) {
+	public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, String idProdutoEdicao, String situacaoProdutoEdicao, boolean redistribuicao) {
 		
-		if (codigoProduto == null || codigoProduto.trim().isEmpty()) {
+		if (filtro.getCodigo() == null || filtro.getCodigo().trim().isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(codigoProduto, idProdutoEdicao);
+		ProdutoEdicaoDTO dto =
+			produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
@@ -231,18 +243,20 @@ public class ProdutoEdicaoController extends BaseController {
 			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
 			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
-			BigDecimal desconto, String descricaoDesconto,Long peso, 
+			String desconto, String descricaoDesconto,Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
-            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario) {
+            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario, ModoTela modoTela) {
 			
 		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
 		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
+		BigDecimal vlDesconto = (desconto!= null) ? new BigDecimal(desconto.replace(",", ".")) :null;
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		
+		dto.setModoTela(modoTela);
 		dto.setId(idProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
 		dto.setPeb( (peb == null)?0:peb);
@@ -260,7 +274,7 @@ public class ProdutoEdicaoController extends BaseController {
 		dto.setRepartePromocional(repartePromocional);
 		dto.setCodigoDeBarras(codigoDeBarras);
 		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
-		dto.setDesconto(desconto);
+		dto.setDesconto(vlDesconto);
 		dto.setDescricaoDesconto(descricaoDesconto);
 		dto.setPeso(peso);
 		dto.setLargura(largura == null ? 0 : largura.floatValue());
@@ -281,11 +295,12 @@ public class ProdutoEdicaoController extends BaseController {
 		dto.setTemaPrincipal(temaPrincipal);
 		dto.setTemaSecundario(temaSecundario);
 		
+		
 		ValidacaoVO vo = null;
 		 
 		try {
 			
-			this.validarProdutoEdicao(dto, codigoProduto);
+			this.validarProdutoEdicao(dto, codigoProduto, modoTela);
 			
 			// Dados da Imagem:
 			String contentType = null;
@@ -321,7 +336,7 @@ public class ProdutoEdicaoController extends BaseController {
 	 * 
 	 * @param dto
 	 */
-	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
+	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, ModoTela modoTela) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 						
@@ -405,14 +420,17 @@ public class ProdutoEdicaoController extends BaseController {
 			listaMensagens.add("Campo 'Código de Barras' deve ser preenchido!");
 		}
 		
-		if (dto.getNumeroEdicao() != null && dto.getNumeroEdicao() != 0L) {
-			
-			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
+		if (modoTela.equals(ModoTela.REDISTRIBUICAO)) {
 		
-			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
-				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
-			}
+			Date maiorDataLancamento =
+				this.lancamentoService.getMaiorDataLancamento(dto.getId());
 			
+			if (maiorDataLancamento != null
+					&& dto.getDataLancamentoPrevisto().compareTo(maiorDataLancamento) <= 0) {
+				
+				listaMensagens.add(
+					"Não é possível cadastrar uma redistribuição com data igual ou inferior ao lançamento!");
+			}
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -422,6 +440,34 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
+	}
+	
+	/**
+	 * Remove uma Edição.
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	@Post
+	@Path("/validarRemocaoEdicao.json")
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
+	public void validarRemocaoEdicao(Long idProdutoEdicao) {
+
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Por favor, selecione uma Edição válida!");
+		}
+		
+		Map<String, String> validacaoMap = new HashMap<String, String>();
+		
+		try {
+			
+			validacaoMap = this.produtoEdicaoService.isProdutoEdicaoValidoParaRemocao(idProdutoEdicao);
+			
+		} catch (Exception e) {
+			
+		}
+
+		this.result.use(Results.json()).from(validacaoMap, "result").recursive().serialize();
 	}
 
 	/**
@@ -487,17 +533,17 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		for (Lancamento lancamento : lancamentoService.obterLancamentosEdicao(produtoEdicaoId, sortorder, sortname)) {
 			PeriodoLancamentosProdutoEdicaoVO periodoLancamento = new PeriodoLancamentosProdutoEdicaoVO();
+			periodoLancamento.setNumeroLancamento(lancamento.getNumeroLancamento());
+			periodoLancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoDistribuidor());
 			periodoLancamento.setDataLancamentoPrevista(lancamento.getDataLancamentoPrevista());
+			periodoLancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoDistribuidor());
 			periodoLancamento.setDataRecolhimentoPrevista(lancamento.getDataRecolhimentoPrevista());
-			listaPeriodosLancamentos.add(periodoLancamento); 
+			periodoLancamento.setStatus(lancamento.getStatus().getDescricao());
+			periodoLancamento.setReparte(lancamento.getReparte());
+			listaPeriodosLancamentos.add(periodoLancamento);
 		}
 		
-		if (!listaPeriodosLancamentos.isEmpty()) {
-			this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
-		} else {
-			result.nothing();
-		}
-
+		this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 	}
 	
 	/**
@@ -514,8 +560,22 @@ public class ProdutoEdicaoController extends BaseController {
 		if (produtoEdicao!=null){
 		    
 		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getDescontoProdutoEdicao()!=null?produtoEdicao.getDescontoProdutoEdicao().getValor():BigDecimal.ZERO, BigDecimal.ZERO);
-
+		    
+		    BigDecimal percentualDesconto = BigDecimal.ZERO;
+		    
+		    if(Origem.INTERFACE.equals(produtoEdicao.getOrigem())){
+		    	
+		    	 percentualDesconto = (produtoEdicao.getProduto().getDescontoLogistica()!= null)
+				    		? produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto()
+				    				:BigDecimal.ZERO;
+		    }
+		    else{
+		    	
+		    	percentualDesconto = (produtoEdicao.getDesconto()!= null)
+		    			? produtoEdicao.getDesconto()
+		    					: BigDecimal.ZERO;
+		    }
+		    
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			
 			BigDecimal precoComDesconto = null;
@@ -542,7 +602,7 @@ public class ProdutoEdicaoController extends BaseController {
 													   produtoEdicao.getProduto().getNome(),
 													   produtoEdicao.getProduto().getCodigo(),
 										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
-										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
+										               (precoComDesconto!=null?CurrencyUtil.formatarValorQuatroCasas(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
 										               razaoSocial,
@@ -570,4 +630,5 @@ public class ProdutoEdicaoController extends BaseController {
 
 		return valor;
 	}
+	
 }

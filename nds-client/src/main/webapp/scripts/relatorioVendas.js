@@ -85,10 +85,11 @@ var relatorioVendasController = $.extend(true, {
 			} ],
 			sortname : "codigoProduto",
 			sortorder : "asc",
-			usepager : false,
-			useRp : false,
+			usepager : true,
+			useRp : true,
+			rp : 15,
 			width : 800,
-			height : 255
+			height : 275
 		});
 
 		$(".abcEditorGrid", relatorioVendasController.workspace).flexigrid({
@@ -167,8 +168,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "rkEditor",
-			sortorder : "asc",
+			sortname : "faturamentoCapaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -235,8 +236,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkCota",
-			sortorder : "asc",
+			sortname : "faturamentoCapaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -309,8 +310,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkProduto",
-			sortorder : "asc",
+			sortname : "faturamentoCapaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -383,8 +384,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkProduto",
-			sortorder : "asc",
+			sortname : "faturamento",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -676,7 +677,7 @@ var relatorioVendasController = $.extend(true, {
 	popup_editor : function() {
 		$("#dialog-editor", relatorioVendasController.workspace).dialog({
 			resizable : false,
-			height : 450,
+			height : 500,
 			width : 850,
 			modal : true,
 			buttons : {
@@ -697,6 +698,7 @@ var relatorioVendasController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			$(".grids", relatorioVendasController.workspace).hide();
+			
 			return resultado;
 		}
 
@@ -704,6 +706,7 @@ var relatorioVendasController = $.extend(true, {
 		$("#totalFaturamentoCapaDistribuidor", relatorioVendasController.workspace).html("R$ " + resultado.totalFaturamentoFormatado);
 		
 		$(".grids", relatorioVendasController.workspace).show();
+		
 		return resultado.tableModel;
 	},
 

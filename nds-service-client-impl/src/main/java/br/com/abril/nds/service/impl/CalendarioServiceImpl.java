@@ -41,6 +41,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
@@ -91,28 +92,19 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return cal.getTime();
 	}
 
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Date adicionarDiasRetornarDiaUtil(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(data);
-
+		
 		if (numDias == 0) {
-
-			// Verifica se o dia informado é util.
-			// Caso não seja, incrementa até encontrar o primeiro dia útil.
-			while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
-				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
-			}
-
+				
+			cal.setTime(this.obterProximaDataDiaUtil(data));
 		} else {
 
-			// Adiciona o número de dias úteis informado.
-			for (int i = 0; i < numDias; i++) {
-
-				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
-			}
+			cal.setTime(DateUtil.adicionarDias(data, numDias));
 		}
 
 		return cal.getTime();
@@ -136,6 +128,25 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		return cal.getTime();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Date subtrairDiasUteisComOperacao(Date data, int numDias) {
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+
+		for (int i = 0; i < numDias; i++) {
+
+			cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
+
+			while (DateUtil.isSabadoDomingo(cal) || isFeriadoSemOperacao(cal.getTime()) || isFeriadoMunicipalSemOperacao(cal.getTime())) {
+				cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
+			}
+		}
+
+		return cal.getTime();
+	} 
 
 	@Transactional
 	public boolean isDiaUtil(Date data) {
@@ -151,93 +162,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal));
 	}
 
-	@Override
-	public Date adicionarDiasUteis(Date data, int numDias,
-			List<Integer> diasSemanaConcentracaoCobranca,
-			List<Integer> diasMesConcentracaoCobranca) {
-		
-		
-        //DIARIO
-		if (diasSemanaConcentracaoCobranca == null
-				|| diasSemanaConcentracaoCobranca.isEmpty()
-				&& (diasSemanaConcentracaoCobranca == null)) {
-
-			return this.adicionarDiasUteis(data, numDias);
-		}
-
-		//SEMANAL
-		if (diasSemanaConcentracaoCobranca != null
-				&& !diasSemanaConcentracaoCobranca.isEmpty()) {
-
-			Calendar dataBase = Calendar.getInstance();
-			dataBase.setTime(data);
-			dataBase.add(Calendar.DAY_OF_MONTH, numDias);
-
-			boolean dataValida = false;
-
-			while (!dataValida) {
-				while (!diasSemanaConcentracaoCobranca.contains(dataBase
-						.get(Calendar.DAY_OF_WEEK))) {
-					dataBase.add(Calendar.DAY_OF_MONTH, 1);
-				}
-
-				dataBase.setTime(this.adicionarDiasUteis(dataBase.getTime(), 0));
-
-				dataValida = diasSemanaConcentracaoCobranca.contains(dataBase
-						.get(Calendar.DAY_OF_WEEK));
-			}
-
-			return dataBase.getTime();
-		}
-		else if (diasMesConcentracaoCobranca != null) {
-			
-			Calendar dataVencimento = Calendar.getInstance();
-			
-			int diaMesConcentracaoCobranca;
-			
-			//MENSAL
-			if (diasMesConcentracaoCobranca.size()<2){
-			
-				diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(0);
-	
-				if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-	
-					diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
-				}
-
-				while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
-	
-					dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
-				}
-			}
-			//QUINZENAL
-			else{
-				
-				diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(0);
-				
-				if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-					
-					diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(1);
-					
-					if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-						
-						diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
-					}
-				}
-
-				while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
-	
-					dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
-				}
-			}
-
-			return dataVencimento.getTime();
-		}
-
-		return Calendar.getInstance().getTime();
-	}
-
-	private boolean isFeriado(Calendar cal) {
+	protected boolean isFeriado(Calendar cal) {
 
 		if (cal != null) {
 			
@@ -643,7 +568,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 			int diaSemana = novaData.get(Calendar.DAY_OF_WEEK);
 
-			calendario.setDiaSemana(DateUtil.obterDiaSemana(diaSemana));
+			calendario.setDiaSemana(SemanaUtil.obterDiaSemana(diaSemana));
 
 			if (mapaFeriadosPorMes.get(mesFeriado) != null) {
 
@@ -777,7 +702,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 			for (Feriado feriado : feriados) {
 				
 				if (localidadeDistribuidor != null && feriado.getLocalidade() != null
-						&& feriado.getLocalidade().equals(localidadeDistribuidor)) {
+						&& feriado.getLocalidade().toUpperCase().equals(localidadeDistribuidor.toUpperCase())) {
 					
 					feriadoMunicipalSemOperacao = true;
 					
@@ -787,5 +712,24 @@ public class CalendarioServiceImpl implements CalendarioService {
 		}
 		return feriadoMunicipalSemOperacao;
 	}
-
+	
+	/**
+     * Obtem a proxima data com dia util, considerando Feriados, Sabados e Domingos
+     * @param data
+     * @return Date
+     */
+	@Override
+	public Date obterProximaDataDiaUtil(Date data) {
+		
+		Calendar c = Calendar.getInstance();
+		
+		c.setTime(data);
+		
+		if (this.feriadoRepository.isFeriado(data) || DateUtil.isSabadoDomingo(c)){
+			
+			data = this.obterProximaDataDiaUtil(DateUtil.adicionarDias(data, 1));
+		}
+		
+		return data;
+	}
 }

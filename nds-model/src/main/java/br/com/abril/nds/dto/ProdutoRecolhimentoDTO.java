@@ -2,7 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -38,8 +40,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private String nomeProduto;
 	
 	private Long idLancamento;
-
-	private Integer sequencia;
 	
 	private Long idFornecedor;
 	
@@ -51,8 +51,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private TipoLancamentoParcial parcial;
 	
-	private boolean possuiChamada;
-
 	private Date dataLancamento;
 
 	private Date dataRecolhimentoPrevista;
@@ -68,6 +66,10 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private BigDecimal valorTotal;
 
 	private Date novaData;
+	
+	private boolean produtoAgrupado;
+	
+	private List<Long> idsLancamentosAgrupados = new ArrayList<>();
 
 	/**
 	 * Construtor padrão.
@@ -209,20 +211,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
-	
-	/**
-	 * @return the sequencia
-	 */
-	public Integer getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
-	}
 
 	/**
 	 * @return the idFornecedor
@@ -293,20 +281,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	public void setParcial(String parcial) {
 		
 		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
-	}
-	
-	/**
-	 * @return the possuiChamada
-	 */
-	public boolean isPossuiChamada() {
-		return possuiChamada;
-	}
-
-	/**
-	 * @param possuiChamada the possuiChamada to set
-	 */
-	public void setPossuiChamada(boolean possuiChamada) {
-		this.possuiChamada = possuiChamada;
 	}
 
 	/**
@@ -427,12 +401,42 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	public boolean isBalanceamentoSalvo() {
 		return StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(statusLancamento);
 	}
+	
+	/**
+	 * @return the produtoAgrupado
+	 */
+	public boolean isProdutoAgrupado() {
+		return produtoAgrupado;
+	}
+	
+	/**
+	 * @param produtoAgrupado the produtoAgrupado to set
+	 */
+	public void setProdutoAgrupado(boolean produtoAgrupado) {
+		this.produtoAgrupado = produtoAgrupado;
+	}
+	
+	/**
+	 * @return the idsLancamentosAgrupados
+	 */
+	public List<Long> getIdsLancamentosAgrupados() {
+		return idsLancamentosAgrupados;
+	}
+
+	/**
+	 * @param idsLancamentosAgrupados the idsLancamentosAgrupados to set
+	 */
+	public void setIdsLancamentosAgrupados(List<Long> idsLancamentosAgrupados) {
+		this.idsLancamentosAgrupados = idsLancamentosAgrupados;
+	}
 
 	/**
 	 * @return the balanceamentoConfirmado
 	 */
 	public boolean isBalanceamentoConfirmado() {
-		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento);
+		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento) || 
+				StatusLancamento.EM_RECOLHIMENTO.equals(statusLancamento) ||  
+				StatusLancamento.RECOLHIDO.equals(statusLancamento);
 	}
 
 }

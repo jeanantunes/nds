@@ -167,15 +167,15 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryMode
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Integer> obterCodigosDiaDistribuicaoFornecedor(Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
+	public List<Integer> obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor operacaoDistribuidor, Long ...idFornecedor) {
 
 		Criteria criteria = getSession().createCriteria(DistribuicaoFornecedor.class);
 		
 		criteria.setProjection(Projections.property("codigoDiaSemana"));
 		
-		if (idFornecedor != null) {
+		if (idFornecedor != null && idFornecedor.length > 0) {
 		
-			criteria.add(Restrictions.eq("fornecedor.id", idFornecedor));
+			criteria.add(Restrictions.in("fornecedor.id", idFornecedor));
 		}
 		
 		if (operacaoDistribuidor != null) {

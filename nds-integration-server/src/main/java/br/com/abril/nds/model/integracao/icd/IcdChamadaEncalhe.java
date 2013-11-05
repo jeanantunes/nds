@@ -26,6 +26,9 @@ public class IcdChamadaEncalhe {
 	@Transient
 	private String baseDeDados;
 	
+	@Transient
+	private String usuarioBaseDeDados;
+	
 	@Column(name = "COD_DISTRIBUIDOR", nullable = false)
 	private Long codigoDistribuidor;
 	
@@ -114,6 +117,14 @@ public class IcdChamadaEncalhe {
 
 	public void setBaseDeDados(String baseDeDados) {
 		this.baseDeDados = baseDeDados;
+	}
+
+	public String getUsuarioBaseDeDados() {
+		return usuarioBaseDeDados;
+	}
+
+	public void setUsuarioBaseDeDados(String usuarioBaseDeDados) {
+		this.usuarioBaseDeDados = usuarioBaseDeDados;
 	}
 
 	public Long getCodigoDistribuidor() {

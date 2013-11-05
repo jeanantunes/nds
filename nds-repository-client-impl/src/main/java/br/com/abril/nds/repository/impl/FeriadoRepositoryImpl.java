@@ -58,7 +58,9 @@ public class FeriadoRepositoryImpl extends
 		if (localidade != null) {
 			criteria.add(Restrictions.eq("localidade", localidade));
 		}
-
+		
+		criteria.setCacheable(true);
+		
 		return criteria.list();
 	}
 	

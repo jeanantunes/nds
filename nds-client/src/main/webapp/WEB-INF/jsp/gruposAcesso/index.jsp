@@ -301,4 +301,7 @@
            </form>
    	</div>
 
+	<div id="ok-falta-de-permissoes" title="Falta de permissões" style="display:none;">
+	  <p>Não foi escolhido as permissões para esse grupo</p>
+	</div>
 </body>

@@ -17,7 +17,7 @@
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="75">Data Encalhe:</td>
-				<td width="114"><input name="filtro.dataEncalhe" type="text" id="analiticoEncalhe_dataEncalhe" style="width:80px;" value="${dataOperacao}" onchange="analiticoEncalheController.limpaGridPesquisa()" /></td>
+				<td width="114"><input name="filtro.dataEncalhe" type="text" id="analiticoEncalhe_dataEncalhe" style="width:80px;" value="" onchange="analiticoEncalheController.limpaGridPesquisa()" /></td>
 				<td width="67">Fornecedor:</td>
 				<td width="216">
 					<select name="filtro.fornecedorId" id="selectFornecedor" style="width:200px;" onchange="analiticoEncalheController.limpaGridPesquisa()">
@@ -55,9 +55,9 @@
 	        	<tr>
 	            	<td width="626">&nbsp;</td>
 		            <td width="50"><strong >Total R$:</strong></td>
-		            <td width="81" id="valorTotal" >0,00</td>
+		            <td width="81" id="valorTotalAnalitico" >0,00</td>
 		            <td width="69"><strong>Qtde Cotas:</strong></td>
-		            <td width="92" id="totalCota">0</td>
+		            <td width="92" id="totalCotaAnalitico">0</td>
 	          	</tr>
 	        </table>
 		</div>

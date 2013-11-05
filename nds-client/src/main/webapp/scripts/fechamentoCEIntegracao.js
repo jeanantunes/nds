@@ -11,10 +11,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	},
 	
 	verificarDataFechamentoCE : function(fechada) {
-		
+			
+			$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
 			if (fechada) {					
-				
-				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
 				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
@@ -37,11 +43,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				});
 				
 			} else {
-				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
-				
-				$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).unbind("click");
-				
-				$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).unbind("click");
 				
 				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
@@ -88,6 +89,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					data,
 					function(result) {	
 						if (result) {	
+							
 							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
 						}
 					}
@@ -103,6 +105,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	initGrid : function(){	
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(fechamentoCEIntegracaoController.workspace);},
 			preProcess : fechamentoCEIntegracaoController.fechamentoCeGridPreProcess,
 			dataType : 'json',
 			colModel : [ {
@@ -317,19 +320,26 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							(row.cell.reparte)?row.cell.reparte:"" +
 						'</span>';
 					
+					var colunaReparte;
+					
 					var colunaEncalhe;
 					
 					var colunaVenda;
+					
+					colunaReparte =
+						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
+							((row.cell.reparte) ? row.cell.reparte : "") +
+						'</span>';
 					
 					if (isParcial) {
 						
 						colunaEncalhe =
 							'<span id="encalhe' + row.cell.idItemCeIntegracao + '">' +
-								(row.cell.encalhe)?row.cell.encalhe:"" +
+								((row.cell.encalhe) ? row.cell.encalhe : "") +
 							'</span>';
 						
 						colunaVenda =
-							'<input type="text" name="inputVenda"' +
+							'<input isEdicao="true" type="text" name="inputVenda"' +
 							'id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							'value="' + row.cell.venda + '" size="5px"' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
@@ -338,16 +348,17 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					} else {
 						
 						colunaEncalhe =
-							'<input type="text" name="inputEncalhe"' +
-							'id="inputEncalhe' + row.cell.idItemCeIntegracao + '"' +
-							'value="' + (row.cell.encalhe)?row.cell.encalhe:'' + '" size="5px"' +
+							'<input isEdicao="true" type="text" name="inputEncalhe" ' +
+							'id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
+							'value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 							row.cell.idItemCeIntegracao + ', this.value)"/>';
 						
-						colunaVenda =
+						colunaVenda =	
 							'<span id="venda' + row.cell.idItemCeIntegracao + '">' +
 								row.cell.venda +
 							'</span>';
+
 					}
 					
 					var colunaPrecoCapa =

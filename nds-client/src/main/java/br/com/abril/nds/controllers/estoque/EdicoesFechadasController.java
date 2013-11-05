@@ -76,7 +76,7 @@ public class EdicoesFechadasController extends BaseController {
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);
-		result.include("fornecedores", fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO));
+		result.include("fornecedores", fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO));
 	}
 
 	/**
@@ -122,8 +122,15 @@ public class EdicoesFechadasController extends BaseController {
 
 		List<RegistroEdicoesFechadasVO> resultado = null;
 		BigInteger saldoTotal = new BigInteger("0");
+		
+		Long count = null;
+		
 		try {
-			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
+			resultado = edicoesFechadasService.obterResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor, 
+					sortorder, sortname, ((rp*page) - rp), rp); 
+			
+			count = edicoesFechadasService.countResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
+			
 			saldoTotal = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);
 		} catch (Exception e) {
 
@@ -139,15 +146,11 @@ public class EdicoesFechadasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
-			int qtdeTotalRegistros = resultado.size();
-
-			List<RegistroEdicoesFechadasVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
-		
 			TableModel<CellModelKeyValue<RegistroEdicoesFechadasVO>> tableModel = new TableModel<CellModelKeyValue<RegistroEdicoesFechadasVO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(qtdeTotalRegistros);
+			tableModel.setTotal(count.intValue());
 			
 			ResultadoEdicoesFechadasVO resultadoEdicoesFechadas = new ResultadoEdicoesFechadasVO();
 			resultadoEdicoesFechadas.setTableModel(tableModel);

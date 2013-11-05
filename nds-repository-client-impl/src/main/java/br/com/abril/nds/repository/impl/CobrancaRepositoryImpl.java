@@ -19,6 +19,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CobrancaRepository;
 
@@ -43,34 +44,40 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean naoObtemCobrancaOrigemNegociacao) {		
+	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean obtemCobrancaOrigemNegociacao) {		
 		
 		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
 		
 		criteria.createAlias("cobranca.cota", "cota");
+		criteria.createAlias("cobranca.divida", "divida");
 		
-		if(naoObtemCobrancaOrigemNegociacao) {
-			
-			criteria.createAlias("cobranca.divida", "divida");
-			
-			criteria.add(Restrictions.eq("divida.origemNegociacao", false));
-			
-		}
-		
+		criteria.add(Restrictions.eq("divida.origemNegociacao", obtemCobrancaOrigemNegociacao));
 		criteria.add(Restrictions.eq("cota.id", idCota));
-		
 		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
-		
+		criteria.add(Restrictions.isNull("divida.dividaRaiz"));
 		criteria.addOrder(Order.asc("dataVencimento"));
 		
 		return criteria.list();				
 	}
 	
-	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota) {
+	/**
+	 * Obtem cobrancas em aberto que não estejam associadas a 
+	 * operacao de encalhe em questão (caso flag seja true)
+	 * 
+	 * @param idCota
+	 * @param idControleConfEncCota
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data) {
 		
 		StringBuffer sql = new StringBuffer();
 			
-		sql.append(" SELECT cobranca.VALOR as valor, cobranca.DT_EMISSAO as dataLancamento FROM COBRANCA cobranca ");
+		sql.append(" SELECT cobranca.VALOR as valor, cobranca.DT_EMISSAO as dataLancamento "); 
+		
+		sql.append(" FROM COBRANCA cobranca ");
 		
 		sql.append(" inner join DIVIDA d on ( 	");
 		sql.append(" 	cobranca.DIVIDA_ID = d.id 	");
@@ -96,7 +103,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 		sql.append(" cota.id = :idCota and ");
 		
-		sql.append(" d.ORIGEM_NEGOCIACAO = :origemNegociacao  ");
+		sql.append(" d.ORIGEM_NEGOCIACAO = :origemNegociacao and ");
+		
+		sql.append(" cobranca.DT_VENCIMENTO <= :data ");
 		
 		if(idControleConfEncCota != null) {
 			sql.append(" and cc.id is null ");
@@ -119,6 +128,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		query.setParameter("origemNegociacao", false);
 		
+		query.setParameter("data", data);
+		
 		return query.list();
 		
 	}
@@ -126,11 +137,17 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
 		
-		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
-		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
-		criteria.setMaxResults(1);
-	
-		return (Cobranca) criteria.uniqueResult();
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select c from Cobranca c where c.nossoNumero = :nossoNumero ");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("nossoNumero", nossoNumero);
+		
+		return (Cobranca) query.uniqueResult();
+		
 	}
 	
 	public void incrementarVia(String... nossoNumero){
@@ -194,8 +211,13 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	public List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
-		hql.append(" from Cobranca c where ");		
-		hql.append(" c.cota.numeroCota = :ncota ");
+		hql.append(" select c from Cobranca c ");		
+		hql.append(" left join c.baixasCobranca baixa ");
+		hql.append(" left join c.divida divida ");
+		hql.append(" where c.cota.numeroCota = :ncota ");
+		hql.append(" and baixa.statusAprovacao is null ");
+		hql.append(" and divida.status != :statusPendenteInadimplencia ");
+		
 		
 		if (filtro.getDataVencimento()!=null){
 		    hql.append(" and c.dataVencimento <= :vcto ");
@@ -249,6 +271,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			query.setParameter("acumulada", filtro.isAcumulaDivida());
 			query.setParameter("data", filtro.getDataVencimento());
 		}
+		
+		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA);
 
         if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -260,7 +284,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			}
 		}
 
-		return query.list();
+		return (List<Cobranca>)query.list();
 	}
 
 	@Override
@@ -331,44 +355,6 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
-	@Override
-	public BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota){
-		
-		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
-
-		return valorCobrancaNaoPago != null ? valorCobrancaNaoPago : BigDecimal.ZERO;
-	}
-	
-	/**
-	 * Retorna o valor das cobranças em aberto de uma determinada cota
-	 * 
-	 * @param dataVencimento - data de vencimento da cobrança
-	 * 
-	 * @param numeroCota - numero da cota
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorNaoPagoCobranca(Integer numeroCota) {
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select sum(cobranca.valor + coalesce(cobranca.encargos, 0)) ")
-			.append(" from Cobranca cobranca, Distribuidor distribuidor ")
-			.append(" inner join cobranca.cota cota ")
-			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ")
-			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ")
-			.append(" and (cobranca.divida.origemNegociacao = :origemNegociacao ")
-			.append(" 	or cobranca.divida.origemNegociacao is null) ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("origemNegociacao", false);
-
-		return (BigDecimal) query.uniqueResult();
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -399,7 +385,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" m.valor as valor, m.data as data, case when m.observacao is null then '' else m.observacao end as observacao")
+		hql.append(" m.valor as valor, c.dataEmissao as data, case when m.observacao is null then '' else m.observacao end as observacao")
 		   .append(" from Cobranca c ")
 		   .append(" join c.divida.consolidado.movimentos m ")
 		   .append(" where c.id = :idCobranca ");

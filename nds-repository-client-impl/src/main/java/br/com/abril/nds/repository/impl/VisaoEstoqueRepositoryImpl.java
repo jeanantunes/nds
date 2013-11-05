@@ -36,14 +36,14 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 						+ "), 0) as valor  ")
 				.append("   FROM EstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ");
-		if (filtro.getIdFornecedor() != -1) {
+		if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pe.produto.fornecedores f ");
 			hql.append("  WHERE f.id = :idFornecedor ");
 		}
 
 		Query query = getSession().createQuery(hql.toString());
 
-		if (filtro.getIdFornecedor() != -1) {
+		if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 
@@ -158,12 +158,24 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("    AND f.id = :idFornecedor ");
 		}
 		
-		
-		
 		if(!isCount) {
 			hql.append(" group by pe.id ");
-			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
-				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+			
+			if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null &&
+					filtro.getPaginacao().getSortColumn() != null){
+				
+				hql.append(" order by ");
+				
+				if (filtro.getPaginacao().getSortColumn().equals("codigo")){
+					
+					hql.append(" (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')) ");
+				} else {
+					hql.append(filtro.getPaginacao().getSortColumn());
+				}
+				
+				hql.append(" ").append(filtro.getPaginacao().getOrdenacao().name());
+				hql.append(" , pe.numeroEdicao DESC ");
+			}
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -221,7 +233,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 	}
 	
 	public Query queryObterVisaoEstoqueDetalheHistorico(Boolean isCount, String coluna, StringBuilder hql, FiltroConsultaVisaoEstoque filtro) {
-		
+
 		hql.append("   FROM HistoricoEstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ")
 				.append("   JOIN pe.produto as pr ")
@@ -238,9 +250,15 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("    AND f.id = :idFornecedor ");
 		}
 		
-		if(!isCount)
+		if(!isCount) {
+		
+			String orderByCodigo = " (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')) ";
+			
 			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
-				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+				orderByCodigo, orderByCodigo,"produto","edicao","precoCapa","lcto","rclto","qtde");
+			
+			hql.append(" , pe.numeroEdicao DESC ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -273,7 +291,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
 				.append("       ,ep." + coluna + " as qtde");
 		
-		Query query = queryObterVisaoEstoqueDetalheHistorico(false, coluna,hql,filtro);
+		Query query = queryObterVisaoEstoqueDetalheHistorico(false, coluna, hql, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VisaoEstoqueDetalheDTO.class));
@@ -314,7 +332,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		
 		if(!isCount)
 			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
-				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+				"codigo","codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

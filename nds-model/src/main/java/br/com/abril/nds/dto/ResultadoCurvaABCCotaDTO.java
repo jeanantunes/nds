@@ -26,12 +26,6 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 	
 	@Export(label = "", alignWithHeader="Faturamento R$")
 	private String totalFaturamentoFormatado;
-	
-	public ResultadoCurvaABCCotaDTO(BigInteger totalVendaExemplares, BigDecimal totalFaturamento) {
-		this.totalVendaExemplares = totalVendaExemplares;
-		this.totalFaturamento = totalFaturamento;
-		formatarCampos();
-	}
 
 	public TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> getTableModel() {
 		return tableModel;
@@ -48,6 +42,8 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 
 	public void setTotalVendaExemplares(BigInteger totalVendaExemplares) {
 		this.totalVendaExemplares = totalVendaExemplares;
+		
+		totalVendaExemplaresFormatado = totalVendaExemplares == null ? "0" : totalVendaExemplares.toString();
 	}
 
 	public BigDecimal getTotalFaturamento() {
@@ -56,6 +52,8 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 
 	public void setTotalFaturamento(BigDecimal totalFaturamento) {
 		this.totalFaturamento = totalFaturamento;
+		
+		totalFaturamentoFormatado = CurrencyUtil.formatarValor((totalFaturamento== null)?BigDecimal.ZERO: totalFaturamento);
 	}
 
 	public String getTotalVendaExemplaresFormatado() {
@@ -73,11 +71,6 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 
 	public void setTotalFaturamentoFormatado(String totalFaturamentoFormatado) {
 		this.totalFaturamentoFormatado = totalFaturamentoFormatado;
-	}
-
-	private void formatarCampos() {
-		totalFaturamentoFormatado = CurrencyUtil.formatarValor((totalFaturamento== null)?BigDecimal.ZERO: totalFaturamento); 
-		totalVendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado((totalVendaExemplares == null)?BigDecimal.ZERO:totalVendaExemplares);
 	}
 	
 }

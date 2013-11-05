@@ -80,7 +80,7 @@ var produtoEdicaoController =$.extend(true,  {
 		var nome = $(idProduto,this.workspace).val();
 
 		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {"nomeProduto" : nome},
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nome},
 					function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 					null, isFromModal);
 		}
@@ -151,7 +151,7 @@ var produtoEdicaoController =$.extend(true,  {
 		$(idCodigo,this.workspace).val("");
 
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"filtro.nome" : nomeProduto},
 					function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 					function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 		} else {
@@ -231,6 +231,18 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-repartePrevisto").numeric();
 		$("#produtoEdicaoController-expectativaVenda").numeric();
 		$("#produtoEdicaoController-repartePromocional").numeric();
+
+		$("#produtoEdicaoController-pPrecoDe", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.',
+		    centsLimit:2
+		});
+		
+		$("#produtoEdicaoController-pPrecoAte", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.',
+		    centsLimit:2
+		});
 		
 		$('#produtoEdicaoController-precoPrevisto', this.workspace).maskMoney({
 			 thousands:'.', 
@@ -244,7 +256,20 @@ var produtoEdicaoController =$.extend(true,  {
 			 precision:2
 		});
 		
-		$("#produtoEdicaoController-desconto").numeric();
+		$('#produtoEdicaoController-pPrecoDe', this.workspace).maskMoney({
+					 thousands:'.', 
+					 decimal:',', 
+					 precision:2
+				});
+				
+		$('#produtoEdicaoController-pPrecoAte', this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+
+		$("#produtoEdicaoController-desconto", this.workspace).mask("999,99"); 			
+		
 		$("#produtoEdicaoController-peso").numeric();
 		$("#produtoEdicaoController-largura").numeric();
 		$("#produtoEdicaoController-comprimento").numeric();
@@ -417,25 +442,55 @@ var produtoEdicaoController =$.extend(true,  {
 		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexigrid({
 			preProcess: produtoEdicaoController.executarPreProcessamentoLancamentosPeriodo,
 			dataType : 'json',
-			colModel : [ { 
-				display : 'Lançamento',
+			colModel : [{
+				display : 'Nº Lancto',
+				name : 'numeroLancamento',
+				width : 65,
+				sortable : true,
+				align : 'center'
+			},{ 
+				display : 'Lancto Previsto',
 				name : 'dataLancamentoPrevista',
-				width : 80,
+				width : 110,
+				sortable : true,
+				align : 'center'
+			},{ 
+				display : 'Lancto Real',
+				name : 'dataLancamentoDistribuidor',
+				width : 90,
 				sortable : true,
 				align : 'center'
 			},{
-				display : 'Recolhimento',
+				display : 'Recolhimento Previsto',
 				name : 'dataRecolhimentoPrevista',
-				width : 80,
+				width : 120,
 				sortable : true,
 				align : 'center'
-			} ],
+			},{
+				display : 'Recolhimento Real',
+				name : 'dataRecolhimentoDistribuidor',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Status',
+				name : 'status',
+				width : 85,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Reparte',
+				name : 'reparte',
+				width : 85,
+				sortable : true,
+				align : 'right'
+			}  ],
 			sortname : "dataLancamentoPrevista",
 			sortorder : "asc",
 			usepager : false,
 			useRp : false,
 			showTableToggleBtn : false,
-			width : 200,
+			width : 745,
 			height : 250
 		});
 		
@@ -443,7 +498,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 		
 	pesquisarEdicoes : function(codigoProduto, nomeProduto) {
-
+		
 		if (codigoProduto == "" || codigoProduto == undefined) {
 			codigoProduto = $("#produtoEdicaoController-pCodigoProduto",this.workspace).val();
 		}
@@ -454,8 +509,8 @@ var produtoEdicaoController =$.extend(true,  {
 			nomeProduto = $("#produtoEdicaoController-pNome",this.workspace).val();
 		}
 		var dataLancamentoDe = $("#produtoEdicaoController-pDateLanctoDe",this.workspace).val();	
-		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).val();
-		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).val();
+		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).floatValue();
+		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).floatValue();
 		var dataLancamentoAte = $("#produtoEdicaoController-pDateLanctoAte",this.workspace).val();
 		var situacaoLancamento = $("#produtoEdicaoController-pSituacaoLancamento",this.workspace).val();
 		var codigoDeBarras = $("#produtoEdicaoController-pCodigoDeBarras",this.workspace).val();
@@ -468,8 +523,8 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$(".edicoesGrid",this.workspace).flexOptions({
 			url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
-			params: [{name:'codigoProduto', value: codigoProduto },
-			         {name:'nomeProduto', value: nomeProduto },
+			params: [{name:'filtro.codigo', value: codigoProduto },
+			         {name:'filtro.nome', value: nomeProduto },
 			         {name:'dataLancamentoDe', value: dataLancamentoDe },
 			         {name:'dataLancamentoAte', value: dataLancamentoAte },
 			         {name:'precoDe', value: precoDe },
@@ -479,7 +534,7 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'brinde', value : brinde }],
 			         newp: 1,
 		});
-
+			
 		$(".edicoesGrid",this.workspace).flexReload();
 	},
 	
@@ -498,7 +553,7 @@ var produtoEdicaoController =$.extend(true,  {
 			var cProduto = '';
 			$.each(resultado.rows, function(index, row) {
 
-				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ', \'' + row.cell.codigoProduto + '\', \'' + row.cell.nomeProduto + '\');" style="cursor:pointer; margin-right:10px;">' +
+				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ', \'' + row.cell.codigoProduto + '\', \'' + row.cell.statusSituacao + '\');" style="cursor:pointer; margin-right:10px;">' +
 				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
 				'</a>';
 
@@ -533,16 +588,24 @@ var produtoEdicaoController =$.extend(true,  {
 
 			//
 			var txt = '';
-			if (nProduto != null || cProduto != null) {
-				txt = ": " + cProduto + " - " + nProduto;
-			}
-			$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
 			
-			if (cProduto != "") {
-			    
-			    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
-            }
-
+			if($("#produtoEdicaoController-pCodigoProduto", this.workspace).val() == "" && 
+					$("#produtoEdicaoController-pNome", this.workspace).val() == "") {
+				
+				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html("");
+			
+			} else {
+				
+				if (nProduto != null || cProduto != null) {
+					txt = ": " + cProduto + " - " + nProduto;
+				}
+				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
+				
+				if (cProduto != "") {
+				    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+	            }
+			}	
+		
 			return resultado;
 		}
 	},
@@ -551,13 +614,26 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$.each(resultado.rows, function(index, row) {
 			
+			var isRedistribuicao = produtoEdicaoController.isRedistribuicao(row.cell.modoTela);
+			
 			if(row.cell.numeroEdicao){
 				
-				row.cell.numeroEdicao = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
-				                        '<label style = "height:30px; width:40px;" >'  +
-										 row.cell.numeroEdicao +
-										'</label>'  + 
-										'</a>';
+				if (isRedistribuicao) {
+					
+					row.cell.numeroEdicao = '<label style = "height:30px; width:40px;" >'  +
+												row.cell.numeroEdicao +
+											'</label>';
+					
+				} else {
+					
+					row.cell.numeroEdicao = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
+												'<label style = "height:30px; width:40px;" >'  +
+													row.cell.numeroEdicao +
+												'</label>'  + 
+											'</a>';
+				}
+				
+				
 			}else{
 				
 				row.cell.numeroEdicao = '';
@@ -565,11 +641,22 @@ var produtoEdicaoController =$.extend(true,  {
 
 			if(row.cell.nomeComercial){
 				
-				row.cell.nomeComercial = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
-				 						 '<label style = "height:30px; width:115px;" >'  +						  
-										  row.cell.nomeComercial +
-										 '</label>'  + 
-										 '</a>';
+				if (isRedistribuicao) {
+
+					row.cell.nomeComercial = '<label style = "height:30px; width:115px;" >'  +						  
+											 	row.cell.nomeComercial +
+											 '</label>';
+
+					
+				} else {
+					
+					row.cell.nomeComercial = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ');" style="cursor:pointer; margin-right:10px;">' +
+												 '<label style = "height:30px; width:115px;" >'  +						  
+												  	row.cell.nomeComercial +
+												 '</label>'  + 
+											 '</a>';
+				}
+				 
 			}else{
 				
 				row.cell.nomeComercial = '';
@@ -582,23 +669,22 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	novaEdicao : function () {
-		produtoEdicaoController.popup("", "", "");
+		produtoEdicaoController.popup("", "", false);
 	},
-
-	editarEdicao:function (id, codigo, nome) {
+	
+	editarEdicao:function (id, codigo, situacaoProdutoEdicao) {
+		
 		if (id == undefined) {
 			id = "";
 		}
 		if (codigo == undefined) {
 			codigo = "";
 		}
-		if (nome == undefined) {
-			nome = "";
-		}
-		produtoEdicaoController.popup(id, codigo, nome);
+
+		produtoEdicaoController.popup(id, codigo, false, situacaoProdutoEdicao);
 	},
 
-	prepararTela : 			function (id, codigo) {
+	prepararTela : function (id, codigo, modoTela) {
 
 		produtoEdicaoController.form_clear('dialog-novo');
 		
@@ -630,8 +716,8 @@ var produtoEdicaoController =$.extend(true,  {
 		}
 		var nomeProduto = $("#produtoEdicaoController-pNome",this.workspace).val();
 		var dataLancamentoDe = $("#produtoEdicaoController-pDateLanctoDe",this.workspace).val();	
-		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).val();
-		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).val();
+		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).floatValue();
+		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).floatValue();
 		var dataLancamentoAte = $("#produtoEdicaoController-pDateLanctoAte",this.workspace).val();
 		var situacaoLancamento = $("#produtoEdicaoController-pSituacaoLancamento",this.workspace).val();
 		var codigoDeBarras = $("#produtoEdicaoController-pCodigoDeBarras",this.workspace).val();
@@ -644,15 +730,16 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$(".prodsPesqGrid",this.workspace).flexOptions({
 			url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
-			params: [{name:'codigoProduto', value: codigo },
-			         {name:'nomeProduto', value: nomeProduto },
+			params: [{name:'filtro.codigo', value: codigo },
+			         {name:'filtro.nome', value: nomeProduto },
 			         {name:'dataLancamentoDe', value: dataLancamentoDe },
 			         {name:'dataLancamentoAte', value: dataLancamentoAte },
 			         {name:'precoDe', value: precoDe },
 			         {name:'precoAte', value: precoAte },
 			         {name:'situacaoLancamento', value: situacaoLancamento },
 			         {name:'codigoDeBarras', value: codigoDeBarras },
-			         {name:'brinde', value : brinde }],
+			         {name:'brinde', value : brinde },
+			         {name:'modoTela', value : modoTela }],
 			         newp: 1, 
 			         rp: 99999
 		});
@@ -660,7 +747,7 @@ var produtoEdicaoController =$.extend(true,  {
 		$(".prodsPesqGrid",this.workspace).flexReload();	
 	},
 	
-	carregarDialog : 			function (id, codigoProduto) {
+	carregarDialog : function (id, codigoProduto, redistribuicao, situacaoProdutoEdicao) {
 		
 		if (codigoProduto == "") {
 			codigoProduto = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
@@ -669,11 +756,41 @@ var produtoEdicaoController =$.extend(true,  {
 		// Exibir os dados do Produto:
 		$.postJSON(
 				 contextPath + '/cadastro/edicao/carregarDadosProdutoEdicao.json',
-				{ codigoProduto : codigoProduto, 
-					idProdutoEdicao : id},
+				{ 'filtro.codigo': codigoProduto, idProdutoEdicao : id, situacaoProdutoEdicao : situacaoProdutoEdicao, redistribuicao : redistribuicao},
+
 					function(result) {
 						
-						var title = (id)?"Editar Edição":"Incluir Nova Edição";
+						//Default:
+						$("a[name='linkRedistribuicao']", this.workspace).show();
+						$("a[name='linkIncluirNovo']", this.workspace).show();
+						$("#idLinkMostrarPeriodos", this.workspace).show();
+						$("#linkExclusaoCapa", this.workspace).show();
+						$("#produtoEdicaoController-imagemCapa").enable();
+						
+						var title;
+						
+						var modoTela = result.modoTela;
+						
+						if (redistribuicao) {
+							
+							title = "Incluir Nova Redistribuição";
+							
+							$("a[name='linkRedistribuicao']", this.workspace).hide();
+							$("a[name='linkIncluirNovo']", this.workspace).hide();
+							$("#idLinkMostrarPeriodos", this.workspace).hide();
+							$("#linkExclusaoCapa", this.workspace).hide();
+							$("#produtoEdicaoController-imagemCapa").disable();
+							
+						} else if (produtoEdicaoController.isEdicao(modoTela)) {
+							
+							title = "Editar Edição";
+							
+						} else {
+							
+							title = "Incluir Nova Edição";
+							
+							$("a[name='linkRedistribuicao']", this.workspace).hide();
+						}
 						
 						$( "#produtoEdicaoController-dialog-novo" ).dialog({
 							resizable: false,
@@ -697,22 +814,21 @@ var produtoEdicaoController =$.extend(true,  {
 						
 						produtoEdicaoController.iniciaTab();
 						
-						produtoEdicaoController.prepararTela(id, codigoProduto);
+						produtoEdicaoController.prepararTela(id, codigoProduto, modoTela);
 						
 						if (result) {
+							$("#produtoEdicaoController-modoTela", this.workspace).val(modoTela);
 							$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 							$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
 							$("#produtoEdicaoController-nomePublicacao").val(result.nomeProduto);
 							$("#produtoEdicaoController-nomeComercialProduto").val(result.nomeComercialProduto);
 							$("#produtoEdicaoController-nomeFornecedor").val(result.nomeFornecedor);
-							$("#produtoEdicaoController-situacao").val(result.situacao);
+							$("#produtoEdicaoController-situacao").val(result.statusSituacao);
 							$("#produtoEdicaoController-numeroEdicao").val(result.numeroEdicao);
 							$("#produtoEdicaoController-fase").val(result.fase);
 							$("#produtoEdicaoController-numeroLancamento").val(result.numeroLancamento);
 							$("#produtoEdicaoController-pacotePadrao").val(result.pacotePadrao);
-							$("#produtoEdicaoController-situacao").val(result.situacaoLancamento);
 							$("#produtoEdicaoController-tipoLancamento").val(result.tipoLancamento);	
-							
 							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevistoFormatado);
 							$("#produtoEdicaoController-precoVenda").val(result.precoVendaFormatado);
 							
@@ -724,7 +840,7 @@ var produtoEdicaoController =$.extend(true,  {
 						    $("#produtoEdicaoController-categoria").val(result.grupoProduto);
 							$("#produtoEdicaoController-codigoDeBarras").val(result.codigoDeBarras);
 							$("#produtoEdicaoController-codigoDeBarrasCorporativo").val(result.codigoDeBarrasCorporativo);
-							$("#produtoEdicaoController-desconto").val(result.desconto);
+							$("#produtoEdicaoController-desconto", this.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
 							$("#produtoEdicaoController-descricaoDesconto").val(result.descricaoDesconto);
 							$("#produtoEdicaoController-peso").val(result.peso);
 							$("#produtoEdicaoController-largura").val(result.largura);
@@ -748,50 +864,19 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-temaPrincipal").val(result.temaPrincipal);
 							$("#produtoEdicaoController-temaSecundario").val(result.temaSecundario);
 
-							var naoEditavel = result.origemInterface;
-							
-							$("#produtoEdicaoController-peb").attr("readonly", naoEditavel);		
-							$("#produtoEdicaoController-descricaoProduto").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-codigoProdutoEdicao").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-nomeComercialProduto").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-numeroEdicao").attr("readonly", (naoEditavel || result.numeroEdicao == 1));
-							$("#produtoEdicaoController-pacotePadrao").attr("readonly", naoEditavel);														
-							$("#produtoEdicaoController-tipoLancamento option").not(":selected").attr("disabled", naoEditavel);
-							$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", naoEditavel);
-							$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", naoEditavel);							
-							$("#produtoEdicaoController-precoPrevisto").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-dataLancamentoPrevisto").attr("disabled", naoEditavel);
-							$("#produtoEdicaoController-dataRecolhimentoPrevisto").attr("disabled", naoEditavel);
-							$("#produtoEdicaoController-repartePrevisto").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-repartePromocional").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-codigoDeBarrasCorporativo").attr("readonly", naoEditavel);	
-							
-							$('.target_visible').css({'visibility':'hidden', display: ''});							
-							
-							$("#produtoEdicaoController-desconto").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-largura").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-comprimento").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-espessura").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-boletimInformativo").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-numeroLancamento").attr("readonly", naoEditavel);
-							$("#produtoEdicaoController-descricaoDesconto").attr("readonly", naoEditavel);
-							
-							//Segmentação
-						    $("#produtoEdicaoController-classeSocial option").not(":selected").attr("disabled", naoEditavel);
-						    $("#produtoEdicaoController-sexo option").not(":selected").attr("disabled", naoEditavel);
-						    $("#produtoEdicaoController-faixaEtaria option").not(":selected").attr("disabled", naoEditavel);
-						    $("#produtoEdicaoController-temaPrincipal option").not(":selected").attr("disabled", naoEditavel);
-						    $("#produtoEdicaoController-temaSecundario option").not(":selected").attr("disabled", naoEditavel);    
-
-							$("#produtoEdicaoController-precoVenda").attr("readonly", false); 
-							$("#produtoEdicaoController-imagemCapa").attr("readonly", false);
-							$("#produtoEdicaoController-codigoDeBarras").attr("readonly", false);				
-							$("#produtoEdicaoController-chamadaCapa").attr("readonly", false);
-							$("#produtoEdicaoController-possuiBrinde").attr("readonly", false);
-							$("#produtoEdicaoController-descricaoBrinde").attr("readonly", false);
-							$("#produtoEdicaoController-peso").attr("readonly", false);
+							if (redistribuicao) {
+								
+								produtoEdicaoController.definirBackgroundInputs(
+									false, result.numeroEdicao, true);
+								
+							} else {
+								
+								produtoEdicaoController.definirBackgroundInputs(
+									result.origemInterface, result.numeroEdicao, false);	
+							}
 							
 							if(result.id){
+								
 								produtoEdicaoController.carregarLancamentosPeriodo(result.id);
 							}
 						}
@@ -800,6 +885,56 @@ var produtoEdicaoController =$.extend(true,  {
 					true
 		);
 
+	},
+	
+	definirBackgroundInputs : function(bloquearOrigemInterface, numeroEdicao, bloquearRedistribuicao) {		
+		
+		var bloquear = (bloquearOrigemInterface || bloquearRedistribuicao);
+		
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamentoPrevisto", bloquearOrigemInterface);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
+		
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", (bloquear || numeroEdicao == 1));
+		
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataRecolhimentoPrevisto", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peb", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-descricaoProduto", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-codigoProdutoEdicao", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-nomeComercialProduto", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-precoPrevisto", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-codigoDeBarrasCorporativo", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-desconto", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-largura", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-comprimento", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-espessura", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-boletimInformativo", bloquear);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-descricaoDesconto", bloquear);
+
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-pacotePadrao", bloquearRedistribuicao);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-precoVenda", bloquearRedistribuicao);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-codigoDeBarras", bloquearRedistribuicao);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-chamadaCapa", bloquearRedistribuicao);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peso", bloquearRedistribuicao);
+		
+		$("#produtoEdicaoController-tipoLancamento option").not(":selected").attr("disabled", bloquear);
+		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
+		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
+		
+		//Segmentação
+	    $("#produtoEdicaoController-classeSocial option").not(":selected").attr("disabled", bloquear);
+	    $("#produtoEdicaoController-sexo option").not(":selected").attr("disabled", bloquear);
+	    $("#produtoEdicaoController-faixaEtaria option").not(":selected").attr("disabled", bloquear);
+	    $("#produtoEdicaoController-temaPrincipal option").not(":selected").attr("disabled", bloquear);
+	    $("#produtoEdicaoController-temaSecundario option").not(":selected").attr("disabled", bloquear);
+	},
+	
+	bloquearCampo : function(campo, bloquear) {
+		
+		var color = bloquear ? "buttonface" : "white";
+		
+		$("#" + campo).css("background-color", color);
+		$("#" + campo).attr("readonly", bloquear);
 	},
 	
 	carregarLancamentosPeriodo : function (produtoEdicaoId) {
@@ -815,6 +950,13 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	executarPreProcessamentoLancamentosPeriodo : function (result) {
 		
+		$.each(result.rows, function(index, row) {
+			
+			if(!row.cell.numeroLancamento) {
+				row.cell.numeroLancamento = "";
+			}
+		});
+		
 		return result;
 	},
 	
@@ -823,36 +965,44 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-tabIdentificacao",this.workspace).click();
 	},
 	
-	popup:function (id, codigo, nome) {
+	popup:function (id, codigo, redistribuicao, situacaoProdutoEdicao) {
 
-		//$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
+		$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
 		
 		// if ($(".edicoesGrid > tbody").data() == null ||
 		// $(".edicoesGrid > tbody").data() == undefined) {
 		if ($("#produtoEdicaoController-codigoProduto",this.workspace).val() == "" && (codigo == "")) {
+			
 			exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
+			
 			return;
 		}
 		
 		if (codigo == "" || codigo == undefined) {
-			codigo = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
 			
+			codigo = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
 		}
 		
-		if (nome == undefined) {
-			nome = "";
-		}
+		produtoEdicaoController.carregarDialog(id, codigo, redistribuicao, situacaoProdutoEdicao);
+	},
+	
+	popupRedistribuicao : function () {
 		
+		var id = $("#produtoEdicaoController-idProdutoEdicao").val();
 		
-		produtoEdicaoController.carregarDialog(id, codigo);
+		var codigo = $("#produtoEdicaoController-codigoProdutoEdicao").val();
+		
+		var situacaoProdutoEdicao = $("#produtoEdicaoController-situacao", produtoEdicaoController.workspace).val();
+		
+		produtoEdicaoController.popup(id, codigo, true, situacaoProdutoEdicao);
 	},
 	
 	mostrarPeriodosLancamento : function() {
 
 		$( "#dialog-produto-edicao-periodos-lancamentos" ).dialog({
 			resizable: true,
+			width:765,
 			height:380,
-			width:225,
 			modal: true,
 			buttons: {
 				"Fechar": function() {
@@ -866,6 +1016,43 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	salvarProdutoEdicao : function(closePopUp) {
 
+		previsto = $('#produtoEdicaoController-precoPrevisto', this.workspace).val();
+		real = $('#produtoEdicaoController-precoVenda', this.workspace).val();
+		
+		if(previsto != real) {
+			$("#produtoEdicaoController-dialog-precos-real-previsto-divergentes").dialog({
+				resizable: false,
+				height:140,
+				modal: true,
+				buttons: {
+					"Sim": function() {
+						
+						setTimeout(function() {
+							$("#produtoEdicaoController-precoVenda", this.workspace).focus(); }, 10);
+						
+						setTimeout(function() {
+							$("#produtoEdicaoController-precoVenda", this.workspace).select(); }, 10);
+						
+						
+						$( this ).dialog( "close" );
+					},
+					"Não": function() {
+						
+						produtoEdicaoController.submeterProdutoEdicao(closePopUp);
+						
+						$( this ).dialog( "close" );						
+					}
+				}
+			});
+		} else {
+		
+			produtoEdicaoController.submeterProdutoEdicao(closePopUp);
+			
+		}
+	},
+	
+	submeterProdutoEdicao : function(closePopUp) {
+		
 		$("#produtoEdicaoController-formUpload").ajaxSubmit({
 			beforeSubmit: function(arr, formData, options) {
 				// Incluir aqui as validacoes;
@@ -891,16 +1078,18 @@ var produtoEdicaoController =$.extend(true,  {
 						
 						exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 						
-						produtoEdicaoController.popup("", "", "");
+						produtoEdicaoController.popup("", "", false);
 						
-						produtoEdicaoController.prepararTela(null, null);
+						var codigoProduto = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
+						
+						produtoEdicaoController.prepararTela(null, codigoProduto);
 					}
 				}
 			}, 
 			url:  contextPath + '/cadastro/edicao/salvar',
 			type: 'POST',
 			dataType: 'json',
-			data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
+			data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val()}
 		});
 	},
 	
@@ -998,47 +1187,85 @@ var produtoEdicaoController =$.extend(true,  {
 		});	      
 	},
 	
-	removerEdicao:function (id) {
+	removerEdicao: function (id) {
 
-		$( "#produtoEdicaoController-dialog-excluir").dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
+		$.postJSON(
+				 contextPath + '/cadastro/edicao/validarRemocaoEdicao.json',
+					{idProdutoEdicao : id},
+					function(result) {
 
-					$.postJSON(
-							 contextPath + '/cadastro/edicao/removerEdicao.json',
-							{idProdutoEdicao : id},
-							function(result) {
-								$("#produtoEdicaoController-dialog-excluir").dialog("close");
+						$("#produtoEdicaoController-dialog-excluir").dialog("close");
+						
+						
+						if(result.map.length > 0) {
+							
+							var tipoMensagem = 'WARNING';
+							var listaMensagens = [];
+							
+							/*
+							for (var i=0; i<result.map.length; i++) {
+								listaMensagens[i] = result.map[i][1];
+							}
+							*/
+							
+							if(result.map.length > 0) {
+								listaMensagens[0] = "Existem restrições que impedem a exclusão desta edição.";
+							}
+							
+							if (tipoMensagem && listaMensagens) {
 
-								var tipoMensagem = result.tipoMensagem;
-								var listaMensagens = result.listaMensagens;
+								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+							
+							return;
+						}
+						
+						$( "#produtoEdicaoController-dialog-excluir").dialog({
+							resizable: false,
+							height:170,
+							width:380,
+							modal: true,
+							buttons: {
+								"Confirmar": function() {
 
-								if (tipoMensagem && listaMensagens) {
+									$.postJSON(
+											 contextPath + '/cadastro/edicao/removerEdicao.json',
+											{idProdutoEdicao : id},
+											function(result) {
+												$("#produtoEdicaoController-dialog-excluir").dialog("close");
 
-									exibirMensagem(tipoMensagem, listaMensagens);
+												var tipoMensagem = result.tipoMensagem;
+												var listaMensagens = result.listaMensagens;
+
+												if (tipoMensagem && listaMensagens) {
+
+													exibirMensagem(tipoMensagem, listaMensagens);
+												}
+
+												produtoEdicaoController.carregarImagemCapa(null);
+												$(".edicoesGrid").flexReload();
+											},
+											null,
+											true
+									);
+									
+								},
+								"Cancelar": function() {
+									$( this ).dialog( "close" );
 								}
-
-								produtoEdicaoController.carregarImagemCapa(null);
-								$(".edicoesGrid").flexReload();
 							},
-							null,
-							true
-					);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			beforeClose: function() {
-				clearMessageDialogTimeout();
-			},
-			form: $("#produtoEdicaoController-dialog-excluir", this.workspace).parents("form")
-		});
+							beforeClose: function() {
+								clearMessageDialogTimeout();
+							},
+							form: $("#produtoEdicaoController-dialog-excluir", this.workspace).parents("form")
+						});
+						
+						
+					},
+					null,
+					true
+			);
+		
 	},
 	
 	popup_excluir_capa:			function () {
@@ -1106,6 +1333,32 @@ var produtoEdicaoController =$.extend(true,  {
 	mostraLinhaProd:function (){
 
 		$( ".prodLinhas",this.workspace ).show('slow');
+	},
+	
+	novaRedistribuicao : function() {
+	
+		$( "#dialog-redistribuicao-lancamento" ).dialog({
+			resizable: true,
+			width:720,
+			height:380,
+			modal: true,
+			buttons: {
+				"Fechar": function() {
+					$( "#dialog-redistribuicao-lancamento" ).dialog("close");
+				}
+			},
+			form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
+		});
+	},
+	
+	isRedistribuicao : function(modoTela) {
+		
+		return modoTela == 'REDISTRIBUICAO';
+	},
+	
+	isEdicao : function(modoTela) {
+		
+		return modoTela == 'EDICAO';
 	}
 
 }, BaseController);

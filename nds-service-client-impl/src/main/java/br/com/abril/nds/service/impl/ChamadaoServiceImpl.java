@@ -1,11 +1,15 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.NullComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +20,10 @@ import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -36,6 +42,10 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe de implementação de serviços referentes
@@ -58,6 +68,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	@Autowired
 	protected CotaRepository cotaRepository;
 	
+	@Autowired 
+	protected DistribuidorService distribuidorService;
+	
 	@Autowired
 	protected EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
@@ -69,6 +82,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private SituacaoCotaService situacaoCotaService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -143,6 +162,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 								  FiltroChamadaoDTO filtro,
 								  boolean chamarTodos,
+								  List<Long> idsIgnorados,
 								  Usuario usuario,
 								  Date novaDataChamadao) {
 		
@@ -154,33 +174,92 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			if (filtro.isChamadaEncalhe()) {
 		
-				listaChamadao =
-					this.chamadaoRepository.obterConsignadosComChamadao(filtro);
+				listaChamadao = this.chamadaoRepository.obterConsignadosComChamadao(filtro);
 				
 			} else {
 			
-				listaChamadao =
-					this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+				listaChamadao = this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+			}
+		} else {
+			for(ConsignadoCotaChamadaoDTO cc : listaChamadao) {
+				
+				ProdutoEdicao pe = null;
+				if(cc.getCodigoProduto() != null && cc.getNumeroEdicao() != null) {
+					pe = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(cc.getCodigoProduto(), cc.getNumeroEdicao());
+				}
+				
+				cc.setNomeProduto((pe != null && pe.getProduto() != null) ? pe.getProduto().getNome() : "");
 			}
 		}
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
+		listaChamadao = (List<ConsignadoCotaChamadaoDTO>) this.ordenarEmMemoria(listaChamadao, Ordenacao.ASC, "numeroEdicao");
+		listaChamadao = (List<ConsignadoCotaChamadaoDTO>) this.ordenarEmMemoria(listaChamadao, Ordenacao.ASC, "nomeProduto");		
+				
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
+			
+			if (idsIgnorados != null) {
+				if (idsIgnorados.contains(consignadoCotaChamadao.getIdLancamento())) {
+	
+					continue;
+				}
+			}
+			
+			if(consignadoCotaChamadao.getDataRecolhimento().equals(novaDataChamadao)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe Chamada de encalhe para esta data!");
+			}
 			
 			if (filtro.isChamadaEncalhe()) {
 				
-				this.alterarChamadao(
-					consignadoCotaChamadao, dataChamadao, novaDataChamadao, cota);
+				this.alterarChamadao(consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
 				
 			} else {
 				
-				this.gerarChamadaEncalhe(
-					consignadoCotaChamadao, dataChamadao, cota);
+				this.gerarChamadaEncalhe(consignadoCotaChamadao, dataChamadao, cota);
 			}
 		}
 		
 		this.tratarConfirmacaoChamadao(filtro, cota, usuario);
+	}
+	
+	/**
+	 * Efetua a ordenação de uma lista em memória.
+	 * 
+	 * @param listaAOrdenar - Lista que será ordenada.
+	 * @param ordenacao - Define se a ordenação será ascendente ou descendente.
+	 * @param nomeAtributoOrdenacao - nome do atributo que será usada para a ordenação.
+	 * 
+	 * @return Lista ordenada
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Object> Collection<T> ordenarEmMemoria(List<T> listaAOrdenar,
+															  Ordenacao ordenacao,
+															  String nomeAtributoOrdenacao) {
+		
+		if (listaAOrdenar == null || listaAOrdenar.isEmpty()) {
+			
+			return listaAOrdenar;
+		}
+		
+		if (ordenacao == null) {
+			
+			throw new IllegalArgumentException("Tipo de ordenação nulo!");
+		}
+		
+		if (nomeAtributoOrdenacao == null) {
+			
+			throw new IllegalArgumentException("Nome do atributo para ordenação nulo!");
+		}
+		
+		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
+
+		if (Ordenacao.DESC.equals(ordenacao)) {
+
+			Collections.reverse(listaAOrdenar);
+		}
+		
+		return listaAOrdenar;
 	}
 	
 	@Transactional
@@ -205,17 +284,40 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			ChamadaEncalhe chamadaEncalhe =
 				this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
-					produtoEdicao, filtro.getDataChamadao(), TipoChamadaEncalhe.CHAMADAO);
+					produtoEdicao, consignadoCotaChamadao.getDataRecolhimento(), TipoChamadaEncalhe.CHAMADAO);
 			
 			ChamadaEncalheCota chamadaEncalheCotaExcluir =
 				this.obterChamadaEncalheCota(cota, chamadaEncalhe);
 			
-			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCotaExcluir);
+			if(chamadaEncalheCotaExcluir!= null){
+				this.chamadaEncalheCotaRepository.remover(chamadaEncalheCotaExcluir);
+			}
 			
 			this.verificarRemoverChamadaEncalhe(chamadaEncalhe, chamadaEncalheCotaExcluir);
 		}
 		
-		this.cotaRepository.ativarCota(filtro.getNumeroCota());
+		this.atualizarStatusCotaParaAtivo(cota); 
+	}
+	
+	/**
+	 * Atualiza a situação de cadastro da cota para Ativo e gera historico de alteração da situação de cadastro da cota
+	 * @param cota
+	 */
+	private void atualizarStatusCotaParaAtivo(Cota cota){
+		
+		Date dataDeOperacao = distribuidorService.obterDataOperacaoDistribuidor();		
+		
+		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
+		historico.setCota(cota);
+		historico.setDataEdicao(new Date());
+		historico.setNovaSituacao(SituacaoCadastro.ATIVO);
+		historico.setSituacaoAnterior(cota.getSituacaoCadastro());
+		historico.setResponsavel(usuarioService.getUsuarioLogado());
+		historico.setMotivo(MotivoAlteracaoSituacao.CHAMADAO);
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);		
+		historico.setDataInicioValidade(dataDeOperacao);
+		
+		situacaoCotaService.atualizarSituacaoCota(historico, dataDeOperacao);
 	}
 	
 	/**
@@ -232,9 +334,23 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				consignadoCotaChamadao.getCodigoProduto(), consignadoCotaChamadao.getNumeroEdicao());
 		
+		Long idCota = cota.getId();
+		Long idProdutoEdicao = produtoEdicao.getId();
+		
+		if (this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(idCota, idProdutoEdicao, false, dataChamadao)) {
+			
+			this.tratarChamadaEncalheCotaExistente(idCota, idProdutoEdicao, dataChamadao);
+		}
+		
 		ChamadaEncalhe chamadaEncalhe =
 			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
 				produtoEdicao, dataChamadao, TipoChamadaEncalhe.CHAMADAO);
+		
+		if (chamadaEncalhe == null) {
+			chamadaEncalhe =
+					this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
+						produtoEdicao, dataChamadao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		}
 		
 		if (chamadaEncalhe == null) {
 			
@@ -286,6 +402,23 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 	}
 
+	private void tratarChamadaEncalheCotaExistente(Long idCota, Long idProdutoEdicao, Date dataChamadao) {
+		
+		ChamadaEncalheCota chamadaEncalheCota =
+			this.chamadaEncalheCotaRepository.obterChamadaEncalheCota(idCota, idProdutoEdicao, dataChamadao);
+		
+		if (chamadaEncalheCota != null) {
+			
+			ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+			
+			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+			
+			if(chamadaEncalhe.getChamadaEncalheCotas().isEmpty()){
+				chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
+		}		
+	}
+
 	/**
 	 * Altera a programação do chamadão.
 	 * 
@@ -308,14 +441,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		if (chamadaEncalheAntiga == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Chamada de encalhe não encontrada!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Chamada de encalhe não encontrada!");
 		}
 		
 		Set<Lancamento> lancamentos = this.getLancamentos(chamadaEncalheAntiga.getLancamentos());
 		
-		ChamadaEncalheCota chamadaEncalheCotaAlterar =
-			this.obterChamadaEncalheCota(cota, chamadaEncalheAntiga);
+		ChamadaEncalheCota chamadaEncalheCotaAlterar = this.obterChamadaEncalheCota(cota, chamadaEncalheAntiga);
 		
 		ChamadaEncalhe chamadaEncalheNova =
 			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
@@ -323,7 +454,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 		if (chamadaEncalheNova == null) {
 			
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(novaDataChamadao);
+			
 			chamadaEncalheNova = new ChamadaEncalhe();
+			chamadaEncalheNova.setSequencia(++sequencia);
 		}
 		
 		chamadaEncalheNova.setDataRecolhimento(novaDataChamadao);
@@ -370,19 +504,25 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	private ChamadaEncalheCota obterChamadaEncalheCota(Cota cota,
 													   ChamadaEncalhe chamadaEncalhe) {
 		
-		Set<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalhe.getChamadaEncalheCotas();
-		
-		ChamadaEncalheCota chamadaEncalheCotaAlterar = null;
-		
-		for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
+		if(chamadaEncalhe!= null && chamadaEncalhe.getChamadaEncalheCotas()!= null){
 			
-			if (chamadaEncalheCota.getCota().getId().equals(cota.getId())) {
+			Set<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalhe.getChamadaEncalheCotas();
+			
+			ChamadaEncalheCota chamadaEncalheCotaAlterar = null;
+			
+			for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
 				
-				chamadaEncalheCotaAlterar = chamadaEncalheCota;
+				if (chamadaEncalheCota.getCota().getId().equals(cota.getId())) {
+					
+					chamadaEncalheCotaAlterar = chamadaEncalheCota;
+				}
 			}
+			
+			return chamadaEncalheCotaAlterar;
 		}
 		
-		return chamadaEncalheCotaAlterar;
+		return null;
+		
 	}
 
 	/**
@@ -395,13 +535,16 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	private void verificarRemoverChamadaEncalhe(ChamadaEncalhe chamadaEncalhe,
 									   			ChamadaEncalheCota chamadaEncalheCota) {
 		
-		Set<ChamadaEncalheCota> chamadaEncalheCotas = chamadaEncalhe.getChamadaEncalheCotas();
-		
-		chamadaEncalheCotas.remove(chamadaEncalheCota);
-		
-		if (chamadaEncalheCotas.isEmpty()) {
+		if(chamadaEncalhe!= null && chamadaEncalhe.getChamadaEncalheCotas()!= null){
 			
-			this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			Set<ChamadaEncalheCota> chamadaEncalheCotas = chamadaEncalhe.getChamadaEncalheCotas();
+			
+			chamadaEncalheCotas.remove(chamadaEncalheCota);
+			
+			if (chamadaEncalheCotas.isEmpty()) {
+				
+				this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}
 	}
 	
@@ -498,7 +641,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void suspenderCota(Long idCota, Usuario usuario) {
 		
-		cotaService.suspenderCota(idCota, usuario, MotivoAlteracaoSituacao.CHAMADAO);
+		Date dataInicioValidade = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		cotaService.suspenderCota(idCota, usuario, dataInicioValidade, MotivoAlteracaoSituacao.CHAMADAO);
 	}
 	
 }

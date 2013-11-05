@@ -28,6 +28,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -56,11 +57,11 @@ public class EmissaoBandeiraController extends BaseController {
 	}
 	
 	@Path("/pesquisar")
-	public void pesquisar(Integer semana, String sortname, String sortorder, int rp, int page) {
+	public void pesquisar(Integer anoSemana, String sortname, String sortorder, int rp, int page) {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		
-		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana,paginacaoVO); 
+		List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(anoSemana,paginacaoVO); 
 		
 		List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
 		
@@ -73,17 +74,18 @@ public class EmissaoBandeiraController extends BaseController {
 		} else {
 			
 			 
-			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(chamadaEncalheService.countObterBandeirasDaSemana(semana).intValue()).page(page).serialize();
+			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(chamadaEncalheService.countObterBandeirasDaSemana(anoSemana).intValue()).page(page).serialize();
 		}
+		
 	}
 
 
 	
 	@Get
 	@Path("/imprimirArquivo")
-	public void imprimirArquivo(Integer semana,	String sortname, String sortorder, int rp, int page, FileType fileType) {
+	public void imprimirArquivo(Integer anoSemana,	String sortname, String sortorder, int rp, int page, FileType fileType) {
 	
-	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(semana, null); 
+	List<BandeirasDTO> listaBandeiraDTO = chamadaEncalheService.obterBandeirasDaSemana(anoSemana, null); 
 		
 	List<EmissaoBandeiraVO> listaEmissaoBandeiraVO =  new ArrayList<EmissaoBandeiraVO>();
 		
@@ -107,9 +109,9 @@ public class EmissaoBandeiraController extends BaseController {
 	
 
 	@Get("/imprimirBandeira")
-	public Download imprimirBandeira(Integer semana, Integer numeroPallets  ) throws Exception{
+	public Download imprimirBandeira(Integer anoSemana, Integer numeroPallets  ) throws Exception{
 		
-		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(semana, numeroPallets);
+		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(anoSemana, numeroPallets);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeira.pdf", true);
 	}
@@ -120,19 +122,16 @@ public class EmissaoBandeiraController extends BaseController {
 	}
 	
 	@Get("/imprimirBandeiraManual")
-	public Download imprimirBandeiraManual(Integer semana, Integer numeroPallets,String nome, String codigoPracaNoProdin, String praca, String destino, String canal ) throws Exception{
+	public Download imprimirBandeiraManual(Integer anoSemana, Integer numeroPallets,String nome, String codigoPracaNoProdin, String praca, String destino, String canal ) throws Exception{
 		
-		byte[] comprovate = emissaoBandeiraService.imprimirBandeiraManual(semana, numeroPallets, nome, codigoPracaNoProdin, praca, destino, canal);
+		byte[] comprovate = emissaoBandeiraService.imprimirBandeiraManual(anoSemana, numeroPallets, nome, codigoPracaNoProdin, praca, destino, canal);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeiraManual.pdf", true);
 	}
 	
-	
-	
-	
-	
-	
-
-
+	public Download obterLogoDistribuidor() {
+		
+		return new InputStreamDownload(super.getLogoDistribuidor(), null, null);
+	}
 	
 }

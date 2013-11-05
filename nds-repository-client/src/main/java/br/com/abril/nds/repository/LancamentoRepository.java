@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
@@ -24,7 +25,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -46,9 +46,10 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor,
 			Boolean estudo);
 
-	Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista,
-			TipoLancamento tipoLancamento, Long idProdutoEdicao);
+	Lancamento obterLancamentoPosteriorDataLancamento(Date dataPrevista, Long idProdutoEdicao);
 
+	Lancamento obterLancamentoAnteriorDataLancamento(Date dataLancamento, Long idProdutoEdicao);
+	
 	Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
 
 	/**
@@ -331,9 +332,44 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	void alterarLancamento(Long idLancamento,Date date, StatusLancamento expedido,
 			Expedicao expedicao);
 
-	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
-			Date data, Long idFornecedor);
-
+	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente);
+	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
+	
+	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
 
+	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
+
+	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
+
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
+	
+	void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento);
+	
+	Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento);
+	
+	List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor);
+	
+	List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase);
+	
+	List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao);
+	
+	List<CotaOperacaoDiferenciadaDTO> obterLancamentosEncalhesPorCota(Set<Long> idsCota, Set<Long> idsLancamento);
+
+	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
+
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	
+	Integer obterProximaSequenciaMatrizPorData(Date dataLancamento);
+	
+	Lancamento obterLancamentoParcialFinal(Long idProdutoEdicao);
+
+	Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
+
+	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao);
+	
+	Date getMaiorDataLancamentoPrevisto(Long idProdutoEdicao);
+	
+	Date getMaiorDataLancamentoDistribuidor(Long idProdutoEdicao);
+	
 }

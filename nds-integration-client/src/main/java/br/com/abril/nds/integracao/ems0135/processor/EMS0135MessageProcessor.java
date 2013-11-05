@@ -20,9 +20,11 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -33,9 +35,13 @@ import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
@@ -45,6 +51,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoProdutoRepository tipoProdutoRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -56,19 +68,18 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		EMS0135Input input = (EMS0135Input) message.getBody();
 	
-		
 		// Validar código do distribuidor:
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(
-				input.getDistribuidor().toString())){			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
-			return;
-		}
+//		Distribuidor distribuidor = this.distribuidorService.obter();
+//		if(!distribuidor.getCodigoDistribuidorDinap().equals(
+//				input.getDistribuidor().toString())){			
+//			this.ndsiLoggerFactory.getLogger().logWarning(message,
+//					EventoExecucaoEnum.RELACIONAMENTO, 
+//					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
+//			return;
+//		}
 
 		NotaFiscalEntradaFornecedor notafiscalEntrada = null;
-		
+
 		// Atualização por chave de acesso NFE
 		if (input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()) {
 			
@@ -95,18 +106,13 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 
-		/*if (input.getNotaFiscal() != null && !input.getNotaFiscal().equals(0L) &&
-			input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) &&
-			input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ) {*/
-
-			notafiscalEntrada = obterNotaFiscal(
-					input.getNotaFiscal()
-					, input.getSerieNotaFiscal()
-					, input.getCnpjEmissor()
-					, input.getNumeroNotaEnvio()
-					);		
-		//}
-		
+		notafiscalEntrada = obterNotaFiscal(
+				input.getNotaFiscal()
+				, input.getSerieNotaFiscal()
+				, input.getCnpjEmissor()
+				, input.getNumeroNotaEnvio()
+			);		
+			
 		if(notafiscalEntrada == null){
 			
 			notafiscalEntrada = new NotaFiscalEntradaFornecedor();
@@ -116,19 +122,30 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			if (null != notafiscalEntrada) {
 				notafiscalEntrada = calcularValores(notafiscalEntrada);				
 				this.getSession().persist(notafiscalEntrada);
+				
+				this.ndsiLoggerFactory.getLogger().logInfo(
+							message
+							, EventoExecucaoEnum.SEM_DOMINIO
+							, String.format("Nota Fiscal inserida no sistema: %1$s", input.getNotaFiscal()));
+				
 			} else {
+				
+				String msg = "Nota fiscal com produtos não encontrados no sistema";
+				if(input.getNotaFiscal() != null && input.getNotaFiscal() > 0){
+					msg = String.format("Nota fiscal com produtos não encontrados no sistema, número nota: %1$s", input.getNotaFiscal());
+				}
+				
 				// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
-						EventoExecucaoEnum.RELACIONAMENTO, 
-						String.format("Nota Fiscal Com Produtos nao encontrados no sistema: %1$s", input.getNotaFiscal()));
+						EventoExecucaoEnum.RELACIONAMENTO, msg);
 				return;		
 			}
 			
-		}else{
+		} else {
 			// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.REGISTRO_JA_EXISTENTE, 
-						String.format("Nota Fiscal %1$s já cadastrada", notafiscalEntrada.getNumero()));
+						String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s", notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(), notafiscalEntrada.getNumeroNotaEnvio()));
 				return;			
 		}		
 	}
@@ -167,57 +184,104 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		
 		List<EMS0135InputItem> items =  input.getItems();
-		boolean ItemNotFound = false;
+//		boolean ItemNotFound = false;
 
 		for(EMS0135InputItem imputItem : items) {
 					
 
 			final String codigoProduto = imputItem.getCodigoProduto();
 			final Long edicao = imputItem.getEdicao();
-			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-					edicao);
+			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto, edicao);
 			if (produtoEdicao == null) {
 				
 				// Validar código do distribuidor:
-				this.ndsiLoggerFactory.getLogger().logWarning(message,
-						EventoExecucaoEnum.HIERARQUIA, 
-						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
-						) ;
-				ItemNotFound = true;
-			}	else {					
-			
-				ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
-		
-				item.setQtde(new BigInteger(imputItem.getQtdExemplar().toString()));
-				item.setNotaFiscal(nfEntrada);
-				item.setProdutoEdicao(produtoEdicao);
-				item.setPreco( BigDecimal.valueOf( imputItem.getPreco() ));
-				item.setDesconto( BigDecimal.valueOf( imputItem.getDesconto() ));
+//				this.ndsiLoggerFactory.getLogger().logError(message,
+//						EventoExecucaoEnum.HIERARQUIA, 
+//						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
+//						) ;
+//				ItemNotFound = true;
 				
-				Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
-				if (null == lancamento) {
-					Calendar cal = Calendar.getInstance();
+				//Trac 784
+				Produto produto = this.produtoRepository.obterProdutoPorCodigo(codigoProduto);
+				
+				if (produto == null){
 					
-					cal.add(Calendar.DAY_OF_MONTH, 2);					
-					item.setDataLancamento(cal.getTime());
+					TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(1L);
 					
-					cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-					item.setDataRecolhimento(cal.getTime());
-					
-					item.setTipoLancamento(TipoLancamento.LANCAMENTO);
-
-				} else {					
-					item.setDataLancamento(lancamento.getDataLancamentoPrevista());
-					item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
-					item.setTipoLancamento(lancamento.getTipoLancamento());
+					produto = new Produto();
+					produto.setCodigo(imputItem.getCodigoProduto());
+					produto.setPeriodicidade(PeriodicidadeProduto.MENSAL);
+					produto.setNome(imputItem.getNomeProduto());
+					produto.setOrigem(Origem.MANUAL);
+					produto.setTipoProduto(tipoProduto);
+					produto.setPacotePadrao(10);
+					produto.setPeb(35);
+					produto.setPeso(100L);
+					this.getSession().persist(produto);
 				}
-				nfEntrada.getItens().add(item);
+				
+				produtoEdicao = new ProdutoEdicao();
+				produtoEdicao.setProduto(produto);
+				produtoEdicao.setNumeroEdicao(imputItem.getEdicao());
+				produtoEdicao.setPacotePadrao(10);
+				produtoEdicao.setPeb(35);
+				produtoEdicao.setPeso(100L);
+				produtoEdicao.setPossuiBrinde(false);
+				produtoEdicao.setPermiteValeDesconto(false);
+				produtoEdicao.setParcial(true);
+				produtoEdicao.setAtivo(true);
+				produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
+				produtoEdicao.setPrecoPrevisto(new BigDecimal(imputItem.getPreco()));
+				produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
+				this.getSession().persist(produtoEdicao);
+				
+				Date dataAtual = new Date();
+				Date dataPrevista = DateUtil.adicionarDias(dataAtual, produto.getPeb());
+				Lancamento lancamento = new Lancamento();
+				lancamento.setDataCriacao(dataAtual);
+				lancamento.setDataLancamentoPrevista(dataAtual);
+				lancamento.setDataLancamentoDistribuidor(dataAtual);
+				lancamento.setDataRecolhimentoPrevista(dataPrevista);
+				lancamento.setDataRecolhimentoDistribuidor(dataPrevista);
+				lancamento.setProdutoEdicao(produtoEdicao);
+				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+				lancamento.setDataStatus(dataAtual);
+				lancamento.setStatus(StatusLancamento.CONFIRMADO);
+				lancamento.setReparte(new BigInteger(imputItem.getQtdExemplar().toString()));
+				this.getSession().persist(lancamento);
 			}
+			
+			ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
+	
+			item.setQtde(new BigInteger(imputItem.getQtdExemplar().toString()));
+			item.setNotaFiscal(nfEntrada);
+			item.setProdutoEdicao(produtoEdicao);
+			item.setPreco( BigDecimal.valueOf( imputItem.getPreco() ));
+			item.setDesconto( BigDecimal.valueOf( imputItem.getDesconto() ));
+			
+			Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
+			if (null == lancamento) {
+				Calendar cal = Calendar.getInstance();
+				
+				cal.add(Calendar.DAY_OF_MONTH, 2);					
+				item.setDataLancamento(cal.getTime());
+				
+				cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+				item.setDataRecolhimento(cal.getTime());
+				
+				item.setTipoLancamento(TipoLancamento.LANCAMENTO);
+
+			} else {					
+				item.setDataLancamento(lancamento.getDataLancamentoPrevista());
+				item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
+				item.setTipoLancamento(lancamento.getTipoLancamento());
+			}
+			nfEntrada.getItens().add(item);
 		}
 		
-		if (ItemNotFound) {
-			return null;				
-		}
+//		if (ItemNotFound) {
+//			return null;				
+//		}
 		
 		return nfEntrada;
 	}
@@ -323,36 +387,35 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie, String cnpjEmissor, String numeroNotaEnvio) {
 		StringBuilder hql = new StringBuilder();
 
+		boolean existeNotaFiscal = (numero != null && !numero.equals(0L) && serie != null && !serie.isEmpty() && !serie.equals("0"));
+		
 		PessoaJuridica emitente = this.obterPessoaJuridica( cnpjEmissor );		
 				
 		hql.append("from NotaFiscalEntradaFornecedor nf ");
 		hql.append("where nf.emitente = :emitente ");
-		
-		if (numero == null || numero.equals(0L)) {
-			hql.append("and (nf.numero is null or nf.numero = 0 or nf.numero = '') ");
+
+		if (existeNotaFiscal) {
+			hql.append("and nf.numero = :numero and nf.serie = :serie");
 		} else {
-			hql.append("and nf.numero = :numero ");
-		}
-		
-		if (serie == null || serie.isEmpty() || serie.equals("0")) {
-			hql.append("and ( nf.serie is null or nf.serie = 0 or nf.serie = '') ");
-		} else {
-			hql.append("and nf.serie = :serie ");
+			hql.append("and nf.numeroNotaEnvio = :numeroNotaEnvio ");
 		}
 
-		hql.append("and nf.numeroNotaEnvio = :numeroNotaEnvio ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 
-		if ( numero != null && !numero.equals(0L) ) {
-			query.setParameter("numero", numero);
-		}
-		
-		if ( serie != null && !serie.isEmpty() && !serie.equals("0")) {
-			query.setParameter("serie", serie);
-		}
 		query.setParameter("emitente",  emitente);
-		query.setParameter("numeroNotaEnvio",  Long.parseLong(numeroNotaEnvio) );
+
+		if (existeNotaFiscal) {
+			if ( numero != null && !numero.equals(0L) ) {
+				query.setParameter("numero", numero);
+			}
+			
+			if ( serie != null && !serie.isEmpty() && !serie.equals("0")) {
+				query.setParameter("serie", serie);
+			}
+		} else {
+			query.setParameter("numeroNotaEnvio",  Long.parseLong(numeroNotaEnvio) );
+		}
 		
 		return (NotaFiscalEntradaFornecedor) query.uniqueResult();
 		

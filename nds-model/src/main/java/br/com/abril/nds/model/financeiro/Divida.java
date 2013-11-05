@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,7 +56,7 @@ public class Divida implements Serializable {
 	@Column(name = "STATUS", nullable = false)
 	private StatusDivida status;
 	
-	@OneToOne(mappedBy = "divida")
+	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE})
 	private Cobranca cobranca;
 	
 	@OneToOne(optional = false)

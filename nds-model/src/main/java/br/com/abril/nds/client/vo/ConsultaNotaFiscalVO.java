@@ -24,14 +24,23 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	@Export(label = "Número da Nota")
 	private Long numeroNota;
 	
+	@Export(label = "Série")
+	private String serie;
+	
+	@Export(label = "Nota Envio")
+	private Long notaEnvio;
+	
+	@Export(label = "Chave Acesso", widthPercent=30, alignment = Alignment.CENTER)
+	private String chaveAcesso;
+	
 	@Export(label = "Data de Emissão", alignment = Alignment.CENTER)
 	private Date dataEmissao;
 	
 	@Export(label = "Data de Expedição", alignment = Alignment.CENTER)
 	private Date dataExpedicao;
-	
-	@Export(label = "Tipo", widthPercent=30)
-	private String tipoNotaFiscal;
+
+//	@Export(label = "Tipo", widthPercent=30)
+//	private String tipoNotaFiscal;
 	
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
@@ -39,8 +48,12 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	@Export(label = "Valor R$")
 	private String valor;
 	
+	@Export(label = "Valor Com Desconto R$")
+	private String valorComDesconto;
+	
 	@Export(label = "Nota Recebida")
 	private String notaRecebida;
+	
 	
 	/**
 	 * Construtor padrão.
@@ -91,19 +104,19 @@ public class ConsultaNotaFiscalVO implements Serializable {
 		this.dataExpedicao = dataExpedicao;
 	}
 
-	/**
-	 * @return the tipoNotaFiscal
-	 */
-	public String getTipoNotaFiscal() {
-		return tipoNotaFiscal;
-	}
-
-	/**
-	 * @param tipoNotaFiscal the tipoNotaFiscal to set
-	 */
-	public void setTipoNotaFiscal(String tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
-	}
+//	/**
+//	 * @return the tipoNotaFiscal
+//	 */
+//	public String getTipoNotaFiscal() {
+//		return tipoNotaFiscal;
+//	}
+//
+//	/**
+//	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+//	 */
+//	public void setTipoNotaFiscal(String tipoNotaFiscal) {
+//		this.tipoNotaFiscal = tipoNotaFiscal;
+//	}
 
 	/**
 	 * @return the nomeFornecedor
@@ -145,6 +158,38 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	 */
 	public void setValor(String valor) {
 		this.valor = valor;
+	}
+
+	public String getValorComDesconto() {
+		return valorComDesconto;
+	}
+
+	public void setValorComDesconto(String valorComDesconto) {
+		this.valorComDesconto = valorComDesconto;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public Long getNotaEnvio() {
+		return notaEnvio;
+	}
+
+	public void setNotaEnvio(Long notaEnvio) {
+		this.notaEnvio = notaEnvio;
+	}
+
+	public String getChaveAcesso() {
+		return chaveAcesso;
+	}
+
+	public void setChaveAcesso(String chaveAcesso) {
+		this.chaveAcesso = chaveAcesso;
 	}
 	
 	

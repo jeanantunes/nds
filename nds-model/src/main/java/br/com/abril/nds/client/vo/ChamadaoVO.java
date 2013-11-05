@@ -47,6 +47,8 @@ public class ChamadaoVO {
 	private String valorTotalDesconto;
 	
 	private String idLancamento;
+	
+	private boolean checked;
 
 	/**
 	 * @return the codigo
@@ -215,5 +217,18 @@ public class ChamadaoVO {
 	public void setValorTotalDesconto(String valorTotalDesconto) {
 		this.valorTotalDesconto = valorTotalDesconto;
 	}
-	
+
+	/**
+	 * @return the checked
+	 */
+	public boolean isChecked() {
+		return checked;
+	}
+
+	/**
+	 * @param checked the checked to set
+	 */
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
 }

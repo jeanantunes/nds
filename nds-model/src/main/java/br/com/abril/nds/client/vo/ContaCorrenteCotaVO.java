@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Date;
 
@@ -30,44 +31,53 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private Integer numeroCota;
 	
-	@Export(label = "Data")
-	private Date dataConsolidado;
-	
 	private Date dataRaiz;
 	
-	@Export(label = "Vlr. Postergado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
-	private BigDecimal valorPostergado;
+	private Date dataPendente;
+	
+	private String nomeBox;
+	
+	private boolean cobrado;
+	
+	private boolean inadimplente;
+	
+	private BigInteger numeroAcumulo;
+	
+	@Export(label = "Data")
+	private Date dataConsolidado;
 		
-	@Export(label = "Consignado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Consignado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal consignado;
 	
-	@Export(label = "Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal encalhe;
 	
-	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Valor Venda Dia", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	private BigDecimal valorVendaDia;
+	
+	@Export(label = "Vlr. Postergado R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	private BigDecimal valorPostergado;
+	
+	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal vendaEncalhe;
 	
-	@Export(label = "Déb/Cred.", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Déb/Cred.", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal debitoCredito;
 	
-	@Export(label = "Encargos", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Encargos", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal encargos;
 	
-	@Export(label = "Pendente", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Pendente", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal pendente;
 	
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
+	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal valorPago;
 	
-	private String tipo;
-	
+	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal saldo;
-	
-	private BigDecimal valorVendaDia;
-	
-	private String nomeBox;
 	
 	/**
 	 * Construtor padrão.
@@ -103,7 +113,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setValorPostergado(BigDecimal valorPostergado) {
 		this.valorPostergado = 
 				valorPostergado != null ? 
-						valorPostergado.setScale(2, RoundingMode.HALF_EVEN) : valorPostergado;
+						valorPostergado.setScale(4, RoundingMode.HALF_EVEN) : valorPostergado;
 	}
 
 		/**
@@ -119,7 +129,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setConsignado(BigDecimal consignado) {
 		this.consignado = 
 				consignado != null ?
-						consignado.setScale(2, RoundingMode.HALF_EVEN) : consignado;
+						consignado.setScale(4, RoundingMode.HALF_EVEN) : consignado;
 	}
 
 	/**
@@ -135,7 +145,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = 
 				encalhe != null ? 
-						encalhe.setScale(2, RoundingMode.HALF_EVEN) : encalhe;
+						encalhe.setScale(4, RoundingMode.HALF_EVEN) : encalhe;
 	}
 
 	/**
@@ -151,7 +161,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setVendaEncalhe(BigDecimal vendaEncalhe) {
 		this.vendaEncalhe = 
 				vendaEncalhe != null ? 
-						vendaEncalhe.setScale(2, RoundingMode.HALF_EVEN) : vendaEncalhe;
+						vendaEncalhe.setScale(4, RoundingMode.HALF_EVEN) : vendaEncalhe;
 	}
 
 	/**
@@ -167,7 +177,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setDebitoCredito(BigDecimal debitoCredito) {
 		this.debitoCredito = 
 				debitoCredito != null ? 
-						debitoCredito.setScale(2, RoundingMode.HALF_EVEN) : debitoCredito;
+						debitoCredito.setScale(4, RoundingMode.HALF_EVEN) : debitoCredito;
 	}
 
 	/**
@@ -183,7 +193,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setEncargos(BigDecimal encargos) {
 		this.encargos = 
 				encargos != null ? 
-						encargos.setScale(2, RoundingMode.HALF_EVEN) : encargos;
+						encargos.setScale(4, RoundingMode.HALF_EVEN) : encargos;
 	}
 
 	/**
@@ -215,7 +225,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setTotal(BigDecimal total) {
 		this.total = 
 				total != null ? 
-						total.setScale(2, RoundingMode.HALF_EVEN) : total;;
+						total.setScale(4, RoundingMode.HALF_EVEN) : total;;
 	}
 
 	public Long getId() {
@@ -250,6 +260,20 @@ public class ContaCorrenteCotaVO implements Serializable {
 		this.dataRaiz = dataRaiz;
 	}
 
+	/**
+	 * @return the dataPendente
+	 */
+	public Date getDataPendente() {
+		return dataPendente;
+	}
+
+	/**
+	 * @param dataPendente the dataPendente to set
+	 */
+	public void setDataPendente(Date dataPendente) {
+		this.dataPendente = dataPendente;
+	}
+
 	public BigDecimal getValorPago() {
 		return valorPago;
 	}
@@ -257,15 +281,29 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setValorPago(BigDecimal valorPago) {
 		this.valorPago = 
 				valorPago != null ? 
-						valorPago.setScale(2, RoundingMode.HALF_EVEN) : valorPago;
+						valorPago.setScale(4, RoundingMode.HALF_EVEN) : valorPago;
 	}
 
-	public String getTipo() {
-		return tipo;
+	/**
+	 * @return the numeroAcumulo
+	 */
+	public BigInteger getNumeroAcumulo() {
+		return numeroAcumulo;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	/**
+	 * @param numeroAcumulo the numeroAcumulo to set
+	 */
+	public void setNumeroAcumulo(BigInteger numeroAcumulo) {
+		this.numeroAcumulo = numeroAcumulo;
+	}
+
+	public boolean getCobrado() {
+		return cobrado;
+	}
+
+	public void setCobrado(boolean cobrado) {
+		this.cobrado = cobrado;
 	}
 
 	public BigDecimal getSaldo() {
@@ -273,9 +311,12 @@ public class ContaCorrenteCotaVO implements Serializable {
 	}
 
 	public void setSaldo(BigDecimal saldo) {
-		this.saldo = 
-				saldo != null ? 
-						saldo.setScale(2, RoundingMode.HALF_EVEN) : saldo;
+		
+		if(saldo == null) {
+			saldo = BigDecimal.ZERO;
+		}
+		
+		this.saldo = saldo.setScale(4, RoundingMode.HALF_EVEN);
 	}
 
 	public BigDecimal getValorVendaDia() {
@@ -285,7 +326,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setValorVendaDia(BigDecimal valorVendaDia) {
 		this.valorVendaDia = 
 				valorVendaDia != null ? 
-						valorVendaDia.setScale(2, RoundingMode.HALF_EVEN) : valorVendaDia;
+						valorVendaDia.setScale(4, RoundingMode.HALF_EVEN) : valorVendaDia;
 	}
 
 	public String getNomeBox() {
@@ -294,5 +335,19 @@ public class ContaCorrenteCotaVO implements Serializable {
 
 	public void setNomeBox(String nomeBox) {
 		this.nomeBox = nomeBox;
+	}
+
+	/**
+	 * @return the inadimplente
+	 */
+	public boolean isInadimplente() {
+		return inadimplente;
+	}
+
+	/**
+	 * @param inadimplente the inadimplente to set
+	 */
+	public void setInadimplente(boolean inadimplente) {
+		this.inadimplente = inadimplente;
 	}
 }

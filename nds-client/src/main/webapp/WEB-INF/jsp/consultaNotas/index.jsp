@@ -8,6 +8,24 @@ fieldset label
 	width: auto;
 	margin-bottom: 0px !important;
 }
+
+.gridLinhaDestacada {
+  background:#BEBEBE; 
+  font-weight:bold; 
+  color:#fff;
+}
+
+.gridLinhaDestacada:hover {
+   color:#000;
+}
+
+.gridLinhaDestacada a {
+   color:#fff;
+}
+
+.gridLinhaDestacada a:hover {
+   color:#000;
+}
 </style>
 
 </head>
@@ -39,14 +57,19 @@ fieldset label
 	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
 		<br />
 
-		<table width="569" border="0" cellspacing="2" cellpadding="2">
-	      <tr style="font-size:11px;">
-	        <td width="275" align="right"><strong>Total:</strong></td>
+		<table width="830" border="0" cellspacing="2" cellpadding="2">
+	      <tr style="font-size:11px;" align="right">
+	        <td width="275" align="right"><strong>Total Exemplares:</strong></td>
 	        <td width="106" align="right">
 	        	<span id="totalExemplares"></span>
 	        </td>
+	        <td width="275" align="right"><strong>Valor Total:</strong></td>
 	        <td width="168" align="right"> 
 	        	<span id="totalSumarizado"></span>
+	        </td>
+	        <td width="275" align="right"><strong>Total C/Desc:</strong></td>
+	        <td width="168" align="right"> 
+	        	<span id="totalSumarizadoComDesconto"></span>
 	        </td>
 	      </tr>
 	    </table>
@@ -83,25 +106,21 @@ fieldset label
 						<td>Período</td>
 						<td width="46">de:</td>
 						<td width="120">
-							<input name="dataInicial" type="text" id="datepickerDe"
+							<input name="dataInicial" type="text" id="dataNFDe"
 								   style="width: 80px; float: left; margin-right: 5px;" value="${dataAtual}" />
 						</td>
 						<td align="center">Até</td>
 						<td>
-							<input name="dataFinal" type="text" id="datepickerAte"
+							<input name="dataFinal" type="text" id="dataNFAte"
 							 	   style="width: 80px; float: left; margin-right: 5px;" value="${dataAtual}" />
 						</td>
 					</tr>
 					<tr>
-						<td width="107">Tipo de Nota:</td>
+					
+						<td width="107"></td>
 						<td width="293">
-						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
-							<option selected="selected" value="-1"></option>
-							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
-								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
-							</c:forEach>
-							
-						</select></td>
+						</td>
+						
 						<td width="95"><label for="notaRecebida" style="margin:0px">Nota Recebida</label></td>
 						<td colspan="2">
 						<select name="filtroConsultaNotaFiscal.notaRecebida" id="selectNotaRecebida"

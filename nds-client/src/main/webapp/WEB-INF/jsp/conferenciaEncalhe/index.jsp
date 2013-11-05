@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <head>
 
@@ -19,6 +20,10 @@
 		._dados:hover{
 			background: none repeat scroll 0 0 #D9EBF5;
 		}
+		
+		.td {
+			font-size: 14px;
+		}
 	</style>
 	
 	<script type="text/javascript">
@@ -27,7 +32,7 @@
 		
 		var VEIO_DO_BT_BOX_ENCALHE = false;
 		
-		//Solicita seleção do box caso usuário não esteja associado.
+		//Solicita seleï¿½ï¿½o do box caso usuï¿½rio nï¿½o esteja associado.
 		if(ID_BOX_LOGADO == ""){
 			ConferenciaEncalhe.popup_logado();
 		}else{
@@ -36,7 +41,9 @@
 		
 		$(function(){
 			ConferenciaEncalhe.init();
+			bloquearItensEdicao(ConferenciaEncalhe.workspace);
 		});
+		
 	</script>
 	
 </head>
@@ -69,11 +76,10 @@
 								</span>
 							</td>											
 							<td width="314">&nbsp;</td>
-							<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
-							<td width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-							<td width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
-							<td width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
-							<td width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar ConferÃªncia</td>
+							<td class="atalhosCE" width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
+							<td class="atalhosCE" width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
+							<td class="atalhosCE" width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
+							<td class="atalhosCE" width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar ConferÃªncia</td>
 						</tr>
 					</table>
 				</fieldset>
@@ -122,10 +128,10 @@
 
 							<c:choose>
 								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
-							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input isEdicao="true" type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
 								</c:when>
 								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
-							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input isEdicao="true" type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
 								</c:when>
 							</c:choose>
 							
@@ -181,7 +187,7 @@
 						
 						<input name="idProdutoEdicaoHidden" type="hidden" id="idProdutoEdicaoHidden" />
 						
-						<a href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.adicionarProdutoConferido();">
+						<a isEdicao="true" href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.buscarProdutoConferencia();" >
 							<img src="${pageContext.request.contextPath}/images/bt_check.gif" alt="Incluir" width="22" height="22" border="0" />
 						</a>
 					</td>
@@ -242,11 +248,20 @@
 			<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
 				<tr>
 					<td width="380">&nbsp;</td>
-					<td width="128" style="float:left">&nbsp;</td>
-					<td width="62" style="float:left">&nbsp;</td>
 					<td width="120" align="center" style="float:left"><strong>Data de OperaÃ§Ã£o:</strong></td>
 					<td width="70" style="float:left">${dataOperacao}</td>
+					<td width="128" style="float:left"><strong>Total de devoluÃ§Ã£o:</strong></td>
+					<td width="62" style="float:left"><span id="totalExemplaresFooter"></span></td>
 				</tr>
 			</table>
 		</fieldset>
+		
+		<div id="idImpressaoFinalizacaoApplet1" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal1"></div>
+		</div>	
+
+		<div id="idImpressaoFinalizacaoApplet2" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal2"></div>
+		</div>	
+		
 </body>

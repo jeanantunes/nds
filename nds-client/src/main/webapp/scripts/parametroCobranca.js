@@ -5,10 +5,11 @@ var idPolitica = null;
 var parametroCobrancaController = $.extend(true,
 	{
 		
-
+		idsFornecedoresDisponiveis : [],
+	
 		init : function() {
 			parametroCobrancaController.formatarCampos();
-	    	parametroCobrancaController.criarParametrosGrid();
+	    	parametroCobrancaController.criarParametrosGrid();	    	
 		},
 		
 	   
@@ -325,6 +326,7 @@ var parametroCobrancaController = $.extend(true,
 				$('.tdMulta', this.workspace).show();			
 				$('.tdJuros', this.workspace).show();
 	
+				$("#dBanco", this.workspace).val("");
 		    }
 			
 			else if (op=='BOLETO_EM_BRANCO'){
@@ -340,6 +342,8 @@ var parametroCobrancaController = $.extend(true,
 				$('.tdValorMinimo', this.workspace).hide();			
 				$('.tdMulta', this.workspace).show();			
 				$('.tdJuros', this.workspace).show();
+				
+				$("#dBanco", this.workspace).val("");
 		    }
 			
 			if((op=='BOLETO') || (op=='BOLETO_EM_BRANCO')){
@@ -348,6 +352,7 @@ var parametroCobrancaController = $.extend(true,
 				$('.formPgto', this.workspace).hide();
 			}
 			
+			parametroCobrancaController.obterDadosBancarios($("#dBanco", this.workspace).val());
 		},
 		
 		
@@ -385,8 +390,7 @@ var parametroCobrancaController = $.extend(true,
 					   null,
 					   true);
 		},
-		
-		
+
 		sucessCallbackObterParametro : function(resultado) {
 			
 			var formaEmissao = resultado.formaEmissao;
@@ -440,15 +444,25 @@ var parametroCobrancaController = $.extend(true,
 	
 			parametroCobrancaController.opcaoPagto(resultado.tipoCobranca);
 			parametroCobrancaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+			parametroCobrancaController.tratarFornecedoresCobrancaUnificada();
 			
 			$("input[name='checkGroupFornecedores']", this.workspace).each(function(i) {			
 				$(this, this.workspace).attr('checked',false);
 			});	
 			
+			parametroCobrancaController.idsFornecedoresDisponiveis = resultado.fornecedoresId;
+			
 			$.each(resultado.fornecedoresId, function(index, value) { 
-				 $("#fornecedor_" + value, this.workspace).attr('checked', true);
+				 $("#ParamCob-fornecedor_" + value, this.workspace).attr('checked', true);
 			});
 			
+			$.each($("#comboFatorVencimento option", this.workspace), function(index, value) { 
+				 if(this.value == resultado.fatorVencimento) {
+					this.selected = true;
+				 }
+			});
+
+			parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			
 			$("input[name='radioFormaCobrancaBoleto']", this.workspace).each(function(i) {			
 				if($(this, this.workspace).val() == resultado.formaCobrancaBoleto){
@@ -457,6 +471,30 @@ var parametroCobrancaController = $.extend(true,
 			});
 			
 			parametroCobrancaController.carregarFormasEmissao(resultado.tipoCobranca,formaEmissao);
+			
+			$("#valorMinimo", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
+			$("#valorMulta", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
+			$('#taxaMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#taxaJuros', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 		},	
 		
 		
@@ -471,16 +509,19 @@ var parametroCobrancaController = $.extend(true,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#dBanco", this.workspace).val(),
-					valorMinimo : floatValue($("#valorMinimo").val()),
-					taxaMulta : $("#taxaMulta", this.worspace).val(),
-					valorMulta : $("#valorMulta", this.worspace).val(),
-					taxaJuros : $("#taxaJuros", this.worspace).val(),
+					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
+					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
+					valorMinimo : floatValue($("#valorMinimo", this.workspace).val()),
+					taxaMulta : floatValue($("#taxaMulta", this.worspace).val()),
+					valorMulta : floatValue($("#valorMulta", this.worspace).val()),
+					taxaJuros : floatValue($("#taxaJuros", this.worspace).val()),
 					instrucoes : $("#instrucoes", this.worspace).val(),
 					acumulaDivida : $("#acumulaDivida", this.workspace).val() == 'S',
 					vencimentoDiaUtil : $("#vencimentoDiaUtil", this.workspace).val() == 'S',
 					unificada : $("#unificada", this.workspace).val() == 'S',
 					envioEmail : $("#envioEmail", this.workspace).val() == 'S',
 					principal : $("#principal", this.workspace).attr('checked')  == 'checked',
+					cobradoPeloBackoffice : $("#cobradoPeloBackoffice", this.workspace).attr('checked')  == 'checked',
 					segunda : $("#dPS", this.workspace).attr('checked')  == 'checked',		
 					terca : $("#dPT", this.workspace).attr('checked')  == 'checked',
 					quarta : $("#dPQ", this.workspace).attr('checked')  == 'checked',		
@@ -605,13 +646,24 @@ var parametroCobrancaController = $.extend(true,
 			$("#PSab", this.workspace).attr('checked',false);
 			$("#PDom", this.workspace).attr('checked',false);
 	
+			$("#comboFatorVencimento option:first", this.workspace).attr("selected", "selected");
+			
+			$("#comboFornecedorPadrao option:first", this.workspace).attr("selected", "selected");
+			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
+				$("#ParamCob-fornecedor_"+ value.value, this.workspace).attr('disabled', false);				
+			});
+			
+			$.each($('.semanal :input[type="checkbox"]', this.workspace), function(index, value) {
+				$(value).attr('checked', false);
+			});
 			
 			parametroCobrancaController.carregarFormasEmissao(null,"");
 			$("input[name='checkGroupFornecedores']", this.workspace).each(function(i) {			
 				$(this, this.workspace).attr('checked',false);
 			});	
 			$('[name=concentracaoPagamento]', this.workspace).attr('checked',false);
-	
+			
+			parametroCobrancaController.tratarSelecaoFornecedorPadrao();	
 		},	
 		
 		
@@ -640,7 +692,7 @@ var parametroCobrancaController = $.extend(true,
 			$.postJSON(contextPath+"/distribuidor/parametroCobranca/obterFormasEmissao",
 					   data,
 					   function(resultado){
-				           parametroCobrancaController.criaComponenteFormasEmissao(resultado,selected)
+				           parametroCobrancaController.criaComponenteFormasEmissao(resultado,selected);
 			           }
 					   ,
 					   null,
@@ -652,18 +704,65 @@ var parametroCobrancaController = $.extend(true,
 		    var comboFormasEmissao =  parametroCobrancaController.montarComboBox(result,"formaEmissao","",selected);
 			$("#formasEmissao", this.workspace).html(comboFormasEmissao);
 		},
-	
+		
+		tratarFornecedoresCobrancaUnificada: function() {
+		
+			var isUnificada = $("#unificada").val();
+			
+			if (isUnificada == 'N') {
+			
+				$("input[name='checkGroupFornecedores']").prop("checked", false);
+				
+				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
+				
+				$("input[name='checkGroupFornecedores']").prop("disabled", true);
+				
+			} else {
+				
+				parametroCobrancaController.habilitarTodosFornecedores();
+				
+				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
+			}
+		},
+		
+		tratarSelecaoFornecedorPadrao: function() {
+		
+			parametroCobrancaController.desabilitarFornecedorPadrao(true);
+		},
+
+		desabilitarFornecedorPadrao: function(check) {
+		
+			$("#comboFornecedorPadrao", this.workspace).focus(function () {
+				previous = this.value;
+			}).on('change', function() {
+				var isUnificada = $("#unificada").val();
+				if (isUnificada == 'S') 
+					parametroCobrancaController.habilitarTodosFornecedores();
+				else
+					$("input[name='checkGroupFornecedores']").prop("checked", false);
+				$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('disabled', true);
+				$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('checked', check);
+			});
+			
+			$("#comboFornecedorPadrao", this.workspace).change();
+		},
+		
+		habilitarTodosFornecedores: function() {
+		
+			$("input[name='checkGroupFornecedores']", this.workspace).attr('disabled', false);
+		},
 		
 		obterDadosBancarios : function(idBanco){
 			
 			if (idBanco == ""){
 				
-				$("#taxaMulta", this.workspace).val("0.00");
-				$("#valorMulta", this.workspace).val("0.00");
-				$("#taxaJuros", this.workspace).val("0.00");
-				$("#instrucoes", this.workspace).val("0.00");
-		        
+				parametroCobrancaController.bloquearCampos(false);
+				
 				return;
+				
+		    } else {
+		    	
+		    	parametroCobrancaController.bloquearCampos(true);
 		    }
 			
 			var data = [{name: 'idBanco', value: idBanco}];
@@ -674,12 +773,30 @@ var parametroCobrancaController = $.extend(true,
 					   true);
 		},
 		
+		bloquearCampos : function(bloquear) {
+			
+			$("#taxaMulta", this.workspace).attr('readonly', bloquear);
+			$("#valorMulta", this.workspace).attr('readonly', bloquear);
+			$("#taxaJuros", this.workspace).attr('readonly', bloquear);
+		},
 		
 		sucessCallbackCarregarDadosBancarios : function(result) {
 			$("#taxaMulta", this.workspace).val(result.multa);
 			$("#valorMulta", this.workspace).val(result.vrMulta);
 			$("#taxaJuros", this.workspace).val(result.juros);
 			$("#instrucoes", this.workspace).val(result.instrucoes);
+			
+			$('#taxaMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#taxaJuros', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 		}
 		
 	}	

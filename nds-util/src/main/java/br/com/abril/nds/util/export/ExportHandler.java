@@ -15,7 +15,8 @@ import br.com.abril.nds.util.export.Export.Alignment;
 
 public class ExportHandler {
 	
-	private static DecimalFormat FORMATO_MOEDA = new DecimalFormat("#,###,##0.00");
+	private static final DecimalFormat FORMATO_MOEDA = new DecimalFormat("#,###,##0.00");
+	private static final DecimalFormat FORMATO_MOEDA_QUATRO_CASAS = new DecimalFormat("#,###,##0.0000");
 	
 	public static <T, F, FT> ExportModel generateExportModel(F filter,
 														 	 FT footer,
@@ -455,6 +456,9 @@ public class ExportHandler {
 			switch(columnType){
 				case MOEDA:
 					exportValue = FORMATO_MOEDA.format(value);
+				break;
+				case MOEDA_QUATRO_CASAS:
+					exportValue = FORMATO_MOEDA_QUATRO_CASAS.format(value);
 				break;
 				case DECIMAL:
 				case INTEGER:

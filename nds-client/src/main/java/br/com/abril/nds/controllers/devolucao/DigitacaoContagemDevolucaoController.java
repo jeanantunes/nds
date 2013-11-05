@@ -41,6 +41,7 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -91,8 +92,6 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	private static final int NUMERO_MESES_PESQUISA_DESATIVACAO = 6;
-	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
@@ -134,19 +133,26 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, 
+			Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
 		Intervalo<Date> periodo = null;
-						
+
 		if ( realizarPesquisaPorSemanaCE(dataDe, dataAte, semanaConferenciaEncalhe) ) {
+			
 			periodo = obterPeriodoSemanaConferenciaEncalhe(semanaConferenciaEncalhe);
 		
 		} else {
+			
 			periodo =  obterPeriodoValidado(dataDe, dataAte);
 		}
 
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
-				new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
+				new FiltroDigitacaoContagemDevolucaoDTO(
+					periodo,idFornecedor, 
+					SemanaUtil.getSemana(semanaConferenciaEncalhe), 
+					semanaConferenciaEncalhe
+				);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -157,9 +163,9 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	
 	private boolean realizarPesquisaPorSemanaCE(String dataDe, String dataAte,
-			Integer semanaConferenciaEncalhe) {
+			String anoSemanaConferenciaEncalhe) {
 		
-		if (semanaConferenciaEncalhe != null) {
+		if (anoSemanaConferenciaEncalhe != null || !StringUtil.isEmpty(anoSemanaConferenciaEncalhe)) {
 			
 			if (!StringUtil.isEmpty(dataDe) || !StringUtil.isEmpty(dataAte)) {
 				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
@@ -173,18 +179,31 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 
 
-	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(Integer semanaConferenciaEncalhe) {
+	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(String anoSemanaConferenciaEncalhe) {
 		
 		Intervalo<Date> periodo = null;	
 		
-		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
-				this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
+		try {
 		
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+			Integer inicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+			
+			Integer anoBase = SemanaUtil.getAno(anoSemanaConferenciaEncalhe);
+			
+			Integer numeroSemana = SemanaUtil.getSemana(anoSemanaConferenciaEncalhe);
+			
+			Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
+				numeroSemana, inicioSemana, anoBase);
+			
+			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+			
+			periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+			
+			return periodo;
 		
-		periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		} catch (IllegalArgumentException e) {
 		
-		return periodo;
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
 	}
 	
 	/*
@@ -337,6 +356,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void adicionarEdicoesFechadas(boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas ) {
 		
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
@@ -359,15 +379,49 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/salvar")
-	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
+	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao, boolean replicarTodos) {
 		
-		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty()) {
+		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty() && !replicarTodos) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
 		
-		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = null;
 		
-		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
+		if (replicarTodos){
+			
+			FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+			
+			if (filtro == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Pesquisa inválida.");
+			}
+			
+			PaginacaoVO paginacaoVO = filtro.getPaginacao();
+			
+			filtro.setPaginacao(null);
+			
+			listaContagemDevolucaoDTO = 
+				contagemDevolucaoService.obterListaContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
+			
+			filtro.setPaginacao(paginacaoVO);
+			
+			listaContagemDevolucaoDTO.addAll(0, this.obterListaEdicoesFechadas());
+			
+			for (ContagemDevolucaoDTO dto : listaContagemDevolucaoDTO){
+				
+				dto.setDiferenca(BigInteger.ZERO);
+				dto.setQtdNota(dto.getQtdDevolucao());
+			}
+			
+		} else {
+			
+			listaContagemDevolucaoDTO = 
+					getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		}
+		
+		this.contagemDevolucaoService.inserirListaContagemDevolucao(
+				listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -376,6 +430,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/confirmar")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
@@ -395,6 +450,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/geraNota")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
@@ -405,7 +461,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.gerarNotasFiscaisPorFornecedor(listaContagemDevolucaoDTO);
+		contagemDevolucaoService.gerarNotasFiscaisPorFornecedorFecharLancamentos(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
@@ -444,7 +500,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
 			
-			digitacaoContagemDevolucaoVO.setValorTotalComDesconto((CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
+			digitacaoContagemDevolucaoVO.setValorTotalComDesconto((CurrencyUtil.formatarValorQuatroCasas(dto.getTotalComDesconto())));
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			
@@ -634,17 +690,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		Date dataInicial = DateUtil.subtrairMeses(filtro.getDataInicial(), NUMERO_MESES_PESQUISA_DESATIVACAO);
+		BigInteger quantidade = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
 		
-		Date dataFinal = DateUtil.subtrairDias(filtro.getDataInicial(), 1);
-		
-		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor());
-		if(quantidade == 0){
+		if( quantidade == null || BigInteger.ZERO.compareTo(quantidade) >= 0 ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		
-		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();

@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 public class ProdutoEdicaoMapaDTO implements Serializable {
 
@@ -10,19 +11,22 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
+	private String codigoDeBarras;
 	private String precoCapa;
 	private HashMap<Integer, BoxRotasDTO> boxes;
+	private List<String> cotasSemRoteirizacao; 
 	
 	public ProdutoEdicaoMapaDTO() {
 		
 	}
 	
 	public ProdutoEdicaoMapaDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, String precoCapa, HashMap<Integer, BoxRotasDTO> boxes) {
+			Long numeroEdicao, String codigoDeBarras, String precoCapa, HashMap<Integer, BoxRotasDTO> boxes) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
+		this.codigoDeBarras = codigoDeBarras;
 		this.precoCapa = precoCapa;
 		this.boxes = boxes;
 	}
@@ -96,6 +100,21 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 	public void setBoxes(HashMap<Integer, BoxRotasDTO> boxes) {
 		this.boxes = boxes;
 	}
-	
+
+	public List<String> getCotasSemRoteirizacao() {
+		return cotasSemRoteirizacao;
+	}
+
+	public void setCotasSemRoteirizacao(List<String> cotasSemRoteirizacao) {
+		this.cotasSemRoteirizacao = cotasSemRoteirizacao;
+	}
+
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
+	}
 	
 }

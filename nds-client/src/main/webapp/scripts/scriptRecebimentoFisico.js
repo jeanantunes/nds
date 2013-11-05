@@ -4,6 +4,8 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	novoValorTotalTyped: false, 
 	
+	linhasDestacadas : [],
+	
 	init: function() {
 		var _this = this;
 
@@ -70,14 +72,17 @@ var recebimentoFisicoController = $.extend(true, {
 			 precision:2
 		});
 		
-		$("#novoValorTotal", recebimentoFisicoController.workspace).keyup(function(){
-			_this.novoValorTotalTyped = true;
+		$("#novoValorTotal", recebimentoFisicoController.workspace).keyup(function(e){
+			if((e.keyCode || e.which) != 9) { // 9: tecla tab
+				_this.novoValorTotalTyped = true;
+			}
 		});
 		
 		$("#novoValorTotal", recebimentoFisicoController.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
-			 precision:2
+			 precision:2,
+			 allowZero: true
 		});
 			
 		$("#novoNumeroNota", recebimentoFisicoController.workspace).numeric();
@@ -224,17 +229,42 @@ var recebimentoFisicoController = $.extend(true, {
 
 		if(validacao.tipoMensagem == "SUCCESS") {
 		
+			recebimentoFisicoController.carregarItemNotaGridNota();
+			
 			if (recebimentoFisicoController.indNotaFiscalInterface){
-				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', false);
-				recebimentoFisicoController.carregarItemNotaGridNotaInterface();
 				
+				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
+				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(12,false);
+				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,false);
 	    	}else{
-				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', true);
-				recebimentoFisicoController.carregarItemNotaGridNotaManual();
+	    		
+				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
+				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(12,true);
+				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,true);
 	    	}
 			
-			if(result.validacao.listaMensagens.length>0)
+			if(result.validacao.listaMensagens.length>0){
 				exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
+			}
+			
+			if (result.cnpj){
+				$("#cnpj", recebimentoFisicoController.workspace).val(result.cnpj);
+				$("#fornecedor", recebimentoFisicoController.workspace).val(removeSpecialCharacteres(result.cnpj));
+			}
+			
+			if (result.numeroNotaFiscal){
+				$("#notaFiscal", recebimentoFisicoController.workspace).val(result.numeroNotaFiscal);
+			}
+			
+			if (result.serieNotaFiscal){
+				$("#serie", recebimentoFisicoController.workspace).val(result.serieNotaFiscal);
+			}
+			
+			if (result.chaveAcesso){
+				$("#eNF", recebimentoFisicoController.workspace).check();
+				recebimentoFisicoController.mostrar_nfes();
+				$("#chaveAcesso", recebimentoFisicoController.workspace).val(result.chaveAcesso);
+			}
 			
 			recebimentoFisicoController.pesquisarItemNotaGrid();
 
@@ -254,7 +284,7 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#novoSerieNota", recebimentoFisicoController.workspace).val($("#serie", recebimentoFisicoController.workspace).val());		
 			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val($("#chaveAcesso", recebimentoFisicoController.workspace).val());		
 		}
-		
+		$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
 	},
 		
 	/**
@@ -449,8 +479,8 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val("");
 		$("#repartePrevisto", recebimentoFisicoController.workspace).val("");
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");		
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
 		$('#labelValorTotal', recebimentoFisicoController.workspace).text('0,00');
+		$('#labelValorTotalDesconto', recebimentoFisicoController.workspace).text('0,00');
 	
 	},
 
@@ -469,8 +499,6 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");
 		$("#peso", recebimentoFisicoController.workspace).val("");
 		$("#pacotePadrao", recebimentoFisicoController.workspace).val("");
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
-		
 	
 	},
 	
@@ -527,15 +555,17 @@ var recebimentoFisicoController = $.extend(true, {
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
 	 */
-	carregarItemNotaGridNotaInterface : function() {
+	carregarItemNotaGridNota : function() {
 						
 		$(".gridWrapper", recebimentoFisicoController.workspace).empty();
 		
 		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
+		//ATENTO AO ALTERAR A ORDEM DAS COLUNAS DO GRID POIS HÁ COLUNAS NA POLÍTICA DE SEGURANÇA DO USUÁRIO
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
-				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);},
-				preProcess: recebimentoFisicoController.getDataFromResultNotaInterface,
+				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);
+									   recebimentoFisicoController.marcarLinhas();},
+				preProcess: recebimentoFisicoController.getDataFromResultNota,
 				dataType : 'json',
 				colModel : [
 			{
@@ -563,8 +593,14 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Preço c/ Desconto R$ ',
+				display : 'Preço Capa ',
 				name : 'precoCapa',
+				width : 70,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Preço c/ Desconto R$ ',
+				name : 'precoDesconto',
 				width : 110,
 				sortable : false,
 				align : 'center'
@@ -577,13 +613,13 @@ var recebimentoFisicoController = $.extend(true, {
 			}, {
 				display : 'Qtd. Pacotes',
 				name : 'qtdPacote',
-				width : 60,
+				width : 65,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Qtd. Quebra',
 				name : 'qtdExemplar',
-				width : 60,
+				width : 62,
 				sortable : false,
 				align : 'center'
 			}, {				
@@ -592,105 +628,63 @@ var recebimentoFisicoController = $.extend(true, {
 				width : 60,
 				sortable : false,
 				align : 'center'
-				
 			}, {
 				display : 'Valor Total R$',
-				name : 'valorTotal',
+				name : 'valorTotalCapa',
 				width : 70,
 				sortable : false,
 				align : 'center'
-				
-			},{
+			}, {
+				display : 'Valor Total c/ Desc. R$',
+				name : 'valorTotalDesconto',
+				width : 118,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
 				width : 40,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{
-				
 				display : 'Replicar Qtd.',
 				name : 'replicaQtd',
-				width : 60,
-				sortable : true,
+				width : 64,
+				sortable : false,
 				align : 'center'
-					
 			}],
 		
-			showTableToggleBtn : true,
-			width : 980,
+			showTableToggleBtn : false,
+			width : 1200,
 			height : 180
 		});
+		
+		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
 	},
 	
-	/**
-	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
-	 */
-	carregarItemNotaGridNotaManual : function() {
-				
-		$(".gridWrapper", recebimentoFisicoController.workspace).empty();
-		
-		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
-		
-		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
+	marcarLinhas : function(){
+		$.each(recebimentoFisicoController.linhasDestacadas,
+			function(index, item){
+				$('#row' + item, recebimentoFisicoController.workspace).removeClass("erow").addClass("gridLinhaDestacada");
+			}
+		);
+	},
+	
+	apresentarEsconderConteudoPermissao : function() {
+		if($("#permissaoGridColRepartePrevisto").val() != "true"){
 			
-				preProcess: recebimentoFisicoController.getDataFromResultNotaManual,
-				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);},
-				dataType : 'json',
-				colModel : [
-			{
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 200,
-				sortable : false,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 60,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Pcte. Padrão',
-				name : 'pacotePadrao',
-				width : 70,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Preço c/ Desconto R$',
-				name : 'precoCapa',
-				width : 120,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Reparte previsto',
-				name : 'repartePrevisto',
-				width : 100,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Valor Total R$',
-				name : 'valorTotal',
-				width : 70,
-				sortable : false,
-				align : 'center'
-			},{
-				display : 'Ação',
-				name : 'acao',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}],
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(6,false);
+		}
+		
+		if($("#permissaoGridColDiferenca").val() != "true"){
 			
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180
-		});
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,false);
+		}
+		
+		if($("#permissaoGridColRepartePrevisto").val() != "true"){
+			
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(6,false);
+		}
 	},
 	
     /**
@@ -730,7 +724,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(this.path + 'cancelarNotaRecebimentoFisico', null, 
 
 		function(result) {
-					
+			
 	    	if(result.tipoMensagem == "SUCCESS") {
 				
 	    		$(".grids", recebimentoFisicoController.workspace).hide();
@@ -744,14 +738,8 @@ var recebimentoFisicoController = $.extend(true, {
 	    		recebimentoFisicoController.limparCampos();
 	        	
 	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
-	        	
-	        	
-	        	
-			} 
-	    	
+			}
 		});
-    	
-    	
 	},
 	
     /**
@@ -897,6 +885,13 @@ var recebimentoFisicoController = $.extend(true, {
 	replicarValorRepartePrevisto : function(lineId, elementoCheckBox) {
 		
 		if( $(elementoCheckBox).attr('checked') != 'checked') {
+			
+			$("#qtdPacote_"+ lineId, recebimentoFisicoController.workspace).val(0);
+			$("#qtdExemplar_"+ lineId, recebimentoFisicoController.workspace).val(0);
+			$("#diferenca_"+ lineId, recebimentoFisicoController.workspace).text(0);
+			
+			$("#chBoxReplicaValorRepartePrevistoAll", recebimentoFisicoController.workspace).uncheck();
+			
 			return;
 		}
 		
@@ -906,10 +901,17 @@ var recebimentoFisicoController = $.extend(true, {
 
 		function(resultado) {
 
-			$("#qtdPacote_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdPacote);
+			$("#qtdPacote_"+ lineId, recebimentoFisicoController.workspace).val(resultado.qtdPacote);
+			$("#qtdExemplar_"+ lineId, recebimentoFisicoController.workspace).val(resultado.qtdExemplar);
+			$("#diferenca_"+ lineId, recebimentoFisicoController.workspace).text(0);
 			
-			$("#qtdExemplar_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdExemplar);
-		
+			resultado.valorTotalCapa = $.formatNumber(resultado.valorTotalCapa, {format:"#,##0.00", locale:"br"});
+			
+			resultado.valorTotalDesconto = $.formatNumber(resultado.valorTotalDesconto, {format:"#,##0.0000", locale:"br"});
+			
+			$("#valorTotalCapa_"+ lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalCapa);
+			$("#valorTotalDesconto_"+ lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalDesconto);
+			
 		});
 		
 	},
@@ -928,10 +930,13 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$.each(linhasDaGrid, function(index, value) {
 				$(value).find('input[name="replicaQtde"]').attr('checked', false);
+				
+				$(value).find('input[name="qtdPacote"]').val(0);
+				$(value).find('input[name="qtdExemplar"]').val(0);
+				$(value).find('input[name="diferenca"]').val(0);
 			});
 			
 			return;
-			
 		}
 		
 		$.postJSON(this.path + 'replicarTodosValoresRepartePrevisto', null, 
@@ -1000,7 +1005,9 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#peso", recebimentoFisicoController.workspace).val(resultado.peso);
 			$("#codigo", recebimentoFisicoController.workspace).val(resultado.codigo);
 			$("#produto", recebimentoFisicoController.workspace).val(resultado.nomeProduto);
-			$("#precoCapa", recebimentoFisicoController.workspace).val(resultado.precoCapa);
+			$("#precoCapa", recebimentoFisicoController.workspace).val(
+				$.formatNumber(resultado.precoCapa, {format:"#,##0.00", locale:"br"})
+			);
 			$("#edicao", recebimentoFisicoController.workspace).val(resultado.edicao);
 			$("#datepickerLancto", recebimentoFisicoController.workspace).val(resultado.dataLancamento);
 			$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val(resultado.dataRecolhimento);
@@ -1034,116 +1041,79 @@ var recebimentoFisicoController = $.extend(true, {
 			
 	},
 	
-
-	/**
-	 * PREPARA OS DADOS DA NOTA MANUAL A SEREM APRESENTADOS NA GRID.
-	 */
-	getDataFromResultNotaManual : function(data) {	
-		
-		$.each(data.rows, function(index, value) {
-			
-			var edicaoItemNotaPermitida 	= value.cell.edicaoItemNotaPermitida;
-			
-			var lineId = value.cell.lineId;
-	
-			var imgExclusao = '<img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
-			
-			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
-			
-			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
-			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
-			
-			if(edicaoItemNotaPermitida == "S") {
-				
-				value.cell.acao = '<a href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>'  +
-								  '<a href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
-				
-			} else{
-				
-				value.cell.acao = 	'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>' + 
-							 		'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>';
-				
-			} 
-			
-			
-		});
-		
-		if(data.rows) {
-
-			$(".grids", recebimentoFisicoController.workspace).show();
-			
-		}
-		
-		if(!recebimentoFisicoController.indRecebimentoFisicoConfirmado){
-			
-			$("#botoesNormais", recebimentoFisicoController.workspace).show();
-			$("#botoesOpacos", recebimentoFisicoController.workspace).hide();
-			$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).hide();
-			
-			if(recebimentoFisicoController.indNotaFiscalInterface){
-				$("#botaoNovoProduto", recebimentoFisicoController.workspace).hide();
-			}else{
-				$("#botaoNovoProduto", recebimentoFisicoController.workspace).show();
-			}
-				
-			
-		}else{
-
-			$("#botoesOpacos", recebimentoFisicoController.workspace).show();
-			$("#botoesNormais", recebimentoFisicoController.workspace).hide();			
-			
-			if(recebimentoFisicoController.indNotaFiscalInterface){
-				$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).hide();
-			}else{
-				$("#botaoNovoProdutoOpaco", recebimentoFisicoController.workspace).show();
-			}
-			$("#botaoNovoProduto", recebimentoFisicoController.workspace).hide();
-
-		}
-		
-		return data;
-
-	},
-	
 	alterarValor : function(idLinha) {
 
-		var qtdPacote 		= $("#qtdPacote_"+idLinha).val();
-		var qtdQuebra 		= $("#qtdExemplar_"+idLinha).val();
+		var qtdPacote 		= $("#qtdPacote_"+idLinha, recebimentoFisicoController.workspace).val();
+		var qtdQuebra 		= $("#qtdExemplar_"+idLinha, recebimentoFisicoController.workspace).val();
 
 		if (qtdPacote == "") {
 			qtdPacote = 0;
-			$("#qtdPacote_"+idLinha).val(0);
+			$("#qtdPacote_"+idLinha, recebimentoFisicoController.workspace).val(0);
 		}
 
 		if (qtdQuebra == "") {
 			qtdQuebra = 0;
-			$("#qtdExemplar_"+idLinha).val(0);
+			$("#qtdExemplar_"+idLinha, recebimentoFisicoController.workspace).val(0);
 		}
 
-		var qtdPacote 		= parseInt(qtdPacote);
-		var qtdQuebra 		= parseInt(qtdQuebra);
-		var repartePrevisto = parseInt($("#repartePrevisto_"+idLinha).text());
-		var pacotePadrao 	= parseInt($("#pacotePadrao_"+idLinha).val());
+		qtdPacote 		= parseInt(qtdPacote);
+		qtdQuebra 		= parseInt(qtdQuebra);
+		var repartePrevisto = parseInt($("#repartePrevisto_"+idLinha, recebimentoFisicoController.workspace).text());
+		var pacotePadrao 	= parseInt($("#pacotePadrao_"+idLinha, recebimentoFisicoController.workspace).text());
 		var diferenca 		= 0;
 
 		diferenca = ( (qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
 
 		if (diferenca < 0) {
-			$("#diferenca_"+idLinha)[0].style.color = "red";			
+			$("#diferenca_"+idLinha, recebimentoFisicoController.workspace)[0].style.color = "red";			
 		} else {
-			$("#diferenca_"+idLinha)[0].style.color = "black";			
+			$("#diferenca_"+idLinha, recebimentoFisicoController.workspace)[0].style.color = "black";			
+		}
+		
+		if (isNaN(diferenca)){
+			diferenca = 0;
 		}
 
-		$("#diferenca_"+idLinha).text(diferenca);
+		$("#diferenca_"+idLinha, recebimentoFisicoController.workspace).text(diferenca);
+		
+	},
+	
+	atualizarValoresTotais : function(){
+		var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
+
+		var valorTotal = 0, valorTotalDesconto = 0;
+
+		$.each(linhasDaGrid, function(index, value) {
+
+			var linha = $(value);
+
+			valorTotal += 
+				intValue(removeMascaraPriceFormat(
+					linha.find('[name="valorTotalCapa"]').text()));
+			
+			valorTotalDesconto += 
+				intValue(removeMascaraPriceFormat(
+					linha.find('[name="valorTotalDesconto"]').text()));
+		});
+		
+        $("#totalSemDescontoLbl", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
+        $("#totalComDescontoLbl", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
 	},
 	
 	alterarValorItem : function(idLinha) {
 		
-		var preco = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).val());
+		var precoDesconto = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).text());
+		var preco = priceToFloat($("#precoCapa"+idLinha, recebimentoFisicoController.workspace).text());
 		
+		var qtdNota			= $("#qtdNotaItem"+idLinha).val();
 		var qtdPacote 		= $("#qtdPacoteItem"+idLinha).val();
 		var qtdQuebra 		= $("#qtdExemplarItem"+idLinha).val();
 
+		if (qtdNota == "") {
+			qtdNota = 0;
+			$("#qtdNotaItem"+idLinha).val(0);
+		}
+		
 		if (qtdPacote == "") {
 			qtdPacote = 0;
 			$("#qtdPacoteItem"+idLinha).val(0);
@@ -1154,15 +1124,19 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#qtdExemplarItem"+idLinha).val(0);
 		}
 		
-		var qtdPacote 		= parseInt(qtdPacote);
-		var qtdQuebra 		= parseInt(qtdQuebra);
-		var repartePrevisto = parseInt($("#qtdNotaItem"+idLinha).val());
-		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).val());
+		qtdPacote 			= parseInt(qtdPacote);
+		qtdQuebra 			= parseInt(qtdQuebra);
+		var repartePrevisto = parseInt($("#qtdNotaItem"+ idLinha).val());
+		var pacotePadrao 	= !isNaN(parseInt($("#pacotePadraoItem"+ idLinha).text())) ? parseInt($("#pacotePadraoItem"+ idLinha).text()) : 0;
 		var diferenca 		= 0;
 
-		var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra);
+		var valorDesconto = precoDesconto * qtdNota;
+		var valor = preco * qtdNota;
 
-		$("#valorItem"+idLinha, recebimentoFisicoController.workspace).val($.formatNumber(valor,{locale:'br'}));
+		$("#valorItemDesconto"+idLinha, recebimentoFisicoController.workspace).text(
+			$.formatNumber(valorDesconto,{format:"#,##0.0000", locale:'br'}));
+		
+		$("#valorItem"+idLinha, recebimentoFisicoController.workspace).text($.formatNumber(valor,{locale:'br'}));
 		
 		diferenca = ((qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
 
@@ -1171,10 +1145,6 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			$("#diferencaItem"+idLinha)[0].style.color = "black";			
 		}
-
-		if (isNaN(diferenca)){
-        	diferenca = 0;
-        }
 		
 		$("#diferencaItem"+idLinha).val(diferenca);
 		
@@ -1186,17 +1156,26 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	numericOnly : function(event) {
-          var num=event.keyCode;
-          if(num>=48 & num<=57)
-               return true;
-          return false; 
+	
+			var num = (event.keyCode != 0 ? event.keyCode : event.charCode);
+			var numeroId = event.target.id.split("_");
+			if(num>=48 & num<=57) {
+		  		if($("#replicaValorRepartePrevisto_" + numeroId[1]).is(':checked')) {
+		  			$("#replicaValorRepartePrevisto_" + numeroId[1]).attr('checked', false);
+		  		} 
+		  		return true;
+			} else {
+				 return false; 
+			}
 	},
 	
 	/**
 	 * PREPARA OS DADOS DA NOTA INTERFACE A SEREM APRESENTADOS NA GRID.
 	 */
-	getDataFromResultNotaInterface : function(data) {		
+	getDataFromResultNota : function(data) {
 		
+		recebimentoFisicoController.linhasDestacadas = [];
+		var totalDescontoGeral = 0, totalGeral = 0;
 		$.each(data.rows, function(index, value) {
 			
 			var edicaoItemRecFisicoPermitida 	= value.cell.edicaoItemRecFisicoPermitida;
@@ -1221,7 +1200,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
-			var pacotePadrao = value.cell.pacotePadrao;
+			value.cell.pacotePadrao = '<span id="pacotePadrao_'+lineId+'">'+value.cell.pacotePadrao+'</span>'; 
 			
 			
 			if(destacarValorNegativo == "S") {
@@ -1233,35 +1212,58 @@ var recebimentoFisicoController = $.extend(true, {
 			value.cell.repartePrevisto = '<span id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
-				value.cell.qtdPacote 	=  '<input isEdicao="true" name="qtdPacote" id="qtdPacote_'+ lineId +'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+hiddenFields;
-				value.cell.qtdExemplar = '<input isEdicao="true" name="qtdExemplar" id="qtdExemplar_'+ lineId +'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+'" onblur="recebimentoFisicoController.alterarValor('+ lineId +')" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
+				value.cell.qtdPacote 	=  '<input isEdicao="true" name="qtdPacote" id="qtdPacote_'+ lineId +
+				'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+
+				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +
+				');recebimentoFisicoController.atualizarValoresTotais();" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+
+				hiddenFields;
+				
+				value.cell.qtdExemplar = '<input isEdicao="true" name="qtdExemplar" id="qtdExemplar_'+ lineId +
+				'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+
+				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +
+				');recebimentoFisicoController.atualizarValoresTotais();" " />';
+				
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
 			} else {
-				value.cell.qtdPacote 	= '<input isEdicao="true" name="qtdPacote" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
-				value.cell.qtdExemplar 	=  '<input isEdicao="true" name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
+				value.cell.qtdPacote 	= '<input isEdicao="true" name="qtdPacote" disabled="disabled" style="width: 45px;" type="text" value="'+
+					qtdPacote+'"/>'+hiddenFields;
+				value.cell.qtdExemplar 	=  '<input isEdicao="true" name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+
+					qtdExemplar+'"/>';
+				
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
 			}
 			
-			$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
+			totalDescontoGeral += parseFloat(value.cell.valorTotalDesconto);
+			totalGeral += parseFloat(value.cell.valorTotalCapa);
 			
-			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
-			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
+			value.cell.precoCapa = '<span id="precoCapa_'+ lineId + '">' +
+									$.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}) +
+									'</span>';
+			
+			value.cell.precoDesconto = '<span id="precoCapaDesconto_' + lineId + '">' +
+										$.formatNumber(value.cell.precoDesconto, {format:"#,##0.0000", locale:"br"})+
+										'</span>';
+			
+			value.cell.valorTotalCapa = '<span name="valorTotalCapa" id="valorTotalCapa_' + lineId + '">' + 
+										$.formatNumber(value.cell.valorTotalCapa, {format:"#,##0.00", locale:"br"})+
+										'</span>';
+			
+			value.cell.valorTotalDesconto = '<span name="valorTotalDesconto" id="valorTotalDesconto_' + lineId + '">' + 
+											$.formatNumber(value.cell.valorTotalDesconto, {format:"#,##0.0000", locale:"br"})+
+											'</span>';
 
 			if(edicaoItemNotaPermitida == "S") {
 				
-				value.cell.acao =  '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>' +
-								   '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>' +
-								   '<input type="hidden" id="pacotePadrao_'+[lineId]+'" value='+pacotePadrao+' />';
+				value.cell.acao =  '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + 
+									imgEdicao + '</a>' +
+								   '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + 
+								   imgExclusao + '</a>';
 				
 			} else{
 				
 				value.cell.acao = 	'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgEdicao   + '</a>' + 
-							 		'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>'  +
-				   					'<input type="hidden" id="pacotePadrao_'+[lineId]+'" value='+pacotePadrao+' />';
+							 		'<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)"  >' + imgExclusao + '</a>';
 			}
-			
-			
-			
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
 				value.cell.replicaQtd = '<input isEdicao="true" title="Replicar Item" onclick="recebimentoFisicoController.replicarValorRepartePrevisto('+
@@ -1270,6 +1272,9 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.replicaQtd = '<input title="Replicar Item" disabled="disabled" type="checkbox"/>';
 			}
 			
+			if (value.cell.produtoSemCadastro){
+				recebimentoFisicoController.linhasDestacadas.push(value.id);
+			}
 		});
 		
 		$(".grids", recebimentoFisicoController.workspace).show();
@@ -1303,10 +1308,42 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoNovoProduto', recebimentoFisicoController.workspace).hide();
 			
-		}	
+		}
+		
+		var subtrairNumeroColunaReplicar = 0;
+		if ($("#permissaoColValorTotal", recebimentoFisicoController.workspace).val() == "true"){
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11, true);
+			$("#totalSemDescontoLbl", recebimentoFisicoController.workspace).text(
+					$.formatNumber(totalGeral, {format:"#,##0.00", locale:"br"}));
+			$("#spanTotalSemDescontoLbl", recebimentoFisicoController.workspace).show();
+		} else {
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11, false);
+			$("#spanTotalSemDescontoLbl", recebimentoFisicoController.workspace).hide();
+			subtrairNumeroColunaReplicar++;
+		}
+		
+		if ($("#permissaoColValorTotalDesconto", recebimentoFisicoController.workspace).val() == "true"){
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10, true);
+			$("#totalComDescontoLbl", recebimentoFisicoController.workspace).text(
+					$.formatNumber(totalDescontoGeral, {format:"#,##0.0000", locale:"br"}));
+			$("#spanTotalComDescontoLbl", recebimentoFisicoController.workspace).show();
+		} else {
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10, false);
+			$("#spanTotalComDescontoLbl", recebimentoFisicoController.workspace).hide();
+			subtrairNumeroColunaReplicar++;
+		}
+		
+		/*if (subtrairNumeroColunaReplicar != 0 || !recebimentoFisicoController.indNotaFiscalInterface){
+			
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,false);
+			$(".bt_sellAll", recebimentoFisicoController.workspace).hide();
+		/*} else {*/
+			
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,true);
+			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
+		//}
 		
 		return data;
-
 	},
 	
 	tratarFocoInputQuantidade : function(input) {
@@ -1367,10 +1404,17 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center',
 				resizable : false
+			},{
+				display : 'Preço Capa',
+				name : 'precoCapa',
+				width : 70,
+				sortable : false,
+				align : 'right',
+				resizable : false
 			}, {
 				display : 'Preço Desc. R$',
 				name : 'precoDesconto',
-				width : 90,
+				width : 80,
 				sortable : false,
 				align : 'right',
 				resizable : false
@@ -1403,25 +1447,37 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center',
 				resizable : false
 			}, {
-				display : 'Valor R$',
+				display : 'Valor Total R$',
 				name : 'valor',
 				width : 70,
 				sortable : false,
 				align : 'center',
 				resizable : false
 			}, {
-				display : 'Replicar',
-				name : 'replicar',
-				width : 40,
+				display : 'Valor Total Desconto R$',
+				name : 'valorDesconto',
+				width : 100,
 				sortable : false,
 				align : 'center',
 				resizable : false
+			}, {
+				display : 'Replicar Qtd',
+				name : 'replicar',
+				width : 80,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
+				display : 'Excluir',
+				name: 'excluir',
+				width: 30,
+				sortable: false,
+				align: 'center',
+				resizable: false
 			}],
-			width : 1000,
+			width : 1250,
 			height : 180
 		});
-
-		
 	},
 	
 	popup_adicionar : function() {
@@ -1433,26 +1489,26 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$( "#dialog-adicionar", recebimentoFisicoController.workspace ).dialog({
 			resizable: false,
-			height:530,
-			width:1028,
+			height:520,
+			width:1280,
 			modal: true,
 			buttons:[ 
-			          {
-				           id:"bt_confirmar",
-				           text:"Confirmar", 
-				           click: function() {
-				        	   recebimentoFisicoController.validarValorTotalNotaFiscal();
-				        	   recebimentoFisicoController.limparCamposPesquisa();
-				        	   $(".grids", recebimentoFisicoController.workspace).hide();
-				           }
-			           },
-			           {
-				           id:"bt_cancelar",
-				           text:"Cancelar", 
-				           click: function() {
-				        	   $( this ).dialog( "close" );
-				           }
-			           }
+	          {
+		           id:"bt_confirmar",
+		           text:"Confirmar", 
+		           click: function() {
+		        	   recebimentoFisicoController.validarValorTotalNotaFiscal();
+		        	   recebimentoFisicoController.limparCamposPesquisa();
+		        	   $(".grids", recebimentoFisicoController.workspace).hide();
+		           }
+	           },
+	           {
+		           id:"bt_cancelar",
+		           text:"Cancelar", 
+		           click: function() {
+		        	   $( this ).dialog( "close" );
+		           }
+	           }
 	        ],
 		    
 	        beforeClose: function() {
@@ -1518,18 +1574,18 @@ var recebimentoFisicoController = $.extend(true, {
 	formataCampo : function(campo, Mascara) { 
 	        var boleanoMascara; 
 
-	        exp = /\-|\.|\/|\(|\)| /g
+	        exp = '/\-|\.|\/|\(|\)| /g';
 	        campoSoNumeros = campo.replace( exp, "" ); 
 
 	        var posicaoCampo = 0;    
 	        var NovoValorCampo="";
 	        var TamanhoMascara = campoSoNumeros.length;; 
 
-            for(i=0; i<= TamanhoMascara; i++) { 
+            for(var i=0; i<= TamanhoMascara; i++) { 
                     boleanoMascara  = ((Mascara.charAt(i) == "-") || (Mascara.charAt(i) == ".")
-                                                            || (Mascara.charAt(i) == "/")) 
+                                                            || (Mascara.charAt(i) == "/"));
                     boleanoMascara  = boleanoMascara || ((Mascara.charAt(i) == "(") 
-                                                            || (Mascara.charAt(i) == ")") || (Mascara.charAt(i) == " ")) 
+                                                            || (Mascara.charAt(i) == ")") || (Mascara.charAt(i) == " "));
                     if (boleanoMascara) { 
                             NovoValorCampo += Mascara.charAt(i); 
                               TamanhoMascara++;
@@ -1558,8 +1614,13 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
-				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val(result.pacotePadrao);
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(result.precoDesconto, {format:"#,##0.0000", locale:"br"})
+				);
+				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
+				);
+				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).text(result.pacotePadrao);
 			},
 			null,
 			true
@@ -1568,7 +1629,7 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	calcularDiferencaEValorItem : function(index){
 		
-		var preco = priceToFloat($("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val());
+		var preco = priceToFloat($("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text());
 		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index, recebimentoFisicoController.workspace).val());
 		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplarItem"+index, recebimentoFisicoController.workspace).val());
 		
@@ -1658,6 +1719,11 @@ var recebimentoFisicoController = $.extend(true, {
 				 valueEdicao = row.cell.edicao;
 			 }
 			 
+			 var valuePrecoCapa='';
+			 if (row.cell.precoCapa!=null){
+				 valuePrecoCapa = row.cell.precoCapa;
+			 }
+			 
 			 var valuePrecoDesconto='';
 			 if (row.cell.precoDesconto!=null){
 				 valuePrecoDesconto = row.cell.precoDesconto;
@@ -1692,45 +1758,189 @@ var recebimentoFisicoController = $.extend(true, {
 			 if (row.cell.valorTotal!=null){
 				 valueValor = row.cell.valorTotal;
 			 }
+			 
+			 var valueValorDesconto='';
+			 if (row.cell.valorTotalDesconto!=null){
+				 valueValorDesconto = row.cell.valorTotalDesconto;
+			 }
 
-        	 var codigo =       '<input class="number" maxlength="28" value="'+valueCodigo+'" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null, recebimentoFisicoController.limparCamposItemNota('+index+'));" ></input>';
+        	 var codigo =       '<input class="number" maxlength="28" value="'+valueCodigo+
+        	 					'" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +
+        	 					'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +
+        	 					'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null, recebimentoFisicoController.limparCamposItemNota('+
+        	 					index+'));" ></input>';
 	         			 					     
-	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null, recebimentoFisicoController.limparCamposItemNota('+index+'));"></input>';
+	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +
+	         					'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +
+	         					'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ 
+	         					index +'\', \'#edicaoItem'+ index +'\', true, null, recebimentoFisicoController.limparCamposItemNota('+index+'));"></input>';
 				             
-			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
+			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+
+			 					index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
-			 var precoDesconto ='<input class="money" maxlength="17" value="'+valuePrecoDesconto+'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+			 var precoCapa ='<span class="money" maxlength="17" value="'+valuePrecoCapa+
+			 				'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapa'+ index +
+			 				'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
 			 
-			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+			 var precoDesconto ='<span class="money" maxlength="17" value="'+valuePrecoDesconto+
+			 					'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +
+			 					'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
+			 
+			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+
+			 					'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +
+			 					'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+
+			 					'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 			     
-	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+
+	         					'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +
+	         					'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+
+	         					');" onkeydown="recebimentoFisicoController.retirarChekboxReplicar('+index+');"></input>';
 				             
-			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
+			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+
+			 					'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +
+			 					'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+
+			 					');" onkeydown="recebimentoFisicoController.retirarChekboxReplicar('+index+');"></input>'; 
 			 
-			 var pacotePadrao =  '<input class="number" maxlength="10" value="'+valuePacotePadrao+'" type="text" readonly="readonly" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+			 var pacotePadrao = '<span class="number" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'">'+ valuePacotePadrao +'</span>';
 			 
-			 var diferenca =    '<input class="number" maxlength="10" value="'+valueDiferenca+'" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+			 var diferenca =    '<input class="number" maxlength="10" value="'+valueDiferenca+
+			 					'" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +
+			 					'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 				 
-			 var valor =        '<input class="money" maxlength="17" value="'+valueValor+'" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
-						 
-			 var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
-
+			 var valor =        '<span class="money" maxlength="17" value="'+valueValor+
+			 					'" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +
+			 					'" style="width: 70px; border: 0px; background-color: inherit;"></span>';
+			 
+			 var valorDesconto ='<span class="money" maxlength="17" value="'+valueValorDesconto+
+			 					'" type="text" readonly="readonly" name="itensRecebimento.valorItemDesconto" id="valorItemDesconto'+ index +
+			 					'" style="width: 70px; border: 0px; background-color: inherit;"></span>';
+			 
+			 var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +
+			 					'" onclick="recebimentoFisicoController.replicarQtdLancamentoManual('+index+');" />';
+			 
+			 var btnExcluir =   '<a href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" hspace="5" border="0" onclick="recebimentoFisicoController.removerItem(this)"/></a>';
+			 
 		     row.cell[0] = codigo;
 		     row.cell[1] = produto;
 		     row.cell[2] = edicao;
 		     row.cell[3] = pacotePadrao;
-		     row.cell[4] = precoDesconto;
-		     row.cell[5] = qtdNota;
-		     row.cell[6] = qtdPacote;
-		     row.cell[7] = qtdExemplar;
-		     row.cell[8] = diferenca;
-		     row.cell[9] = valor;
-		     row.cell[10] = checkBox;
+		     row.cell[4] = precoCapa;
+		     row.cell[5] = precoDesconto;
+		     row.cell[6] = qtdNota;
+		     row.cell[7] = qtdPacote;
+		     row.cell[8] = qtdExemplar;
+		     row.cell[9] = diferenca;
+		     row.cell[10] = valor;
+		     row.cell[11] = valorDesconto;
+		     row.cell[12] = checkBox;
+		     row.cell[13] = btnExcluir;
          }
 	    
 		);
 
 		return resultado;
+	},
+	
+	removerItem : function(element) {
+		
+		$(element).parent().parent().parent().parent().remove();
+		
+		recebimentoFisicoController.obterValorTotalItens();
+		
+	},
+	
+	replicarQtdLancamentoManual: function(index){
+		
+		//caso algum dos checkbox da grid tenha sido acionado
+		if (index || index == 0){
+			
+			//caso o checkbox esteja selecionado calcula valores pra a respectiva linha
+			if ($("#checkbox" + index, recebimentoFisicoController.workspace).is(":checked")){
+			
+				var qtdNotaDigitada = parseInt($("#qtdNotaItem" + index, recebimentoFisicoController.workspace).val());
+				
+				pacotes = qtdNotaDigitada / parseInt($("#pacotePadraoItem" + index, recebimentoFisicoController.workspace).text());
+				exemplares = qtdNotaDigitada % parseInt($("#pacotePadraoItem" + index, recebimentoFisicoController.workspace).text());
+				
+				if (!isNaN(qtdNotaDigitada)){
+					if(!isNaN(pacotes - pacotes)) {
+						$("#qtdPacoteItem" + index, recebimentoFisicoController.workspace).val(
+							parseInt(pacotes)
+						);
+					} else {
+						$("#qtdPacoteItem" + index, recebimentoFisicoController.workspace).val(0);
+					}
+					
+					if(!isNaN(exemplares)) {
+						$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(
+							parseInt(exemplares)
+						);
+					} else {
+						$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(0);
+					}
+					
+					var pacotePadrao = parseInt($("#pacotePadraoItem" + index, recebimentoFisicoController.workspace).text());
+					
+					if(pacotePadrao <= 0){
+						$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(qtdNotaDigitada);
+					}
+					
+				} else {
+					
+					$("#qtdPacoteItem" + index, recebimentoFisicoController.workspace).val(0);
+					
+					$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(0);
+				}
+				
+				$("#diferencaItem"+ index, recebimentoFisicoController.workspace).val(0);
+				
+				var qtdItens = parseFloat(priceToFloat($("#qtdNotaItem" + index, recebimentoFisicoController.workspace).val()));
+				
+				$("#valorItem" + index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(
+						(qtdItens) * parseFloat(priceToFloat($("#precoCapa" + index).text())),
+						{format:"#,##0.00", locale:"br"}
+					)	
+				);
+				
+				$("#valorItemDesconto" + index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(
+						(qtdItens) * parseFloat(priceToFloat($("#precoDescontoItem" + index).text())),
+						{format:"#,##0.0000", locale:"br"}
+					)	
+				);
+			//caso o checkbox esteja deselecionado
+			} else {
+				
+				$("#qtdPacoteItem" + index, recebimentoFisicoController.workspace).val(0);
+				$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(0);
+				$("#diferencaItem"+ index, recebimentoFisicoController.workspace).val(0);
+			}
+		//caso o checkbox marcar todos tenha chamado essa função
+		} else {
+			
+			$.each($("[name='checkboxGrid']", recebimentoFisicoController.workspace),
+				function (index, item){
+					var id = $(item).attr("id");
+					id = id.replace('checkbox', '');
+					
+					//caso o checkbox marcar todos esteja checado
+					if ($("#selTodos", recebimentoFisicoController.workspace).is(":checked")){
+					
+						recebimentoFisicoController.replicarQtdLancamentoManual(id);
+						
+					//caso o checkbox marcar todos não esteja checado
+					} else {
+						
+						$("#qtdPacoteItem" + id, recebimentoFisicoController.workspace).val(0);
+						$("#qtdExemplarItem" + id, recebimentoFisicoController.workspace).val(0);
+						$("#diferencaItem"+ id, recebimentoFisicoController.workspace).val(0);
+					}
+				}
+			);
+		}
+		
+		recebimentoFisicoController.obterValorTotalItens();
 	},
 	
 	limparCamposItemNota : function(idLinha) {
@@ -1739,11 +1949,10 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#qtdNotaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#qtdPacoteItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#qtdExemplarItem" + idLinha, recebimentoFisicoController.workspace).val("");
-		$("#pacotePadraoItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#pacotePadraoItem" + idLinha, recebimentoFisicoController.workspace).text("");
 		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
-		$("#labelValorTotal", recebimentoFisicoController.workspace).text("");
+		
 	},
 	
 	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {
@@ -1793,13 +2002,13 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaProduto = linha.find("td")[1];
 			var colunaEdicao = linha.find("td")[2];
 			var colunaPacotePadrao = linha.find("td")[3];
-			var colunaPrecoDesconto = linha.find("td")[4];
-			var colunaQtdNota = linha.find("td")[5];
-			var colunaQtdPacote = linha.find("td")[6];
-			var colunaQtdExemplar = linha.find("td")[7];
-			var colunaDiferenca = linha.find("td")[8];
-			var colunaValor = linha.find("td")[9];
-			var colunaCheck = linha.find("td")[10];
+			var colunaPrecoCapa = linha.find("td")[4];
+			var colunaPrecoDesconto = linha.find("td")[5];
+			var colunaQtdNota = linha.find("td")[6];
+			var colunaQtdPacote = linha.find("td")[7];
+			var colunaQtdExemplar = linha.find("td")[8];
+			var colunaDiferenca = linha.find("td")[9];
+			var colunaValor = linha.find("td")[10];
 			
 			var codigo = 
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
@@ -1811,7 +2020,10 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val();
 
 			var precoDesconto =
-				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
+				$(colunaPrecoDesconto).find("div").find('[name="itensRecebimento.precoDescontoItem"]').text();
+			
+			var precoCapa = 
+				$(colunaPrecoCapa).find("div").find('[name="itensRecebimento.precoCapa"]').text();
 			
 			var qtdNota =
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
@@ -1823,13 +2035,13 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val();
 			
 			var pacotePadrao =
-				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val();
+				$(colunaPacotePadrao).find("div").find('[name="itensRecebimento.pacotePadraoItem"]').text();
 			
 			var diferenca =
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
 			
 			var valor =
-				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val();
+				$(colunaValor).find("div").find('[name="itensRecebimento.valorItem"]').text();
 			
 
 			if (!recebimentoFisicoController.isAtributosLancamentoVazios(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar)) {
@@ -1843,6 +2055,7 @@ var recebimentoFisicoController = $.extend(true, {
 						nomeProduto:produto,
 						edicao:edicao,
 						precoDesconto:recebimentoFisicoController.preparaValor(precoDesconto),
+						precoCapa:recebimentoFisicoController.preparaValor(precoCapa),
 						repartePrevisto:qtdNota,
 						qtdFisico:qtdNota,
 						qtdPacote:qtdPacote,
@@ -1866,32 +2079,34 @@ var recebimentoFisicoController = $.extend(true, {
 
 		var linhasDaGrid = $(".novoItemNotaGrid tr", recebimentoFisicoController.workspace);
 
-		var listaItens = "";
-		
-		var valorTotal = 0;
+		var valorTotal = 0, valorTotalDesconto = 0;
 
 		$.each(linhasDaGrid, function(index, value) {
 
 			var linha = $(value);
 
-			var colunaValor = linha.find("td")[9];
-
-			valorTotal += intValue(removeMascaraPriceFormat($(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val()));
+			valorTotal += 
+				intValue(removeMascaraPriceFormat(
+					linha.find('[name="itensRecebimento.valorItem"]').text()));
 			
+			valorTotalDesconto += 
+				intValue(removeMascaraPriceFormat(
+					linha.find('[name="itensRecebimento.valorItemDesconto"]').text()));
 		});
 		
 		if(!this.novoValorTotalTyped){
 			$("#novoValorTotal", recebimentoFisicoController.workspace).val(floatToPrice(valorTotal/100));
 		}
-       
-        
-        $("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
+
+		$("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
+        //$("#labelValorTotalDesconto", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
+		$("#labelValorTotalDesconto", recebimentoFisicoController.workspace).html($.formatNumber(
+				(valorTotalDesconto/10000),{format:"#,##0.0000", locale:'br'}));
 	},
     
     replicarQuantidadeItem : function(index){
     	
-    	if ( $("#checkbox"+index, recebimentoFisicoController.workspace).attr('checked') == 'checked' || 
-    		 $("#novoReplicarQtde", recebimentoFisicoController.workspace).attr('checked') == 'checked' ) {
+    	if ( $("#checkbox"+index, recebimentoFisicoController.workspace).attr('checked') == 'checked') {
     		
     	    $("#qtdExemplarItem"+index, recebimentoFisicoController.workspace).val($("#qtdNotaItem"+index, recebimentoFisicoController.workspace).val());
     	    
@@ -1901,41 +2116,65 @@ var recebimentoFisicoController = $.extend(true, {
     //PREPARA NOVA LINHA DA GRID
     adicionarNovaLinha : function(index){
 
-    	var row;
-
-    	var codigo =       '<input class="number" maxlength="28" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+    	var codigo =       '<input class="number" maxlength="28" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +
+    						'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +
+    						'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
 	     
-        var produto =      '<input maxlength="200" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
+        var produto =      '<input maxlength="200" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +
+        					'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +
+        					'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ 
+        					index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
 			             
-		var edicao =       '<input class="number" maxlength="18" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
+		var edicao =       '<input class="number" maxlength="18" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +
+							'" style="width: 30px;" onkeyup="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 		
-		var precoDesconto ='<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+		 var precoCapa ='<span class="money" maxlength="17"'+
+						'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapa'+ index +
+						'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
+		
+		var precoDesconto ='<span class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+
+							index +'" style="width: 80px; border: 0px; background-color: inherit;"></span>';
 		 
-		var qtdNota =      '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+		var qtdNota =      '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +
+							'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+
+							'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 		     
-        var qtdPacote =    '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+        var qtdPacote =    '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +
+        					'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 			             
-		var qtdExemplar =  '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
+		var qtdExemplar =  '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +
+							'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
 		
-		var pacotePadrao =    '<input class="number" maxlength="10" type="text" readonly="readonly" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+		var pacotePadrao = '<span class="number" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'"></span>';
 		
-		var diferenca =    '<input class="number" maxlength="10" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+		var diferenca =    '<input class="number" maxlength="10" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+
+							index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 			 
-		var valor =        '<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+		var valor =        '<span class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +
+							'" style="width: 70px; border: 0px; background-color: inherit;"></span>';
+		
+		var valorDesconto ='<span class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.valorItemDesconto" id="valorItemDesconto'+ index +
+							'" style="width: 70px; border: 0px; background-color: inherit;"></span>';
 					 
-		var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
+		var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +
+							'" onclick="recebimentoFisicoController.replicarQtdLancamentoManual('+index+');"/>';
+		
+		var btnExcluir =   '<a href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" hspace="5" border="0" onclick="$(this).parent().parent().parent().parent().remove();"/></a>';
 
     	var row = [{name: 'codigo', value: codigo},
    	               {name: 'produto', value: produto},
    	               {name: 'edicao', value: edicao},
    	               {name: 'pacotePadrao', value: pacotePadrao},
+   	               {name: 'precoCapa', value: precoCapa},
    	               {name: 'precoDesconto', value: precoDesconto},
    	          	   {name: 'qtdeNota', value: qtdNota},
    	               {name: 'qtdePcts', value: qtdPacote},
    	               {name: 'qtdeExemplar', value: qtdExemplar},
    	               {name: 'diferenca', value: diferenca},
    	               {name: 'valor', value: valor},
-   	               {name: 'replicar', value: checkBox}];
+   	               {name: 'valorDesconto', value: valorDesconto},
+   	               {name: 'replicar', value: checkBox},
+   	               {name: 'excluir', value: btnExcluir}];
     	
     	return row;
     },
@@ -1947,8 +2186,6 @@ var recebimentoFisicoController = $.extend(true, {
 
     	var dataValores = [];
     	var rowValores;
-    	
-    	var idx;
     	
     	//OBTEM VALORES DIGITADOS
     	var nLinhas = 0;
@@ -1963,55 +2200,64 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaProduto = linha.find("td")[1];
 			var colunaEdicao = linha.find("td")[2];
 			var colunaPacotePadrao = linha.find("td")[3];
-			var colunaPrecoDesconto = linha.find("td")[4];
-			var colunaQtdNota = linha.find("td")[5];
-			var colunaQtdPacote = linha.find("td")[6];
-			var colunaQtdExemplar = linha.find("td")[7];
-			var colunaDiferenca = linha.find("td")[8];
-			var colunaValor = linha.find("td")[9];
-			var colunaCheck = linha.find("td")[10];
+			var colunaPrecoCapa = linha.find("td")[4];
+			var colunaPrecoDesconto = linha.find("td")[5];
+			var colunaQtdNota = linha.find("td")[6];
+			var colunaQtdPacote = linha.find("td")[7];
+			var colunaQtdExemplar = linha.find("td")[8];
+			var colunaDiferenca = linha.find("td")[9];
+			var colunaValor = linha.find("td")[10];
+			var colunaValorDesconto = linha.find("td")[11];
 			
 			var valueCodigo = 
-				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
+				$(colunaCodigo).find('input[name="itensRecebimento.codigoItem"]').val();
 			
 			var valueProduto = 
-				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val();
+				$(colunaProduto).find('input[name="itensRecebimento.produtoItem"]').val();
 
 			var valueEdicao = 
-				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val();
+				$(colunaEdicao).find('input[name="itensRecebimento.edicaoItem"]').val();
 
 			var valuePrecoDesconto =
-				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
+				$(colunaPrecoDesconto).find('[name="itensRecebimento.precoDescontoItem"]').text();
+			
+			var valuePrecoCapa=
+				$(colunaPrecoCapa).find('[name="itensRecebimento.precoCapa"]').text();
 			
 			var valueQtdNota =
-				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
+				$(colunaQtdNota).find('input[name="itensRecebimento.qtdNotaItem"]').val();
 			
 			var valueQtdPacote =
-				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val();
+				$(colunaQtdPacote).find('input[name="itensRecebimento.qtdPacoteItem"]').val();
 			
 			var valueQtdExemplar =
-				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val();
+				$(colunaQtdExemplar).find('input[name="itensRecebimento.qtdExemplarItem"]').val();
 			
 			var valuePacotePadrao =
-				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val();
+				$(colunaPacotePadrao).find('[name="itensRecebimento.pacotePadraoItem"]').text();
 			
 			var valueDiferenca =
-				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
+				$(colunaDiferenca).find('input[name="itensRecebimento.diferencaItem"]').val();
 			
 			var valueValor =
-				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val();
+				$(colunaValor).find('[name="itensRecebimento.valorItem"]').text();
+			
+			var valueValorDesconto =
+				$(colunaValorDesconto).find('[name="itensRecebimento.valorItemDesconto"]').text();
 
 			
 		    rowValores = [{name: 'codigo', value: valueCodigo},
 		   	              {name: 'produto', value: valueProduto},
 		   	              {name: 'edicao', value: valueEdicao},
 		   	              {name: 'pacotePadrao', value: valuePacotePadrao},
+		   	              {name: 'precoCapa', value: valuePrecoCapa},
 		   	              {name: 'precoDesconto', value: valuePrecoDesconto},
 		   	              {name: 'qtdeNota', value: valueQtdNota},
 		   	              {name: 'qtdePcts', value: valueQtdPacote},
 						  {name: 'qtdeExemplar', value: valueQtdExemplar},
 		   	              {name: 'diferenca', value: valueDiferenca},
 		   	              {name: 'valor', value: valueValor},
+		   	              {name: 'valorDesconto', value: valueValorDesconto},
 		   	              {name: 'replicar', value: 0}];
 			
 		    dataValores.push({id:index, cell: rowValores});
@@ -2036,6 +2282,10 @@ var recebimentoFisicoController = $.extend(true, {
     	recebimentoFisicoController.recuperaValoresDigitados(dataValores);
     	
     	this.formatItemNota();
+    	
+    	//$("#tabelaItens").parent().animate({scrollTop: $("#tabelaItens").parent().offset().top}, 100);
+    	$("#tabelaItens").parent().animate({scrollTop: $("#tabelaItens").height()}, 100);
+    	
 	},
     
     //RECUPERA VALORES DIGITADOS ANTES DA INSERÇÃO DA NOVA LINHA
@@ -2052,25 +2302,28 @@ var recebimentoFisicoController = $.extend(true, {
 				var colunaProduto = linha.find("td")[1];
 				var colunaEdicao = linha.find("td")[2];
 				var colunaPacotePadrao = linha.find("td")[3];
-				var colunaPrecoDesconto = linha.find("td")[4];
-				var colunaQtdNota = linha.find("td")[5];
-				var colunaQtdPacote = linha.find("td")[6];
-				var colunaQtdExemplar = linha.find("td")[7];
-				var colunaDiferenca = linha.find("td")[8];
-				var colunaValor = linha.find("td")[9];
-				var colunaCheck = linha.find("td")[10];
+				var colunaPrecoCapa = linha.find("td")[4];
+				var colunaPrecoDesconto = linha.find("td")[5];
+				var colunaQtdNota = linha.find("td")[6];
+				var colunaQtdPacote = linha.find("td")[7];
+				var colunaQtdExemplar = linha.find("td")[8];
+				var colunaDiferenca = linha.find("td")[9];
+				var colunaValor = linha.find("td")[10];
+				var colunaValorDesconto = linha.find("td")[11];
 				
-				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val(dataValores[index].cell[0].value);
-				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
-				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val(dataValores[index].cell[2].value);
-				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val(dataValores[index].cell[3].value);
-				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val(dataValores[index].cell[4].value);
-				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[5].value);
-				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[6].value);
-				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[7].value);
-				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[8].value);
-				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[9].value);
-	        	
+				$(colunaCodigo).find('input[name="itensRecebimento.codigoItem"]').val(dataValores[index].cell[0].value);
+				$(colunaProduto).find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
+				$(colunaEdicao).find('input[name="itensRecebimento.edicaoItem"]').val(dataValores[index].cell[2].value);
+				$(colunaPacotePadrao).find('[name="itensRecebimento.pacotePadraoItem"]').text(dataValores[index].cell[3].value);
+				$(colunaPrecoCapa).find('[name="itensRecebimento.precoCapa"]').text(dataValores[index].cell[4].value);
+				$(colunaPrecoDesconto).find('[name="itensRecebimento.precoDescontoItem"]').text(dataValores[index].cell[5].value);
+				
+				$(colunaQtdNota).find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[6].value);
+				$(colunaQtdPacote).find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[7].value);
+				$(colunaQtdExemplar).find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[8].value);
+				$(colunaDiferenca).find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[9].value);
+				$(colunaValor).find('[name="itensRecebimento.valorItem"]').text(dataValores[index].cell[10].value);
+				$(colunaValorDesconto).find('[name="itensRecebimento.valorItemDesconto"]').text(dataValores[index].cell[11].value);
         	}
         });
     	
@@ -2084,30 +2337,24 @@ var recebimentoFisicoController = $.extend(true, {
 		    	 x.checked = checked;
 		     }    
 		}
-
-		if (checked){
-			var elem = document.getElementById("textoSelTodos");
-			elem.innerHTML = "Desmarcar todos";
-        }
 		
-		else{
-			var elem = document.getElementById("textoSelTodos");
-			elem.innerHTML = "Marcar todos";
-		}
+		recebimentoFisicoController.replicarQtdLancamentoManual();
 	},
     
 	limparCamposNovaNota : function(){
 		
-		$("#novoFornecedor", 	recebimentoFisicoController.workspace).val(-1);
-		$("#novoCnpj", 			recebimentoFisicoController.workspace).val("");
-		$("#novoNumeroNota", 	recebimentoFisicoController.workspace).val("");
-        $("#novoSerieNota", 	recebimentoFisicoController.workspace).val("");
-        $("#novoNfe", 			recebimentoFisicoController.workspace).val("");
-        $("#novoChaveAcesso", 	recebimentoFisicoController.workspace).val("");
-        $("#novoDataEmissao", 	recebimentoFisicoController.workspace).val("");
-        $("#novoDataEntrada", 	recebimentoFisicoController.workspace).val("");
-        $("#novoValorTotal", 	recebimentoFisicoController.workspace).val("");
-        
+		$("#novoFornecedor", 	  recebimentoFisicoController.workspace).val(-1);
+		$("#novoCnpj", 			  recebimentoFisicoController.workspace).val("");
+		$("#novoNumeroNota", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoSerieNota", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).val("");
+        $("#novoNfe", 			  recebimentoFisicoController.workspace).removeAttr("checked");
+        $("#novoChaveAcesso", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoDataEmissao", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoDataEntrada", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoValorTotal", 	  recebimentoFisicoController.workspace).val("0,00");
+        $("#labelValorTotal",     recebimentoFisicoController.workspace).text("0,00");
+        $("#labelValorTotalDesconto",     recebimentoFisicoController.workspace).text("0,00");
         recebimentoFisicoController.montaGridItens();
 	},
 	
@@ -2193,7 +2440,9 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if(typeof result != "undefined") {
 				
-				$("#precoCapa", recebimentoFisicoController.workspace).val(result.precoVenda);			
+				$("#precoCapa", recebimentoFisicoController.workspace).val(
+					$.formatNumber(result.precoVenda, {format:"#,##0.00", locale:"br"})
+				);			
 				$("#peso", recebimentoFisicoController.workspace).val(result.peso);			
 				$("#pacotePadrao", recebimentoFisicoController.workspace).val(result.pacotePadrao);			
 				
@@ -2201,9 +2450,17 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		});
 		
-	}
-		
+	},
 	
+	retirarChekboxReplicar : function(numeroDaLinha) {
+		
+		if($("#checkbox" + numeroDaLinha).is(":checked")) {
+			$("#checkbox" + numeroDaLinha).attr("checked", false);
+		}
+		if($("#selTodos").is(":checked")) {
+			$("#selTodos").attr("checked", false);
+		}
+	}
 }, BaseController);
 
-//@ sourceURL=meuScriptRecebimentoFisico.js
+//@ sourceURL=recebimentoFisico.js

@@ -23,6 +23,12 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 
 	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados;
+	
+	private List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada;
+	
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -57,6 +63,51 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	public void setCapacidadeRecolhimentoDistribuidor(
 			BigInteger capacidadeRecolhimentoDistribuidor) {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @return the produtosRecolhimentoNaoBalanceados
+	 */
+	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoNaoBalanceados() {
+		return produtosRecolhimentoNaoBalanceados;
+	}
+
+	/**
+	 * @param produtosRecolhimentoNaoBalanceados the produtosRecolhimentoNaoBalanceados to set
+	 */
+	public void setProdutosRecolhimentoNaoBalanceados(
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados) {
+		this.produtosRecolhimentoNaoBalanceados = produtosRecolhimentoNaoBalanceados;
+	}
+
+	/**
+	 * @return the cotasOperacaoDiferenciada
+	 */
+	public List<CotaOperacaoDiferenciadaDTO> getCotasOperacaoDiferenciada() {
+		return cotasOperacaoDiferenciada;
+	}
+
+	/**
+	 * @param cotasOperacaoDiferenciada the cotasOperacaoDiferenciada to set
+	 */
+	public void setCotasOperacaoDiferenciada(
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		this.cotasOperacaoDiferenciada = cotasOperacaoDiferenciada;
+	}
+
+	/**
+	 * @return the produtosRecolhimentoAgrupados
+	 */
+	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoAgrupados() {
+		return produtosRecolhimentoAgrupados;
+	}
+
+	/**
+	 * @param produtosRecolhimentoAgrupados the produtosRecolhimentoAgrupados to set
+	 */
+	public void setProdutosRecolhimentoAgrupados(
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
+		this.produtosRecolhimentoAgrupados = produtosRecolhimentoAgrupados;
 	}
 	
 }

@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +40,7 @@ import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -69,6 +72,9 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private PessoaService pessoaService;
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
@@ -111,6 +117,9 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
 		
 		this.buscarLogoArmazenarSessao();
+		
+		session.removeAttribute(COTAS_SELECIONADAS);
+		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
 	private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
@@ -198,8 +207,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		String contentType = (String) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE);
 		
-		validarCadastroDistribuidor(parametrosDistribuidor);
 		
+		validarCadastroDistribuidor(parametrosDistribuidor);
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
 		
@@ -296,6 +305,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void gravarDiasDistribuidorFornecedor(String selectFornecedoresLancamento, String selectDiasLancamento, String selectDiasRecolhimento) throws Exception {
 		
+		this.validarAssociacaoDiasOperacao(
+			selectFornecedoresLancamento, selectDiasLancamento, selectDiasRecolhimento);
+		
 		List<String> listaFornecedoresLancamento = Arrays.asList(selectFornecedoresLancamento.split(","));
 		List<String> listaDiasLancamento		 = Arrays.asList(selectDiasLancamento.split(","));
 		List<String> listaDiasRecolhimento		 = Arrays.asList(selectDiasRecolhimento.split(","));
@@ -304,6 +316,33 @@ public class ParametrosDistribuidorController extends BaseController {
 		Distribuidor distribuidor = distribuidorService.obter();
 		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento, distribuidor);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
+	}
+
+	private void validarAssociacaoDiasOperacao(String selectFornecedoresLancamento,
+											   String selectDiasLancamento,
+											   String selectDiasRecolhimento) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (selectFornecedoresLancamento == null) {
+			
+			mensagens.add("Fornecedor(es) deve(m) ser selecionado(s)!");
+		}
+		
+		if (selectDiasLancamento == null) {
+			
+			mensagens.add("Dia(s) de lançamento deve(m) ser selecionado(s)!");
+		}
+		
+		if (selectDiasRecolhimento == null) {
+			
+			mensagens.add("Dia(s) de recolhimento deve(m) ser selecionado(s)!");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
 	}
 	
 	/**
@@ -344,6 +383,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getCnpj() == null || vo.getCnpj().trim().isEmpty()) {
 	        erros.add("É necessário informar o CNPJ!");
 	    }
+	    
+	    this.pessoaService.validarCNPJ(vo.getCnpj());
+	    
 	    if (vo.getInscricaoEstadual() == null || vo.getInscricaoEstadual().trim().isEmpty()) {
 	        erros.add("É necessário informar a Insc. Estadual!");
 	    }
@@ -362,6 +404,15 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getEndereco().getLogradouro() == null || vo.getEndereco().getLogradouro().trim().isEmpty()) {
 	        erros.add("É necessário informar o Logradouro!");
 	    }
+	    
+	    if (vo.getNumeroDDD() == null || vo.getNumeroDDD().trim().isEmpty()) {
+	        erros.add("É necessário informar o DDD do Telefone!");
+	    }
+	    
+	    if (vo.getNumeroTelefone() == null || vo.getNumeroTelefone().trim().isEmpty()) {
+	        erros.add("É necessário informar o número do Telefone!");
+	    }
+	    
 	    if (vo.getRegimeTributario() == null) {
 	        erros.add("É necessário informar o campo Regime Tributário!");
 	    }
@@ -428,9 +479,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * Busca todos os Grupos de Cota
 	 */
 	@Post
-	public void obterGrupos() {
+	public void obterGrupos(String sortname, String sortorder) {
 			
-		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos();
+		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos(sortname, sortorder);
 		
 		result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
 				
@@ -455,11 +506,10 @@ public class ParametrosDistribuidorController extends BaseController {
 				
 		List<MunicipioDTO> municipios =	grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
 		
-		List<String> selecionados = getMunicipiosSelecionados();
+		Set<String> selecionados = getMunicipiosSelecionados();
 				
 		for(MunicipioDTO municipio : municipios) {
-			if(selecionados.contains(municipio.getMunicipio()))
-				municipio.setSelecionado(true);
+			municipio.setSelecionado(selecionados.contains(municipio.getMunicipio()));
 		}
 		
 		result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();
@@ -471,7 +521,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		session.setAttribute(TIPO_COTA, tipoCota);
 		
-		List<Long> selecionados = getCotasSelecionados();
+		Set<Long> selecionados = getCotasSelecionados();
 		
 		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
 		
@@ -484,17 +534,17 @@ public class ParametrosDistribuidorController extends BaseController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Long> getCotasSelecionados() {
+	private Set<Long> getCotasSelecionados() {
 		
-		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new ArrayList<Long>()
-				: (List<Long>)session.getAttribute(COTAS_SELECIONADAS);
+		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new HashSet<Long>()
+				: (Set<Long>)session.getAttribute(COTAS_SELECIONADAS);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<String> getMunicipiosSelecionados() {
+	private Set<String> getMunicipiosSelecionados() {
 		
-		return	session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
-					new ArrayList<String>() : (List<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
+		return session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
+					new HashSet<String>() : (Set<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
 	/**
@@ -504,15 +554,12 @@ public class ParametrosDistribuidorController extends BaseController {
 	@Post
 	public void selecionarCota(Long idCota, Boolean selecionado, Boolean addResult) {
 		
+		Set<Long> selecionados = getCotasSelecionados();
 		
-		List<Long> selecionados = getCotasSelecionados();
-		
-		int index = selecionados.indexOf(idCota); 
-		
-		if(index==-1 && selecionado==true) {
+		if (selecionado){
 			selecionados.add(idCota);
-		} else if(index!=-1 && selecionado==false){
-			selecionados.remove(index);
+		} else {
+			selecionados.remove(idCota);
 		}
 		
 		session.setAttribute(COTAS_SELECIONADAS, selecionados);
@@ -528,16 +575,14 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * 
 	 */
 	@Post
-	public void selecionarMunicipio(String  municipio, Boolean selecionado, Boolean addResult) {
+	public void selecionarMunicipio(String municipio, Boolean selecionado, Boolean addResult) {
 				
-		List<String> selecionados = getMunicipiosSelecionados();		
+		Set<String> selecionados = getMunicipiosSelecionados();		
 		
-		int index = selecionados.indexOf(municipio); 
-		
-		if(index==-1 && selecionado==true) {
+		if(selecionado) {
 			selecionados.add(municipio);
-		} else if(index!=-1 && selecionado==false){
-			selecionados.remove(index);
+		} else {
+			selecionados.remove(municipio);
 		}
 		
 		session.setAttribute(MUNICIPIOS_SELECIONADOS, selecionados);
@@ -579,29 +624,37 @@ public class ParametrosDistribuidorController extends BaseController {
 	@Post
 	public void limparSelecoes() {
 		
-		session.setAttribute(COTAS_SELECIONADAS, null);
-		session.setAttribute(MUNICIPIOS_SELECIONADOS, null);
+		session.removeAttribute(COTAS_SELECIONADAS);
+		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
-	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo){
+	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo, TipoOperacaoDiferenciada tipoOperacaoDiferenciada){
 		
-		List<Long> cotas = (List<Long>) (session.getAttribute(COTAS_SELECIONADAS) == null ?
-				null
-				:session.getAttribute(COTAS_SELECIONADAS));
-		
-		if(cotas != null) {
+		if (tipoOperacaoDiferenciada.equals(TipoOperacaoDiferenciada.TIPO_COTA)) {
+			
+			Set<Long> cotas = this.getCotasSelecionados();
+			
+			if (cotas == null || cotas.isEmpty()) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada!");
+			}
+			
 			TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session.getAttribute(TIPO_COTA);
+			
 			grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
+			
 		} else {
-		
-			List<String> municipios = (List<String>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?
-					null
-					:session.getAttribute(MUNICIPIOS_SELECIONADOS));
+			
+			Set<String> municipios = this.getMunicipiosSelecionados();
+			
+			if (municipios == null || municipios.isEmpty()) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum município foi selecionado!");
+			}
 			
 			grupoService.salvarGrupoMunicipios(idGrupo,municipios, nome, diasSemana);
 		}
@@ -614,18 +667,31 @@ public class ParametrosDistribuidorController extends BaseController {
 
 		if(tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
 		
-			List<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
+			Set<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
 			
-			session.setAttribute(COTAS_SELECIONADAS, null);
+			session.removeAttribute(COTAS_SELECIONADAS);
 			session.setAttribute(MUNICIPIOS_SELECIONADOS, municipios);
 		} else {
 			
-			List<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
+			Set<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
 			
-			session.setAttribute(MUNICIPIOS_SELECIONADOS, null);
+			session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 			session.setAttribute(COTAS_SELECIONADAS, ids);
 		}
 		
 		result.use(Results.json()).from("").serialize();
 	}
+	
+	@Post
+	public void mensagemControleAprovacao(){
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Ao desmarcar a opção [Utiliza Controle de Aprovação] não serão mais exibidos os avisos de pendências das funcionalidades abaixo !"),"result").recursive().serialize();
+	}
+	
+	private enum TipoOperacaoDiferenciada {
+		
+		TIPO_COTA,
+		MUNICIPIO;
+	}
+	
 }

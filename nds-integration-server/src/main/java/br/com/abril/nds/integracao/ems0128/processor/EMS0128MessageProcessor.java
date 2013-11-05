@@ -30,6 +30,7 @@ import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
+import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0128MessageProcessor extends AbstractRepository implements MessageProcessor  {
@@ -37,7 +38,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0128MessageProcessor.class);
 	
 	@Autowired
-	private SessionFactory sessionFactoryIcd;
+	private SessionFactory sessionFactoryGfs;
 	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
@@ -49,17 +50,17 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	
 	private String pastaInterna;
 
-	protected Session getSessionIcd() {
+	protected Session getSessionGfs() {
 		
 		Session session = null;
 		try {
-			session = sessionFactoryIcd.getCurrentSession();
+			session = sessionFactoryGfs.getCurrentSession();
 		} catch(Exception e) {
 			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
 		
 		if(session == null) {
-			session = sessionFactoryIcd.openSession();
+			session = sessionFactoryGfs.openSession();
 		}
 		
 		return session;
@@ -88,35 +89,40 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 
-				CouchDbClient couchDbClient = this.getCouchDBClient("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+				CouchDbClient couchDbClient = this.getCouchDBClient(StringUtils.leftPad(distribuidor, 8, "0"));
 										
 				View view = couchDbClient.view("importacao/porTipoDocumento");
 								
 				view.key("EMS0128");
 				view.includeDocs(true);
-				try {
+				try { 
 					ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
 					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 						
 						EMS0128Input doc = (EMS0128Input) row.getDoc();
+						doc.setDataSolicitacao(DateUtil.normalizarDataSemHora(doc.getDataSolicitacao()));
 						
 						if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 							icdObjectService.insereSolicitacao(doc);
 							doc.setSituacaoSolicitacao("AGUARDANDO_GFS");
-						} else if (
-								doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
-								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")) {
+						} else if (doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
+								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")
+								|| doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
 							
 							SolicitacaoFaltaSobra solicitacao = icdObjectService.recuperaSolicitacao(Long.valueOf(distribuidor), doc);
+							
+							if(solicitacao == null) continue;
 							
 							doc.setSituacaoSolicitacao(solicitacao.getCodigoSituacao());
 							
 							List<DetalheFaltaSobra> listaDetalhes = solicitacao.getItens();
 							
-							for (DetalheFaltaSobra item : listaDetalhes)
-							{
+							for (DetalheFaltaSobra item : listaDetalhes) {
+								
 								for ( EMS0128InputItem eitem : doc.getItems()) {
+									
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
+										
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
 										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());

@@ -87,6 +87,8 @@ public interface DistribuidorService {
 	Long qntDiasReutilizacaoCodigoCota();
 
 	Set<PoliticaCobranca> politicasCobranca();
+	
+	Set<PoliticaCobranca> politicasCobrancaAtivas();
 
 	String assuntoEmailCobranca();
 
@@ -99,4 +101,37 @@ public interface DistribuidorService {
 	Integer fatorRelancamentoParcial();
 
 	Long obterId();
+	
+	boolean utilizaControleAprovacaoFaltaSobra();
+	
+	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
+	
+	/**
+	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
+	 * @param dataConferencia
+	 * @param dataRecolhimento
+	 * @param long1
+	 * @return Integer
+	 */
+	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz
+	 */
+	void bloqueiaProcessosLancamentosEstudos();
+
+	/**
+	 * Desbloqueia os processos que alteram estudos ou balanceamentos de matriz
+	 */
+	void desbloqueiaProcessosLancamentosEstudos();
+
+	/**
+	 * Verifica se os processos que alteram estudos ou balanceamentos de matriz devem ser bloqueados
+	 * Tambem desbloqueia caso a interface esteja sendo executada a mais de uma hora (pois pode ser que a interface tenha travado)
+	 * @return boolean
+	 */
+	boolean verificaDesbloqueioProcessosLancamentosEstudos();
+	
+	boolean isConferenciaCegaRecebimentoFisico();
+	
 }

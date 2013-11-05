@@ -11,10 +11,13 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fecharDia.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+  <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script language="javascript" type="text/javascript">
 
 	$(function() {
+	
 		fecharDiaController.init();
+		
 		bloquearItensEdicao(fecharDiaController.workspace);
 	});		
 	
@@ -128,7 +131,7 @@
 		       	<div id="linkParaFaltasESobra"></div>		        	
 		        
 		        <span class="bt_novos">
-		        	<a href="javascript:;" onclick="popup_transferencias();">
+		        	<a href="javascript:;" onclick="fecharDiaController.transferirDiferencasParaEstoqueDePerdaGanho();">
 		        		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
 		        	Não</a>
 		        </span>
@@ -364,7 +367,7 @@
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="104">Data da Operação:</td>
-              <td width="111" id="dataDaOperacao">${dataOperacao}</td>
+              <td width="111"><input id="dataDaOperacao" type="text" value="${dataOperacao}" style="width: 70px;"/></td>
               <td width="185">
               	<span class="bt_novos" title="Iniciar Fechamento do Dia">
               		<a isEdicao="true" href="#" onclick="fecharDiaController.popup_processos();">
@@ -372,7 +375,7 @@
               	</span>
               </td>
               <td width="529">
-              		<span class="bt_confirmar_novo grids" style="display:none;" title="Confirmar">
+              		<span class="bt_confirmar_novo" id="btnConfirmarFechamento" style="display:none;" title="Confirmar">
               			<a onclick="fecharDiaController.popup();" href="javascript:;">
               			<img width="16" border="0" hspace="5" height="16" alt="Confirmar" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar</a>
               	</span>

@@ -28,6 +28,8 @@
 	<field name="uf" class="java.lang.String">
 		<fieldDescription><![CDATA[uf]]></fieldDescription>
 	</field>
+	<field name="tipoLogradouro" class="java.lang.String"/>
+	<field name="numeroLogradouro" class="java.lang.String"/>
 	<columnHeader>
 		<band height="25" splitType="Stretch">
 			<staticText>
@@ -175,7 +177,9 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[($F{logradouro} == null ? "" : $F{logradouro} + ", ")
+				<textFieldExpression><![CDATA[($F{tipoLogradouro} == null ? "" : $F{tipoLogradouro} + " ")
++ ($F{logradouro} == null ? "" : $F{logradouro} + ", ")
++ ($F{numeroLogradouro} == null ? "" : $F{numeroLogradouro} + ", ")
 + ($F{bairro} == null ? "" : $F{bairro} + ", ")
 + ($F{cidade} == null ? "" : $F{cidade} + ", ")
 + ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>

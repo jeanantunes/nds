@@ -59,7 +59,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 
 	@Override
@@ -97,10 +97,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
-		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(
-				produtoEdicao.getPrecoPrevisto());
-		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(
-				input.getPrecoPrevisto());
+		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
+		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
 		if (!precoPrevistoAtual.equals(precoPrevistoCorrente)) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -135,7 +133,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Cálcular data de recolhimento
 			Calendar calRecolhimento = Calendar.getInstance();
 			calRecolhimento.setTime(input.getDataLancamento());
-			calRecolhimento.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+			int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
+			if (peb == 0) {
+				peb = 15;
+			}
+			calRecolhimento.add(Calendar.DAY_OF_MONTH, peb);
 			final Date dataRecolhimento = calRecolhimento.getTime();
 
 			// Data da Operação do sistema:
@@ -171,8 +173,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			lancamento.setHistoricos(null);// default
 			
 			lancamento.setRecebimentos(null);// default
-			
-			lancamento.setNumeroReprogramacoes(null);// confirmado
 			
 			lancamento.setSequenciaMatriz(null);// confirmado				
 
@@ -362,7 +362,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
 }

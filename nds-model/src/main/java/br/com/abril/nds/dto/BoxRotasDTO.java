@@ -2,6 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
+
+import br.com.abril.nds.model.cadastro.Cota;
 
 public class BoxRotasDTO implements Serializable{
 
@@ -9,6 +12,7 @@ public class BoxRotasDTO implements Serializable{
 
 	private Integer qtdeTotal;
 	private HashMap<String, Integer> rotasQtde;
+	private List<Cota> cotas; 
 	
 	public BoxRotasDTO() {
 		
@@ -31,5 +35,13 @@ public class BoxRotasDTO implements Serializable{
 	}
 	public void setRotasQtde(HashMap<String, Integer> rotasQtde) {
 		this.rotasQtde = rotasQtde;
+	}
+
+	public List<Cota> getCotas() {
+		return cotas;
+	}
+
+	public void setCotas(List<Cota> cotas) {
+		this.cotas = cotas;
 	}
 }

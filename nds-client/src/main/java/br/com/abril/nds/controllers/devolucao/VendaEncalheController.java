@@ -24,7 +24,6 @@ import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -140,12 +139,14 @@ public class VendaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
 	public void confirmaNovaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.TRUE);
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
 	public void confirmaEdicaoVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.FALSE);
@@ -206,28 +207,29 @@ public class VendaEncalheController extends BaseController {
 		BigDecimal total = CurrencyUtil.converterValor(precoProduto).multiply((new BigDecimal(qntSolicitada)));
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
-		mapa.put("totalFormatado", CurrencyUtil.formatarValor(total));
+		mapa.put("totalFormatado", CurrencyUtil.formatarValorQuatroCasas(total));
 		mapa.put("total",total);
 		
 		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post
-	public void obterDatavenda(){
+	public void obterDatavenda() {
 		
-		Date dataVencimentoDebito = new Date();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		Integer qntDias = this.distribuidorService.qntDiasVencinemtoVendaEncalhe();
 		
-		qntDias = (qntDias == null)?0: qntDias;
+		qntDias = (qntDias == null) ? 0 : qntDias;
 		
-		dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
+		Date dataVencimentoDebito = DateUtil.adicionarDias(dataOperacao, qntDias);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
-		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		mapa.put("data", DateUtil.formatarDataPTBR(dataOperacao));
 		mapa.put("dataVencimentoDebito",DateUtil.formatarDataPTBR(dataVencimentoDebito));
 		
-		result.use(CustomJson.class).from(mapa).serialize();
+		this.result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post
@@ -397,6 +399,7 @@ public class VendaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
 	public void excluir(Long idVenda){
 		
 		vendaEncalheService.excluirVendaEncalhe(idVenda);
@@ -418,13 +421,13 @@ public class VendaEncalheController extends BaseController {
 		
 		validarParametrosFiltro(filtro);
 		
-		List<VendaEncalheDTO> vendas = vendaEncalheService.buscarVendasProduto(filtro);
+		Long quantidade = vendaEncalheService.buscarQntVendasProduto(filtro);
 		
-		if(vendas.isEmpty()){
+		if(quantidade == null || quantidade.equals(0L)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		Long quantidade = vendaEncalheService.buscarQntVendasProduto(filtro);
+		List<VendaEncalheDTO> vendas = vendaEncalheService.buscarVendasProduto(filtro);
 		
 		List<VendaEncalheVO> listaExibicaoGrid = new ArrayList<VendaEncalheVO>();
 		
@@ -432,12 +435,13 @@ public class VendaEncalheController extends BaseController {
 		
 		VendaEncalheVO vendaEncalheVO = null;
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		for(VendaEncalheDTO dto : vendas){
 			
 			vendaEncalheVO = getVendaEncalheVO(dto);
 			
-			if( this.distribuidorService.obterDataOperacaoDistribuidor().compareTo(
-					DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
+			if(dataOperacao.compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
 				vendaEncalheVO.setEdicaoExclusaoItem(true);
 			}
 			else{
@@ -473,10 +477,10 @@ public class VendaEncalheController extends BaseController {
 		vendaEncalheVO.setNomeProduto(tratarValor(dto.getNomeProduto()));
 		vendaEncalheVO.setNumeroCota(tratarValor(dto.getNumeroCota()));
 		vendaEncalheVO.setNumeroEdicao(tratarValor(dto.getNumeroEdicao()));
-		vendaEncalheVO.setPrecoDesconto(CurrencyUtil.formatarValor((dto.getPrecoDesconto())));
+		vendaEncalheVO.setPrecoDesconto(CurrencyUtil.formatarValorQuatroCasas((dto.getPrecoDesconto())));
 		vendaEncalheVO.setQntProduto( tratarValor(dto.getQntProduto()));
 		vendaEncalheVO.setTipoVendaEncalhe( (dto.getTipoVendaEncalhe()!= null)?dto.getTipoVendaEncalhe().getVenda():"");
-		vendaEncalheVO.setValoTotalProduto(CurrencyUtil.formatarValor(dto.getValoTotalProduto()));
+		vendaEncalheVO.setValoTotalProduto(CurrencyUtil.formatarValorQuatroCasas(dto.getValoTotalProduto()));
 		vendaEncalheVO.setCodigoBarras(tratarValor(dto.getCodigoBarras()));
 		vendaEncalheVO.setQntDisponivelProduto(tratarValor(dto.getQntDisponivelProduto()));
 		vendaEncalheVO.setFormaVenda(tratarValor(dto.getFormaVenda()));		
@@ -700,7 +704,6 @@ public class VendaEncalheController extends BaseController {
 				
 				filtro.getPaginacao().setPaginaAtual(null);
 				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.setOrdenacaoColuna(null);
 			}
 			
 			if(filtro.getNumeroCota()!= null){

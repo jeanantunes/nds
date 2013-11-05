@@ -6,7 +6,7 @@ var VENDA_PRODUTO = {
 	inicializar : function() {
 		$(function() {
 
-			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexigrid({
+			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexigrid({
 				preProcess:VENDA_PRODUTO.executarPreProcessamentoGridVenda,
 				onSuccess: VENDA_PRODUTO.formatarCampos,
 				dataType : 'json',
@@ -102,11 +102,11 @@ var VENDA_PRODUTO = {
 			
 			if(row.cell.edicaoExclusaoItem){
 				
-				linkEdicao = '<a href="javascript:;" onclick="VENDA_PRODUTO.editar('+ row.cell.idVenda +');" style="margin-right: 5px;cursor:pointer">' +
+				linkEdicao = '<a isEdicao="true" href="javascript:;" onclick="VENDA_PRODUTO.editar('+ row.cell.idVenda +');" style="margin-right: 5px;cursor:pointer">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Venda" />' +
 				 '</a>';			
 			 
-				linkExclusao ='<a href="javascript:;" onclick="VENDA_PRODUTO.exibirDialogExclusao('+ row.cell.idVenda +' );" style="margin-right: 5px;cursor:pointer">' +
+				linkExclusao ='<a isEdicao="true" href="javascript:;" onclick="VENDA_PRODUTO.exibirDialogExclusao('+ row.cell.idVenda +' );" style="margin-right: 5px;cursor:pointer">' +
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                  '</a>';		 					 
 				
@@ -121,11 +121,11 @@ var VENDA_PRODUTO = {
 			}
 			else{
 				
-				linkEdicao = '<a href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkEdicao = '<a isEdicao="true" href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Venda" />' +
 				 '</a>';			
 			 
-				linkExclusao ='<a href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkExclusao ='<a isEdicao="true" href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
                '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                 '</a>';		
 				linkReimpressao  ='<a href="javascript:;" style="margin-right: 5px;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
@@ -151,13 +151,13 @@ var VENDA_PRODUTO = {
 		
 		VENDA_PRODUTO.processarVisualizacaoDataVencimento();
 		
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 			params:[{name:"idVendaEncalhe", value:idVenda}],
 			url: contextPath + "/devolucao/vendaEncalhe/prepararDadosEdicaoVenda",
 			newp: 1
 		});
 
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();		
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexReload();		
 	},
 	
 	excluir:function(idVenda){
@@ -252,12 +252,12 @@ var VENDA_PRODUTO = {
 	
 	pesquisarVendas:function(){
 			
-		$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexOptions({
+		$("#vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexOptions({
 			url: contextPath + "/devolucao/vendaEncalhe/pesquisarVendas",
 			params: VENDA_PRODUTO.params(),newp: 1
 		});
 		
-		$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexReload();
+		$("#vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexReload();
 	},
 	
 	processarVisualizcaoImpressao:function(isVisualiza){
@@ -327,17 +327,17 @@ var VENDA_PRODUTO = {
 					},null,true);
 		
 
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 			url: contextPath + "/devolucao/vendaEncalhe/prepararDadosVenda",
 			newp: 1
 		});
 		
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexReload();
 	},
 	
 	showModalVendas:function(){
 		
-		$("#dialog-venda-encalhe", VENDA_PRODUTO.workspace).dialog({
+		$("#dialog-venda-encalhe-cota", VENDA_PRODUTO.workspace).dialog({
 			resizable: false,
 			height:510,
 			width:1030,
@@ -353,7 +353,7 @@ var VENDA_PRODUTO = {
 		        		}	  
 		        	}  
 				],
-			form: $("#dialog-venda-encalhe", this.workspace).parents("form")
+			form: $("#dialog-venda-encalhe-cota", this.workspace).parents("form")
 		});
 	},
 	
@@ -653,35 +653,54 @@ var VENDA_PRODUTO = {
 	
 	totalizarQntDisponivelGeral:function(){
 	
-		var total =  $("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace).sum();
-		$("#span_total_disponivel_venda", VENDA_PRODUTO.workspace).html(total);
+		//var total =  $("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace).sum();
+		var valorTotal = 0;
+		$.each($("input[id^='qntDisponivel']", VENDA_PRODUTO.workspace), function(index,inp){
+			if (inp.value){
+				valorTotal += parseInt(inp.value);
+			}
+		});
+		$("#span_total_disponivel_venda", VENDA_PRODUTO.workspace).html(valorTotal);
 	},
 	
 	totalizarQntSolicitadaGeral:function(){
 		
-		var valorQntSuplementar = $(".sum_qntSolicitada_suplemtar", VENDA_PRODUTO.workspace).sum();
-		$("#span_qntSolicitada_suplementar_venda", VENDA_PRODUTO.workspace).text(valorQntSuplementar);
+		var valorTotalSup = 0;
+		$.each($(".sum_qntSolicitada_suplemtar", VENDA_PRODUTO.workspace), function(index,inp){
+			valorTotalSup += parseInt(inp.value);
+		});
+		$("#span_qntSolicitada_suplementar_venda", VENDA_PRODUTO.workspace).text(valorTotalSup);
 		
-		var valorQntEncalhe = $(".sum_qntSolicitada_encalhe", VENDA_PRODUTO.workspace).sum();
-		$("#span_qntSolicitada_encalhe_venda", VENDA_PRODUTO.workspace).text(valorQntEncalhe);
+		var valorTotalEnc = 0;
+		$.each($(".sum_qntSolicitada_encalhe", VENDA_PRODUTO.workspace), function(index,inp){
+			valorTotalEnc += parseInt(inp.value);
+		});
+		$("#span_qntSolicitada_encalhe_venda", VENDA_PRODUTO.workspace).text(valorTotalEnc);
 		
-		var total = $("input[id^='qntSolicitada']", VENDA_PRODUTO.workspace).sum();
-		$("#span_total_solicitado_venda", VENDA_PRODUTO.workspace).text(total); 
+		$("#span_total_solicitado_venda", VENDA_PRODUTO.workspace).text(valorTotalSup + valorTotalEnc); 
 	},
 	
 	totalizarQntTotalGeral:function(){
 		
-		var valorTotalSuplementar = $(".sum_total_suplemtar", VENDA_PRODUTO.workspace).sum();
-		$("#span_total_suplementar_venda", VENDA_PRODUTO.workspace).text(valorTotalSuplementar);
-		$("#span_total_suplementar_venda", VENDA_PRODUTO.workspace).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+		var valorTotal = 0;
+		$.each($(".sum_total_suplemtar", VENDA_PRODUTO.workspace), function(index,inp){
+			valorTotal += parseFloat(inp.value);
+		});
+		$("#span_total_suplementar_venda", VENDA_PRODUTO.workspace).text($.formatNumber(valorTotal, {format:"#,##0.0000", locale:"br"}));
 		
-		var valorTotalEncalhe = $(".sum_total_encalhe", VENDA_PRODUTO.workspace).sum();
-		$("#span_total_encalhe_venda", VENDA_PRODUTO.workspace).text(valorTotalEncalhe);
-		$("#span_total_encalhe_venda", VENDA_PRODUTO.workspace).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+		valorTotal = 0;
+		$.each($(".sum_total_encalhe", VENDA_PRODUTO.workspace), function(index,inp){
+			valorTotal += parseFloat(inp.value);
+		});
+		$("#span_total_encalhe_venda", VENDA_PRODUTO.workspace).text($.formatNumber(valorTotal, {format:"#,##0.0000", locale:"br"}));
 		
-		var total = $("input[id^='hiddenTotal']", VENDA_PRODUTO.workspace).sum();
-		$("#span_total_geral_venda", VENDA_PRODUTO.workspace).text(total);
-		$("#span_total_geral_venda", VENDA_PRODUTO.workspace).formatCurrency({region: 'pt-BR', decimalSymbol: ',', symbol: ''});
+		valorTotal = 0;
+		$.each($("input[id^='hiddenTotal']", VENDA_PRODUTO.workspace), function(index,inp){
+			if (inp.value){
+				valorTotal += parseFloat(inp.value);
+			}
+		});
+		$("#span_total_geral_venda", VENDA_PRODUTO.workspace).text($.formatNumber(valorTotal, {format:"#,##0.0000", locale:"br"}));
 	},
 	
 	obterDadosProduto:function(codigoProduto, edicaoProduto,index) {
@@ -905,12 +924,12 @@ var VENDA_PRODUTO = {
 	},
 	
 	limparGridVenda: function (){
-		$('#vendaEncalhesGrid tr', VENDA_PRODUTO.workspace).remove();
+		$('#vendaEncalhesGridCota tr', VENDA_PRODUTO.workspace).remove();
 	},
 	
 	validaritemRepetido:function(indiceLinha){
 		
-		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var linhasDaGrid = $("#vendaEncalhesGridCota tr", VENDA_PRODUTO.workspace);
 		var retorno  = false;
 		$.each(linhasDaGrid, function(index, value) {
 			
@@ -939,7 +958,7 @@ var VENDA_PRODUTO = {
 	
 	getListaProduto:function(){
 		
-		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var linhasDaGrid = $("#vendaEncalhesGridCota tr", VENDA_PRODUTO.workspace);
 
 		var listaVendas= [];
 		
@@ -1000,8 +1019,8 @@ var VENDA_PRODUTO = {
 	isAtributosVendaVazios:function(codigoProduto, numeroEdicao, qtdeSolicitada) {
 
 		if (!$.trim(codigoProduto) 
-				&& !$.trim(numeroEdicao) 
-				&& !$.trim(qtdeSolicitada)) {
+				|| !$.trim(numeroEdicao) 
+				|| !$.trim(qtdeSolicitada)) {
 
 			return true;
 		}
@@ -1025,7 +1044,7 @@ var VENDA_PRODUTO = {
 						result.listaMensagens
 					);
 				
-				$("#dialog-venda-encalhe", VENDA_PRODUTO.workspace).dialog( "close" );
+				$("#dialog-venda-encalhe-cota", VENDA_PRODUTO.workspace).dialog( "close" );
 				
 				VENDA_PRODUTO.imprimeSlipVendaEncalhe();	
 			},
@@ -1078,7 +1097,7 @@ var VENDA_PRODUTO = {
 			return;
 		}
 		
-		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var linhasDaGrid = $("#vendaEncalhesGridCota tr", VENDA_PRODUTO.workspace);
 		var listaVendas = [];
 		
 		$.each(linhasDaGrid, function(index, value) {
@@ -1136,13 +1155,13 @@ var VENDA_PRODUTO = {
 			
 			listaVendas.push({name:"numeroCota",value:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()});
 			
-			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 				url: contextPath + "/devolucao/vendaEncalhe/recalcularValorDescontoItensVenda",
 				params:listaVendas,
 				newp: 1
 			});
 			
-			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();
+			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexReload();
 		}	
 
 	}
@@ -1178,8 +1197,9 @@ $(function() {
 		}
 	});
 		
-	$(".vendaEncalheGrid", VENDA_PRODUTO.workspace).flexigrid({
+	$(".vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexigrid({
 		preProcess:VENDA_PRODUTO.executarPreProcessamento,
+		onSuccess: function() {bloquearItensEdicao(VENDA_PRODUTO.workspace);},
 		dataType : 'json',
 		colModel : [ {
 			display : 'Data',
@@ -1254,7 +1274,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}],
-		sortname : "nomeCota",
+		sortname : "dataVenda",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,

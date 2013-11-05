@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
-import org.hibernate.Query;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -85,6 +84,13 @@ public class PaginacaoUtil {
 			}
 		}
 
+		while (posicaoInicial > posicaoFinal) {
+			
+			posicaoInicial = posicaoInicial - paginacao.getQtdResultadosPorPagina();
+			
+			paginacao.setPaginaAtual(paginacao.getPaginaAtual() - 1);
+		}
+		
 		return listaAPaginar.subList(posicaoInicial, posicaoFinal);
 	}
 	
@@ -117,8 +123,7 @@ public class PaginacaoUtil {
 			throw new IllegalArgumentException("Nome do atributo para ordenação nulo!");
 		}
 		
-		Collections.sort(
-				listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
+		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
 
 		if (Ordenacao.DESC.equals(ordenacao)) {
 

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ChamadaoVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaoVO;
@@ -35,6 +36,7 @@ import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -87,9 +89,14 @@ public class ChamadaoController extends BaseController {
 	@Autowired
 	private EditorService editorService;
 	
+	@Autowired
+	private LancamentoService lancamentoService;
+	
 	private static final String FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroPesquisaConsignados";
 	
 	private static final String QTD_REGISTROS_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaConsignados";
+	
+	private static final String DATA_HOLDER_ACTION_KEY = "chamadaoHolder";
 	
 	@Get
 	@Path("/")
@@ -286,7 +293,7 @@ public class ChamadaoController extends BaseController {
 	public void pesquisarConsignados(Integer numeroCota, String dataChamadaoFormatada, Long idFornecedor,
 									 Long idEditor, boolean chamadaEncalhe, String sortorder, String sortname, int page, int rp) {
 		
-		this.validarEntradaDadosPesquisa(numeroCota, dataChamadaoFormatada);
+		this.validarEntradaDadosPesquisa(numeroCota, dataChamadaoFormatada, chamadaEncalhe);
 		
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
@@ -331,9 +338,10 @@ public class ChamadaoController extends BaseController {
 	
 	@Post
 	@Path("/confirmarChamadao")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO_ALTERACAO)
 	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
-								  boolean chamarTodos,
-								  String novaDataChamadaoFormatada) {
+								  boolean chamarTodos, List<Long> idsIgnorados,
+								  String novaDataChamadaoFormatada,boolean reprogramacao) {
 		
 		FiltroChamadaoDTO filtroSessao =
 			(FiltroChamadaoDTO) 
@@ -347,7 +355,7 @@ public class ChamadaoController extends BaseController {
 									  filtroSessao.isChamadaEncalhe());
 		
 		this.validarDadosConfirmarChamadao(
-			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe());
+			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe(),reprogramacao);
 		
 		Date novaDataChamadao = null;
 		
@@ -357,7 +365,7 @@ public class ChamadaoController extends BaseController {
 		}
 		
 		this.chamadaoService.confirmarChamadao(
-			listaChamadao, filtro, chamarTodos, getUsuarioLogado(), novaDataChamadao);
+			listaChamadao, filtro, chamarTodos, idsIgnorados, getUsuarioLogado(), novaDataChamadao);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
@@ -375,12 +383,18 @@ public class ChamadaoController extends BaseController {
 	private void validarDadosConfirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 											   boolean chamarTodos,
 											   String novaDataChamadaoFormatada,
-											   boolean isChamadaEncalhe) {
+											   boolean isChamadaEncalhe,
+											   boolean reprogramacao) {
 		
 		if (!chamarTodos && listaChamadao == null) {
 			
+			if(reprogramacao){
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"É necessário selecionar pelo menos um produto para reprogramação.");
+			}
+			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"É necessário selecionar pelo menos um produto para realizar o chamadão!");
+					"É necessário selecionar pelo menos um produto para realizar o chamadão!");
 		}
 		
 		if (isChamadaEncalhe) {
@@ -403,7 +417,7 @@ public class ChamadaoController extends BaseController {
 		if (!chamarTodos && listaChamadao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"É necessário selecionar pelo menos um produto para realizar o chamadão!");
+				"É necessário selecionar pelo menos um produto para realizar o cancelamento do chamadão.");
 		}
 		
 		FiltroChamadaoDTO filtroSessao =
@@ -422,6 +436,16 @@ public class ChamadaoController extends BaseController {
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão cancelado com sucesso!"),
 								"result").recursive().serialize();
+	}
+	
+	@Post
+	public void validarMatrizRecolhimentoConfirmada(String dataPesquisa) {
+		
+		boolean matrizConfirmadaNaData = 
+			this.lancamentoService.existeMatrizRecolhimentoConfirmado(
+				DateUtil.parseDataPTBR(dataPesquisa));
+		
+		this.result.use(Results.json()).withoutRoot().from(matrizConfirmadaNaData).serialize();
 	}
 	
 	/**
@@ -462,8 +486,7 @@ public class ChamadaoController extends BaseController {
 			
 			if (resumoConsignadoCotaChamadao.getValorTotal() != null) {
 			
-				valorTotalFormatado =
-					CurrencyUtil.formatarValor(resumoConsignadoCotaChamadao.getValorTotal());	
+				valorTotalFormatado = CurrencyUtil.formatarValorQuatroCasas(resumoConsignadoCotaChamadao.getValorTotal());	
 			}
 		}
 		
@@ -500,8 +523,7 @@ public class ChamadaoController extends BaseController {
 			
 			if (consignadoCotaChamadao.getPrecoDesconto() != null) {
 				
-				chamadaoVO.setPrecoDesconto(
-					CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoDesconto()));
+				chamadaoVO.setPrecoDesconto(CurrencyUtil.formatarValorQuatroCasas(consignadoCotaChamadao.getPrecoDesconto()));
 				
 			} else {
 				chamadaoVO.setPrecoDesconto("");
@@ -517,17 +539,16 @@ public class ChamadaoController extends BaseController {
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotal()));
 			
 			chamadaoVO.setValorTotalDesconto(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotalDesconto()));
-			
-			if (consignadoCotaChamadao.getIdLancamento() != null) {
-				
-				chamadaoVO.setIdLancamento(consignadoCotaChamadao.getIdLancamento().toString());
-			} else {
-				
-				chamadaoVO.setIdLancamento(null);
-			}
-			
+				CurrencyUtil.formatarValorQuatroCasas(consignadoCotaChamadao.getValorTotalDesconto()));
+
+			String idLancamento = consignadoCotaChamadao.getIdLancamento() != null ? 
+					consignadoCotaChamadao.getIdLancamento().toString() : null;
+
+			chamadaoVO.setIdLancamento(idLancamento);
+
 			chamadaoVO.setBrinde(consignadoCotaChamadao.isPossuiBrinde() ? "Sim" : "Não");
+			
+			chamadaoVO.setChecked(getCheckedFromDataHolder(idLancamento));
 			
 			listaChamadao.add(chamadaoVO);
 		}
@@ -535,40 +556,54 @@ public class ChamadaoController extends BaseController {
 		return listaChamadao;
 	}
 	
+	private boolean getCheckedFromDataHolder(String idLancamento) {
+		
+		DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		
+		if (dataHolder != null) {
+
+			return Boolean.parseBoolean(dataHolder.getData(DATA_HOLDER_ACTION_KEY, idLancamento, "checado"));
+		}
+		
+		return Boolean.FALSE;
+	}
+	
 	/**
 	 * Valida a entrada de dados para pesquisa de consignados da cota.
 	 * 
 	 * @param numeroCota - número da cota
 	 * @param dataChamadaoFormatada - data do chamadão
+	 * @param chamadaEncalhe 
 	 */
-	private void validarEntradaDadosPesquisa(Integer numeroCota, String dataChamadaoFormatada) {
+	private void validarEntradaDadosPesquisa(Integer numeroCota, String dataChamadaoFormatada, boolean chamadaEncalhe) {
+		
+		List<String> msgs = new ArrayList<String>();
 		
 		if (numeroCota == null) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento da cota é obrigatório!");
-		}
-		
-		if (dataChamadaoFormatada == null 
-				|| dataChamadaoFormatada.trim().isEmpty()) {
-			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Data Chamadão] é obrigatório!");
+			msgs.add("O preenchimento da cota é obrigatório!");
 		}
 		
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
-		if (dataChamadao == null) {
+		if (!chamadaEncalhe && dataChamadao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida");
+			msgs.add("O preenchimento do campo [Data Chamadão] é obrigatório!");
 		}
 		
-		Date dataAtual = DateUtil.removerTimestamp(new Date());
-		
-		if (dataChamadao.compareTo(dataAtual) < 0) {
+		if (dataChamadao != null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A Data do Chamadão deve ser maior ou igual a data do dia!");
+			Date dataAtual = DateUtil.removerTimestamp(this.distribuidorService.obterDataOperacaoDistribuidor());
+			
+			if (dataChamadao.compareTo(dataAtual) <= 0) {
+				
+				msgs.add("A Data do Chamadão deve ser maior que a data de operação!");
+			}
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
 	}
 	
@@ -664,5 +699,6 @@ public class ChamadaoController extends BaseController {
 				Util.getEnumByStringValue(OrdenacaoColunaChamadao.values(), sortname));
 		}
 	}
+	
 	
 }

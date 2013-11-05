@@ -1,5 +1,5 @@
-package br.com.abril.nds.model.cadastro;
 
+package br.com.abril.nds.model.cadastro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -118,7 +118,7 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
 	private Set<ChamadaEncalhe> chamadaEncalhes = new HashSet<ChamadaEncalhe>(); 
 
-	@Column(name = "POSSUI_BRINDE", nullable = true)
+	@Column(name = "POSSUI_BRINDE", nullable = false)
 	protected boolean possuiBrinde;
 	
 	@ManyToOne(cascade = { CascadeType.MERGE , CascadeType.PERSIST } )
@@ -138,13 +138,13 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * Flag indicando se o produto permite vale desconto
 	 */
-	@Column(name = "PERMITE_VALE_DESCONTO")
+	@Column(name = "PERMITE_VALE_DESCONTO", nullable = false)
 	protected boolean permiteValeDesconto;
 	
 	/**
 	 * Flag indicando se o produto permite recolhimentos parciais
 	 */
-	@Column(name = "PARCIAL")
+	@Column(name = "PARCIAL", nullable = false)
 	private boolean parcial;
 
 	@Column(name = "CHAMADA_CAPA", nullable = true, length = 255)
@@ -160,10 +160,7 @@ public class ProdutoEdicao implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	private Origem origem;
-	
-	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
-	private Integer numeroLancamento;
-	
+		
 	/**
 	 * Dimensões do produto (largura, etc)
 	 */
@@ -333,6 +330,24 @@ public class ProdutoEdicao implements Serializable {
 	}
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
+		
+		if (codigoDeBarras != null && !"".equals(codigoDeBarras) && new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) > 0){
+			
+			//evita que sejam gravados zeros na frente do código de barras, vide trac 677
+			if (codigoDeBarras.startsWith("0")){
+				
+				int indexUltimoZero = 0;
+				
+				while (codigoDeBarras.charAt(indexUltimoZero) == '0'){
+					indexUltimoZero++;
+				}
+				
+				codigoDeBarras = codigoDeBarras.substring(
+						indexUltimoZero, 
+						codigoDeBarras.length());
+			}
+		}
+		
 		this.codigoDeBarras = codigoDeBarras;
 	}
 	
@@ -499,20 +514,6 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setBoletimInformativo(String boletimInformativo) {
 		this.boletimInformativo = boletimInformativo;
-	}
-
-	/**
-	 * @return the numeroLancamento
-	 */
-	public Integer getNumeroLancamento() {
-		return numeroLancamento;
-	}
-
-	/**
-	 * @param numeroLancamento the numeroLancamento to set
-	 */
-	public void setNumeroLancamento(Integer numeroLancamento) {
-		this.numeroLancamento = numeroLancamento;
 	}
 
 	/**

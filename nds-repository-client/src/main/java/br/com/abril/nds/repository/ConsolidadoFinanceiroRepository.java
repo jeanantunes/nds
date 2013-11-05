@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 
 public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoFinanceiroCota, Long> {
@@ -34,7 +33,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 
 	Long obterQuantidadeDividasGeradasData(List<Long> idsCota);
 
-	ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, java.sql.Date data);
+	ConsolidadoFinanceiroCota buscarPorCotaEData(Long idCota, Date data);
 
 	List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(Long idCota);
 
@@ -42,10 +41,12 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
 			List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
 			List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
-			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado);
+			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado, List<Long> tiposMovimentoPendete);
 
 	BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro);
 	
-	
 	Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota);
+	
+	Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota);
+	
 }

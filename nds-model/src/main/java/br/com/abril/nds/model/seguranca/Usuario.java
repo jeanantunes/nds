@@ -103,6 +103,9 @@ public class Usuario implements Serializable {
 	@OneToMany
 	private List<PerfilUsuario> perfilUsuario = new ArrayList<PerfilUsuario>();
 	
+	@Column(name = "SYS")
+	private boolean sys;
+	
 	public Usuario() {
 		
 	}

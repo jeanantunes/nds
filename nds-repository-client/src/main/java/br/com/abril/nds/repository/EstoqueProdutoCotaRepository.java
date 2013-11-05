@@ -36,9 +36,6 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 
 	BigDecimal obterConsignado(boolean cotaInadimplente);
 
-	Double obterFaturamentoCota(Long idCota);
-	
-	
 	BigInteger obterTotalEmEstoqueProdutoCota(Long idCota, Long idProdutoEdicao);
 	
 	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto);

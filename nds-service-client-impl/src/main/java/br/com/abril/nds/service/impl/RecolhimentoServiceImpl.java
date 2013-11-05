@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,14 +22,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -43,18 +48,24 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DistribuicaoFornecedorService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 
 /**
@@ -96,35 +107,52 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Autowired
 	protected CalendarioService calendarioService;
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
-																 List<Long> listaIdsFornecedores,
-																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean forcarBalanceamento,
-																 Date dataBalanceamento) {
-		
-		RecolhimentoDTO dadosRecolhimento =
-			this.obterDadosRecolhimento(
-				numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
-				forcarBalanceamento, dataBalanceamento);
-		
-		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
-			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
-		
-		return balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
-	}
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private DistribuicaoFornecedorService distribuicaoFornecedorService;
+	
+	@Autowired
+	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
+	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer anoNumeroSemana,
+																 List<Long> listaIdsFornecedores,
+																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
+																 boolean forcarBalanceamento) {
+		
+		RecolhimentoDTO dadosRecolhimento =
+			this.obterDadosRecolhimento(
+				anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
+				forcarBalanceamento);
+		
+		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
+			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO =
+			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+		
+		return balanceamentoRecolhimentoDTO;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												Usuario usuario) {
+	public void salvarBalanceamentoRecolhimento(Usuario usuario,
+												BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO) {
+		
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+			balanceamentoRecolhimentoDTO.getMatrizRecolhimento();
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -149,12 +177,33 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
 			
-				if (!produtoRecolhimento.isBalanceamentoConfirmado()
-						&& !produtoRecolhimento.isPossuiChamada()) {
+				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
-					mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
+				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
-					idsLancamento.add(produtoRecolhimento.getIdLancamento());
+					continue;
+				}
+				
+				if (this.isProdutoAgrupado(produtoRecolhimento)) {
+					
+					continue;
+				}
+				
+				this.montarInformacoesSalvarBalanceamento(
+					mapaRecolhimentos, idsLancamento, produtoRecolhimento);
+				
+				if (!produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty()) {
+					
+					for (Long idLancamento : produtoRecolhimento.getIdsLancamentosAgrupados()) {
+						
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
+							balanceamentoRecolhimentoDTO.getProdutosRecolhimentoAgrupados(), idLancamento);
+						
+						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
+						
+						this.montarInformacoesSalvarBalanceamento(
+							mapaRecolhimentos, idsLancamento, produtoRecolhimentoAgrupado);
+					}
 				}
 			}
 		}
@@ -162,6 +211,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		this.atualizarLancamentos(
 			idsLancamento, usuario, mapaRecolhimentos,
 			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
+	}
+
+	private void montarInformacoesSalvarBalanceamento(
+									Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos,
+									Set<Long> idsLancamento,
+									ProdutoRecolhimentoDTO produtoRecolhimento) {
+		
+		mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
+		
+		idsLancamento.add(produtoRecolhimento.getIdLancamento());
+	}
+	
+	private boolean isProdutoAgrupado(ProdutoRecolhimentoDTO produtoRecolhimento) {
+		
+		return (produtoRecolhimento.isProdutoAgrupado()
+					&& produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty());
 	}
 	
 	/**
@@ -173,7 +238,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 											Integer numeroSemana,
 											List<Date> datasConfirmadas,
-											Usuario usuario) {
+											Usuario usuario,
+											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -185,8 +251,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
-		
-		Set<Long> idsProdutoEdicaoParcial = new TreeSet<Long>();
 		
 		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
@@ -206,42 +270,40 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
+				if (this.isProdutoAgrupado(produtoRecolhimento)) {
+					
+					continue;
+				}
+				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
 				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
 					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
-															null, novaDataRecolhimento);
+															  null, novaDataRecolhimento);
 					
 					continue;
 				}
 				
-				Long idLancamento = produtoRecolhimento.getIdLancamento();
-
-				// Monta Map e Set para controlar a atualização dos lançamentos
+				this.montarInformacoesConfirmarBalanceamento(
+					mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
+					idsLancamento, produtoRecolhimento, novaDataRecolhimento);
 				
-				mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
-				
-				idsLancamento.add(idLancamento);
-				
-				// Monta Map para controlar a geração de chamada de encalhe
-				
-				Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
-				
-				if (idsLancamentoPorData == null) {
+				List<Long> idsLancamentosAgrupados = produtoRecolhimento.getIdsLancamentosAgrupados();
+			
+				if (!idsLancamentosAgrupados.isEmpty()) {
 					
-					idsLancamentoPorData = new LinkedHashSet<Long>();
-				}
-				
-				idsLancamentoPorData.add(idLancamento);
-				
-				mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
-				
-				// Monta Set para controlar a geração de períodos parciais
-				
-				if (produtoRecolhimento.getParcial() != null) {
-					
-					idsProdutoEdicaoParcial.add(produtoRecolhimento.getIdProdutoEdicao());
+					for (Long idLancamento : idsLancamentosAgrupados) {
+							
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
+							produtosRecolhimentoAgrupados, idLancamento);
+						
+						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
+						
+						this.montarInformacoesConfirmarBalanceamento(
+							mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
+							idsLancamento, produtoRecolhimentoAgrupado, novaDataRecolhimento);
+					}
 				}
 			}
 		}
@@ -255,6 +317,35 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada;
 	}
 
+	private void montarInformacoesConfirmarBalanceamento(
+									Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento,
+									Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
+									Set<Long> idsLancamento,
+									ProdutoRecolhimentoDTO produtoRecolhimento,
+									Date novaDataRecolhimento) {
+
+		Long idLancamento = produtoRecolhimento.getIdLancamento();
+
+		// Monta Map e Set para controlar a atualização dos lançamentos
+		
+		mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
+		
+		idsLancamento.add(idLancamento);
+		
+		// Monta Map para controlar a geração de chamada de encalhe
+		
+		Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
+		
+		if (idsLancamentoPorData == null) {
+			
+			idsLancamentoPorData = new LinkedHashSet<Long>();
+		}
+		
+		idsLancamentoPorData.add(idLancamento);
+		
+		mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void ordenarProdutosRecolhimentoPorNome(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
 		
@@ -263,43 +354,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		comparatorChain.addComparator(new BeanComparator("nomeProduto"));
 		
 		Collections.sort(produtosRecolhimento, comparatorChain);
-	}
-	
-	@Override
-	@Transactional
-	public void excluiBalanceamento(Long idLancamento) {
-		
-		Lancamento lancamento =  lancamentoRepository.buscarPorId(idLancamento);
-		
-		this.realizarTransferenciaReparteProximoLancamento(lancamento);
-		
-		if(lancamento == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não encontrado!");
-		}
-		
-		lancamento.setStatus(StatusLancamento.EXCLUIDO_RECOLHIMENTO);
-	}
-
-	/*
-	 * Método responsável pela transferência de reparte de um lançamento para o próximo, 
-	 * devido a exclusão deste na matriz de recolhimento.
-	 * 
-	 * @param lancamento
-	 */
-	private void realizarTransferenciaReparteProximoLancamento(Lancamento lancamento) {
-		
-		Lancamento proximoLancamento = this.lancamentoRepository.obterProximoLancamento(lancamento);
-		
-		if (proximoLancamento == null) { 
-
-			return;
-		}
-
-		BigInteger novoReparte = lancamento.getReparte().add(proximoLancamento.getReparte());
-
-		proximoLancamento.setReparte(novoReparte);
-		
-		this.lancamentoRepository.alterar(proximoLancamento);
 	}
 	
 	/**
@@ -347,14 +401,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				Date novaData = produtoRecolhimento.getNovaData();
 				
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
-				lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
+				lancamento.setUsuario(usuario);
 				
 				this.lancamentoRepository.merge(lancamento);
 				
 				if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
-					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento);
+					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento, usuario);
 				}
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
@@ -366,11 +420,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					historicoLancamento.setLancamento(lancamento);
 					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
-					historicoLancamento.setStatus(lancamento.getStatus());
+					historicoLancamento.setStatusNovo(lancamento.getStatus());
 					historicoLancamento.setDataEdicao(new Date());
 					historicoLancamento.setResponsavel(usuario);
 					
-					this.historicoLancamentoRepository.merge(historicoLancamento);
+					//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+					//this.historicoLancamentoRepository.merge(historicoLancamento);
 				}
 			}
 		}
@@ -458,11 +513,19 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					boolean indNovaChamadaEncalhe = false;
 					
-					ProdutoEdicao produtoEdicao = estoqueProdutoCota
-							.getProdutoEdicao();
+					ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 
 					Cota cota = estoqueProdutoCota.getCota();
 
+					Boolean existeChamadaEncalheCota = 
+						this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(
+							cota.getId(), produtoEdicao.getId(), dataRecolhimento);
+					
+					if (existeChamadaEncalheCota) {
+						
+						continue;
+					}
+					
 					ChamadaEncalhe chamadaEncalhe =
 						this.obterChamadaEncalheLista(
 							listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());
@@ -490,8 +553,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						listaChamadaEncalhe.add(chamadaEncalhe);
 					}
 					
-					this.criarChamadaEncalheCota(estoqueProdutoCota, cota,
-							chamadaEncalhe);
+					this.criarChamadaEncalheCota(estoqueProdutoCota, cota, chamadaEncalhe);
 				}
 			}
 		}
@@ -576,16 +638,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * Monta o DTO com as informações para realização do balanceamento.
 	 */
-	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
+	private RecolhimentoDTO obterDadosRecolhimento(Integer anoNumeroSemana,
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento,
-			 									   boolean forcarBalanceamento,
-			 									   Date dataBalanceamento) {
+			 									   boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(numeroSemana, dataBalanceamento);
+			getPeriodoRecolhimento(anoNumeroSemana);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
@@ -614,7 +675,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
-
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
+		
+		produtosRecolhimento =
+			this.tratarAgrupamentoLancamentosComMesmaEdicao(
+				produtosRecolhimento, produtosRecolhimentoAgrupados);
+		
+		dadosRecolhimento.setProdutosRecolhimentoAgrupados(produtosRecolhimentoAgrupados);
+		
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
@@ -624,6 +693,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
+		if (!produtosRecolhimento.isEmpty()) {
+		
+			this.obterCotasOperacaoDiferenciada(
+				periodoRecolhimento, produtosRecolhimento, dadosRecolhimento);
+		}
+		
+		this.atualizarEncalheSedeAtendidaDosProdutos(
+			produtosRecolhimento, dadosRecolhimento.getCotasOperacaoDiferenciada());
+		
 		return dadosRecolhimento;
 	}
 
@@ -631,17 +709,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
 	@Override
-	public Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana,
-												   Date dataBalanceamento) {
+	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
 		int codigoInicioSemana = 
 				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 		
+		Integer anoBase = SemanaUtil.getAno(anoNumeroSemana);
+		
+		Integer numeroSemana = SemanaUtil.getSemana(anoNumeroSemana);
+		
 		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(
+			SemanaUtil.obterDataDaSemanaNoAno(
 				numeroSemana,
 				codigoInicioSemana, 
-				dataBalanceamento);
+				anoBase);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -687,7 +768,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											 	 Set<Integer> diasRecolhimentoSemana) {
 		
 		TreeSet<Date> datasRecolhimento =
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
+			SemanaUtil.obterPeriodoDeAcordoComDiasDaSemana(
 				periodoRecolhimento.getDe(), periodoRecolhimento.getAte(), diasRecolhimentoSemana);
 		
 		TreeSet<Date> datasRecolhimentoComOperacao = new TreeSet<>();
@@ -711,22 +792,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 	@Override
 	@Transactional
-	public void voltarConfiguracaoOriginal(Integer numeroSemana, Date anoBase, List<Long> fornecedores) {
+	public void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores, Usuario usuario) {
 		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(numeroSemana, anoBase);
+			getPeriodoRecolhimento(numeroSemana);
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
-		
-		if (lancamentos == null || lancamentos.size() <= 0){
-		
-			throw new ValidacaoException(TipoMensagem.WARNING ,"Não existem lançamentos à serem reiniciados.");
-		}	
 			
 		for(Lancamento lancamento: lancamentos) {
 			
 			lancamento.setStatus(StatusLancamento.EXPEDIDO);
 			lancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoPrevista());
+			
+			lancamento.setUsuario(usuario);
+			
 			lancamentoRepository.alterar(lancamento);
 		}
 	}
@@ -747,6 +826,546 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
 		}
+	}
+	
+	@Transactional
+	@Override
+	public void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana){
+		
+		if(produtos == null || produtos.isEmpty()){
+			return;
+		}
+		
+		for(ProdutoRecolhimentoDTO item : produtos){
+			
+			Date dataRecolhimento = this.obterDataValidaRecolhimento(numeroSemana, item.getIdFornecedor());
+			
+			lancamentoRepository.atualizarDataRecolhimentoDistribuidor(dataRecolhimento, item.getIdLancamento());
+		}		
+	}
+	
+	private Date obterDataValidaRecolhimento(Integer numeroSemana, Long idFornecedor){
+		
+		Intervalo<Date> periodoRecolhimento = getPeriodoRecolhimento(++numeroSemana);
+		
+		Date dataRecolhimento = periodoRecolhimento.getDe();
+		
+		Date dataValida = null;
+		
+		while(dataRecolhimento.compareTo(periodoRecolhimento.getAte())<=0){
+			
+			if(!lancamentoRepository.existeRecolhimentoNaoBalanceado(dataRecolhimento)
+					&& this.validarDiaRecolhimentoFornecedor(idFornecedor, dataRecolhimento)){
+				dataValida = dataRecolhimento;
+				break;
+			}
+			
+			dataRecolhimento = DateUtil.adicionarDias(dataRecolhimento, 1);
+		}		
+				
+		if(dataValida == null){
+			dataValida = obterDataValidaRecolhimento(numeroSemana, idFornecedor);
+		}
+		
+		return dataValida;
+	}
+
+	private boolean validarDiaRecolhimentoFornecedor(Long idFornecedor, Date dataRecolhimento) {
+		
+		Fornecedor fornecedor = this.fornecedorService.obterPorId(idFornecedor);
+		
+		List<Integer> diasRecolhimentoFornecedor = 
+				this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
+						fornecedor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
+		
+		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(dataRecolhimento);
+		
+		return diasRecolhimentoFornecedor.contains(codigoDiaCorrente);
+	}
+	
+	private void obterCotasOperacaoDiferenciada(Intervalo<Date> periodoRecolhimento,
+											    List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+											    RecolhimentoDTO dadosRecolhimento) {
+
+		Map<Long, List<Date>> mapCotasDiasRecolhimento =
+			this.obterCotasOperacaoDiferenciada(periodoRecolhimento);
+
+		if (mapCotasDiasRecolhimento.isEmpty()) {
+			
+			return;
+		}
+		
+		Set<Long> idsLancamento = this.obterIdsLancamento(produtosRecolhimento);
+
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada =
+			this.lancamentoRepository.obterLancamentosEncalhesPorCota(
+				mapCotasDiasRecolhimento.keySet(), idsLancamento);
+
+		this.setDatasRecolhimentoCotasOperaDif(mapCotasDiasRecolhimento, cotasOperacaoDiferenciada);
+
+		dadosRecolhimento.setCotasOperacaoDiferenciada(cotasOperacaoDiferenciada);
+	}
+	
+	private Map<Long, List<Date>> obterCotasOperacaoDiferenciada(Intervalo<Date> periodoRecolhimento) {
+		
+		Map<Long, List<Date>> mapCotasDiasRecolhimento = new HashMap<>();
+		
+		List<GrupoCota> gruposCota =
+			this.grupoRepository.obterGruposCota(periodoRecolhimento.getDe());
+		
+		for (GrupoCota grupoCota : gruposCota) {
+			
+			Set<Cota> cotas = grupoCota.getCotas();
+			Set<String> municipios = grupoCota.getMunicipios();
+			Set<DiaSemana> diasRecolhimento = grupoCota.getDiasRecolhimento();
+			
+			if (cotas != null && !cotas.isEmpty()) {
+			
+				this.montarMapOperacaoDiferenciadaCotas(
+					cotas, diasRecolhimento, periodoRecolhimento, mapCotasDiasRecolhimento);
+				
+			} else if (municipios != null && !municipios.isEmpty()) {
+				
+				this.montarMapOperacaoDiferenciadaMunicipios(
+					municipios, diasRecolhimento, periodoRecolhimento, mapCotasDiasRecolhimento);
+			}
+		}
+		
+		return mapCotasDiasRecolhimento;
+	}
+
+	private void montarMapOperacaoDiferenciadaCotas(Set<Cota> cotas,
+													Set<DiaSemana> diasRecolhimento,
+													Intervalo<Date> periodoRecolhimento,
+													Map<Long, List<Date>> mapCotasDiasRecolhimento) {
+		
+		List<Date> datasRecolhimento = 
+			this.obterDatasRecolhimentoGrupo(diasRecolhimento, periodoRecolhimento);
+		
+		for (Cota cota : cotas) {
+			
+			mapCotasDiasRecolhimento.put(cota.getId(), datasRecolhimento);
+		}
+	}
+	
+	private void montarMapOperacaoDiferenciadaMunicipios(Set<String> municipios,
+														 Set<DiaSemana> diasRecolhimento,
+														 Intervalo<Date> periodoRecolhimento,
+														 Map<Long, List<Date>> mapCotasDiasRecolhimento) {
+		
+		List<Date> datasRecolhimento = 
+			this.obterDatasRecolhimentoGrupo(diasRecolhimento, periodoRecolhimento);
+		
+		for (String municipio : municipios) {
+			
+			List<Long> idsCotas = this.cotaRepository.obterIdsCotasPorMunicipio(municipio);
+			
+			for (Long idCota : idsCotas) {
+				
+				mapCotasDiasRecolhimento.put(idCota, datasRecolhimento);
+			}
+		}
+	}
+
+	private List<Date> obterDatasRecolhimentoGrupo(Set<DiaSemana> diasRecolhimento,
+											   	   Intervalo<Date> periodoRecolhimento) {
+		
+		List<Date> datasRecolhimentoGrupo = new ArrayList<>();
+		
+		List<Calendar> datasDaSemana =
+			this.getDatasDaSemana(periodoRecolhimento);
+		
+		Set<Integer> diasRecolhimentoNaSemana = this.getDiasRecolhimentoNaSemana(diasRecolhimento);
+		
+		for (Calendar dataRecolhimento : datasDaSemana) {
+			
+			if (diasRecolhimentoNaSemana.contains(SemanaUtil.obterDiaDaSemana(dataRecolhimento))) {
+				
+				datasRecolhimentoGrupo.add(dataRecolhimento.getTime());
+			}
+		}
+		
+		return datasRecolhimentoGrupo;
+	}
+
+	private Set<Integer> getDiasRecolhimentoNaSemana(Set<DiaSemana> diasRecolhimento) {
+		
+		Set<Integer> diasRecolhimentoNaSemana = new HashSet<>();
+		
+		for (DiaSemana diaSemana : diasRecolhimento) {
+			
+			diasRecolhimentoNaSemana.add(diaSemana.getCodigoDiaSemana());
+		}
+		
+		return diasRecolhimentoNaSemana;
+	}
+
+	private List<Calendar> getDatasDaSemana(Intervalo<Date> periodoRecolhimento) {
+		
+		List<Calendar> datasDaSemana = new ArrayList<>();
+		
+		Calendar dataInicio = DateUtil.toCalendar(periodoRecolhimento.getDe());
+		Calendar dataFim = DateUtil.toCalendar(periodoRecolhimento.getAte());
+		
+		Calendar dataPeriodoRecolhimento = dataInicio;
+		
+		while(dataPeriodoRecolhimento.compareTo(dataInicio) >= 0
+				&& dataPeriodoRecolhimento.compareTo(dataFim) <= 0) {
+			
+			datasDaSemana.add(dataPeriodoRecolhimento);
+			
+			dataPeriodoRecolhimento = DateUtil.adicionarDias(dataPeriodoRecolhimento, 1);
+		}
+		
+		return datasDaSemana;
+	}
+	
+	private Set<Long> obterIdsLancamento(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		Set<Long> idsLancamento = new HashSet<>();
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : produtosRecolhimento) {
+			
+			idsLancamento.add(produtoRecolhimentoDTO.getIdLancamento());
+		}
+		
+		return idsLancamento;
+	}
+	
+	private void setDatasRecolhimentoCotasOperaDif(Map<Long, List<Date>> mapCotasDiasRecolhimento,
+												   List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+
+		List<Date> datasRecolhimento = null;
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciadaDTO : cotasOperacaoDiferenciada) {
+
+			datasRecolhimento = mapCotasDiasRecolhimento.get(cotaOperacaoDiferenciadaDTO.getIdCota());
+
+			cotaOperacaoDiferenciadaDTO.setDatasRecolhimento(datasRecolhimento);
+		}
+	}
+	
+	public void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
+												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
+												TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+												List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		
+		if (cotasOperacaoDiferenciada == null || cotasOperacaoDiferenciada.isEmpty()) {
+			
+			return;
+		}
+
+		if (matrizRecolhimento == null) {
+			
+			return;
+		}
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entry.getValue();
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+				
+				List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+					this.obterCotasOperacaoDiferenciadaPorLancamento(
+						cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+				
+				if (!cotasOperacaoDiferenciadaDoLancamento.isEmpty()) {
+					
+					this.montarMapsOperacaoDiferenciada(
+						cotasOperacaoDiferenciadaDoLancamento, mapOperacaoDifAdicionar,
+						mapOperacaoDifRemover, dataRecolhimento);
+				}
+			}
+		}
+	}
+	
+	private void atualizarEncalheSedeAtendidaDosProdutos(
+								List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+								List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		
+		if (cotasOperacaoDiferenciada == null || cotasOperacaoDiferenciada.isEmpty()) {
+			
+			return;
+		}
+
+		if (produtosRecolhimento == null || produtosRecolhimento.isEmpty()) {
+			
+			return;
+		}
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+				this.obterCotasOperacaoDiferenciadaPorLancamento(
+					cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+			
+			this.atualizarEncalheSedeAtendida(
+				produtoRecolhimento, cotasOperacaoDiferenciadaDoLancamento);
+		}
+	}
+	
+	private void atualizarEncalheSedeAtendida(
+						   ProdutoRecolhimentoDTO produtoRecolhimento,
+						   List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento) {
+		
+		BigDecimal expectativaEncalheAtendida = BigDecimal.ZERO;
+		BigDecimal expectativaEncalheSede = produtoRecolhimento.getExpectativaEncalhe();
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciadaDoLancamento) {
+			
+			expectativaEncalheAtendida = 
+				expectativaEncalheAtendida.add(cotaOperacaoDiferenciada.getExpectativaEncalhe());
+			
+			expectativaEncalheSede =
+				expectativaEncalheSede.subtract(cotaOperacaoDiferenciada.getExpectativaEncalhe());
+		}
+		
+		produtoRecolhimento.setExpectativaEncalheAtendida(expectativaEncalheAtendida);
+		produtoRecolhimento.setExpectativaEncalheSede(expectativaEncalheSede);
+	}
+	
+	private List<CotaOperacaoDiferenciadaDTO> obterCotasOperacaoDiferenciadaPorLancamento(
+										List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada,
+										Long idLancamento) {
+		
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento = new ArrayList<>();
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciada) {
+			
+			if (cotaOperacaoDiferenciada.getIdLancamento().equals(idLancamento)) {
+				
+				cotasOperacaoDiferenciadaDoLancamento.add(cotaOperacaoDiferenciada);
+			}
+		}
+		
+		return cotasOperacaoDiferenciadaDoLancamento;
+	}
+	
+	private void montarMapsOperacaoDiferenciada(List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento,
+												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
+												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
+												Date dataRecolhimento) {
+		
+		List<Date> datasRecolhimento = null;
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciadaDoLancamento) {
+			
+			datasRecolhimento = cotaOperacaoDiferenciada.getDatasRecolhimento();
+			
+			if (!datasRecolhimento.contains(dataRecolhimento)) {
+				
+				Date dataRecolhimentoEscolhida =
+					this.obterDataRecolhimentoOperacaoDiferenciada(datasRecolhimento, dataRecolhimento);
+				
+				this.addMap(mapOperacaoDifAdicionar, dataRecolhimentoEscolhida, cotaOperacaoDiferenciada);
+				
+				this.addMap(mapOperacaoDifRemover, dataRecolhimento, cotaOperacaoDiferenciada);
+			}
+		}
+	}
+
+	private void addMap(Map<Date, List<CotaOperacaoDiferenciadaDTO>> map,
+						Date dataRecolhimento,
+						CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada) {
+		
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada = map.get(dataRecolhimento);
+		
+		if (cotasOperacaoDiferenciada == null) {
+			
+			cotasOperacaoDiferenciada = new ArrayList<>();
+		}
+		
+		cotasOperacaoDiferenciada.add(cotaOperacaoDiferenciada);
+		
+		map.put(dataRecolhimento, cotasOperacaoDiferenciada);
+	}
+	
+	/*
+	 * Obtém uma data de recolhimento de acordo com a datas de recolhimento da cota.
+	 * Primeiro tenta obter uma data maior que a data de recolhimento do lançamento.
+	 * Se não houver nenhuma pega a primeira data da cota, mesmo não sendo mais que a data do lançamento.
+	 */
+	private Date obterDataRecolhimentoOperacaoDiferenciada(List<Date> datasRecolhimento,
+														   Date dataRecolhimento) {
+		
+		for (Date dataRecolhimentoOperacaoDiferenciada : datasRecolhimento) {
+			
+			if (dataRecolhimentoOperacaoDiferenciada.after(dataRecolhimento)) {
+				
+				return dataRecolhimentoOperacaoDiferenciada;
+			}
+		}
+		
+		return datasRecolhimento.get(0);
+	}
+	
+	private List<ProdutoRecolhimentoDTO> tratarAgrupamentoLancamentosComMesmaEdicao(
+											List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
+
+		Map<Long, List<Long>> mapProdutoEdicaoLancamento =
+			this.montarMapProdutoEdicaoLancamento(produtosRecolhimento);
+
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoRetorno = new ArrayList<>();
+
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+
+			if (produtoRecolhimento.isProdutoAgrupado()) {
+
+				continue;
+			}
+
+			List<Long> idLancamentos =
+				mapProdutoEdicaoLancamento.get(produtoRecolhimento.getIdProdutoEdicao());
+
+			if (this.existeMaisDeUmLancamento(idLancamentos)) {
+
+				produtosRecolhimentoAgrupados.add(produtoRecolhimento);
+				
+				this.agruparProdutosRecolhimento(
+					produtoRecolhimento, idLancamentos,
+					produtosRecolhimento, produtosRecolhimentoAgrupados);
+			}
+
+			produtosRecolhimentoRetorno.add(produtoRecolhimento);
+		}
+
+		return produtosRecolhimentoRetorno;
+	}
+	
+	private Map<Long, List<Long>> montarMapProdutoEdicaoLancamento(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		Map<Long, List<Long>> mapProdutoEdicaoLancamento = new HashMap<>();
+		
+		Long idLancamento = null;
+		Long idProdutoEdicao = null;
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			idLancamento = produtoRecolhimento.getIdLancamento();
+			idProdutoEdicao = produtoRecolhimento.getIdProdutoEdicao();
+			
+			List<Long> idLancamentos = mapProdutoEdicaoLancamento.get(idProdutoEdicao);
+			
+			if (idLancamentos == null) {
+				
+				idLancamentos = new ArrayList<>();
+			}
+			
+			idLancamentos.add(idLancamento);
+			
+			mapProdutoEdicaoLancamento.put(idProdutoEdicao, idLancamentos);
+		}
+		
+		return mapProdutoEdicaoLancamento;
+	}
+	
+	private void agruparProdutosRecolhimento(ProdutoRecolhimentoDTO produtoRecolhimento,
+											 List<Long> idLancamentos,
+											 List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+											 List<ProdutoRecolhimentoDTO> produtosRecolhimentosAgrupados) {
+
+		for (Long idLancamento : idLancamentos) {
+
+			if (produtoRecolhimento.getIdLancamento().equals(idLancamento)) {
+
+				continue;
+			}
+
+			ProdutoRecolhimentoDTO produtoRecolhimentoMesmaEdicao =
+				this.obterProdutoRecolhimento(produtosRecolhimento, idLancamento);
+
+			ProdutoRecolhimentoDTO produtoRecolhimentoAntigo = null;
+			ProdutoRecolhimentoDTO produtoRecolhimentoNovo = null;
+
+			if (this.isLancamentoMaisAntigo(produtoRecolhimento, produtoRecolhimentoMesmaEdicao)) {
+
+				produtoRecolhimentoAntigo = produtoRecolhimento;
+				produtoRecolhimentoNovo = produtoRecolhimentoMesmaEdicao;
+
+			} else {
+
+				produtoRecolhimentoAntigo = produtoRecolhimentoMesmaEdicao;
+				produtoRecolhimentoNovo = produtoRecolhimento;
+			}
+
+			this.efetivarAgrupamento(
+				produtoRecolhimento, produtoRecolhimentoAntigo,
+				produtoRecolhimentoNovo,idLancamento);
+			
+			produtosRecolhimentosAgrupados.add(produtoRecolhimentoMesmaEdicao);
+		}
+	}
+	
+	private ProdutoRecolhimentoDTO obterProdutoRecolhimento(List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+														   	Long idLancamento) {
+	
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+
+			if (produtoRecolhimento.getIdLancamento().equals(idLancamento)) {
+
+				return produtoRecolhimento;
+			}
+		}
+
+		return null;
+	}
+	
+	private void efetivarAgrupamento(ProdutoRecolhimentoDTO produtoRecolhimento,
+									 ProdutoRecolhimentoDTO produtoRecolhimentoAntigo,
+									 ProdutoRecolhimentoDTO produtoRecolhimentoNovo,
+									 Long idLancamento) {
+
+		BigDecimal encalhe =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getExpectativaEncalhe(),
+								produtoRecolhimentoNovo.getExpectativaEncalhe());
+		
+		BigDecimal encalheAtendida =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getExpectativaEncalheAtendida(), 
+								produtoRecolhimentoNovo.getExpectativaEncalheAtendida());
+		
+		BigDecimal encalheSede =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getExpectativaEncalheSede(), 
+								produtoRecolhimentoNovo.getExpectativaEncalheSede());
+		
+		BigDecimal valorTotal =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getValorTotal(), 
+								produtoRecolhimentoNovo.getValorTotal());
+		
+		Long peso =
+			produtoRecolhimentoAntigo.getPeso() + produtoRecolhimentoNovo.getPeso();
+		
+		produtoRecolhimento.setDataLancamento(produtoRecolhimentoAntigo.getDataLancamento());
+		produtoRecolhimento.setDataRecolhimentoPrevista(produtoRecolhimentoAntigo.getDataRecolhimentoPrevista());
+		produtoRecolhimento.setDataRecolhimentoDistribuidor(produtoRecolhimentoAntigo.getDataRecolhimentoDistribuidor());
+		produtoRecolhimento.setExpectativaEncalhe(encalhe);
+		produtoRecolhimento.setExpectativaEncalheAtendida(encalheAtendida);
+		produtoRecolhimento.setExpectativaEncalheSede(encalheSede);
+		produtoRecolhimento.setValorTotal(valorTotal);
+		produtoRecolhimento.setPeso(peso);
+		
+		produtoRecolhimento.getIdsLancamentosAgrupados().add(idLancamento);
+		produtoRecolhimentoAntigo.setProdutoAgrupado(true);
+		produtoRecolhimentoNovo.setProdutoAgrupado(true);
+	}
+
+	private boolean isLancamentoMaisAntigo(ProdutoRecolhimentoDTO produtoRecolhimentoDTO,
+										   ProdutoRecolhimentoDTO produtoRecolhimento) {
+
+		if (produtoRecolhimentoDTO.getDataLancamento().before(
+				produtoRecolhimento.getDataLancamento())) {
+
+			return true;
+		}
+
+		return false;
+	}
+	
+	private boolean existeMaisDeUmLancamento(List<Long> idLancamentos) {
+		
+		return idLancamentos.size() > 1;
 	}
 	
 }

@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -30,10 +30,11 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.FuroProdutoService;
+import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -65,6 +66,12 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 
 	@Autowired
 	private ItemNotaEnvioRepository itemNovaEnvioRepository;
+	
+	@Autowired
+	private MatrizLancamentoService matrizLancamentoService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository; 
 
 	@Transactional
 	@Override
@@ -111,28 +118,14 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
-		
-		boolean ultrapassouLimiteReprogramacoes =
-			lancamento.getNumeroReprogramacoes() != null
-				&& lancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE;
-		
-		boolean possuiRecebimento =
-			lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty();
-		
-		if (ultrapassouLimiteReprogramacoes && possuiRecebimento) {
-			
-			throw new ValidacaoException(
-				TipoMensagem.ERROR, "Produto não pode sofrer furo! Já ultrapassou o limite de reprogramações!");
-		}
-		
+
 		//verificar se existe distribuição nesse dia da semana
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
 		
 		if (!this.distribuicaoFornecedorRepository.verificarDistribuicaoDiaSemana(
 				codigoProduto, idProdutoEdicao, DiaSemana.getByCodigoDiaSemana(calendar.get(Calendar.DAY_OF_WEEK)))){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe distribuição para esse produto no dia " + 
-				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(novaData));
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento deve ser uma data em que o distribuidor realiza operação.");
 		}
 		
 		if (!this.distribuidorService.regimeEspecial()) {
@@ -170,7 +163,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 		
-		if (this.distribuidorService.regimeEspecial()) {
+		/*if (this.distribuidorService.regimeEspecial()) {
 			
 			List<ItemNotaEnvio> itensNotaEnvio = 
 				this.itemNovaEnvioRepository.obterItemNotaEnvio(idLancamento);
@@ -179,7 +172,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				
 				this.itemNovaEnvioRepository.remover(itemNotaEnvio);
 			}
-		}
+		}*/
 		
 		if (this.verificarProdutoExpedido(idLancamento)) {
 			
@@ -191,67 +184,67 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			
 			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
 			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
-			
+						
 		}
 		
+		ProdutoLancamentoDTO produtoLancamentoDTO = new ProdutoLancamentoDTO();
+		produtoLancamentoDTO.setNovaDataLancamento(novaData);
+		
+		lancamento.setStatus(StatusLancamento.FURO);
+		lancamento.setSequenciaMatriz(null);
+		
 		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
-		if (lancamento.getEstudo()!=null){
+		if (lancamento.getEstudo() != null) {
 			
 			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
 				
-				if (lancamento.getEstudo().getEstudoCotas()!=null && !lancamento.getEstudo().getEstudoCotas().isEmpty()){
+				if (lancamento.getEstudo().getEstudoCotas() != null && !lancamento.getEstudo().getEstudoCotas().isEmpty()) {
 					
-					for(ItemNotaEnvio item : ec.getItemNotaEnvios()){
+					for(ItemNotaEnvio item : ec.getItemNotaEnvios()) {
 						
 						item.setEstudoCota(null);
 						
-						itemNovaEnvioRepository.alterar(item);
+						itemNovaEnvioRepository.merge(item);
 					}
 				}
 			}
 		}
 		
+		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
+		
 		lancamento.setDataLancamentoDistribuidor(novaData);
-		lancamento.setStatus(StatusLancamento.FURO);
-		lancamento.setNumeroReprogramacoes(this.atualizarNumeroReprogramacoes(lancamento));
+		lancamento.setUsuario(usuario);
 		lancamento.setExpedicao(null);
 		
+		
+		/*
+		 * Alterado data do furo p/ inserir com data do sistema
+		 * 
+		 * A data do furo deve estar de acordo com a expedição devido a possibilidade de data do sistema defasada.
+		 */
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		FuroProduto furoProduto = new FuroProduto();
-		furoProduto.setData(new Date());
+		furoProduto.setData(dataOperacao);
 		furoProduto.setLancamento(lancamento);
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(idProdutoEdicao);
 		furoProduto.setProdutoEdicao(produtoEdicao);
-		Usuario usuario = new Usuario();
-		usuario.setId(idUsuario);
 		furoProduto.setUsuario(usuario);
 		
 		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
 		historicoLancamento.setDataEdicao(new Date());
 		historicoLancamento.setLancamento(lancamento);
 		historicoLancamento.setResponsavel(usuario);
-		historicoLancamento.setStatus(lancamento.getStatus());
+		historicoLancamento.setStatusNovo(lancamento.getStatus());
 		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
 		this.lancamentoRepository.alterar(lancamento);
 		
-		this.historicoLancamentoRepository.adicionar(historicoLancamento);
-	}
-	
-	private Integer atualizarNumeroReprogramacoes(Lancamento lancamento) {
-		
-		Integer numeroReprogramacoes = lancamento.getNumeroReprogramacoes();
-		
-		if (numeroReprogramacoes == null) {
-			
-			numeroReprogramacoes = 0;
-		}
-		
-		numeroReprogramacoes++;
-		
-		return numeroReprogramacoes;
+		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+		//this.historicoLancamentoRepository.adicionar(historicoLancamento);
 	}
 	
 }

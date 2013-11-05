@@ -46,6 +46,16 @@ public class PoliticaCobranca {
 	@Column(name = "FORMA_EMISSAO")
 	private FormaEmissao formaEmissao;
 	
+	@Column(name="COBRANCA_BO")
+	private boolean cobradoPeloBackoffice; 
+
+	@Column(name = "FATOR_VENCIMENTO")
+	private Integer fatorVencimento;
+	
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_PADRAO_ID")
+	private Fornecedor fornecedorPadrao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -110,5 +120,27 @@ public class PoliticaCobranca {
 		this.formaEmissao = formaEmissao;
 	}
 
-	
+	public boolean isCobradoPeloBackoffice() {
+		return cobradoPeloBackoffice;
+	}
+
+	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
+		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
+	}
+
+	public Integer getFatorVencimento() {
+		return fatorVencimento;
+	}
+
+	public void setFatorVencimento(Integer fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
+	}
+
+	public Fornecedor getFornecedorPadrao() {
+		return fornecedorPadrao;
+	}
+
+	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
+		this.fornecedorPadrao = fornecedorPadrao;
+	}
 }

@@ -27,6 +27,10 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean parcial;
 	
+	private boolean isContagemPacote;
+	
+	private boolean parcialCalculado;
+	
 	/**
 	 * Utilizado como referência para o valor do reparte.
 	 */
@@ -51,6 +55,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private String codigoDeBarras;
 	
 	private Date dataRecolhimento;
+	
+	private Date dataConferencia;
 	
 	private Integer codigoSM;
 	
@@ -118,6 +124,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	public Date getDataConferencia() {
+		return dataConferencia;
+	}
+
+	public void setDataConferencia(Date dataConferencia) {
+		this.dataConferencia = dataConferencia;
 	}
 
 	public Integer getCodigoSM() {
@@ -249,7 +263,9 @@ public class ConferenciaEncalheDTO implements Serializable {
 	}
 
 	public void setTipoChamadaEncalhe(String tipoChamadaEncalhe) {
-		this.tipoChamadaEncalhe = TipoChamadaEncalhe.valueOf(tipoChamadaEncalhe);
+		if(tipoChamadaEncalhe != null && !tipoChamadaEncalhe.isEmpty()) {
+			this.tipoChamadaEncalhe = TipoChamadaEncalhe.valueOf(tipoChamadaEncalhe);
+		}
 	}
 
 	public BigDecimal getPrecoCapaInformado() {
@@ -268,6 +284,20 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.parcial = parcial;
 	}
 
+	/**
+	 * @return the isContagemPacote
+	 */
+	public boolean getIsContagemPacote() {
+		return isContagemPacote;
+	}
+
+	/**
+	 * @param isContagemPacote the isContagemPacote to set
+	 */
+	public void setContagemPacote(boolean isContagemPacote) {
+		this.isContagemPacote = isContagemPacote;
+	}
+
 	public BigInteger getQtdReparte() {
 		return qtdReparte;
 	}
@@ -284,8 +314,22 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.precoComDesconto = precoComDesconto;
 	}
 
-	public Boolean isJuramentada() {
+	public Boolean getJuramentada() {
 		return juramentada;
+	}
+	
+	/**
+	 * @return the parcialCalculado
+	 */
+	public boolean isParcialCalculado() {
+		return parcialCalculado;
+	}
+
+	/**
+	 * @param parcialCalculado the parcialCalculado to set
+	 */
+	public void setParcialCalculado(boolean parcialCalculado) {
+		this.parcialCalculado = parcialCalculado;
 	}
 
 	@Override

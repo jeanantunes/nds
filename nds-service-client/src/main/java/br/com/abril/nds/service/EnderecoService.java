@@ -52,11 +52,18 @@ public interface EnderecoService {
 
 	List<String> obterListaLocalidadePdv();
 
-	List<String> obterLocalidadesPorUF(String uf);
+	List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf);
+	
+	List<String> obterLocalidadesPorUFPDVBoxEspecial(String uf);
 
 	public abstract List<String> obterBairrosCotas();
 	
-	List<String> obterUnidadeFederativaAssociadaComEndereco();
+	List<String> obterUnidadeFederativaPDVSemRoteirizacao();
 	
 	Long obterQtdEnderecoAssociadoCota(Long idCota);
+	
+	List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade);
+	
+	List<String> obterBairrosPDVBoxEspecial(String uf, String cidade);
+	
 }

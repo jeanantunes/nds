@@ -49,7 +49,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@ManyToMany(mappedBy="movimentos", fetch=FetchType.EAGER)
 	private List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota;
 	
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Fornecedor fornecedor;
 	
 	public Cota getCota() {

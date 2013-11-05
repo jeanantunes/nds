@@ -121,6 +121,8 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	Long qntDiasReutilizacaoCodigoCota();
 
 	Set<PoliticaCobranca> politicasCobranca();
+	
+	Set<PoliticaCobranca> politicasCobrancaAtivas();
 
 	String assuntoEmailCobranca();
 
@@ -147,4 +149,16 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	ParametroContratoCota parametroContratoCota();
 
 	ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor();
+	
+	boolean utilizaControleAprovacaoFaltaSobra();
+
+	boolean isConferenciaCegaRecebimentoFisico();
+	
+	boolean naoAcumulaDividas();
+	
+	Integer numeroMaximoAcumuloDividas();
+	
+	List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
+			OperacaoDistribuidor operacaoDistribuidor);
+
 }

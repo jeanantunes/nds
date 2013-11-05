@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
@@ -36,6 +38,8 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
@@ -43,16 +47,22 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.repository.TelefoneDistribuidorRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -78,6 +88,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private static final String DB_NAME = "db_parametro_distribuidor";
 	
+	@Autowired
+	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
+
 	@Autowired
 	private DistribuidorService distribuidorService;
 
@@ -112,6 +125,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private CouchDbProperties couchDbProperties;
 	
 	private CouchDbClient couchDbClient;
+	
+	@Autowired
+	private TelefoneRepository telefoneRepository;
+	
+	@Autowired
+	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
+	
+	
 	
 	@PostConstruct
 	public void initCouchDbClient() {
@@ -151,6 +172,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosDistribuidor.setEndereco(
 			this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
+		
+		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
 		parametrosDistribuidor.setRegimeTributario(distribuidor.getTipoAtividade());
 		parametrosDistribuidor.setObrigacaoFiscal(distribuidor.getObrigacaoFiscal());
@@ -231,6 +254,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			break;
 			}
 		}
+		
+		parametrosDistribuidor.setNomeArquivoInterfaceLED1(distribuidor.getArquivoInterfaceLedPicking1());
+		parametrosDistribuidor.setNomeArquivoInterfaceLED2(distribuidor.getArquivoInterfaceLedPicking2());
+		parametrosDistribuidor.setNomeArquivoInterfaceLED3(distribuidor.getArquivoInterfaceLedPicking3());
 		
 		// Impressão Interface LED
 		if (distribuidor.getTipoImpressaoInterfaceLED() != null)
@@ -363,6 +390,59 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return parametrosDistribuidor;
 	}
 	
+	private void atribuirDadosTelefoneDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor, Distribuidor distribuidor) {
+		
+		TelefoneDistribuidor telefone = this.getTefoneDistribuidorPrincipal(distribuidor);
+		
+		if(telefone!= null){
+			parametrosDistribuidor.setNumeroDDD(telefone.getTelefone().getDdd());
+			parametrosDistribuidor.setNumeroTelefone(telefone.getTelefone().getNumero());
+		}
+	}
+	
+	private TelefoneDistribuidor getTefoneDistribuidorPrincipal(Distribuidor distribuidor){
+		
+		for(TelefoneDistribuidor item : distribuidor.getTelefones()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		
+		return null;
+	}
+	
+	private void gravarTelefoneDistribuidor(Distribuidor distribuidor, String numerotelefone, String numeroDD){
+		
+		TelefoneDistribuidor telefoneFDistribuidor = this.getTefoneDistribuidorPrincipal(distribuidor);
+		
+		if (telefoneFDistribuidor == null){
+			
+			Telefone telefone = new Telefone();
+			telefone.setDdd(numeroDD);
+			telefone.setNumero(numerotelefone);
+			
+			telefone.setId(telefoneRepository.adicionar(telefone));
+			
+			telefoneFDistribuidor = new TelefoneDistribuidor();
+			
+			telefoneFDistribuidor.setDistribuidor(distribuidor);
+			telefoneFDistribuidor.setPrincipal(true);
+			telefoneFDistribuidor.setTipoTelefone(TipoTelefone.COMERCIAL);
+			telefoneFDistribuidor.setTelefone(telefone);
+			
+			telefoneDistribuidorRepository.adicionar(telefoneFDistribuidor);
+			
+		}
+		else{
+			
+			Telefone telefone = telefoneFDistribuidor.getTelefone();
+			telefone.setDdd(numeroDD);
+			telefone.setNumero(numerotelefone);
+			
+			telefoneRepository.alterar(telefone);
+		}
+	}
+
 	private PessoaJuridica gravarPessoaJuridicaDistribuidor(Distribuidor distribuidor,
 															ParametrosDistribuidorVO parametrosDistribuidor) {
 		
@@ -493,19 +573,25 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
 		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
 		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
+		
 		if(politicaChamadao == null) {
 		    politicaChamadao = new PoliticaChamadao();
 		    distribuidor.setPoliticaChamadao(politicaChamadao);
 		}
+		
 		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
 		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
-		if (parametrosDistribuidor
-							.getChamadaoValorConsignado() != null) {
-			BigDecimal chamadaoConsignado = CurrencyUtil
-					.getBigDecimal(parametrosDistribuidor
-							.getChamadaoValorConsignado());
-			politicaChamadao.setValorConsignado(chamadaoConsignado);
+
+		BigDecimal chamadaoConsignado = null;
+		
+		if (parametrosDistribuidor.getChamadaoValorConsignado() != null) {
+			
+			chamadaoConsignado =
+				CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
 		}
+		
+		politicaChamadao.setValorConsignado(chamadaoConsignado);
+		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
@@ -531,7 +617,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 												? new BigInteger(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento().toString())
 												: null);
 		
-		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
+		distribuidor.setQntDiasReutilizacaoCodigoCota(
+			parametrosDistribuidor.getReutilizacaoCodigoCotaInativa() == null 
+				? null : parametrosDistribuidor.getReutilizacaoCodigoCotaInativa() * 30);
 		
 		distribuidor.setUtilizaSugestaoIncrementoCodigo(parametrosDistribuidor.isUtilizaSugestaoIncrementoCodigo());
 
@@ -596,6 +684,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 			distribuidor.setTipoImpressaoInterfaceLED(null);
 		}
+		
+		distribuidor.setArquivoInterfaceLedPicking1(parametrosDistribuidor.getNomeArquivoInterfaceLED1());;
+		distribuidor.setArquivoInterfaceLedPicking2(parametrosDistribuidor.getNomeArquivoInterfaceLED2());;
+		distribuidor.setArquivoInterfaceLedPicking3(parametrosDistribuidor.getNomeArquivoInterfaceLED3());;
+		
+		distribuidor.setPararAcumuloDividas(parametrosDistribuidor.isPararAcumuloDividas());
 
 		// Impressão NECA / Danfe
 		if (parametrosDistribuidor.getImpressaoNECADANFE() != null && !parametrosDistribuidor.getImpressaoNECADANFE().isEmpty() && !parametrosDistribuidor.getImpressaoNECADANFE().equalsIgnoreCase(UNDEFINED)) {
@@ -685,7 +779,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
-		this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
+		if (parametrosDistribuidor.getUtilizaControleAprovacao()){
+		    
+			this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
+		}
 		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
 		
@@ -702,14 +799,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				 					 		   !parametrosDistribuidor.getNegociacao());
 		
 		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
-		
-//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
-//		  	  Tratar futuramente, como será utilizado o parametro de ajuste.
-//		
-//		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
-//				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
-//				 					 		!parametrosDistribuidor.getAjusteEstoque());
-		
+				
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
 		
 		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
@@ -796,6 +886,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
+		
+		this.gravarTelefoneDistribuidor(distribuidor, parametrosDistribuidor.getNumeroTelefone(), parametrosDistribuidor.getNumeroDDD());
 	}
 	
 	private void validarUtilizacaoControleAprovacao(ParametrosDistribuidorVO parametrosDistribuidor) {
@@ -807,7 +899,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroDebitosCreditos())) {
 	
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para débitos e créditos. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Débitos e Créditos]. Existem movimentos pendentes!");
 			}
 		}
 
@@ -816,9 +908,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroNegociacao())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para negociação. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Negociação]. Existem movimentos pendentes!");
 			}
 		}
+		
 //		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
 //			  Tratar futuramente, como será utilizado o parametro de ajuste.
 //		if (!parametrosDistribuidor.getAjusteEstoque()) {
@@ -826,7 +919,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 //					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
 //
 //				mensagens.add(
-//					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
+//					"Não é possível não utilizar controle de [Aprovação] para [Ajuste de Estoque]. Existem movimentos pendentes!");
 //			}
 //		}
 
@@ -835,7 +928,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroPostergacaoCobranca())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para postergacao de cobranca. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Postergação de Cobranca]. Existem movimentos pendentes!");
 			}
 		}
 
@@ -844,7 +937,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueDevolucaoFornecedor())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para devolucao fornecedor. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Devolucao Fornecedor]. Existem movimentos pendentes!");
 			}
 		}
 
@@ -853,7 +946,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueFaltasSobras())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para faltas e sobras. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Faltas e Sobras]. Existem movimentos pendentes!");
 			}
 		}
 		
@@ -878,24 +971,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return gruposMovimentoFinanceiro;
 	}
-	
-	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
-		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
-		
-		return gruposMovimentoEstoque;
-	}
-	
+
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
 		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
@@ -917,7 +993,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
 			Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
-						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
+						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM,
+						  GrupoMovimentoEstoque.FALTA_DE_COTA, GrupoMovimentoEstoque.FALTA_EM_COTA,
+						  GrupoMovimentoEstoque.SOBRA_DE_COTA, GrupoMovimentoEstoque.SOBRA_EM_COTA);
 		
 		return gruposMovimentoEstoque;
 	}
@@ -1097,5 +1175,31 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			return true;
 		return false;
 	}
-	
+
+	/**
+	 * Obtém o ControleConferenciaEncalhe referente a dataOperacao atual.
+	 * 
+	 * @param dataOperacao
+	 * 
+	 * @return ControleConferenciaEncalhe
+	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public ControleConferenciaEncalhe obterControleConferenciaEncalhe(Date dataOperacao) {
+		
+		ControleConferenciaEncalhe controleConferenciaEncalhe = controleConferenciaEncalheRepository.obterControleConferenciaEncalhe(dataOperacao);
+		
+		if(controleConferenciaEncalhe == null) {
+			
+			controleConferenciaEncalhe = new ControleConferenciaEncalhe();
+			
+			controleConferenciaEncalhe.setData(dataOperacao);
+			
+			controleConferenciaEncalhe.setStatus(StatusOperacao.EM_ANDAMENTO);
+			
+			controleConferenciaEncalheRepository.adicionar(controleConferenciaEncalhe);
+		}
+		
+		return controleConferenciaEncalhe;
+		
+	}
 }

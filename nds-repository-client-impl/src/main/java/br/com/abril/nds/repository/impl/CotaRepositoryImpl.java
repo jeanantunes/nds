@@ -2,6 +2,8 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -22,6 +25,7 @@ import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,19 +41,21 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -58,6 +64,9 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -103,6 +112,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						"select c from Cota c where c.numeroCota = :numeroCota");
 		
 		query.setParameter("numeroCota", numeroCota);
+		query.setCacheable(true);
 		
 		return (Cota) query.uniqueResult();
 	}
@@ -211,10 +221,86 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	@SuppressWarnings("unchecked")
 	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
-			String sortColumn, Integer inicio, Integer rp) {
+			String sortColumn, Integer inicio, Integer rp, Date dataOperacao) {
 
-		StringBuilder sql = new StringBuilder(querySuspensaoCota);
-
+		StringBuilder hqlConsignado = new StringBuilder();
+		hqlConsignado.append(" SELECT SUM(")
+					 .append(" MOVIMENTOCOTA.PRECO_COM_DESCONTO ")
+					 .append(" *(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
+					 .append(" FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
+					 .append(" JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
+					 .append(" JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
+					 .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID  ")
+					 .append(" AND MOVIMENTOCOTA.DATA <= :dataOperacao ")
+					 .append(" AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
+					 .append(" OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ")
+					 .append(" AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE != :tipoMovimentoEstorno ")
+					 .append(" AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
+		
+		StringBuilder hqlDividaAcumulada = new StringBuilder();
+		hqlDividaAcumulada.append(" SELECT SUM(COALESCE(D.VALOR,0)) ")
+						  .append("	FROM DIVIDA D ")
+						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
+						  .append("	WHERE D.COTA_ID = COTA_.ID ")
+						  .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
+				
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COTA_.ID AS IDCOTA, ")
+		.append("		COTA_.NUMERO_COTA AS numCota, ")
+		.append("		PESSOA_.NOME AS nome, ")
+		.append("		PESSOA_.RAZAO_SOCIAL AS RAZAOSOCIAL, ")
+		//consignado
+		.append("		(")
+		.append(hqlConsignado)
+		.append("		) AS vlrConsignado, ")
+		//reparte
+		.append("		(SELECT SUM(")
+		.append(" 		MOVIMENTOCOTA.PRECO_COM_DESCONTO ")
+		.append("		*(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
+		.append("		FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
+		.append("		JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
+		.append("		JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
+		.append("		WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
+		.append("		AND MOVIMENTOCOTA.DATA = :dataOperacao ")
+		.append("		AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
+		.append("			OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ")
+		.append("		AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE != :tipoMovimentoEstorno ")
+		.append("		AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
+		.append("		) AS vlrReparte, ")
+		//divida acumulada
+		.append("		(")
+		.append(hqlDividaAcumulada)
+		.append(" 		) AS dividaAcumulada, ")
+		//data abertura
+		.append("		(SELECT ")
+		.append("			MIN(COBRANCA_.DT_VENCIMENTO) FROM COBRANCA COBRANCA_")
+		.append("		WHERE COBRANCA_.COTA_ID=COTA_.ID  ")
+		.append("		AND COBRANCA_.STATUS_COBRANCA='NAO_PAGO' ")
+		.append("		AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento) AS DATAABERTURA, ")
+		//faturamento
+		.append("		(SELECT SUM(")
+		.append("			(EPC.QTDE_RECEBIDA - EPC.QTDE_DEVOLVIDA) * MOVIMENTOCOTA.PRECO_COM_DESCONTO) / :intervalo ")
+		.append("		FROM ESTOQUE_PRODUTO_COTA EPC ")
+		.append("		JOIN MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ON (MOVIMENTOCOTA.ESTOQUE_PROD_COTA_ID = EPC.ID) ")
+		.append("		WHERE EPC.COTA_ID = COTA_.ID ")
+		.append("		AND MOVIMENTOCOTA.DATA BETWEEN :dataOperacaoIntervalo AND :dataOperacao ")
+		.append("		) AS faturamento, ")
+		//percDivida = dividaAcumulada / vlrConsignado
+		.append("		((")
+		.append(hqlDividaAcumulada)
+		.append(" 		) / ")
+		.append("		(")
+		.append(hqlConsignado)
+		.append("		) * 100) as percDivida, ")
+		.append("		COALESCE(DATEDIFF(:dataOperacao, ")
+		.append("				(SELECT MIN(D.DATA) FROM DIVIDA D WHERE D.COTA_ID = COTA_.ID ")
+		.append("												  AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("												  AND D.DATA <= :dataOperacao) ")
+		.append("		),0) AS diasAberto ");
+		
+		this.setFromWhereCotasSujeitasSuspensao(sql);
+		
 		sql.append(obterOrderByCotasSujeitasSuspensao(sortOrder, sortColumn));
 
 		if (inicio != null && rp != null) {
@@ -225,8 +311,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				.addScalar("idCota").addScalar("numCota")
 				.addScalar("vlrConsignado").addScalar("vlrReparte")
 				.addScalar("dividaAcumulada").addScalar("nome")
-				.addScalar("razaoSocial").addScalar("dataAbertura");
-
+				.addScalar("razaoSocial").addScalar("dataAbertura")
+				.addScalar("faturamento").addScalar("percDivida")
+				.addScalar("diasAberto");
+		
+		this.setParametrosCotasSujeitasSuspensao(query, dataOperacao);
+		
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		
+		int intervalo = 35;
+		query.setParameter("intervalo", intervalo);
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dataOperacao);
+		calendar.add(Calendar.DAY_OF_MONTH, intervalo * -1);
+		query.setParameter("dataOperacaoIntervalo", calendar.getTime());
+		
 		if (inicio != null && rp != null) {
 			query.setInteger("inicio", inicio);
 			query.setInteger("qtdeResult", rp);
@@ -236,6 +337,80 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				.aliasToBean(CotaSuspensaoDTO.class));
 
 		return query.list();
+	}
+
+	private void setParametrosCotasSujeitasSuspensao(Query query, Date dataOperacao) {
+		
+		query.setParameter("tipoDocumento", TipoCobranca.BOLETO.name());
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
+		query.setParameterList("statusDividaEmAbertoPendente", new String[]{StatusDivida.EM_ABERTO.name(), StatusDivida.PENDENTE.name()});
+	}
+
+private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
+		
+		sql.append(" FROM COTA COTA_ ")
+		.append(" JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
+		.append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
+		.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
+		.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO=true ")
+		
+		.append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+		.append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
+		.append("		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <= ( ")
+		.append("											SELECT count(DIVIDA.ID) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
+		.append("	   ) ")
+		.append("	   OR ")
+		
+		
+		.append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ")
+		.append("       AND POLITICACOTA.VALOR_SUSPENSAO <> 0 ")
+		.append("		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
+			
+		
+
+		.append("	   ) ")
+		.append("	   OR ")
+		
+		.append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
+		.append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ")
+		.append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ")
+		.append("		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (")
+		.append("											SELECT count(DIVIDA.ID) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
+		.append("	   ) ")
+		.append("	   OR ")
+		
+		.append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
+		.append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ")
+		.append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0")
+		.append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
+		
+		.append("	   ) ")
+		.append(")");
 	}
 
 	private String obterOrderByCotasSujeitasSuspensao(String sortOrder,
@@ -260,6 +435,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			sql += "dividaAcumulada";
 		} else if (sortColumn.equalsIgnoreCase("diasAberto")) {
 			sql += "dataAbertura";
+		} else if (sortColumn.equalsIgnoreCase("faturamento")){
+			sql += "faturamento";
+		} else if (sortColumn.equalsIgnoreCase("percDivida")){
+			sql += "percDivida";
 		} else {
 			return "";
 		}
@@ -340,11 +519,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	@Override
-	public Long obterTotalCotasSujeitasSuspensao() {
+	public Long obterTotalCotasSujeitasSuspensao(Date dataOperacao) {
 
-		StringBuilder sql = new StringBuilder(queryCountSuspensaoCota);
+		StringBuilder sql = new StringBuilder("SELECT COUNT(COTA_.ID) ");
+		
+		this.setFromWhereCotasSujeitasSuspensao(sql);
 
 		Query query = getSession().createSQLQuery(sql.toString());
+		
+		this.setParametrosCotasSujeitasSuspensao(query, dataOperacao);
 
 		Long qtde = ((BigInteger) query.uniqueResult()).longValue();
 
@@ -397,7 +580,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		Query query = this.getSession().createQuery(hql.toString());
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
-
+ 
 		for (String key : param.keySet()) {
 			query.setParameter(key, param.get(key));
 		}
@@ -467,7 +650,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		param.put("codigoProduto", filtro.getCodigoProduto());
 		param.put("numeroEdicao", filtro.getNumeroEdicao());
 		param.put("status", StatusLancamento.EXPEDIDO);
-		param.put("dataAtual", new Date());
+		param.put("dataAtual", filtro.getDataOperacao());
 		param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
 
 		if (filtro.getNumeroCota() != null) {
@@ -1020,35 +1203,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCotaTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
-	 */
-	@Override
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
-
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) ) ");
-
-		hql.append(getWhereQueryObterCurvaABCCota(filtro));
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		HashMap<String, Object> param = getParametrosObterCurvaABCCota(filtro);
-
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-		
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
-		}
-		
-		return (ResultadoCurvaABCCotaDTO) query.list().get(0);
-	}
-
-	/* (non-Javadoc)
 	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCota(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
 	 */
 	@Override
@@ -1064,7 +1218,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) , ")
-		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
+		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id, estoqueProdutoCota.produtoEdicao.id ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
@@ -1076,15 +1230,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-		
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
-		}
 
 		return complementarCurvaABCCota((List<RegistroCurvaABCCotaDTO>) query.list());
-
 	}
 
 	/**
@@ -1200,6 +1347,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
 			param.put("municipio", filtro.getMunicipio());
+		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			param.put("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 
 		return param;
@@ -1328,7 +1479,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
 		
-		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero from Cota cota ");
+		StringBuilder hql = new StringBuilder("select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from Cota cota ");
 
 		hql.append(" join cota.pessoa pessoa ");
 		
@@ -1353,7 +1504,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 		
-		StringBuilder hql = new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
+		StringBuilder hql = new StringBuilder(" select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
 		
 		hql.append(" join cotaAusente.cota cota ");
 		
@@ -1382,7 +1533,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 		
 		StringBuilder hql = 
-			new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
+			new StringBuilder(" select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
 		
 		hql.append(" join chamadaEncalheCota.cota cota ");
 		
@@ -1391,10 +1542,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
 		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
 		hql.append(" join controleConferenciaEncalheCota.cota cota ");
-		hql.append(" where controleConferenciaEncalheCota.dataOperacao >= :dataRecolhimentoEncalhe ");
+		hql.append(" where controleConferenciaEncalheCota.dataOperacao = :dataRecolhimentoEncalhe ");
 		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
-		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataRecolhimentoEncalhe ");
+		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
 		hql.append(" group by chamadaEncalheCota.cota.id ");
+		hql.append(" order by cota.numeroCota");
 
 		Query query = this.getSession().createQuery(hql.toString());
 
@@ -1434,7 +1586,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 					intervaloBox.getAte()));
 		}
 		
-		if(situacoesCadastro != null){
+		if(situacoesCadastro != null && !situacoesCadastro.isEmpty()){
 			criteria.add(Restrictions.in("situacaoCadastro", situacoesCadastro));
 		}
 		
@@ -1454,9 +1606,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		
 		criteria.addOrder(Order.asc("box.codigo"));
-		criteria.addOrder(Order.asc("roteiro.ordem"));
-		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
-		criteria.addOrder(Order.asc("rota.ordem"));
+		criteria.addOrder(Order.asc("rota.id"));
 		criteria.addOrder(Order.asc("rota.descricaoRota"));
 		criteria.addOrder(Order.asc("numeroCota"));
 		
@@ -1614,9 +1764,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
-			sql.append( " select "
+			sql.append( " select lancamento_.STATUS as status, "
 				+ "	        cota_.ID as idCota, "
 				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(mec.QTDE) as exemplares, "
@@ -1722,6 +1873,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						&& filtro.getIntervaloMovimento().getDe() != null 
 						&& filtro.getIntervaloMovimento().getAte() != null) {
 					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+					sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
 				}
 				
 				sql.append(
@@ -1730,14 +1882,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	
-	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		
+	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
-			sql.append( " select "
+			sql.append( " select lancamento_.STATUS as status,  "
 			+ "	        cota_.ID as idCota, "
 			+ "	        cota_.NUMERO_COTA as numeroCota, "
+			+ "	        cota_.BOX_ID as box, "
 			+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 			+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 			+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
@@ -1789,9 +1942,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
 		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
-		+ "	   	where "
-		+ "	        lancamento_.STATUS in (:status) "
-		+ "		and pdv_.ponto_principal = :principal ");
+		+ "	   	where 1=1 "
+		+ "		and pdv_.ponto_principal = :principal " 
+		+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis) ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			sql.append(
@@ -1844,9 +1997,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
-			sql.append( " select "
+			sql.append( " select lancamento_.STATUS as status,  "
 				+ "	        cota_.ID as idCota, "
 				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
@@ -1898,7 +2052,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				+ "		left outer join NOTA_ENVIO_ITEM nei " 
 		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 				+ "	   	where "
-				+ "	        lancamento_.STATUS in (:status)  "
+				+ "	        lancamento_.STATUS not in (:status)  "
+				+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis)  "
 				+ "    	and  nei.estudo_cota_id is null "
 				+ "		and pdv_.ponto_principal = :principal ");
 				
@@ -1940,6 +2095,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						&& filtro.getIntervaloMovimento().getDe() != null 
 						&& filtro.getIntervaloMovimento().getAte() != null) {
 					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+					sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
 				}
 				
 				sql.append(
@@ -1951,7 +2107,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			FiltroConsultaNotaEnvioDTO filtro, Query query, boolean isCount) {
 		
 		query.setParameter("principal", true);
-		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
+
+		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
+		query.setParameterList("statusNaoEmitiveis", new String[]{StatusLancamento.PLANEJADO.name(), StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
+		
 		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
@@ -2158,6 +2317,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		gerarOrderByObterQtdeCotaMunicipio(hql, sortname, sortorder);
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("situacoesCota", Arrays.asList(SituacaoCadastro.PENDENTE, SituacaoCadastro.INATIVO));
 				
 		query.setResultTransformer(new AliasToBeanResultTransformer(MunicipioDTO.class));
 
@@ -2191,12 +2352,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		hql.append(" from Cota cota ");
 		hql.append(" join cota.pessoa pessoa ");
-		hql.append(" join cota.pdvs pdv ");
-		hql.append(" join cota.enderecos enderecoCota ");
-		hql.append(" join enderecoCota.endereco endereco ");
+		hql.append(" left join cota.pdvs pdv ");
+		hql.append(" left join cota.enderecos enderecoCota ");
+		hql.append(" left join enderecoCota.endereco endereco ");
 		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
 		hql.append(" and enderecoCota.principal=true ");
+		hql.append(" and cota.situacaoCadastro not in (:situacoesCota) ");
 	}
 	
 	@Override
@@ -2209,6 +2371,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		gerarWhereFromObterQtdeCotaMunicipio(hql);
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("situacoesCota", Arrays.asList(SituacaoCadastro.PENDENTE, SituacaoCadastro.INATIVO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}
@@ -2271,7 +2435,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public Cota buscarCotaPorID(Long idCota) {
     	
     	String queryString = " select cota from Cota cota "
-				   + " join fetch cota.fornecedores fornecedores "
+				   + " left join fetch cota.fornecedores fornecedores "
 				   + " where cota.id = :idCota ";
 
 		Query query = this.getSession().createQuery(queryString);
@@ -2833,4 +2997,234 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer buscarNumeroCotaPorId(Long idCota) {
+
+		Criteria criteria = getSession().createCriteria(Cota.class);
+		
+		criteria.add(Restrictions.eq("id", idCota));
+		
+		criteria.setProjection(Projections.property("numeroCota"));
+		
+		return (Integer) criteria.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> obterIdsCotasPorMunicipio(String municipio){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.id ");
+				
+		hql.append(" from Cota cota ");
+		hql.append(" join cota.enderecos enderecoCota ");
+		hql.append(" join enderecoCota.endereco endereco ");
+		
+		hql.append(" where enderecoCota.principal=true ");
+		hql.append(" and endereco.cidade = :cidade ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("cidade", municipio);
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoAbastecimentoDTO> obterCotaPorProdutoEdicaoData(FiltroMapaAbastecimentoDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select distinct estudoCota.cota as cota");
+				
+		hql.append(" from EstudoCota estudoCota ");
+		hql.append(" join estudoCota.estudo estudo ");
+		
+		hql.append(" join estudoCota.cota cota ");
+		hql.append(" join estudo.produtoEdicao pe ");
+		hql.append(" join pe.produto p ");
+		hql.append(" join pe.lancamentos l ");
+		hql.append(" where ");
+		
+		for (int i = 0; i < filtro.getCodigosProduto().size(); i++ ) {
+			hql.append(" p.codigo = :codigoProduto_" + i + " and ");
+		}
+		hql.append(" pe.numeroEdicao = :numeroEdicao and ");
+		hql.append(" ( l.status = :balanceado or l.status = :expedido ) and ");
+		hql.append(" l.dataLancamentoPrevista = :dataPrevista ");
+		
+		
+		/*
+		hql.append(" where estudo.dataLancamento in ( ");
+		hql.append(" select lancamento.dataLancamentoPrevista from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" where ");
+		
+		for (int i = 0; i < filtro.getCodigosProduto().size(); i++ ) {
+			hql.append(" produto.codigo = :codigoProduto_" + i + " and ");
+		}
+		hql.append(" produtoEdicao.numeroEdicao = :numeroEdicao and ");
+		hql.append(" ( lancamento.status = :balanceado or lancamento.status = :expedido ) and ");
+		hql.append(" lancamento.dataLancamentoPrevista = :dataPrevista ");
+		
+		hql.append(" )");
+		*/
+		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		for(int i = 0; i < filtro.getCodigosProduto().size(); i++ ) {
+			query.setParameter("codigoProduto_" + i, filtro.getCodigosProduto().get(i));
+		}
+		query.setParameter("numeroEdicao", filtro.getEdicaoProduto());
+		query.setParameter("balanceado", StatusLancamento.BALANCEADO);
+		query.setParameter("expedido", StatusLancamento.EXPEDIDO);
+		query.setParameter("dataPrevista", filtro.getDataDate());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+		
+		return query.list();
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota, Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDateRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder("")
+			.append(" select ")
+			.append(" c.NUMERO_COTA as numeroCota, ")
+        	.append(" coalesce(p.NOME, p.RAZAO_SOCIAL, p.NOME_FANTASIA) as nomePessoa ")
+        	.append(" from COTA c ")
+        	.append(" inner join PESSOA p on c.PESSOA_ID=p.ID ")
+        	.append(" inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ")
+    		.append(" inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
+        	
+    	if (intervaloDataLancamento != null) {
+    		hql .append(" inner join LANCAMENTO l on e.PRODUTO_EDICAO_ID=l.PRODUTO_EDICAO_ID and e.DATA_LANCAMENTO=l.DATA_LCTO_PREVISTA ");
+    	}
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql .append(" inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
+    			.append(" inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
+    	}
+    	
+    	hql	.append(" where 1=1")
+    		.append(" and ( ")
+        	.append(" 	c.NUMERO_COTA not in ( ")
+        	.append("     	select distinct c.NUMERO_COTA ")
+        	.append("     	from ROTEIRIZACAO rot ")
+        	.append("     	inner join ROTEIRO r on rot.ID=r.ROTEIRIZACAO_ID ") 
+        	.append("     	inner join ROTA rota on r.ID=rota.ROTEIRO_ID ") 
+        	.append("     	inner join ROTA_PDV rp on rota.ID=rp.ROTA_ID ") 
+        	.append("     	inner join PDV pdv on rp.PDV_ID=pdv.ID ") 
+        	.append("     	inner join COTA c on pdv.COTA_ID=c.ID ")
+        	.append("     	inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ") 
+        	.append("     	inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
+	    	
+    	hql	.append(" 	where rot.box_id is not null ) ")
+    		.append(" ) ");
+    	
+    	if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null) {
+			hql	.append(" and ( ")
+				.append(" 	c.NUMERO_COTA between :de and :ate ")
+				.append(" ) ");
+		}
+    	
+    	if (intervaloDataLancamento != null) {
+	    	hql	.append(" and ( ")
+	    		.append(" 	l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte ")
+	    		.append(" ) ");
+    	}
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql	.append(" and ( ")
+    			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
+    			.append(" ) ");
+    	}
+    	
+    	hql	.append(" and ( ")
+    		.append(" 	c.SITUACAO_CADASTRO not in (:inativo, :pendente) ")
+    		.append(" ) ")
+    		.append(" group by c.NUMERO_COTA ")
+    		.append(" order by c.NUMERO_COTA ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
+		query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
+		
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null) {
+			query.setParameter("de", intervaloCota.getDe());
+			query.setParameter("ate", intervaloCota.getAte());
+		}
+		
+		if (intervaloDataLancamento != null) {
+			query.setParameter("dataLancamentoDe", intervaloDataLancamento.getDe());
+			query.setParameter("dataLancamentoAte", intervaloDataLancamento.getAte());
+		}
+		
+		if (intervaloDateRecolhimento != null) {
+			query.setParameter("dataRecolhimentoDe", intervaloDateRecolhimento.getDe());
+			query.setParameter("dataRecolhimentoAte", intervaloDateRecolhimento.getAte());
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		query.setCacheable(true);
+		query.addScalar("nomePessoa", StandardBasicTypes.STRING);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		
+		return query.list();
+	}
+
+	@Override
+	public BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor) {
+		
+		StringBuilder hql = new StringBuilder("SELECT SUM(COALESCE(D_.VALOR,0)) ");
+		
+		this.setFromWhereCotasSujeitasSuspensao(hql);
+		
+		hql.insert(hql.indexOf("WHERE"), 
+			" JOIN DIVIDA AS D_ ON (D_.COTA_ID = COTA_.ID AND D_.STATUS in (:statusDividaEmAbertoPendente) AND D_.DATA <= :dataOperacao) ");
+		
+		Query query = this.getSession().createSQLQuery(hql.toString());
+		
+		this.setParametrosCotasSujeitasSuspensao(query, dataOperacaoDistribuidor);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	
+	/**
+	 * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a data atual
+	 * @param data
+	 * @return List<Cota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasTipoAVista(Date data){
+	    
+	    StringBuilder hql = new StringBuilder("select c ")
+	
+	       .append(" from Cota c ")
+	       
+	       .append(" where c.tipoCota = :tipoCota ")
+	    
+	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	    
+	    Query query = this.getSession().createQuery(hql.toString());
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("data", data);
+	    
+	    return query.list();
+	}
+	
 }

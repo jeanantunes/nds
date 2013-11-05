@@ -107,55 +107,30 @@ $(function(){
 <!-- SITUACAO DIVIDA  TODAS -->                
 
 			<table>
-				<tr>
-					
-                
-				
-				<td>
-					<span class="bt_sellAll">
-<input type="checkbox" id="idSelecaoTodos" name="Todos2" onclick="inadimplenciaController.selecionarTodos(this);" style="float:left;"/>
-					</span>
-				</td>
-				<td>
-					<span class="bt_sellAll">
-<label for="selDivida">Selecionar Todas</label>
-					</span>
-				</td>
-								
-				</tr>
-				<tr>
-				
-<!-- SITUACAO DIVIDA - ABERTAS -->
-				<td>
-<input id="idDividaEmAberto" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" type="checkbox"/>
-                </td>
-                <td>
-                <label for="emaberto">Em Aberto</label>
-                </td>
-                
-                </tr>
-                <tr>
-                
-                <td>
-<!-- SITUACAO DIVIDA - NEGOCIADA -->
-<input id="idDividaNegociada" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" type="checkbox"/>
-				</td>
-				<td>
-                <label for="negociada">Negociada</label>
-                </td>
-                
-                </tr>
-                <tr>
-                
-                <td>
-<!-- SITUACAO DIVIDA - PAGA -->
-<input id="idDividaPaga" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" type="checkbox"/>
-				</td>
-				<td>
-                <label for="paga">Paga</label>
-                </td>
-                
-				</tr>
+				<tr> 
+					<td> 
+						<span class="bt_sellAll"> 
+							<input type="checkbox" id="idSelecaoTodos" name="Todos2" onclick="inadimplenciaController.selecionarTodos(this);" 
+								   style="float:left;" checked="checked" /> 
+						</span> 
+					</td> 
+					<td> 
+						<span class="bt_sellAll"> 
+							<label for="selDivida">Selecionar Todas</label> 
+						</span> 
+					</td> 
+				</tr> 
+				<c:forEach items="${statusDivida}" var="status" varStatus="index">		
+					<tr> 
+						<td> 
+							<input id="${status}" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" 
+								   type="checkbox" checked="checked" /> 
+						</td> 
+						<td> 
+							<label for="paga">${status.descricao}</label> 
+						</td>                 
+	 				</tr> 
+				</c:forEach>
 			</table>
                 
            </div>

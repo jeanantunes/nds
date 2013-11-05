@@ -56,7 +56,7 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		
 		hql.append(" ) ");
 		
-		hql.append(" ) * itemChamadaEncalheFornecedor.qtdeDevolucaoApurada ) ");
+		hql.append(" ) * coalesce(itemChamadaEncalheFornecedor.qtdeDevolucaoApurada, 0) ) ");
 		
 		hql.append(" from ItemChamadaEncalheFornecedor itemChamadaEncalheFornecedor ");
 		
@@ -71,7 +71,7 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idChamadaEncalheFornecedor", idChamadaEncalheFornecedor);
-	
+		
 		return (BigDecimal) query.uniqueResult();
 		
 	}
@@ -89,23 +89,23 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		
 		hql.append(" inner join itemChamadaEncalheFornecedor.produtoEdicao produtoEdicao ");
 		
-		hql.append(" inner join produtoEdicao.estoqueProduto estoqueProduto, ");
+		hql.append(" inner join produtoEdicao.estoqueProduto estoqueProduto ");
 		
-		hql.append(" FechamentoEncalhe fechamentoEncalhe");
+		//hql.append(" inner join FechamentoEncalhe fechamentoEncalhe");
 		
-		hql.append(" where ");
+		hql.append(" where 1 = 1 ");
 		
-		hql.append(" fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = produtoEdicao.id " );
+		//hql.append(" fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = produtoEdicao.id " );
 		
-		hql.append(" AND fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe BETWEEN :inicioSemana AND :fimSemana ");
+		//hql.append(" AND fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe BETWEEN :inicioSemana AND :fimSemana ");
 		
 		hql.append(" AND chamadaEncalheFornecedor.id = :idChamadaEncalheFornecedor ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idChamadaEncalheFornecedor", idChamadaEncalheFornecedor);
-		query.setParameter("inicioSemana", periodo.getDe());
-		query.setParameter("fimSemana", periodo.getAte());
+		//query.setParameter("inicioSemana", periodo.getDe());
+		//query.setParameter("fimSemana", periodo.getAte());
 	
 		return query.list();
 	}

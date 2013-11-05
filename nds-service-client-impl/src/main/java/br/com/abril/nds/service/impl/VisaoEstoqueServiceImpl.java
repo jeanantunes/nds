@@ -114,15 +114,13 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		} else {
 			
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-			
-			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
-				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
-			} else {
+			if (filtro.isBuscaHistorico()) {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
+			} else {
+				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
 			}
 		}
-				
+
 		return list;
 	}
 	
@@ -249,18 +247,18 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			
 			if (BigInteger.ZERO.compareTo(qtdeDiferenca) < 0) {
 				
-				diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+				diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 				
 				statusAprovacao = StatusAprovacao.GANHO;
 				
 			} else {
 				
-				diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+				diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 				
 				statusAprovacao = StatusAprovacao.PERDA;
 			}
 			
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao, null);
 		}
 	}
 

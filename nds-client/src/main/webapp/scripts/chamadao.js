@@ -1,5 +1,19 @@
 var chamadaoController = $.extend(true, {
 	
+	checkAll: false,
+	
+	nonSelected: [],
+	
+	parciais: {
+		
+		qtdProdutosParcial: 0,
+		qtdExemplaresParcial: 0,
+		valorParcial: 0
+		
+	},
+	
+	ACAO_TELA: "PESQUISAR",
+	
 	init : function() {
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
@@ -55,6 +69,7 @@ var chamadaoController = $.extend(true, {
 		
 		$(".chamadaoGrid", chamadaoController.workspace).flexigrid({
 			preProcess: chamadaoController.executarPreProcessamento,
+			postProcess: function() { alert('oi');} ,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -81,13 +96,13 @@ var chamadaoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Venda R$',
+				display : 'Preço Capa R$',
 				name : 'precoVenda',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Desconto R$',
+				display : 'Preço c/ Desc. R$',
 				name : 'precoDesconto',
 				width : 70,
 				sortable : true,
@@ -186,8 +201,75 @@ var chamadaoController = $.extend(true, {
 			popularGridPeloFollowUp(numeroCota,dataChamadaoFormatada);
 		}
 	},
+	
+	validarMatrizRecolhimentoConfirmada : function() {
+		
+		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
+		
+		var dataChamadaoFormatada;
+		
+		if (followUp != '') {
+			
+			dataChamadaoFormatada = $("#dataCotaFollowUp", chamadaoController.workspace).val();
+			
+		} else {
+			
+			dataChamadaoFormatada = $("#dataChamadao", chamadaoController.workspace).val();
+		}
+		
+		$.postJSON(
+			contextPath + "/devolucao/chamadao/validarMatrizRecolhimentoConfirmada",
+			{'dataPesquisa': dataChamadaoFormatada},
+			function(result) {
+				
+				if (result) {
+					
+					chamadaoController.popupUsoMatrizRecolhimentoConfirmada();
+					
+				} else {
+					
+					chamadaoController.pesquisar();
+				}
+			}
+		);
+	},
+	
+	popupUsoMatrizRecolhimentoConfirmada : function() {
+		
+		$("#dialogUsoMatrizRecolhimentoConfirmada", chamadaoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					chamadaoController.pesquisar();
+					
+					$(this).dialog("close");
+				
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialogUsoMatrizRecolhimentoConfirmada", this.workspace).parents("form")			
+		});
+		
+		$("#dialogUsoMatrizRecolhimentoConfirmada", chamadaoController.workspace).show();
+	},
 		
 	pesquisar : function() {
+		
+		chamadaoController.ACAO_TELA = "PESQUISAR";
+		
+		dataHolder.clearAction('chamadaoHolder', chamadaoController.workspace);
+		
+		chamadaoController.nonSelected = [];
+		
+		chamadaoController.zerarCamposParciais();
+		
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		var numeroCota;
@@ -216,18 +298,22 @@ var chamadaoController = $.extend(true, {
 			$("#divBotoesChamadaEncalhe").hide();
 			$("#divBotaoConfirmarChamadao").show();
 		}
-		
+
 		$(".chamadaoGrid", chamadaoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/chamadao/pesquisarConsignados",
 			onSuccess: function() {
 				
-				var checkAllSelected = chamadaoController.verifyCheckAll();
+				var checkAllSelected = $("#checkAll",chamadaoController.workspace).is(":checked");
 				
 				if (checkAllSelected) {
 					
 					$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
 						
-						this.checked = true;
+						var idLancamento = eval($(this).closest("tr").find('.lancamentoHidden').val());
+
+						var checked = !($.inArray(idLancamento, chamadaoController.nonSelected) >= 0);
+						
+						this.checked = checked;
 					});
 				}
 			},
@@ -243,15 +329,28 @@ var chamadaoController = $.extend(true, {
 		
 		$(".chamadaoGrid", chamadaoController.workspace).flexReload();
 	},
-	
+
 	executarPreProcessamento : function(resultado) {
 		
 		if (resultado.mensagens) {
-
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
+			
+			if(resultado.mensagens.tipoMensagem!= "WARNING"){
+				
+				exibirMensagem(
+						resultado.mensagens.tipoMensagem, 
+						resultado.mensagens.listaMensagens
+					);
+			}
+			else{
+				
+				if(chamadaoController.ACAO_TELA == "PESQUISAR" ){
+					
+					exibirMensagem(
+						resultado.mensagens.tipoMensagem, 
+						resultado.mensagens.listaMensagens
+					);
+				}
+			}
 			
 			$(".grids", chamadaoController.workspace).hide();
 			$(".area", chamadaoController.workspace).hide();
@@ -264,27 +363,24 @@ var chamadaoController = $.extend(true, {
 			var spanReparte = "<span id='reparte" + row.id + "'>"
 						+ row.cell.reparte + "</span>";
 			
-			var spanValorTotal = "<span id='valorTotal" + row.id + "'>"
-						+ row.cell.valorTotal + "</span>";
-			
-			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
-						   + ' name="checkConsignado"'
-						   + ' value="' + row.id + '"'
-						   + ' onclick="chamadaoController.calcularParcial()" />';
+			var spanValorTotalDesconto = "<span id='valorTotal" + row.id + "'>"
+						+ row.cell.valorTotalDesconto + "</span>";
 			
 			var idLancamento = (row.cell.idLancamento) ? row.cell.idLancamento : "";
+
+			var inputCheck = chamadaoController.getInputCheckBox(idLancamento, row.id, row.cell.checked);
 			
 			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="' + idLancamento + '"/>';
 						   
 			row.cell.reparte = spanReparte;
-			row.cell.valorTotal = spanValorTotal;
+			row.cell.valorTotalDesconto = spanValorTotalDesconto;
 			row.cell.sel = inputCheck;
 			row.cell.lancamentoHidden = inputHidden;
 		});
 		
 		$("#qtdProdutosTotal", chamadaoController.workspace).val(resultado.qtdProdutosTotal);
 		$("#qtdExemplaresTotal", chamadaoController.workspace).val(resultado.qtdExemplaresTotal);
-		$("#valorTotal", chamadaoController.workspace).val(resultado.valorTotal);
+		$("#valorTotal", chamadaoController.workspace).val(priceToFloat( resultado.valorTotal ));
 		
 		var checkAllSelected = chamadaoController.verifyCheckAll();
 		
@@ -292,9 +388,6 @@ var chamadaoController = $.extend(true, {
 			
 			chamadaoController.duplicarCamposParciais();
 			
-		} else {
-			
-			chamadaoController.zerarCamposParciais();
 		}
 		
 		$(".grids", chamadaoController.workspace).show();
@@ -303,12 +396,36 @@ var chamadaoController = $.extend(true, {
 		return resultado.tableModel;
 	},
 	
+	getInputCheckBox : function(idLancamento, rowId, checked) {
+
+		var inputCheck = '<input type="checkbox" id="ch' + rowId + '"'
+						   + ' name="checkConsignado"'
+						   + ' value="' + rowId + '"';
+		
+		inputCheck = inputCheck.concat(checked ? ' checked="checked"' : '');
+		
+		inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial(this)" '
+						+ ' onchange="chamadaoController.selecionarLinha(' + idLancamento + ', this.checked);" />');
+		
+		return inputCheck;
+	},
+	
+	selecionarLinha : function(idLancamento, checked) {
+		
+		if (!checked && chamadaoController.checkAll) {
+		
+			chamadaoController.nonSelected.push(idLancamento);
+		}
+		
+		dataHolder.hold('chamadaoHolder', idLancamento, 'checado', checked);
+	},
+
 	selecionarTodos : function(input) {
 		
 		checkAll(input, "checkConsignado");
 		
 		$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
-		
+			
 			var checado = this.checked;
 			
 			clickLineFlexigrid(this, checado);
@@ -322,43 +439,50 @@ var chamadaoController = $.extend(true, {
 			
 			chamadaoController.zerarCamposParciais();
 		}
+		
+		chamadaoController.nonSelected = [];
+		
+		this.checkAll = input.checked;
 	},
 	
-	calcularParcial : function() {
+	calcularParcial : function(input) {
 
-		var qtdProdutosParcial = 0;
-		var qtdExemplaresParcial = 0;
-		var valorParcial = 0;
+		var checado = input.checked;
 		
-		$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
+		clickLineFlexigrid(input, checado);
 		
-			var checado = this.checked;
+		if (checado) {
 			
-			clickLineFlexigrid(this, checado);
+			chamadaoController.parciais.qtdProdutosParcial += 1;
 			
-			if (checado) {
-				
-				qtdProdutosParcial = qtdProdutosParcial + 1;
-				
-				var reparte = $("#reparte" + this.value).html();
-				reparte = removeMascaraPriceFormat(reparte);
-				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
-				
-				var valor = $("#valorTotal" + this.value).html();
-				valor = removeMascaraPriceFormat(valor);
-				valorParcial = valorParcial + intValue(valor);
+			var reparte = $("#reparte" + input.value).html();
+			reparte = removeMascaraPriceFormat(reparte);
+			chamadaoController.parciais.qtdExemplaresParcial += intValue(reparte);
 			
-			} else {
-				
-				$("#checkAll", chamadaoController.workspace).attr("checked", false);
-			}
-		});
+			var valor = $("#valorTotal" + input.value).html();
+			
+			valor = priceToFloat(valor);
+			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) + parseFloat(valor);
 		
-		$("#qtdProdutosParcial", chamadaoController.workspace).val(qtdProdutosParcial);
-		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(valorParcial);
+		} else {
+			
+			chamadaoController.parciais.qtdProdutosParcial -= 1;
+			
+			var reparte = $("#reparte" + input.value).html();
+			reparte = removeMascaraPriceFormat(reparte);
+			chamadaoController.parciais.qtdExemplaresParcial -= intValue(reparte);
+			
+			var valor = $("#valorTotal" + input.value).html();
+			
+			valor = priceToFloat(valor);
+			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) - parseFloat(valor);
+		}
+
+		chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial).toFixed(4);
 		
-		chamadaoController.aplicarMascaraCampos();
+		$("#qtdProdutosParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdProdutosParcial);
+		$("#qtdExemplaresParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdExemplaresParcial);
+		$("#valorParcial", chamadaoController.workspace).val(parseFloat(chamadaoController.parciais.valorParcial).toFixed(2));
 	},
 	
 	verifyCheckAll : function() {
@@ -370,15 +494,21 @@ var chamadaoController = $.extend(true, {
 		$("#qtdProdutosParcial", chamadaoController.workspace).val($("#qtdProdutosTotal", chamadaoController.workspace).val());
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val($("#qtdExemplaresTotal", chamadaoController.workspace).val());
 		$("#valorParcial", chamadaoController.workspace).val($("#valorTotal", chamadaoController.workspace).val());
+		
+		chamadaoController.parciais.qtdProdutosParcial = $("#qtdProdutosTotal", chamadaoController.workspace).val();
+		chamadaoController.parciais.qtdExemplaresParcial = $("#qtdExemplaresTotal", chamadaoController.workspace).val();
+		chamadaoController.parciais.valorParcial = $("#valorTotal", chamadaoController.workspace).val();
 	},
 	
 	zerarCamposParciais : function() {
 		
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(0);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(0);
-		$("#valorParcial", chamadaoController.workspace).val(0);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(0));
 		
-		chamadaoController.aplicarMascaraCampos();
+		chamadaoController.parciais.qtdProdutosParcial = 0;
+		chamadaoController.parciais.qtdExemplaresParcial = 0;
+		chamadaoController.parciais.valorParcial = 0;
 	},
 	
 	aplicarMascaraCampos : function() {
@@ -386,11 +516,12 @@ var chamadaoController = $.extend(true, {
 		$("#valorParcial", chamadaoController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
-		    thousandsSeparator: '.'
+		    thousandsSeparator: '.',
+		    centsLimit: 2
 		});
 	},
 	
-	confirmar : function() {
+	confirmar : function(acao) {
 		
 		chamadaoController.limparNovaDataChamadao();
 		
@@ -402,7 +533,7 @@ var chamadaoController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					chamadaoController.realizarChamadao();
+					chamadaoController.realizarChamadao(acao);
 				},
 				"Cancelar": function() {
 					
@@ -424,10 +555,17 @@ var chamadaoController = $.extend(true, {
 		$("#novaDataChamadao").val("");		
 	},
 	
-	realizarChamadao : function() {
-		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), chamarTodos:chamadaoController.verifyCheckAll()};
+	realizarChamadao : function(acao) {
+		
+		var isReprogramacao = (acao == "REPROGRAMAR")?true:false;
+		
+		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), 
+					chamarTodos:chamadaoController.verifyCheckAll(),
+					reprogramacao:isReprogramacao};
 		
 		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
+		
+		param.idsIgnorados = chamadaoController.nonSelected;
 		
 		$.postJSON(contextPath + "/devolucao/chamadao/confirmarChamadao",param,
 				   function(result) {
@@ -445,6 +583,8 @@ var chamadaoController = $.extend(true, {
 						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
 						
 						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+						
+						chamadaoController.ACAO_TELA = "";
 					},
 				   null,
 				   true
@@ -476,13 +616,15 @@ var chamadaoController = $.extend(true, {
 					var colunaCodProduto = linha.find("td")[0];
 					var colunaNumEdicao = linha.find("td")[2];
 					var inputHiddenLancamento = linha.find("td")[12];
+					var colunaDataRecolhimento = linha.find("td")[8];
 					
 					var codProduto = $(colunaCodProduto).find("div").html();
 					var numEdicao = $(colunaNumEdicao).find("div").html();
 					var lancamento = $($(inputHiddenLancamento).find("div").html()).val();
+					var dataRecolhimento = $(colunaDataRecolhimento).find("div").html();
 					
 					
-					listaChamadao.push({codigoProduto:codProduto,numeroEdicao:numEdicao,idLancamento:lancamento});
+					listaChamadao.push({codigoProduto:codProduto,numeroEdicao:numEdicao,idLancamento:lancamento,dataRecolhimento:dataRecolhimento});
 				}
 			});
 		}
@@ -510,6 +652,8 @@ var chamadaoController = $.extend(true, {
 						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
 						
 						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+						
+						chamadaoController.ACAO_TELA = "";
 					},
 				   null
 		);
@@ -518,3 +662,4 @@ var chamadaoController = $.extend(true, {
 }, BaseController);
 
 //@ sourceURL=chamadao.js
+

@@ -75,7 +75,8 @@ var ParciaisController = $.extend(true, {
 	
 	pesquisarPeriodosParciais : function() {
 		
-		$(".periodosGrid",this.workspace).flexOptions({			
+		$(".periodosGrid",this.workspace).flexOptions({
+			onSuccess: function() {bloquearItensEdicao(this.workspace);},
 			url : contextPath + "/parciais/pesquisarPeriodosParciais",
 			dataType : 'json',
 			preProcess: this.processaRetornoPeriodosParciais,
@@ -93,7 +94,8 @@ var ParciaisController = $.extend(true, {
 		data.push({name: 'filtro.codigoProduto',	value: codigoProduto});
 		data.push({name: 'filtro.edicaoProduto',	value: numEdicao});
 		
-		$(".parciaisPopGrid",this.workspace).flexOptions({			
+		$(".parciaisPopGrid",this.workspace).flexOptions({	
+			onSuccess: function() {bloquearItensEdicao(this.workspace);},
 			url : contextPath + "/parciais/pesquisarPeriodosParciais",
 			dataType : 'json',
 			preProcess: this.processaRetornoPeriodosParciaisModal,
@@ -276,7 +278,7 @@ var ParciaisController = $.extend(true, {
 		}
 	
 		row.cell.acao = 
-			'<a href="javascript:;" ' +
+			'<a href="javascript:;" isEdicao="true" ' +
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':'onclick="ParciaisController.carregarEdicaoDetalhes(\''+ 
 					row.cell.idLancamento +'\', \''+
 					row.cell.dataLancamento +'\', \''+
@@ -284,7 +286,7 @@ var ParciaisController = $.extend(true, {
 			        ' \')"')+
 			        
 			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:10px;" /></a>' +
-			'<a href="javascript:;" '+
+			'<a href="javascript:;" isEdicao="true" '+
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
 			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
 	},
@@ -885,5 +887,5 @@ var ParciaisController = $.extend(true, {
 $(function() {
 	
 	ParciaisController.init();
-				
+	bloquearItensEdicao(ParciaisController.workspace);				
 });

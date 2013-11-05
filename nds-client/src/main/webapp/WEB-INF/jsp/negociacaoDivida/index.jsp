@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
@@ -81,7 +82,7 @@
 						<label for="selTodos">Selecionar Todos</label>
 					</td>
 					<td width="5%" align="left">
-						<input type="checkbox"
+						<input isEdicao="true" type="checkbox"
 							id="negociacaoCheckAll" name="Todos"
 							onclick="negociacaoDividaController.checkAll(this);"
 							style="float: left;" />
@@ -363,7 +364,9 @@
 				</table>
 			</fieldset>
 			<span class="bt_novos" title="Imprimir" name="botoes" id="botaoImprimirNegociacao">
-				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">
+				<%-- a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao?valorDividaSelecionada=asas" --%>
+
+				<a href="javascript:;" onclick="negociacaoDividaController.imprimirNegociacao()">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Negocia&ccedil;&atilde;o
 				</a>

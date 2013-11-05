@@ -95,7 +95,9 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		}
 		
 		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-		String totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		String totalFormatado = "";
+		
+		totalFormatado = CurrencyUtil.formatarValor(totalGeral);
 		
 		this.result.use(Results.json()).from(totalFormatado, "result").recursive().serialize();
 		
@@ -180,27 +182,29 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> efetuarConsultaConsignadoCota(
 			FiltroConsultaConsignadoCotaDTO filtro) {
 		
-		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
-		
-		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
-		
-		Long totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro);
-		if(totalRegistros == 0){
+		int totalRegistros = this.consultaConsignadoCota.buscarConsignadoCota(filtro, false).size();
+		if (totalRegistros == 0) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
+		
+		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = 
+				this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
+		
+		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = 
+				new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsignadoCota));
-		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		
-		tableModel.setTotal(totalRegistros.intValue());
+		tableModel.setTotal(totalRegistros);
 		
 		return tableModel;
 	}
 	
 	@Post
 	@Path("pesquisarMovimentoCotaPeloFornecedor")
-	public void pesquisarMovimentoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisarMovimentoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, 
+			String sortorder, String sortname, int page, int rp){
 		
 		if(filtro.getIdCota() != null){
 			cota = obterCota(filtro.getIdCota().intValue());
@@ -217,17 +221,21 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		this.tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = efetuarConsultaConsignadoCotaPeloFornecedor(filtro);
+		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = 
+				efetuarConsultaConsignadoCotaPeloFornecedor(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
 	
-	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> efetuarConsultaConsignadoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro) {
+	private TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> 
+		efetuarConsultaConsignadoCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro) {
 		
-		List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, true);
+		List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = 
+				this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, true);
 		
-		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>>();
+		TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>> tableModel = 
+				new TableModel<CellModelKeyValue<ConsultaConsignadoCotaPeloFornecedorDTO>>();
 		
 		Long totalRegistros = this.consultaConsignadoCota.buscarTodosMovimentosCotaPeloFornecedor(filtro);
 		if(totalRegistros == 0){
@@ -246,7 +254,8 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroConsultaConsignadoCotaDTO filtro = (FiltroConsultaConsignadoCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
+		FiltroConsultaConsignadoCotaDTO filtro = 
+				(FiltroConsultaConsignadoCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
 		if(filtro.getIdCota() != null){
 
@@ -273,9 +282,10 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		}
 		
 		if(filtro.getIdCota() != null
-				&& filtro.getIdFornecedor() == null) { 
+				&& filtro.getIdFornecedor() == null) {
 				
-			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, false);
+			List<ConsultaConsignadoCotaDTO> listaConsignadoCota = 
+					this.consultaConsignadoCota.buscarConsignadoCota(filtro, false);
 			
 			if(listaConsignadoCota.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -286,7 +296,8 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			
 		}else{
 			
-			List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, false);
+			List<ConsultaConsignadoCotaPeloFornecedorDTO> listaConsignadoCota = 
+					this.consultaConsignadoCota.buscarMovimentosCotaPeloFornecedor(filtro, false);
 			
 			if(listaConsignadoCota.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -351,14 +362,6 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	
 	private void tratarFiltro(FiltroConsultaConsignadoCotaDTO filtroAtual) {
 
-		FiltroConsultaConsignadoCotaDTO filtroSession = (FiltroConsultaConsignadoCotaDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
-		
-		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
-
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA, filtroAtual);
 	}
 }

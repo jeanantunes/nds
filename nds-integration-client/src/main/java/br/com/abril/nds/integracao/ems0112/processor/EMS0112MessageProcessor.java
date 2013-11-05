@@ -42,192 +42,220 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void processMessage(Message message) {
-
 		EMS0112Input input = (EMS0112Input) message.getBody();
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT e ");
-		sql.append("FROM Editor e ");
-		sql.append("LEFT JOIN FETCH e.enderecos ender ");
-		sql.append("LEFT JOIN FETCH e.telefones tel ");
-		sql.append("JOIN FETCH e.pessoaJuridica p ");
-		sql.append("WHERE e.codigo = :codigoEditor ");
-		
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("codigoEditor", input.getCodigoEditor());
-		
-		Editor editor = (Editor) query.uniqueResult();
-		if (null != editor) {
-			if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
-					input.getTipoOperacao().equals("A")){
-				
-				if(!input.getNomeEditor().equals(editor.getPessoaJuridica().getNome())){
-					editor.getPessoaJuridica().setRazaoSocial(input.getNomeEditor());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome do Editor para: "+editor.getPessoaJuridica().getNome());
-				}
-				
-				if(!input.getInscricaoMunicipal().equals(editor.getPessoaJuridica().getInscricaoMunicipal())){
-					editor.getPessoaJuridica().setInscricaoMunicipal(input.getInscricaoMunicipal());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Inscricao Municipal para: "+editor.getPessoaJuridica().getInscricaoMunicipal());
-				}
-				
-				
-				if(!input.getNomeContato().equals(editor.getNomeContato())){
-					editor.setNomeContato(input.getNomeContato());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome Contato para: "+editor.getNomeContato());
-				}
-				
-				if(input.getStatus() != editor.isAtivo()){
-					editor.setAtivo(input.getStatus());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Status para: "+editor.isAtivo());
-				}
-				
-				if(!input.getCnpj().equals(editor.getPessoaJuridica().getCnpj())){
-					editor.getPessoaJuridica().setCnpj(input.getCnpj());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CNPJ para: "+editor.getPessoaJuridica().getCnpj());
-				}
-				
-				if(!input.getInscricaoEstadual().equals(editor.getPessoaJuridica().getInscricaoEstadual())){
-					editor.getPessoaJuridica().setInscricaoEstadual(input.getInscricaoEstadual());
-					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Inscricao Estadual para: "+editor.getPessoaJuridica().getInscricaoEstadual());
-				}
-				
-				atualizaEndereco(input, message, editor, TipoEndereco.COMERCIAL);
-				
-				atualizaEndereco(input, message, editor, TipoEndereco.LOCAL_ENTREGA);
-				
-				
-				
-				atualizaTelefone(input, message, editor, TipoTelefone.COMERCIAL);
-				
-				atualizaTelefone(input, message, editor, TipoTelefone.FAX);
-				
-				atualizaTelefone(input, message, editor, TipoTelefone.CONTATO);			
-				
-			}
-		} else {
-			//CASO: NAO EXISTE EDITOR CADASTRADO
-		
-			// VERIFICA A EXISTENCIA DA PESSOA
+		try{
 			
-			StringBuilder hql = new StringBuilder();
-			hql.append("SELECT j ");
-			hql.append("FROM PessoaJuridica j ");
-			hql.append("WHERE j.cnpj = :cnpj ");
+			StringBuilder sql = new StringBuilder();
+			sql.append(" SELECT e ");
+			sql.append(" FROM Editor e ");
+			sql.append(" LEFT JOIN FETCH e.enderecos ender ");
+			sql.append(" LEFT JOIN FETCH e.telefones tel ");
+			sql.append(" JOIN FETCH e.pessoaJuridica p ");
+			sql.append(" WHERE e.codigo = :codigoEditor ");
 			
-			Query pj_query = getSession().createQuery(hql.toString());
+			Query query = getSession().createQuery(sql.toString());
+			query.setParameter("codigoEditor", input.getCodigoEditor());
+
+			Object object = query.uniqueResult();
 			
-			pj_query.setParameter("cnpj", input.getCnpj());
+			if (null != object) {
+				Editor editor = (Editor) object;
+				if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
+						input.getTipoOperacao().equals("A")) {
 					
-			PessoaJuridica pessoa = (PessoaJuridica) pj_query.uniqueResult();		
-			if (null == pessoa) {			
-				//INSERE
-						
-				//PESSOA
-				pessoa = new PessoaJuridica();				
-				pessoa.setCnpj(input.getCnpj());
-				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
-				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());
-				pessoa.setRazaoSocial(input.getNomeEditor());
-				getSession().persist(pessoa);
+					if(!input.getNomeEditor().equals(editor.getPessoaJuridica().getNome())){
+						editor.getPessoaJuridica().setRazaoSocial(input.getNomeEditor());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome do Editor para: "+editor.getPessoaJuridica().getNome());
+					}
+					
+					if(!input.getInscricaoMunicipal().equals(editor.getPessoaJuridica().getInscricaoMunicipal())){
+						editor.getPessoaJuridica().setInscricaoMunicipal(input.getInscricaoMunicipal());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Inscricao Municipal para: "+editor.getPessoaJuridica().getInscricaoMunicipal());
+					}
+					
+					
+					if(!input.getNomeContato().equals(editor.getNomeContato())){
+						editor.setNomeContato(input.getNomeContato());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Nome Contato para: "+editor.getNomeContato());
+					}
+					
+					if(input.getStatus() != editor.isAtivo()){
+						editor.setAtivo(input.getStatus());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Status para: "+editor.isAtivo());
+					}
+					
+					if(!input.getCnpj().equals(editor.getPessoaJuridica().getCnpj())){
+						editor.getPessoaJuridica().setCnpj(input.getCnpj());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do CNPJ para: "+editor.getPessoaJuridica().getCnpj());
+					}
+					
+					if(!input.getInscricaoEstadual().equals(editor.getPessoaJuridica().getInscricaoEstadual())){
+						editor.getPessoaJuridica().setInscricaoEstadual(input.getInscricaoEstadual());
+						ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao da Inscricao Estadual para: "+editor.getPessoaJuridica().getInscricaoEstadual());
+					}
+					
+					atualizaEndereco(input, message, editor, TipoEndereco.COMERCIAL);
+					
+					atualizaEndereco(input, message, editor, TipoEndereco.LOCAL_ENTREGA);
+	
+					
+					atualizaTelefone(input, message, editor, TipoTelefone.COMERCIAL);
+					
+					atualizaTelefone(input, message, editor, TipoTelefone.FAX);
+					
+					atualizaTelefone(input, message, editor, TipoTelefone.CONTATO);			
+					
+				}
 			} else {
-				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
-				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
-				pessoa.setRazaoSocial(input.getNomeEditor());
-				getSession().update(pessoa);				
+				//CASO: NAO EXISTE EDITOR CADASTRADO		
+				// VERIFICA A EXISTENCIA DA PESSOA
+				
+				StringBuilder hql = new StringBuilder();
+				hql.append("SELECT j ");
+				hql.append("FROM PessoaJuridica j ");
+				hql.append("WHERE j.cnpj = :cnpj ");
+				
+				Query pjQuery = getSession().createQuery(hql.toString());
+				
+				pjQuery.setParameter("cnpj", input.getCnpj());
+						
+				PessoaJuridica pessoa = (PessoaJuridica) pjQuery.uniqueResult();
+				
+				if (null == pessoa) {			
+					//INSERE
+							
+					//PESSOA
+					pessoa = new PessoaJuridica();				
+					pessoa.setCnpj(input.getCnpj());
+					pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
+					pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());
+					pessoa.setRazaoSocial(input.getNomeEditor());
+					getSession().persist(pessoa);
+					
+					ndsiLoggerFactory.getLogger().logInfo(
+							message
+							, EventoExecucaoEnum.INF_DADO_ALTERADO
+							, "Inserido Editor/Pessoa: "+ input.getNomeEditor());
+					
+				} else {
+					
+					pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
+					pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
+					pessoa.setRazaoSocial(input.getNomeEditor());
+					getSession().update(pessoa);	
+					
+					ndsiLoggerFactory.getLogger().logInfo(
+							message
+							, EventoExecucaoEnum.INF_DADO_ALTERADO
+							, "Atualizado Editor/Pessoa: "+ input.getNomeEditor());
+					
+				}
+				
+				//EDITOR
+				Editor ed = new Editor();
+				ed.setCodigo(input.getCodigoEditor());
+				ed.setAtivo(input.getStatus());
+				ed.setNomeContato(input.getNomeContato());
+				ed.setPessoaJuridica(pessoa);
+				getSession().persist(ed);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Atualizado Editor/Pessoa: "+ input.getNomeEditor());
+				
+				//ENDERECO EDITOR [COMERCIAL]
+				Endereco endComercial = new Endereco();
+				endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
+				endComercial.setLogradouro(input.getLogradouroEditor());
+				endComercial.setCidade(input.getCidadeEditor());
+				endComercial.setUf(input.getUfEditor());
+				endComercial.setCep(input.getCepEditor());
+				endComercial.setBairro(input.getBairroEditor());
+				
+				endComercial.setNumero(input.getNumeroEditor());
+				endComercial.setComplemento(input.getComplementoEditor());			
+				getSession().persist(endComercial);
+				
+				EnderecoEditor enderecoEditorCom = new EnderecoEditor();
+				enderecoEditorCom.setTipoEndereco(TipoEndereco.COMERCIAL);
+				enderecoEditorCom.setEditor(ed);
+				enderecoEditorCom.setEndereco(endComercial);
+				getSession().persist(enderecoEditorCom);
+				
+				
+				//ENDERECO EDITOR [ENTREGA]
+				Endereco endEntrega = new Endereco();				
+				endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
+				endEntrega.setLogradouro(input.getLogradouroEntrega());
+				endEntrega.setCidade(input.getCidadeEntrega());
+				endEntrega.setUf(input.getUfEntrega());
+				endEntrega.setCep(input.getCepEntrega());
+				endEntrega.setBairro(input.getBairroEntrega());
+	
+				endEntrega.setNumero(input.getNumeroEntrega());
+				endEntrega.setComplemento(input.getComplementoEntrega());
+				getSession().persist(endEntrega);
+				
+				EnderecoEditor enderecoEditorEnt = new EnderecoEditor();		
+				enderecoEditorEnt.setTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
+				enderecoEditorEnt.setEditor(ed);
+				enderecoEditorEnt.setEndereco(endEntrega);
+				getSession().persist(enderecoEditorEnt);
+				
+				//TELEFONE [CONTATO]
+				Telefone telContato = new Telefone();
+				telContato.setDdd(input.getDddContato());
+				telContato.setNumero(input.getTelefoneContato());
+				telContato.setPessoa(ed.getPessoaJuridica()); 
+				getSession().persist(telContato);
+				
+				TelefoneEditor telefoneContato = new TelefoneEditor();
+				telefoneContato.setTelefone(telContato);
+				telefoneContato.setEditor(ed);
+				telefoneContato.setTipoTelefone(TipoTelefone.CONTATO);
+				getSession().persist(telefoneContato);
+				
+				//TELEFONE [FAX]
+				Telefone telFax = new Telefone();
+				telFax.setDdd(input.getDddFax());
+				telFax.setNumero(input.getTelefoneFax());
+				telFax.setPessoa(ed.getPessoaJuridica());
+				getSession().persist(telFax);
+				
+				TelefoneEditor telefoneFax = new TelefoneEditor();
+				telefoneFax.setTelefone(telFax);
+				telefoneFax.setEditor(ed);
+				telefoneFax.setTipoTelefone(TipoTelefone.FAX);
+				getSession().persist(telefoneFax);
+				
+				//TELEFONE [PRINCIPAL]
+				Telefone telPrincipal = new Telefone();
+				telPrincipal.setDdd(input.getDddEditor());
+				telPrincipal.setNumero(input.getTelefoneEditor());
+				telPrincipal.setPessoa(ed.getPessoaJuridica());
+				getSession().persist(telPrincipal);
+	
+				TelefoneEditor telefonePrincipal = new TelefoneEditor();
+				telefonePrincipal.setTelefone(telPrincipal);
+				telefonePrincipal.setEditor(ed);
+				telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
+				telefonePrincipal.setPrincipal(true);
+				getSession().persist(telefonePrincipal);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Endereço e Telefone do Editor: "+ input.getNomeEditor());
+				
+				
 			}
-			
-			//EDITOR
-			Editor ed = new Editor();
-			ed.setCodigo(input.getCodigoEditor());
-			ed.setAtivo(input.getStatus());
-			ed.setNomeContato(input.getNomeContato());
-			ed.setPessoaJuridica(pessoa);
-			getSession().persist(ed);
-			
-			
-			//ENDERECO EDITOR [COMERCIAL]
-			Endereco endComercial = new Endereco();
-			endComercial.setTipoLogradouro(input.getTipoLogradouroEditor());
-			endComercial.setLogradouro(input.getLogradouroEditor());
-			endComercial.setCidade(input.getCidadeEditor());
-			endComercial.setUf(input.getUfEditor());
-			endComercial.setCep(input.getCepEditor());
-			endComercial.setBairro(input.getBairroEditor());
-			
-			endComercial.setNumero(input.getNumeroEditor());
-			endComercial.setComplemento(input.getComplementoEditor());			
-			getSession().persist(endComercial);
-			
-			EnderecoEditor enderecoEditorCom = new EnderecoEditor();
-			enderecoEditorCom.setTipoEndereco(TipoEndereco.COMERCIAL);
-			enderecoEditorCom.setEditor(ed);
-			enderecoEditorCom.setEndereco(endComercial);
-			getSession().persist(enderecoEditorCom);			
-			
-			
-			//ENDERECO EDITOR [ENTREGA]
-			Endereco endEntrega = new Endereco();				
-			endEntrega.setTipoLogradouro(input.getTipoLogradouroEntrega());
-			endEntrega.setLogradouro(input.getLogradouroEntrega());
-			endEntrega.setCidade(input.getCidadeEntrega());
-			endEntrega.setUf(input.getUfEntrega());
-			endEntrega.setCep(input.getCepEntrega());
-			endEntrega.setBairro(input.getBairroEntrega());
-
-			endEntrega.setNumero(input.getNumeroEntrega());
-			endEntrega.setComplemento(input.getComplementoEntrega());
-			getSession().persist(endEntrega);
-			
-			EnderecoEditor enderecoEditorEnt = new EnderecoEditor();		
-			enderecoEditorEnt.setTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
-			enderecoEditorEnt.setEditor(ed);
-			enderecoEditorEnt.setEndereco(endEntrega);
-			getSession().persist(enderecoEditorEnt);
-			
-			//TELEFONE [CONTATO]
-			Telefone telContato = new Telefone();
-			telContato.setDdd(input.getDddContato());
-			telContato.setNumero(input.getTelefoneContato());
-			telContato.setPessoa(ed.getPessoaJuridica()); 
-			getSession().persist(telContato);
-			
-			TelefoneEditor telefoneContato = new TelefoneEditor();
-			telefoneContato.setTelefone(telContato);
-			telefoneContato.setEditor(ed);
-			telefoneContato.setTipoTelefone(TipoTelefone.CONTATO);
-			getSession().persist(telefoneContato);
-			
-			//TELEFONE [FAX]
-			Telefone telFax = new Telefone();
-			telFax.setDdd(input.getDddFax());
-			telFax.setNumero(input.getTelefoneFax());
-			telFax.setPessoa(ed.getPessoaJuridica());
-			getSession().persist(telFax);
-			
-			TelefoneEditor telefoneFax = new TelefoneEditor();
-			telefoneFax.setTelefone(telFax);
-			telefoneFax.setEditor(ed);
-			telefoneFax.setTipoTelefone(TipoTelefone.FAX);
-			getSession().persist(telefoneFax);
-			
-			//TELEFONE [PRINCIPAL]
-			Telefone telPrincipal = new Telefone();
-			telPrincipal.setDdd(input.getDddEditor());
-			telPrincipal.setNumero(input.getTelefoneEditor());
-			telPrincipal.setPessoa(ed.getPessoaJuridica());
-			getSession().persist(telPrincipal);
-
-			TelefoneEditor telefonePrincipal = new TelefoneEditor();
-			telefonePrincipal.setTelefone(telPrincipal);
-			telefonePrincipal.setEditor(ed);
-			telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
-			telefonePrincipal.setPrincipal(true);
-			getSession().persist(telefonePrincipal);
-			
-			
+		}catch(Exception e){
+			e.printStackTrace();
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.HIERARQUIA,
+			String.format( "Ocorreu um erro inesperado para numeroEditor: "+ input.getNumeroEditor()+" codigoEditor: "+ input.getCodigoEditor()
+					+" no Interface 112, descrição do erro: "+ e.getMessage() +". Erro não para o processamento."));
 		}
-		
 	}
 
 	private void atualizaEndereco(EMS0112Input input, Message message, Editor editor, TipoEndereco tipo){
@@ -288,7 +316,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Bairro para: "+ed.getEndereco().getBairro());
 				}						
 				
-			}else if(ed.getTipoEndereco() == TipoEndereco.LOCAL_ENTREGA){
+			} else if(ed.getTipoEndereco() == TipoEndereco.LOCAL_ENTREGA) {
 				
 				if(!input.getNumeroEntrega().equals(ed.getEndereco().getNumero())){
 					ed.getEndereco().setNumero(input.getNumeroEntrega());
@@ -360,8 +388,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				enderecoEditorCom.setEndereco(endComercial);
 				getSession().persist(enderecoEditorCom);
 				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Endereço do Editor: "+ input.getNomeEditor());
 			
-			}else if(tipo == TipoEndereco.LOCAL_ENTREGA){
+			} else if(tipo == TipoEndereco.LOCAL_ENTREGA) {
 				//ENDERECO EDITOR [ENTREGA]
 
 				Endereco endEntrega = new Endereco();
@@ -382,6 +414,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				enderecoEditorEnt.setEditor(editor);
 				enderecoEditorEnt.setEndereco(endEntrega);
 				getSession().persist(enderecoEditorEnt);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Endereço do Editor: "+ input.getNomeEditor());
 				
 			}
 			
@@ -407,36 +444,36 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		if (null != telefone) {
 			if(telefone.getTipoTelefone() == TipoTelefone.FAX){
 				
-				if(!input.getDddFax().equals(telefone.getTelefone().getDdd())){
+				if(!input.getDddFax().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddFax());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD (Fax) para: "+telefone.getTelefone().getDdd());
 				}
 				
-				if(!input.getTelefoneFax().equals(telefone.getTelefone().getNumero())){
+				if(!input.getTelefoneFax().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneFax());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero (Fax) para: "+telefone.getTelefone().getNumero());
 				}
 				
-			}else if(telefone.isPrincipal() == true){
+			} else if(telefone.isPrincipal() == true) {
 				
-				if(!input.getDddEditor().equals(telefone.getTelefone().getDdd())){
+				if(!input.getDddEditor().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddEditor());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD Principal para: "+telefone.getTelefone().getDdd());
 				}
 				
-				if(!input.getTelefoneEditor().equals(telefone.getTelefone().getNumero())){
+				if(!input.getTelefoneEditor().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneEditor());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Principal para: "+telefone.getTelefone().getNumero());
 				}
 				
-			}else if(telefone.getTipoTelefone() == TipoTelefone.CONTATO){
+			} else if(telefone.getTipoTelefone() == TipoTelefone.CONTATO) {
 				
-				if(!input.getDddContato().equals(telefone.getTelefone().getDdd())){
+				if(!input.getDddContato().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddContato());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD Principal para: "+telefone.getTelefone().getDdd());
 				}
 				
-				if(!input.getTelefoneContato().equals(telefone.getTelefone().getNumero())){
+				if(!input.getTelefoneContato().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneContato());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Principal para: "+telefone.getTelefone().getNumero());
 				}
@@ -447,7 +484,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			// INSERE 
 			
-			if(tipo == TipoTelefone.CONTATO){
+			if(tipo == TipoTelefone.CONTATO) {
 				//TELEFONE [CONTATO]
 				Telefone telContato = new Telefone();
 				telContato.setDdd(input.getDddContato());
@@ -461,8 +498,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				telefoneContato.setTipoTelefone(TipoTelefone.CONTATO);
 				getSession().persist(telefoneContato);
 				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
 				
-			}else if(tipo == TipoTelefone.FAX){
+			} else if(tipo == TipoTelefone.FAX) {
 				//TELEFONE [FAX]
 				Telefone telFax = new Telefone();
 				telFax.setDdd(input.getDddFax());
@@ -476,7 +517,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				telefoneFax.setTipoTelefone(TipoTelefone.FAX);
 				getSession().persist(telefoneFax);
 				
-			}else if(tipo == TipoTelefone.COMERCIAL){	
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
+				
+			} else if(tipo == TipoTelefone.COMERCIAL) {	
 				//TELEFONE [PRINCIPAL]
 				Telefone telPrincipal = new Telefone();
 				telPrincipal.setDdd(input.getDddEditor());
@@ -490,6 +536,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
 				telefonePrincipal.setPrincipal(true);
 				getSession().persist(telefonePrincipal);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
 				
 			}
 			

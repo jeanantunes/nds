@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Intervalo;
@@ -22,28 +23,26 @@ public interface RecolhimentoService {
 	/**
 	 * Obtém a matriz de balanceamento de recolhimento.
 	 * 
-	 * @param numeroSemana - número da semana para balanceamento
+	 * @param anoNumeroSemana - número da semana para balanceamento
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
 	 * @param forcarBalanceamento - indica se é necessário forçar o balanceamento da matriz
-	 * @param dataBalanceamento - data de balanceamento
 	 * 
 	 * @return {@link BalanceamentoRecolhimentoDTO}
 	 */
-	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
+	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer anoNumeroSemana,
 														  List<Long> listaIdsFornecedores,
 														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-														  boolean forcarBalanceamento,
-														  Date dataBalanceamento);
+														  boolean forcarBalanceamento);
 	
 	/**
 	 * Salva o balanceamento da matriz de recolhimento.
 	 * 
-	 * @param matrizRecolhimento - matriz de recolhimento
 	 * @param usuario - usuário
+	 * @param balanceamentoRecolhimentoDTO
 	 */
-	void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-										 Usuario idUsuario);
+	void salvarBalanceamentoRecolhimento(Usuario idUsuario,
+										 BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO);
 
 	/**
 	 * Confirma o balanceamento da matriz de recolhimento.
@@ -52,6 +51,7 @@ public interface RecolhimentoService {
 	 * @param numeroSemana - número da semana
 	 * @param datasConfirmadas - datas para confirmação
 	 * @param usuario - usuário
+	 * @param produtosRecolhimentoAgrupados
 	 * 
 	 * @return matriz de recolhimento confirmada
 	 */
@@ -59,26 +59,34 @@ public interface RecolhimentoService {
 											Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 											Integer numeroSemana,
 											List<Date> datasConfirmadas,
-											Usuario usuario);
+											Usuario usuario,
+											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados);
 	
-	/**
-	 * Exclui um balanceamento da matriz de recolhimento.
-	 * 
-	 * @param idLancamento - identificador do lançamento
-	 */
-	void excluiBalanceamento(Long idLancamento);
-
-	Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana, Date dataBalanceamento);
+	Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana);
 
 	/**
 	 * Desfaz alterações de recolhimento sobre os lançamentos da semana desejada.
 	 * 
 	 * @param numeroSemana - Número da semana
-	 * @param date - Data contendo o ano 
-	 * @param fornecedores 
+	 * @param fornecedores
+	 * @param usuario
 	 */
-	void voltarConfiguracaoOriginal(Integer numeroSemana, Date date, List<Long> fornecedores);
+	void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores, Usuario usuario);
 	
 	void verificaDataOperacao(Date data);
+	
+	/**
+	 * Processa os produtos que não foram confirmados em uma matriz já fechada, para proxima semana de recolhimento
+	 * 
+	 * @param produtos - produtos a serem processados 
+	 * @param numeroSemana - número da semana 
+	 * 
+	 */
+	void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana);
+	
+	void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
+										 Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
+										 TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+										 List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada);
 	
 }

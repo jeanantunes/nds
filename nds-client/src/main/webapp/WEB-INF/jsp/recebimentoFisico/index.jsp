@@ -1,4 +1,11 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoGridColRepartePrevisto" type="hidden" value="${permissaoGridColRepartePrevisto}">
+<input id="permissaoGridColDiferenca" type="hidden" value="${permissaoGridColDiferenca}">
+
+<input id="permissaoColValorTotal" type="hidden" value="${permissaoColValorTotal}">
+<input id="permissaoColValorTotalDesconto" type="hidden" value="${permissaoColValorTotalDesconto}">
+
+<input id="indConferenciaCega" type="hidden" value="${indConferenciaCega}">
 
 <head>
 
@@ -7,6 +14,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptRecebimentoFisico.js"></script>
+
 
 <script language="javascript" type="text/javascript">
 
@@ -24,6 +32,24 @@
 <style type="text/css">
     fieldset label {width: auto; margin-bottom: 0px!important;}
     .nfes{display:none; float: left; margin-top: 4px;line-height: 24px;}
+    
+    .gridLinhaDestacada {
+	  background:#BEBEBE; 
+	  font-weight:bold; 
+	  color:#fff;
+	}
+	
+	.gridLinhaDestacada:hover {
+	   color:#000;
+	}
+	
+	.gridLinhaDestacada a {
+	   color:#fff;
+	}
+	
+	.gridLinhaDestacada a:hover {
+	   color:#000;
+	}
 </style>
 
 </head>
@@ -46,7 +72,7 @@
 
 			<table width="341" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-					<td>CÃ³digo:</td>
+					<td>Código:</td>
 					<td width="202">
 						<input 
 						type="text"
@@ -202,11 +228,14 @@
 							</a> 
 						</span>
 
-						<span class="bt_novos">
-							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
-							</a>
-						</span>
+						<c:if test="${permissaoBotaoConfirmacao eq true}">
+							<span class="bt_novos">
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
+								</a>
+							</span>
+						</c:if>
+						
 					</div>	
 
 					<div id="botoesOpacos">
@@ -223,11 +252,13 @@
 							</a> 
 						</span>
 
-						<span class="bt_novos">
-							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento FÃ­sico"> 
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
-							</a>
-						</span>						
+						<c:if test="${permissaoBotaoConfirmacao eq true}">
+							<span class="bt_novos">
+								<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento Físico"> 
+									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
+								</a>
+							</span>				
+						</c:if>		
 
 					</div>
 		</div>
@@ -305,30 +336,38 @@
 			</form>		
 
 			<div class="linha_separa_fields">&nbsp;</div>
-
-			<fieldset class="fieldGrid">
-
-				<legend>Recebimentos F&iacute;sico Cadastrados</legend>
-
-				<div class="grids" style="display: none;">
-
-					<div class="gridWrapper">
-
-						<table class="itemNotaGrid"></table>
-
+			<div class="break_conteudo" style="position: relative !important; left: -10%;">
+				<fieldset class="fieldGrid" style="width: 1200px;">
+	
+					<legend>Recebimentos F&iacute;sico Cadastrados</legend>
+	
+					<div class="grids" style="display: none;">
+	
+						<div class="gridWrapper">
+	
+							<table class="itemNotaGrid"></table>
+	
+						</div>
+	
+						<span class="bt_sellAll" style="float:right; margin-right:40px;">
+							<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
+							<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" 
+								onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+						</span>
+						
+						<span style="float:right; margin-right:40px;" id="spanTotalComDescontoLbl">
+							<label>Total com desconto: </label>
+							<label id="totalComDescontoLbl"></label>
+						</span>
+						
+						<span style="float:right; margin-right:40px;" id="spanTotalSemDescontoLbl">
+							<label>Total: </label>
+							<label id="totalSemDescontoLbl"></label>
+						</span>
 					</div>
-
-					
-
-					<span class="bt_sellAll" style="float:right; margin-right:40px;">
-						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
-						<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
-					</span>
-
-				</div>
-
-			</fieldset>
-
+	
+				</fieldset>
+			</div>
 
 
 
@@ -341,9 +380,9 @@
 
 		    <jsp:include page="../messagesDialog.jsp" />
 
-			<fieldset style="width:1000x!important;">
+			<fieldset style="width:1150px!important;">
 			  <legend>Dados da Nota</legend>
-			  <table width="1000" cellpadding="2" cellspacing="2" style="text-align:left;">
+			  <table width="1150" cellpadding="2" cellspacing="2" style="text-align:left;">
 
 			    <tr style="width: 25%">
 
@@ -422,19 +461,13 @@
 			      <td>
 			          <input maxlength="17" type="text" style="width:100px; text-align:right; " id="novoValorTotal" name="novoValorTotal"/>
 			      </td>
-
-			      <td align="right">
-			          <input type="checkbox" id="novoReplicarQtde" name="novoReplicarQtde" />
-			      </td>
-			      <td>Replicar Qtde</td>
-
 			    </tr>
 
 			    </table>
 			</fieldset>
 
 
-			<fieldset style="width:1000px!important; margin-top:10px;">
+			<fieldset style="width:1250px!important; margin-top:10px;">
 			    <form name="formularioItensNota" id="formularioItensNota">
 				    <legend>Itens da Nota</legend>
 				    <table id="tabelaItens" class="novoItemNotaGrid"></table>
@@ -450,14 +483,21 @@
 
 			<span class="bt_sellAll" style="float:right; margin-right:40px; margin-top:8px">
 			    <label for="textoSelTodos" id="textoSelTodos">
-	                Marcar Todos
+	                Selecionar Todos
 	            </label>
 			    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-left:10px"/>
+			</span>
+			
+			<span style="float:right; margin-right:35px; margin-top:8px">
+			    <strong style="margin-right:10px;">
+			        Total com desconto:
+			    </strong> 
+			    <label id="labelValorTotalDesconto">0,00</label>
 			</span>
 
 			<span style="float:right; margin-right:35px; margin-top:8px">
 			    <strong style="margin-right:10px;">
-			        Valor Total R$
+			        Total:
 			    </strong> 
 			    <label id="labelValorTotal">0,00</label>
 			</span>

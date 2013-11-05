@@ -7,8 +7,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -36,13 +38,13 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#obterHistoricosStatusCota(br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO)
 	 */
-	@SuppressWarnings("unchecked")
-	public List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+	public List<HistoricoSituacaoCotaVO> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterHistorico(filtro,false,false);
 	}
 
-	private List<HistoricoSituacaoCota> obterHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
+	@SuppressWarnings("unchecked")
+	private List<HistoricoSituacaoCotaVO> obterHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
 		
 		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
 		
@@ -53,6 +55,8 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		this.configurarParametrosQueryHistoricoStatusCota(query, filtro);
 		
 		this.configurarPaginacaoQueryHistoricoStatusCota(query, filtro);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(HistoricoSituacaoCotaVO.class));
 		
 		return query.list();
 	}
@@ -70,8 +74,6 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
 		
-		hql = this.adicionarOrdenacaoQueryHistoricoStatusCota(hql, filtro);
-		
 		Query query = super.getSession().createQuery(hql);
 		
 		this.configurarParametrosQueryHistoricoStatusCota(query, filtro);
@@ -87,36 +89,43 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * 
 	 * @return Query string
 	 */
+	@SuppressWarnings("deprecation")
 	private String criarQueryHistoricoStatusCota(FiltroStatusCotaDTO filtro, boolean totalizarResultados, boolean filtrarUltimaDataHistorico) {
 		
 		String hql = "select ";
 		
-		hql += totalizarResultados ? " count(hsc) " : " hsc ";
+		if (totalizarResultados){
+			
+			hql += " count(hsc) ";
+		} else {
+			
+			hql += "c.numeroCota as numeroCota, ";
+			hql += "coalesce(p.nome, p.razaoSocial) as nomeCota, ";
+			hql += "hsc.dataInicioValidade as data, ";
+			hql += "hsc.situacaoAnterior as statusAnterior, ";
+			hql += "hsc.novaSituacao as statusAtualizado, ";
+			hql += "responsavel.nome as usuario, ";
+			hql += "hsc.motivo as motivo, ";
+			hql += "hsc.descricao as descricao, ";
+			hql += "hsc.processado as processado ";
+		}
 		
 		hql += " from HistoricoSituacaoCota hsc ";
 		hql += " join hsc.cota c ";
 		hql += " join c.pessoa p ";
+		hql += " join hsc.responsavel responsavel ";
+		hql += " where 1 = 1 ";
 		
 		if (filtro != null) {
 			
-			boolean useWhere = true;
-			
 			if (filtro.getNumeroCota() != null) {
-				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.cota.numeroCota = :numeroCota ";
-				
-				useWhere = false;
+
+				hql += " and hsc.cota.numeroCota = :numeroCota ";
 			}
 			
 			if (filtro.getStatusCota() != null) {
 				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.novaSituacao = :statusCota ";
-				
-				useWhere = false;
+				hql += " and hsc.novaSituacao = :statusCota ";
 			}
 			
 			if (filtro.getPeriodo() != null) {
@@ -124,46 +133,31 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				if (filtro.getPeriodo().getDataInicial() != null
 						&& filtro.getPeriodo().getDataFinal() != null) {
 					
-					hql += useWhere ? " where " : " and ";
-					
-					hql += " hsc.dataInicioValidade between :dataInicial and :dataFinal ";
-					
-					useWhere = false;
+					hql += " and hsc.dataInicioValidade between :dataInicial and :dataFinal ";
 					
 				} else if (filtro.getPeriodo().getDataInicial() != null) {
 					
-					hql += useWhere ? " where " : " and ";
-					
-					hql += " hsc.dataInicioValidade >= :dataInicial ";
-					
-					useWhere = false;
+					hql += " and hsc.dataInicioValidade >= :dataInicial ";
 					
 				} else if (filtro.getPeriodo().getDataFinal() != null) {
 					
-					hql += useWhere ? " where " : " and ";
-					
-					hql += " hsc.dataInicioValidade <= :dataFinal ";
-					
-					useWhere = false;
+					hql += " and hsc.dataInicioValidade <= :dataFinal ";
 				}
 			}
 			
 			if (filtro.getMotivoStatusCota() != null) {
 				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.motivo = :motivo ";
-				
-				useWhere = false;
+				hql += " and hsc.motivo = :motivo ";
 			}
 			
-			if(filtrarUltimaDataHistorico){
+			if (filtrarUltimaDataHistorico) {
 				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.dataInicioValidade = ( select max(hs.dataInicioValidade) from HistoricoSituacaoCota hs where hs.cota.numeroCota = hsc.cota.numeroCota )  ";
-				
-				useWhere = false;
+				hql += " and hsc.id = (";
+				hql += " select max(_h.id) from HistoricoSituacaoCota _h ";
+				hql += " where _h.dataInicioValidade <= (";
+				hql += " select dataOperacao from Distribuidor ";
+				hql += ") and _h.cota.id = hsc.cota.id ";
+				hql += ")";
 			}
 		}
 		
@@ -185,28 +179,28 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case NUMERO_COTA :
-					hql += "order by c.numeroCota ";
+					hql += "order by numeroCota ";
 					break;
 				case NOME_COTA :
-					hql += "order by CASE WHEN p.class = 'J' THEN p.razaoSocial else p.nome END ";
+					hql += "order by nomeCota ";
 					break;
 				case DATA:
-					hql += "order by hsc.dataInicioValidade ";
+					hql += "order by data  ";
 					break;
 				case DESCRICAO:
-					hql += "order by hsc.descricao ";
+					hql += "order by descricao  ";
 					break;
 				case MOTIVO:
-					hql += "order by hsc.motivo ";
+					hql += "order by motivo ";
 					break;
 				case STATUS_ANTERIOR:
-					hql += "order by hsc.situacaoAnterior ";
+					hql += "order by statusAnterior ";
 					break;
 				case STATUS_ATUALIZADO:
-					hql += "order by hsc.novaSituacao ";
+					hql += "order by statusAtualizado ";
 					break;
 				case USUARIO:
-					hql += "order by hsc.responsavel ";
+					hql += "order by usuario ";
 					break;
 				default:
 					break;
@@ -214,7 +208,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			
 			if (filtro.getPaginacao().getOrdenacao() != null) {
 				
-				hql += filtro.getPaginacao().getOrdenacao().toString();
+				if(filtro.getOrdenacaoColuna().equals(FiltroStatusCotaDTO.OrdenacaoColunasStatusCota.DATA)){
+					hql += filtro.getPaginacao().getOrdenacao().toString() + " ,hsc.dataEdicao desc ";
+				}
+				else{
+					hql += filtro.getPaginacao().getOrdenacao().toString();
+				}
 			}
 		}
 		
@@ -227,6 +226,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * @param query - query
 	 * @param filtro - filtro de pesquisa
 	 */
+	@SuppressWarnings("deprecation")
 	private void configurarParametrosQueryHistoricoStatusCota(Query query, FiltroStatusCotaDTO filtro) {
 		
 		if (filtro != null) {
@@ -294,19 +294,21 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select h from  HistoricoSituacaoCota h JOIN h.cota cota ")
-		.append(" where cota.numeroCota =:numeroCota")
-		.append(" and cota.situacaoCadastro = h.novaSituacao ")
-		.append(" and cota.situacaoCadastro =:situacaoCadastro ")
-		.append(" order by cota.inicioAtividade, h.dataEdicao desc ");
+		hql.append(" select h from HistoricoSituacaoCota h JOIN h.cota cota ")
+		   .append(" where cota.numeroCota = :numeroCota ")
+		   .append(" and h.processado = true ")
+		   .append(" and cota.situacaoCadastro = h.novaSituacao ")
+		   .append(" and cota.situacaoCadastro = :situacaoCadastro ")
+		   .append(" order by cota.inicioAtividade, h.dataEdicao desc ");
 		
-		Query query  = getSession().createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString());
+		
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("situacaoCadastro", SituacaoCadastro.INATIVO);
+		
 		query.setMaxResults(1);
 		
 		return (HistoricoSituacaoCota) query.uniqueResult();
-		
 	}
 
 	/* (non-Javadoc)
@@ -318,6 +320,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		criteria.setProjection(Projections.max("dataEdicao"));
 		criteria.add(Restrictions.eq("novaSituacao", SituacaoCadastro.SUSPENSO));
 		criteria.add(Restrictions.eq("dataEdicao", dataOperacao));
+		criteria.add(Restrictions.eq("processado", true));
 		return (Date) criteria.uniqueResult();
 	}
 
@@ -328,21 +331,59 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	public Date buscarDataUltimaSuspensaoCotas() {
 		Criteria criteria = getSession().createCriteria(HistoricoSituacaoCota.class);
 		criteria.setProjection(Projections.max("dataEdicao"));
+		criteria.add(Restrictions.eq("processado", true));
 		return (Date) criteria.uniqueResult();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<HistoricoSituacaoCota> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+	public List<HistoricoSituacaoCotaVO> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterHistorico(filtro, false, true);
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterTotalHistorico(filtro, true, true);
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<HistoricoSituacaoCota> obterNaoProcessadosComInicioEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select h from HistoricoSituacaoCota h ")
+		   .append(" where h.processado = :processado ")
+		   .append(" and h.dataInicioValidade = :data ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("processado", false);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<HistoricoSituacaoCota> obterNaoRestauradosComTerminoEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select h from HistoricoSituacaoCota h ")
+		   .append(" where h.processado = :processado ")
+		   .append(" and h.dataFimValidade = :data ")
+		   .append(" and h.restaurado = :restaurado ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("processado", true);
+		query.setParameter("restaurado", false);
+		
+		return query.list();
+	}
+	
 }

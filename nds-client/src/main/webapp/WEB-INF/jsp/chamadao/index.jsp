@@ -1,6 +1,9 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/chamadao.js"></script>
 
@@ -12,6 +15,8 @@
 
 	$(function(){
 		chamadaoController.init();
+
+		bloquearItensEdicao(chamadaoController.workspace);
 	});
 		
 </script>
@@ -21,7 +26,13 @@
 <body>
 <input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
 <input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
-
+	
+	<form id="formUsoMatrizRecolhimentoConfirmada">
+		<div id="dialogUsoMatrizRecolhimentoConfirmada" title="Atenção" style="display: none">
+			<p>A data escolhida já possui matriz de recolhimento confirmada. Deseja prosseguir mesmo assim?</p>
+		</div>
+	</form>
+	
 	<form id="form-confirm">
 		<div id="dialog-confirm" title="Chamadão">
 			
@@ -56,7 +67,7 @@
 			<div id="divBotaoConfirmarChamadao" style="display: none">
 	    			
    				<span class="bt_novos">
-   					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy"  title="Confirmar" >
+   					<a isEdicao="true" onclick="chamadaoController.confirmar('CONFIRMAR');" href="javascript:;" rel="tipsy"  title="Confirmar" >
    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
    					</a>
 				</span>
@@ -66,7 +77,7 @@
 			<div id="divBotoesChamadaEncalhe" style="display: none">
 							
 				<span class="bt_novos">
-					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy" title="Reprogramar">
+					<a onclick="chamadaoController.confirmar('REPROGRAMAR');" href="javascript:;" rel="tipsy" title="Reprogramar">
 						<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 					</a>
 				</span>
@@ -142,7 +153,7 @@
 			    </td>
 			    <td>
     				<span class="bt_pesquisar" title="Pesquisar">
-    					<a href="javascript:;" onclick="chamadaoController.pesquisar();">Pesquisar</a>
+    					<a href="javascript:;" onclick="chamadaoController.validarMatrizRecolhimentoConfirmada();">Pesquisar</a>
     				</span>
     			</td>
 		  </tr>
@@ -159,18 +170,18 @@
 	        
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
 	   			<tr>
-	   				<td width="442" valign="top"></td>
+	   				<td width="242" valign="top"></td>
 	      				
 	      			<td width="458">
-				        <fieldset class="box_field" style="width:320px;">
+				        <fieldset class="box_field" style="width:420px;">
 				        	<legend>Chamadão</legend>
-				        	<div class="box_resumo" style="width:308px;">
-				            	<table width="309" border="0" cellspacing="1" cellpadding="1">
+				        	<div class="box_resumo" style="width:408px;">
+				            	<table width="409" border="0" cellspacing="1" cellpadding="1">
 				                	<tr class="header_table">
 				                    	<td height="23" align="right">&nbsp;</td>
 				                      	<td align="center"><strong>Produtos</strong></td>
 				                      	<td align="center"><strong>Exemplares</strong></td>
-				                      	<td align="center"><strong>Total R$</strong></td>
+				                      	<td align="center"><strong>Total R$ (com desconto)</strong></td>
 				                    </tr>
 				                    <tr class="class_linha_1">
 				                    	<td width="52" height="23"><strong>Parcial:</strong></td>

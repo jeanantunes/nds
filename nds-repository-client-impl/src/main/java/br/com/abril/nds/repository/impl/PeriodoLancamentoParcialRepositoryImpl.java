@@ -300,7 +300,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(periodo) ");
+		hql.append(" select distinct periodo ");
 		
 		hql.append(getSqlFromEWherePeriodosParciais(filtro));
 		
@@ -312,7 +312,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			query.setParameter(key, param.get(key));
 		}	
 		
-		Long totalRegistros = (Long) query.uniqueResult();
+		List<Object> listaTotalRegistros = query.list();
+		Long totalRegistros = (long) listaTotalRegistros.size();
+		
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}
@@ -462,7 +464,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
-			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
 			.append(" and produtoEdicao.id =:idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -478,7 +480,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
-			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
 			.append(" and produtoEdicao.id =:idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());

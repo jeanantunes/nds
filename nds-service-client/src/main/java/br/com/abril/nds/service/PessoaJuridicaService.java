@@ -8,5 +8,5 @@ public interface PessoaJuridicaService {
 	PessoaJuridica buscarCnpjPorFornecedor(String nomeFantasia);
 	PessoaJuridica salvarPessoaJuridica(PessoaJuridica pessoaJuridica);
 	PessoaJuridica buscarPorId(Long id);
-
+	Long buscarIdPessoaJuridicaPorIdForncedor(Long idFornecedor);
 }

@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.administracao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,10 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
@@ -46,11 +45,12 @@ import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
@@ -79,7 +79,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 public class FecharDiaController extends BaseController {
     
-    private static final Logger LOG = LoggerFactory.getLogger(FecharDiaController.class);
+	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
 	@Autowired
 	private FecharDiaService fecharDiaService;
@@ -95,6 +95,9 @@ public class FecharDiaController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -116,11 +119,11 @@ public class FecharDiaController extends BaseController {
 	
 	private static Date dataOperacao;
 
-	private static final String ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO = "atributoSessaoValidacao";
-	
 	private static final String FECHAMENTO_DIARIO_DTO_SESSION_KEY = "FECHAMENTO_DIARIO_DTO_SESSION_KEY"; 
 	
 	private static final String FECHAMENTO_DIARIO_REPORT_EXPORT_NAME = "relatorio-fechamento-diario.pdf";
+	
+	private static final String INACTIVE_INTERVAL = "inactive_interval";
 	
 	@Path("/")
 	public void index(){
@@ -130,19 +133,32 @@ public class FecharDiaController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA_ALTERACAO)
-	public void inicializarValidacoes(){		
+	public void inicializarValidacoes(Date data){
 		
-		this.fecharDiaService.setLockBancoDeDados(true);
+		LOG.info("FAZENDO VALIDAÇÕES");
+		
+		if (data != null && !data.equals(dataOperacao)) {
+			
+			dataOperacao = data;
+			
+		} else {
+			
+			this.fecharDiaService.setLockBancoDeDados(true);
+		}
 		
 		FecharDiaDTO dto = new FecharDiaDTO();
 		
-		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(dataOperacao));
-		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(dataOperacao));
+		dto.setBaixaBancaria(!this.fecharDiaService.existeCobrancaParaFecharDia(dataOperacao));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(dataOperacao));
-		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
+		dto.setConfirmacaoDeExpedicao(!this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(dataOperacao));
 		dto.setControleDeAprovacao(this.distribuidorService.utilizaControleAprovacao());
-		dto.setFechamentoEncalhe(this.fechamentoEncalheService.buscaControleFechamentoEncalhe(dataOperacao));
+		dto.setFechamentoEncalhe(this.fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(dataOperacao));
+		dto.setConsolidadoCota(this.fecharDiaService.isConsolidadoCotaAVista(data));
+		
+		dto.setHabilitarConfirmar(
+			dataOperacao.equals(this.distribuidorService.obterDataOperacaoDistribuidor())
+			&& dto.isFechamentoPermitido());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
@@ -207,35 +223,13 @@ public class FecharDiaController extends BaseController {
 		
 		Boolean pendencia = this.fecharDiaService.existePendenciasDeAprovacao(dataOperacao);
 		
-//		for (ValidacaoControleDeAprovacaoFecharDiaDTO dto : listaLancamentoFaltaESobra) {
-//			if(dto.getDescricaoTipoMovimento().equals("Falta DE") || dto.getDescricaoTipoMovimento().equals("Falta EM") 
-//					|| dto.getDescricaoTipoMovimento().equals("Sobra DE") || dto.getDescricaoTipoMovimento().equals("Sobra EM")) {
-//				pendencia = true;
-//			}
-//			if(dto.getDescricaoTipoMovimento().equals("Crédito") || dto.getDescricaoTipoMovimento().equals("Débito")){
-//				pendencia = true;
-//			}
-//			if(dto.getDescricaoTipoMovimento().equals("Negociação")){
-//				pendencia = true;
-//			}
-//			if(dto.getDescricaoTipoMovimento().equals("Ajuste de estoque")){
-//				pendencia = true;
-//			}
-//			if(dto.getDescricaoTipoMovimento().equals("Postergação de cobrança")){
-//				pendencia = true;
-//			}
-//		}
-		
-		this.session.setAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO, pendencia);
-		
 		this.result.use(Results.json()).from(pendencia).recursive().serialize();
-		
 	}
 	
 	@Post
 	@Path("obterResumoQuadroReparte")
 	public void obterResumoQuadroReparte(){
-		SumarizacaoReparteDTO dto = resumoFecharDiaService.obterSumarizacaoReparte(getDataFechamento());
+		SumarizacaoReparteDTO dto = resumoFecharDiaService.obterSumarizacaoReparte(dataOperacao);
 		result.use(CustomMapJson.class).put("result", dto).serialize();
 	}
 	
@@ -247,10 +241,8 @@ public class FecharDiaController extends BaseController {
 				this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(dataOperacao);
 		
 		result.use(CustomMapJson.class).put("result", dto).serialize();
-		
 	}
 	
-
 	@Post
 	@Path("obterResumoQuadroSuplementar")
 	public void obterResumoQuadroSuplementar(){
@@ -264,20 +256,18 @@ public class FecharDiaController extends BaseController {
 	@Post
 	@Path("/obterGridReparte")
 	public void obterGridReparte(Integer page, Integer rp){
-	    Date dataFechamento = getDataFechamento();
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
-		List<ReparteFecharDiaDTO> listaReparte = resumoFecharDiaService.obterResumoReparte(dataFechamento, paginacao);
-		Long countReparte = resumoFecharDiaService.contarLancamentosExpedidos(dataFechamento);
+		List<ReparteFecharDiaDTO> listaReparte = resumoFecharDiaService.obterResumoReparte(dataOperacao, paginacao);
+		Long countReparte = resumoFecharDiaService.contarLancamentosExpedidos(dataOperacao);
 		result.use(FlexiGridJson.class).from(listaReparte).page(page).total(countReparte.intValue()).serialize();    
 	}
 	
 	@Post
 	@Path("/obterGridEncalhe")
 	public void obterGridEncalhe(Integer page, Integer rp){
-	    Date dataFechamento = getDataFechamento();
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
-	    List<EncalheFecharDiaDTO> listaEncalhe = resumoEncalheFecharDiaService.obterDadosGridEncalhe(dataFechamento, paginacao);
-	    Long countEncalhe = resumoEncalheFecharDiaService.contarProdutoEdicaoEncalhe(dataFechamento);
+	    List<EncalheFecharDiaDTO> listaEncalhe = resumoEncalheFecharDiaService.obterDadosGridEncalhe(dataOperacao, paginacao);
+	    Long countEncalhe = resumoEncalheFecharDiaService.contarProdutoEdicaoEncalhe(dataOperacao);
 		result.use(FlexiGridJson.class).from(listaEncalhe).page(page).total(countEncalhe.intValue()).serialize();    
 	}
 	
@@ -285,7 +275,7 @@ public class FecharDiaController extends BaseController {
 	@Path("/obterGridSuplementar")
 	public void obterGridSuplementar(Integer page, Integer rp){		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento(), paginacao);		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(dataOperacao, paginacao);		
 		Long countSuplementar = this.resumoSuplementarFecharDiaService.contarProdutoEdicaoSuplementar();		
 		result.use(FlexiGridJson.class).from(listaSuplementar).page(page).total(countSuplementar.intValue()).serialize();		
 	}
@@ -299,19 +289,16 @@ public class FecharDiaController extends BaseController {
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 		if(tipoVenda.equals("encalhe")) {
 			lista = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(dataOperacao, paginacao);
-			total = resumoEncalheFecharDiaService.contarVendasEncalhe(getDataFechamento());
+			total = resumoEncalheFecharDiaService.contarVendasEncalhe(dataOperacao);
 		} else if(tipoVenda.equals("suplementar")){
 			lista = resumoSuplementarFecharDiaService.obterVendasSuplementar(dataOperacao);
-			total = resumoSuplementarFecharDiaService.contarVendasSuplementar(getDataFechamento());
+			total = resumoSuplementarFecharDiaService.contarVendasSuplementar(dataOperacao);
 		}
 		result.use(FlexiGridJson.class).from(lista).page(page).total(total.intValue()).serialize();    
 	}
 	
-	
-	
 	@Get
 	public void exportarResumoReparte(FileType fileType){
-		
 		
 		try {
 		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(dataOperacao, null);
@@ -326,19 +313,16 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Get
 	public void exportarResumoEncalhe(FileType fileType){
 		
-		
 		try {
 		
-		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(dataOperacao, null);
+		List<EncalheFecharDiaDTO> listaEncalhe = 
+				this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(dataOperacao, null);
 		
 		if(listaEncalhe.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -350,19 +334,16 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Get
 	public void exportarResumoSuplementar(FileType fileType){
 		
-		
 		try {
-		
-		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(getDataFechamento(), null);
+			
+			List<SuplementarFecharDiaDTO> listaSuplementar = 
+					this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(dataOperacao, null);
 		
 		if(listaSuplementar.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -374,10 +355,7 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Post
@@ -386,28 +364,27 @@ public class FecharDiaController extends BaseController {
 		try {
 			
 			List<VendaFechamentoDiaDTO> listaVenda = null;
+			
 			if(tipoVenda.equals("encalhe")){
+				
 				listaVenda = resumoEncalheFecharDiaService.obterDadosVendaEncalhe(dataOperacao, null);
 			}else if(tipoVenda.equals("suplementar"))
+				
 				listaVenda = resumoSuplementarFecharDiaService.obterVendasSuplementar(dataOperacao);
-			
 			if(listaVenda.isEmpty()) {
+				
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-				FileExporter.to("venda_" + tipoVenda, fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
-						listaVenda, VendaFechamentoDiaDTO.class, this.httpResponse);
+			FileExporter.to("venda_" + tipoVenda, fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaVenda, VendaFechamentoDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
-	
-	
 	
 	@Get
 	public void exportarRecebimentoFisico(FileType fileType){
-		
 		
 		try {
 		List<ValidacaoRecebimentoFisicoFecharDiaDTO> listaRecebimentoFisicoNaoConfirmado = 
@@ -423,20 +400,17 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Post
 	public void obterSumarizacaoDividas() {
-        Date dataFechamento = getDataFechamento();
         
-        Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = new HashMap<TipoDivida, List<SumarizacaoDividasDTO>>();
+		Map<TipoDivida, List<SumarizacaoDividasDTO>> sumarizacao = 
+				new HashMap<TipoDivida, List<SumarizacaoDividasDTO>>();
         
-        List<SumarizacaoDividasDTO> aReceber = fecharDiaService.sumarizacaoDividasReceberEm(dataFechamento);
-        List<SumarizacaoDividasDTO> aVencer = fecharDiaService.sumarizacaoDividasVencerApos(dataFechamento);
+        List<SumarizacaoDividasDTO> aReceber = fecharDiaService.sumarizacaoDividasReceberEm(dataOperacao);
+        List<SumarizacaoDividasDTO> aVencer = fecharDiaService.sumarizacaoDividasVencerApos(dataOperacao);
         
         sumarizacao.put(TipoDivida.DIVIDA_A_RECEBER, aReceber);
         sumarizacao.put(TipoDivida.DIVIDA_A_VENCER, aVencer);
@@ -446,14 +420,14 @@ public class FecharDiaController extends BaseController {
 	
 	@Post
 	public void obterDividasReceber(Integer page, Integer rp) {
-	    Date dataFechamento = getDataFechamento();
+	    
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 	    
-	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, paginacao);
-	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataFechamento);
+	    List<Cobranca> dividas = fecharDiaService.obterDividasReceberEm(dataOperacao, paginacao);
+	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataOperacao);
 	    
 	    List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
-	    for (Divida divida : dividas) {
+	    for (Cobranca divida : dividas) {
 	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
 	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();       
@@ -461,12 +435,11 @@ public class FecharDiaController extends BaseController {
 	
 	@Get
     public void exportarDividasReceber(FileType fileType) throws IOException {
-	    Date dataFechamento = getDataFechamento();
-        
-        List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataFechamento, null);
+	    
+		List<Cobranca> dividas = fecharDiaService.obterDividasReceberEm(dataOperacao, null);
         List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
-        for (Divida divida : dividas) {
+        for (Cobranca divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
         
@@ -476,17 +449,16 @@ public class FecharDiaController extends BaseController {
         result.nothing();
     }
 	
-	
 	@Post
 	public void obterDividasVencer(Integer page, Integer rp) {
-	    Date dataFechamento = getDataFechamento();
+	    
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
         
-        List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, paginacao);
-        Long totalDividas = fecharDiaService.contarDividasVencerApos(dataFechamento);
+        List<Cobranca> dividas = fecharDiaService.obterDividasVencerApos(dataOperacao, paginacao);
+        Long totalDividas = fecharDiaService.contarDividasVencerApos(dataOperacao);
         
         List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
-        for (Divida divida : dividas) {
+        for (Cobranca divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
         result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();            
@@ -494,12 +466,11 @@ public class FecharDiaController extends BaseController {
 	
 	@Get
     public void exportarDividasVencer(FileType fileType) throws IOException {
-	    Date dataFechamento = getDataFechamento();
-        
-        List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataFechamento, null);
+	    
+		List<Cobranca> dividas = fecharDiaService.obterDividasVencerApos(dataOperacao, null);
         List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
-        for (Divida divida : dividas) {
+        for (Cobranca divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
         
@@ -513,7 +484,7 @@ public class FecharDiaController extends BaseController {
 	public void obterResumoCotas() {
 		
 		ResumoFechamentoDiarioCotasDTO resumoFechamentoDiarioCotas = 
-			this.fecharDiaService.obterResumoCotas(this.getDataFechamento());
+			this.fecharDiaService.obterResumoCotas(dataOperacao);
 		
 		Map<TipoResumo, Long> mapaResumo = new HashMap<TipoResumo, Long>();
 		
@@ -545,17 +516,38 @@ public class FecharDiaController extends BaseController {
 	@Post
 	public void confirmar() {
 		//Unlock na base de dados
+		
+		LOG.info("INICIO CONFIRMA FECHAMENTO DIA");
+		
 		this.fecharDiaService.setLockBancoDeDados(false);
+
+		LOG.info("LOCK DE BANCO ATIVADO");
+		
+		this.session.setAttribute(INACTIVE_INTERVAL, this.session.getMaxInactiveInterval());
 		
 		try {
-		    Boolean hasPendenciaValidacao = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
-		    
-		   if (hasPendenciaValidacao == null || !hasPendenciaValidacao) {
+			
+			//evita que a sessão expire antes que o fechamento do dia seja finalizado
+			this.session.setMaxInactiveInterval(-1);
+
+			LOG.info("SESSION CONFIGURADA PARA ATIVA PERMANENTE");
+
+			Date _dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			Boolean hasPendenciaValidacao = this.fecharDiaService.existePendenciasDeAprovacao(_dataOperacao);
+			
+			if (hasPendenciaValidacao == null || !hasPendenciaValidacao) {
+
+				LOG.info("INICIO PROCESSAMENTO FECHAMENTO DIA");
+				
+		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuarioLogado(), _dataOperacao);
 		        
-		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuarioLogado(), getDataFechamento());
+				LOG.info("FINALIZADO PROCESSAMENTO FECHAMENTO DIA");
+
+		        
 		        setFechamentoDiarioDTO(dto);
 		        
-		        this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
+		        //this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
 		        
 		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, " Fechamento do Dia efetuado com sucesso."),
 		                Constantes.PARAM_MSGS).recursive().serialize();
@@ -564,22 +556,28 @@ public class FecharDiaController extends BaseController {
 		        
 		    	//Lock novamente na base de dados.
 				this.fecharDiaService.setLockBancoDeDados(true);
-		        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Fechamento do Dia não pode ser confirmado! Existem pendências em aberto!"),
+		        result.use(Results.json()).from(
+		        		new ValidacaoVO(
+		        				TipoMensagem.WARNING, 
+		        				"Fechamento do Dia não pode ser confirmado! " +
+		        				"Existem pendências em aberto para a data de operação: " +
+		        				new SimpleDateFormat("dd/MM/yyyy").format(_dataOperacao) + "!"),
 		                Constantes.PARAM_MSGS).recursive().serialize();
 		        
 		    }
 		    
 		} catch (RuntimeException ex) {
-		    clearFechamentoDiarioDTO();
-		    LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
-		    throw ex;
+		    
+			LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
+
+			clearFechamentoDiarioDTO();
+
+			throw ex;
+			
 		}
-	    
 	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
-		
-		Date dataFechamento = this.getDataFechamento();
 		
 		List<CotaResumoDTO> listaCotas = null;
 		
@@ -588,19 +586,19 @@ public class FecharDiaController extends BaseController {
 			case AUSENTES_REPARTE:
 				
 				listaCotas =
-					this.cotaService.obterCotasAusentesNaExpedicaoDoReparteEm(dataFechamento);
+					this.cotaService.obterCotasAusentesNaExpedicaoDoReparteEm(dataOperacao);
 				
 				break;
 				
 			case AUSENTES_ENCALHE:
 				
-				listaCotas = this.cotaService.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataFechamento);
+				listaCotas = this.cotaService.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataOperacao);
 				
 				break;
 				
 			case NOVAS:
 				
-				listaCotas = this.cotaService.obterCotasComInicioAtividadeEm(dataFechamento);
+				listaCotas = this.cotaService.obterCotasComInicioAtividadeEm(dataOperacao);
 				
 				break;
 				
@@ -643,7 +641,7 @@ public class FecharDiaController extends BaseController {
 	public void obterResumoConsignado() {
 		
 		ResumoFechamentoDiarioConsignadoDTO resumoFechamentoDiarioConsignado = 
-			this.fecharDiaService.obterResumoConsignado(getDataFechamento());
+			this.fecharDiaService.obterResumoConsignado(dataOperacao);
 		
 		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioConsignado).serialize();
 	}
@@ -652,16 +650,30 @@ public class FecharDiaController extends BaseController {
 	public void obterResumoEstoque() {
 		
 		ResumoEstoqueDTO resumoFechamentoDiarioEstoque = 
-			this.fecharDiaService.obterResumoEstoque(getDataFechamento());
+			this.fecharDiaService.obterResumoEstoque(dataOperacao);
 		
 		result.use(CustomMapJson.class).put("resumo", resumoFechamentoDiarioEstoque).serialize();
 	}
 	
     @Post
     public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
-        FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
+        
+    	LOG.info("FECHAMENTO DIARIO - INICIO GERACAO RELATORIO FECHAMENTO DIARIO");
+    	
+    	//volta o valor original de inativação da sessão
+    	if (this.session.getAttribute(INACTIVE_INTERVAL) != null){
+    		
+    		this.session.setMaxInactiveInterval((int) this.session.getAttribute(INACTIVE_INTERVAL));
+    		this.session.removeAttribute(INACTIVE_INTERVAL);
+    	}
+
+    	LOG.info("FECHAMENTO DIARIO - RETIRADA CONFIGURACAO DE SESSION PERMANENTE");
+    	
+    	FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
         
         byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
+        
+    	LOG.info("FECHAMENTO DIARIO - OBTIDO BYTES RELATORIO FECHAR DIA");
 
         if (relatorio != null) {
             long size = relatorio.length;
@@ -676,14 +688,24 @@ public class FecharDiaController extends BaseController {
             
             InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
                     FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
+            
+        	LOG.info("FECHAMENTO DIARIO - RETORNANDO RELATORIO FECHAR DIA");
+
             return download;
         }
+        
+    	LOG.info("FECHAMENTO DIARIO - RELATORIO NAO GERADO");
+        
         return null;
     }
-
-	
-    private Date getDataFechamento() {
-        return distribuidorService.obterDataOperacaoDistribuidor();
+    
+    @Post
+    public void transferirDiferencasParaEstoqueDePerdaGanho() {
+    	
+    	this.fecharDiaService.transferirDiferencasParaEstoqueDePerdaGanho(
+    		dataOperacao, getUsuarioLogado().getId());
+    	
+    	this.result.use(CustomMapJson.class).put("result", "").serialize();
     }
     
     private FechamentoDiarioDTO getFechamentoDiarioDTO() {
@@ -722,7 +744,5 @@ public class FecharDiaController extends BaseController {
          * 
          */
         JQUERY_FILE_DOWNLOAD_PLUGIN
-        
     }
-
 }

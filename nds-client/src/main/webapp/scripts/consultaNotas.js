@@ -2,6 +2,8 @@ var consultaNotasController = $.extend(true, {
 
 init : function() {
 	
+	this.linhasDestacadas = [],
+	
 	$("#btnPesquisar", consultaNotasController.workspace).keypress(function(event) {
 
 		var keynum;
@@ -24,63 +26,69 @@ init : function() {
 		preProcess : consultaNotasController.processarResultadoConsultaNF,
 		dataType : 'json',
 		colModel : [ {
-			display : 'Número da Nota',
+			display : 'Nº NF',
 			name : 'numero',
-			width : 100,
+			width : 30,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Série',
 			name : 'serie',
-			width : 50,
+			width : 30,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Nota de Envio',
 			name : 'numeroNotaEnvio',
-			width : 50,
+			width : 70,
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Data de Emissão',
+			display : 'Chave Acesso',
+			name : 'chaveAcesso',
+			width : 260,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Emissão',
 			name : 'dataEmissao',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Data de Expedição',
+			display : 'Expedição',
 			name : 'dataExpedicao',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'center'
-		}, {
-			display : 'Tipo',
-			name : 'descricao',
-			width : 150,
-			sortable : true,
-			align : 'left'
 		}, {
 			display : 'Fornecedor',
 			name : 'razaoSocial',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Valor R$',
+			display : 'Valor Capa R$',
 			name : 'valorTotalNota',
-			width : 80,
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Valor C/Desc R$',
+			name : 'valorTotalNotaComDesconto',
+			width : 90,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Nota Recebida',
 			name : 'notaRecebida',
-			width : 90,
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : "Ação",
 			name : 'acao',
-			width : 60,
+			width : 30,
 			sortable : false,
 			align : 'center'
 		} ],
@@ -95,7 +103,7 @@ init : function() {
 		singleSelect : true
 	});
 
-	$("#datepickerDe", consultaNotasController.workspace).datepicker({
+	$("#dataNFDe", consultaNotasController.workspace).datepicker({
 		showOn : "button",
 		buttonImage : contextPath + "/images/calendar.gif",
 		buttonImageOnly : true,
@@ -103,9 +111,9 @@ init : function() {
 		defaultDate : new Date()
 	});
 
-	$("#datepickerDe", consultaNotasController.workspace).mask("99/99/9999");
+	$("#dataNFDe", consultaNotasController.workspace).mask("99/99/9999");
 
-	$("#datepickerAte", consultaNotasController.workspace).datepicker({
+	$("#dataNFAte", consultaNotasController.workspace).datepicker({
 		showOn : "button",
 		buttonImage : contextPath + "/images/calendar.gif",
 		buttonImageOnly : true,
@@ -113,18 +121,18 @@ init : function() {
 		defaultDate : new Date()
 	});
 
-	$("#datepickerAte", consultaNotasController.workspace).mask("99/99/9999");
+	$("#dataNFAte", consultaNotasController.workspace).mask("99/99/9999");
 	
 },	
 	
 processarResultadoConsultaNF : function (data) {
 
-	if ($("#datepickerDe", consultaNotasController.workspace).val() == "" && $("#datepickerAte", consultaNotasController.workspace).val() == "") {
+	if ($("#dataNFDe", consultaNotasController.workspace).val() == "" && $("#dataNFAte", consultaNotasController.workspace).val() == "") {
 
 		var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
 
-		$("#datepickerDe", consultaNotasController.workspace).val(dataAtual);
-		$("#datepickerAte", consultaNotasController.workspace).val(dataAtual);
+		$("#dataNFDe", consultaNotasController.workspace).val(dataAtual);
+		$("#dataNFAte", consultaNotasController.workspace).val(dataAtual);
 	}
 
 	if (data.mensagens) {
@@ -152,6 +160,10 @@ processarResultadoConsultaNF : function (data) {
 				+ ' style="cursor:pointer;border:0px" title="Visualizar Detalhes">'
 				+ '<img src="' + contextPath + '/images/ico_detalhes.png" border="0px"/>'
 				+ '</a>';
+				
+		if(!data.rows[i].cell.chaveAcesso){
+			data.rows[i].cell.chaveAcesso="";
+		}
 	}
 
 	if ($(".grids", consultaNotasController.workspace).css('display') == 'none') {
@@ -183,30 +195,37 @@ pesquisarDetalhesNota : function(idNota) {
 			{
 				url : contextPath + "/estoque/consultaNotas/pesquisarDetalhesNotaFiscal",
 				preProcess : consultaNotasController.montarGridComRodape,
+				onSuccess: consultaNotasController.onSuccesPesquisa,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
-					name : 'codigoItem',
-					width : 70,
+					name : 'codigoProduto',
+					width : 45,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 150,
+					width : 170,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 70,
+					width : 40,
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Preço de Venda R$',
-					name : 'precoCapa',
-					width : 100,
+					display : 'Preço Capa R$',
+					name : 'precoVenda',
+					width : 80,
 					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Preço C/Desc R$',
+					name : 'precoComDesconto',
+					width : 90,
+					sortable : false,
 					align : 'right'
 				}, {
 					display : 'Exemplares',
@@ -222,13 +241,21 @@ pesquisarDetalhesNota : function(idNota) {
 					align : 'center'
 				}, {
 					display : 'Total R$',
-					name : 'total',
-					width : 80,
+					name : 'valorTotal',
+					width : 55,
 					sortable : true,
 					align : 'right'
+				}, {
+					display : 'Total C/Desc R$',
+					name : 'valorTotalComDesconto',
+					width : 80,
+					sortable : false,
+					align : 'right'
 				} ],
-				width : 715,
+				width : 840,
 				height : 230,
+				sortname : "codigoItem",
+				sortorder : "asc",
 				params : [ {
 					name : 'idNota',
 					value : idNota
@@ -257,6 +284,15 @@ montarGridComRodape : function(data) {
 
 		return;
 	}
+	
+	consultaNotasController.linhasDestacadas = [];
+	$.each(data.tableModel.rows,
+		function(index, item){
+			if (item.cell[9] == "true"){
+				consultaNotasController.linhasDestacadas.push(item.id);
+			}
+		}
+	);
 
 	var jsonData = jQuery.toJSON(data);
 
@@ -264,6 +300,7 @@ montarGridComRodape : function(data) {
 
 	$("#totalExemplares", consultaNotasController.workspace).html(result.totalExemplares);
 	$("#totalSumarizado", consultaNotasController.workspace).html("R$ " + result.totalSumarizado);
+	$("#totalSumarizadoComDesconto", consultaNotasController.workspace).html("R$ " + result.totalSumarizadoComDesconto);
 
 	consultaNotasController.popup();
 
@@ -275,7 +312,7 @@ popup : function() {
 	$("#dialog-novo", consultaNotasController.workspace).dialog({
 		resizable : false,
 		height : 400,
-		width : 750,
+		width : 860,
 		modal : true,
 		buttons : {
 			"Fechar" : function() {
@@ -284,6 +321,16 @@ popup : function() {
 		},
 		form: $("#dialog-novo", consultaNotasController.workspace).parents("form")
 	});
+},
+
+onSuccesPesquisa : function(){
+	$.each(consultaNotasController.linhasDestacadas,
+		function (index, item){	    	
+			$('#row' + item, consultaNotasController.workspace).removeClass("erow").addClass("gridLinhaDestacada");
+		}
+	);
 }
 
 }, BaseController);
+
+//@ sourceURL=scriptConsultaNota.js

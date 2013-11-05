@@ -69,7 +69,17 @@ public enum TipoParametroSistema {
 	 * Usúario de de autenticação da conta de e-mail do sistema
 	 */
 	EMAIL_USUARIO,
+	
+	/**
+	 * Remetente para envio de e-mail do sistema
+	 */
+	EMAIL_REMETENTE,
 
+	/**
+	 * Autentica o envio de e-mail do sistema
+	 */
+	EMAIL_AUTENTICAR,
+	
 	/**
 	 * Representa a quantidade de meses que sera efetuado o expurgo do sistema
 	 */

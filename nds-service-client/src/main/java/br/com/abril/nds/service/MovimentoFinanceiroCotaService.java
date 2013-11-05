@@ -5,15 +5,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 public interface MovimentoFinanceiroCotaService {
@@ -30,6 +32,23 @@ public interface MovimentoFinanceiroCotaService {
 	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaPorId(Long idMovimento);
 	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
+
+	void processarRegistrohistoricoFinanceiro(
+			HistoricoFinanceiroInput vendaInput, Date dataOperacao);
+
+	boolean existeOutrosMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCredito, Long idMovimentoFinanceiroAtual);
+
+	void removerPostergadosDia(Long idCota,
+			List<TipoMovimentoFinanceiro> tiposMovimentoPostergado, Date dataOperacao);
+	
+	List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos();
+	
+	/**
+	 * Remove movimentos financeiros do consolidado ou postergado
+	 * Referentes à encalhe ou reparte da cota
+	 * @param mfcs
+	 */
+	void removerMovimentosFinanceirosCota(List<MovimentoFinanceiroCota> mfcs);
 	
 	/**
 	 * Obtém valores dos faturamentos bruto ou liquido das cotas no período
@@ -40,22 +59,89 @@ public interface MovimentoFinanceiroCotaService {
 	 * @return Map<Long,BigDecimal>: Faturamentos das cotas
 	 */
 	Map<Long,BigDecimal> obterFaturamentoCotasPeriodo(List<Cota> cotas, BaseCalculo baseCalculo, Date dataInicial, Date dataFinal);
+
+	/**
+	 * Gera Financeiro para Movimentos de Estoque da Cota à Vista referentes à Envio de Reparte.
+	 * @param cota
+	 * @param fornecedor
+	 * @param movimentosEstoqueCotaOperacaoEnvioReparte
+	 * @param movimentosEstoqueCotaOperacaoEstorno
+	 * @param dataOperacao
+	 * @param usuario
+	 */
+	void gerarMovimentoFinanceiroCotaAVista(Cota cota,
+											Fornecedor fornecedor,
+											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
+											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno,
+											Date dataOperacao, Usuario usuario);
+
+	/**
+     * Distingue Movimentos de Estoque da Cota por Fornecedor; 
+     * Separa a lista de Movimentos de Estoque em outras listas;
+     * Cada lista separada possui Movimentos de Estoque de um único Fornecedor.
+     * @param movimentosEstoqueCota
+     * @return Map<Long,List<MovimentoEstoqueCota>>
+     */
+	Map<Long, List<MovimentoEstoqueCota>> agrupaMovimentosEstoqueCotaPorFornecedor(List<MovimentoEstoqueCota> movimentosEstoqueCota);
+
+	/**
+	 * Gera Movimentos Financeiros das Cotas
+	 * @param cotas
+	 * @param dataOperacao
+	 * @param usuario
+	 */
+	void gerarMovimentoFinanceiroCota(List<Cota> cotas,
+	                                  Date dataOperacao, 
+	                                  Usuario usuario);
 	
 	/**
-	 * Gera movimento financeiro para cota a vista (crédito)
-	 * @param controleConferenciaEncalheCota
+	 * Gera Movimentos Financeiros da Cota
+	 * @param cota
+	 * @param dataOperacao
+	 * @param usuario
 	 */
-	void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota,
-			FormaComercializacao formaComercializacaoProduto);
-
-	void processarRegistrohistoricoFinanceiro(
-			HistoricoFinanceiroInput vendaInput, Date dataOperacao);
-
-	boolean existeOutrosMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCredito, Long idMovimentoFinanceiroAtual);
-
-	void removerPostergadosDia(Long idCota,
-			List<TipoMovimentoFinanceiro> tiposMovimentoPostergado);
+	void gerarMovimentoFinanceiroCota(Cota cota,
+			                          Date dataOperacao, 
+			                          Usuario usuario);
 	
-	List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos();
+	/**
+	 * Gera movimento financeiro para cota na Conferencia de Encalhe
+	 * @param idControleConferenciaEncalheCota
+	 */
+	void gerarMovimentoFinanceiroCota(Cota cota,
+									  Date dataOperacao,
+									  Usuario usuario,
+									  Long idControleConferenciaEncalheCota);
+	
+	/**
+	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @return int
+	 */
+	int obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data);
+	
+	/**
+	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * @return List<ProcessamentoFinanceiroCotaVO>
+	 */
+	List<ProcessamentoFinanceiroCotaVO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
+	                                                                     Date data, 
+	                                                                     String sortorder, 
+	                                                                     String sortname,
+	                                                                     int initialResult, 
+	                                                                     int maxResults);
 
+	/**
+	 * Remove Movimentos Financeiros da Cota referentes a Conferencia na Data nao Consolidados
+	 * @param numeroCota
+	 * @param dataOperacao
+	 */
+	void removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao);
 }

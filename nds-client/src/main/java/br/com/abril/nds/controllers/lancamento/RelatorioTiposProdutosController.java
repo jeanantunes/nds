@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.lancamento;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,16 +9,15 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
-import br.com.abril.nds.client.vo.RelatorioTiposProdutosVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.RelatorioTiposProdutosService;
 import br.com.abril.nds.service.TipoProdutoService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -38,12 +36,6 @@ public class RelatorioTiposProdutosController extends BaseController {
 	
 	@Autowired
 	private TipoProdutoService tipoProdutoService; 
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private RelatorioTiposProdutosService service;
 	
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -73,9 +65,16 @@ public class RelatorioTiposProdutosController extends BaseController {
 		
 		tratarFiltroPesquisa(filtro, sortorder, sortname, page, rp);
 		
- 		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
- 		
-		result.use(FlexiGridJson.class).from(list).total(filtro.getPaginacaoVO().getQtdResultadosTotal()).page(page).serialize();
+		Long total = this.tipoProdutoService.obterQunatidade(filtro);
+		
+		if (total != null && total > 0){
+			
+			List<RelatorioTiposProdutosDTO> list = this.tipoProdutoService.gerarRelatorio(filtro);
+			result.use(FlexiGridJson.class).from(list).total(total.intValue()).page(page).serialize();
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
 	}
 	
 	private void tratarFiltroPesquisa(FiltroRelatorioTiposProdutos filtro, 
@@ -119,30 +118,19 @@ public class RelatorioTiposProdutosController extends BaseController {
 
 			TipoProduto tipoProduto = tipoProdutoService.buscaPorId(filtro.getTipoProduto());
 			
-			filtro.setNomeTipoProduto(tipoProduto.getDescricao());
-		}
-		
-		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
-		
-		FileExporter.to("relatorio-tipos-produtos", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null,
-				list, RelatorioTiposProdutosVO.class,
-				this.httpServletResponse);
-		
-		result.use(Results.nothing());
-	}
-	
-	
-	private List<RelatorioTiposProdutosVO> convertList(List<RelatorioTiposProdutosDTO> listDTO) {
-		
-		List<RelatorioTiposProdutosVO> listVO = new ArrayList<RelatorioTiposProdutosVO>();
-		
-		if (listDTO != null) {
-			for (RelatorioTiposProdutosDTO dto : listDTO) {
-				listVO.add(new RelatorioTiposProdutosVO(dto));
+			if (tipoProduto != null) {
+				
+				filtro.setNomeTipoProduto(tipoProduto.getDescricao());
 			}
 		}
 		
-		return listVO;
+		List<RelatorioTiposProdutosDTO> list = this.tipoProdutoService.gerarRelatorio(filtro);
+		
+		FileExporter.to("relatorio-tipos-produtos", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtro, null,
+				list, RelatorioTiposProdutosDTO.class,
+				this.httpServletResponse);
+		
+		result.use(Results.nothing());
 	}
 }

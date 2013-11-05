@@ -1,16 +1,16 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
@@ -21,7 +21,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoSuplementarFecharDiaRepository;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -93,7 +92,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" FROM VendaProduto as ve ");		 
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
-		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" WHERE ve.dataOperacao = :dataOperacao ");
 		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
 		hql.append(" AND ve.tipoVenda = :suplementar");
@@ -141,7 +140,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append(" FROM VendaProduto as ve ");		 
 		hql.append(" JOIN ve.produtoEdicao as pe ");					
 		hql.append(" JOIN pe.produto as p ");					
-		hql.append(" WHERE ve.dataVenda = :dataOperacao ");
+		hql.append(" WHERE ve.dataOperacao = :dataOperacao ");
 		hql.append(" AND ve.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
 		
 		hql.append(" AND ve.tipoVenda = :suplementar");
@@ -166,93 +165,130 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao) {
 	    Objects.requireNonNull(data, "Data para consulta estoque suplementar não deve ser nula!");
 
-	    String templateHqlTransferencia =  new StringBuilder("(select sum(movimentoEstoque.qtde) from MovimentoEstoque movimentoEstoque ")
-	    .append("where movimentoEstoque.data = :data and movimentoEstoque.produtoEdicao = produtoEdicao and movimentoEstoque.status = :statusAprovado ")
-        .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:%s)) as %s ").toString();
+
+	    StringBuilder sql = new StringBuilder();
+
+	    sql.append(" select ");
+	    sql.append(" produtoedi1_.ID as idProdutoEdicao, ");
+	    sql.append(" produto2_.CODIGO as codigo, ");
+	    sql.append(" produto2_.NOME as nomeProduto, ");
+	    sql.append(" produtoedi1_.NUMERO_EDICAO as numeroEdicao, ");
+	    sql.append(" produtoedi1_.PRECO_VENDA as precoVenda, ");
+	    sql.append(" coalesce(estoquepro0_.QTDE_SUPLEMENTAR, 0) as quantidadeContabil, ");
+	    sql.append(" (select ");
+	    sql.append(" coalesce(historicoe3_.QTDE_SUPLEMENTAR, 0) ");
+	    sql.append(" from ");
+	    sql.append(" HISTORICO_ESTOQUE_PRODUTO historicoe3_, ");
+	    sql.append(" PRODUTO_EDICAO produtoedi4_ ");
+	    sql.append(" where ");
+	    sql.append(" historicoe3_.PRODUTO_EDICAO_ID=produtoedi4_.ID ");
+	    sql.append(" and historicoe3_.PRODUTO_EDICAO_ID=produtoedi1_.ID ");
+	    sql.append(" and historicoe3_.DATA=( ");
+	    sql.append(" select ");
+	    sql.append(" max(historicoe5_.DATA) ");
+	    sql.append(" from ");
+	    sql.append(" HISTORICO_ESTOQUE_PRODUTO historicoe5_, ");
+	    sql.append(" PRODUTO_EDICAO produtoedi6_ ");
+	    sql.append(" where ");
+	    sql.append(" historicoe5_.PRODUTO_EDICAO_ID=produtoedi6_.ID ");
+	    sql.append("                and historicoe5_.PRODUTO_EDICAO_ID=historicoe3_.PRODUTO_EDICAO_ID ");
+	    sql.append(" ) ");
+	    sql.append(" ) as quantidadeLogico, ( ");
+	    sql.append(" select ");
+	    sql.append(" coalesce(sum(vendaprodu8_.QNT_PRODUTO), ");
+	    sql.append(" 0) ");
+	    sql.append(" from ");
+	    sql.append(" VENDA_PRODUTO vendaprodu8_, ");
+	    sql.append(" PRODUTO_EDICAO produtoedi9_ ");
+	    sql.append(" where ");
+	    sql.append(" vendaprodu8_.ID_PRODUTO_EDICAO=produtoedi9_.ID ");
+	    sql.append(" and vendaprodu8_.ID_PRODUTO_EDICAO=produtoedi1_.ID ");
+	    sql.append("                 and vendaprodu8_.DATA_OPERACAO= :data ");
+	    sql.append(" and vendaprodu8_.TIPO_VENDA_ENCALHE=:tipoVendaSuplementar ");
+	    sql.append(" and vendaprodu8_.TIPO_COMERCIALIZACAO_VENDA=:tipoComercializacaoVista ");
+	    sql.append(" ) as quantidadeVenda, ( ");
+	    sql.append(" select ");
+	    sql.append(" sum(movimentoe10_.QTDE) ");
+	    sql.append(" from ");
+	    sql.append(" MOVIMENTO_ESTOQUE movimentoe10_, ");
+	    sql.append(" PRODUTO_EDICAO produtoedi11_, ");
+	    sql.append(" TIPO_MOVIMENTO tipomovime12_ ");
+	    sql.append(" where ");
+	    sql.append(" movimentoe10_.PRODUTO_EDICAO_ID=produtoedi11_.ID ");
+	    sql.append(" and movimentoe10_.TIPO_MOVIMENTO_ID=tipomovime12_.ID ");
+	    sql.append("                 and movimentoe10_.DATA= :data ");
+	    sql.append(" and movimentoe10_.PRODUTO_EDICAO_ID=produtoedi1_.ID ");
+	    sql.append(" and movimentoe10_.STATUS=:statusAprovado ");
+	    sql.append(" and ( ");
+	    sql.append(" tipomovime12_.GRUPO_MOVIMENTO_ESTOQUE in (:grupoEntradaSuplementar) ) ");
 	    
-	    StringBuilder hql = new StringBuilder("select new map(produtoEdicao.id as idProdutoEdicao,produto.codigo as codigo, ");
-		hql.append("produto.nome as nomeProduto, ");
-		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append("produtoEdicao.precoVenda as precoVenda, ");                               
-		
-		//QTDE CONTÁBIL (ESTOQUE ATUAL)
-		hql.append("coalesce(estoqueProduto.qtdeSuplementar, 0) as quantidadeContabil, ");
-		
-		//QTDE LOGICO (ESTOQUE ANTERIOR)
-		hql.append("(select coalesce(historicoEstoque.qtdeSuplementar, 0) from HistoricoEstoqueProduto historicoEstoque ");
-		hql.append("where historicoEstoque.produtoEdicao = produtoEdicao and historicoEstoque.data = " );
-		hql.append("(select max(historicoAnterior.data) from HistoricoEstoqueProduto historicoAnterior where ");
-		hql.append("historicoAnterior.produtoEdicao = historicoEstoque.produtoEdicao)) as quantidadeLogico,");
-		
-		//QTDE VENDA SUPLEMENTAR
-        hql.append("(select coalesce(sum(vendaSuplementar.qntProduto), 0) from VendaProduto vendaSuplementar ");
-        hql.append("where vendaSuplementar.produtoEdicao = produtoEdicao and ");
-        hql.append("vendaSuplementar.dataVenda = :data and vendaSuplementar.tipoVenda = :tipoVendaSuplementar ");
-        hql.append("and vendaSuplementar.tipoComercializacaoVenda = :tipoComercializacaoVista) as quantidadeVenda, ");
-        
-        //QTDE ENTRADA TRANSFERENCIA
-        hql.append(String.format(templateHqlTransferencia, "grupoEntradaSuplementar", "quantidadeTransferenciaEntrada")).append(",");
-          
-        //QTDE SAIDA TRANSFERENCIA
-        hql.append(String.format(templateHqlTransferencia, "grupoSaidaSuplementar", "quantidadeTransferenciaSaida")).append(") ");
- 	
-		hql.append("from EstoqueProduto as estoqueProduto ");               
-		hql.append("join estoqueProduto.produtoEdicao as produtoEdicao ");
-		hql.append("join produtoEdicao.produto as produto ");
-		hql.append("order by codigo ");
-		
-		Query query = getSession().createQuery(hql.toString());	
+	    sql.append(" ) as quantidadeTransferenciaEntrada, ( ");
+	    sql.append(" select ");
+	    sql.append(" sum(movimentoe13_.QTDE) ");
+	    sql.append(" from ");
+	    sql.append(" MOVIMENTO_ESTOQUE movimentoe13_, ");
+	    sql.append(" PRODUTO_EDICAO produtoedi14_, ");
+	    sql.append(" TIPO_MOVIMENTO tipomovime15_ ");
+	    sql.append(" where ");
+	    sql.append(" movimentoe13_.PRODUTO_EDICAO_ID=produtoedi14_.ID ");
+	    sql.append(" and movimentoe13_.TIPO_MOVIMENTO_ID=tipomovime15_.ID ");
+	    sql.append("                 and movimentoe13_.DATA= :data ");
+	    sql.append("             and movimentoe13_.PRODUTO_EDICAO_ID=produtoedi1_.ID ");
+	    sql.append(" and movimentoe13_.STATUS=:statusAprovado ");
+	    sql.append("             and ( ");
+	    sql.append(" tipomovime15_.GRUPO_MOVIMENTO_ESTOQUE in ( :grupoSaidaSuplementar ) ");
+	    sql.append(" ) ");
+	    sql.append(" ) as quantidadeTransferenciaSaida ");
+	    sql.append(" from ");
+	    sql.append(" ESTOQUE_PRODUTO estoquepro0_ ");
+	    sql.append(" inner join ");
+	    sql.append(" PRODUTO_EDICAO produtoedi1_ ");
+	    sql.append(" on estoquepro0_.PRODUTO_EDICAO_ID=produtoedi1_.ID ");
+	    sql.append(" inner join ");
+	    sql.append(" PRODUTO produto2_ ");
+	    sql.append(" on produtoedi1_.PRODUTO_ID=produto2_.ID ");
+   		sql.append(" group by estoquepro0_.id ");
+   		sql.append(" having quantidadeContabil > 0 or quantidadeLogico > 0 or quantidadeVenda > 0 or quantidadeTransferenciaEntrada > 0 or quantidadeTransferenciaSaida > 0 ");
+   		sql.append(" order by idProdutoEdicao "); 
+
+		SQLQuery query = getSession().createSQLQuery(sql.toString())
+									 .addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
+									 .addScalar("codigo", StandardBasicTypes.STRING)
+									 .addScalar("nomeProduto", StandardBasicTypes.STRING)
+									 .addScalar("numeroEdicao", StandardBasicTypes.LONG)
+									 .addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL)
+									 .addScalar("quantidadeContabil", StandardBasicTypes.BIG_INTEGER)
+									 .addScalar("quantidadeLogico", StandardBasicTypes.BIG_INTEGER)
+									 .addScalar("quantidadeVenda", StandardBasicTypes.BIG_INTEGER)
+									 .addScalar("quantidadeTransferenciaEntrada", StandardBasicTypes.BIG_INTEGER)
+									 .addScalar("quantidadeTransferenciaSaida", StandardBasicTypes.BIG_INTEGER);
+									 
 		
 		query.setParameter("data", data);
-		query.setParameter("tipoVendaSuplementar", TipoVendaEncalhe.SUPLEMENTAR);
-        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);   
-        query.setParameter("statusAprovado", StatusAprovacao.APROVADO);   
+		query.setParameter("tipoVendaSuplementar", TipoVendaEncalhe.SUPLEMENTAR.name());
+        query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME.name());   
+        query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());   
         
         query.setParameterList("grupoEntradaSuplementar", Arrays.asList(
-                        GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE,
-                        GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO,
-                        GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR,
-                        GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE,
-                        GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR));  
+                        GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name(),
+                        GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.name(),
+                        GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name(),
+                        GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE.name(),
+                        GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR.name()));  
         
         query.setParameterList("grupoSaidaSuplementar", Arrays.asList(
-                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
-                GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR));
+                GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),
+                GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR.name()));
         
         if (paginacao != null) {
             query.setFirstResult(paginacao.getPosicaoInicial());
             query.setMaxResults(paginacao.getQtdResultadosPorPagina());
         }
 		
-	    List<Map<String, Object>> maps = query.list();
-	       
-        List<SuplementarFecharDiaDTO> lista = new ArrayList<>(maps.size());
+        query.setResultTransformer(Transformers.aliasToBean(SuplementarFecharDiaDTO.class));
         
-        for (Map<String, Object> map : maps) {
-        	Long idProdutoEdicao = (Long) map.get("idProdutoEdicao");
-            String codigo = (String) map.get("codigo");
-            String nomeProduto = (String) map.get("nomeProduto");
-            Long numeroEdicao = (Long) map.get("numeroEdicao");
-            BigDecimal precoVenda = (BigDecimal) map.get("precoVenda");
-            BigInteger quantidadeContabil = Util.nvl((BigInteger) map.get("quantidadeContabil"), BigInteger.ZERO);
-            BigInteger quantidadeLogico = Util.nvl((BigInteger) map.get("quantidadeLogico"), BigInteger.ZERO);
-            BigInteger quantidadeVenda = Util.nvl((BigInteger) map.get("quantidadeVenda"), BigInteger.ZERO);
-            BigInteger quantidadeTransferenciaEntrada = Util.nvl((BigInteger) map.get("quantidadeTransferenciaEntrada"), BigInteger.ZERO);
-            BigInteger quantidadeTransferenciaSaida = Util.nvl((BigInteger) map.get("quantidadeTransferenciaSaida"), BigInteger.ZERO);
+        List<SuplementarFecharDiaDTO> lista = query.list();
 
-            SuplementarFecharDiaDTO dto = new SuplementarFecharDiaDTO();
-            dto.setIdProdutoEdicao(idProdutoEdicao);
-            dto.setCodigo(codigo);
-            dto.setNomeProduto(nomeProduto);
-            dto.setNumeroEdicao(numeroEdicao);
-            dto.setPrecoVenda(precoVenda);
-            dto.setQuantidadeContabil(quantidadeContabil);
-            dto.setQuantidadeLogico(quantidadeLogico);
-            dto.setQuantidadeVenda(quantidadeVenda);
-            dto.setQuantidadeTransferenciaEntrada(quantidadeTransferenciaEntrada);
-            dto.setQuantidadeTransferenciaSaida(quantidadeTransferenciaSaida);
-            lista.add(dto);
-        }
 		return lista;
 	}
 
@@ -262,6 +298,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    StringBuilder hql = new StringBuilder("select count(distinct produtoEdicao) ");
 	    hql.append("from EstoqueProduto as estoqueProduto ");
         hql.append("join estoqueProduto.produtoEdicao produtoEdicao ");
+        hql.append("where estoqueProduto.qtdeSuplementar is not null and estoqueProduto.qtdeSuplementar > 0 ");
 	   
         Query query = getSession().createQuery(hql.toString());
                 
@@ -271,7 +308,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	@Override
 	public Long contarVendasSuplementar(Date dataOperacao) {
 		StringBuilder hql = new StringBuilder("select count(vendaEncalhe) from VendaProduto vendaEncalhe ");
-        hql.append("where vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        hql.append("where vendaEncalhe.dataOperacao = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
         hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
         
         Query query = getSession().createQuery(hql.toString());

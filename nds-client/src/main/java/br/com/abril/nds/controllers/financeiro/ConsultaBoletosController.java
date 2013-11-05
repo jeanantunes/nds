@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BoletoVO;
+import br.com.abril.nds.client.vo.DividaGeradaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
@@ -30,11 +31,13 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
@@ -166,6 +169,10 @@ public class ConsultaBoletosController extends BaseController {
 		//BUSCA BOLETOS
 		List<Boleto> boletos = this.boletoService.obterBoletosPorCota(filtroAtual);
 		
+		//VERIFICA SE CAMPO PARA ENVIO SERA ABERTO NAO
+		boletos = this.boletoService.verificaEnvioDeEmail(boletos);
+		
+		
 		//CARREGA DIRETO DA ENTIDADE PARA A TABELA
 		List<CellModel> listaModelo = new LinkedList<CellModel>();
 		
@@ -174,6 +181,28 @@ public class ConsultaBoletosController extends BaseController {
 		} 
 		
 		DecimalFormat formatoMoeda = new DecimalFormat("#,###,##0.00");
+		
+		
+		
+		
+//		///
+//		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas);
+//
+//		TableModel<CellModelKeyValue<DividaGeradaVO>> tableModel = new TableModel<CellModelKeyValue<DividaGeradaVO>>();
+//
+//		tableModel.setRows(CellModelKeyValue
+//				.toCellModelKeyValue(listaDividasGeradasVO));
+//
+//		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+//
+//		tableModel.setTotal((totalRegistros == null) ? 0 : totalRegistros
+//				.intValue());
+//
+//		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
+//				.serialize();
+//		
+//		/////
+		
 		
 		for (Boleto boleto : boletos){
 			listaModelo.add(new CellModel(1,
@@ -184,8 +213,10 @@ public class ConsultaBoletosController extends BaseController {
 			  (boleto.getEncargos()!=null? formatoMoeda.format(boleto.getEncargos()) : ""),
 			  (boleto.getValor()!=null? formatoMoeda.format(boleto.getValor()) : ""),
 			  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
-			  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
-			  ""
+			  ((boleto.getDivida() != null && StatusDivida.PENDENTE_INADIMPLENCIA.equals(boleto.getDivida().getStatus())) ?  
+					  StatusDivida.PENDENTE_INADIMPLENCIA.getDescricao() : 
+						  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():"")),
+			  (boleto.isRecebeCobrancaEmail())
 			)
           );
 		}	
@@ -218,6 +249,7 @@ public class ConsultaBoletosController extends BaseController {
 	 */
 	@Get
 	@Path("/imprimeBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA_ALTERACAO)
 	public void imprimeBoleto(String nossoNumero) throws Exception{
 
 		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
@@ -256,6 +288,7 @@ public class ConsultaBoletosController extends BaseController {
 	 */
 	@Post
 	@Path("/enviaBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA_ALTERACAO)
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
 		if (!validarBoletoPago(nossoNumero)){

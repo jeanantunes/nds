@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,6 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -534,6 +534,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO)
 	public void removerMovimentoFinanceiroCota(Long idMovimento) {
 
 		if (idMovimento == null) {
@@ -551,9 +552,12 @@ public class DebitoCreditoCotaController extends BaseController{
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO)
 	public void criarMovimentoFincanceiroCota(List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
+		
+		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
 
@@ -569,6 +573,8 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			debitoCredito.setId(null);
 			
+			debitoCredito.setDataCriacao(dataCriacao);
+			
 			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = 
 					debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
 			
@@ -577,14 +583,12 @@ public class DebitoCreditoCotaController extends BaseController{
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 		}
 		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		listaMensagens.add("Cadastro realizado com sucesso.");
-
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), 
+				"result").recursive().serialize();
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO)
 	public void editarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
 		
 		validarPreenchimentoCamposEdicao(debitoCredito);
@@ -731,11 +735,6 @@ public class DebitoCreditoCotaController extends BaseController{
 		}
 		
 		if (!movimentoFinanceiroCota.isLancamentoManual()) {
-			
-			movimentoEditavel = false;
-		}
-		
-		if (StatusAprovacao.APROVADO.equals(movimentoFinanceiroCota.getStatus())) {
 			
 			movimentoEditavel = false;
 		}
@@ -952,6 +951,8 @@ public class DebitoCreditoCotaController extends BaseController{
 		filtroDebitoCredito.setDataVencimentoInicio(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 		filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 		filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
+		filtroDebitoCredito.setGrupoMovimentosFinanceirosDebitosCreditos(
+				Arrays.asList( debitoCredito.getTipoMovimentoFinanceiro().getGrupoMovimentoFinaceiro()));
 			
 		if (this.movimentoFinanceiroCotaService.existeOutrosMovimentosFinanceiroCota(filtroDebitoCredito, id)) {
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Já existe um movimento para esta cota, nesta data.");

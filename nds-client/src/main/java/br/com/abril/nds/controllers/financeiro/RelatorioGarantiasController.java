@@ -102,14 +102,6 @@ public class RelatorioGarantiasController extends BaseController {
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
-		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
-		}
-		else if(filtro.getStatusGarantia().equalsIgnoreCase("Selecionar...")){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O status de garantia deve ser informado."));
-			
-		}
-		
 		List<RelatorioGarantiasVO> garantiasVO = new ArrayList<RelatorioGarantiasVO>();
 		FlexiGridDTO<RelatorioGarantiasDTO> flexDTO = relatorioGarantiasService.gerarTodasGarantias(filtro);
 		
@@ -133,22 +125,14 @@ public class RelatorioGarantiasController extends BaseController {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
+		page = page == 0 ? 1 : page;
+		rp = rp == 0 ? 10 : rp;
+		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		filtro.setPaginacao(paginacaoVO);
 		filtro.setDataBaseCalculo(dataOperacao);
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
-		String data = sdf.format(dataOperacao);
-		
-		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
-		}
-		else if(filtro.getStatusGarantia().equalsIgnoreCase("Selecionar...")){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O status de garantia deve ser informado."));
-			
-		}
 		
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
@@ -157,13 +141,15 @@ public class RelatorioGarantiasController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A busca não retornou resultados"));
 		}
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
+		String data = sdf.format(dataOperacao);
+		
 		for(RelatorioDetalheGarantiaDTO dto : flexDTO.getGrid()){
 			
 			garantiasVO.add(new RelatorioDetalheGarantiaVO(dto,data));
 		}
 		
 		result.use(FlexiGridJson.class).from(garantiasVO).page(page).total(flexDTO.getTotalGrid()).serialize();
-
 	}
 	
 	

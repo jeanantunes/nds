@@ -32,12 +32,11 @@ import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
 
-@Component
-
+@Component("couchDBImportDataRouter")
 public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
-	
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -75,8 +74,16 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		view.key(inputModel.getRouteInterface().getName());
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
-		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
-
+		ViewResult<String, Void, ?> result = null;
+		
+		try{
+			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+		}catch(org.lightcouch.NoDocumentException e){
+			//Nao ha informacoes a serem processadas
+			ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
+			return;
+		}
+		
 		AtomicReference<Object> tempVar = new AtomicReference<Object>();
 		// Processamento a ser executado ANTES do processamento principal:
 		messageProcessor.preProcess(tempVar);
@@ -133,7 +140,13 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view.key(inputModel.getRouteInterface().getName());
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
-			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+			
+			try{
+				result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+			}catch(org.lightcouch.NoDocumentException e){
+				//Nao ha mais informacoes a serem processadas
+				break;
+			}
 		} while(!result.getRows().isEmpty());
 		
 		// Processamento a ser executado APÓS o processamento principal:

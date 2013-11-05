@@ -73,6 +73,23 @@ public class DistribuidorRepositoryImpl extends
 
 		return query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
+			OperacaoDistribuidor operacaoDistribuidor) {
+
+		StringBuilder hql =
+			new StringBuilder(" from DistribuicaoFornecedor ");
+
+		hql.append(" where operacaoDistribuidor = :operacaoDistribuidor ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
+
+		return query.list();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -229,6 +246,17 @@ public class DistribuidorRepositoryImpl extends
 		
 		return controle == null ? false : controle;
 	}
+	
+	@Override
+	public boolean utilizaControleAprovacaoFaltaSobra() {
+		
+		Boolean controle = 
+				(Boolean) this.getSession().createQuery(
+						"select parametrosAprovacaoDistribuidor.faltasSobras from Distribuidor").uniqueResult();
+		
+		return controle == null ? false : controle;
+	}
+
 
 	@Override
 	public Boolean utilizaTermoAdesao() {
@@ -365,7 +393,7 @@ public class DistribuidorRepositoryImpl extends
 	public String cidadeDistribuidor() {
 		
 		return (String) this.getSession().createQuery(
-				"select d.enderecoDistribuidor.endereco.cidade from Distribuidor d").uniqueResult();
+				"select d.enderecoDistribuidor.endereco.cidade from Distribuidor d").setCacheable(true).uniqueResult();
 	}
 
 	@Override
@@ -427,6 +455,15 @@ public class DistribuidorRepositoryImpl extends
 		return new HashSet<PoliticaCobranca>(
 				this.getSession().
 				createQuery("select politicasCobranca from Distribuidor").list());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<PoliticaCobranca> politicasCobrancaAtivas() {
+		
+		return new HashSet<PoliticaCobranca>(
+				this.getSession().
+				createQuery("select p from PoliticaCobranca p JOIN p.formaCobranca f where p.ativo = true").list());
 	}
 
 	@Override
@@ -530,5 +567,42 @@ public class DistribuidorRepositoryImpl extends
 		
 		return (ParametrosAprovacaoDistribuidor)
 				this.getSession().createQuery("select parametrosAprovacaoDistribuidor from Distribuidor").uniqueResult();
+	}
+
+	@Override
+	public boolean isConferenciaCegaRecebimentoFisico() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" p.conferenciaCegaRecebimento ")
+		   .append(" from Distribuidor d ")
+		   .append(" join d.parametrosRecolhimentoDistribuidor p ");
+		
+		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean naoAcumulaDividas() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" d.pararAcumuloDividas ")
+		   .append(" from Distribuidor d ");
+		
+		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer numeroMaximoAcumuloDividas() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" d.politicaSuspensao.numeroAcumuloDivida ")
+		   .append(" from Distribuidor d ");
+		
+		return (Integer) this.getSession().createQuery(hql.toString()).uniqueResult();
 	}
 }

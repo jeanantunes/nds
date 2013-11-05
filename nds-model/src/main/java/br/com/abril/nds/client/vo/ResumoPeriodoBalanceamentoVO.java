@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -17,13 +19,15 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private Long qtdeTitulos;
 	private BigInteger qtdeExemplares;
 	private String qtdeExemplaresFormatada;
-	private Long pesoTotal;
+	private BigDecimal pesoTotal;
 	private String pesoTotalFormatado;
 	private BigDecimal valorTotal;
 	private String valorTotalFormatado;
 	private Long qtdeTitulosParciais;
 	private boolean exibeDestaque;
 	private boolean excedeCapacidadeDistribuidor;
+	private boolean bloquearVisualizacao;
+	private Set<Long> idsProdutoEdicao = new HashSet<>();
 	
 	public Date getData() {
 		return data;
@@ -63,11 +67,11 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 		return qtdeExemplaresFormatada;
 	}
 	
-	public Long getPesoTotal() {
+	public BigDecimal getPesoTotal() {
 		return pesoTotal;
 	}
 
-	public void setPesoTotal(Long pesoTotal) {
+	public void setPesoTotal(BigDecimal pesoTotal) {
 		this.pesoTotal = pesoTotal;
 		if (pesoTotal != null) {
 			pesoTotalFormatado = pesoTotal.toString();
@@ -96,7 +100,7 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	public static ResumoPeriodoBalanceamentoVO empty(Date data) {
 		ResumoPeriodoBalanceamentoVO resumo = new ResumoPeriodoBalanceamentoVO();
 		resumo.setData(data);
-		resumo.setPesoTotal(0L);
+		resumo.setPesoTotal(BigDecimal.ZERO);
 		resumo.setQtdeExemplares(BigInteger.ZERO);
 		resumo.setQtdeTitulos(0L);
 		resumo.setValorTotal(BigDecimal.ZERO);
@@ -143,6 +147,34 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	 */
 	public void setExcedeCapacidadeDistribuidor(boolean excedeCapacidadeDistribuidor) {
 		this.excedeCapacidadeDistribuidor = excedeCapacidadeDistribuidor;
+	}
+
+	/**
+	 * @return the bloquearVisualizacao
+	 */
+	public boolean isBloquearVisualizacao() {
+		return bloquearVisualizacao;
+	}
+
+	/**
+	 * @param bloquearVisualizacao the bloquearVisualizacao to set
+	 */
+	public void setBloquearVisualizacao(boolean bloquearVisualizacao) {
+		this.bloquearVisualizacao = bloquearVisualizacao;
+	}
+
+	/**
+	 * @return the idsProdutoEdicao
+	 */
+	public Set<Long> getIdsProdutoEdicao() {
+		return idsProdutoEdicao;
+	}
+
+	/**
+	 * @param idsProdutoEdicao the idsProdutoEdicao to set
+	 */
+	public void setIdsProdutoEdicao(Set<Long> idsProdutoEdicao) {
+		this.idsProdutoEdicao = idsProdutoEdicao;
 	}
 	
 }

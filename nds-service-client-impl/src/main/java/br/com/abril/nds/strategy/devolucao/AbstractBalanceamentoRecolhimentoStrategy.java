@@ -38,27 +38,58 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			return balanceamentoRecolhimento;
 		}
 		
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = null;
+		balanceamentoRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
 		
-		matrizRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
+		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+			balanceamentoRecolhimento.getMatrizRecolhimento();
 		
 		this.configurarMatrizRecolhimento(matrizRecolhimento);
-		
-		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
-		
-		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
-			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
 		return balanceamentoRecolhimento;
 	}
 	
-	protected TreeSet<Date> obterDatasRecolhimento(TreeSet<Date> datasRecolhimento,Set<Date> datasConfirmadas) {
+	protected BalanceamentoRecolhimentoDTO gerarBalanceamentoRecolhimentoDTO(
+										TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+										List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
+										RecolhimentoDTO dadosRecolhimento) {
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
+		
+		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
+		
+		balanceamentoRecolhimento.setProdutosRecolhimentoNaoBalanceados(
+			produtosRecolhimentoNaoBalanceados);
+		
+		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
+			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+		
+		balanceamentoRecolhimento.setCotasOperacaoDiferenciada(
+			dadosRecolhimento.getCotasOperacaoDiferenciada());
+		
+		balanceamentoRecolhimento.setProdutosRecolhimentoAgrupados(
+			dadosRecolhimento.getProdutosRecolhimentoAgrupados());
+		
+		return balanceamentoRecolhimento;
+	}
+	
+	/*
+	 * Obtém as datas válidas para o balanceamento.
+	 */
+	protected TreeSet<Date> obterDatasParaBalanceamento(RecolhimentoDTO dadosRecolhimento) {
+		
+		Set<Date> obterDatasConfirmadas = 
+			this.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
+		
+		return 
+			this.obterDatasRecolhimento(
+				dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
+	}
+	
+	protected TreeSet<Date> obterDatasRecolhimento(TreeSet<Date> datasRecolhimento,
+												   Set<Date> datasConfirmadas) {
 
-		for (Date dataConfirmada : datasConfirmadas) {
-	
-			datasRecolhimento.remove(dataConfirmada);
-		}
-	
+		datasRecolhimento.removeAll(datasConfirmadas);
+
 		return datasRecolhimento;
 	}
 	
@@ -90,7 +121,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * 
 	 * @return Matriz de recohlimento balanceada
 	 */
-	protected abstract TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento);
+	protected abstract BalanceamentoRecolhimentoDTO gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento);
 	
 	/*
 	 * Balanceia os produtos do recolhimento que possuem chamada (antecipada ou chamadão) na matriz.
@@ -144,12 +175,11 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/**
 	 * Verifica se o produto de recolhimento pode ser balanceado ou não.
 	 */
-	private boolean isProdutoNaoBalanceavel(boolean isConfiguracaoInicial,
+	private boolean isProdutoNaoBalanceavel(boolean forcarBalanceamento,
 										 	ProdutoRecolhimentoDTO produtoRecolhimento) {
 		
-		return produtoRecolhimento.isPossuiChamada()
-				|| produtoRecolhimento.isBalanceamentoConfirmado()
-				|| (produtoRecolhimento.isBalanceamentoSalvo() && !isConfiguracaoInicial);
+		return produtoRecolhimento.isBalanceamentoConfirmado()
+				|| (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento);
 	}
 	
 	/*
@@ -264,12 +294,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 						break;
 					}
 				}
-				
-				if (dataRecolhimentoEscolhida == null) {
-				
-					throw new RuntimeException(
-						"Data de recolhimento fora da semana de recolhimento: " + dataRecolhimentoPrevista);
-				}
 			}
 		} else {
 			
@@ -303,7 +327,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				continue;
 			}
 			
-			if (produtoRecolhimento.getDataRecolhimentoPrevista().equals(dataRecolhimentoDesejada)) {
+			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
 				
 				produtosRecolhimentoFiltrados.add(produtoRecolhimento);
 			}
@@ -393,11 +417,9 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	}
 	
 	/*
-	 * Configura a sequência, a data de recolhimento e a nova data dos produtos da matriz.
+	 * Configura a data de recolhimento e a nova data dos produtos da matriz.
 	 */
 	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
-		
-		Integer sequencia = 1;
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {
@@ -410,7 +432,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				
 				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
-				produtoRecolhimento.setSequencia(sequencia++);
 			}
 		}
 	}

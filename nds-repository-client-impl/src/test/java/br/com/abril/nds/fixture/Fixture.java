@@ -1,9 +1,7 @@
 package br.com.abril.nds.fixture;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,11 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.FileUtils;
-
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.LeiautePicking;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -167,12 +162,10 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
@@ -312,15 +305,15 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999998);
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, tipoFornecedor, 9999998);
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999999);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, tipoFornecedor, 9999999);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor, 3);
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, tipoFornecedor, 3);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -494,12 +487,11 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
-			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
+			SituacaoCadastro situacaoCadastro, 
 			TipoFornecedor tipo, Integer codigoInterface) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
-		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
 		fornecedor.setTipoFornecedor(tipo);
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);
@@ -747,7 +739,6 @@ public class Fixture {
 		distribuidor.setFatorRelancamentoParcial(7);
 		distribuidor.setQuantidadeDiasSuspensaoCotas(7);
 		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
-		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
 		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
 		distribuidor.setObrigacaoFiscal(ObrigacaoFiscal.COTA_TOTAL);
 		distribuidor.setRegimeEspecial(true);
@@ -2038,7 +2029,6 @@ public class Fixture {
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 		estoqueProdutoCota.setQtdeDevolvida(qtde);
 		estoqueProdutoCota.setQtdeRecebida(qtde);
-		estoqueProdutoCota.setVersao(2L);
 		
 		return estoqueProdutoCota;
 	}
@@ -2425,19 +2415,6 @@ public class Fixture {
 		return mfc;
 	}
 
-
-
-	public static HistoricoAcumuloDivida criarHistoricoAcumuloDivida(
-			Divida divida, Date dataInclusao, Usuario usuario,
-			StatusInadimplencia status) {
-		HistoricoAcumuloDivida historicoInadimplencia = new HistoricoAcumuloDivida();
-		historicoInadimplencia.setDivida(divida);
-		historicoInadimplencia.setDataInclusao(dataInclusao);
-		historicoInadimplencia.setResponsavel(usuario);
-		historicoInadimplencia.setStatus(status);
-		return historicoInadimplencia;
-	}
-	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,
@@ -2622,7 +2599,6 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
-		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}

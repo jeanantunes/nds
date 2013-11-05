@@ -2,9 +2,6 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -58,7 +55,8 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 * @param boxID 
 	 * @return
 	 */
-	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID);
+	public List<PDV> obterCotasPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, Long boxID);
 	
     /**
      * Recupera os PDV's do histórico de titularidade da cota
@@ -108,5 +106,4 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	public List<PdvDTO> obterPDVs(Integer numeroCota);
 
 	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota);
-	
 }

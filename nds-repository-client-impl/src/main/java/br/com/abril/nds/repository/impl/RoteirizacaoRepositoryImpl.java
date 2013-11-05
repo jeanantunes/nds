@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -272,6 +273,8 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 
 	private void getParameterConsulta(FiltroConsultaRoteirizacaoDTO filtro, Query query) {
 		
+		query.setParameter("sitCadastro", SituacaoCadastro.INATIVO);
+		
 		if(filtro.getIdBox()!= null && filtro.getIdBox() > 0){
 			query.setParameter("idBox", filtro.getIdBox());
 		}
@@ -292,7 +295,6 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 	private StringBuilder getHqlWhere(FiltroConsultaRoteirizacaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-		boolean indWhere = false;
 		
 		hql.append("from Roteirizacao roteirizacao ")
 			.append(" left join roteirizacao.roteiros roteiro " )
@@ -301,12 +303,12 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 			.append(" Join rota.rotaPDVs rotaPdv ")
 			.append(" Join rotaPdv.pdv pdv ")
 			.append(" Join pdv.cota cota ")
-			.append(" join cota.pessoa pessoa ");
+			.append(" join cota.pessoa pessoa ")
+			.append(" where cota.situacaoCadastro != :sitCadastro ");
 			
 		if(filtro.getIdBox() != null) {
 			
-			hql.append(" where ");
-			indWhere = true;
+			hql.append(" and ");
 			
 			if (filtro.getIdBox() < 1){
 				
@@ -319,44 +321,17 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		if(filtro.getIdRoteiro() != null){
 			
-			if (indWhere){
-				
-				hql.append(" and ");
-			} else {
-				
-				hql.append(" where ");
-				indWhere = true;
-			}
-			
-			hql.append(" roteiro.id = :idRoteiro ");
+			hql.append(" and roteiro.id = :idRoteiro ");
 		}
 		
 		if(filtro.getIdRota() != null){
 			
-			if (indWhere){
-				
-				hql.append(" and ");
-			} else {
-				
-				hql.append(" where ");
-				indWhere = true;
-			}
-			
-			hql.append(" rota.id = :idRota ");
+			hql.append(" and rota.id = :idRota ");
 		}
 		
 		if(filtro.getNumeroCota() != null){
 			
-			if (indWhere){
-				
-				hql.append(" and ");
-			} else {
-				
-				hql.append(" where ");
-				indWhere = true;
-			}
-			
-			hql.append(" cota.numeroCota = :numeroCota ");
+			hql.append(" and cota.numeroCota = :numeroCota ");
 		}
 		
 		return hql;
@@ -622,6 +597,25 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		query.setMaxResults(1);
 		
 		return (Box) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Integer> obterNumerosCotaOrdenadosRoteirizacao() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.numeroCota from Roteirizacao r "); 
+		hql.append(" join r.box b ");
+		hql.append(" join r.roteiros roteiro ");
+		hql.append(" join roteiro.rotas rota ");
+		hql.append(" join rota.rotaPDVs rotaPdv ");
+		hql.append(" join rotaPdv.pdv pdv ");
+		hql.append(" join pdv.cota cota ");
+		hql.append(" order by b.id, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		return query.list();
 	}
 
 }

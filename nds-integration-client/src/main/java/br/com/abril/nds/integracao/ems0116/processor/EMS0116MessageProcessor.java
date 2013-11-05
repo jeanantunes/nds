@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -78,9 +77,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarPDV(Message message, EMS0116Input input, Cota cota) {
 		
-		//PDV pdvCandidatoAlteracao = cota.getPdvs().get(0);
-		
-		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input, cota);
 		
 		// comentado por cesar pop punk em 26/03/2013 pois quem "manda" no cadastro é o novo distrib e não mais o mdc.
 		if(pdvCandidatoAlteracao == null){
@@ -97,6 +94,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		processarEnderecoPDV(message, input, cota, pdvCandidatoAlteracao);
 
 		processarTelefonePDV(message, input, cota, pdvCandidatoAlteracao);
+		
+		getSession().update(pdvCandidatoAlteracao);
 	}
 
 	
@@ -119,7 +118,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			}
 		} else {
 
-			ndsiLoggerFactory.getLogger().logWarning(
+			ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"O arquivo nao contem dados de telefone para a cota "
@@ -222,8 +221,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarEnderecoPDV(Message message, EMS0116Input input,Cota cota, PDV pdv) {
 		
-		if (!input.getEndereco().isEmpty()
-				&& !".".equals(input.getEndereco())) {
+		if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {
 
 			List<EnderecoPDV> enderecosPDV = obterEnderecoPDVPorLogradouro(input, pdv);
 
@@ -251,44 +249,61 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	/*
 	 * Altera os dados do endereço relacionado ao PDV
 	 */
-	private void alterarEnderecoPDV(Message message, EMS0116Input input,PDV pdv,List<EnderecoPDV> enderecosPDV) {
+	private void alterarEnderecoPDV(Message message, EMS0116Input input, PDV pdv, List<EnderecoPDV> enderecosPDV) {
 		
 		EnderecoPDV enderecoPDV = null;
 
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		for (EnderecoPDV item : enderecosPDV) {
 
-			//if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
-			if(item.getEndereco().getLogradouro().equals(logradouro) &&
-			   item.getEndereco().getNumero().equals(numero)){
+			if(item.getEndereco().getLogradouro().equalsIgnoreCase(logradouro)
+					&& item.getEndereco().getNumero().equals(numero)) {
+				
 				enderecoPDV = item;
+				
 				break;
+				
 			}
 		}
 		
-		if(enderecoPDV == null){
+		if(enderecoPDV == null) {
+			
 			enderecoPDV = incluirNovoEnderecoPDV(input, pdv);
-		}
-		else{
+			
+		} else {
 			
 			Endereco endereco = enderecoPDV.getEndereco();
 			
 			endereco.setCep(input.getCep());
-			endereco.setCidade(input.getNomeMunicipio());
-			//endereco.setLogradouro(input.getEndereco());
-			endereco.setLogradouro(logradouro);
-			endereco.setNumero(numero);
+			endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
+			endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
+			try {
+				Long l = Long.parseLong(numero);
+				endereco.setNumero(l.toString());
+			} catch (Exception e) {
+				
+			}
+			
 			endereco.setUf(input.getSiglaUF());
 			
 			Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 			
 			if (null != endTmp) {
-				endereco.setBairro(endTmp.getBairro());
-				endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+				endereco.setBairro((endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro()));
+				endereco.setTipoLogradouro((endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro()));
 			}
+			
+			if(!isEnderecoPrincipal(pdv.getEnderecos())) {
+				enderecoPDV.setPrincipal(true);
+			} else {
+				if(!pdv.getEnderecos().contains(enderecoPDV)) {
+					enderecoPDV.setPrincipal(false);
+				}
+			}
+			
+			getSession().merge(enderecoPDV);
 			
 			getSession().merge(endereco);
 		}
@@ -296,7 +311,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do  Endereco PDV "
+							"Atualizacao do Endereco PDV "
 									+ enderecoPDV.getId());
 			
 	}
@@ -320,25 +335,21 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private EnderecoPDV incluirNovoEnderecoPDV(EMS0116Input input, PDV pdv) {
 		
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
-		endereco.setCidade(input.getNomeMunicipio());
-		//endereco.setLogradouro(input.getEndereco());
-		endereco.setLogradouro(logradouro);
+		endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
+		endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
 		endereco.setNumero(numero);
 		endereco.setUf(input.getSiglaUF());
 		Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 		
 		if (null != endTmp) {
-			endereco.setBairro(endTmp.getBairro());
-			endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+			endereco.setBairro((endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro()));
+			endereco.setTipoLogradouro((endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro()));
 		}
-
-		//endereco.setNumero(null);
 
 		getSession().persist(endereco);
 
@@ -363,7 +374,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		for(EnderecoPDV item : enderecos){
 			
-			if(item.isPrincipal()){
+			if(item.isPrincipal()) {
 				return item.isPrincipal();
 			}
 		}
@@ -521,9 +532,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private PDV obterPdvCorrenteImportacao(EMS0116Input input,Cota cota) {
 		
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -531,8 +541,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		sql.append(" FROM PDV p join p.enderecos enderecoPDV join enderecoPDV.endereco endereco ");
 		sql.append(" WHERE ");
 		sql.append(" p.cota = :cota ");
-		sql.append(" and endereco.logradouro=:logradouro");
-		sql.append(" and endereco.numero=:numero");
+		sql.append(" and endereco.logradouro = :logradouro");
+		sql.append(" and endereco.numero = :numero");
 
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("cota", cota);
@@ -591,9 +601,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@SuppressWarnings("unchecked")
 	private List<EnderecoPDV> obterEnderecoPDVPorLogradouro(EMS0116Input input, PDV pdv) {
 		
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ep  ");
@@ -612,6 +621,41 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		return query.list();
 	}
 
+	private String getLogradouroSemTipo(String logradouro) {
+		
+		String rua = "RUA";
+		if (logradouro.startsWith("RUA"))
+			return logradouro.substring(rua.length()).trim();
+
+		String avenida = "AV. ";
+		if (logradouro.startsWith(avenida))
+			return logradouro.substring(avenida.length()).trim();
+		
+		String estrada = "ES. ";
+		if (logradouro.startsWith(estrada))
+			return logradouro.substring(estrada.length()).trim();
+		
+		String alameda = "AL. ";
+		if (logradouro.startsWith(alameda))
+			return logradouro.substring(alameda.length()).trim();
+		
+		String praca = "PR. ";
+		if (logradouro.startsWith(praca))
+			return logradouro.substring(praca.length()).trim();
+		
+		String rodovia = "RO. ";
+		if (logradouro.startsWith(rodovia))
+			return logradouro.substring(rodovia.length()).trim();
+		
+		String lagoa = "LA. ";
+		if (logradouro.startsWith(lagoa))
+			return logradouro.substring(lagoa.length()).trim();
+		
+		String jardins = "JA. ";
+		if (logradouro.startsWith(jardins))
+			return logradouro.substring(jardins.length()).trim();
+		return logradouro;
+	}
 	
 	@Override
 	public void posProcess(Object tempVar) {

@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parciais.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -6,7 +8,9 @@
 <script type="text/javascript">
 	
 	var pesquisaProdutoParciais = new PesquisaProduto(ParciaisController.workspace);
-
+	
+	
+	
 </script>
 		
 <style type="text/css">
@@ -154,7 +158,7 @@
 				</span>
 		</div>   
 	
-	 <span id="btnIncluirPeriodosModal" class="bt_novos"><a href="javascript:;" onclick="ParciaisController.popup(true);" rel="tipsy" title="Incluir Novo Período"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Períodos" /></a></span>
+	 <span id="btnIncluirPeriodosModal" class="bt_novos"><a href="javascript:;" isEdicao="true" onclick="ParciaisController.popup(true);" rel="tipsy" title="Incluir Novo Período"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Períodos" /></a></span>
 	
 	
 	</div>
@@ -225,7 +229,7 @@
 					</span>
 						
 				 	<span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
-				 		<a href="javascript:;" onclick="ParciaisController.popup(false);">
+				 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popup(false);">
 				 			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
 				 		</a>
 				 	</span>

@@ -1,5 +1,5 @@
 var lancamentoController = $.extend(true, {
-
+	
 	inicializar : function() {
 		
 		lancamentoController.configurarFlexiGrid();
@@ -9,6 +9,7 @@ var lancamentoController = $.extend(true, {
 		$("#labelTotalGeral", lancamentoController.workspace).hide();
 		$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 		$("#valorTotalDiferencas", lancamentoController.workspace).hide();
+		$("#selecionarTodos", lancamentoController.workspace).hide();
 			
 		$("#datePickerDataMovimento", lancamentoController.workspace).datepicker({
 			showOn : "button",
@@ -37,6 +38,7 @@ var lancamentoController = $.extend(true, {
 			$("#labelTotalGeral", lancamentoController.workspace).hide();
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).hide();
 			$("#valorTotalDiferencas", lancamentoController.workspace).hide();
+			$("#selecionarTodos", lancamentoController.workspace).hide();
 
 			return;
 		}
@@ -74,22 +76,15 @@ var lancamentoController = $.extend(true, {
 									     '<img src="' + contextPath + '/images/bt_cadastros.png" hspace="5" border="0px" />' +
 									  '</a>';
 			
-			var linkExclusaoDiferenca;
+			var linkExclusaoDiferenca  = '<a isEdicao="true" id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+											'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+										 '</a>';
 			
-			if (row.cell.automatica) {
-				
-				linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
-												'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
-											'</a>';
-				
-			} else {
-
-				linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
-												'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
-											'</a>';
-			}
-							
+			var chkSelecao = '<input id="idCheck' + row.cell.id + '" name="selecao" idDiferenca="' + row.cell.id + '" type="checkbox" isEdicao="true" onclick="lancamentoController.adicionarSelecao(' + row.cell.id + ',this);" style="float: left;">';
+			
 			row.cell.acao = linkRateioDiferenca + linkExclusaoDiferenca;
+			
+			row.cell.selecao = chkSelecao;
 		});
 
 		if ($(".grids", lancamentoController.workspace).css('display') == 'none') {	
@@ -99,6 +94,7 @@ var lancamentoController = $.extend(true, {
 			$("#labelTotalGeral", lancamentoController.workspace).show();
 			$("#qtdeTotalDiferencas", lancamentoController.workspace).show();
 			$("#valorTotalDiferencas", lancamentoController.workspace).show();
+			$("#selecionarTodos", lancamentoController.workspace).show();
 		}
 		
 		if(resultado.tableModel.rows.length < 1){
@@ -107,10 +103,42 @@ var lancamentoController = $.extend(true, {
 		else{
 			$("#btnsControleDiferenca", lancamentoController.workspace).show();
 		}
-
+		
 		return resultado.tableModel;
 	},
+	
+	adicionarSelecao : function(id, check) {
+		
+		if (check.checked == false) {
+			
+			$("#selecionarTodosID", lancamentoController.workspace).attr("checked", false);
+		}
+		
+		$.postJSON(
+			contextPath + "/estoque/diferenca/selecionar", 
+			{idDiferenca:id, selecionado:check.checked}
+		);				
+	},
+	
+	selecionarTodos : function (elementoCheck) {
+		
+		var selects =  $("[name='selecao']");
 
+		var data = [];
+		
+		$.each(selects, function(index, row) {
+			    
+			row.checked = !row.disabled ? elementoCheck.checked : false;
+			
+			data.push(row['attributes']['idDiferenca'].value);
+		});
+		
+		$.postJSON(
+			contextPath + "/estoque/diferenca/selecionarTodos", 
+			{selecionado: elementoCheck.checked, listaIdsDiferencas: data}
+		);	
+	},
+	
 	pesquisar : function(confirmado) { 
 		
 		$.postJSON(
@@ -170,6 +198,33 @@ var lancamentoController = $.extend(true, {
 		
 		$("#dialogConfirmacaoPerdaDados", lancamentoController.workspace).show();
 	},
+	
+	verificarAlteracoesLancamentoFaltasSobrasParaFecharAba : function(self, index) {
+		
+		if(lancamentoNovoController.houveAlteracaoLancamentos){
+			
+			$("#dialogConfirmacaoPerdaDados", lancamentoController.workspace).dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: 
+				{
+					"Confirmar": function() {
+						$(this).dialog("close");
+						$(self).tabs("remove", index);
+						lancamentoNovoController.houveAlteracaoLancamentos = false;
+						
+					}, "Cancelar": function() {
+						$(this).dialog("close");
+					}
+				},
+				form: $("#dialogConfirmacaoPerdaDados", this.workspace).parents("form")
+			});
+		}else{
+			$(self).tabs("remove", index);
+		}
+	},
 
 	popupExclusaoDiferenca : function(idDiferenca) {
 
@@ -218,7 +273,6 @@ var lancamentoController = $.extend(true, {
 			buttons: 
 			{
 				"Confirmar": function() {
-					
 					$.postJSON(
 						contextPath + "/estoque/diferenca/confirmarLancamentos", 
 						null,
@@ -231,7 +285,6 @@ var lancamentoController = $.extend(true, {
 					$(this).dialog("close");
 				
 				}, "Cancelar": function() {
-					
 					$(this).dialog("close");
 				}
 			},
@@ -259,7 +312,8 @@ var lancamentoController = $.extend(true, {
 							lancamentoController.inicializar();
 						}
 					);
-
+					
+					lancamentoNovoController.houveAlteracaoLancamentos = false;
 					$(this).dialog("close");
 				
 				}, "Cancelar": function() {
@@ -308,6 +362,7 @@ var lancamentoController = $.extend(true, {
 	configurarFlexiGrid : function() {
 
 		$("#gridLancamentos", lancamentoController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(lancamentoController.workspace);},
 			preProcess: lancamentoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [{
@@ -337,7 +392,7 @@ var lancamentoController = $.extend(true, {
 			}, {
 				display : 'Pacote Padrão',
 				name : 'pacotePadrao',
-				width : 110,
+				width : 90,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -364,6 +419,12 @@ var lancamentoController = $.extend(true, {
 				width : 60,
 				sortable : false,
 				align : 'center'
+			}, {
+				display : '',
+				name : 'selecao',
+				width : 20,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "descricaoProduto",
 			sortorder : "asc",
@@ -376,14 +437,11 @@ var lancamentoController = $.extend(true, {
 			singleSelect: true
 		});
 	},
-	
-	
-	
-	
+
 	imprimirRelatorioFaltasSobras : function(){
 		
 		$.postJSON(
-				contextPath + "/estoque/diferenca/validaDataRelatorioFaltasSobras", 
+				contextPath + "/estoque/diferenca/validarDadosParaImpressao", 
 				[{name:'dataMovimentoFormatada', value: $("#datePickerDataMovimento", lancamentoController.workspace).val()}] ,
 				function(resultado) {
 					var tipoMensagem = null; 
@@ -401,6 +459,12 @@ var lancamentoController = $.extend(true, {
 			);
 		
 		 
+	},
+	
+	salvar : function() {
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/salvar"
+		);
 	}
 	
 }, BaseController);

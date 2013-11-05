@@ -1,6 +1,7 @@
 var inadimplenciaController = $.extend(true, {
 
 	nomeCota : "",
+	numeroCota : "",
 
 	init : function () {		
 		$("#idNumCota", inadimplenciaController.workspace).numeric();
@@ -86,7 +87,7 @@ var inadimplenciaController = $.extend(true, {
 					display : 'Dias em Atraso',
 					name : 'diasAtraso',
 					width : 75,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Detalhes',
@@ -94,8 +95,8 @@ var inadimplenciaController = $.extend(true, {
 					width : 40,
 					align : 'center',
 				}],
-				sortname : "nome",
-				sortorder : "asc",
+				sortname : "dataVencimento",
+				sortorder : "desc",
 				usepager : true,
 				useRp : true,
 				rp : 15,
@@ -114,24 +115,24 @@ var inadimplenciaController = $.extend(true, {
 		var numCota = $('#idNumCota', inadimplenciaController.workspace).attr('value');
 		var nomeCota = $('#idNomeCota', inadimplenciaController.workspace).attr('value');
 		var statusCota = $('#idStatusCota', inadimplenciaController.workspace).attr('value');
+
+		var params= [{name:'periodoDe',value : periodoDe},
+			        {name:'periodoAte',value : periodoAte},
+			        {name:'numCota',value : numCota},
+			        {name:'nomeCota',value : nomeCota},
+			        {name:'statusCota',value : statusCota}];
 		
-		var situacaoEmAberto = ( $('#idDividaEmAberto', inadimplenciaController.workspace).attr('checked') == "checked" ) ;	
-		var situacaoNegociada = ( $('#idDividaNegociada', inadimplenciaController.workspace).attr('checked') == "checked" );
-		var situacaoPaga = ( $('#idDividaPaga', inadimplenciaController.workspace).attr('checked') == "checked" );
+		$("input[name='checkgroup_menu_divida']").each(function(index, value) {
+			if (this.checked) {
+				params.push({name: 'statusDivida['+index+']', value:value.id});
+			}
+		});
 
 		$(".inadimplenciaGrid", inadimplenciaController.worlspace).flexOptions({			
 			url : contextPath + '/inadimplencia/pesquisar',
 			dataType : 'json',
 			preProcess:inadimplenciaController.processaRetornoPesquisa,
-			
-			params:[{name:'periodoDe',value : periodoDe},
-			        {name:'periodoAte',value : periodoAte},
-			        {name:'numCota',value : numCota},
-			        {name:'nomeCota',value : nomeCota},
-			        {name:'statusCota',value : statusCota},
-			        {name:'situacaoEmAberto',value : situacaoEmAberto},
-			        {name:'situacaoNegociada',value : situacaoNegociada},
-			        {name:'situacaoPaga',value : situacaoPaga}]		
+			params: params
 		});
 		
 		$(".inadimplenciaGrid", inadimplenciaController.workspace).flexReload();
@@ -170,7 +171,7 @@ var inadimplenciaController = $.extend(true, {
 			var negociada = row.cell.situacao == "Negociada";
 			var comissao = (row.cell.comissaoSaldoDivida) && negociada; 
 			
-			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida,row.cell.nome, comissao);		
+			row.cell.detalhe = inadimplenciaController.gerarBotaoDetalhes(row.cell.idDivida, row.cell.numCota, row.cell.nome, comissao);		
 			
 	  	});
 		
@@ -180,23 +181,27 @@ var inadimplenciaController = $.extend(true, {
 		return grid;
 	},
 
-	gerarBotaoDetalhes : function(idDivida, nome, comissao) {
+	gerarBotaoDetalhes : function(idDivida, numCota, nome, comissao) {
 		if(comissao) {
-			return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+			return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhesComissaoCota(" + idDivida + ", " + numCota + ", '" + nome + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 		}
 		
-		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes("+idDivida+",'"+nome+"');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
+		return "<a href=\"javascript:;\" onclick=\"inadimplenciaController.getDetalhes(" + idDivida + ", " + numCota + ", '" + nome + "');\"><img src=\"" + contextPath + "/images/ico_detalhes.png\" border=\"0\" hspace=\"5\" title=\"Detalhes\" /></a>";
 	},
 
-	getDetalhes : function(idDivida, nome) {
+	getDetalhes : function(idDivida, numCota, nome) {
 		nomeCota = nome;
+		numeroCota = numCota;
+		
 		$.postJSON(contextPath + "/inadimplencia/getDetalhesDivida", 
 				{idDivida:idDivida,method:'get'}, 
 				inadimplenciaController.popupDetalhes);	
 	},
 	
-	getDetalhesComissaoCota : function(idDivida, nome) {
+	getDetalhesComissaoCota : function(idDivida, numCota, nome) {
 		nomeCota = nome;
+		numeroCota = numCota;
+		
 		$.postJSON(contextPath + "/inadimplencia/getDividaComissao", 
 				{idDivida:idDivida,method:'get'}, 
 				inadimplenciaController.popupDetalhesComissaoCota);	
@@ -204,7 +209,7 @@ var inadimplenciaController = $.extend(true, {
 
 	popupDetalhes : function(result) {
 		
-			inadimplenciaController.gerarTabelaDetalhes(result, nomeCota);
+			inadimplenciaController.gerarTabelaDetalhes(result, numeroCota, nomeCota);
 		
 			$( "#dialog-detalhes", inadimplenciaController.workspace ).dialog({
 				resizable: false,
@@ -224,7 +229,7 @@ var inadimplenciaController = $.extend(true, {
 	
 	popupDetalhesComissaoCota : function(result) {
 		
-		inadimplenciaController.gerarTabelaDetalhesComissaoCota(result, nomeCota);
+		inadimplenciaController.gerarTabelaDetalhesComissaoCota(result, numeroCota, nomeCota);
 	
 		$( "#dialog-detalhes-comissao", inadimplenciaController.workspace ).dialog({
 			resizable: false,
@@ -242,7 +247,7 @@ var inadimplenciaController = $.extend(true, {
 		});
 	},
 		
-	gerarTabelaDetalhes : function(dividas, nome) {
+	gerarTabelaDetalhes : function(dividas, numeroCota, nome) {
 		
 		//var div = document.getElementById("dialog-detalhes");
 		var div = $("#dialog-detalhes", inadimplenciaController.workspace);
@@ -258,7 +263,7 @@ var inadimplenciaController = $.extend(true, {
 		//div.appendChild(fieldset);
 		
 		var legend = document.createElement("LEGEND");
-		legend.innerHTML = "Cota: ".bold() + " - " + nome;
+		legend.innerHTML = "Cota: ".bold() + numeroCota + " - " + nome;
 		
 		fieldset.appendChild(legend);
 		
@@ -317,7 +322,7 @@ var inadimplenciaController = $.extend(true, {
 		 });		 		
 	},
 	
-	gerarTabelaDetalhesComissaoCota : function(dividaComissao, nome) {
+	gerarTabelaDetalhesComissaoCota : function(dividaComissao, numeroCota, nome) {
 		
 		var div = $("#dialog-detalhes-comissao", inadimplenciaController.workspace);
 
@@ -330,7 +335,7 @@ var inadimplenciaController = $.extend(true, {
 		$(div).append(fieldset);
 		
 		var legend = document.createElement("LEGEND");
-		legend.innerHTML = "Comissão Cota: ".bold() + " - " + nome;
+		legend.innerHTML = "Comissão Cota: ".bold() + numeroCota + " - " + nome;
 		
 		fieldset.appendChild(legend);
 		

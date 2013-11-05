@@ -52,6 +52,8 @@ public interface CalendarioService {
 	 */
 	Date subtrairDiasUteis(Date data, int numDias);
 
+	Date subtrairDiasUteisComOperacao(Date data, int numDias);
+	
 	/**
 	 * Verifica se a data informada é dia útil.
 	 * 
@@ -61,24 +63,6 @@ public interface CalendarioService {
 	 * @return indicação se a data é dia útil
 	 */
 	boolean isDiaUtil(Date data);
-
-	/**
-	 * Adiciona dias úteis a uma data.
-	 * 
-	 * @param data
-	 *            - data a ser adicionada
-	 * @param numDias
-	 *            - número de dias
-	 * @param diasSemanaConcentracaoCobranca
-	 *            - dias da semana onde a data deve cair
-	 * @param diaMesConcentracaoCobranca
-	 *            - dia do mes onde a data deve cair
-	 * 
-	 * @return nova data calculada
-	 */
-	Date adicionarDiasUteis(Date data, int numDias,
-			List<Integer> diasSemanaConcentracaoCobranca,
-			List<Integer> diaMesConcentracaoCobranca);
 
 	/**
 	 * Cadastro novo feriado.
@@ -166,5 +150,12 @@ public interface CalendarioService {
 	public enum TipoPesquisaFeriado {
 		FERIADO_MENSAL, FERIADO_ANUAL;
 	}
+	
+    /**
+     * Obtem a proxima data com dia util, considerando Feriados, Sabados e Domingos
+     * @param data
+     * @return Date
+     */
+	Date obterProximaDataDiaUtil(Date data);
 
 }

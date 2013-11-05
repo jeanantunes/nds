@@ -52,6 +52,10 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	@Column(name = "STATUS_NOTA_FISCAL", nullable = false)
 	protected StatusNotaFiscalEntrada statusNotaFiscal;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_RECEBIMENTO")
+	protected StatusRecebimento statusRecebimento;
+	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "CFOP_ID")
 	protected CFOP cfop;
@@ -133,6 +137,14 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 
 	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
+	public StatusRecebimento getStatusRecebimento() {
+		return statusRecebimento;
+	}
+
+	public void setStatusRecebimento(StatusRecebimento statusRecebimento) {
+		this.statusRecebimento = statusRecebimento;
 	}
 	
 	

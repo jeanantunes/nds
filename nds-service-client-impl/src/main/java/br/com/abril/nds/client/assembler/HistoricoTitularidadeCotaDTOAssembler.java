@@ -64,6 +64,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 
@@ -198,17 +199,19 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
      */
     public static EnderecoDTO toEnderecoDTO(HistoricoTitularidadeCotaEndereco endereco) {
         EnderecoDTO dto = new EnderecoDTO();
-        dto.setTipoLogradouro(endereco.getTipoLogradouro());
-        dto.setLogradouro(endereco.getLogradouro());
-        dto.setNumero(endereco.getNumero());
-        dto.setComplemento(endereco.getComplemento());
-        dto.setBairro(endereco.getBairro());
-        dto.setCep(endereco.getCep());
-        dto.setCidade(endereco.getCidade());
-        dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
-        dto.setCodigoUf(endereco.getCodigoUf());
-        dto.setUf(endereco.getUf());
-        dto.setId(Util.generateObjectId(dto));
+        if(endereco != null) {
+        	dto.setTipoLogradouro(endereco.getTipoLogradouro());
+            dto.setLogradouro(endereco.getLogradouro());
+            dto.setNumero(endereco.getNumero());
+            dto.setComplemento(endereco.getComplemento());
+            dto.setBairro(endereco.getBairro());
+            dto.setCep(endereco.getCep());
+            dto.setCidade(endereco.getCidade());
+            dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
+            dto.setCodigoUf(endereco.getCodigoUf());
+            dto.setUf(endereco.getUf());
+            dto.setId(Util.generateObjectId(dto));
+        }
         return dto;
     }
     
@@ -221,10 +224,12 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
      */
     public static TelefoneDTO toTelefoneDTO(HistoricoTitularidadeCotaTelefone telefone) {
         TelefoneDTO dto = new TelefoneDTO();
-        dto.setDdd(telefone.getDdd());
-        dto.setNumero(telefone.getNumero());
-        dto.setRamal(telefone.getRamal());
-        dto.setId(Util.generateObjectId(dto));
+        if(telefone != null) {
+        	dto.setDdd(telefone.getDdd());
+            dto.setNumero(telefone.getNumero());
+            dto.setRamal(telefone.getRamal());
+            dto.setId(Util.generateObjectId(dto));
+        }
         return dto;
     }
 
@@ -414,17 +419,17 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
         ParametroCobrancaCotaDTO dto = new ParametroCobrancaCotaDTO();
         if (financeiro != null) {
             dto.setFatorVencimento(financeiro.getFatorVencimento());
-            dto.setValorMinimo(financeiro.getValorMininoCobranca());
+            dto.setValorMinimo(CurrencyUtil.formatarValor(financeiro.getValorMininoCobranca()));
             PoliticaSuspensao politicaSuspensao = financeiro.getPoliticaSuspensao();
             if (politicaSuspensao != null) {
                 dto.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
-                dto.setVrDividasAberto(politicaSuspensao.getValor());
+                dto.setVrDividasAberto(CurrencyUtil.formatarValor(politicaSuspensao.getValor()));
                 dto.setSugereSuspensao(true);
             }
-            dto.setContrato(financeiro.isPossuiContrato());
+            dto.setContrato(financeiro.isPossuiContrato() != null ? financeiro.isPossuiContrato() : false);
             dto.setInicioContrato(financeiro.getDataInicioContrato());
             dto.setTerminoContrato(financeiro.getDataTerminoContrato());
-            dto.setContratoRecebido(financeiro.isContratoRecebido());
+            dto.setContratoRecebido(financeiro.isContratoRecebido() != null ? financeiro.isContratoRecebido() : false);
             dto.setTipoCota(financeiro.getTipoCota());
         }
         return dto;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.util.Util;
 
 /**
  * Data Transfer Object para consulta de movimento para aprovação.
@@ -177,8 +178,9 @@ public class MovimentoAprovacaoDTO {
 	/**
 	 * @param statusMovimento the statusMovimento to set
 	 */
-	public void setStatusMovimento(StatusAprovacao statusMovimento) {
-		this.statusMovimento = statusMovimento;
+	public void setStatusMovimento(String statusMovimento) {
+		
+		this.statusMovimento = Util.getEnumByStringValue(StatusAprovacao.values(), statusMovimento);
 	}
 
 	/**

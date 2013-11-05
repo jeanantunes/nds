@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +27,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
@@ -59,6 +61,7 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
+import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -69,6 +72,7 @@ import br.com.abril.nds.repository.EnderecoFiadorRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.repository.FormaCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -108,6 +112,12 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Autowired 
 	private FormaCobrancaCaucaoLiquidaRepository formaCobrancaRepository;
 	
+	@Autowired
+	private DescontoService descontoService;
+	
+	@Autowired
+	private BancoRepository bancoRepository;
+	
     private static final  Logger LOGGER = LoggerFactory.getLogger(CotaGarantiaServiceImpl.class);
 	
 	/*
@@ -136,8 +146,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
 		
-			cotaGarantiaImovel.getImoveis().size();			
-		
+			cotaGarantiaImovel.getImoveis().size();
+
 		} else if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {
 		
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
@@ -158,12 +168,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			tipo = TipoGarantia.OUTROS;			
 			
-			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;			
-		
-			cotaGarantiaOutros.getOutros().size();			
-			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;
+
+			cotaGarantiaOutros.getOutros().size();
 		}
-		
+
 		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
 	
@@ -263,7 +272,33 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return imoveisDTO;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<GarantiaCotaOutros> obterDadosGarantiaOutrosDTO(Long idCota) {
+		
+		List<GarantiaCotaOutros> garantiaOutros = new ArrayList<GarantiaCotaOutros>();
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaOutros) {	
+			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;
+
+			if (cotaGarantiaOutros.getOutros() != null) {
+
+				cotaGarantiaOutros.getOutros().size();
+				
+				garantiaOutros = cotaGarantiaOutros.getOutros();
+			}
+		}
+		
+		return garantiaOutros;
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Imovel> obterDadosImoveis(Long idCota){
@@ -586,6 +621,36 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return notaPromissoria;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<String> validarDadosCotaPreImpressao(Long idCota){
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = 
+			this.cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
+		
+		if(cotaGarantiaNotaPromissoria == null){
+			
+			msgs.add("Nota Promissória não cadastrada para esta cota.");
+		}
+		
+		EnderecoCota enderecoCota =  enderecoCotaRepository.getPrincipal(idCota);
+		
+		if(enderecoCota==null  || enderecoCota.getEndereco() == null){
+			
+			msgs.add( "Endereço não cadastrado para esta cota.");
+		}
+		
+		EnderecoDistribuidor enderecoDistribuidor =  distribuidorRepository.obterEnderecoPrincipal();
+		
+		if(enderecoDistribuidor==null  || enderecoDistribuidor.getEndereco() == null){
+			msgs.add("Endereço não cadastrada para este distribuidor.");
+		}
+		
+		return msgs;
+	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -684,7 +749,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	            CotaGarantiaCaucaoLiquida.class);
 		
 		FormaCobrancaCaucaoLiquida formaCobranca = null;
-          	
+		
         if (TipoCobrancaCotaGarantia.BOLETO == cotaGarantiaCaucaoLiquida.getTipoCobranca()){
         	PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
         	formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
@@ -833,8 +898,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
             case DEPOSITO_TRANSFERENCIA:
 				
+            	Banco bancoCedente = this.bancoRepository.buscarPorId(formaCobrancaDTO.getIdBanco());
+            	
             	pagamentoDepositoTransferencia = new PagamentoDepositoTransferencia();
             	pagamentoDepositoTransferencia.setValor(formaCobrancaDTO.getValor());
+            	pagamentoDepositoTransferencia.setBanco(bancoCedente);
 				
 			break;
         }
@@ -870,6 +938,20 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		this.setFiadorCota(idCota, null);
 		
 		return (CotaGarantiaCaucaoLiquida) this.cotaGarantiaRepository.merge(cotaGarantiaCaucaoLiquida);
+	}
+	
+	/**
+	 * Método responsável por obter lista de CaucaoLiquida da cota
+	 * @param idCota: ID da cota
+	 * @return List<CaucaoLiquida>
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<CaucaoLiquida> obterCaucaoLiquidasCota(Long idCota){
+
+		List<CaucaoLiquida> caucaoLiquidas = cotaGarantiaRepository.getCaucaoLiquidasCota(idCota);
+				
+		return caucaoLiquidas;
 	}
 	
 	/**
@@ -992,6 +1074,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					if (pagamentoDepositoTransferencia != null){
 						
 						formaCobrancaDTO.setValor(pagamentoDepositoTransferencia.getValor());
+						
+						formaCobrancaDTO.setIdBanco(pagamentoDepositoTransferencia.getBanco().getId());
 					}
 					
 				break;
@@ -1017,6 +1101,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 						formaCobrancaDTO.setValorDescontoAtual(pagamentoDescontoCota.getDescontoAtual());
 						formaCobrancaDTO.setUtilizarDesconto(pagamentoDescontoCota.getPorcentagemUtilizada());
 						formaCobrancaDTO.setDescontoCotaDesconto(pagamentoDescontoCota.getDescontoCota());
+					
+					} else {
+						
+						BigDecimal descontoAtual = this.obterValorComissaoCaucaoLiquida(idCota);
+
+						formaCobrancaDTO.setValorDescontoAtual(descontoAtual);
+						formaCobrancaDTO.setDescontoCotaDesconto(descontoAtual);
 					}
 					
 				break;
@@ -1036,7 +1127,21 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return formaCobrancaDTO;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public BigDecimal obterValorComissaoCaucaoLiquida(Long idCota) {
+		
+		Integer numeroCota = this.cotaRepository.buscarNumeroCotaPorId(idCota);
 
+		BigDecimal descontoAtual = this.descontoService.obterComissaoCota(numeroCota);
+		
+		return descontoAtual;
+	}
+	
     /**
      * {@inheritDoc}
      */
@@ -1096,4 +1201,16 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
         return caucao == null ? null : HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
     }
+
+	@Override
+	@Transactional(readOnly=true)
+	public boolean existeCaucaoLiquidasCota(Long idCota) {
+		
+		if (this.cotaGarantiaRepository.existeCaucaoLiquidasCota(idCota)){
+			
+			return this.cotaGarantiaRepository.verificarQuitacaoCaucaoLiquida(idCota);
+		}
+		
+		return this.cotaGarantiaRepository.existeCaucaoLiquidasCota(idCota);
+	}
 }

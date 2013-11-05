@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 
@@ -25,6 +26,8 @@ public class SlipDTO {
 	
 	private BigDecimal valorEncalheDia;
 	
+	private BigDecimal valorLiquidoDevido;
+	
 	private BigInteger totalProdutoDia;
 	
 	private Long ceJornaleiro;
@@ -39,9 +42,13 @@ public class SlipDTO {
 
 	private List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlipDTO;
 	
-	private List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO;
+	private List<DebitoCreditoCotaDTO> listaComposicaoCobrancaDTO;
 	
+	private BigDecimal valorTotalDesconto;
 	
+	private BigDecimal valorTotalSemDesconto;
+	
+	private Map<String, Object> parametersSlip;
 	
 	/**
 	 * Obtém numeroCota
@@ -304,7 +311,7 @@ public class SlipDTO {
 	/**
 	 * @return the listaComposicaoCobrancaDTO
 	 */
-	public List<ComposicaoCobrancaSlipDTO> getListaComposicaoCobrancaDTO() {
+	public List<DebitoCreditoCotaDTO> getListaComposicaoCobrancaDTO() {
 		return listaComposicaoCobrancaDTO;
 	}
 
@@ -312,8 +319,46 @@ public class SlipDTO {
 	 * @param listaComposicaoCobrancaDTO the listaComposicaoCobrancaDTO to set
 	 */
 	public void setListaComposicaoCobrancaDTO(
-			List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO) {
+			List<DebitoCreditoCotaDTO> listaComposicaoCobrancaDTO) {
 		this.listaComposicaoCobrancaDTO = listaComposicaoCobrancaDTO;
+	}
+
+	public BigDecimal getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	public void setValorTotalDesconto(BigDecimal valorTotalDesconto) {
+		this.valorTotalDesconto = valorTotalDesconto;
+	}
+
+	public BigDecimal getValorTotalSemDesconto() {
+		return valorTotalSemDesconto;
+	}
+
+	public void setValorTotalSemDesconto(BigDecimal valorTotalSemDesconto) {
+		this.valorTotalSemDesconto = valorTotalSemDesconto;
+	}
+
+	public Map<String, Object> getParametersSlip() {
+		return parametersSlip;
+	}
+
+	public void setParametersSlip(Map<String, Object> parametersSlip) {
+		this.parametersSlip = parametersSlip;
+	}
+
+	/**
+	 * @return the valorLiquidoDevido
+	 */
+	public BigDecimal getValorLiquidoDevido() {
+		return valorLiquidoDevido;
+	}
+
+	/**
+	 * @param valorLiquidoDevido the valorLiquidoDevido to set
+	 */
+	public void setValorLiquidoDevido(BigDecimal valorLiquidoDevido) {
+		this.valorLiquidoDevido = valorLiquidoDevido;
 	}
 	
 }

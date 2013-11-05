@@ -19,13 +19,10 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -138,7 +135,7 @@ public interface CotaService {
 	 *
 	 * @return Cota - cota suspensa
 	 */
-	Cota suspenderCota(Long idCota, Usuario usuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao);
+	Cota suspenderCota(Long idCota, Usuario usuario, Date dataInicioValidade, MotivoAlteracaoSituacao motivoAlteracaoSituacao);
 
 	/**
 	 * Suspende lista de cotas e retorna dados básicos das cota suspensas com
@@ -163,6 +160,8 @@ public interface CotaService {
 	List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp);
 
 	Long obterTotalCotasSujeitasSuspensao();
+	
+	BigDecimal obterTotalDividaCotasSujeitasSuspensao();
 
 	String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota);
 
@@ -237,20 +236,6 @@ public interface CotaService {
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota();
 	
 	void alterarCota(Cota cota);
-
-	/**
-	 * Método responsável por obter o total do relatório de vendas ABC por cota
-	 * @param filtroCurvaABCCotaDTO
-	 * @return
-	 */
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
-	
-	/**
-	 * Método responsável por obter o relatório de vendas ABC por cota
-	 * @param filtroCurvaABCCotaDTO
-	 * @return
-	 */
-	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
 	public EnderecoCota obterEnderecoPrincipal(long idCota);
 	
@@ -388,4 +373,26 @@ public interface CotaService {
 	 * @return
 	 */
 	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
+
+	void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
+			Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDataRecolhimento);
+	
+	/**
+	 * Obtem lista de Cotas dos numeros de cotas passados como parametro
+	 * @param numerosCota
+	 * @return List<Cota>
+	 */
+	List<Cota> obterCotasPorNumeros(List<Integer> numerosCota);
+
+	boolean salvarTipoCota(long idCota, TipoCota tipoCota);
+
+	/**
+     * Verifica se a cota teve seu tipo alterado na data informada
+     * @param cota
+     * @param data
+     * @return boolean
+     */
+	boolean isCotaAlteradaNaData(Cota cota, Date data);
+
 }

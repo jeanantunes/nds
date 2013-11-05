@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 
 @Component
 public class EMS0114MessageProcessor extends AbstractRepository implements
@@ -31,6 +31,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -45,8 +48,21 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		// Validar Produto/Edicao
 		final String codigoProduto = input.getCodProd();
 		final Long edicao = input.getEdicao();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				edicao, message);
+		ProdutoEdicao produtoEdicao = null; 
+		
+		try {
+			produtoEdicao = produtoEdicaoRepository.obterMaxProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
+		} catch (Exception e) {
+			this.ndsiLoggerFactory.getLogger().logError(message
+					, EventoExecucaoEnum.HIERARQUIA
+					, "produto.codigo: " + codigoProduto.toString() 
+						+ ", produtoEdicao.numeroEdicao:"
+						+ edicao.toString() + " Erro:" + e.getMessage());
+			
+			return;
+		}
+		
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -58,8 +74,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 		
 		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
-		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
-				produtoEdicao, dataGeracaoArquivo);
+		
+		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(produtoEdicao, dataGeracaoArquivo);
+		
 		if (lancamento == null) {
 			
 			lancamento = this.getLancamentoAnteriorRecolhimentoMaisProximo(produtoEdicao, dataGeracaoArquivo);
@@ -73,19 +90,24 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			}
 		}
 		
-		if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO || lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO) {
+		if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO
+				|| lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO
+				|| lancamento.getStatus() == StatusLancamento.EM_RECOLHIMENTO
+				|| lancamento.getStatus() == StatusLancamento.RECOLHIDO
+				|| lancamento.getStatus() == StatusLancamento.FECHADO) {
+			
 			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			ndsiLoggerFactory.getLogger().logWarning(
 					message,
 					EventoExecucaoEnum.ERRO_INFRA,
-					String.format( "Registro não será atualizado pois já está em balanceamento / balanceado. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", sdf.format(input.getDataRecolhimento()), input.getCodProd(), input.getEdicao().toString() ));
+					String.format( "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", sdf.format(input.getDataRecolhimento()), input.getCodProd(), input.getEdicao().toString() ));
 			return;
 		}
 		
-		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(
-				lancamento.getDataRecolhimentoDistribuidor());
-		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(
-				input.getDataRecolhimento());
+		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataRecolhimentoDistribuidor());
+		
+		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(input.getDataRecolhimento());
+		
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
 			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(
@@ -120,42 +142,6 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		
 	}
 
-	/**
-	 * Obtém o Produto Edição cadastrado previamente.
-	 * 
-	 * @param codigoPublicacao Código da Publicação.
-	 * @param edicao Número da Edição.
-	 * @param message 
-	 * 
-	 * @return
-	 */
-	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
-			Long edicao, Message message) {
-
-		try {
-
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
-
-			criteria.createAlias("produtoEdicao.produto", "produto");
-			criteria.setFetchMode("produto", FetchMode.JOIN);
-
-			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
-			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
-
-			return (ProdutoEdicao) criteria.uniqueResult();
-
-		} catch (Exception e) {
-			this.ndsiLoggerFactory.getLogger().logError(message
-					, EventoExecucaoEnum.HIERARQUIA
-					, "produto.codigo: " + codigoPublicacao.toString() 
-						+ ", produtoEdicao.numeroEdicao:" 
-						+ edicao.toString() + " Erro:" + e.getMessage());
-
-
-			throw new RuntimeException(e);
-		}
-	}	
 	
 	/**
 	 * Obtém o Lançamento com a data de recolhimento mais próximo da data de 

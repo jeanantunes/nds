@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -1139,7 +1140,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdProdutoEdicao(veja1.getId());
-		filtro.setIdCota(cotaManoel.getId());
+		filtro.setNumeroCota(cotaManoel.getNumeroCota());
 
 		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
 		
@@ -1265,7 +1266,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdProdutoEdicao(veja1.getId());
-		filtro.setIdCota(cotaManoel.getId());
+		filtro.setNumeroCota(cotaManoel.getNumeroCota());
 
 		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
 		
@@ -1568,9 +1569,12 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForContagemDevolucao();
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
+		ContagemDevolucaoAgregationValuesDTO devolucao = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
 				obterFiltroDigitacaoContagemDevolucao());
-		Assert.assertTrue(qtde > 0);
+		
+		Assert.assertNotNull(devolucao);
+		
+		Assert.assertTrue(devolucao.getQuantidadeTotal() > 0);
 	}
 	
 	private FiltroDigitacaoContagemDevolucaoDTO obterFiltroDigitacaoContagemDevolucao() {
@@ -2697,10 +2701,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date data = Fixture.criarData(1, Calendar.NOVEMBER, 2012);
 		List<Integer> numCotas = new ArrayList<Integer>();
 		numCotas.add(1);
-		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.ENVIO_ENCALHE;
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = Arrays.asList(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		List<MovimentoEstoqueCotaDTO> listaMovimento = 
-				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, grupoMovimentoEstoque);
+				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, gruposMovimentoEstoque);
 		
 		Assert.assertNotNull(listaMovimento);
 
@@ -3135,7 +3139,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		this.setupFinanceiroReparteEncalhe();
 		
 		List<MovimentoEstoqueCota> movimentos = 
-				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(
 						cotaValdomiro.getId(),
 						Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		

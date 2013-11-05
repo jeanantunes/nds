@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 
@@ -31,7 +33,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param cotaId
 	 * @param dataOperacaoDe
 	 * @param dataOperacaoAte
-	 * @param conferido
 	 * @param postergado
 	 * 
 	 * @return BigDecimal
@@ -40,7 +41,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			Long cotaId, 
 			Date dataOperacaoDe,
 			Date dataOperacaoAte,
-			Boolean conferido, Boolean postergado);
+			Boolean postergado);
 	
 	
 	/**
@@ -75,29 +76,19 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	
 	
 	/**
-	 * Obtém lista de chamada encalhe cota a partir do 
+	 * Obtém a ultima chamada encalhe cota a partir do 
 	 * numeroCota e dataRecolhimento.  
 	 * 
-	 * Se flag indPesquisaCEFutura for true sera pesquisado registro com 
-	 * dataRecolhimento >= a data passado por parâmetro, senão, pesquisará 
-	 * registros com dataRecolhimento igual data passada por parâmetro.
 	 * 
-	 * @param numeroCota
+	 * @param cota
 	 * @param dataOperacao
 	 * @param idProdutoEdicao
-	 * @param indPesquisaCEFutura
-	 * @param conferido
 	 * @param postergado
 	 * 
-	 * @return List - ChamadaEncalheCota
+	 * @return ChamadaEncalheCota
 	 */
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
-			Integer numeroCota, 
-			Date dataOperacao, 
-			Long idProdutoEdicao, 
-			boolean indPesquisaCEFutura, 
-			boolean conferido,
-			boolean postergado);
+	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Cota cota,Long idProdutoEdicao,
+			   											 boolean postergado,Date dataOperacao);
 	
 	
 	/**
@@ -157,4 +148,21 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @return
 	 */
 	List<ChamadaEncalheCota> obterListChamadaEncalheCota(Long chamadaEncalheID, Long cotaID);
+
+	BigDecimal obterTotalDescontoDaChamaEncalheCota(Integer numeroCota,
+			Date dataOperacao, Boolean conferido, Boolean postergado);
+
+	BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(Integer numeroCota,
+			Date dataOperacao, Boolean conferido, Boolean postergado);
+	
+	ChamadaEncalheCota obterChamadaEncalheCotaNaData(Cota cota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
+	
+	BigInteger quantidadeCotaAusenteFechamentoEncalhe(Integer numeroCota, Date dataRecolhimento);
+	
+	Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Boolean fechado, Date dataRecolhimento);
+	
+	Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
+	
+	ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
+	
 }

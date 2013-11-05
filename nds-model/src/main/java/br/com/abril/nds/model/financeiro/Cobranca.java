@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -112,6 +113,9 @@ public abstract class Cobranca {
 	@JoinColumn(name="FORNECEDOR_ID")
 	private Fornecedor fornecedor;
     
+	@ManyToMany(mappedBy="cobrancasOriginarias")
+	private List<Negociacao> negociacao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -274,6 +278,20 @@ public abstract class Cobranca {
 
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
+	}
+
+	/**
+	 * @return the negociacao
+	 */
+	public List<Negociacao> getNegociacao() {
+		return negociacao;
+	}
+
+	/**
+	 * @param negociacao the negociacao to set
+	 */
+	public void setNegociacao(List<Negociacao> negociacao) {
+		this.negociacao = negociacao;
 	}
 	
 }

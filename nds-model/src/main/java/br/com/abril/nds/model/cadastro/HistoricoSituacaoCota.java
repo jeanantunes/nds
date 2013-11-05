@@ -52,6 +52,10 @@ public class HistoricoSituacaoCota extends HistoricoEdicao implements Serializab
 	private Date dataFimValidade;
 	@Column(name = "DESCRICAO", nullable = true)
 	private String descricao;
+	@Column(name = "PROCESSADO", nullable = true)
+	private boolean processado;
+	@Column(name = "RESTAURADO", nullable = true)
+	private boolean restaurado;
 	
 	public Long getId() {
 		return id;
@@ -133,6 +137,22 @@ public class HistoricoSituacaoCota extends HistoricoEdicao implements Serializab
 	 */
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public boolean isProcessado() {
+		return processado;
+	}
+
+	public void setProcessado(boolean processado) {
+		this.processado = processado;
+	}
+
+	public boolean isRestaurado() {
+		return restaurado;
+	}
+
+	public void setRestaurado(boolean restaurado) {
+		this.restaurado = restaurado;
 	}
 
 }

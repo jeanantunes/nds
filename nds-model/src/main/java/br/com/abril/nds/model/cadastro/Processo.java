@@ -9,7 +9,6 @@ public enum Processo {
 	SOBRA_REPARTE("Sobras do reparte"),
 	FALTA_ENCALHE("Faltas do encalhe"),
 	SOBRA_ENCALHE("Sobras do encalhe"),
-	DEVOLUCAO_FORNECEDOR("Devolução fornecedor"),
 	CALCELADA("Cancelada"),
 
 	GERACAO_NF_E("Geração NF-e"),

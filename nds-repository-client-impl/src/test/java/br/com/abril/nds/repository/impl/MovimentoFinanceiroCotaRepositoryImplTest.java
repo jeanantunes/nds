@@ -475,17 +475,6 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 
 	@Test
 	@SuppressWarnings("unused")
-	public void obterQuantidadeMovimentoFinanceiroDataOperacao() {
-		
-		Date dataAtual = Fixture.criarData(06, Calendar.NOVEMBER, 2012);
-		
-		Long totalMovimentosFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(dataAtual);
-
-	}
-
-	@Test
-	@SuppressWarnings("unused")
 	public void obterSomatorioValorMovimentosFinanceiroCota() {
 		
 		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();

@@ -13,7 +13,7 @@ var ConsultaEncalhe = $.extend(true, {
 				dataType : 'json',
 				preProcess:ConsultaEncalhe.executarPreProcessamento,
 				colModel : colunas,
-				sortname : "codigoProduto",
+				sortname : "dataDoRecolhimentoDistribuidor",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -136,7 +136,7 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				var detalhes = '<a href="javascript:;" ' +
-					(row.cell.indPossuiObservacaoConferenciaEncalhe=='N'?'style="opacity: 0.5;"': 'onclick="ConsultaEncalhe.popupDetalhe(\'' + row.cell.idCota + '\', \'' + row.cell.idFornecedor + '\', \'' + row.cell.idProdutoEdicao + '\', \'' + row.cell.dataMovimento + '\', \'' + row.cell.dataRecolhimento + '\');" style="cursor:pointer"')
+				(!row.cell.indPossuiObservacaoConferenciaEncalhe ?'style="opacity: 0.5;"' : 'onclick="ConsultaEncalhe.popupDetalhe(\'' + row.cell.idCota + '\', \'' + row.cell.idFornecedor + '\', \'' + row.cell.idProdutoEdicao + '\', null, \'' + row.cell.recolhimento + '\');" style="cursor:pointer"')
 						+ '>' +
 						 	   '<img title="Detalhes do Encalhe" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';	
@@ -220,14 +220,19 @@ var ConsultaEncalhe = $.extend(true, {
 		},
 		
 	    //POPULA GRADE DE DETALHES DA ENCALHE
-	    obterDetalhesEncalhe : function(idCota, idFornecedor, idProdutoEdicao, dataMovimento, dataRecolhimento){
+	    obterDetalhesEncalhe : function(numeroCota, idFornecedor, idProdutoEdicao, dataMovimento, dataRecolhimento){
+	    	
+	    	if (!numeroCota){
+	    		
+	    		numeroCota = $("#cota", ConsultaEncalhe.workspace).val();
+	    	}
 	    	
 			$("#dadosDetalheEncalheGrid", ConsultaEncalhe.workspace).flexOptions({
 				url: contextPath + "/devolucao/consultaEncalhe/pesquisarDetalhe",
 				params: [
 						{name:'idProdutoEdicao', value: idProdutoEdicao},
 						{name:'idFornecedor', value: idFornecedor},
-						{name:'idCota', value: idCota},
+						{name:'numeroCota', value: numeroCota},
 						{name:'dataRecolhimento', value: dataRecolhimento},
 						{name:'dataMovimento', value: dataMovimento}
 				        ] ,
@@ -243,7 +248,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var colModel = [ {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -303,8 +308,8 @@ var ConsultaEncalhe = $.extend(true, {
 			}, {
 				display : 'Recolhimento',
 				name : 'recolhimento',
-				width : 80,
-				sortable : true,
+				width : 70,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Detalhes',

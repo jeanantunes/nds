@@ -23,7 +23,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -141,7 +140,7 @@ public class ControleAprovacaoController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO_ALTERACAO)
 	public void aprovarMovimento(Long idMovimento) {
 		
-		controleAprovacaoService.aprovarMovimento(idMovimento, obterUsuario());
+		controleAprovacaoService.aprovarMovimento(idMovimento, super.getUsuarioLogado());
 		
 		PaginacaoUtil.atualizarQtdRegistrosPesquisa(
 			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
@@ -169,7 +168,7 @@ public class ControleAprovacaoController extends BaseController {
 				"O campo [Motivo] deve conter até 255 caracteres!");
 		}
 		
-		controleAprovacaoService.rejeitarMovimento(idMovimento, motivo, obterUsuario());
+		controleAprovacaoService.rejeitarMovimento(idMovimento, motivo, super.getUsuarioLogado());
 		
 		PaginacaoUtil.atualizarQtdRegistrosPesquisa(
 			this.session, QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE);
@@ -336,21 +335,4 @@ public class ControleAprovacaoController extends BaseController {
 				Util.getEnumByStringValue(OrdenacaoColunaControleAprovacao.values(), sortname));
 		}
 	}
-	
-	/**
-	 * Obtém usuário logado.
-	 * 
-	 * @return usuário logado
-	 */
-	private Usuario obterUsuario() {
-		
-		//TODO: Aguardando definição de como será obtido o usuário logado
-		
-		Usuario usuario = new Usuario();
-		
-		usuario.setId(1L);
-		
-		return usuario;
-	}
-	
 }

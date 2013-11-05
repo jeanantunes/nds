@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -28,6 +29,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		this.clazz = clazz;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public K adicionar(T entity) {
 		return (K) getSession().save(entity);		
 	}
@@ -38,6 +40,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void removerPorId(K... id) {		
 		String hql  = "DELETE FROM "+ clazz.getCanonicalName() + " WHERE id in (:ids)" ;
@@ -48,11 +51,13 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		getSession().flush();
 	}
 	
+	@Transactional
 	public void alterar(T entity) {
 		getSession().update(entity);
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public T merge(T entity) {
 		return (T) getSession().merge(entity);
 	}

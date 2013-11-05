@@ -1,17 +1,22 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.Column;
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -22,64 +27,104 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 public class ChamadaEncalheCotaRepositoryImpl extends
 		AbstractRepositoryModel<ChamadaEncalheCota, Long> implements
 		ChamadaEncalheCotaRepository {
+	
+	private static final String REPARTE_COM_DESCONTO = "reparte";
+	
+	private static final String REPARTE_SEM_DESCONTO = "reparteSemDesconto";
+	
+	private static final String DESCONTO = "desconto";
+	
+	@Autowired
+	private DataSource dataSource;
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
 	}
+	
+	public BigInteger quantidadeCotaAusenteFechamentoEncalhe(Integer numeroCota, Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT COUNT(*) "); 
+		sql.append(" FROM CHAMADA_ENCALHE ce, CHAMADA_ENCALHE_COTA cec, COTA c ");
+		sql.append(" WHERE ce.ID = cec.CHAMADA_ENCALHE_ID ");
+		sql.append(" AND cec.COTA_ID = c.ID ");
+		sql.append(" AND ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		sql.append(" AND NUMERO_COTA = :numeroCota ");
+		sql.append(" AND cec.FECHADO = :fechado " );
 
+		Query query = getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("fechado", true);
+
+		return (BigInteger) query.uniqueResult();
+	}
+
+	@Override
 	public BigDecimal obterReparteDaChamaEncalheCota(
 			Integer numeroCota, 
 			Date dataOperacao,
 			Boolean conferido, Boolean postergado) {
 
-		StringBuffer subSqlWhereDesconto = new StringBuffer();
-		
-		subSqlWhereDesconto.append(" (SELECT ");	
-		subSqlWhereDesconto.append("	MEC.PRECO_COM_DESCONTO ");
-		subSqlWhereDesconto.append(" FROM 	");
-		subSqlWhereDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
-		subSqlWhereDesconto.append(" WHERE  	");
-		subSqlWhereDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlWhereDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 				");
-		subSqlWhereDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
-		subSqlWhereDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		subSqlWhereDesconto.append(" ORDER BY MEC.DATA DESC ");
-		subSqlWhereDesconto.append(" LIMIT 1) ");
+		Query query = 
+				this.getSession().createSQLQuery(
+						this.getSqlValor(conferido, postergado, REPARTE_COM_DESCONTO));
 
-		StringBuilder sql = new StringBuilder();
+		query.setParameter("dataOperacao", dataOperacao);
 		
-		sql.append(" SELECT SUM( COALESCE( ");
-		sql.append( subSqlWhereDesconto.toString() +  ", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
-		sql.append(" ) ");
-		
-		sql.append("    FROM    ");
-		
-		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
-		sql.append("	inner join COTA AS COTA ON 								");
-		sql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)						");
-		sql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON 			");
-		sql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
-		sql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON 			");
-		sql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)			");
-		sql.append("	inner join PRODUTO as PROD ON 							");
-		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)						");
-		
-		sql.append("	WHERE   ");
-		
-		sql.append("	COTA.NUMERO_COTA = :numeroCota  ");
-		
-		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao	");
+		query.setParameter("numeroCota", numeroCota);
 		
 		if(conferido!=null) {
-			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
+			query.setParameter("conferido", conferido);
 		}
 		
 		if(postergado!=null) {
-			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
+			query.setParameter("postergado", postergado);
 		}
 		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		
-		Query query = this.getSession().createSQLQuery(sql.toString());
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterTotalDescontoDaChamaEncalheCota(
+			Integer numeroCota, 
+			Date dataOperacao,
+			Boolean conferido, Boolean postergado) {
+
+		Query query = 
+				this.getSession().createSQLQuery(
+						this.getSqlValor(conferido, postergado, DESCONTO));
+
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		if(conferido!=null) {
+			query.setParameter("conferido", conferido);
+		}
+		
+		if(postergado!=null) {
+			query.setParameter("postergado", postergado);
+		}
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(
+			Integer numeroCota, 
+			Date dataOperacao,
+			Boolean conferido, Boolean postergado) {
+		
+		Query query = 
+				this.getSession().createSQLQuery(
+						this.getSqlValor(conferido, postergado, REPARTE_SEM_DESCONTO));
 
 		query.setParameter("dataOperacao", dataOperacao);
 		
@@ -98,30 +143,85 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (BigDecimal) query.uniqueResult();
 	}
 
+	private String getSqlValor(Boolean conferido, Boolean postergado, String valor) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT SUM( COALESCE( ");
+		
+		if (REPARTE_COM_DESCONTO.equals(valor)){
+			
+			sql.append("MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		} else if (DESCONTO.equals(valor)){
+			
+			sql.append("MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO, 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		} else {
+			
+			sql.append("MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		}
+		
+		sql.append(" ) ");
+		
+		sql.append("    FROM    ");
+		
+		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
+		sql.append("	inner join COTA AS COTA ON 								");
+		sql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)						");
+		sql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON 			");
+		sql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
+		sql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON 			");
+		sql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)			");
+		sql.append("	inner join PRODUTO as PROD ON 							");
+		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)						");
+		
+		sql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC ON 				");
+		sql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		
+		sql.append("	INNER JOIN TIPO_MOVIMENTO TIPO_MOV ON ");
+		sql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+		
+		sql.append("	WHERE   ");
+		
+		sql.append("	COTA.NUMERO_COTA = :numeroCota  ");
+		
+		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao	");
+		
+		sql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA)				");
+		sql.append("	FROM    MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV ");
+		sql.append("	WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID		");
+		sql.append("	AND     MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID		");
+		sql.append("	AND 	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID			");
+		sql.append("	AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque) ");
+		
+		if(conferido!=null) {
+			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
+		}
+		
+		if(postergado!=null) {
+			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
+		}
+		
+		return sql.toString();
+	}
+
 	public BigDecimal obterReparteDaChamaEncalheCotaNoPeriodo(
 			Long cotaId, 
 			Date dataOperacaoDe,
 			Date dataOperacaoAte,
-			Boolean conferido, Boolean postergado) {
-		
+			Boolean postergado) {
+
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT SUM(PRODUTOS_DESCONTO.PRECO_COM_DESCONTO * PRODUTOS_DESCONTO.QTDE_PREVISTA) ");
+		sql.append(" SELECT SUM(PRODUTOS_DESCONTO.PRECO_COM_DESCONTO * PRODUTOS_DESCONTO.QTDE_PREVISTA) as precoTotalComDesconto ");
 		
 		sql.append(" FROM	");
 		
 		sql.append(" ( ");
 		
 		sql.append("  SELECT	");
-		
-		
-		sql.append("  COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA) AS PRECO_COM_DESCONTO, ");
-		
+		sql.append("  COALESCE(MEC.PRECO_COM_DESCONTO, MEC.PRECO_VENDA) AS PRECO_COM_DESCONTO, ");
 		sql.append("  CH_ENCALHE_COTA.QTDE_PREVISTA AS QTDE_PREVISTA  ");
-		
-		
 		sql.append("    FROM    ");
-		
 		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
 		
 		sql.append("	inner join COTA AS COTA ON 								");
@@ -155,50 +255,47 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("	WHERE   ");
 
-		sql.append("	( CH_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataOperacaoDe AND  :dataOperacaoAte )  ");
+		sql.append("	( CH_ENCALHE.DATA_RECOLHIMENTO >= :dataOperacaoDe AND  CH_ENCALHE.DATA_RECOLHIMENTO <= :dataOperacaoAte )  ");
+		
+		sql.append(" AND CH_ENCALHE_COTA.QTDE_PREVISTA > 0 ");
+		
+		sql.append(" AND MEC.DATA = ");
+		
+		sql.append(" ( SELECT MAX(MV.DATA) FROM MOVIMENTO_ESTOQUE_COTA MV WHERE MV.LANCAMENTO_ID = LANCAMENTO.ID AND MV.ID = MEC.ID ) ");
 		
 		if(cotaId!=null) {
 			sql.append(" AND COTA.ID = :cotaId ");
-		}
-		
-		if(conferido!=null) {
-			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
 		}
 		
 		if(postergado!=null) {
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
 
-		
-		sql.append("  GROUP BY PRECO_COM_DESCONTO, QTDE_PREVISTA ");
-		
+		sql.append("  GROUP BY CH_ENCALHE.ID ");
 		
 		sql.append(" ) AS PRODUTOS_DESCONTO ");
 
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
-		Query query = this.getSession().createSQLQuery(sql.toString());
-
 		if(cotaId!=null) {
-			query.setParameter("cotaId", cotaId);
+			parameters.put("cotaId", cotaId);
 		}
-		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
-		}
-		
+
 		if(postergado!=null) {
-			query.setParameter("postergado", postergado);
+			parameters.put("postergado", postergado);
 		}
 		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-		
-		query.setParameter("dataOperacaoDe", dataOperacaoDe);
-		
-		query.setParameter("dataOperacaoAte", dataOperacaoAte);
-		
-		return (BigDecimal) query.uniqueResult();
-		
+		parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		parameters.put("dataOperacaoDe", dataOperacaoDe);
+		parameters.put("dataOperacaoAte", dataOperacaoAte);
+
+		Object precoTotalComDesconto = namedParameterJdbcTemplate.queryForMap(sql.toString(), parameters).get("precoTotalComDesconto");
+
+		return (BigDecimal) (precoTotalComDesconto == null ? BigDecimal.ZERO : precoTotalComDesconto);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalheCota> obterListaChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -267,11 +364,16 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
-			Integer numeroCota, Date dataOperacao, Long idProdutoEdicao,
-			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
+	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Cota cota,Long idProdutoEdicao,
+														 boolean postergado,Date dataOperacao) {
 
+		return obterUltimaChamadaEncalheCota(cota, idProdutoEdicao,postergado, null);
+
+	}
+
+	private ChamadaEncalheCota obterUltimaChamadaEncalheCota(Cota cota, Long idProdutoEdicao, boolean postergado,
+															 Date dataOperacao) {
+		
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select chamadaEncalheCota ");
@@ -280,39 +382,46 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		hql.append(" where ");
 
-		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
-
-		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
+		hql.append(" chamadaEncalheCota.cota.id = :idCota ");
 
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
-
-		if (indPesquisaCEFutura) {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
-		} else {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
+		
+		if(dataOperacao!= null){
+			
+			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento  = :dataOperacao ");
 		}
-
+		
 		if (idProdutoEdicao != null) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 		}
 
+		hql.append(" order by chamadaEncalheCota.chamadaEncalhe.dataRecolhimento desc ");
+		
 		Query query = this.getSession().createQuery(hql.toString());
 
-		query.setParameter("numeroCota", numeroCota);
-
-		query.setParameter("conferido", conferido);
+		query.setMaxResults(1);
+		
+		query.setParameter("idCota", cota.getId());
 
 		query.setParameter("postergado", postergado);
 
-		query.setParameter("dataOperacao", dataOperacao);
-
+		if(dataOperacao!= null){
+			query.setParameter("dataOperacao", dataOperacao);
+		}
+		
 		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
-
-		return query.list();
-
+		
+		return (ChamadaEncalheCota) query.uniqueResult();
 	}
+	
+	public ChamadaEncalheCota obterChamadaEncalheCotaNaData(Cota cota, Long idProdutoEdicao,
+			 													 boolean postergado, Date dataOperacao) {
+		
+		return obterUltimaChamadaEncalheCota(cota, idProdutoEdicao, postergado, dataOperacao);
+	}
+	
 
 	public ChamadaEncalheCota buscarPorChamadaEncalheECota(
 			Long idChamadaEncalhe, Long idCota) {
@@ -607,5 +716,97 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		return query.list();
 	}
+	
+	@Override
+	public Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Boolean fechado, Date dataRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when(count(cec) > 0) then true else false end ");
+		
+		hql.append(" from ChamadaEncalheCota cec ");
+		
+		hql.append(" join cec.chamadaEncalhe chamadaEncalhe ");
+		
+		hql.append(" where cec.cota.id = :idCota ");
+		
+		hql.append(" and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		
+		if (fechado != null) {
+			hql.append(" and cec.fechado = :fechado ");
+		}
+		
+		if (dataRecolhimento != null) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataRecolhimento ");
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		if (fechado != null) {
+			query.setParameter("fechado", fechado);
+		}
+		
+		if (dataRecolhimento != null) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
+	@Override
+	public Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when(count(cec) > 0) then true else false end ");
+		
+		hql.append(" from ChamadaEncalheCota cec ");
+		
+		hql.append(" join cec.chamadaEncalhe chamadaEncalhe ");
+		
+		hql.append(" where cec.cota.id = :idCota ");
+		
+		hql.append(" and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		
+		if (dataRecolhimento != null) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		if (dataRecolhimento != null) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
+	public ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento) {
 
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select chamadaEncalheCota from ChamadaEncalheCota chamadaEncalheCota ")
+			.append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+			.append(" WHERE chamadaEncalheCota.cota.id = :idCota ")
+			.append(" AND chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ")
+			.append(" and chamadaEncalhe.dataRecolhimento >= :dataRecolhimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+
+		query.setMaxResults(1);
+		
+		return (ChamadaEncalheCota) query.uniqueResult();
+	}
 }

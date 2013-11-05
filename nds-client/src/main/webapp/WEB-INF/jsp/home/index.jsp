@@ -160,8 +160,13 @@
 									
 									$span = $("<span>").addClass(className);					
 									
-									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
+									if (url.indexOf("/devolucao/conferenciaEncalhe/contingencia") >= 0) {
+										$span = $($span).addClass("conferencia_encalhe_contigencia");
+									}
+									else if (url.indexOf("/devolucao/conferenciaEncalhe") >= 0) {
 										$span = $($span).addClass("conferencia_encalhe");
+									}else if (url.indexOf("/estoque/diferenca/lancamento") >= 0) {
+										$span = $($span).addClass("lancamento_faltas_sobras");
 									}
 									
 									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
@@ -183,15 +188,34 @@
 											if (index > -1) {
 												
 												var indAbaConferenciaEncalhe = $(this).parent().find('.conferencia_encalhe').index() > -1;
+												var indAbaLancamentoFaltasSobras = $(this).parent().find('.lancamento_faltas_sobras').index() > -1;
+												var indAbaConferenciaEncalheContigencia = $(this).parent().find('.conferencia_encalhe_contigencia').index() > -1;
 												
 												if(indAbaConferenciaEncalhe) {
 													
+
 													if((typeof(ConferenciaEncalhe)  == 'undefined') || ConferenciaEncalhe == null) {
 														return;
 													}
 													
 													ConferenciaEncalhe.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
 													
+												}else if(indAbaLancamentoFaltasSobras) {
+													
+													if((typeof(lancamentoController)  == 'undefined') || lancamentoController == null) {
+														return;
+													}
+													
+													lancamentoController.verificarAlteracoesLancamentoFaltasSobrasParaFecharAba(self, index);
+													
+												} else if (indAbaConferenciaEncalheContigencia){
+													
+													if((typeof(ConferenciaEncalheCont)  == 'undefined') || ConferenciaEncalheCont == null) {
+														return;
+													}
+													
+													ConferenciaEncalheCont.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
+												
 												} else {
 													
 													$(self).tabs("remove", index);
@@ -252,8 +276,10 @@
 		
 		$("#ajaxLoading").ajaxStart(function() {
 			$(this).fadeIn(200);
+			
 		});
 		$("#ajaxLoading").ajaxStop(function() {
+			$(document).unbind('keydown');
 			$(this).fadeOut(200);
 			redimensionarWorkspace();
 		});
@@ -338,6 +364,36 @@
 			.dialog( "open" );
 		});
 		
+	
+	
+	
+	var suppressKeyPress = false;	
+	$(document).keydown(function(event){		
+		var keyCode = $.ui.keyCode;
+		switch( event.keyCode ) {		
+		case keyCode.ENTER:
+		case keyCode.NUMPAD_ENTER:
+			if(suppressKeyPress){
+				event.stopPropagation();				
+				return false;
+			}else{
+				suppressKeyPress = true;
+			}
+			break;
+		}
+		return true;
+	});
+	
+	$(document).keyup(function(event){
+		var keyCode = $.ui.keyCode;
+		switch( event.keyCode ) {		
+		case keyCode.ENTER:
+		case keyCode.NUMPAD_ENTER:
+			suppressKeyPress = false;
+			break;
+		}
+		return true;
+	});
 	});
 	//@ sourceURL=abas.js
 	

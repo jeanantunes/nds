@@ -1,11 +1,33 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoEncalhe.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaBloqueada.js"></script>
+	
 	<script language="javascript" type="text/javascript">
-	$(function(){
-		fechamentoEncalheController.init();
-	});
+	
+		$(function(){
+		
+			var contextoAplicacao = "${pageContext.request.contextPath}";
+			
+			fechamentoEncalheController.init();
+			
+			cotaBloqueadaController.init();
+			
+			bloquearItensEdicao(fechamentoEncalheController.workspace);
+			
+			$('#cancelar-sessao', fechamentoEncalheController.workspace).click(function(){
+				$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/limparDadosDaSessaoGrid", function() {
+					  console.log( "success" );
+				});
+			});
+		});
+	
 	</script>
 
 	<style type="text/css">
@@ -65,7 +87,7 @@
 	<div class="areaBts">
 		<div class="area">
 			<div class="divBotoesPrincipais" style="display:none; float:left;">
-	            <span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
+	            <span class="bt_novos"><a isEdicao="true" href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
 			</div>
 			<span class="bt_novos" style="display:none;" id="bt_cotas_ausentes" ><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
 			<span id="btAnaliticoEncalhe" class="bt_novos" style="display: none;">
@@ -75,7 +97,7 @@
 				</a>
 			</span>
 			<div class="divBotoesPrincipais" style="display:none; float:left;">
-				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
+				<span class="bt_novos"><a id="btnEncerrarOperacaoEncalhe" isEdicao="true" href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
 			</div>
 			
 			<span class="bt_arq"><a href="javascript:;" onclick="fechamentoEncalheController.imprimirArquivo('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
@@ -107,14 +129,14 @@
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.verificarMensagemConsistenciaDados();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+				<td width="106"><span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.verificarMensagemConsistenciaDados();"><img id="cancelar-sessao" src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 			</tr>
 		</table>
     </fieldset>
 
     <div class="linha_separa_fields">&nbsp;</div>
       
-    <fieldset class="fieldGrid">
+    <fieldset class="fieldGrid" style="width: 1030px;">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;" id="divFechamentoGrid">	
 			
@@ -122,9 +144,14 @@
 			
 			<span class="bt_sellAll" style="float:right;">
 				<label for="sel">Selecionar Todos</label>
-				<input type="checkbox" id="sel" name="Todos" onclick="fechamentoEncalheController.checkAll(this);" style="float:right;margin-right:65px;"/>
+				<input isEdicao="true" type="checkbox" id="sel" name="Todos" onclick="fechamentoEncalheController.checkAll(this);" style="float:right;margin-right:65px;"/>
 			</span>
 			
 		</div>
 	</fieldset>
+	
+	<form id="cotas-bloqueadas">
+		<jsp:include page="../cota/cotaBloqueada.jsp" />
+	</form>
+	
 </body>

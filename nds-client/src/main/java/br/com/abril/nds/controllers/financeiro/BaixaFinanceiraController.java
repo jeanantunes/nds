@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -157,6 +157,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void realizarBaixaAutomatica(Date data, UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		valorFinanceiro = CurrencyUtil.convertValorInternacional(valorFinanceiro);
@@ -481,13 +482,13 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("/buscaBoleto")
-	public void buscaBoleto(String nossoNumero){
+	public void buscaBoleto(String nossoNumero, Date dataPagamento){
 		
 		if ((nossoNumero==null)||("".equals(nossoNumero.trim()))){
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 		
-		CobrancaVO cobranca = this.boletoService.obterDadosBoletoPorNossoNumero(nossoNumero);
+		CobrancaVO cobranca = this.boletoService.obterDadosBoletoPorNossoNumero(nossoNumero, dataPagamento);
 		if (cobranca==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
@@ -507,16 +508,13 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("/baixaManualBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualBoleto(String nossoNumero, 
 					              String valor,
-					              Date dataVencimento,
+					              Date dataPagamento,
 					              String desconto, 
 					              String juros,
 					              String multa) {        
-        
-		Date dataNovoMovimento =
-			calendarioService.adicionarDiasUteis(
-					this.distribuidorService.obterDataOperacaoDistribuidor(), 1);
 		
         BigDecimal valorConvertido = CurrencyUtil.converterValor(valor);
         BigDecimal jurosConvertido = CurrencyUtil.converterValor(juros);
@@ -531,7 +529,7 @@ public class BaixaFinanceiraController extends BaseController {
         }
 
         PagamentoDTO pagamento = new PagamentoDTO();
-		pagamento.setDataPagamento(dataNovoMovimento);
+		pagamento.setDataPagamento(dataPagamento);
 		pagamento.setNossoNumero(nossoNumero);
 		pagamento.setNumeroRegistro(null);
 		pagamento.setValorPagamento(valorConvertido);
@@ -541,7 +539,7 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
 								   null, 
-								   dataNovoMovimento, null, null, new Date());
+								   dataPagamento, null, null, dataPagamento);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -569,8 +567,10 @@ public class BaixaFinanceiraController extends BaseController {
 
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
-				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),StatusCobranca.NAO_PAGO);
+				new FiltroConsultaDividasCotaDTO(numCota);
+		
+		filtroAtual.setStatusCobranca(StatusCobranca.NAO_PAGO);
+
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
 		filtroAtual.setPaginacao(paginacao);
@@ -631,8 +631,7 @@ public class BaixaFinanceiraController extends BaseController {
 
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
-				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,StatusCobranca.PAGO);
+				new FiltroConsultaDividasCotaDTO(numCota);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setNossoNumero(nossoNumero);
 		filtroAtual.setSomenteBaixadas(true);
@@ -658,17 +657,23 @@ public class BaixaFinanceiraController extends BaseController {
 
     	//TRATAMENTO DE DIVIDAS SELECIONADAS
 		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
-		if (dataHolder != null) {
-		    for (CobrancaVO itemCobrancaVO:cobrancasVO){
+	    for (CobrancaVO itemCobrancaVO:cobrancasVO){
+
+	    	if (dataHolder != null) {
+
 		    	String dividaMarcada = dataHolder.getData("baixaManual", itemCobrancaVO.getCodigo(), "checado");
 		    	if (dividaMarcada!=null){
 		    	    itemCobrancaVO.setCheck(dividaMarcada.equals("true")?true:false); 
 		    	}
 		    }
+
+	    	itemCobrancaVO.setDataEmissao(DateUtil.formatarDataPTBR(DateUtil.parseData(itemCobrancaVO.getDataEmissao(), "yyyy-MM-dd")));
+	    	itemCobrancaVO.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.parseData(itemCobrancaVO.getDataVencimento(), "yyyy-MM-dd")));
+	    	itemCobrancaVO.setValor(itemCobrancaVO.getValor()!=null?CurrencyUtil.convertValor(itemCobrancaVO.getValor(),2):"");
 		}
 		
 
-		int qtdRegistros = this.cobrancaService.obterQuantidadeCobrancasPorCota(filtroAtual);
+		int qtdRegistros = this.baixaCobrancaService.countBuscarCobrancasBaixadas(filtroAtual).intValue();
 			
 		TableModel<CellModelKeyValue<CobrancaVO>> tableModel = new TableModel<CellModelKeyValue<CobrancaVO>>();
 			
@@ -711,17 +716,76 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("obterPagamentoDividas")
-	public void obterPagamentoDividas(List<Long> idCobrancas){
+	public void obterPagamentoDividas(List<Long> idCobrancas, Date dataPagamento){
 		
 		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida.");
 		}
 		
-		CobrancaDividaVO pagamento;
-	    pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas);
-
+		CobrancaDividaVO pagamento = null;
+		
+			
+		if ( dataPagamento == null){
+			pagamento = new CobrancaDividaVO();
+			pagamento.setValorJuros(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorMulta(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorDividas(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorPagamento(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorDesconto(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorSaldo(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+		}
+		else{
+			pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas, dataPagamento);
+		}
+		
 		result.use(Results.json()).from(pagamento,"result").recursive().serialize();
 	}
+	
+	@Post
+	@Path("calcularSaldoDivida")
+	public void calacularSaldo(BigDecimal vlDivida, BigDecimal vlMulta, BigDecimal vlJuros, BigDecimal vlDesconto, BigDecimal vlPago){
+		
+		vlDivida = vlDivida.setScale(2, RoundingMode.HALF_EVEN);
+		
+		vlMulta  = vlMulta.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlJuros = vlJuros.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlDesconto = vlDesconto.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlPago = vlPago.setScale(2,RoundingMode.HALF_EVEN);
+		
+		vlPago = vlPago.add(vlDesconto);
+		
+		BigDecimal vlSaldo = BigDecimal.ZERO;
+				
+		vlSaldo = vlSaldo.add(vlDivida).add(vlMulta).add(vlJuros).subtract(vlPago).negate().setScale(2,RoundingMode.HALF_EVEN);
+		
+		result.use(Results.json()).from(CurrencyUtil.formatarValor(vlSaldo),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("calculaTotalManualDividas")
+	public void calculaTotalManualDividas(BigDecimal vlDivida, BigDecimal vlMulta, BigDecimal vlJuros, BigDecimal vlDesconto){
+		
+		vlDivida = vlDivida.setScale(2, RoundingMode.HALF_EVEN);
+		
+		vlMulta  = vlMulta.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlJuros = vlJuros.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlDesconto = vlDesconto.setScale(4,RoundingMode.HALF_EVEN);
+		
+		BigDecimal vlTotalDividas = BigDecimal.ZERO;
+				
+		vlTotalDividas = vlTotalDividas.add(vlDivida).add(vlMulta).add(vlJuros).subtract(vlDesconto);
+		
+		vlTotalDividas = vlTotalDividas.setScale(2,RoundingMode.HALF_EVEN);
+		
+		result.use(Results.json()).from(CurrencyUtil.formatarValor(vlTotalDividas),"result").recursive().serialize();
+	}
+	
+	
 	
 	/**
 	 * Método responsável por efetuar a baixa das dívidas marcadas pelo usuário
@@ -730,6 +794,7 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("baixaManualDividas")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualDividas(Boolean manterPendente,
 			                       String valorDividas, 
 								   String valorMulta, 
@@ -740,7 +805,8 @@ public class BaixaFinanceiraController extends BaseController {
 	                               TipoCobranca tipoPagamento,
 	                               String observacoes,
 	                               List<Long> idCobrancas,
-	                               Long idBanco){
+	                               Long idBanco,
+	                               Date dataPagamento){
 		
 		BigDecimal valorDividasConvertido = CurrencyUtil.converterValor(valorDividas);
 		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
@@ -749,24 +815,8 @@ public class BaixaFinanceiraController extends BaseController {
 		BigDecimal valorSaldoConvertido = CurrencyUtil.converterValor(valorSaldo);
 		BigDecimal valorPagamentoConvertido = CurrencyUtil.converterValor(valorPagamento);
 		
-		if (valorDescontoConvertido.compareTo(
-				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {	
-        	throw new ValidacaoException(TipoMensagem.WARNING,"O desconto não deve ser maior do que o valor a pagar.");
-        }
-		
-		if (!this.cobrancaService.validaBaixaManualDividas(idCobrancas) && (valorSaldoConvertido.floatValue() > 0)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não é permitida a baixa parcial de dívidas do tipo [Boleto].");
-		}
-		
-		if (tipoPagamento==null){
-			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
-		}
-		
-		if(idBanco == null){
-			if (!TipoCobranca.DINHEIRO.equals(tipoPagamento)&&!TipoCobranca.OUTROS.equals(tipoPagamento)){
-			    throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
-		    }
-		}
+		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
+								  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
 		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
 		pagamento.setValorDividas(valorDividasConvertido);
@@ -777,13 +827,62 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(this.distribuidorService.obterDataOperacaoDistribuidor());
+		pagamento.setDataPagamento( (dataPagamento == null) ? this.distribuidorService.obterDataOperacaoDistribuidor() : dataPagamento);
 		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
 		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
+	}
+
+	private void validarBaixaManualDividas(TipoCobranca tipoPagamento,
+			List<Long> idCobrancas, Long idBanco,
+			BigDecimal valorMultaConvertido, BigDecimal valorJurosConvertido,
+			BigDecimal valorDescontoConvertido, BigDecimal valorSaldoConvertido, Date dataPagamento) {
+		
+		if(dataPagamento == null){
+			 throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma data de pagamento [Data Pagamento].");
+		}
+		
+		if (valorDescontoConvertido.compareTo(
+				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {	
+        	throw new ValidacaoException(TipoMensagem.WARNING,"O desconto não deve ser maior do que o valor a pagar.");
+        }
+		
+		if (tipoPagamento==null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
+		}
+		
+		if(idBanco == null){
+			if (!TipoCobranca.DINHEIRO.equals(tipoPagamento)&&!TipoCobranca.OUTROS.equals(tipoPagamento)){
+			    throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
+		    }
+		}
+	}
+	
+	@Post
+	@Path("validarBaixaManual")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
+	public void validarBaixaManual(
+								   String valorMulta, 
+								   String valorJuros,
+								   String valorDesconto,
+								   String valorSaldo,
+					               TipoCobranca tipoPagamento,
+					               List<Long> idCobrancas,
+					               Long idBanco,
+					               Date dataPagamento){
+		
+		BigDecimal valorMultaConvertido = valorMulta == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorMulta);
+	    BigDecimal valorJurosConvertido = valorJuros == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorJuros);
+		BigDecimal valorDescontoConvertido = valorDesconto == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorDesconto);
+		BigDecimal valorSaldoConvertido = valorSaldo == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorSaldo);
+		
+		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
+		  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 		
 	/**
@@ -816,77 +915,59 @@ public class BaixaFinanceiraController extends BaseController {
 	@Path("obterPostergacao")
 	public void obterPostergacao(Date dataPostergacao, List<Long> idCobrancas) {
 		
-		if ((idCobrancas==null) || (idCobrancas.size() <=0)) {
-			this.result.use(
-				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida."), "result").recursive().serialize();
-			throw new ValidacaoException();
+		if (idCobrancas == null || idCobrancas.isEmpty()) {
+
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
 		}
 		
-		if (dataPostergacao == null) {
-			dataPostergacao = Calendar.getInstance().getTime();
+		BigDecimal encargos = null;
+
+		if (dataPostergacao != null) {
+
+			if (!this.calendarioService.isDiaUtil(dataPostergacao)) {
+				
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+						"É necessário selecionar um dia útil para postergação da dívida.");
+			}
+			
+			encargos = this.dividaService.calcularEncargosPostergacao(idCobrancas, dataPostergacao);
 		}
-		
-		BigDecimal encargos = this.dividaService.calcularEncargosPostergacao(idCobrancas, dataPostergacao);
-		
-		String encargosResult = CurrencyUtil.formatarValor(encargos);
 		
 		if (encargos != null) {
+			
+			String encargosResult = CurrencyUtil.formatarValor(encargos);
+			
 			this.result.use(Results.json()).from(encargosResult, "result").recursive().serialize();
+			
+		} else {
+			
+			this.result.use(Results.json()).from("", "result").recursive().serialize();
 		}
 	}
 	
 	@Post
 	@Path("finalizarPostergacao")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void finalizarPostergacao(Date dataPostergacao, boolean isIsento, List<Long> idCobrancas) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 
-		if (idCobrancas == null || idCobrancas.isEmpty()) {
+		if (idCobrancas == null 
+				|| idCobrancas.isEmpty()) {
+			
 			listaMensagens.add("É necessário marcar ao menos uma dívida.");
 		}
 		
-		if (dataPostergacao == null || dataPostergacao.before(Calendar.getInstance().getTime())) {
-			listaMensagens.add("A Data para postergação tem que ser maior que a data atual!");
-		}
-		
-		// TODO: Pegar o id do usuário e passar.
-		Long idUsuario = 1L;
-		
-		if (idUsuario == null || idUsuario <= 0L) {
-			listaMensagens.add("Usuário inválido!");
+		if (!this.calendarioService.isDiaUtil(dataPostergacao)) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+					"É necessário selecionar um dia útil para postergação da dívida.");
 		}
 				
-		if (listaMensagens != null && !listaMensagens.isEmpty()) {
-			this.result.use(
-				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, listaMensagens), "result").recursive().serialize();
-			throw new ValidacaoException();
-		}
-		
-		try {
-		
-			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, idUsuario, isIsento);
-			
-		} catch (Exception e) {
-			
-			if(e instanceof ValidacaoException){
-				
-				ValidacaoException ex = (ValidacaoException)e;
-				
-				this.result.use(
-						Results.json()).from(ex.getValidacao(), "result").recursive().serialize();
-				return;
-			}
-			else{
-			
-				this.result.use(
-					Results.json()).from(
-							new ValidacaoVO(
-								TipoMensagem.ERROR, "Ocorreu um erro ao tentar postergar as cobranças!"), "result").recursive().serialize();
-				throw new ValidacaoException();
-			}
-		}
+		this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, getUsuarioLogado().getId(), isIsento);
 		
 		this.result.use(
 			Results.json()).from(
@@ -1060,7 +1141,8 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setNossoNumero(detalhe.getNossoNumero());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
 			baixa.setNumeroCota(detalhe.getNumeroCota());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
+			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null : 
+				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
 			
 			lista.add(baixa);
 		}
@@ -1083,8 +1165,10 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setMotivoDivergencia(detalhe.getMotivoDivergencia());
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
-			baixa.setValorPago(detalhe.getValorPago());
+			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null :
+				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
+			baixa.setValorPago(detalhe.getValorPago() == null ? null : 
+				detalhe.getValorPago().setScale(2, RoundingMode.HALF_EVEN));
 			
 			lista.add(baixa);
 		}
@@ -1106,7 +1190,8 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setMotivoRejeitado(detalhe.getMotivoRejeitado());
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
+			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null : 
+				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
 			
 			lista.add(baixa);
 		}
@@ -1127,7 +1212,8 @@ public class BaixaFinanceiraController extends BaseController {
 			
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorPago(detalhe.getValorPago());
+			baixa.setValorPago(detalhe.getValorPago() == null ? null :
+				detalhe.getValorPago().setScale(2, RoundingMode.HALF_EVEN));
 			baixa.setDataPagamento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
 			
 			lista.add(baixa);
@@ -1157,6 +1243,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void confirmarBaixaDividas(List<Long> idCobrancas) {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
@@ -1173,6 +1260,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void cancelarBaixaDividas(List<Long> idCobrancas) {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {

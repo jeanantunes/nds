@@ -67,7 +67,9 @@ public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	 */
 	Date obterDataUltimaExpedicao();
 	
-	ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro);
+	ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(boolean isAgrupamentoPorBox, 
+										              boolean isDetalhesResumo,
+										              FiltroResumoExpedicaoDTO filtro);
 	
 	ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro);
 

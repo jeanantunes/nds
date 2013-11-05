@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import javax.persistence.NoResultException;
 import javax.servlet.ServletContext;
 
-import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.enums.TipoMensagem;

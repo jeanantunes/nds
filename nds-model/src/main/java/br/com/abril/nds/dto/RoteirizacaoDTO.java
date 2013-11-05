@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
@@ -335,22 +335,36 @@ public class RoteirizacaoDTO implements Serializable{
                     PDV pdv = rotaPdv.getPdv();
                     Cota cota = rotaPdv.getPdv().getCota();
 
-                    if (cota.getSituacaoCadastro().equals(SituacaoCadastro.INATIVO)) {
-                    	continue;
-                    }
-
                     String nomeCota = cota.getPessoa().getNome();
                     OrigemEndereco origemEndereco = null;
 
                     Endereco endereco = null;
-                    EnderecoPDV enderecoPdvEntrega  = pdv.getEnderecoEntrega();
                     
-                    if (enderecoPdvEntrega != null){
-                        endereco = enderecoPdvEntrega .getEndereco();
+                    if(!boxDTO.equals(BoxRoteirizacaoDTO.ESPECIAL)) {
+	                    Set<EnderecoCota> enderecosCota = cota.getEnderecos();
+	                    for (EnderecoCota ec : enderecosCota) {
+	                    	if(ec.getTipoEndereco().equals(TipoEndereco.LOCAL_ENTREGA)) {
+	                    		endereco = ec.getEndereco();
+	                    		break;
+	                    	}
+	                    }
+                    }
+                    
+                    EnderecoPDV enderecoPdvEntrega = pdv.getEnderecoEntrega();
+                    
+                    if (endereco == null && enderecoPdvEntrega != null) {
+                    	
+                        endereco = enderecoPdvEntrega.getEndereco();
                         origemEndereco = OrigemEndereco.PDV;
                     
-                    } else {
+                    } else if(endereco == null && pdv != null && pdv.getEnderecoPrincipal() != null) {
                     
+                    	EnderecoPDV enderecoPdv = pdv.getEnderecoPrincipal();
+                    	endereco = enderecoPdv.getEndereco();
+                    	origemEndereco = OrigemEndereco.PDV;
+                    	
+                    } else {
+                    	
                     	EnderecoCota enderecoPrincipalCota = cota.getEnderecoPrincipal();
                         
                     	if (enderecoPrincipalCota != null){
@@ -358,7 +372,9 @@ public class RoteirizacaoDTO implements Serializable{
                         }    
                         
                     	origemEndereco = OrigemEndereco.COTA;
+                    	
                     }
+                    
                     PdvRoteirizacaoDTO pdvDTO = new PdvRoteirizacaoDTO(
                             pdv.getId(), pdv.getNome(), origemEndereco,
                             endereco, cota.getNumeroCota(), nomeCota,

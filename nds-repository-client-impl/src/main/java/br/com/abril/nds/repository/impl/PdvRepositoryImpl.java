@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
@@ -83,7 +84,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		hql.append("SELECT pdv.id as id, pdv.nome as nomePDV, " )
 				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
 				.append("  pdv.contato as contato,")
-				.append("  endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
+				.append("  endereco.tipoLogradouro || ' ' || endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
 				.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
 				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
 				.append("  pdv.status as statusPDV ,")
@@ -97,8 +98,6 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		.append(" LEFT JOIN telefonePdv.telefone telefone ")
 		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
 		.append(" WHERE cota.id = :idCota ")
-		.append(" and (enderecoPdv is null or enderecoPdv.principal =:principal )")
-		.append(" and (telefonePdv is null or telefonePdv.principal =:principal) ")
 		
 		.append(" group by pdv.id");
 		
@@ -107,7 +106,6 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idCota", filtro.getIdCota());
-		query.setParameter("principal",true);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));
 		
@@ -204,7 +202,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
 	}
-	
+
 	/**
 	 * Obtém PDV's por Rota
 	 * @param idRota
@@ -342,27 +340,30 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
+	public List<PDV> obterCotasPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, Long boxID) {
 
-		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
+		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv");
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		criteria.createAlias("cota", "cota");
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
-		
-		
-		if(boxID > 0) {
+				
+		if(boxID != -1) {
 			DetachedCriteria subquery = 
 					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
-									.setProjection(Projections.property("rotaPdv.pdv.id"));
+									.createAlias("rota", "rota")
+									.createAlias("rota.roteiro", "roteiro")
+									.createAlias("roteiro.roteirizacao", "roteirizacao")
+									.createAlias("pdv", "pdv")
+									.createAlias("pdv.cota", "c_cota")
+									.add(Restrictions.isNotNull("roteirizacao.box"))
+									.setProjection(Projections.property("c_cota.id"));
 			
-			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));
+			criteria.add(Subqueries.propertyNotIn("cota.id", subquery));
 			criteria.add(Restrictions.isNull("cota.box"));
-		}
-		
-		if (pesquisaPorCota) {
 			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
-		} 
+		}
 		
 		if (numCota != null && !numCota.equals("") ) {
 			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
@@ -384,6 +385,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			}
 			
 		}
+		
+		criteria.add(Restrictions.not(Restrictions.eq("cota.situacaoCadastro", SituacaoCadastro.INATIVO)));
 		
 		criteria.addOrder(Order.asc("cota.numeroCota"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

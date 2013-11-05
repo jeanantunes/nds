@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
@@ -138,11 +140,13 @@ public class ProdutoController extends BaseController {
 		if(codigoProduto == null || "".equals(codigoProduto.trim()))
 				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
 		
-		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+		FiltroProdutoDTO filtro = new FiltroProdutoDTO();
+		filtro.setCodigo(codigoProduto);
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
 		
 		if (produto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + filtro.getCodigo() + "\" não encontrado!");
 			
 		} else {
 			
@@ -152,8 +156,9 @@ public class ProdutoController extends BaseController {
 	}
 
 	@Post
-	public void autoCompletarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+	public void autoCompletarPorNomeProduto(FiltroProdutoDTO filtro) {
+		
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(filtro.getNome(), Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -200,7 +205,11 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	public void autoCompletarEdicaoPorProduto(String codigoProduto) {
-		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
+		
+		FiltroProdutoDTO filtro = new FiltroProdutoDTO();
+		filtro.setCodigo(codigoProduto);
+		
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(filtro.getCodigo());
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 				
@@ -219,39 +228,41 @@ public class ProdutoController extends BaseController {
 	}
 		
 	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
+	public void pesquisarPorNomeProduto(FiltroProdutoDTO filtro) {
 		
 		Produto produto = null;
 		
-		if(codigoProduto!= null){
+		if(filtro.getCodigo() != null) {
 			
-			produto = this.produtoService.obterProdutoPorCodigo(codigoProduto);
+			produto = this.produtoService.obterProdutoPorCodigo(filtro.getCodigo());
 			
-			if(produto == null || !produto.getNome().equals(nomeProduto)){
+			if(produto == null || !produto.getNome().equals(filtro.getNome())){
 				
-				produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+				produto = this.produtoService.obterProdutoPorNome(filtro.getNome());
 			}
-		}
-		else{
 			
-			produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+		} else {
+			
+			produto = this.produtoService.obterProdutoPorNome(filtro.getNome());
 		}
 		
 		if (produto == null) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
-		}
+			result.nothing();
 			
-		result.use(Results.json()).from(produto, "result").serialize();
+		} else {
+			
+			result.use(Results.json()).from(produto, "result").serialize();
+		}
 	}
 	
 	@Post
-	public void validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
+	public void validarNumeroEdicao(FiltroProdutoDTO filtro, String numeroEdicao) {
 		
 		boolean numEdicaoValida = false;
 			
 		ProdutoEdicao produtoEdicao =
-			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), numeroEdicao);
 		
 		numEdicaoValida = (produtoEdicao != null);
 		
@@ -267,10 +278,10 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	@Path("/obterProdutoEdicao")
-	public void obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao) {
+	public void obterProdutoEdicaoPorCodProdutoNumEdicao(FiltroProdutoDTO filtro, String numeroEdicao) {
 		
 		ProdutoEdicao produtoEdicao =
-			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), numeroEdicao);
 		
 		if (produtoEdicao == null) {
 			
@@ -321,16 +332,16 @@ public class ProdutoController extends BaseController {
 		
 		int startSearch = page*rp - rp;
 		
-		FiltroProdutoDTO filtroProdutoDTO = 
-				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname);
+		FiltroProdutoDTO filtro = 
+				new FiltroProdutoDTO(codigo, produto, editor, fornecedor, codigoTipoProduto, sortorder, sortname);
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 		
 		List<ConsultaProdutoDTO> listaProdutos =
-			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
+			this.produtoService.pesquisarProdutos(filtro.getCodigo(), produto, fornecedor, editor, 
 				codigoTipoProduto, sortorder, sortname, startSearch, rp);
 		
-		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(filtro.getCodigo(), produto, fornecedor, editor, codigoTipoProduto);
 		
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}
@@ -495,6 +506,30 @@ public class ProdutoController extends BaseController {
 		ProdutoCadastroVO produtoCadastroVO = ProdutoCadastroVO.parseProdutoToProdutoCadastroVO(produto);
 		
 		this.result.use(Results.json()).from(produtoCadastroVO, "result").recursive().serialize();
+	}
+	
+	/**
+	 * Retorna uma lista fornecedores relacionados a um determinado produto
+	 * 
+	 * @param codigoProduto
+	 * @return  List<ItemDTO<Long, String>>
+	 */
+	@Post
+	@Path("/pesquisarFornecedorProduto")
+	public void pesquisarFornecedorPorProduto(String codigoProduto){
+		
+		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
+		
+		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorProduto(codigoProduto, GrupoFornecedor.PUBLICACAO);
+		
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Fornecedor fornecedor : listaFornecedor) {
+			listaFornecedoresCombo.add(
+				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+		}
+		
+		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
 	/**

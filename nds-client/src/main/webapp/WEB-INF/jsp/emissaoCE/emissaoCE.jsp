@@ -80,10 +80,10 @@
     <td width="91">
 
 <!-- Box de -->     
-<select id="boxDe" name="jumpMenu" style="width:80px;">
+<select id="boxDe" name="jumpMenu" style="width:80px;" onchange="EmissaoCEController.carregarComboRoteiro(this.value)">
 	<option selected="selected"> </option>	    
 	<c:forEach items="${listaBoxes}" var="box">
-		<option value="${box.key}">${box.value}</option>
+		<option value="${box.key}" >${box.value}</option>
 	</c:forEach>
 </select>
 	
@@ -92,7 +92,7 @@
     <td width="91">
     
 <!-- Box até --> 	
-<select id="boxAte" name="jumpMenu2" style="width:80px;">
+<select id="boxAte" name="jumpMenu2" style="width:80px;" onchange="EmissaoCEController.carregarComboRoteiro(this.value)">
   	<option selected="selected"> </option>
 	<c:forEach items="${listaBoxes}" var="box">
 		<option value="${box.key}">${box.value}</option>
@@ -119,11 +119,11 @@
     
 
 <!-- Roteiro --> 	
-<select id="roteiro"  style="width:100px;">
+<select id="emissaoCERoteiro"  style="width:100px;" onchange="EmissaoCEController.carregarComboRota(this.value)">
     <option selected="selected"> </option>
-	<c:forEach items="${listaRoteiros}" var="roteiro">
+	<%-- <c:forEach items="${listaRoteiros}" var="roteiro">
 		<option value="${roteiro.key}">${roteiro.value}</option>
-	</c:forEach>     
+	</c:forEach>  --%>    
 </select>
 
 	</td>
@@ -132,11 +132,11 @@
     <td>
 
 <!-- Rota --> 	
-<select id="rota" name="select" style="width:130px;">
+<select id="emissaoCERota" name="select" style="width:130px;">
     <option selected="selected"> </option>
-    <c:forEach items="${listaRotas}" var="rota">
+    <%-- <c:forEach items="${listaRotas}" var="rota">
 		<option value="${rota.key}">${rota.value}</option>
-	</c:forEach>
+	</c:forEach> --%>
 </select>
     
     </td>

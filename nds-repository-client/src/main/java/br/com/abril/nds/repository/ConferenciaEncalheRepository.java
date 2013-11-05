@@ -6,13 +6,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
 	
@@ -85,14 +84,24 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 */
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 
-    /**
-     * Obtém composição de cobrança da cota na data de operação para a exibição no Slip
-     * @param numeroCota
-     * @param dataOperacao
-     * @param tiposMovimentoFinanceiroIgnorados
-     * @return List<ComposicaoCobrancaSlipDTO>
-     */
-	public List<ComposicaoCobrancaSlipDTO> obterComposicaoCobrancaSlip(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
+	
+	/**
+	 * Obtem dados relativos a um slip de produto edicao com chamada encalhe para
+	 * a cota e data operação em questão porém ausentes na conferencia de encalhe.
+	 * 
+	 * @param idCota
+	 * @param dataOperacao
+	 * @param indPostergado
+	 * @param listaIdProdutoEdicao
+	 * 
+	 * @return List<ProdutoEdicaoSlipDTO>
+	 */
+	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
+			Long idCota,
+			Date dataOperacao,
+			boolean indPostergado,
+			Set<Long> listaIdProdutoEdicao);
+	
 
 
 	/**
@@ -103,4 +112,8 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	public ChamadaEncalheCota obterChamadaEncalheDevolucao(Long idMovimentoDevolucao);
 	
 	public BigInteger obterReparteConferencia(Long idCota, Long idControleConferenciaEncCota, Long produtoEdicaoId);
+	
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
+	
+	boolean isLancamentoParcial(Long idProdutoEdicao);
 }

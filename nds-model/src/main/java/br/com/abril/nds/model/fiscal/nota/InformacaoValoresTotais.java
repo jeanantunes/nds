@@ -9,7 +9,6 @@ import javax.persistence.OneToOne;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Embeddable
 public class InformacaoValoresTotais implements Serializable {

@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -54,6 +55,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -359,11 +361,24 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 					consolidado.setEncalhe(BigDecimal.ZERO);
 					consolidado.setVendaEncalhe(BigDecimal.ZERO);
-					consolidado.setDebitoCredito(valorOriginalParcela.negate());
+					
+					GrupoMovimentoFinaceiro grupoMovimentoFinaceiro =
+						((TipoMovimentoFinanceiro) parcelaNegociacao.getMovimentoFinanceiroCota()
+							.getTipoMovimento()).getGrupoMovimentoFinaceiro();
+					
+					if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
+						
+						consolidado.setDebitoCredito(valorOriginalParcela.negate());
+						
+					} else {
+						
+						consolidado.setDebitoCredito(valorOriginalParcela);
+					}
+					
 					consolidado.setPendente(BigDecimal.ZERO);
 					consolidado.setEncargos(parcelaNegociacao.getEncargos());
 					
-					consolidado.setTotal(valorTotalParcela.negate());
+					consolidado.setTotal(valorTotalParcela);
 					
 					this.consolidadoFinanceiroRepository.adicionar(consolidado);
 
@@ -472,7 +487,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		novo.setData(movimentoFinanceiroCota.getData());
 		novo.setDataAprovacao(movimentoFinanceiroCota.getDataAprovacao());
 		novo.setDataIntegracao(movimentoFinanceiroCota.getDataIntegracao());
-		novo.setFornecedor(movimentoFinanceiroCota.getFornecedor());
+		novo.setFornecedor(movimentoFinanceiroCota.getFornecedor()!=null?
+				           movimentoFinanceiroCota.getFornecedor():
+				           movimentoFinanceiroCota.getCota().getParametroCobranca().getFornecedorPadrao());
 		//novo.setHistoricos(movimentoFinanceiroCota.getHistoricos());
 		novo.setLancamentoManual(movimentoFinanceiroCota.isLancamentoManual());
 		novo.setMotivo(movimentoFinanceiroCota.getMotivo());
@@ -657,7 +674,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public byte[] imprimirNegociacao(Long idNegociacao) throws Exception {
+	public byte[] imprimirNegociacao(Long idNegociacao, String valorDividaSelecionada) throws Exception {
 
 		Negociacao negociacao = this.obterNegociacaoPorId(idNegociacao);
 
@@ -785,9 +802,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			impressaoNegociacaoDTO.getParcelasCheques().add(vo);
 		}
 		
-		// campo divida selecionada
-				impressaoNegociacaoDTO
-						.setTotalDividaSelecionada(totalParcelas);
+		// campo divida selecionada (este valorDividaSelecionada é retornado do resultado que aparece no html)
+		if (BigDecimal.ZERO.equals(totalParcelas)) {
+			impressaoNegociacaoDTO.setTotalDividaSelecionada(CurrencyUtil.converterValor(valorDividaSelecionada));
+		} else {
+			impressaoNegociacaoDTO.setTotalDividaSelecionada(totalParcelas);
+		}
+		
 
 		List<ImpressaoNegociacaoDTO> listaJasper = new ArrayList<ImpressaoNegociacaoDTO>();
 		listaJasper.add(impressaoNegociacaoDTO);
@@ -822,7 +843,14 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		parameters.put("TOTAL_PARCELAS",CurrencyUtil.formatarValor(
 				totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+
+		String nomeDistribuidor = this.distribuidorService.obterRazaoSocialDistribuidor();
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
+
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+		
+		parameters.put("COTA_ATIVA", SituacaoCadastro.ATIVO.equals(cota.getSituacaoCadastro()));
+		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 

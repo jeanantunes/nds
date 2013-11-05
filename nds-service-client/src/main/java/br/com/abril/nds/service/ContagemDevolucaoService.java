@@ -24,7 +24,7 @@ public interface ContagemDevolucaoService {
 	public abstract List<ContagemDevolucaoConferenciaCegaDTO> obterInfoContagemDevolucaoCega(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa,
 			boolean indPerfilUsuarioEncarregado);
 
-	public abstract void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada) throws FileNotFoundException, IOException;
+	public abstract void gerarNotasFiscaisPorFornecedor(List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada, Usuario usuario, boolean indConfirmarContagemDevolucao) throws FileNotFoundException, IOException;
 
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
 			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
@@ -49,7 +49,12 @@ public interface ContagemDevolucaoService {
      *         fornecedor de acordo com os parâmetros
      */
 	public byte[] gerarImpressaoChamadaEncalheFornecedor(Long idFornecedor, Integer numeroSemana, Intervalo<Date> periodo);
-    
+
+	void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException;
+
+	List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
+			FiltroDigitacaoContagemDevolucaoDTO filtro,
+			boolean perfilEncarregado);
     
 	
 }

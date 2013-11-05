@@ -1,9 +1,13 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,11 +27,14 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -75,21 +82,25 @@ public class VisaoEstoqueController extends BaseController {
 	{
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();
 		result.include("listFornecedores", listFornecedores);
-		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
+		result.include("dataAtual", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 	}
 	
 	
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
 		
+		tratarErro(validarDadosConsulta(filtro));
+		
 		this.atualizarDataMovimentacao(filtro);
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
+		
 		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).serialize();
+		
 	}
-	
+
 	@Path("/pesquisarDetalhe.json")
 	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {		
 		
@@ -102,20 +113,58 @@ public class VisaoEstoqueController extends BaseController {
 		}
 		filtro.setPaginacao(new PaginacaoVO(page, rp,sortorder,sortname));
 		
-		if(filtro.getPaginar()!=null && !filtro.getPaginar()) {
-			filtro.getPaginacao().setQtdResultadosPorPagina(null);
-			filtro.getPaginacao().setPaginaAtual(null);
+		if(filtro.getPaginar() != null && !filtro.getPaginar()) {
+			filtro.getPaginacao().setQtdResultadosPorPagina(rp);
+			filtro.getPaginacao().setPaginaAtual(page);
 		}
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+
 		this.atualizarDataMovimentacao(filtro);
-		
+
+		if (filtro.getDataMovimentacao().compareTo(dataOperacao) < 0) {
+			
+			filtro.setBuscaHistorico(true);
+		}
+
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
-		Long count = visaoEstoqueService.obterCountVisaoEstoqueDetalhe(filtro);
+		Long count = this.visaoEstoqueService.obterCountVisaoEstoqueDetalhe(filtro);
 		
-		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
-				
-		result.use(FlexiGridJson.class).from(listDetalhe).total(count.intValue()).page(page).serialize();
+		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = this.visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
+		
+		Map<String, Object> mapaDetalhes = new HashMap<>();
+
+		mapaDetalhes.put("listDetalhe", this.getDetalhesTableModel(listDetalhe, filtro.getTipoEstoque(), page, count.intValue()));
+
+		mapaDetalhes.put("isBuscaHistorico", filtro.isBuscaHistorico());
+		
+		this.result.use(CustomJson.class).from(mapaDetalhes).serialize();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private TableModel getDetalhesTableModel(List<? extends VisaoEstoqueDetalheDTO> listDetalhe, String tipoEstoque, int page, int total) {
+		
+		TableModel table = null;
+		
+		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
+
+			table = new TableModel<CellModelKeyValue<VisaoEstoqueDetalheDTO>>();
+		
+			table.setRows(CellModelKeyValue.toCellModelKeyValue((List<VisaoEstoqueDetalheDTO>)listDetalhe));
+			
+		} else {
+			
+			table = new TableModel<CellModelKeyValue<VisaoEstoqueDetalheJuramentadoDTO>>();
+			
+			table.setRows(CellModelKeyValue.toCellModelKeyValue((List<VisaoEstoqueDetalheJuramentadoDTO>)listDetalhe));		
+		}
+
+		table.setPage(page);
+		
+		table.setTotal(total);
+		
+		return table;
 	}
 	
 	
@@ -197,7 +246,13 @@ public class VisaoEstoqueController extends BaseController {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		
-		filtro.setPaginacao(new PaginacaoVO());
+		if (filtro.getPaginacao() == null){
+			filtro.setPaginacao(new PaginacaoVO());
+		}
+		
+		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setQtdResultadosTotal(null);
 		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		Class clazz = VisaoEstoqueDetalheDTO.class;
@@ -213,7 +268,6 @@ public class VisaoEstoqueController extends BaseController {
 		
 		result.use(Results.nothing());
 	}
-	
 	
 	@Path("/gerarDadosConferenciaCega")
 	public void gerarDadosConferenciaCega(FiltroConsultaVisaoEstoque filtro) throws IOException {
@@ -259,13 +313,54 @@ public class VisaoEstoqueController extends BaseController {
 		
 	private void atualizarDataMovimentacao(FiltroConsultaVisaoEstoque filtro) {
 		
+		if(filtro == null || filtro != null && filtro.getDataMovimentacaoStr() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valores de filtros inválidos.");
+		}
+		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		if (filtro.getDataMovimentacao() == null
+		if (filtro.getDataMovimentacao() == null || filtro.getDataMovimentacaoStr() == null
 				|| DateUtil.isDataInicialMaiorDataFinal(filtro.getDataMovimentacao(), dataOperacao)) {
 			
 			filtro.setDataMovimentacao(dataOperacao);
 		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			filtro.setDataMovimentacao(sdf.parse(filtro.getDataMovimentacaoStr()));
+		} catch (ParseException e) {
+			filtro.setDataMovimentacao(dataOperacao);
+		}
+		
+	}
+
+	private List<String> validarDadosConsulta(FiltroConsultaVisaoEstoque filtro){
+		
+		List<String> mensagens = new ArrayList<String>();
+		if(filtro != null && filtro.getDataMovimentacaoStr() != null && !"".equals(filtro.getDataMovimentacaoStr())){
+			
+			if (!DateUtil.isValidDate(filtro.getDataMovimentacaoStr(), "dd/MM/yyyy")) {
+				
+				mensagens.add("O campo Data Movimento de é inválido");
+			}else{
+				filtro.setDataMovimentacao(DateUtil.parseDataPTBR(filtro.getDataMovimentacaoStr()));
+			}
+		}
+		
+		return mensagens;
 	}
 	
+	private void tratarErro(List<String> mensagensErro){
+		
+		ValidacaoVO validacao = new ValidacaoVO();
+		
+		validacao.setTipoMensagem(TipoMensagem.ERROR);
+		
+		if(!mensagensErro.isEmpty()){
+			
+			validacao.setListaMensagens(mensagensErro);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
 }

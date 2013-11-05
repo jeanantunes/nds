@@ -26,6 +26,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,11 +36,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.EnderecoVO;
 
 /**
@@ -51,6 +55,8 @@ import br.com.abril.nds.vo.EnderecoVO;
 @Repository
 public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Long> implements
 		EnderecoRepository {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoRepositoryImpl.class);
 	
 	/**
 	 * Construtor.
@@ -181,10 +187,12 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		Criteria criteria = super.getSession().createCriteria(Localidade.class);
 
 		criteria.createAlias("unidadeFederacao", "uf");
-
-		criteria.add(Restrictions.and(Restrictions.eq("uf.sigla", siglaUF),
-									  Restrictions.ilike("nome",
-											  nome, MatchMode.ANYWHERE)));
+		
+		criteria.add(Restrictions.eq("uf.sigla", siglaUF));
+				
+		if(!StringUtil.isEmpty(nome)) {
+			criteria.add(Restrictions.ilike("nome", nome, MatchMode.ANYWHERE));
+		}
 
 		return criteria.list();
 	}
@@ -306,21 +314,73 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> obterLocalidadesPorUF(String uf) {
+	public List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf) {
 
-		Query query = this.getSession().createQuery("select distinct(e.cidade) from Endereco e where e.uf = :uf");
+		StringBuilder hql = new StringBuilder("select distinct(e.cidade) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(")")
+		   .append(" and e.uf = :uf ")
+		   .append(" and c.situacaoCadastro != :inativo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		query.setParameter("uf", uf);
 
 		return query.list();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<String>obterUFs(){
+	public List<String>obterUFsPDVSemRoteirizacao(){
 		
-		Query query = this.getSession().createQuery("select distinct(e.uf) from Endereco e, EnderecoCota ec, " +
-				" EnderecoPDV ep where e.id = ec.endereco.id or e.id = ep.endereco.id and e.uf is not null order by e.uf ");
+		StringBuilder hql = new StringBuilder("select distinct(e.uf) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(") ")
+		   .append(" and c.situacaoCadastro != :inativo ");
 		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String>obterBairrosPDVSemRoteirizacao(String uf, String cidade){
+		
+		StringBuilder hql = new StringBuilder("select distinct(e.bairro) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(")")
+		   .append(" and e.uf = :uf ")
+		   .append(" and e.cidade = :cidade ")
+		   .append(" and e.bairro is not null ")
+		   .append(" and c.situacaoCadastro != :inativo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("uf", uf);
+		query.setParameter("cidade", cidade);
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		
 		return query.list();
 	}
@@ -394,19 +454,52 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 				ret.setLocalidade(localidade.getNome());				
 				
 			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("", e);
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("", e);
 			}
 						
 		}
 		
 		return ret;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterLocalidadesPorUFPDVBoxEspecial(String uf) {
+		StringBuilder hql = new StringBuilder("select distinct(e.cidade) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where e.uf = :uf ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("uf", uf);
+
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterBairrosPDVBoxEspecial(String uf, String cidade) {
+		StringBuilder hql = new StringBuilder("select distinct(e.bairro) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where e.uf = :uf ")
+		   .append(" and e.cidade = :cidade ")
+		   .append(" and e.bairro is not null ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("uf", uf);
+		query.setParameter("cidade", cidade);
+		
+		return query.list();
 	}
 
 }

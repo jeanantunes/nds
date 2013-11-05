@@ -17,7 +17,9 @@ import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.job.AjusteReparteJob;
 import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
@@ -63,19 +65,31 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-
-		/*this.agendarIntegracaoOperacionalDistribuidor();
-		this.agendaExeclusaoAjusteReparte();
-		this.agendarExclusaoDeEstudos();
-		this.agendarGeracaoRankings();
 		
 		try {
-			StdSchedulerFactory.getDefaultScheduler().start();
+			
+			final WebApplicationContext springContext = 
+				WebApplicationContextUtils.getWebApplicationContext(
+					servletContextEvent.getServletContext());
+			
+			SchedulerFactoryBean schedulerFactoryBean =
+				springContext.getBean(SchedulerFactoryBean.class);
+			 
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+			
+//			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
+//			this.agendaExeclusaoAjusteReparte(scheduler);
+//			this.agendarExclusaoDeEstudos(scheduler);
+//			this.agendarGeracaoRankings(scheduler);
+			
+			scheduler.start();
+			
 		} catch (SchedulerException e) {
+			
 			logger.fatal("Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
-		}*/
+		}
 
 	}
 
@@ -83,21 +97,19 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de integração operacional do
 	 * distribuidor.
 	 */
-	private void agendarIntegracaoOperacionalDistribuidor() {
+	private void agendarIntegracaoOperacionalDistribuidor(Scheduler scheduler) {
 
 		try {
 
 			String groupName = "integracaoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil(
 					"integracao-distribuidor.properties");
 
 			String intervaloExecucaoIntegracaoOperacionalDistribuidor = propertiesUtil
 					.getPropertyValue("intervalo.execucao.integracao.operacional");
-
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail job = newJob(IntegracaoOperacionalDistribuidorJob.class)
 					.withIdentity("integracaoOperacionalJob", groupName)
@@ -111,8 +123,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			scheduler.scheduleJob(job, cronTrigger);
 
-			scheduler.start();
-
 		} catch (SchedulerException se) {
 
 			logger.fatal("Falha ao inicializar agendador do Quartz", se);
@@ -122,20 +132,18 @@ public class ApplicationContextListener implements ServletContextListener {
 	}
 	
 	
-	private void agendarExclusaoDeEstudos() {
+	private void agendarExclusaoDeEstudos(Scheduler scheduler) {
 
 		try {
 
 			String groupName = "exclusaoEstudoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil("exclusao-estudos.properties");
 
 			String intervaloExecucaoIntegracaoOperacionalDistribuidor = propertiesUtil
 					.getPropertyValue("intervalo.execucao.exclusao.estudos");
-			 
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail job = newJob(IntegracaoOperacionalDistribuidorJob.class)
 					.withIdentity("exclusaoEstudosJob", groupName)
@@ -149,8 +157,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			scheduler.scheduleJob(job, cronTrigger);
 
-			scheduler.start();
-
 		} catch (SchedulerException se) {
 
 			logger.fatal("Falha ao inicializar agendador do Quartz", se);
@@ -160,10 +166,11 @@ public class ApplicationContextListener implements ServletContextListener {
 	}
 
 	
-	private void agendarGeracaoRankings(){
+	private void agendarGeracaoRankings(Scheduler scheduler) {
+		
 		final String groupName = "gerarRankingGroup";
 		
-		QuartzUtil.removeJobsFromGroup(groupName);
+		QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 		
 		PropertiesUtil propertiesUtil = new PropertiesUtil(
 				"integracao-distribuidor.properties");
@@ -192,10 +199,8 @@ public class ApplicationContextListener implements ServletContextListener {
 				.withSchedule(
 						cronSchedule(intervaloExecucaoGeracaoRanking))
 				.build();
-		
-		Scheduler scheduler = null;
+
 		try {
-			scheduler = StdSchedulerFactory.getDefaultScheduler();
 			scheduler.scheduleJob(jobRankingFaturamento, cronTriggerRankingFaturamento);
 			scheduler.scheduleJob(jobRankingSegmento, cronTriggerRankingSegmento);
 		} catch (SchedulerException e) {
@@ -212,21 +217,19 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
 	 * 
 	 */
-	private void agendaExeclusaoAjusteReparte() {
+	private void agendaExeclusaoAjusteReparte(Scheduler scheduler) {
 
 		try {
 
 			String groupName = "integracaoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil(
 					"integracao-distribuidor.properties");
 
 			String intervaloExecucao = propertiesUtil
 					.getPropertyValue("intervalo.execucao.ajuste.reparte");
-
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail job = newJob(AjusteReparteJob.class)
 					.withIdentity(AjusteReparteJob.class.getName(), groupName)
@@ -239,8 +242,6 @@ public class ApplicationContextListener implements ServletContextListener {
 					.build();
 
 			scheduler.scheduleJob(job, cronTrigger);
-
-			scheduler.start();
 
 		} catch (SchedulerException se) {
 

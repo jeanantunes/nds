@@ -95,8 +95,11 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.endereco.localidade', value: $('#cidade', this.workspace).val()},
 			//{name:'parametrosDistribuidor.endereco.uf', value: $('#uf', this.workspace).val()}, 
 			{name:'parametrosDistribuidor.endereco.uf', value: "SP"}, 
-			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val()},
-			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val()},
+			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val() != undefined ? $('#codigoCidadeIBGE', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val() != undefined ? $('#codigoBairro', this.workspace).val() : ''},
+			
+			{name:'parametrosDistribuidor.numeroTelefone', value: $('#numeroTelefone', this.workspace).val()},
+			{name:'parametrosDistribuidor.numeroDDD', value: $('#numeroDDD', this.workspace).val()},
 			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal', this.workspace).val()},
@@ -133,15 +136,18 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.impressaoInterfaceLED', value: $("input[name='interfaceLED']:checked", this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED1', value: $('#nomeArquivoInterfaceLED1', this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED2', value: $('#nomeArquivoInterfaceLED2', this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED3', value: $('#nomeArquivoInterfaceLED3', this.workspace).val()},
 			{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoContrato', value: $('#prazoContrato', this.workspace).val()},
 			{name:'parametrosDistribuidor.informacoesComplementaresContrato', value: $('#informacoesComplementaresContrato', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaProcuracaoEntregadores', value: $('#utilizaProcuracaoEntregadores', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao', this.workspace).val()},
+			{name:'parametrosDistribuidor.informacoesComplementaresProcuracao', value: $('#informacoesComplementaresProcuracao', this.workspace).val() != undefined ? $('#informacoesComplementaresProcuracao', this.workspace).val() : '' },
 			{name:'parametrosDistribuidor.utilizaTermoAdesaoEntregaBancas', value: $('#utilizaTermoAdesaoEntregaBancas', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.complementoTermoAdesaoEntregaBancas', value: $('#complementoTermoAdesaoEntregaBancas', this.workspace).val()},
+			{name:'parametrosDistribuidor.complementoTermoAdesaoEntregaBancas', value: $('#complementoTermoAdesaoEntregaBancas', this.workspace).val() != undefined ? $('#complementoTermoAdesaoEntregaBancas', this.workspace).val() : '' },
 			{name:'parametrosDistribuidor.utilizaGarantiaPdv', value: $('#utilizaGarantiaPdv', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.utilizaChequeCaucao', value: $('#utilizaChequeCaucao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeChequeCaucao', value: $('#validadeChequeCaucao', this.workspace).val()},
@@ -156,18 +162,21 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.validadeAntecedenciaValidade', value: $('#validadeAntecedenciaValidade', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaOutros', value: $('#utilizaOutros', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.validadeOutros', value: $('#validadeOutros', this.workspace).val()},
-			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos', this.workspace).val()},
-			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais', this.workspace).val()},
+			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos', this.workspace).val() != undefined ? $('#sugereSuspensaoQuandoAtingirBoletos', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais', this.workspace).val() != undefined ? $('#sugereSuspensaoQuandoAtingirReais', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas', this.workspace).val()},
+			{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas', this.workspace).val() != undefined ? $('#negociacaoAteParcelas', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.aceitaBaixaPagamentoMaior', value: $('#aceitaBaixaPagamentoMaior', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aceitaBaixaPagamentoMenor', value: $('#aceitaBaixaPagamentoMenor', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aceitaBaixaPagamentoVencido', value: $('#aceitaBaixaPagamentoVencido', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.numeroDiasNovaCobranca', value: $('#numeroDiasNovaCobranca', this.workspace).val()},
-			{name:'parametrosDistribuidor.assuntoEmailCobranca', value: $('#assuntoEmailCobranca', this.workspace).val()},
-			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val()},
+			{name:'parametrosDistribuidor.numeroDiasNovaCobranca', value: $('#numeroDiasNovaCobranca', this.workspace).val() != undefined ?  $('#numeroDiasNovaCobranca', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.assuntoEmailCobranca', value: $('#assuntoEmailCobranca', this.workspace).val() != undefined ? $('#assuntoEmailCobranca', this.workspace).val() : ''},
+			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val() != undefined ? $('#mensagemEmailCobranca', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto', this.workspace).val()},		
+			
+			{name:'parametrosDistribuidor.pararAcumuloDividas', value: $('#pararAcumuloDividas', this.workspace).val() != undefined ? $('#pararAcumuloDividas', this.workspace).val() : ''},
+			
+			{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto', this.workspace).val() != undefined ? $('#percentualDesconto', this.workspace).val() : ''},		
 			{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.negociacao', value: $('#negociacao', this.workspace).is(':checked')},
@@ -176,16 +185,17 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.recibo', value: $('#recibo', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.consolidadoCota', value: $('#cobranca', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoSobraEm', value: $('#aprovacaoSobraEm', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.prazoFollowUp', value: $('#prazoFollowUp', this.workspace).val()},
+			{name:'parametrosDistribuidor.prazoFollowUp', value: $('#prazoFollowUp', this.workspace).val() != undefined ? $('#prazoFollowUp', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.prazoFollowUpFaltaDe', value: $('#prazoFollowUpFaltaDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoFollowUpSobraDe', value: $('#prazoFollowUpSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoFollowUpFaltaEm', value: $('#prazoFollowUpFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoFollowUpSobraEm', value: $('#prazoFollowUpSobraEm', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia', value: $('#prazoAvisoPrevioValidadeGarantia', this.workspace).val()},
+			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantia', value: $('#prazoAvisoPrevioValidadeGarantia', this.workspace).val() != undefined ? $('#prazoAvisoPrevioValidadeGarantia', this.workspace).val() : ''},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
@@ -382,11 +392,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$('#formParamentrosDistribuidor', this.workspace).ajaxForm(options);
 		
-		$("input[id^='reutilizacaoCodigoCotaInativa']", this.workspace).maskMoney({
-			 thousands:'', 
-			 decimal:'', 
-			 precision:0
-		});
+		$("input[id^='reutilizacaoCodigoCotaInativa']", this.workspace).numeric();
 
 		$("input[id^='capacidadeManuseioHomemHoraLancamento']", this.workspace).maskMoney({
 			 thousands:'', 
@@ -492,6 +498,8 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#tipoEndereco", this.workspace).val($("#tipoEnderecoHidden").val());
 		$("#regimeTributario", this.workspace).val($("#regimeTributarioHidden").val());
 		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
+		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
+		$("#pararAcumuloDividas", this.workspace).val($("#pararAcumuloDividasHidden").val());
 		
 		var hasLogotipo = $("#hasLogotipoHidden").val();
 		
@@ -502,11 +510,12 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$("#relancamentoParciaisEmDias", this.workspace).val($("#relancamentoParciaisEmDias").val());
 		
-		$('input:radio[name=interfaceLED][value=' + $("#impressaoInterfaceLEDHidden").val() + ']', this.workspace).click();
+		//$('input:radio[name=interfaceLED][value=' + $("#impressaoInterfaceLEDHidden").val() + ']', this.workspace).click();
 		$('input:radio[name=impressaoNECADANFE][value=' + $("#impressaoNECADANFEHidden").val() + ']', this.workspace).click();
 		$('input:radio[name=impressaoCE][value=' + $("#impressaoCEHidden").val() + ']', this.workspace).click();
 		
 		parametrosDistribuidorController.utilizaContratoCotasListener();
+		
 		
 		$("#tabDistribuidor", this.workspace).tabs();
 		
@@ -552,6 +561,24 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.exibirAdesao();
 
 		parametrosDistribuidorController.exibirContratoCota();
+		
+		parametrosDistribuidorController.desabilitarItens();
+		
+		$("#numeroDDD", this.workspace).numeric();
+		$("#numeroTelefone", this.workspace).numeric();
+		
+	},
+	
+	desabilitarItens : function() {
+
+		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [6] );
+		$("#chamadaoDiasSuspensao", this.workspace).disable();
+		$("#chamadaoValorConsignado", this.workspace).disable();
+		$("#utilizaDesconto", this.workspace).disable();
+		$("#percentualDesconto", this.workspace).disable();
+		$("#parcelamentoDividas", this.workspace).disable();
+		$("#negociacaoAteParcelas", this.workspace).disable();
+		
 	},
 	
 	dialogConfirmarGrupo: function() {
@@ -569,7 +596,12 @@ var parametrosDistribuidorController = $.extend(true, {
 				"Cancelar": function() {
 					$(this).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				
+				$("#nomeDiferenca", this.workspace).val("");
+				$("#diaSemana", this.workspace).val("");
+			},
 		});
 	 },
 	 
@@ -599,8 +631,19 @@ var parametrosDistribuidorController = $.extend(true, {
 		 }else{
 			 $(".exibirContratoComCotas").hide();
 		 }
-	 }
+	 },
 	 
+	 mensagemControleAprovacao:function(check){
+		 
+		 if (check==false){
+			 
+			 $.postJSON(parametrosDistribuidorController.path + "mensagemControleAprovacao",null,
+					   function (result) {
+				 
+							exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					   });
+		 }
+	 }
 	 
 }, BaseController);
 

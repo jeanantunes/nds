@@ -74,7 +74,7 @@ var produtoController = $.extend(true, {
 	
 	pesquisarFornecedor:function(data){
 	
-		$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor",
+		$.postJSON(contextPath + "/produto/pesquisarFornecedorProduto",
 				   data, this.montarComboFornecedores);
 	},
 
@@ -476,6 +476,14 @@ var produtoController = $.extend(true, {
 		$("#percentualDesconto", this.workspace).val("");
 		$("#grupoEditorial", this.workspace).val("");
 		$("#subGrupoEditorial", this.workspace).val("");
+		
+		$("#segmentacaoClasseSocial", this.workspace).val("");
+		$("#segmentacaoSexo", this.workspace).val("");
+		$("#segmentacaoFaixaEtaria", this.workspace).val("");
+		$("#segmentacaoFormato", this.workspace).val("");
+		$("#segmentacaoTipoLancamento", this.workspace).val("");
+		$("#segmentacaoTemaPrincipal", this.workspace).val("");
+		$("#segmentacaoTemaSecundario", this.workspace).val("");
 	},
 	
 	salvarProduto : function() {

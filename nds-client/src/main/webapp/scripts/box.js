@@ -9,7 +9,7 @@ var boxController = $.extend(true, {
 	intGridBox : function() {
 		$(".boxGrid", this.workspace).flexigrid({
 			preProcess : function(data) {
-				if( typeof data.mensagens == "object") {
+				if(typeof data.mensagens == "object") {
 
 					exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 
@@ -268,14 +268,14 @@ var boxController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Rota',
-				name : 'rota',
+				display : 'Roteiro',
+				name : 'roteiro',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Roteiro',
-				name : 'roteiro',
+				display : 'Rota',
+				name : 'rota',
 				width : 120,
 				sortable : true,
 				align : 'left'

@@ -176,17 +176,18 @@ public class GruposAcessoController extends BaseController {
 	public void salvarGrupoPermissao(GrupoPermissaoDTO grupoPermissaoDTO) throws Exception {
 		
 		this.validarDadosGrupoPermissao(grupoPermissaoDTO);
-
+		
 		GrupoPermissao grupoPermissao = new GrupoPermissao();
 		grupoPermissao.setId(grupoPermissaoDTO.getId());
 		grupoPermissao.setNome(grupoPermissaoDTO.getNome());
 		
-		if(grupoPermissaoDTO.getPermissoes() == null)
+		if(grupoPermissaoDTO.getPermissoes() == null) {
 			grupoPermissaoDTO.setPermissoes(new ArrayList<Permissao>());
+		}
 		
 		addPais(grupoPermissaoDTO.getPermissoes());
 		
-		grupoPermissao.setPermissoes(new HashSet<>(grupoPermissaoDTO.getPermissoes()));
+		grupoPermissao.setPermissoes(new HashSet(grupoPermissaoDTO.getPermissoes()));
 		
 		grupoPermissaoService.salvar(grupoPermissao);
 		
@@ -417,18 +418,17 @@ public class GruposAcessoController extends BaseController {
 
 		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
 		
-		if(usuarioDTO.getGrupos() != null) {
+		if(usuarioDTO.getIdsGrupos() != null && !usuarioDTO.getIdsGrupos().isEmpty()) {
 			for (Long id : usuarioDTO.getIdsGrupos()) {
 					grupos.add(grupoPermissaoService.buscar(id));
 			}
-			usuario.setGruposPermissoes(grupos);
 		}		
 		
+		usuario.setGruposPermissoes(grupos);
+
 		usuarioService.salvar(usuario);
-	
-		
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário salvo com Sucesso."),"result").recursive().serialize();
-	
 	}
 	
 	/**

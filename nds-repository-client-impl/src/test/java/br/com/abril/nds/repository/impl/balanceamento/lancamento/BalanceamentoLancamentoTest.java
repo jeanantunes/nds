@@ -403,14 +403,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		ProdutoLancamentoDTO produtoRecolhimentoQuatroRodas = produtosLancamento.get(2);
 		
-		ProdutoLancamentoDTO produtoRecolhimentoCromoReiLeao = produtosLancamento.get(5);
-		
-		Assert.assertTrue(produtoRecolhimentoVeja.isPossuiRecebimentoFisico());
-		
-		Assert.assertTrue(produtoRecolhimentoQuatroRodas.isPossuiRecebimentoFisico());
-		
-		Assert.assertFalse(produtoRecolhimentoCromoReiLeao.isPossuiRecebimentoFisico());
-		
 		boolean ordenacaoPorDataCorreta =
 			!DateUtil.isDataInicialMaiorDataFinal(produtoRecolhimentoVeja.getDataLancamentoDistribuidor(), 
 												  produtoRecolhimentoQuatroRodas.getDataLancamentoDistribuidor());

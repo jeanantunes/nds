@@ -63,16 +63,28 @@ $(function(){
 
 <input type="hidden" name="tipoFormaCobranca" id="tipoFormaCobranca" />
 
+
+<div id="dialog-confirm-formaCobrancaDistribuidor" title="Atenção" style="display: none;">
+	<fieldset>
+		<legend>Forma Cobran&ccedil;a da Cota</legend>
+		<p>
+			Confirma a altera&ccedil;&atilde;o na forma de cobran&ccedil;a da cota?
+		</p>
+	</fieldset>
+</div>
+
 <div name="formFinanceiro" id="formFinanceiro">
 <fieldset style="width:880px!important; margin:5px;">
  	<legend>Financeiro</legend>
 
 	<table width="100%" border="0" cellspacing="1" cellpadding="1">
+		
 		<tbody>
+		
 			<tr>
-				<td width="195">Fator Vencimento de Cobrança em D+:</td>
-				<td width="157"><select id="fatorVencimento"
-					name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
+				<td width="195" style="width: 274px; ">Fator Vencimento de Cobrança em D+:</td>
+				<td width="157" style="width: 147px; ">
+				<select id="fatorVencimento" name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
 					    <option>0</option>
 						<option>1</option>
 						<option>2</option>
@@ -94,10 +106,12 @@ $(function(){
 						<option>18</option>
 						<option>19</option>
 						<option>20</option>
-				</select></td>
-				<td width="10" style="width: 10px;">&nbsp;</td>
-				<td width="60">Contrato:</td>
-				<td width="20"><input id="contrato" name="contrato"
+				</select>
+				</td>
+				
+				<td width="10" style="width: 118px;">&nbsp;</td>
+				<td width="60" style="width: 50px; ">Contrato:</td>
+				<td width="20" style="width: 16px; "><input id="contrato" name="contrato"
 					type="checkbox" style="float: left;"
 					onclick="parametroCobrancaCotaController.exibe_form_contrato(this.checked);" />
 				</td>
@@ -109,6 +123,7 @@ $(function(){
 						</span>
 					</div>
 				</td>
+				
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
@@ -178,15 +193,18 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;">
-						<option value="">Selecione</option>
+				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);">
 						<c:forEach varStatus="counter" var="itemTipoCota"
 							items="${listaTiposCota}">
 							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
 						</c:forEach>
 				</select></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
+				
+				<td id="tituloDevolveEncalhe">Devolve Encalhe?</td>
+				<td id="selectDevolveEncalhe"><select name="devolveEncalhe" id="devolveEncalhe">
+						<option value="0">Sim</option>
+						<option value="1">Não</option>
+				</select></td>
 			</tr>
 			<tr>
 				<td>Unifica Cobrança?</td>
@@ -220,7 +238,7 @@ $(function(){
 					<div class="form-suspensao-hidden-class">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td width="31%">Qtde de dividas em aberto:</td>
+								<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
 								<td width="13%"><input maxlength="15" type="text"
 									name="qtdDividasAberto" id="qtdDividasAberto"
 									style="width: 60px;" /></td>
@@ -337,7 +355,7 @@ $(function(){
 							        
 					             <tr>
 					                 <td width="12%">
-					                     <input type="checkbox" name="PS" id="PS" />
+					                     <input type="checkbox" name="PCC-PS" id="PCC-PS" />
 					                 </td>    
 					                 <td width="88%">
 					                     <label for="PS">Segunda-feira</label>
@@ -346,7 +364,7 @@ $(function(){
 							            
 							     <tr>
 					                 <td>           
-							             <input type="checkbox" name="PT" id="PT" />
+							             <input type="checkbox" name="PCC-PT" id="PCC-PT" />
 							         </td>    
 					                 <td>    
 							             <label for="PT">Terça-feira</label>
@@ -355,7 +373,7 @@ $(function(){
 					             
 					             <tr>
 					                 <td>            
-							             <input type="checkbox" name="PQ" id="PQ" />
+							             <input type="checkbox" name="PCC-PQ" id="PCC-PQ" />
 							         </td>    
 					                 <td>      
 							             <label for="PQ">Quarta-feira</label>
@@ -364,7 +382,7 @@ $(function(){
 							                          
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PQu" id="PQu" />
+							             <input type="checkbox" name="PCC-PQu" id="PCC-PQu" />
 							          </td>    
 					                  <td>  
 							             <label for="PQu">Quinta-feira</label>
@@ -373,7 +391,7 @@ $(function(){
 							                  
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PSex" id="PSex" />
+							             <input type="checkbox" name="PCC-PSex" id="PCC-PSex" />
 							         </td>    
 					                 <td>      
 							             <label for="PSex">Sexta-feira</label>
@@ -382,7 +400,7 @@ $(function(){
 							               
 							      <tr>
 					                 <td>    
-							             <input type="checkbox" name="PSab" id="PSab" />
+							             <input type="checkbox" name="PCC-PSab" id="PCC-PSab" />
 							             </td>    
 					                 <td>  
 							             <label for="PSab">Sábado</label>
@@ -391,7 +409,7 @@ $(function(){
 							                   
 							      <tr>
 					                  <td>
-							             <input type="checkbox" name="PDom" id="PDom" />
+							             <input type="checkbox" name="PCC-PDom" id="PCC-PDom" />
 							             </td>    
 					                 <td>  
 							             <label for="PDom">Domingo</label>
@@ -539,8 +557,8 @@ $(function(){
 <form id="form-excluir-unificacao">
 	<div id="dialog-excluir-unificacao" title="Forma de Pagamento">
 		<fieldset>
-			<legend>Exclusão de Forma de Pagamento</legend>
-			<p>Confirma a exclusão da Forma de Pagamento.</p>
+			<legend>Exclus&atilde;o Forma de Pagamento da Cota </legend>
+			<p>Confirma a exclusão da Forma de Pagamento da Cota?</p>
 		</fieldset>
 	</div>
 </form>

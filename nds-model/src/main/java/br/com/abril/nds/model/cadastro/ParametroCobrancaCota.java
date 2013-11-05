@@ -8,8 +8,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -48,14 +46,13 @@ public class ParametroCobrancaCota implements Serializable {
 	private Integer fatorVencimento;
 	
 	@Column(name = "UNIFICA_COBRANCA")
-	private boolean unificaCobranca;
+	private Boolean unificaCobranca;
+	
+	@Column(name = "DEVOLVE_ENCALHE")
+	private Boolean devolveEncalhe;
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA")
-	private TipoCota tipoCota;
 	
 	@ManyToOne
 	@JoinColumn(name = "FORNECEDOR_ID")
@@ -108,14 +105,6 @@ public class ParametroCobrancaCota implements Serializable {
 	public void setFormasCobrancaCota(Set<FormaCobranca> formasCobrancaCota) {
 		this.formasCobrancaCota = formasCobrancaCota;
 	}
-
-	public TipoCota getTipoCota() {
-		return tipoCota;
-	}
-
-	public void setTipoCota(TipoCota tipoCota) {
-		this.tipoCota = tipoCota;
-	}
 	
 	public Fornecedor getFornecedorPadrao() {
 		return fornecedorPadrao;
@@ -125,11 +114,19 @@ public class ParametroCobrancaCota implements Serializable {
 		this.fornecedorPadrao = fornecedorPadrao;
 	}
 
-	public boolean isUnificaCobranca() {
+	public Boolean isUnificaCobranca() {
 		return unificaCobranca;
 	}
 
-	public void setUnificaCobranca(boolean unificaCobranca) {
+	public void setUnificaCobranca(Boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
+	}
+
+	public Boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
 	}
 }

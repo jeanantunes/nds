@@ -21,18 +21,21 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ComboTipoFornecedorDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.TipoFornecedorService;
@@ -82,6 +85,9 @@ public class FornecedorController extends BaseController {
 	@Autowired
 	private TipoFornecedorService tipoFornecedorService;
 	
+	@Autowired
+	private BancoService bancoService;
+	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoFornecedor";
 	
 	public static final String LISTA_TELEFONES_REMOVER_SESSAO = "listaTelefonesRemoverSessaoFornecedor";
@@ -94,10 +100,14 @@ public class FornecedorController extends BaseController {
 
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
+	
+	
 	@Path("/")
 	public void index() {
 
 		obterTiposFornecedor();
+		
+		this.obterBancos();
 	}
 
 	/**
@@ -290,6 +300,13 @@ public class FornecedorController extends BaseController {
 		this.result.include("combo", combo);
 	}
 	
+	private void obterBancos() {
+
+		List<ItemDTO<Integer, String>> bancos = this.bancoService.getComboBancos(true);
+
+		this.result.include("listaBancos", bancos);
+	}
+	
 	/**
 	 * Valida existência de endereço e existência de endereço principal
 	 * @param mensagensValidacao
@@ -414,6 +431,10 @@ public class FornecedorController extends BaseController {
 				
 				mensagens.add("CNPJ inválido.");
 			}
+		}
+		
+		if(fornecedorDTO.getIdBanco() == null) {
+			mensagens.add("O preenchimento do [Banco] é obrigatório.");
 		}
 		
 		if (fornecedorDTO.getIdFornecedor() != null) {
@@ -605,14 +626,22 @@ public class FornecedorController extends BaseController {
 		
 		TipoFornecedor tipoFornecedor = null;
 		
-		if(fornecedorDTO.getTipoFornecedor()!=null) {
+		if (fornecedorDTO.getTipoFornecedor()!=null) {
 
 			tipoFornecedor = this.tipoFornecedorService.obterTipoFornecedorPorId(fornecedorDTO.getTipoFornecedor());
-			
 		}
 		
-		 
+		fornecedor.setTipoFornecedor(tipoFornecedor);
+		
+		Banco banco = null;
+		
+		if (fornecedorDTO.getIdBanco() != null) {
 
+			banco = this.bancoService.obterBancoPorId(fornecedorDTO.getIdBanco());
+		}
+
+		fornecedor.setBanco(banco);
+		
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
 		fornecedor.setEmailNfe(fornecedorDTO.getEmailNfe());
@@ -660,10 +689,14 @@ public class FornecedorController extends BaseController {
 		
 		fornecedorDTO.setResponsavel(fornecedor.getResponsavel());
 		
-		if(fornecedor.getTipoFornecedor() != null) {
+		if (fornecedor.getTipoFornecedor() != null) {
 
 			fornecedorDTO.setTipoFornecedor(fornecedor.getTipoFornecedor().getId());
+		}
+		
+		if (fornecedor.getBanco() != null) {
 
+			fornecedorDTO.setIdBanco(fornecedor.getBanco().getId());
 		}
 		
 		fornecedorDTO.setValidadeContrato(DateUtil.formatarDataPTBR(fornecedor.getValidadeContrato()));

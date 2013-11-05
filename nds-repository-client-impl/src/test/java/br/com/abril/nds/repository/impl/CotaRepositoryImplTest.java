@@ -24,12 +24,10 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -65,10 +63,8 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -105,10 +101,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Cota cota;
 	private Cota cotaInativa;
 	private Boleto boleto1;
-	private HistoricoAcumuloDivida histInadimplencia1;
-
 	private Boleto boleto2;
-	private HistoricoAcumuloDivida histInadimplencia2;
 	private Usuario usuario;
 	private PessoaJuridica pessoaJuridica;
 
@@ -248,14 +241,6 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 
-		histInadimplencia1 = Fixture.criarHistoricoAcumuloDivida(divida1,
-				new Date(), usuario, StatusInadimplencia.ATIVA);
-		save(histInadimplencia1);
-
-		histInadimplencia2 = Fixture.criarHistoricoAcumuloDivida(divida2,
-				new Date(), usuario, StatusInadimplencia.ATIVA);
-		save(histInadimplencia2);
-
 		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true,
 				new BigDecimal(200), true, bancoHSBC, BigDecimal.ONE,
 				BigDecimal.ONE, null);
@@ -374,7 +359,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						CotaSuspensaoDTO.Ordenacao.NOME.name(), 0, 50);
+						CotaSuspensaoDTO.Ordenacao.NOME.name(), 0, 50, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -383,7 +368,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao(null,
-						null, null, null);
+						null, null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 
@@ -392,7 +377,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao(null,
-						null, 1, null);
+						null, 1, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -401,7 +386,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao(null,
-						null, null, 10);
+						null, null, 10, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -410,7 +395,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"numCota", null, null);
+						"numCota", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -419,7 +404,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"nome", null, null);
+						"nome", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -428,7 +413,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"vlrConsignado", null, null);
+						"vlrConsignado", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -437,7 +422,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"vlrReparte", null, null);
+						"vlrReparte", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -446,7 +431,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"dividaAcumulada", null, null);
+						"dividaAcumulada", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -455,7 +440,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"diasAberto", null, null);
+						"diasAberto", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -464,7 +449,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						null, null, null);
+						null, null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -496,7 +481,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("desc",
-						null, null, null);
+						null, null, null, new Date());
 		Assert.assertNotNull(lista);
 
 	}
@@ -505,7 +490,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterTotalCotasSujeitasSuspensao(){
 		setupHistoricoInadimplencia();
-		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
+		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao(new Date());
 		Assert.assertTrue(total == 1L);
 	}
 	
@@ -1051,105 +1036,6 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void gerarSugestaoNumeroCota(){
 		Integer numeroCota = cotaRepository.gerarSugestaoNumeroCota();
 	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalNulo(){
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotal(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		edicaoProduto.add(1L);
-		edicaoProduto.add(2L);
-		Date dataDe = Fixture.criarData(10, Calendar.APRIL, 2012);
-		Date dataAte = Fixture.criarData(10, Calendar.MAY, 2012);
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(dataDe, dataAte, "1", "1", "Teste", edicaoProduto, "1", 1, "teste", "municipio");
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorEdicaoProduto(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		edicaoProduto.add(1L);
-		edicaoProduto.add(2L);
-		
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, edicaoProduto, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorNomeProduto(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, "Teste", null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoFornecedor(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, "1", null, null, null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoEditor(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, "1", null, null, null, "1", null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoProduto(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, "1", null, null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoCota(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, 1, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorNomeCota(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, null, "teste", null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorMunicipio(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, null, null, "municipio");
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	
 	
 	@Test
 	public void buscarCotasPorIN() {

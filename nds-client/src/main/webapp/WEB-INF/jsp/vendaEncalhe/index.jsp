@@ -1,4 +1,6 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -13,6 +15,7 @@ var pesquisaProdutoVendaEncalhe = new PesquisaProduto();
 
 $(function(){
 	VENDA_PRODUTO.inicializar();
+	bloquearItensEdicao(VENDA_PRODUTO.workspace);
 });
 
 </script>
@@ -29,7 +32,7 @@ $(function(){
 	<div class="area">
 		      		
    		<span class="bt_novos">
-   			<a onclick="VENDA_PRODUTO.novaVenda();" href="javascript:;" rel="tipsy" title="Venda Encalhe / Suplementar">
+   			<a isEdicao="true" onclick="VENDA_PRODUTO.novaVenda();" href="javascript:;" rel="tipsy" title="Venda Encalhe / Suplementar">
    				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif">
    			</a>
    		</span>
@@ -136,7 +139,7 @@ $(function(){
        		<legend>Venda de Encalhes</legend>
         	
 	    	<div class="gridVenda" id="gridVenda" style="display: none;">
-				<table id="vendaEncalheGrid" class="vendaEncalheGrid"></table>
+				<table id="vendaEncalheGridCota" class="vendaEncalheGridCota"></table>
 			</div>
 	        
 	       	<table width="100%" cellspacing="2" cellpadding="2" border="0">

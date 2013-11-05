@@ -79,7 +79,7 @@
 					</td>
 					<td>Cidade:</td>
 					<td>
-						<input type="text" style="width:250px" 
+						<input type="text" style="width:250px; text-transform: uppercase;" 
 							   id="${param.telaEndereco}cidade" 
 							   onkeyup="${param.telaEndereco}.autoCompletarLocalidades();"
 							   onblur="${param.telaEndereco}.autoCompletarLocalidades(true);"
@@ -90,7 +90,7 @@
 				
 					<td>Bairro:</td>
 					<td>
-						<input type="text"  style="width:230px"
+						<input type="text"  style="width:230px; text-transform: uppercase;"
 							   onkeyup="${param.telaEndereco}.autoCompletarBairros();"
 							   onblur="${param.telaEndereco}.autoCompletarBairros(true);"
 							   name="enderecoAssociacao.endereco.bairro" id="${param.telaEndereco}bairro" />
@@ -100,33 +100,34 @@
 					<td>	   
 					   <select  style="width:255px" name="enderecoAssociacao.endereco.tipoLogradouro" id="${param.telaEndereco}tipoLogradouro">
 							<option value="">Selecione</option>
-							<option value="Aeroporto">Aeroporto</option>
-						    <option value="Alameda">Alameda</option>
-						    <option value="Apartamento">Apartamento</option>
-						    <option value="Avenida">Avenida</option>
-						    <option value="Beco">Beco</option>
-						    <option value="Bloco">Bloco</option>
-						    <option value="Caminho">Caminho</option>
-						    <option value="Escadinha">Escadinha</option>
-						    <option value="Estação">Estação</option>
-						    <option value="Estrada">Estrada</option>
-						    <option value="Fazenda">Fazenda</option>
-						    <option value="Fortaleza">Fortaleza</option>
-						    <option value="Galeria">Galeria</option>
-						    <option value="Ladeira">Ladeira</option>
-						    <option value="Largo">Largo</option>
-						    <option value="Praça">Praça</option>
-						    <option value="Parque">Parque</option>
-						    <option value="Praia">Praia</option>
-						    <option value="Quadra">Quadra</option>
-						    <option value="Quilômetro">Quilômetro</option>
-						    <option value="Quinta">Quinta</option>
-						    <option value="Rodovia">Rodovia</option>
-						    <option value="Rua">Rua</option>
-						    <option value="Super Quadra">Super Quadra</option>
-						    <option value="Travessa">Travessa</option>
-						    <option value="Viaduto">Viaduto</option>
-						    <option value="Vila">Vila</option>
+							<option value="AEROPORTO">Aeroporto</option>
+						    <option value="ALAMEDA">Alameda</option>
+						    <option value="APARTAMENTO">Apartamento</option>
+						    <option value="AVENIDA">Avenida</option>
+						    <option value="BECO">Beco</option>
+						    <option value="BLOCO">Bloco</option>
+						    <option value="CAMINHO">Caminho</option>
+						    <option value="ESCADINHA">Escadinha</option>
+						    <option value="ESTAÇÃO">Estação</option>
+						    <option value="ESTRADA">Estrada</option>
+						    <option value="FAZENDA">Fazenda</option>
+						    <option value="FORTALEZA">Fortaleza</option>
+						    <option value="GALERIA">Galeria</option>
+						    <option value="LADEIRA">Ladeira</option>
+						    <option value="LARGO">Largo</option>
+						    <option value="PRAÇA">Praça</option>
+						    <option value="PARQUE">Parque</option>
+						    <option value="PRAIA">Praia</option>
+						    <option value="QUADRA">Quadra</option>
+						    <option value="QUILÔMETRO">Quilômetro</option>
+						    <option value="QUINTA">Quinta</option>
+						    <option value="RODOVIA">Rodovia</option>
+						    <option value="RUA">Rua</option>
+						    <option value="SUPER QUADRA">Super Quadra</option>
+						    <option value="TRAVESSA">Travessa</option>
+						    <option value="VIADUTO">Viaduto</option>
+						    <option value="VIELA">Viela</option>
+						    <option value="VILA">Vila</option>
 						</select>	   
 					</td>
 					
@@ -135,14 +136,14 @@
 					
 					<td>Logradouro:</td>
 					<td>
-						<input type="text" style="width:230px"
+						<input type="text" style="width:230px; text-transform: uppercase;"
 							   onkeyup="${param.telaEndereco}.autoCompletarLogradouros();"
 							   onblur="${param.telaEndereco}.autoCompletarLogradouros(true);" 
 							   name="enderecoAssociacao.endereco.logradouro" id="${param.telaEndereco}logradouro" />
 					</td>
 					<td>Complemento:</td>
 					<td>
-						<input type="text" style="width:250px" 
+						<input type="text" style="width:250px; text-transform: uppercase;" 
 							   name="enderecoAssociacao.endereco.complemento" id="${param.telaEndereco}complemento" />
 					</td>
 				    

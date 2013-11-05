@@ -104,8 +104,6 @@ var romaneiosController = $.extend(true, {
 			
 			$(".grids", romaneiosController.workspace).hide();
 
-			$("#selectProdutos").multiselect("uncheckAll");
-
 			return resultado;
 		}
 		

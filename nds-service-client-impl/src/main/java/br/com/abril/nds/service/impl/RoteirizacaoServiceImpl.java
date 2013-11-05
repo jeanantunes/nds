@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO.OrigemEndereco;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -43,8 +45,11 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
+import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.OrdenacaoUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -71,6 +76,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private BoxService boxService;
+	
+	@Autowired
+	private RotaService rotaService;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -510,46 +521,99 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	@Override
 	@Transactional
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, boolean pesquisaPorCota, Long boxID) {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
-		List<PDV> listaPdv = new ArrayList<PDV>();
-			
-		listaPdv.addAll(this.pdvRepository.obterPDVsDisponiveisPor(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID));
+		List<PDV> listaPdv = this.pdvRepository.obterCotasPDVsDisponiveisPor(
+				numCota, municipio, uf, bairro, cep, boxID);
 		
 		PdvRoteirizacaoDTO pdvDTO;
 		
 		Integer ordem=0;
 		
-		for(PDV itemPdv:listaPdv){
-		    
+		for(PDV itemPdv : listaPdv){
+			
+			Endereco endereco = null;
 			ordem++;
-			
 			pdvDTO = new PdvRoteirizacaoDTO();
-			
 			pdvDTO.setId(itemPdv.getId());
-			
-			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
-		
+			pdvDTO.setNome(itemPdv.getNome());
 			pdvDTO.setOrdem(ordem);
 			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
 			
-			Endereco endereco = null;
-			EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
-			if (enderecoPdvEntrega !=null){
-				endereco = enderecoPdvEntrega .getEndereco();
-				pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
-			}
-			else{
-				EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
-				if (enderecoPrincipalCota !=null){
-				    endereco = enderecoPrincipalCota.getEndereco();
-				}    
-				pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
+			//especial
+			if (boxID == -1){
+				
+				EnderecoPDV endPdv = itemPdv.getEnderecoEntrega();
+				
+				if (endPdv != null){
+					
+					endereco = endPdv.getEndereco();
+					pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+				} else {
+					
+					if (itemPdv.getCaracteristicas().isPontoPrincipal()){
+					
+						endPdv = itemPdv.getEnderecoPrincipal();
+						endPdv = (endPdv == null ? itemPdv.getEnderecos().iterator().next() : endPdv);
+						
+						if (endPdv != null){
+							
+							endereco = endPdv.getEndereco();
+							pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+						}
+					} else {
+						
+						endPdv = (endPdv == null ? itemPdv.getEnderecos().iterator().next() : endPdv);
+						
+						if (endPdv != null){
+							
+							endereco = endPdv.getEndereco();
+							pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+						}
+					}
+				}
+			//normal
+			} else {
+				
+				EnderecoCota endCota = itemPdv.getCota().getEnderecoPorTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
+				
+				if (endCota != null){
+					
+					endereco = endCota.getEndereco();
+				    pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
+				}
+				
+				if (endereco == null){
+					
+					EnderecoPDV endPdv = itemPdv.getEnderecoPrincipal();	
+					if (endPdv != null){
+						
+						endereco = endPdv.getEndereco();
+						pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+					}
+				}
+				
+				if (endereco == null){
+					
+					endCota = itemPdv.getCota().getEnderecoPrincipal();
+					
+					if (endCota != null){
+						endereco = endCota.getEndereco();
+						pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
+					}
+				}
+				
 			}
 			
-			pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
+			pdvDTO.setEndereco(endereco != null ? 
+					endereco.getTipoLogradouro() + " " +
+					endereco.getLogradouro() + " " + 
+					"nº.: " + endereco.getNumero() + ", " +
+					endereco.getCidade() +
+					", CEP: " + Util.adicionarMascaraCEP(endereco.getCep()) : "");
 
 			pdvDTO.setPdv(itemPdv.getNome());
 
@@ -880,15 +944,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Box box) {
 		
-		 PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
-		 
-		 Cota cota  = pdv.getCota();
-		 
-		 if(pdv.getCaracteristicas()!= null && pdv.getCaracteristicas().isPontoPrincipal() ){
+		if (box != null){
+			 PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
 			 
-			 cota.setBox(box);
-			 cotaRepository.merge(cota);
-		 }
+			 Cota cota  = pdv.getCota();
+			 
+			 if(pdv.getCaracteristicas()!= null && pdv.getCaracteristicas().isPontoPrincipal() ){
+				 
+				 cota.setBox(box);
+				 cotaRepository.merge(cota);
+			 }
+		}
 	}
 
 	
@@ -1278,6 +1344,253 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		List<RoteiroRoteirizacaoDTO> roteirosDTO = RoteiroRoteirizacaoDTO.getDTOFrom(roteiros);
 		
 		return roteirosDTO;
+	}
+
+	/**
+	 * Obtem combo com todos os Roteiros
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboTodosRoteiros(){
+		
+        List<Roteiro> roteiros = this.buscarRoteiro(null, null);
+		
+		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Roteiro roteiro : roteiros){
+			
+			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+		}
+		
+		return listRoteiro;
+	}
+	
+	/**
+	 * Obtem combo com todas as Rotas
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboTodosRotas(){
+		
+        List<Rota> rotas = this.buscarRota(null, null);
+		
+		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Rota rota : rotas){
+			
+			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+		}
+		
+		return listRota;
+	}
+    
+    /**
+     * Obtem combo com todos os Boxes
+     * @return List<ItemDTO<Long, String>>
+     */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboTodosBoxes(){
+		
+        List<Box> boxs = this.boxService.buscarPorTipo(TipoBox.LANCAMENTO);
+		
+		List<ItemDTO<Long, String>> listaBox = new ArrayList<ItemDTO<Long,String>>();
+		
+		listaBox.add(new ItemDTO<Long, String>(0L, "Especial"));
+		
+		for (Box box : boxs) {
+			
+			listaBox.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
+		}
+		
+		return listaBox;
+	}
+	
+    /**
+	 * Carrega o combo Box por Rota
+	 * @param idRota
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboBoxPorRota(Long idRota) {
+		
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		
+		if (idRota != null && idRota > 0){
+		
+			List<Box> boxes = this.boxService.buscarBoxPorRota(idRota);
+	
+	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
+	
+			for (Box box : boxes){
+	    		
+	    		lista.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
+	    	}
+		}
+		else{
+		    
+			lista = this.getComboTodosBoxes();
+		}
+		
+		return lista;
+	}
+	
+	/**
+	 * Carrega o combo Box por Roteiro
+	 * @param idRoteiro
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboBoxPorRoteiro(Long idRoteiro) {
+		
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		
+		if (idRoteiro != null && idRoteiro > 0){
+			
+			List<Box> boxes = this.boxService.buscarBoxPorRoteiro(idRoteiro);
+	
+	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
+	        	
+	    	for (Box box : boxes){
+	    		
+	    		lista.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
+	    	}
+		}
+		else{
+			
+			lista = this.getComboTodosBoxes();
+		}
+		
+		return lista;
+	}
+	
+	/**
+	 * Carrega o combo Rota por intervalo de Box
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboRotaPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
+		
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		
+		if ((codigoBoxDe != null && codigoBoxDe > 0)||(codigoBoxAte != null && codigoBoxAte > 0)){
+		
+			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
+			
+			for (Box box : boxes){
+			
+		        List<Rota> rotas = this.buscarRotaDeBox(box.getId());
+				
+				for (Rota rota : rotas){
+					
+					lista.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+				}
+			}
+		}
+		else{
+			
+			lista = this.getComboTodosRotas();
+		}
+		
+		return lista;
+	}
+	
+	/**
+	 * Carrega o combo Rota por Roteiro
+	 * @param idRoteiro
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboRotaPorRoteiro(Long idRoteiro) {
+		
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		
+		if(idRoteiro != null && idRoteiro > 0){
+		
+			List<Rota> rotas = this.rotaService.buscarRotaPorRoteiro(idRoteiro);
+
+			for (Rota rota : rotas){
+				
+				lista.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+			}
+		}
+		else{
+			
+			lista = this.getComboTodosRotas();
+		}
+		return lista;
+	}
+	
+	/**
+	 * Carrega o combo Roteiro por Rota
+	 * @param idRota
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboRoteiroPorRota(Long idRota) {
+		
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		
+		if (idRota != null && idRota > 0){
+		
+			Rota rota = this.buscarRotaPorId(idRota);
+		
+			Roteiro roteiro = rota.getRoteiro();
+			
+			lista.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+		}
+		else{
+			
+			lista = this.getComboTodosRoteiros();
+		}
+
+		return lista;
+	}
+	
+	/**
+	 * Carrega o combo Roteiro por intervalo de Box
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ItemDTO<Long, String>> getComboRoteiroPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
+		
+		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
+		
+		if ((codigoBoxDe != null && codigoBoxDe > 0)||(codigoBoxAte != null && codigoBoxAte > 0)){
+		
+			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
+			
+			for (Box box : boxes){
+			
+				List<Roteiro> roteiros = this.buscarRoteiroDeBox(box.getId());
+				
+				for (Roteiro roteiro : roteiros){
+				
+					lista.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+				}
+			}
+		}
+		else{
+			
+			lista = this.getComboTodosRoteiros();
+		}
+
+		return lista;
+	}
+
+	@Override
+	public List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
+		
+		if(codigoBoxDe == null && codigoBoxDe == null) return new ArrayList<Roteiro>();
+		
+		return roteiroRepository.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
+		
 	}
 
 }

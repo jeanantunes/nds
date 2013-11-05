@@ -2,11 +2,15 @@ package br.com.abril.nds.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.UsuarioService;
@@ -70,5 +74,18 @@ public abstract class BaseController {
 		}
 		
 		return inputStream;
+	}
+	
+	protected boolean usuarioPossuiRule(Permissao permissao) {
+		
+		Collection<? extends GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+		
+		for(GrantedAuthority auth : auths) {
+
+			if(auth.getAuthority().toString().equals(permissao.toString()))
+				return true;			
+		}
+		
+		return false;
 	}
 }

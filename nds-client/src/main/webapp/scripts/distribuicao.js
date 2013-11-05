@@ -67,6 +67,10 @@ function Distribuicao(tela) {
 				true,
 				"dialog-cota");
 		
+		if(MANTER_COTA && MANTER_COTA._indCadastroCotaAlterado) {
+    		MANTER_COTA._indCadastroCotaAlterado = false;
+    	}
+		
 		return false;		
 	},
 	

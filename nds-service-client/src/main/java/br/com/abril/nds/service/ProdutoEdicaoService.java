@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
@@ -76,7 +77,7 @@ public interface ProdutoEdicaoService {
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
-	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros);
 	
 	
 	/**
@@ -120,7 +121,7 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
@@ -139,7 +140,7 @@ public interface ProdutoEdicaoService {
 	 * Os critérios para exclusão são:
 	 * <ul>
 	 * <li>A Edição não pode ser cadastrado via INTERFACE;</li>
-	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sitema;</li>
+	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sistema;</li>
 	 * </ul>
 	 * 
 	 * @param idProdutoEdicao
@@ -147,6 +148,22 @@ public interface ProdutoEdicaoService {
 	 * @exception 
 	 */
 	public void excluirProdutoEdicao(Long idProdutoEdicao) throws UniqueConstraintViolationException;
+	
+	/**
+	 * @return TODO
+	 * Exclui uma Edição da base de dados.<br>
+	 * Os critérios para exclusão são:
+	 * <ul>
+	 * <li>A Edição não pode ser cadastrado via INTERFACE;</li>
+	 * <li>A Edição não pode estar sendo utilizada em outras partes dos sistema;</li>
+	 * </ul>
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @exception 
+	 */
+	public Map<String, String> isProdutoEdicaoValidoParaRemocao(Long idProdutoEdicao) throws Exception;
+	
 	/**
 	 * Retorna um produto edição dado seu código de barras
 	 * @param codigoBarras - código de barras
@@ -157,9 +174,13 @@ public interface ProdutoEdicaoService {
 	/**
 	 * Retorna o DTO produtoEdicao
 	 * @param codigoProduto
+	 * @param idProdutoEdicao
+	 * @param redistribuicao
+	 * @param situacaoProdutoEdicao 
+	 * 
 	 * @return
 	 */
-	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
+	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao, boolean redistribuicao, String situacaoProdutoEdicao);
 
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
 	

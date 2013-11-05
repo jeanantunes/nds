@@ -2,6 +2,9 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -56,7 +59,7 @@ public class FiltroTipoDescontoProdutoDTO extends FiltroDTO implements Serializa
 	 * @param codigoProduto the codigoProduto to set
 	 */
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, Constantes.TAMANHO_CAMPO_PRODUTO_CONSULTA, '0');
 	}
 
 	/**

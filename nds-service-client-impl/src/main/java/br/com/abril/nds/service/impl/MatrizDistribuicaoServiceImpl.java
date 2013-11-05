@@ -115,23 +115,25 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			 throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações.s");
 		 }
 		 
+		 Usuario usuario = usuarioRepository.buscarPorId(prodDistribVO.getIdUsuario());
+		 
 		 Long idLancamento = prodDistribVO.getIdLancamento().longValue();
 		 
 		 Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 		 
-		 Lancamento lancamentoCopy = cloneLancamento(lancamento);
+		 Lancamento lancamentoCopy = cloneLancamento(lancamento, usuario);
 		 
 		 ProdutoEdicao produtoEdicaoCopy = cloneProdutoEdicao(lancamentoCopy.getProdutoEdicao());
 		 
 		 lancamentoCopy.setProdutoEdicao(produtoEdicaoCopy);
 		 idLancamento = lancamentoRepository.adicionar(lancamentoCopy);
 		 
-		 gravarHistoricoLancamento(prodDistribVO.getIdUsuario().longValue(), lancamentoCopy);
+		 gravarHistoricoLancamento(usuario, lancamentoCopy);
 		 System.out.println(idLancamento);
 	}
 	
 	
-	private Lancamento cloneLancamento(Lancamento lancamento) {
+	private Lancamento cloneLancamento(Lancamento lancamento, Usuario usuario) {
 		
 		 Lancamento lancamentoCopy = new Lancamento();
 		 BeanUtils.copyProperties(lancamento, lancamentoCopy);
@@ -140,6 +142,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		 lancamentoCopy.setHistoricos(null);
 		 lancamentoCopy.setMovimentoEstoqueCotas(null);
 		 lancamentoCopy.setRecebimentos(null);
+		 lancamentoCopy.setUsuario(usuario);
 		 
 	  return lancamentoCopy;	 
 	}
@@ -160,15 +163,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	  return produtoEdicaoCopy;	 
 	}
 	
-	private void gravarHistoricoLancamento(Long idUsuario,  Lancamento lancamento) {
+	private void gravarHistoricoLancamento(Usuario usuario,  Lancamento lancamento) {
 		
 		 HistoricoLancamento historicoLancamento = new HistoricoLancamento();
 		 historicoLancamento.setDataEdicao(new Date());
 		 historicoLancamento.setLancamento(lancamento);
 		 historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
-		 historicoLancamento.setStatus(StatusLancamento.CONFIRMADO);
-		 Usuario user = usuarioRepository.buscarPorId(idUsuario);
-		 historicoLancamento.setResponsavel(user);
+		 historicoLancamento.setStatusNovo(StatusLancamento.CONFIRMADO);
+		 historicoLancamento.setResponsavel(usuario);
 	}
 
 	
@@ -346,7 +348,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 			if (prodDistribVO.isItemFinalizado()) {
 				
-				reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
+				reabrirItemDistribuicao(prodDistribVO);
 			}
 			
 		}
@@ -356,6 +358,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(prodDistribVO.getIdLancamento().longValue());
 		lanc.setDataFinMatDistrib(new Date());
+		lanc.setUsuario(this.usuarioRepository.buscarPorId(prodDistribVO.getIdUsuario()));
 		distribuicaoRepository.alterar(lanc);
 		
 		BigInteger idEstudo = prodDistribVO.getIdEstudo();
@@ -390,10 +393,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		return map;
 	}
 	
-	private void reabrirItemDistribuicao(Long idLancamento) {
+	private void reabrirItemDistribuicao(ProdutoDistribuicaoVO prodDistribVO) {
 		
-		Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(idLancamento);
+		Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(prodDistribVO.getIdLancamento().longValue());
 		lanc.setDataFinMatDistrib(null);
+		lanc.setUsuario(this.usuarioRepository.buscarPorId(prodDistribVO.getIdUsuario()));
 		distribuicaoRepository.alterar(lanc);
 	}
 	

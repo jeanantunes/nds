@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +34,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
@@ -76,14 +76,14 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = 
 				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
-		if(listaChamadaEncalheFornecedor==null) {
+		if(listaChamadaEncalheFornecedor == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao gerar boleto.");
 			
 		}
 		
 		List<BoletoDistribuidor> listaBoletoDistribuidor = 
-				gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, filtro.getNumeroSemana());
+				gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, Integer.valueOf(filtro.getSemana()));
 		
 		try {
 			
@@ -111,12 +111,13 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		for(ChamadaEncalheFornecedor item : chamadasFornecedor){
-					
-			if(item.getFornecedor() == null){
+		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
+			
+			// Essa validação deverá ser feita somente se houverem outros fornecedores vindos do Prodin.
+			/*if(cef.getFornecedor() == null) {
 				throw new ValidacaoException(TipoMensagem.ERROR,
 						"Erro de integridade. Não existe fornecedor associado ao registro!");
-			}
+			}*/
 			
 			BigDecimal totalCreditoApurado = BigDecimal.ZERO;
 			BigDecimal totalCreditoInformado = BigDecimal.ZERO;
@@ -126,30 +127,50 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			BigDecimal totalVendaInformada = BigDecimal.ZERO;
 			
 			List<ItemChamadaEncalheFornecedor> itensChamadaEncalheFornecedor = 
-							itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(item.getId(),filtro.getPeriodoRecolhimento());
+							itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cef.getId(), filtro.getPeriodoRecolhimento());
 			
-			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor){
+			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor) {
 				
-				itemFo = this.atualizarItem(itemFo.getQtdeDevolucaoInformada(),itemFo.getQtdeVendaInformada(),itemFo);
+				List<ItemFechamentoCEIntegracaoDTO> itemFechamentoCEIntegracaoDTO = null;
+				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() != null && itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+					filtro.setIdItemChamadaEncalheFornecedor(itemFo.getId());
+					itemFechamentoCEIntegracaoDTO = fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
+					filtro.setIdItemChamadaEncalheFornecedor(null);
+					ItemFechamentoCEIntegracaoDTO item = itemFechamentoCEIntegracaoDTO.get(0);
+					
+					BigDecimal desconto = obterPercentualDesconto(itemFo);
+					
+					itemFo.setValorVendaApurado(item.getPrecoCapa().multiply(new BigDecimal(item.getVenda())));
+					itemFo.setValorVendaInformado(item.getPrecoCapa().multiply(new BigDecimal(item.getVenda())));
+					itemFo.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(itemFo.getPrecoUnitario()).multiply(itemFo.getValorVendaApurado()));
+					itemFo.setValorVendaApurado(itemFo.getPrecoUnitario().multiply(itemFo.getValorVendaApurado()).subtract(itemFo.getValorMargemApurado()));
+					
+					itemFo.setValorMargemInformado(itemFo.getValorMargemApurado());
+					itemFo.setValorVendaInformado(itemFo.getValorVendaApurado());
+					
+				}
 				
 				totalCreditoApurado = totalCreditoApurado.add(itemFo.getValorVendaApurado());
 				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
 				totalMargemApurado = totalMargemApurado.add(itemFo.getValorMargemApurado());
 				totalMargemInformado = totalMargemInformado.add(itemFo.getValorMargemInformado());
-				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf((itemFo.getQtdeDevolucaoApurada()==null)?0:itemFo.getQtdeDevolucaoApurada()));
-				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf( (itemFo.getQtdeVendaApurada()==null)?0:itemFo.getQtdeVendaApurada()));
+				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf((itemFo.getQtdeDevolucaoApurada() == null) ? 0 : itemFo.getQtdeDevolucaoApurada()));
+				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf( (itemFo.getQtdeVendaApurada() == null) ? 0 : itemFo.getQtdeVendaApurada()));
+				
+				itemFo = this.atualizarItem(itemFo.getQtdeDevolucaoInformada(), itemFo.getQtdeVendaInformada(), itemFo);
+				
 			}
 			
-			item.setTotalCreditoApurado(totalCreditoApurado);
-			item.setTotalCreditoInformado(totalCreditoInformado);
-			item.setTotalMargemApurado(totalMargemApurado);
-			item.setTotalMargemInformado(totalMargemInformado);
-			item.setTotalVendaApurada(totalVendaApurada);
-			item.setTotalVendaInformada(totalVendaInformada);
-			item.setStatusCeNDS(StatusCeNDS.FECHADO);
-			item.setDataFechamentoNDS(dataOperacao);
+			cef.setTotalCreditoApurado(totalCreditoApurado);
+			cef.setTotalCreditoInformado(totalCreditoInformado);
+			cef.setTotalMargemApurado(totalMargemApurado);
+			cef.setTotalMargemInformado(totalMargemInformado);
+			cef.setTotalVendaApurada(totalVendaApurada);
+			cef.setTotalVendaInformada(totalVendaInformada);
+			cef.setStatusCeNDS(StatusCeNDS.FECHADO);
+			cef.setDataFechamentoNDS(dataOperacao);
 			
-			chamadaEncalheFornecedorRepository.alterar(item);
+			chamadaEncalheFornecedorRepository.alterar(cef);
 		}
 	}
 	
@@ -244,14 +265,15 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	private Intervalo<Date> obterPeriodoDataRecolhimento(String anoSemana) {
 		
-		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
+		Integer inicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
 		
-		Integer semana = Integer.parseInt(anoSemana.substring(4));
+		Integer anoBase = SemanaUtil.getAno(anoSemana);
 		
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
-			
+		Integer numeroSemana = SemanaUtil.getSemana(anoSemana);
+		
+		Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
+			numeroSemana, inicioSemana, anoBase);
+		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
 		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
@@ -259,17 +281,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return periodoRecolhimento;
 		
 	}
-	
-	private Date obterDataBase(String anoSemana, Date data) {
-		
-		String ano = anoSemana.substring(0,4);
-		Calendar c = Calendar.getInstance();
-		c.setTime(data);
-		c.set(Calendar.YEAR, Integer.parseInt(ano));
-		
-		return c.getTime();
-	}
-	
+
 	@Transactional
 	public void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
 		
@@ -279,10 +291,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		atualizarItem(encalhe.longValue(),venda.longValue(),item);
 	}
 
-	private ItemChamadaEncalheFornecedor atualizarItem(Long encalhe,Long vendaParcial ,ItemChamadaEncalheFornecedor item) {
+	private ItemChamadaEncalheFornecedor atualizarItem(Long encalhe, Long vendaParcial, ItemChamadaEncalheFornecedor item) {
 		
-		encalhe = (encalhe == null)?0:encalhe;
-		vendaParcial = (vendaParcial == null)?0:vendaParcial;
+		encalhe = (encalhe == null) ? 0 : encalhe;
+		vendaParcial = (vendaParcial == null) ? 0 : vendaParcial;
 		
 		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
 			
@@ -297,6 +309,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		item.setQtdeDevolucaoApurada(item.getQtdeDevolucaoInformada());
 		item.setQtdeVendaInformada(item.getQtdeVendaApurada());
 		item.setQtdeDevolucaoParcial(0L);
+		item.setValorVendaApurado(item.getPrecoUnitario().multiply(new BigDecimal(item.getQtdeVendaApurada())));
 		
 		BigDecimal desconto = obterPercentualDesconto(item);
 		

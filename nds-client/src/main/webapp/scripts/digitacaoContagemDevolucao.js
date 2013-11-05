@@ -17,11 +17,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 			var colunas = digitacaoContagemDevolucaoController.montarColunas();
 			
-			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexigrid({
-				
+			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexigrid({				
 				dataType : 'json',
 				preProcess:digitacaoContagemDevolucaoController.executarPreProcessamento,
-				onSuccess:function(){$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();},
+				onSuccess:function(){
+					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
+					$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();
+				},
 				colModel : colunas,
 				sortname : "codigoProduto",
 				sortorder : "asc",
@@ -78,7 +80,11 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexOptions({
 				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",
 				params: formData,
-				onSuccess: function(){$(".edicaoFechada").parents("tr").css("background", "#ffeeee");}
+				onSuccess: function(){
+					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
+					$(".edicaoFechada").parents("tr").css("background", "#ffeeee");
+					$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();
+				}
 			});
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexReload();
@@ -110,27 +116,38 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var classEdicaoFechada = row.cell.isEdicaoFechada ? "edicaoFechada" : "";
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
-										
+				var inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" class="input-exemplar-nota '+classEdicaoFechada+
+					' " type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				
+				var corDif = '';
+				
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onkeypress="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '
+						+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+
+						'" onchange="digitacaoContagemDevolucaoController.limparCheck('+index+')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup"  "/>';
-					
-					//Altera cor do valor da quantidade, caso seja um valo negativo
-					if(row.cell.diferenca < 0){
-						row.cell.diferenca = "<span style='color:red'>"+row.cell.diferenca+"</span>";
-					}
+					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup" ' +
+						'onclick="digitacaoContagemDevolucaoController.replicarValor('+index+')"/>';
 					
 					row.cell.replicarQtde = inputCheckReplicarValor;
+					
+					row.cell.qtdDevolucao = '<span id="qtdDevolucao_'+index+'">'+ row.cell.qtdDevolucao +'</span>';
+					
+					//Altera cor do valor da quantidade, caso seja um valo negativo
+					if (row.cell.diferenca < 0){
+						corDif = 'color:red';
+					}
 				}
+				
+				row.cell.diferenca = "<span id='difernca"+index+"' style='"+ corDif +"'>"+row.cell.diferenca+"</span>";
 				
 				//Inputs Hidden da grid
 				var inputDataRecolhimentoDistribuidor= '<input name="idDataRecolhimentoDist" type="hidden" value="' + row.cell.dataRecolhimentoDistribuidor + '" />';
+				var inputValorExemplarNotaAux = '<input type="hidden" id="valorExemplarNotaAux'+ index +'" value="'+ row.cell.qtdNota +'" />';
 				
 				//Insere input text para o campo exemplar nota
-				row.cell.qtdNota =  inputDataRecolhimentoDistribuidor + inputExemplarNota;
+				row.cell.qtdNota =  inputDataRecolhimentoDistribuidor + inputExemplarNota + inputValorExemplarNotaAux;
 				
 				if( !row.cell.precoVenda ){
 					row.cell.precoVenda ='0,00';
@@ -146,30 +163,84 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 			return resultado.tableModel;
 		},
+		
+		replicarValor:function(index){
+			
+			if ($("#ch" + index, digitacaoContagemDevolucaoController.workspace).is(":checked")){
+				$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val(
+					$("#qtdDevolucao_" + index, digitacaoContagemDevolucaoController.workspace).text()
+				);
+				
+				$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("0");
+			} else {
+				
+				$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
+				
+				$("#sel", digitacaoContagemDevolucaoController.workspace).attr("checked",false);
+				
+				var valorAux = 
+					$("#valorExemplarNotaAux" + index, digitacaoContagemDevolucaoController.workspace).val();
+				
+				if (valorAux || valorAux == "0"){
+					$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val(valorAux);
+					
+					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text(
+						parseInt($("#qtdDevolucao_" + index, digitacaoContagemDevolucaoController.workspace).text())-
+						valorAux
+					);
+					
+				} else {
+					$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val("");
+					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
+				}
+			}
+		},
 
 		/**
 			Limpa os valores do checked. 
 		**/
 		limparCheck:function (id){
 			
-			$('#'+id, digitacaoContagemDevolucaoController.workspace).attr("checked",false);	
+			$('#ch'+id, digitacaoContagemDevolucaoController.workspace).attr("checked",false);
+			$('#sel', digitacaoContagemDevolucaoController.workspace).attr("checked",false);
+			
+			if ($("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val() != ""){
+				$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text(
+					parseInt($("#qtdDevolucao_" + id, digitacaoContagemDevolucaoController.workspace).text()) -
+					parseInt($("#valorExemplarNota" + id, digitacaoContagemDevolucaoController.workspace).val())
+				);
+			} else {
+				$("#difernca" + id, digitacaoContagemDevolucaoController.workspace).text("");
+			}
 		},
 		
 		replicarValores : function() {
 			
-			$("#contagemDevolucaoGrid tr", digitacaoContagemDevolucaoController.workspace).each( function(index, input) { 
+			$(".chBoxReplicar", digitacaoContagemDevolucaoController.workspace).each( function(index, input) { 
 				
 				var row = $(input); 
-				var value = $(row.find("td")[4]).find("div").html();
-				var qtdNota = row.find("input[name='qtdNota']");
+				var value = $("#qtdDevolucao_" + index).text();
+				var qtdNota = $("#valorExemplarNota" + index);
 				
 				
-				if(row.find(".chBoxReplicar").is(":checked")){ 
+				if(row.is(":checked")){ 
 					qtdNota.val(value);
-					qtdNota.prop('disabled', true); 
+					//qtdNota.prop('disabled', true);
+					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("0");
 				} else {
-					qtdNota.val("");
-					qtdNota.prop('disabled', false); 
+					
+					var valorAux = 
+						$("#valorExemplarNotaAux" + index, digitacaoContagemDevolucaoController.workspace).val();
+					
+					if (valorAux || valorAux == "0"){
+						qtdNota.val(valorAux);
+						$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text(value - valorAux);
+					} else {
+						qtdNota.val("");
+						$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
+					}
+					
+					//qtdNota.prop('disabled', false);
 				}
 				
 			});
@@ -183,12 +254,9 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		**/
 		checkAllReplicarValor: function (todos, checkgroupName) {
 			
-			if(todos.checked == false) {
-				digitacaoContagemDevolucaoController.limparValorAll();
-			}		
-			else {										
-				$(".chBoxReplicar").attr("checked", true);
-			}	
+			$(".chBoxReplicar").attr("checked", todos.checked);
+			
+			digitacaoContagemDevolucaoController.replicarValores();
 		},
 		
 		/**
@@ -196,7 +264,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		**/
 		salvar:function(){
 			
-			var param = serializeArrayToPost('listaDigitacaoContagemDevolucao', digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao());		
+			var param = serializeArrayToPost('listaDigitacaoContagemDevolucao', 
+					digitacaoContagemDevolucaoController.obterListaDigitacaoContagemDevolucao());
+			
+			param["replicarTodos"] = $("#sel", digitacaoContagemDevolucaoController.workspace).is(":checked");
 			
 			$.postJSON(
 				contextPath + "/devolucao/digitacao/contagem/salvar", 
@@ -256,8 +327,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			 $.fileDownload(contextPath + "/devolucao/digitacao/contagem/gerarChamadaEncalheFornecedor", {
 	                httpMethod : "POST",
 	                data : [],
-	                failCallback : function() {
-	                    exibirMensagem("ERROR", ["Erro ao gerar CE Devolução!"]);
+	                failCallback : function(arg) {
+	                    exibirMensagem("WARNING", ["Não há CE Devolução no periodo informado!"]);
 	                }
 	         });
 		},
@@ -309,6 +380,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
 				var colunaTotalComDesconto = linha.find("td")[5];
 				var colunaDiferenca = linha.find("td")[8];
+				var colunaDataRecolhimento = linha.find("td")[7];
 				
 				var codigoProduto = $(colunaCodigoProduto, digitacaoContagemDevolucaoController.workspace).find("div").html();
 				
@@ -322,7 +394,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var qtdNota = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val();
 				
-				var dataRecolhimentoDistribuidor = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
+				var dataRecolhimentoDistribuidor = $(colunaDataRecolhimento, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
 				
 				if (!$.trim(qtdNota)) {
 
@@ -332,7 +404,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,
 												  numeroEdicao:numeroEdicao,
 												  precoVenda:precoCapa,
-												  dataRecolhimentoDistribuido:dataRecolhimentoDistribuidor,
+												  dataRecolhimentoDistribuidor:dataRecolhimentoDistribuidor,
 												  qtdNota:qtdNota,
 												  valorTotalComDesconto:totalComDesconto};
 				
@@ -345,16 +417,6 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			});
 
 			return listaDigitacaoContagemDevolucao;
-		},
-		
-		/**
-			Limpa todos os dados do grid que estiverem selecionados
-		**/
-		limparValorAll: function (){
-			
-			$(".chBoxReplicar").attr("checked", false);
-			digitacaoContagemDevolucaoController.replicarValores();	
-		
 		},
 		
 		/**
@@ -551,7 +613,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		
 		montaGridEdicoesFechadas :function(){
 			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({
-				
+				onSuccess: function() {bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);},
 				preProcess: function(data) {
 					if( typeof data.mensagens == "object") {
 
@@ -560,7 +622,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					} else {
 						$.each(data.rows, function(index, value) {
 							
-							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' +value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('
+								+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' 
+								+value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							
 							var sel = '<input type="checkbox" name="checkbox" id="checkbox" onclick="'+onClick+'" />';
 							value.cell.parcial = (value.cell.parcial)?"Sim":"Não";				
 							

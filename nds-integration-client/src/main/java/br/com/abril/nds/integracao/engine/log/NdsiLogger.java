@@ -36,8 +36,7 @@ public class NdsiLogger extends AbstractRepository {
 	private PlatformTransactionManager transactionManager;
 	
 	private Logger LOGGER = Logger.getLogger(NdsiLogger.class);
-	private boolean hasError = false;
-	private boolean hasWarning = false;
+	private StatusExecucaoEnum statusProcesso = StatusExecucaoEnum.SUCESSO;
 	private LogExecucao logExecucao = null;
 	private LogExecucaoMensagem logExecucaoMensagem = null;
 	
@@ -59,7 +58,7 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucao.setDataInicio(new Date());
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(route.getUserName());
-		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+		logExecucao.setStatus(StatusExecucaoEnum.ERRO);// Inicia o processo como Não processado - No final atualiza status
 		
 		try {
 			TransactionTemplate template = new TransactionTemplate(transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -84,13 +83,7 @@ public class NdsiLogger extends AbstractRepository {
 	
 	public void logEnd(RouteTemplate route) {
 		
-		if (hasError) {
-			logExecucao.setStatus(StatusExecucaoEnum.FALHA);
-		} else if (hasWarning) {
-			logExecucao.setStatus(StatusExecucaoEnum.AVISO);
-		} else {
-			logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
-		}
+		logExecucao.setStatus(this.statusProcesso);
 		logExecucao.setDataFim(new Date());
 		
 		try {
@@ -111,16 +104,17 @@ public class NdsiLogger extends AbstractRepository {
 	
 	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
-		hasError = true;
-		//message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		this.statusProcesso = StatusExecucaoEnum.FALHA;
 		message.getHeader().put(descricaoErro, MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue());
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
 	
 	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
+
+		if(this.statusProcesso != StatusExecucaoEnum.FALHA)//Nao deve sobrescrever fatal
+			this.statusProcesso = StatusExecucaoEnum.AVISO;
 		
-		hasWarning = true;
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
@@ -150,10 +144,18 @@ public class NdsiLogger extends AbstractRepository {
 		EventoExecucao eventoExecucao = new EventoExecucao();
 		eventoExecucao.setId(eventoExecucaoEnum.getCodigo());
 		
+		logExecucao.setStatus(this.statusProcesso);
+		
 		logExecucaoMensagem = new LogExecucaoMensagem();
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
-		logExecucaoMensagem.setMensagem(descricaoErro);
+		
+		String descricaoErroTamanhoLimitado = descricaoErro;
+		if(descricaoErro != null && descricaoErro.length() > 499){
+			descricaoErroTamanhoLimitado = descricaoErro.substring(0, 499);
+		}
+		
+		logExecucaoMensagem.setMensagem(descricaoErroTamanhoLimitado);
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
 			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
@@ -176,7 +178,7 @@ public class NdsiLogger extends AbstractRepository {
 		}
 	}
 	
-	/*public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}*/
+	public void setStatusProcesso(StatusExecucaoEnum status){
+		this.statusProcesso = status;
+	}
 }

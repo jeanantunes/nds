@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,8 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
@@ -62,8 +65,6 @@ public class InadimplenciaController extends BaseController {
 	@Autowired
 	private DividaService dividaService;
 	
-	private static final String FORMATO_DATA = "dd/MM/yyyy";
-	
 	@Autowired
 	private static final Logger LOG = LoggerFactory
 			.getLogger(InadimplenciaController.class);
@@ -92,7 +93,8 @@ public class InadimplenciaController extends BaseController {
 	@Path("/")
 	public void index() {
 		gerarListaStatus();
-		result.forwardTo(InadimplenciaController.class).inadimplencia();
+		this.result.include("statusDivida", StatusDivida.values());
+		this.result.forwardTo(InadimplenciaController.class).inadimplencia();
 	}
 
 	private void gerarListaStatus() {
@@ -109,13 +111,13 @@ public class InadimplenciaController extends BaseController {
 	
 	public void pesquisar( Integer page, Integer rp, String sortname, String sortorder,
 			String periodoDe, String periodoAte, String nomeCota, Integer numCota, String statusCota, 
-			boolean situacaoEmAberto, boolean situacaoNegociada, boolean situacaoPaga) {
+			List<StatusDivida> statusDivida) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		TableModel<CellModelKeyValue<StatusDividaDTO>> grid = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
 		
-		if (!situacaoEmAberto && !situacaoNegociada && !situacaoPaga) {
+		if (statusDivida == null) {
 			
 			mensagens.add(WARNING_PESQUISA_VALIDACAO_SITUACAO);
 			status=TipoMensagem.WARNING;
@@ -140,9 +142,10 @@ public class InadimplenciaController extends BaseController {
 			filtroAtual.setNomeCota(nomeCota);
 			filtroAtual.setPeriodoDe(periodoDe);
 			filtroAtual.setPeriodoAte(periodoAte);
-			filtroAtual.setSituacaoEmAberto(situacaoEmAberto);
-			filtroAtual.setSituacaoPaga(situacaoPaga);
-			filtroAtual.setSituacaoNegociada(situacaoNegociada);
+			
+			filtroAtual.setStatusDivida(statusDivida);
+			
+			filtroAtual.setDataOperacaoDistribuidor(distribuidorService.obterDataOperacaoDistribuidor());
 			
 			if(statusCota!= null && !statusCota.equals("none")) {
 				
@@ -216,14 +219,6 @@ public class InadimplenciaController extends BaseController {
 	 */
 	private void tratarFiltro(FiltroCotaInadimplenteDTO filtroAtual) {
 
-		FiltroCotaInadimplenteDTO filtroSession = (FiltroCotaInadimplenteDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
@@ -254,18 +249,62 @@ public class InadimplenciaController extends BaseController {
 	 */
 	public void getDetalhesDivida(Long idDivida) {
 		
-		List<Divida> dividas = dividaService.getDividasAcumulo(idDivida);
+		List<DividaDTO> dividasDTO = null;
 		
-		List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
+		Divida dividaAtual = dividaService.obterDividaPorId(idDivida);
 		
-		for(Divida divida : dividas) {
-			dividasDTO.add(new DividaDTO(
-					DateUtil.formatarData(divida.getCobranca().getDataVencimento(), FORMATO_DATA), 
-					CurrencyUtil.formatarValor(divida.getCobranca().getValor())));
+		if (StatusDivida.NEGOCIADA.equals(dividaAtual.getStatus())) {
+			
+			dividasDTO = this.montarDividasDTONegociacao(idDivida);
+			
+		} else {
+			
+			dividasDTO = this.montarDividasDTO(idDivida);
 		}
+		
 		result.use(Results.json()).from(dividasDTO, "result").serialize();
 	}
 	
+	private List<DividaDTO> montarDividasDTONegociacao(Long idDivida) {
+		
+		List<MovimentoFinanceiroCota> movimentosFinanceiroCota =
+			this.dividaService.obterDividasNegociacao(idDivida);
+		
+		List<DividaDTO> dividasDTO = new ArrayList<>();
+		
+		DividaDTO dividaDTO = null;
+		
+		for(MovimentoFinanceiroCota mec : movimentosFinanceiroCota) {
+			
+			dividaDTO = new DividaDTO(DateUtil.formatarDataPTBR(mec.getData()),
+									  CurrencyUtil.formatarValor(mec.getValor()));
+			
+			dividasDTO.add(dividaDTO);
+		}
+		
+		return dividasDTO;
+	}
+	
+	private List<DividaDTO> montarDividasDTO(Long idDivida) {
+		
+		List<Divida> dividas = this.dividaService.obterDividasAcumulo(idDivida);
+		
+		List<DividaDTO> dividasDTO = new ArrayList<>();
+		
+		DividaDTO dividaDTO = null;
+		
+		for(Divida divida : dividas) {
+			
+			dividaDTO =
+				new DividaDTO(DateUtil.formatarDataPTBR(divida.getCobranca().getDataVencimento()), 
+							  CurrencyUtil.formatarValor(divida.getCobranca().getValor()));
+			
+			dividasDTO.add(dividaDTO);
+		}
+		
+		return dividasDTO;
+	}
+
 	/**
 	 * Obtém a divida
 	 * 
@@ -288,6 +327,8 @@ public class InadimplenciaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaInadimplenteDTO filtro = (FiltroCotaInadimplenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<StatusDividaDTO> listaInadimplencias = dividaService.obterInadimplenciasCota(filtro);
 		

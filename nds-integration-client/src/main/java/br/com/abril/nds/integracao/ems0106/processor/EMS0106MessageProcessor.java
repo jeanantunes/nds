@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0106.processor;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -12,10 +13,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -36,7 +40,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 	
 	@Override
@@ -46,13 +50,13 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
-			
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
-				edicao);
+
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao, edicao);
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
+					"NAO ENCONTROU Produto de codigo: " + codigoPublicacao + " edicao: " + edicao);
 			return;
 		}
 			
@@ -63,15 +67,19 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			if (lancamento == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
-						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
+						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + " edicao: " + edicao);
 				return;
 			}
 		}
 		
-		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
+		//Não continuar linha do arquivo caso esteja com algum desses status
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO || lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO || 
+				lancamento.getStatus() == StatusLancamento.FURO || lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO || 
+				lancamento.getStatus() == StatusLancamento.EM_RECOLHIMENTO || lancamento.getStatus() == StatusLancamento.RECOLHIDO ||
+				lancamento.getStatus() == StatusLancamento.FECHADO
+			) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + " edicao: " + edicao + " está com STATUS: " +lancamento.getStatus().getDescricao()+" e portanto, não gerará ou alterará o estudo!");
 			return;
 		}
 		
@@ -80,8 +88,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			// Cadastrar novo estudo:
 			estudo = new Estudo();
-			estudo.setQtdeReparte(BigInteger.valueOf(
-					input.getReparteDistribuir()));
+			estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
 			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
@@ -89,19 +96,63 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			// Associar novo estudo com o lançamento existente:
 			lancamento.setEstudo(estudo);
+			
+			if(lancamento.getReparte() == null || (lancamento.getReparte() != null && lancamento.getReparte().compareTo(new BigInteger("1")) < 0)) {
+				lancamento.setReparte(estudo.getQtdeReparte());
+			}
+			
 			this.getSession().merge(lancamento);
 		} else {
 			
+			//Cenário Lancamento.status in('PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'BALANCEADO', 'ESTUDO_FECHADO', 'CANCELADO')
+			
+			for(EstudoCota estudoCota : estudo.getEstudoCotas()){
+				
+				//Desvincula os ItemNotaEnvios dos EstudoCotas a serem deletados p/ nao apresentar erro de FK
+				for(ItemNotaEnvio itemNota : estudoCota.getItemNotaEnvios()){
+					
+					Query queryNotaItem = getSession().createQuery("delete from ItemNotaEnvio where itemNotaEnvioPK = :itemNotaEnvioPK");
+					queryNotaItem.setParameter("itemNotaEnvioPK", itemNota.getItemNotaEnvioPK());
+					queryNotaItem.executeUpdate();
+
+					this.ndsiLoggerFactory.getLogger().logWarning(message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Excluído item nota de envio número: "
+									+ itemNota.getItemNotaEnvioPK().getNotaEnvio().getNumero()
+									+ " data de emissão: "+ itemNota.getItemNotaEnvioPK().getNotaEnvio().getDataEmissao()
+									+ " número cota: : " + estudoCota.getCota().getNumeroCota()
+									+ " publicação: " + codigoPublicacao);
+				}
+				
+				//Verifica se tem movimento_estoque_cota associado ao estudo_cota
+				boolean retornar = false;
+				for(MovimentoEstoqueCota movimentosEstoqueCota : estudoCota.getMovimentosEstoqueCota()){
+					
+					this.ndsiLoggerFactory.getLogger().logError(message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Movimento desta publicação já foi consignado data: "
+									+ movimentosEstoqueCota.getData()
+									+ " número cota: : " + estudoCota.getCota().getNumeroCota()
+									+ " publicação: " + codigoPublicacao +" o estudo da cota não poderá ser excluído.");
+					retornar = true;
+				}
+				
+				if(retornar)
+					return;
+			}
+			
+			
 			// Remoção dos EstudoCotas que ficaram desatualizados:
-			Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
-			query.setParameter("estudo", estudo);
-			query.executeUpdate();
+			Query queryEstudoCota = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
+			queryEstudoCota.setParameter("estudo", estudo);
+			queryEstudoCota.executeUpdate();
+
 			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
 			
 			// Atualizar os dados do Estudo:
 			BigInteger qtdeReparteAtual = estudo.getQtdeReparte();
-			BigInteger qtdeReparteCorrente = BigInteger.valueOf(
-					input.getReparteDistribuir());
+			BigInteger qtdeReparteCorrente = BigInteger.valueOf(input.getReparteDistribuir());
+			
 			if (!qtdeReparteAtual.equals(qtdeReparteCorrente)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -124,8 +175,20 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			estudo.setDataAlteracao(new Date());
 			this.getSession().merge(estudo);
+			
+			if(lancamento.getReparte() == null || (lancamento.getReparte() != null && lancamento.getReparte().compareTo(new BigInteger("0")) < 1)) {
+				lancamento.setReparte(estudo.getQtdeReparte());
+			}
+			
+			this.getSession().merge(lancamento);
+			
 		}
 		
+		this.ndsiLoggerFactory.getLogger().logInfo(message,
+				EventoExecucaoEnum.INF_DADO_ALTERADO,
+				"EstudoCota processado: " + estudo.getId() + " para o Produto de codigo: " + codigoPublicacao + " edicao: " + edicao + 
+				" no Lancamento: " + lancamento.getDataLancamentoPrevista().toString() + " Inserido com sucesso!");
+
 	}
 	
 	/**
@@ -136,13 +199,11 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @return
 	 */
-	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
-			Long edicao) {
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao, Long edicao) {
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
@@ -176,7 +237,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = getSession().createQuery(sql.toString());
 		
+		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		//Date dataOperacao = new Date();
 		query.setParameter("produtoEdicao", produtoEdicao);
 		query.setDate("dataOperacao", dataOperacao);
 		
@@ -199,6 +262,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = getSession().createQuery(sql.toString());
 		
+		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
+		//Date dataOperacao = new Date();
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		query.setParameter("produtoEdicao", produtoEdicao);
 		query.setDate("dataOperacao", dataOperacao);
@@ -212,7 +277,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
 }

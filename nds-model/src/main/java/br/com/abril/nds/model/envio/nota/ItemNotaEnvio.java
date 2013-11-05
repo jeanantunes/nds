@@ -40,6 +40,9 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name="CODIGO_PRODUTO", length=60, nullable=false)
 	private String codigoProduto;
 	
+	@Column(name="SEQ_MATRIZ_LANCAMENTO")
+	private Integer sequenciaMatrizLancamento;
+	
 	/**
 	 * xProd
 	 */
@@ -198,5 +201,18 @@ public class ItemNotaEnvio implements Serializable {
 			List<MovimentoEstoqueCota> movimentosProdutoSemEstudo) {
 		this.movimentosProdutoSemEstudo = movimentosProdutoSemEstudo;
 	}
-	
+
+	/**
+	 * @return the sequenciaMatrizLancamento
+	 */
+	public Integer getSequenciaMatrizLancamento() {
+		return sequenciaMatrizLancamento;
+	}
+
+	/**
+	 * @param sequenciaMatrizLancamento the sequenciaMatrizLancamento to set
+	 */
+	public void setSequenciaMatrizLancamento(Integer sequenciaMatrizLancamento) {
+		this.sequenciaMatrizLancamento = sequenciaMatrizLancamento;
+	}
 }

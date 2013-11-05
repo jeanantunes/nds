@@ -70,7 +70,16 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Venda total de reparte
 	 */
-	VENDA_TOTAL(OperacaoFinaceira.DEBITO);
+	VENDA_TOTAL(OperacaoFinaceira.DEBITO),
+	
+	
+	PENDENTE(OperacaoFinaceira.DEBITO),
+	
+	
+	LANCAMENTO_CAUCAO_LIQUIDA(OperacaoFinaceira.DEBITO),
+	
+	
+	RESGATE_CAUCAO_LIQUIDA(OperacaoFinaceira.CREDITO);
 	
 	
 	private OperacaoFinaceira operacaoFinaceira;

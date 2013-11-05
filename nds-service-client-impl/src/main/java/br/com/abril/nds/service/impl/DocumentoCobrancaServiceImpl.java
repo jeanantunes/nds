@@ -1,5 +1,9 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +27,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -37,11 +42,13 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.JasperUtil;
 
 @Service
 public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
@@ -64,6 +71,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
 	
 	@Override
 	@Transactional
@@ -84,11 +94,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 					retorno = getDocumentoCobranca(cobranca);
 			}
 			
-		} catch (Exception e) {
+		}catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}
 		
-		this.cobrancaRepository.incrementarVia(nossoNumero);
+		Integer vias = (cobranca.getVias() == null) ? 1 : (cobranca.getVias()+1);
+		
+		cobranca.setVias(vias);
+		
+		this.cobrancaRepository.merge(cobranca);
 		
 		return retorno;
 	}
@@ -110,7 +124,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 					enviarDocumentoPorEmail(cobranca);
 				
 			}
+			
 		} catch (Exception e) {
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar e-mail de arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}
 		
@@ -268,7 +284,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		EnderecoDistribuidor enderecoDistribuidor = distribuidor.getEnderecoDistribuidor();
 		
 		map.put("cidade",(enderecoDistribuidor.getEndereco()==null)?"": enderecoDistribuidor.getEndereco().getCidade());
-		map.put("enderecoDistribuidor", (enderecoDistribuidor.getEndereco()==null)?"":enderecoDistribuidor.getEndereco().getLogradouro() );
+		map.put("enderecoDistribuidor", this.obterDescricaoEnderecoDistribuidor(enderecoDistribuidor) );
 		
 		for(TelefoneDistribuidor telefone : distribuidor.getTelefones()){
 			
@@ -283,7 +299,36 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		map.put("data", new Date());
 		map.put("nomeDistribuidor",distribuidor.getJuridica().getRazaoSocial());
 		
+		InputStream logoDistribuidor = parametrosDistribuidorService.getLogotipoDistribuidor();
+
+		if(logoDistribuidor == null){
+			logoDistribuidor = new ByteArrayInputStream(new byte[0]);;
+		}
+		
+		map.put("imagem",JasperUtil.getImagemRelatorio(logoDistribuidor));
+		
 		return map;
+	}
+	
+	private String obterDescricaoEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor){
+		
+		Endereco endereco  = enderecoDistribuidor.getEndereco();
+		
+		if(endereco == null){
+			return null;
+		}
+		
+		StringBuilder descricao = new StringBuilder();
+		
+		descricao.append(endereco.getTipoLogradouro()).append(" ")
+					.append(endereco.getLogradouro()).append(", ")
+					.append(endereco.getNumero()).append(" - ")
+					.append(endereco.getBairro()).append(" - ")
+					.append("CEP ").append(endereco.getCep()).append(" ")
+					.append(endereco.getCidade()).append(" - ")
+					.append(endereco.getUf()); 
+		
+		return descricao.toString();
 	}
 	
 	/**
@@ -298,13 +343,23 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		Banco banco  = cobranca.getBanco();
 		
-		if(banco!= null){
-			impressaoDTO.setAgencia(banco.getAgencia().intValue());
-			impressaoDTO.setConta(banco.getConta().toString());
-			impressaoDTO.setNomeBanco(banco.getNome());
-		}
+		this.atribuirDadosBanco(impressaoDTO, banco);
 		
 		Cota cota  = cobranca.getCota();
+		
+		this.atribuirDadosCota(razaoSocialDistribuidor, impressaoDTO, cota);
+		
+		BigDecimal valor  = cobranca.getValor();
+		valor = valor.setScale(2,RoundingMode.HALF_EVEN);
+		
+		impressaoDTO.setTipoCobranca(cobranca.getTipoCobranca());
+		impressaoDTO.setValor(valor);
+		impressaoDTO.setVencimento(cobranca.getDataVencimento());
+		
+		return impressaoDTO;
+	}
+
+	private void atribuirDadosCota(String razaoSocialDistribuidor,CobrancaImpressaoDTO impressaoDTO, Cota cota) {
 		
 		if(cota!= null){
 			
@@ -346,12 +401,28 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 				impressaoDTO.setRoteiro("");
 			}
 		}
+	}
+
+	private void atribuirDadosBanco(CobrancaImpressaoDTO impressaoDTO, Banco banco) {
 		
-		impressaoDTO.setTipoCobranca(cobranca.getTipoCobranca());
-		impressaoDTO.setValor(cobranca.getValor());
-		impressaoDTO.setVencimento(cobranca.getDataVencimento());
-		
-		return impressaoDTO;
+		if(banco!= null){
+			
+			String agencia = (banco.getAgencia() == null) ? "" : banco.getAgencia().toString();
+			
+			String conta = (banco.getConta() == null) ? "" : banco.getConta().toString();
+			
+			if(banco.getDvAgencia()!= null && !banco.getDvAgencia().isEmpty()){
+				agencia += " - " + banco.getDvAgencia();
+			}
+			
+			if(banco.getDvConta()!= null && !banco.getDvConta().isEmpty()){
+				conta += " - " + banco.getDvConta();
+			}
+			
+			impressaoDTO.setAgencia(agencia);
+			impressaoDTO.setConta(conta);
+			impressaoDTO.setNomeBanco(banco.getNome());
+		}
 	}
 	
 }

@@ -48,7 +48,8 @@ public class FiltroConsolidadoEncalheCotaDTO {
 		PRECO_COM_DESCONTO("precoComDesconto"),
 		ENCALHE("encalhe"),
 		FORNECEDOR("fornecedor"),
-		TOTAL("total");	
+		TOTAL("total"),
+		SEQUENCIA("sequencia");
 		
 		private String nomeColuna;
 		

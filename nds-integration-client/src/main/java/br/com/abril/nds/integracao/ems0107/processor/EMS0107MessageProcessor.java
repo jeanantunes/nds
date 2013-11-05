@@ -47,7 +47,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 	
 	@Override
@@ -57,8 +57,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
-				edicao);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao, edicao);
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -66,8 +66,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 			
-		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-				produtoEdicao);
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(produtoEdicao);
 		if (lancamento == null) {
 			
 			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);
@@ -120,7 +119,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		eCota.setQtdePrevista(qtdReparte);
 		eCota.setQtdeEfetiva(qtdReparte);
 
-		this.ndsiLoggerFactory.getLogger().logError(message,
+		this.ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
 				"EstudoCota para a numero de Cota: " + numeroCota + "para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " no Lancamento: " + lancamento.getDataLancamentoPrevista().toString() + " Inserido com sucesso!");
 		
@@ -135,13 +134,11 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @return
 	 */
-	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
-			Long edicao) {
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao, Long edicao) {
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
@@ -175,8 +172,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoMaisProximo(
-			ProdutoEdicao produtoEdicao) {
+	private Lancamento getLancamentoPrevistoMaisProximo(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -190,7 +186,10 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		query.setParameter("produtoEdicao", produtoEdicao);
+		
 		query.setDate("dataOperacao", dataOperacao);
+		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
+		//query.setDate("dataOperacao", new Date());
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -204,8 +203,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
-			ProdutoEdicao produtoEdicao) {
+	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -219,7 +217,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		query.setParameter("produtoEdicao", produtoEdicao);
+		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
 		query.setDate("dataOperacao", dataOperacao);
+		//query.setDate("dataOperacao", new Date());
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -249,9 +249,12 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		return (qtd != null && qtd.intValue() > 0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void posProcess(Object tempVar) {
-		
+
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+
 		/*
 		 * Regras de validação para EMS-107:
 		 * 
@@ -268,6 +271,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		hqlEstudoSemEstudoCota.append("  WHERE NOT EXISTS( FROM EstudoCota ec WHERE ec.estudo = e)");
 		
 		Query query = getSession().createQuery(hqlEstudoSemEstudoCota.toString());
+		
 		List<Estudo> lstEstudos = query.list();
 		if (lstEstudos != null && !lstEstudos.isEmpty()) {
 			for (Estudo estudo : lstEstudos) {
@@ -296,8 +300,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		if (lstEstudoId != null && !lstEstudoId.isEmpty()) {
 			for (Object estudoId : lstEstudoId) {
 				
-				Criteria criteriaEstudo = this.getSession().createCriteria(
-						Estudo.class, "estudo");
+				Criteria criteriaEstudo = this.getSession().createCriteria(Estudo.class, "estudo");
 				criteriaEstudo.add(Restrictions.eq("estudo.id", estudoId));
 				Estudo estudo = (Estudo) criteriaEstudo.uniqueResult();
 				
@@ -306,7 +309,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				this.getSession().delete(estudo);
 			}
 		}
-				
+
 	}
 		
 }

@@ -40,8 +40,6 @@ import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TermoAdesaoDTO;
@@ -49,7 +47,6 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -57,6 +54,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -111,7 +109,6 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.SocioCotaRepository;
@@ -127,9 +124,9 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
@@ -229,9 +226,6 @@ public class CotaServiceImpl implements CotaService {
 	private HistoricoTitularidadeService historicoTitularidadeService;
 	
 	@Autowired
-	private RankingRepository rankingRepository;
-	
-	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Autowired
@@ -245,6 +239,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService; 
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -707,9 +704,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
 		
+		Date dataInicioValidade = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
 		for(Long id:idCotas) {	
 			
-			cotasSuspensas.add(suspenderCota(id, usuario, motivoAlteracaoSituacao));
+			cotasSuspensas.add(suspenderCota(id, usuario, dataInicioValidade, motivoAlteracaoSituacao));
 		}	
 		
 		return cotasSuspensas;
@@ -717,7 +716,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional
-	public Cota suspenderCota(Long idCota, Usuario usuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao) {
+	public Cota suspenderCota(Long idCota, Usuario usuario, Date dataInicioValidade, MotivoAlteracaoSituacao motivoAlteracaoSituacao) {
 				
 		Cota cota = obterPorId(idCota);
 		
@@ -734,15 +733,16 @@ public class CotaServiceImpl implements CotaService {
 		historico.setResponsavel(usuario);
 		historico.setMotivo(motivoAlteracaoSituacao);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
-		historico.setDataInicioValidade(new Date());
+		historico.setDataInicioValidade(dataInicioValidade);
+		historico.setProcessado(true);
 		
-		historicoSituacaoCotaRepository.merge(historico);
+		this.historicoSituacaoCotaRepository.merge(historico);
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 		
-		cotaRepository.alterar(cota);
+		this.cotaRepository.alterar(cota);
 		
-		situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
+		this.situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
 		
 		return cota;
 	}
@@ -751,21 +751,25 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
-		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);
+		List<CotaSuspensaoDTO> cotasSujeitasSuspensao = 
+			this.cotaRepository.obterCotasSujeitasSuspensao(sortOrder, sortColumn, inicio, rp, 
+					this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
-		for(CotaSuspensaoDTO dto : lista) {
-			Integer perc = (int) ((dto.getDoubleDividaAcumulada() / dto.getDoubleConsignado() ) * 100);
-			dto.setPercDivida(perc.toString() + "%");
-			dto.setFaturamento(CurrencyUtil.formatarValor(estoqueProdutoCotaRepository.obterFaturamentoCota(dto.getIdCota())));
-		}
-		
-		return lista;		
+		return cotasSujeitasSuspensao;		
 	}
 
 	@Override
 	@Transactional
 	public Long obterTotalCotasSujeitasSuspensao() {
-		return cotaRepository.obterTotalCotasSujeitasSuspensao();
+		return cotaRepository.obterTotalCotasSujeitasSuspensao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+	}
+	
+	@Override
+	@Transactional
+	public BigDecimal obterTotalDividaCotasSujeitasSuspensao() {
+		
+		return cotaRepository.obterTotalDividaCotasSujeitasSuspensao(
+			this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	}
 	
 	@Override
@@ -900,12 +904,48 @@ public class CotaServiceImpl implements CotaService {
 			dto.setQtdeAutomatica(true);
 		}
 		
+		
+		
+		
 		if (parametro == null) {
 
 			dto = this.setDistribuicaoDefault(dto);
-
 			return dto;	
+			
+		} else if ((parametro.getSlipImpresso() == null || parametro.getSlipImpresso() == false) &&
+					(parametro.getSlipEmail() == null || parametro.getSlipEmail() == false) &&
+					(parametro.getBoletoImpresso() == null || parametro.getBoletoImpresso() == false) &&
+					(parametro.getBoletoEmail() == null || parametro.getBoletoEmail() == false) &&
+					(parametro.getBoletoSlipImpresso() == null || parametro.getBoletoSlipImpresso() == false) &&
+					(parametro.getBoletoSlipEmail() == null || parametro.getBoletoSlipEmail() == false) &&
+					(parametro.getReciboImpresso() == null || parametro.getReciboImpresso() == false) &&
+					(parametro.getReciboEmail() == null || parametro.getReciboEmail() == false) &&
+					(parametro.getChamadaEncalheImpresso() == null || parametro.getChamadaEncalheImpresso() == false) &&
+					(parametro.getChamadaEncalheEmail() == null || parametro.getChamadaEncalheEmail() == false) &&
+					(parametro.getNotaEnvioImpresso() == null || parametro.getNotaEnvioImpresso() == false) &&
+					(parametro.getNotaEnvioEmail() == null || parametro.getNotaEnvioEmail() == false)) 
+		{
+			
+			dto = this.setDistribuicaoDefault(dto);
+	
+		} else {
+			dto.setNeImpresso(parametro.getNotaEnvioImpresso());
+			dto.setNeEmail(parametro.getNotaEnvioEmail());
+			dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
+			dto.setCeEmail(parametro.getChamadaEncalheEmail());
+			dto.setSlipImpresso(parametro.getSlipImpresso());
+			dto.setSlipEmail(parametro.getSlipEmail());
+			dto.setBoletoImpresso(parametro.getBoletoImpresso());
+			dto.setBoletoEmail(parametro.getBoletoEmail());
+			dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
+			dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
+			dto.setReciboImpresso(parametro.getReciboImpresso());
+			dto.setReciboEmail(parametro.getReciboEmail());
 		}
+			
+		
+		
+		
 		
 		if(!qtdePDVAutomatico) {
 			dto.setQtdePDV(parametro.getQtdePDV());
@@ -920,18 +960,6 @@ public class CotaServiceImpl implements CotaService {
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
 		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
-		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
-		dto.setNeEmail(parametro.getNotaEnvioEmail());
-		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
-		dto.setCeEmail(parametro.getChamadaEncalheEmail());
-		dto.setSlipImpresso(parametro.getSlipImpresso());
-		dto.setSlipEmail(parametro.getSlipEmail());
-		dto.setBoletoImpresso(parametro.getBoletoImpresso());
-		dto.setBoletoEmail(parametro.getBoletoEmail());
-		dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
-		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
-		dto.setReciboImpresso(parametro.getReciboImpresso());
-		dto.setReciboEmail(parametro.getReciboEmail());
 		dto.setUtilizaTermoAdesao(parametro.getUtilizaTermoAdesao());
 		dto.setTermoAdesaoRecebido(parametro.getTermoAdesaoRecebido());
 		dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
@@ -959,7 +987,25 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
+		
+		///////////////////////////////////////////////
+		
+		
+		/*
+		 *  faço a pesquisa nos parâmetros de distribuidor para comparar ao que foi inserido pelo usuário.
+		 *  Se os parâmetros forem iguais, utilizo o do distribuidor.
+		 */
+		
+		ParametroDistribuicaoCota parametrosDistribuidorConferenciaCota = new ParametroDistribuicaoCota();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();	
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDeDistribuicao = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		
+		
+		
+		
 		ParametroDistribuicaoCota parametros = new ParametroDistribuicaoCota();
+		
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
 		parametros.setGerenteComercial(dto.getGerenteComercial());
@@ -969,18 +1015,6 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
 		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
 		parametros.setRecebeComplementar(dto.getRecebeComplementar());
-		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
-		parametros.setNotaEnvioEmail(dto.getNeEmail());
-		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
-		parametros.setChamadaEncalheEmail(dto.getCeEmail());
-		parametros.setSlipImpresso(dto.getSlipImpresso());
-		parametros.setSlipEmail(dto.getSlipEmail());
-		parametros.setBoletoImpresso(dto.getBoletoImpresso());
-		parametros.setBoletoEmail(dto.getBoletoEmail());
-		parametros.setBoletoSlipImpresso(dto.getBoletoSlipImpresso());
-		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
-		parametros.setReciboImpresso(dto.getReciboImpresso());
-		parametros.setReciboEmail(dto.getReciboEmail());
 		parametros.setUtilizaTermoAdesao(dto.getUtilizaTermoAdesao());
 		parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
 		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
@@ -1000,9 +1034,98 @@ public class CotaServiceImpl implements CotaService {
 		} else {
 			parametros.setFimPeriodoCarencia(null);			
 		}
-				
-		cota.setParametroDistribuicao(parametros);
 		
+		
+		
+		for(ParametrosDistribuidorEmissaoDocumento parametrosDeDistribuicao : listaParametrosDeDistribuicao) {
+			
+			String nomeDocumento = parametrosDeDistribuicao.getTipoParametrosDistribuidorEmissaoDocumento().name();
+			
+			switch (nomeDocumento) {
+				case "BOLETO":
+					parametrosDistribuidorConferenciaCota.setBoletoEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setBoletoImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
+				break;
+				
+				case "BOLETO_SLIP":
+					parametrosDistribuidorConferenciaCota.setBoletoSlipEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setBoletoSlipImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
+				break;
+				
+				case "CHAMADA_ENCALHE":
+					parametrosDistribuidorConferenciaCota.setChamadaEncalheEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setChamadaEncalheImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
+				break;
+				
+				case "NOTA_ENVIO":
+					parametrosDistribuidorConferenciaCota.setNotaEnvioEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setNotaEnvioImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
+				break;
+				
+				case "RECIBO":
+					parametrosDistribuidorConferenciaCota.setReciboEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setReciboImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
+				break;
+				
+				case "SLIP":
+					parametrosDistribuidorConferenciaCota.setSlipEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setSlipImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
+				break;
+			}
+		}
+	
+		
+		if(	
+				
+			parametrosDistribuidorConferenciaCota.getBoletoEmail().equals(dto.getBoletoEmail()) &&
+			parametrosDistribuidorConferenciaCota.getBoletoImpresso().equals(dto.getBoletoImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getBoletoSlipEmail().equals(dto.getBoletoSlipEmail()) &&
+			parametrosDistribuidorConferenciaCota.getBoletoSlipImpresso().equals(dto.getBoletoSlipImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getChamadaEncalheEmail().equals(dto.getCeEmail()) &&
+			parametrosDistribuidorConferenciaCota.getChamadaEncalheImpresso().equals(dto.getCeImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getNotaEnvioEmail().equals(dto.getNeEmail()) &&
+			parametrosDistribuidorConferenciaCota.getNotaEnvioImpresso().equals(dto.getNeImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getReciboEmail().equals(dto.getReciboEmail()) &&
+			parametrosDistribuidorConferenciaCota.getReciboImpresso().equals(dto.getReciboImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getSlipEmail().equals(dto.getSlipEmail()) &&
+			parametrosDistribuidorConferenciaCota.getSlipImpresso().equals(dto.getSlipImpresso()) 
+			
+			) {
+				parametros.setSlipImpresso(null);
+				parametros.setSlipEmail(null);
+				parametros.setBoletoImpresso(null);
+				parametros.setBoletoEmail(null);
+				parametros.setBoletoSlipImpresso(null);
+				parametros.setBoletoSlipEmail(null);
+				parametros.setReciboImpresso(null);
+				parametros.setReciboEmail(null);
+				parametros.setChamadaEncalheImpresso(null);
+				parametros.setChamadaEncalheEmail(null);
+				parametros.setNotaEnvioImpresso(null);
+				parametros.setNotaEnvioEmail(null);
+			} else {
+				parametros.setSlipImpresso(dto.getSlipImpresso());
+				parametros.setSlipEmail(dto.getSlipEmail());
+				parametros.setBoletoImpresso(dto.getBoletoImpresso());
+				parametros.setBoletoEmail(dto.getBoletoEmail());
+				parametros.setBoletoSlipImpresso(dto.getBoletoSlipImpresso());
+				parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
+				parametros.setReciboImpresso(dto.getReciboImpresso());
+				parametros.setReciboEmail(dto.getReciboEmail());
+				parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
+				parametros.setChamadaEncalheEmail(dto.getCeEmail());
+				parametros.setNotaEnvioImpresso(dto.getNeImpresso());
+				parametros.setNotaEnvioEmail(dto.getNeEmail());
+			}
+			
+		
+		cota.setParametroDistribuicao(parametros);
+
 		cotaRepository.merge(cota);		
 
 		this.atualizaTermoAdesao(
@@ -1207,8 +1330,9 @@ public class CotaServiceImpl implements CotaService {
 		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
-			cota.setInicioAtividade(new Date());
+			cota.setInicioAtividade(distribuidorService.obterDataOperacaoDistribuidor());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+			cota.setTipoCota(TipoCota.CONSIGNADO);
 			incluirPDV = true;
 			newCota = true;
 		}
@@ -1235,6 +1359,22 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    cota  = cotaRepository.merge(cota);
 	    
+	    if(newCota) {
+	    	
+		    HistoricoSituacaoCota hsc = new HistoricoSituacaoCota();
+			hsc.setCota(cota);
+			hsc.setDataEdicao(new Date());
+			hsc.setDataInicioValidade(new Date());
+			hsc.setTipoEdicao(TipoEdicao.INCLUSAO);
+			hsc.setResponsavel(usuarioService.getUsuarioLogado());
+			hsc.setSituacaoAnterior(cota.getSituacaoCadastro());
+			hsc.setNovaSituacao(cota.getSituacaoCadastro());
+			hsc.setDescricao("Cota nova.");
+			
+			historicoSituacaoCotaRepository.adicionar(hsc);
+			
+	    }
+		
 	    BaseReferenciaCota baseReferenciaCota = processarDadosBaseReferenciaCota(cota, cotaDto);
 	    
 	    processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
@@ -1779,7 +1919,7 @@ public class CotaServiceImpl implements CotaService {
 					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser utilizado.");
 				}
 				else{
-				   //Alterar Numero Cota e registra histoico
+				   //Alterar Numero Cota e registra histórico
 					alteraNumeroCota(cota);
 				}
 			}
@@ -1852,17 +1992,23 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private boolean isParametroDistribuidoNumeroCotaValido(Integer  numeroCota){
 		
-		HistoricoSituacaoCota histCota  = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+		HistoricoSituacaoCota historicoSituacaoCota  = 
+			this.historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
 		
-		if(histCota == null){
+		if (historicoSituacaoCota == null) {
+			
 			return true;
 		}
 		
-	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
+	    Long qntDiasInativo =  
+	    	DateUtil.obterDiferencaDias(
+	    		historicoSituacaoCota.getDataInicioValidade(), 
+	    			this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	    
-	    Long qntDiasDistribuidor = this.distribuidorService.qntDiasReutilizacaoCodigoCota();
+	    Long qntDiasInativoPermitidoParaReutilizacao =
+	    	this.distribuidorService.qntDiasReutilizacaoCodigoCota();
 	    
-		return (qntDiasInativo > qntDiasDistribuidor );
+		return (qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao);
 	}
 
 	/**
@@ -1882,28 +2028,6 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public void alterarCota(Cota cota) {
 		this.cotaRepository.alterar(cota);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		
-		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
-		
-		if(!lista.isEmpty()){
-			
-			for(RegistroCurvaABCCotaDTO dto : lista){
-				dto.setRkProduto(rankingRepository.obterRankingProdutoCota(dto.getIdCota(),dto.getIdProduto()));
-			}
-		}
-		
-		return lista;
 	}
 
 	/* (non-Javadoc)
@@ -1969,6 +2093,10 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (garantia!=null){
 	 
+			this.cotaGarantiaRepository.deleteListaImoveis(garantia.getId());
+			
+			this.cotaGarantiaRepository.deleteListaOutros(garantia.getId());
+			
 			this.cotaGarantiaRepository.deleteByCota(cota.getId());
 		}
 		
@@ -2005,7 +2133,7 @@ public class CotaServiceImpl implements CotaService {
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
 		Cota cotaNova = this.cotaRepository.buscarPorId(idCotaNova);
-		cotaNova.setInicioTitularidade(new Date());
+		cotaNova.setInicioTitularidade(this.distribuidorService.obterDataOperacaoDistribuidor());
 		cotaNova.setPdvs(pdvs);
 		cotaNova.setFornecedores(fornecedores);
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
@@ -2013,6 +2141,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
 		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
+		cotaNova.setTipoCota(TipoCota.CONSIGNADO);
 		
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
@@ -2163,7 +2292,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("SUBREPORT_DIR",
-				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
+				Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
 		
 		String informacoesComplementares = this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
 		parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");
@@ -2524,5 +2653,80 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.buscarCota(numero);
 	}
 	
-}
+	@Transactional(readOnly = true)
+	@Override
+	public void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota, Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDataRecolhimento){
+		
+		List<CotaDTO> cotasSemRoteirizacao = this.cotaRepository.obterCotasSemRoteirizacao(intervaloCota,
+				intervaloDataLancamento, intervaloDataRecolhimento);
+		
+		if (cotasSemRoteirizacao == null || !cotasSemRoteirizacao.isEmpty()){
+			
+			List<String> msgs = new ArrayList<String>();
+			msgs.add("Cotas sem roteirização:");
+			for (CotaDTO c : cotasSemRoteirizacao){
+				msgs.add(+ c.getNumeroCota() + " - " + c.getNomePessoa());
+			}
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+		}
+	}
+	
+    /**
+     * Obtem lista de Cotas dos numeros de cotas passados como parametro
+     * @param numerosCota
+     * @return List<Cota>
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<Cota> obterCotasPorNumeros(List<Integer> numerosCota){
+    
+        List<Cota> cotas = new ArrayList<Cota>();
+    
+        for (Integer numeroCota : numerosCota){
+      
+            Cota cota = this.obterPorNumeroDaCota(numeroCota);
+      
+            cotas.add(cota);
+        }
+        
+        return cotas;
+  }
+    
+    @Transactional
+    @Override
+	public boolean salvarTipoCota(long idCota, TipoCota tipoCota){
+	
+		Cota cota = this.obterPorId(idCota);
+		
+		if (!cota.getTipoCota().equals(tipoCota)){
+		
+			cota.setTipoCota(tipoCota);
+			
+			cota.setAlteracaoTipoCota(this.distribuidorService.obterDataOperacaoDistribuidor());
+			
+			this.alterarCota(cota);
+			
+			return true;
+		}
+		
+		return false;
+	}
 
+  
+  /**
+   * Verifica se a cota teve seu tipo alterado na data informada
+   * @param cota
+   * @param data
+   * @return boolean
+   */
+  @Override  
+  public boolean isCotaAlteradaNaData(Cota cota, Date data){
+	  
+      boolean isAlteracaoTipoCotaNaDataAtual = (cota.getAlteracaoTipoCota()!=null && 
+      		                                    cota.getAlteracaoTipoCota().compareTo(data)==0);
+      
+      return isAlteracaoTipoCotaNaDataAtual;
+  }
+}

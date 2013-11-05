@@ -26,6 +26,15 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	
 	private ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna;
 	
+	public FiltroConsultaConsignadoCotaDTO() {
+		
+	}
+	
+	public FiltroConsultaConsignadoCotaDTO(Long idCota) {
+		
+		this.idCota = idCota;
+	}
+	
 	public enum ColunaOrdenacaoConsultaConsignadoCota {
 
 		COTA("cota");
@@ -99,5 +108,57 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((idCota == null) ? 0 : idCota.hashCode());
+		result = prime * result
+				+ ((idFornecedor == null) ? 0 : idFornecedor.hashCode());
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((nomeFornecedor == null) ? 0 : nomeFornecedor.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroConsultaConsignadoCotaDTO other = (FiltroConsultaConsignadoCotaDTO) obj;
+		if (idCota == null) {
+			if (other.idCota != null)
+				return false;
+		} else if (!idCota.equals(other.idCota))
+			return false;
+		if (idFornecedor == null) {
+			if (other.idFornecedor != null)
+				return false;
+		} else if (!idFornecedor.equals(other.idFornecedor))
+			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (nomeFornecedor == null) {
+			if (other.nomeFornecedor != null)
+				return false;
+		} else if (!nomeFornecedor.equals(other.nomeFornecedor))
+			return false;
+		return true;
+	}
+	
 	
 }

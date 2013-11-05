@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.util.CurrencyUtil;
 
 public class CobrancaImpressaoDTO implements Serializable {
 
@@ -18,11 +19,24 @@ public class CobrancaImpressaoDTO implements Serializable {
 	private BigDecimal valor;
 	private Date vencimento;
 	private String nomeBanco;
-	private Integer agencia;
+	private String agencia;
 	private String conta;
 	private String nomeFavorecido;
 	private TipoCobranca tipoCobranca;
+    private String valorExtenso;
 	
+	public String getValorExtenso() {
+		
+		if(this.valor!= null){
+			return CurrencyUtil.valorExtenso(this.valor);
+		}
+		return valorExtenso;
+	}
+
+	public void setValorExtenso(String valorExtenso) {
+		this.valorExtenso = valorExtenso;
+	}
+
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -87,11 +101,11 @@ public class CobrancaImpressaoDTO implements Serializable {
 		this.nomeBanco = nomeBanco;
 	}
 	
-	public Integer getAgencia() {
+	public String getAgencia() {
 		return agencia;
 	}
 	
-	public void setAgencia(Integer agencia) {
+	public void setAgencia(String agencia) {
 		this.agencia = agencia;
 	}
 	
@@ -118,5 +132,5 @@ public class CobrancaImpressaoDTO implements Serializable {
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
 	}
-
+	
 }

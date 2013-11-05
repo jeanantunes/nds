@@ -10,6 +10,21 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 public interface ControleConferenciaEncalheCotaRepository  extends Repository<ControleConferenciaEncalheCota,Long> {
 	
 	/**
+	 * Obtém uma lista de datas em que foram 
+	 * realizadas finalização de conferência
+	 * de encalhe de acordo com o range de 
+	 * datas e cota informados.
+	 * 
+	 * @param idCota
+	 * @param dataDe
+	 * @param dataAte
+	 * 
+	 * @return List<Date>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Date> obterDatasControleConferenciaEncalheCotaFinalizada(Long idCota, Date dataDe, Date dataAte);
+	
+	/**
 	 * Obtém registro de ControleConferenciaEncalheCota referente a uma 
 	 * cota e dataOperação.
 	 * 
@@ -28,7 +43,6 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 */
 	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro);	
 	
-	
 	/**
 	 * Obtém o status do registro de controleConferenciaEncalheCota.
 	 * 
@@ -37,5 +51,32 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 * @return StatusOperacao
 	 */
 	public StatusOperacao obterStatusControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota);
+
+	/**
+	 * Obtém lista de ids de controle conferencia de encalhe da cota associados
+	 * a chamada de encalhe dentro do periodo de tempo, fornecedor, e cota pesquisados.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return List - Long
+	 */
+	public List<Long> obterListaIdControleConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro);
 	
+	/**
+	 * Obtém a flag para sinalizar se aceita Juramentado 
+	 * cota e dataOperação.
+	 * 
+	 * @param idCota
+	 * @return boolean
+	 */
+	public boolean obterAceitaJuramentado(Long idCota);
+
+	/**
+	 * Verifica se a cota possui conferencia de encalhe finalizada na data
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return boolean
+	 */
+	boolean isConferenciaEncalheCotaFinalizada(Long idCota, Date dataOperacao);
+
 }

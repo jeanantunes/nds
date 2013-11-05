@@ -63,6 +63,7 @@ var negociacaoDividaController = $.extend(true, {
 	
 		$(".negociacaoGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisar.json?' + params, 
+			onSuccess: function() {bloquearItensEdicao(negociacaoDividaController.workspace);},
 			preProcess : negociacaoDividaController.montaColunaDetalhesAcao,
 			newp : 1
 		});
@@ -134,7 +135,7 @@ var negociacaoDividaController = $.extend(true, {
 		$.each(data.rows, function(index, value) {
 			
 			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe('+value.cell.idCobranca+');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
-			var acao = '<input name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
+			var acao = '<input isEdicao="true" name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
 
@@ -527,7 +528,12 @@ var negociacaoDividaController = $.extend(true, {
 		
 		);
 	},
-		
+
+	imprimirNegociacao : function() {
+		var url = contextPath + '/financeiro/negociacaoDivida/imprimirNegociacao?valorDividaSelecionada=' + $('#totalSelecionado', negociacaoDividaController.wokspace).html();
+		window.open(url, '_blank');
+	},
+
 	geraLinhasCheque :function(result) {
 		
 		$('#encargos').hide();
@@ -923,12 +929,6 @@ var negociacaoDividaController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},{
-				display : ' ',
-				name : 'tipo',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			},{
 				display : 'R$',
 				name : 'valor',
 				width : 60,
@@ -937,7 +937,7 @@ var negociacaoDividaController = $.extend(true, {
 			},  {
 				display : 'Observa&ccedil;&atilde;o',
 				name : 'observacao',
-				width : 320,
+				width : 400,
 				sortable : true,
 				align : 'left'
 			}],

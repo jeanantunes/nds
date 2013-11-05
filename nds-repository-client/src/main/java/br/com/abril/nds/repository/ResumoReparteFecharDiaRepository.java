@@ -16,9 +16,9 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Deprecated
 public interface ResumoReparteFecharDiaRepository {
 
-	SumarizacaoReparteDTO obterSumarizacaoReparte(Date data);
+	SumarizacaoReparteDTO obterSumarizacaoReparte(Date data, Date dataReparteHistoico);
 
-	List<ReparteFecharDiaDTO> obterResumoReparte(Date data);
+	List<ReparteFecharDiaDTO> obterResumoReparte(Date data,Date dataReparteHistoico);
 
     /**
      * Recupera as informações dos lançamentos expedidos na data
@@ -31,7 +31,7 @@ public interface ResumoReparteFecharDiaRepository {
      * @return lista com os lançamentos expedidos na data, paginados de acordo
      *         com os parâmetros recebidos
      */
-	List<ReparteFecharDiaDTO> obterResumoReparte(Date data, PaginacaoVO paginacao);
+	List<ReparteFecharDiaDTO> obterResumoReparte(Date data, PaginacaoVO paginacao,Date dataReparteHistoico);
 	
     /**
      * Conta o total de registros de lançamentos expedidos na data

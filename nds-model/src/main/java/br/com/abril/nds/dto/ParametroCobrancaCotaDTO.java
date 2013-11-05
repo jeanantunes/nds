@@ -1,10 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCota;
 
 public class ParametroCobrancaCotaDTO implements Serializable {
@@ -12,6 +10,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long idParametroCobranca;
+    
+    private Long idFormaCobranca;
 	
 	private Long idCota;
 	
@@ -19,27 +19,31 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private long fatorVencimento;
 	
-	private boolean sugereSuspensao;
+	private Boolean sugereSuspensao;
 	
-	private boolean contrato;
+	private Boolean contrato;
 	
 	private Date inicioContrato;
 	
 	private Date terminoContrato;
 	
-	private boolean contratoRecebido;
+	private Boolean contratoRecebido;
 	
-	private BigDecimal valorMinimo = BigDecimal.ZERO;
+	private String valorMinimo;
 	
-	private Integer qtdDividasAberto = Integer.valueOf(0);
+	private Integer qtdDividasAberto;
 	
-	private BigDecimal vrDividasAberto = BigDecimal.ZERO;
+	private String vrDividasAberto;
 	
 	private TipoCota tipoCota;
 	
 	private Long idFornecedor;
 	
-	private boolean unificaCobranca;
+	private Boolean unificaCobranca;
+	
+	private Boolean devolveEncalhe;
+	
+	private Boolean parametroDistribuidor;
 	
 	
 	public Long getIdParametroCobranca() {
@@ -50,6 +54,14 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 		this.idParametroCobranca = idParametroCobranca;
 	}
 
+
+	public Long getIdFormaCobranca() {
+		return idFormaCobranca;
+	}
+
+	public void setIdFormaCobranca(Long idFormaCobranca) {
+		this.idFormaCobranca = idFormaCobranca;
+	}
 
 	public Long getIdCota() {
 		return idCota;
@@ -81,22 +93,22 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 
 
-	public boolean isSugereSuspensao() {
+	public Boolean isSugereSuspensao() {
 		return sugereSuspensao;
 	}
 
 
-	public void setSugereSuspensao(boolean sugereSuspensao) {
+	public void setSugereSuspensao(Boolean sugereSuspensao) {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 
 
-	public boolean isContrato() {
+	public Boolean isContrato() {
 		return contrato;
 	}
 
 
-	public void setContrato(boolean contrato) {
+	public void setContrato(Boolean contrato) {
 		this.contrato = contrato;
 	}
 	
@@ -120,20 +132,20 @@ public class ParametroCobrancaCotaDTO implements Serializable {
         this.terminoContrato = terminoContrato;
     }
     
-    public boolean isContratoRecebido() {
+    public Boolean isContratoRecebido() {
         return contratoRecebido;
     }
 
-    public void setContratoRecebido(boolean contratoRecebido) {
+    public void setContratoRecebido(Boolean contratoRecebido) {
         this.contratoRecebido = contratoRecebido;
     }
 
-    public BigDecimal getValorMinimo() {
+    public String getValorMinimo() {
 		return valorMinimo;
 	}
 
 
-	public void setValorMinimo(BigDecimal valorMinimo) {
+	public void setValorMinimo(String valorMinimo) {
 		this.valorMinimo = valorMinimo;
 	}
 
@@ -147,12 +159,12 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 
 
-	public BigDecimal getVrDividasAberto() {
+	public String getVrDividasAberto() {
 		return vrDividasAberto;
 	}
 
 
-	public void setVrDividasAberto(BigDecimal vrDividasAberto) {
+	public void setVrDividasAberto(String vrDividasAberto) {
 		this.vrDividasAberto = vrDividasAberto;
 	}
 
@@ -177,13 +189,33 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 	
 
-	public boolean isUnificaCobranca() {
+	public Boolean isUnificaCobranca() {
 		return unificaCobranca;
 	}
 
 
-	public void setUnificaCobranca(boolean unificaCobranca) {
+	public void setUnificaCobranca(Boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
+	}
+
+	
+	public Boolean isParametroDistribuidor() {
+		return parametroDistribuidor;
+	}
+
+	
+	public void setParametroDistribuidor(Boolean parametroDistribuidor) {
+		this.parametroDistribuidor = parametroDistribuidor;
+	}
+
+	
+	public Boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	
+	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
 	}
 
 	

@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
@@ -13,6 +15,8 @@
 var geracaoNFeController;
 $(function(){
 	geracaoNFeController = $.extend(true, new GeracaoNFeController(),  BaseController);
+	
+	bloquearItensEdicao(geracaoNFeController.workspace);
 	
 });
 </script>
@@ -40,7 +44,7 @@ $(function(){
 </div>
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos"><a href="javascript:;" id="btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
+		<span class="bt_novos"><a isEdicao="true" href="javascript:;" id="btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
 
         <span class="bt_arq"><a href="javascript:;" id="btnImprimirXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 
@@ -48,14 +52,15 @@ $(function(){
 	</div>
 </div>
 <div class="linha_separa_fields">&nbsp;</div>
-<fieldset class="fieldFiltro">
-	<legend> Pesquisar NF-e</legend>
+	<fieldset class="fieldFiltro">
+		<legend> Pesquisar NF-e</legend>
 		<form>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<table width="1000px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="91">Tipo de Nota:</td>
     				<td width="204">
 						<select id="selectTipoNotaFiscal" style="width:250px; font-size:11px!important">
+							<option value="">Todos</option>
 							<c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
 							</c:forEach>
@@ -122,14 +127,13 @@ $(function(){
 				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();"></a></span>
 				    </td>
   				</tr>
-  				<td colspan="3"></td>
   			</table>
-		</fieldset>
+		</form>
+	</fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
        <fieldset class="fieldGrid">
        	  <legend>Gera&ccedil;&atilde;o NF-e</legend>
           <div class="grids" style="display:none;">
 		  <table id="gridNFe"></table>
 		</div>
-		</form>
       </fieldset>

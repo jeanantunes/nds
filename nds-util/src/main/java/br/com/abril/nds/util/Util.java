@@ -1,5 +1,6 @@
 package br.com.abril.nds.util;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -119,7 +120,7 @@ public abstract class Util {
 				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_BRADESCO:
-				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				return padLeft(codSacado + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor), "0", 11);
 			
 			case BANCO_DO_BRASIL:
 				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -230,43 +231,45 @@ public abstract class Util {
 				
 			case BANCO_ITAU:
 				
-				//String nossoNumero = "" + numeroCota + idMovimentoFinanceiro;
-				String nossoNumero = idMovimentoFinanceiro.toString();
+//				String nossoNumero = "" + numeroCota + idMovimentoFinanceiro;
+//				String nossoNumero = idMovimentoFinanceiro.toString();
+//				
+//				StringBuilder composto = new StringBuilder();
+//				composto.append(agencia)
+//						.append(contaCorrente)
+//						.append(carteira)
+//						.append(nossoNumero);
+//				
+//				composto.reverse();
+//				
+//				int multiplicador = 2;
+//				
+//				StringBuilder compostoAux = new StringBuilder();
+//				
+//				for (int index = 0 ; index < composto.length() ; index++){
+//					
+//					compostoAux.insert(0, Character.getNumericValue(composto.charAt(index)) * multiplicador);
+//					
+//					if (multiplicador == 2){
+//						
+//						multiplicador = 1;
+//					} else {
+//						
+//						multiplicador = 2;
+//					}
+//				}
+//				
+//				int somatorio = 0;
+//				for (int index = 0 ; index < compostoAux.length() ; index++){
+//					
+//					somatorio += Character.getNumericValue(compostoAux.charAt(index));
+//				}
+//				
+//				somatorio = somatorio % 10;
 				
-				StringBuilder composto = new StringBuilder();
-				composto.append(agencia)
-						.append(contaCorrente)
-						.append(carteira)
-						.append(nossoNumero);
+//				A composição do nosso número com os cálculos acima estavam ultrapassando a quantidade de caracteres [8] para o banco Itau.
 				
-				composto.reverse();
-				
-				int multiplicador = 2;
-				
-				StringBuilder compostoAux = new StringBuilder();
-				
-				for (int index = 0 ; index < composto.length() ; index++){
-					
-					compostoAux.insert(0, Character.getNumericValue(composto.charAt(index)) * multiplicador);
-					
-					if (multiplicador == 2){
-						
-						multiplicador = 1;
-					} else {
-						
-						multiplicador = 2;
-					}
-				}
-				
-				int somatorio = 0;
-				for (int index = 0 ; index < compostoAux.length() ; index++){
-					
-					somatorio += Character.getNumericValue(compostoAux.charAt(index));
-				}
-				
-				somatorio = somatorio % 10;
-				
-				return Util.padLeft("" + carteira + nossoNumero + (10 - somatorio), "0", 8);
+				return Util.padLeft(idMovimentoFinanceiro.toString(), "0", 8);
 				
 			case BANCO_RURAL:
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
@@ -385,7 +388,7 @@ public abstract class Util {
 		return digito;
 	}
 	
-	private static String padLeft(String valor, String caractere, int tamanho){
+	public static String padLeft(String valor, String caractere, int tamanho){
 		while (valor.length() < tamanho){
 			valor = caractere + valor;
 		}
@@ -620,4 +623,47 @@ public abstract class Util {
         return Long.valueOf(System.identityHashCode(object));
     }
 
+    /**
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que o valorIgnorar passado no 3ºparam
+     * 
+     * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
+     * 
+     * @param v1
+     * @param v2
+     * @param valorIgnorar
+     * @return
+     */
+    public static Boolean isDiferencaMenorValor(BigDecimal v1, BigDecimal v2, BigDecimal valorIgnorar){
+		
+    	if(v1 == null && v2 != null)
+    		return null;
+    	
+    	if(v1 != null && v2 == null)
+    		return null;
+    				
+		return v1.subtract(v2).abs().setScale(4).compareTo(valorIgnorar) < 0;
+    }
+    
+    /**
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que 0,005 (meio) centavo
+     * 
+     * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
+     *  
+     * @param v1
+     * @param v2
+     * @return
+     */
+    public static Boolean isDiferencaMenorMeioCentavo(BigDecimal v1, BigDecimal v2){
+		
+		return isDiferencaMenorValor(v1, v2, new BigDecimal("0.005"));
+    }
+    
+    public static void main(String[] args) {
+		BigDecimal v1 = new BigDecimal("7.8549");
+		BigDecimal v2 = null;
+		
+		System.out.println(v1.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		
+		System.out.println(isDiferencaMenorMeioCentavo(v1, v2));
+	}
 }

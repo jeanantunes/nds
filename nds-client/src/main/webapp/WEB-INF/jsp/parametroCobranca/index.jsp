@@ -90,8 +90,8 @@
                                 maxlength="16" name="valorMinimo" id="valorMinimo"
                                 style="width: 70px; text-align:right;" /></td>
                             <td>Cobran&ccedil;a Unificada:</td>
-                            <td><select name="unificada" id="unificada"
-                                style="width: 80px;">
+                            <td><select name="unificada" id="unificada" style="width: 80px;" 
+                                onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada();">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             </select> <br clear="all" /></td>
@@ -144,29 +144,78 @@
                                     <tr>
                                         <td width="9%"><input class="formPgto" type="radio"
                                             name="radioFormaCobrancaBoleto"
-                                            id="radioFormaCobrancaBoleto.REGISTRADA" value="REGISTRADA" /></td>
+                                            id="radioFormaCobrancaBoleto.REGISTRADA" value="COM_REGISTRO" /></td>
                                         <td width="34%"><label class="formPgto"
                                             for="radioFormaCobrancaBoleto.REGISTRADA">Registrado</label></td>
                                         <td width="10%"><input class="formPgto" type="radio"
                                             name="radioFormaCobrancaBoleto"
                                             id="radioFormaCobrancaBoleto.NAO_REGISTRADA"
-                                            value="NAO_REGISTRADA" /></td>
+                                            value="SEM_REGISTRO" /></td>
                                         <td width="47%"><label class="formPgto"
                                             for="radioFormaCobrancaBoleto.NAO_REGISTRADA">N&atilde;o
                                                 Registrado</label></td>
                                     </tr>
                                 </table>
                             </td>
-                            <td align="right">
+                            <td align="right" width="15%">
                             <input type="checkbox" name="principal" id="principal" /></td>
-                            <td><label for="principal">Principal</label></td>
+                            <td ><label for="principal">Principal</label></td>
+                            
                         </tr>
-    
+    					<tr>
+	    					<td></td>
+	    					<td></td>
+	    					<td align="right"><input type="checkbox" name="cobradoPeloBackoffice" id="cobradoPeloBackoffice" /></td>
+							<td><label for="cobradoPeloBackoffice">Cobrança feita pelo Back Office</label></td>
+    					</tr>
+    					
+    					
                         <tr>
                             <td valign="top">Instru&ccedil;&otilde;es:</td>
                             <td colspan="3"><textarea name="instrucoes" rows="2"
                                     maxlength="100" id="instrucoes" style="width: 645px;"
                                     readonly="true"></textarea></td>
+                        </tr>
+                        
+                        <tr>
+                            <td valign="top">Fator de vencimento:</td>
+                            <td colspan="3">
+                            	<select id="comboFatorVencimento">
+                                	<option>0</option>
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+									<option>4</option>
+									<option>5</option>
+									<option>6</option>
+									<option>7</option>
+									<option>8</option>
+									<option>9</option>
+									<option>10</option>
+									<option>11</option>
+									<option>12</option>
+									<option>13</option>
+									<option>14</option>
+									<option>15</option>
+									<option>16</option>
+									<option>17</option>
+									<option>18</option>
+									<option>19</option>
+									<option>20</option>
+								</select>
+							</td>
+                        </tr>
+                        
+                        <tr height="40">
+                            <td valign="middle">Fornecedor Padrão:</td>
+                            <td>
+                            	<select id="comboFornecedorPadrao">
+                            		<option>Selecione...</option>
+                                	<c:forEach step="1" items="${listaFornecedores}" varStatus="status">
+                                    	<option value="${listaFornecedores[status.index].key}">${listaFornecedores[status.index].value}</option>
+									</c:forEach>
+								</select>
+							</td>
                         </tr>
     
                         <tr>
@@ -180,10 +229,9 @@
                                         <tr>
                                             <td><input type="checkbox"
                                                 name="checkGroupFornecedores"
-                                                id="fornecedor_<c:out value="${listaFornecedores[status.index].key}" />"
+                                                id="ParamCob-fornecedor_<c:out value="${listaFornecedores[status.index].key}" />"
                                                 value='<c:out value="${listaFornecedores[status.index].key}" />' /></td>
-                                            <td><c:out
-                                                    value="${listaFornecedores[status.index].value}" /></td>
+                                            <td><c:out value="${listaFornecedores[status.index].value}" /></td>
                                             
                                         </tr>
                                     </c:forEach>
@@ -216,7 +264,7 @@
                         </tr>
                         <tr>
                             <td valign="top">&nbsp;</td>
-                            <td>&nbsp;</td>
+                            <td valign="top">&nbsp;</td>
                             <td valign="top">
                             
                                 <table width="100%" border="0" cellspacing="1" cellpadding="1"

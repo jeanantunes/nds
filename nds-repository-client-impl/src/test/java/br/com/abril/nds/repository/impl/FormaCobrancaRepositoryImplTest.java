@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 
 public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest  {
 	
@@ -93,7 +94,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void carregarFormasCobrancaCota(){
 		
 		
-        Integer diaSemana =  DateUtil.obterDiaDaSemana(new Date());
+        Integer diaSemana =  SemanaUtil.obterDiaDaSemana(new Date());
 		
 		Integer diaMes = DateUtil.obterDiaDoMes(new Date());
 		
@@ -273,7 +274,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		fornecedor2.setId(null);
 		save(fornecedor2);
 		
-		fornecedor3 = Fixture.fornecedor((PessoaJuridica)pessoaPj, SituacaoCadastro.ATIVO, true, tipoFornecedor, 1);
+		fornecedor3 = Fixture.fornecedor((PessoaJuridica)pessoaPj, SituacaoCadastro.ATIVO, tipoFornecedor, 1);
 		fornecedor3.setId(null);
 		save(fornecedor3);
 		
@@ -446,7 +447,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		valor = new BigDecimal(150);
 		
-		Integer diaSemana =  DateUtil.obterDiaDaSemana(data);
+		Integer diaSemana =  SemanaUtil.obterDiaDaSemana(data);
 		
 		Integer diaMes = DateUtil.obterDiaDoMes(data); 	
 		
@@ -477,7 +478,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		BigDecimal valor = new BigDecimal(150);
 		
-		Integer diaSemana =  DateUtil.obterDiaDaSemana(data);
+		Integer diaSemana =  SemanaUtil.obterDiaDaSemana(data);
 		
 		Integer diaMes = DateUtil.obterDiaDoMes(data); 		
 		
@@ -490,7 +491,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -503,7 +504,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -518,7 +519,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = 10;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -533,7 +534,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = 16;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -548,7 +549,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		

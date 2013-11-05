@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -104,7 +106,10 @@ public class HomeController {
 	 * @return
 	 */
 	private List<Permissao> getPermissoesUsuario() {
-		List<Permissao> permissoes = new ArrayList<Permissao>();
+		
+		//alterado para garantir que a ordem do enum de permissões seja respeitada e evitar
+		//que uma permissão filha seja carregada antes da permissão pai.
+		Set<Permissao> permissoes = new TreeSet<Permissao>();
 		for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 			try {
 				permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
@@ -114,7 +119,7 @@ public class HomeController {
 				continue;
 			}
 		}
-		return permissoes;
+		return new ArrayList<>(permissoes);
 	}
 
 	/**
@@ -125,16 +130,16 @@ public class HomeController {
 		List<Route> routes = router.allRoutes();
 		
 		for (Route route : routes) {
-			ResourceMethod resourceMethod = (ResourceMethod) new Mirror()
-					.on(route).get().field("resourceMethod");
-			Rules rule = resourceMethod.getResource().getType().getAnnotation(Rules.class);
 			
-			// Caso possua uma lista de regras, aplica as permissões de menus
-			if (rule != null && rule.value() == permissao) {
+			ResourceMethod resourceMethod = 
+				(ResourceMethod) new Mirror().on(route).get().field("resourceMethod");
+			
+			Rules rule = resourceMethod.getResource().getType().getAnnotation(Rules.class);
+		
+			if (rule != null && rule.value().equals(permissao)) {
 				
 				return resourceMethod.getResource().getType().getAnnotation(Path.class).value()[0];
 			}
-
 		}
 		
 		for (Route route : routes) {
@@ -153,9 +158,7 @@ public class HomeController {
 				
 				return pathBase + "/" + pathMetodo;
 			}
-
 		}
-		
 		
 		return "";
 	}

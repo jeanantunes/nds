@@ -22,8 +22,6 @@ var balanceamentoLancamento = new BalanceamentoLancamento(pathTela, "balanceamen
 
 balanceamentoLancamento.inicializar();
 
-var lancamentosSelecionados = [];
-
 </script>
 
 <style>
@@ -33,7 +31,7 @@ var lancamentosSelecionados = [];
 .dialog-confirm-balanceamento { display:none; }
 
 .gridLinhaDestacada {
-  background:#F00; 
+  background:#888; 
   font-weight:bold; 
   color:#fff;
 }
@@ -43,11 +41,11 @@ var lancamentosSelecionados = [];
 }
 
 .gridLinhaDestacada a {
-   color:#fff;
+   color:inherit;
 }
 
 .gridLinhaDestacada a:hover {
-   color:#000;
+   color:inherit;
 }
 
 </style>
@@ -77,7 +75,7 @@ var lancamentosSelecionados = [];
 <form id="formVoltarConfiguracaoInicial">
 <div id="dialogVoltarConfiguracaoInicial" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
-			<p>Ao voltar a configuração inicial, você perdará os dados confirmados. Deseja prosseguir?</p>
+			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
 			   
 </div>
 </form>
@@ -125,8 +123,18 @@ var lancamentosSelecionados = [];
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
 		                    </a>
 		                </span>
-			  			
-			  			
+		                
+		                <span class="bt_novos" style="display: none;">
+							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
+								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
+							</a>
+						</span>
+						
+						<span class="bt_novos" style="display: none;">
+							<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
+								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
+							</a>
+						</span>
 			  			
 			  			 <span class="bt_arq">
 							<!-- ARQUIVO -->
@@ -174,7 +182,7 @@ var lancamentosSelecionados = [];
 		   	        <td width="112">&nbsp;</td>
 		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
-						<a id="linkPesquisar" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 					</td>
 		          </tr>
 		        </table>

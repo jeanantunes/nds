@@ -477,10 +477,10 @@ input[type='text'], input[type='password'], textarea {
 .hDivBox th{font-weight:bold!important;}
 
 .alert{border:1px solid #F00!important; background:#F4F4F4; padding:5px; font-size:11px; float:left;}
-.box_resumo{border:1px solid #DFDFDF; padding:5px; font-size:11px; float:left; width: 159px;}
-.box_resumo label{width:157px !important; text-align:center; color:#01649E; font-weight:bold; border:1px solid #DFDFDF; margin-right:0px!important; margin-left:0px!important; background:#fff;}
+.box_resumo{border:1px solid #DFDFDF; padding:5px; font-size:11px; float:left; width: 170px;}
+.box_resumo label{width:165px !important; text-align:center; color:#01649E; font-weight:bold; border:1px solid #DFDFDF; margin-right:0px!important; margin-left:0px!important; background:#fff;}
 .box_resumo label img{padding-top:5px;}
-.box_resumo .span_1{width:80px; float:left; font-weight:bold; line-height:20px; border:1px solid #DFDFDF; background:#fff; }
+.box_resumo .span_1{width:90px; float:left; font-weight:bold; line-height:20px; border:1px solid #DFDFDF; background:#fff; }
 .box_resumo .span_2{width:75px; float:left; text-align:right; clear:right; line-height:20px; border:1px solid #DFDFDF; background:#fff; }
 
 .imgProduto{float:left;}
@@ -666,4 +666,8 @@ input[type='text'], input[type='password'], textarea {
 }
 div#ui-tabs-\*.ui-tabs-panel {
 	background-color: blue!important;
+}
+
+.ui-autocomplete { 
+	height: 200px; overflow-y: scroll; overflow-x: hidden;
 }

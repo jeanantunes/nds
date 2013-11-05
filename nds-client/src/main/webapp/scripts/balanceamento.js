@@ -184,6 +184,30 @@ function Balanceamento(pathTela, descInstancia) {
 	},
 	
 	/**
+	 * Obtém datas marcadas da confirmação do balanceamento Recolhimenro
+	 * @returns datasMarcadas
+	 */
+	this.obterDatasMarcadasConfirmacaoRecolhimento = function(){
+
+		var datasConfirmadas=new Array();
+		var table = document.getElementById("tableConfirmaBalanceamentoRecolhimento");
+		
+		for(var i = 0; i < table.rows.length; i++){   
+			
+			if(document.getElementById("checkConfirmarRecolhimento_"+i)!=null){
+				
+				if (document.getElementById("checkConfirmarRecolhimento_"+i).checked){
+					datasConfirmadas. push(table.rows[i].cells[0].textContent);
+			    }
+				
+		    }
+
+		} 
+		
+		return datasConfirmadas;
+	},
+	
+	/**
 	 * Popula Popup de confirmação de Balanceamento.
 	 * OBS: Específico para matrizLancamento\index.jsp
 	 * @param result
@@ -218,6 +242,43 @@ function Balanceamento(pathTela, descInstancia) {
 		});
 		
 		$("#tableConfirmaBalanceamento",workspace).append(conteudo);
+	};
+	
+	/**
+	 * Popula Popup de confirmação de Balanceamento.
+	 * OBS: Específico para matrizRecolhimento\index.jsp
+	 * @param result
+	 */
+	this.popularConfirmacaoBalanceamentoRecolhimento = function(result,workspace) {
+		
+		$("#tableConfirmaBalanceamentoRecolhimento",workspace).clear();
+		
+		var conteudo = '';
+		
+		$.each(result, function(index, row) {
+
+			if (row.confirmado) {
+			    
+				conteudo += '<tr class="class_linha_1"><td>';
+				conteudo += row.mensagem;
+				conteudo += '</td>';
+				conteudo += '<td align="center">Confirmada</td>';
+				conteudo += '<td align="center"><img src="' + contextPath + '/images/bt_check.gif" width="22" height="22" alt="Confirmado" /></td>';
+				conteudo += '</tr>';
+			
+			} else {
+	
+				conteudo += '<tr class="class_linha_1"><td id=dataConfirmarRecolhimento_'+index+' name=dataConfirmarRecolhimento_'+index+' >';
+				conteudo += row.mensagem;
+				conteudo += '</td>';
+				conteudo += '<td align="center"><input id=checkConfirmarRecolhimento_'+index+' name=checkConfirmarRecolhimento_'+index+' type="checkbox" value="" /></td>';
+				conteudo += '<td align="center">&nbsp;</td>';
+				conteudo += '</tr>';
+			}
+			
+		});
+		
+		$("#tableConfirmaBalanceamentoRecolhimento",workspace).append(conteudo);
 	};
 	
 }

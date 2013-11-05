@@ -649,16 +649,16 @@ var roteirizacao = $.extend(true, {
     },
 
     iniciarGridBox : function(){
-        $(".boxGrid", roteirizacao.workspace).flexigrid({
+        $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexigrid({
             preProcess: function(data) {
                 $.each(data.rows, function(index, value) {
 
                     var id = value.cell.id;
                     var nome = value.cell.nome;
-                    var selecione = '<input type="radio" value="' + id +'" name="boxRadio" ';
+                    var selecione = '<input type="radio" value="' + id +'" name="boxRadio" id="radioBox'+nome+'" ';
                     selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\',\'' + nome + '\');"';
                     if (id == roteirizacao.idBox) {
-                        selecione += 'checked';
+                        selecione += 'checked="checked"';
                     }
                     selecione += '/>';
                     value.cell.selecione = selecione;
@@ -686,7 +686,7 @@ var roteirizacao = $.extend(true, {
 
             url: contextPath + '/cadastro/roteirizacao/recarregarBox',
             onSubmit    : function(){
-                $('.boxGrid').flexOptions({params: [{name: 'nomeBox', value: $('#nomeBox').val()}]});
+                $('.boxRoteirizacaoGrid').flexOptions({params: [{name: 'nomeBox', value: $('#nomeBox').val()}]});
                 return true;
             }
         });
@@ -695,19 +695,19 @@ var roteirizacao = $.extend(true, {
 
     popularGridBox : function(data) {
         if (data) {
-            $(".boxGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
+            $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
         } else {
             roteirizacao.limparGridBox();
         }
     },
 
     limparGridBox : function() {
-        $(".boxGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
+        $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
     },
 
     pesquisarBox : function() {
         roteirizacao.limparInfoCotasRota();
-        $(".boxGrid", roteirizacao.workspace).flexReload();
+        $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexReload();
         roteirizacao.idBox = "";
         roteirizacao.nomeBox = "";
         roteirizacao.limparGridRoteiros();
@@ -1289,14 +1289,28 @@ var roteirizacao = $.extend(true, {
             exibirMensagemDialog("WARNING", ["Selecione uma Rota para adicionar PDV's"]);
             return;
         }
+        
+        if ($("input[name=boxRadio]:checked", roteirizacao.workspace).val() == -1){
+        	
+        	$("#tipoPesquisa", roteirizacao.workspace).val("pdv");
+        } else {
+        	
+        	$("#tipoPesquisa", roteirizacao.workspace).val("cota");
+        }
+        
         roteirizacao.iniciaCotasDisponiveisGrid();
 
         $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
         $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
         $("#cotaPesquisaPdv", roteirizacao.workspace).justInput(/[0-9]/);
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
+        $("#selTodos", roteirizacao.workspace).uncheck();
 
-        $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
+        var params = {};
+        if($('#radioBoxEspecial').attr('checked') == 'checked')
+        	params = [{name:'boxEspecial', value: true}];
+        
+        $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas', params,
             function(result) {
 
                 roteirizacao.populaComboUf(result);
@@ -1334,11 +1348,14 @@ var roteirizacao = $.extend(true, {
     },
 
     buscalistaMunicipio : function () {
+    	
+    	params = [{name:'uf', value: $('#comboUf', roteirizacao.workspace).val()}];
+    	if($('#radioBoxEspecial').attr('checked') == 'checked') {
+    		params.push({name:'boxEspecial', value: true});
+    	}    		
+    		
         $.postJSON(contextPath + '/cadastro/roteirizacao/buscalistaMunicipio',
-            {
-                'uf' :$('#comboUf', roteirizacao.workspace).val()
-            }
-            ,
+            params,
             function(result) {
                 roteirizacao.populaMunicipio(result);
             },
@@ -1349,12 +1366,17 @@ var roteirizacao = $.extend(true, {
     },
 
     buscalistaBairro : function () {
+    	
+    	params = [
+    	          	{name:'uf', value: $('#comboUf', roteirizacao.workspace).val()},
+    	          	{name:'municipio', value: $('#comboMunicipio', roteirizacao.workspace).val()}
+    	         ];
+    	if($('#radioBoxEspecial').attr('checked') == 'checked') {
+    		params.push({name:'boxEspecial', value: true});
+    	}   
+    	
         $.postJSON(contextPath + '/cadastro/roteirizacao/buscalistaBairro',
-            {
-                'uf' :$('#comboUf', roteirizacao.workspace).val(),
-                'municipio' :$('#comboMunicipio', roteirizacao.workspace).val()
-            }
-            ,
+        	params,
             function(result) {
                 roteirizacao.populaBairro(result);
             },
@@ -2126,7 +2148,7 @@ var roteirizacao = $.extend(true, {
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'Qtd. Cotas',
+                    display : 'Qtd. PDVs',
                     name : 'qntCotas',
                     width : 78,
                     sortable : true,
@@ -2326,6 +2348,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
+        $('#selecionarTodosPdv').uncheck();
         
     },
 

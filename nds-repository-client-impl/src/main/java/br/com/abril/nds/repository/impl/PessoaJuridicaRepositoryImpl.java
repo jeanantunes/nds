@@ -79,4 +79,17 @@ public class PessoaJuridicaRepositoryImpl extends
 		return hasCnpjOrIE(inscricaoEstadual, null, idPessoa);
 	}
 
+	@Override
+	public Long buscarIdPessoaJuridicaPorIdForncedor(Long idFornecedor) {
+		
+		StringBuilder hql = new StringBuilder("select p.id ");
+		hql.append(" from Fornecedor f ")
+		   .append(" join f.juridica p ")
+		   .append(" where f.id = :idFornecedor ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		return (Long) query.uniqueResult();
+	}
 }

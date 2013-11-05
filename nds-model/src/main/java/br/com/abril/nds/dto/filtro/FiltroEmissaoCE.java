@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -12,6 +13,8 @@ public class FiltroEmissaoCE implements Serializable {
 
 	private static final long serialVersionUID = -701275770998729277L;
 
+	private TipoImpressaoCE tipoImpressao;
+	
 	@Export(label="Dt. Recolhimento:")
 	private Date dtRecolhimentoDe;
 	@Export(label="Até:")
@@ -33,6 +36,24 @@ public class FiltroEmissaoCE implements Serializable {
 	private List<Long> fornecedores;
 	private String colunaOrdenacao;
 	private String ordenacao;
+	
+	/**
+	 * Quantidade de produtos por página
+	 */
+	private int qtdProdutosPorPagina;
+			
+	/**
+	 * Quantidade de capas por página		
+	 */
+	private int qtdCapasPorPagina;
+	
+	/**
+	 * Quantidade máxima de produtos em uma pagina que ira comportar 
+	 * tambem a grid com totalização
+	 */
+	private int qtdMaximaProdutosComTotalizacao;
+	
+	
 	
 	public enum ColunaOrdenacao {
 
@@ -211,7 +232,48 @@ public class FiltroEmissaoCE implements Serializable {
 	public void setOrdenacao(String ordenacao) {
 		this.ordenacao = ordenacao;
 	}
-	
-	
+	/**
+	 * @return the qtdProdutosPorPagina
+	 */
+	public int getQtdProdutosPorPagina() {
+		return qtdProdutosPorPagina;
+	}
+	/**
+	 * @param qtdProdutosPorPagina the qtdProdutosPorPagina to set
+	 */
+	public void setQtdProdutosPorPagina(int qtdProdutosPorPagina) {
+		this.qtdProdutosPorPagina = qtdProdutosPorPagina;
+	}
+	/**
+	 * @return the qtdCapasPorPagina
+	 */
+	public int getQtdCapasPorPagina() {
+		return qtdCapasPorPagina;
+	}
+	/**
+	 * @param qtdCapasPorPagina the qtdCapasPorPagina to set
+	 */
+	public void setQtdCapasPorPagina(int qtdCapasPorPagina) {
+		this.qtdCapasPorPagina = qtdCapasPorPagina;
+	}
+	/**
+	 * @return the qtdMaximaProdutosComTotalizacao
+	 */
+	public int getQtdMaximaProdutosComTotalizacao() {
+		return qtdMaximaProdutosComTotalizacao;
+	}
+	/**
+	 * @param qtdMaximaProdutosComTotalizacao the qtdMaximaProdutosComTotalizacao to set
+	 */
+	public void setQtdMaximaProdutosComTotalizacao(
+			int qtdMaximaProdutosComTotalizacao) {
+		this.qtdMaximaProdutosComTotalizacao = qtdMaximaProdutosComTotalizacao;
+	}
+	public TipoImpressaoCE getTipoImpressao() {
+		return tipoImpressao;
+	}
+	public void setTipoImpressao(TipoImpressaoCE tipoImpressao) {
+		this.tipoImpressao = tipoImpressao;
+	}
 	
 }

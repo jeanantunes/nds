@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 
@@ -72,7 +74,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		for (TipoParametroSistema tps : params.keySet()) {
 			ParametroSistema ps = new ParametroSistema();
 			ps.setTipoParametroSistema(tps);
-			ps.setValor(params.get(tps));
+			ps.setValor(StringUtils.trimWhitespace(params.get(tps)));
 			lst.add(ps);
 		}
 		
@@ -87,20 +89,105 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.FREQUENCIA_EXPURGO,qntMeses);
 	}
 	
+	/**
+	 * @param emailRemetente
+	 *            the email to set
+	 */
+	public void setEmailRemetente(String emailRemetente) {
+		this.params.put(TipoParametroSistema.EMAIL_REMETENTE, emailRemetente);
+	}
 
 	/**
-	 * @return the email
+	 * @return the emailRemetente
 	 */
-	public String getEmail() {
+	public String getEmailRemetente() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_REMETENTE);
+	}
+	
+	/**
+	 * @return the autenticaEmail
+	 */
+	public String getAutenticaEmail() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_AUTENTICAR);
+	}
+
+	/**
+	 * @param autenticaEmail
+	 *            the autenticaEmail to set
+	 */
+	public void setAutenticaEmail(String autenticaEmail) {
+		this.params.put(TipoParametroSistema.EMAIL_AUTENTICAR, Boolean.valueOf(autenticaEmail) ? "TRUE" : "FALSE");
+	} 
+	
+	/**
+	 * @param emailUsuario
+	 *            the email to set
+	 */
+	public void setEmailUsuario(String emailUsuario) {
+		this.params.put(TipoParametroSistema.EMAIL_USUARIO, emailUsuario);
+	}
+
+	/**
+	 * @return the emailUsuario
+	 */
+	public String getEmailUsuario() {
 		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_USUARIO);
 	}
 
 	/**
-	 * @param email
-	 *            the email to set
+	 * @param host
 	 */
-	public void setEmail(String email) {
-		this.params.put(TipoParametroSistema.EMAIL_USUARIO, email);
+	public void setHost(String host) {
+		this.params.put(TipoParametroSistema.EMAIL_HOST, host);
+	}
+	
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_HOST);
+	}
+	
+	/**
+	 * @param protocolo
+	 */
+	public void setProtocolo(String protocolo) {
+		this.params.put(TipoParametroSistema.EMAIL_PROTOCOLO, protocolo);
+	}
+	
+	/**
+	 * @return the protocolo
+	 */
+	public String getProtocolo() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_PROTOCOLO);
+	}
+	
+	/**
+	 * @param porta
+	 */
+	public void setPorta(String porta) {
+		this.params.put(TipoParametroSistema.EMAIL_PORTA, porta);
+	}
+	
+	/**
+	 * @return the porta
+	 */
+	public String getPorta() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_PORTA);
+	}
+	
+	/**
+	 * @param senha
+	 */
+	public void setSenha(String senha) {
+		this.params.put(TipoParametroSistema.EMAIL_SENHA, senha);
+	}
+	
+	/**
+	 * @return the senha
+	 */
+	public String getSenha() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_SENHA);
 	}
 
 	/**

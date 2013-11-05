@@ -2,7 +2,9 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +131,17 @@ public class RoteirizacaoController extends BaseController {
 		result.use(Results.json()).from(roteiros, "result").serialize();
 	}
 	
+	/**
+	 * Carrega o combo de pesquisa por roteiro a partir de um Box
+	 * @param boxId
+	 */
+	@Path("/carregarComboRoteiroCodigoBox")
+	public void carregarComboRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
+		
+		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
+		result.use(Results.json()).from(roteiros, "result").serialize();
+	}
+	
 	
 	/**
 	 * Carrega o combo de pesquisa por rota a partir de um Roteiro
@@ -200,6 +213,70 @@ public class RoteirizacaoController extends BaseController {
         this.result.use(Results.json()).from(listaRotas, "result").serialize();
     }
 	
+	/**
+	 * Carrega o combos Roteiro e Rota por intervalo de Box
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 */
+	@Post
+	@Path("/carregarCombosPorBox")
+	public void carregarCombosPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
+		
+		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboTodosBoxes();
+		
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorBox(codigoBoxDe, codigoBoxAte);
+		
+		List<ItemDTO<Long, String>> roteiros = this.roteirizacaoService.getComboRoteiroPorBox(codigoBoxDe, codigoBoxAte);
+		
+		result.use(Results.json()).from(Arrays.asList(rotas, roteiros, boxes),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o combo Roteiro e Box por Rota
+	 * @param idRota
+	 */
+	@Post
+	@Path("/carregarCombosPorRota")
+	public void carregarCombosPorRota(Long idRota) {
+		
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboTodosRotas();
+		
+		List<ItemDTO<Long, String>> roteiros = this.roteirizacaoService.getComboRoteiroPorRota(idRota);
+		
+		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboBoxPorRota(idRota);
+		
+		result.use(Results.json()).from(Arrays.asList(roteiros, boxes, rotas),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o combo Rota e Box por Roteiro
+	 * @param idRoteiro
+	 */
+	@Post
+	@Path("/carregarCombosPorRoteiro")
+	public void carregarCombosPorRoteiro(Long idRoteiro) {
+		
+		List<ItemDTO<Long, String>> roteiros = this.roteirizacaoService.getComboTodosRoteiros();
+		
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorRoteiro(idRoteiro);
+		
+		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboBoxPorRoteiro(idRoteiro);
+		
+		result.use(Results.json()).from(Arrays.asList(rotas, boxes, roteiros),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o combo Rota por Roteiro
+	 * @param idRoteiro
+	 */
+	@Post
+	@Path("/carregarRotasPorRoteiro")
+	public void carregarRotasPorRoteiro(Long idRoteiro) {
+				
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorRoteiro(idRoteiro);
+				
+		result.use(Results.json()).from(rotas,"result").recursive().serialize();
+	}
 	
 	@Path("/obterProximaOrdemRoteiro")
 	public void obterProximaOrdemRoteiro() {
@@ -224,8 +301,14 @@ public class RoteirizacaoController extends BaseController {
 	
 	
 	@Path("/iniciaTelaCotas")
-	public void iniciaTelaCotas() {
-		List<String> uf = enderecoService.obterUnidadeFederativaAssociadaComEndereco();
+	public void iniciaTelaCotas(boolean boxEspecial) {
+		List<String> uf = new ArrayList<String>();
+		if(!boxEspecial) {
+			uf = enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
+		} else {
+			uf = enderecoService.obterUnidadeFederacaoBrasil();
+		}
+		
 		result.use(Results.json()).from(uf, "result").serialize();
 	}
 	
@@ -350,16 +433,26 @@ public class RoteirizacaoController extends BaseController {
 	
 	
 	@Path("/buscalistaMunicipio")
-	public void buscalistaMunicipio(String uf) {
-		List<String> lista = enderecoService.obterLocalidadesPorUF(uf);
+	public void buscalistaMunicipio(String uf, boolean boxEspecial) {
+		List<String> lista = new ArrayList<String>();
+		if(!boxEspecial) {
+			lista = enderecoService.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
+		} else {
+			lista = enderecoService.obterLocalidadesPorUFPDVBoxEspecial(uf);
+		}
 		result.use(Results.json()).from(lista, "result").serialize();
 	}
 	
 	
 	@Path("/buscalistaBairro")
-	public void buscalistaBairro(String municipio) {
-		List<String> bairro = enderecoService.obterBairrosPorCidade(municipio);
-		result.use(Results.json()).from(bairro, "result").serialize();
+	public void buscalistaBairro(String uf, String municipio, boolean boxEspecial) {
+		List<String> bairros = new ArrayList<String>();
+		if(!boxEspecial) {
+			bairros = enderecoService.obterBairrosPDVSemRoteirizacao(uf, municipio);
+		} else {
+			bairros = enderecoService.obterBairrosPDVBoxEspecial(uf, municipio);
+		}	
+		result.use(Results.json()).from(bairros, "result").serialize();
 	}
 	
 	
@@ -839,7 +932,9 @@ public class RoteirizacaoController extends BaseController {
 	     
 	       OrdenacaoUtil.reordenarLista(pdv, pdvsAtuais);
 	       
-	       pdvsAtuais.add(pdv);
+	       pdvsAtuais.add(pdv.getOrdem() - 1, pdv);
+	       
+	       ordenarPdvsPeloIndiceDaLista(rota);
 	       
 	       result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ordem válida!"), "result").recursive().serialize(); 
 	    }
@@ -853,7 +948,7 @@ public class RoteirizacaoController extends BaseController {
     @Path("/obterDadosComboUF")
 	public void obterDadosComboUF() {
 		
-		List<String> ufs = this.enderecoService.obterUnidadeFederativaAssociadaComEndereco();
+		List<String> ufs = this.enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
 		
 		this.result.use(Results.json()).from(ufs, "result").serialize();
 	}
@@ -863,9 +958,11 @@ public class RoteirizacaoController extends BaseController {
 	 */
 	@Post
 	@Path("/obterPdvsDisponiveis")
-	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID ,String sortname, String sortorder ){
+	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, boolean pesquisaPorCota, Long boxID, String sortname, String sortorder ){
         
-		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
+		List<PdvRoteirizacaoDTO> lista = 
+			this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
@@ -886,7 +983,8 @@ public class RoteirizacaoController extends BaseController {
 		RotaRoteirizacaoDTO rotaDTO = roteiroDTO.getRotaByOrdem(ordemRota);
 		
 		if (rotaDTO == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao obter Rota da sessão com a Ordem: "+ordemRota));
+			throw new ValidacaoException(new ValidacaoVO(
+				TipoMensagem.ERROR, "Falha ao obter Rota da sessão com a Ordem: "+ordemRota));
 		}
 		
 		return rotaDTO;
@@ -1058,17 +1156,18 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> pdvsAux = pdvs;
 		
 		for (int i=0; i < pdvs.size(); i++) {
-			for (int j=i+1; j < pdvsAux.size(); j++) {
+			for (int j = i+1; j < pdvsAux.size(); j++) {
 	            if (pdvsAux.get(j).getOrdem().equals(pdvs.get(i).getOrdem())) {
 	            	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "[Ordem] inválida !"));
 	            }
 	        }
 		}
 		
-		if(pdvsAtual!=null){
+		if(pdvsAtual != null) {
 			
 			OrdenacaoUtil.reordenarListas(pdvs, pdvsAtual);
 		}
+		
 	}
 	
 	
@@ -1110,10 +1209,32 @@ public class RoteirizacaoController extends BaseController {
 		
 		this.verificaOrdemPdvs(pdvs, pdvsAtual);
 		
-		rota.addAllPdv(pdvs);
+		for(PdvRoteirizacaoDTO pdv : pdvs) {
+			
+			if(pdv.getOrdem() < 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Valor inferior ao primeiro elemento da lista.");
+			}
+			
+			rota.getPdvs().add(pdv);
+		}
+		
+		Collections.sort(rota.getPdvs());
+		
+		ordenarPdvsPeloIndiceDaLista(rota);
 			
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
 
+	}
+
+	private void ordenarPdvsPeloIndiceDaLista(RotaRoteirizacaoDTO rota) {
+		
+		if(rota != null && rota.getPdvs() != null) {
+			
+			for(int i = 0; i < rota.getPdvs().size(); i++ ) {
+				rota.getPdvs().get(i).setOrdem(i+1);
+			}
+		}
+		
 	}
 	
 	/**
@@ -1131,6 +1252,8 @@ public class RoteirizacaoController extends BaseController {
 				rota.removerPdv(cotaId);
 			}
 		}	
+		
+		ordenarPdvsPeloIndiceDaLista(rota);
 
 		result.use(CustomJson.class).from("").serialize();
 	}

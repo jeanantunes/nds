@@ -34,15 +34,14 @@ public class ConferenciaEncalheParcial {
 	private Long id;
 	
 	/**
-	 * Data em que ocorreu a conferencia de encalhe (Funcionalidade Conferencia Encalhe Cota) 
-	 * do produto no distribuidor. 
+	 * Data de operação em que ocorreu a conferencia de encalhe parcial.
 	 */
 	@Temporal(value=TemporalType.DATE)
 	@Column(name = "DATA_MOVIMENTO", nullable = false)
 	private Date dataMovimento;
 	
 	/**
-	 * Data na qual foi criado este registro de ConferenciaEncalheParcial
+	 * Data do sistema {@code new Date()} na qual foi criado este registro {@code ConferenciaEncalheParcial} 
 	 * (Na funcionalidade Digitacao Contagem Devolução).
 	 */
 	@Column(name = "DATA_CONF_ENC_PARCIAL", nullable = false)

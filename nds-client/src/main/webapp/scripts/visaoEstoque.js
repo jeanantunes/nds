@@ -1,8 +1,37 @@
+$(document).ready(function() {
+
+	$('#pesquisarVisaoEstoqueForm').on('submit', function() {return false;});
+	
+	$(document.body).keydown(function(e) {	
+		
+		var eventoJs = e;
+		var keycode = e.which;
+		
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+
+		if(keycode == 13) {
+			e.preventDefault();
+			visaoEstoqueController.pesquisar();
+			$(".grids", this.workspace).show();
+		}
+		
+	});
+		
+});
+
 var visaoEstoqueController = $.extend(true, {
 	
 	path : contextPath + '/estoque/visaoEstoque/',
 
-
+	visaoEstoqueTransferenciaArray : {}, 
+	
+	visaoEstoqueInventarioArray : {}, 
+	
+	tipoEstoque: null,
+	
 	init : function() {
 		
 		$("#visaoEstoque_filtro_dataMovimentacao").datepicker({
@@ -10,6 +39,7 @@ var visaoEstoqueController = $.extend(true, {
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		$(".input-date").mask("99/99/9999");
 		
 		$("#btnPesquisarVisaoEstoque", this.workspace).click(function() {
 			visaoEstoqueController.pesquisar();
@@ -27,13 +57,29 @@ var visaoEstoqueController = $.extend(true, {
 	
 	
 	pesquisar : function() {
-		
-		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+
+		var formData = [
+		        {name:'filtro.tipoEstoque', value: $("#visaoEstoque_filtro_tipoEstoque", this.workspace).val()},
+		        {name:'filtro.tipoEstoqueSelecionado', value: $("#visaoEstoque_filtro_tipoEstoqueSelecionado", this.workspace).val()},
+		        {name:'filtro.dataMovimentacaoStr', value: $("#visaoEstoque_filtro_dataMovimentacao", this.workspace).val()},
+		        {name:'filtro.idFornecedor', value: $("#visaoEstoque_filtro_idFornecedor", this.workspace).val()}
+		];
 		
 		$(".visaoEstoqueGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisar.json?' + params, 
+			
+			url : visaoEstoqueController.path + 'pesquisar.json',
+			params: formData,
 			preProcess : visaoEstoqueController.montaColunaAcao,
-			newp : 1
+			newp : 1,
+			onSuccess : function(result) {
+				if (result.listaMensagens) {
+					
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+				}
+			}
 		});
 		
 		$(".visaoEstoqueGrid", this.workspace).flexReload();
@@ -100,15 +146,23 @@ var visaoEstoqueController = $.extend(true, {
 	
 	montaInputTransferencia : function(data) {
 		
+		data = data.listDetalhe;
+		
 		$.each(data.rows, function(index, value) {
 			
 			if (!value.cell.precoCapa) {
 				value.cell.precoCapa = "";
 			}
 			
+			transferir = -1;
+			produtoEdicaoId = visaoEstoqueController.visaoEstoqueTransferenciaArray[value.cell.produtoEdicaoId];
+			if(produtoEdicaoId) {
+				transferir = produtoEdicaoId;
+			}
+			
 			value.cell.estoque = value.cell.qtde;
-			value.cell.transferir = '<input type="text" id="inputVisaoEstoqueTransferencia_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarSaldo(this)"/>';
-			value.cell.check = '<input type="checkbox" class="visaoEstoqueCheck" name="checkVisaoEstoqueTransferir" value="' + value.cell.produtoEdicaoId + '" onclick="visaoEstoqueController.verificarCheck();" />';
+			value.cell.transferir = '<input type="text" id="inputVisaoEstoqueTransferencia_' + value.cell.produtoEdicaoId + '" '+ (transferir != -1 ? 'value="'+ transferir +'"': '') +' style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarSaldo(this,'+ value.cell.produtoEdicaoId +')" onkeyup="visaoEstoqueController.ajustarSaldo(this,'+ value.cell.produtoEdicaoId +')"/>';
+			
 		});
 		
 		return data;
@@ -117,14 +171,22 @@ var visaoEstoqueController = $.extend(true, {
 	
 	montaInputInventario : function(data) {
 		
+		data = data.listDetalhe;
+		
 		$.each(data.rows, function(index, value) {
 			
 			if (!value.cell.precoCapa) {
 				value.cell.precoCapa = "";
 			}
 			
+			inventario = -1;
+			produtoEdicaoId = visaoEstoqueController.visaoEstoqueInventarioArray[value.cell.produtoEdicaoId];
+			if(produtoEdicaoId) {
+				inventario = produtoEdicaoId;
+			}
+			
 			value.cell.diferenca = '<div abbr="diferenca">' + value.cell.qtde + '</div>';
-			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this)"/>';
+			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" '+ (inventario != -1 ? 'value="'+ visaoEstoqueController.visaoEstoqueInventarioArray[value.cell.produtoEdicaoId]['inventario'] +'"': '') +' style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this,'+ value.cell.produtoEdicaoId +')"/>';
 			
 		});
 		
@@ -132,22 +194,42 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	
-	ajustarSaldo : function(element) {
+	ajustarSaldo : function(element, produtoEdicaoId) {
 		
 		var tr = element.parentNode.parentNode.parentNode;
 		var qtdeTransferir = parseInt($.trim(element.value) == "" ? 0 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
 		
-		$('td[abbr="estoque"] >div', tr).html(qtde - qtdeTransferir);
+		if(qtdeTransferir > 0 && qtdeTransferir <= qtde) {
+			$('td[abbr="estoque"] >div', tr).html(qtde - qtdeTransferir);
+			visaoEstoqueController.visaoEstoqueTransferenciaArray[produtoEdicaoId] = qtdeTransferir;
+		} else {
+			$('td[abbr="estoque"] >div', tr).html(qtde);
+			$('td[abbr="transferir"] >div>input', tr).attr('value', '');
+			delete visaoEstoqueController.visaoEstoqueTransferenciaArray[produtoEdicaoId];
+		}
+		
 	},
 	
 	
-	ajustarDiferenca : function(element) {
+	ajustarDiferenca : function(element, produtoEdicaoId) {
 		
 		var tr = element.parentNode.parentNode.parentNode;
-		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
+		var qtdeInventario = parseInt($.trim(element.value) == "" ? -1 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
-		$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
+		
+		if(!isNaN(qtdeInventario) && qtdeInventario > -1) {
+			$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
+			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId] = {};
+			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId]['inventario'] = (qtdeInventario);
+			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId]['diferenca']  = (qtdeInventario - qtde);
+		} else {
+			$('div[abbr="diferenca"]', tr).attr('value', (!isNaN(qtdeInventario)) ? (qtdeInventario - qtde) : qtde);
+			$('div[abbr="diferenca"]', tr).html(((!isNaN(qtdeInventario) && qtdeInventario > 0) ? (qtdeInventario - qtde) : qtde));
+			element.value = '';
+			delete visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId];
+		}
+		
 	},
 	
 	
@@ -184,7 +266,7 @@ var visaoEstoqueController = $.extend(true, {
 			params,
 			function(result) {
 
-				$('#dialog-visaoEstoque-transferencia').dialog('close');
+				visaoEstoqueController.visaoEstoqueTransferenciaArray = {};
 				
 				if (result.listaMensagens) {
 				
@@ -195,6 +277,8 @@ var visaoEstoqueController = $.extend(true, {
 				}
 				
 				$(".visaoEstoqueGrid", this.workspace).flexReload();
+				
+				//$('#dialog-visaoEstoque-transferencia').dialog('close');
 			}
 		);
 	},
@@ -202,18 +286,14 @@ var visaoEstoqueController = $.extend(true, {
 	
 	parametrosTransferencia : function() {
 		
-		var dados ="";
+		var dados = "";
 		var index = 0;
-		$("input[type=checkbox][name='checkVisaoEstoqueTransferir']:checked").each(function(i, element) {
-			if (dados != ""){
-				dados+=",";
-			}
-				
-			var produtoEdicaoId = element.value;
-			var qtde = $('#inputVisaoEstoqueTransferencia_' + element.value).val();
+		
+		$.each( visaoEstoqueController.visaoEstoqueTransferenciaArray, function(produtoEdicaoId, qtde) {
 			
-			dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
+			dados += '{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId", value: '+ produtoEdicaoId +'}, {name:"filtro.listaTransferencia['+index+'].qtde", value: '+ ((qtde != "") ? qtde : 0) +'},';
 			index++;
+			
 		});
 
 		var params = '['+dados+']';
@@ -223,18 +303,20 @@ var visaoEstoqueController = $.extend(true, {
 	
 	confirmaInventario : function() {
 		
-		$('#dialog-visaoEstoque-inventario-confirm').dialog('close');
-		
 		var params = visaoEstoqueController.parametrosInventario();
 		
 		$.postJSON(
 			this.path + 'inventario?' + $('#pesquisarVisaoEstoqueForm').serialize(),
 			params,
 			function() {
+				visaoEstoqueController.visaoEstoqueInventarioArray = {};
 				$('#dialog-visaoEstoque-inventario').dialog('close');
 				visaoEstoqueController.pesquisar();
 			}
 		);
+		
+		$('#dialog-visaoEstoque-inventario-confirm').dialog('close');
+		
 	},
 	
 	
@@ -242,22 +324,12 @@ var visaoEstoqueController = $.extend(true, {
 		
 		var dados ="";
 		var index = 0;
-		$(".inputVisaoEstoqueInventario").each(function(i, element) {
+		
+		$.each( visaoEstoqueController.visaoEstoqueInventarioArray, function(produtoEdicaoId, qtde) {
 			
-			if (element.value != "") {
+			dados += '{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId", value: '+ produtoEdicaoId +'}, {name:"filtro.listaTransferencia['+index+'].qtde", value: '+ ((qtde['inventario'] != "") ? qtde['diferenca'] : 0) +'},';
+			index++;
 			
-				if (dados != ""){
-					dados+=",";
-				}
-					
-				var produtoEdicaoId = element.id.substring(element.id.lastIndexOf("_")+1);
-
-				var tr = $(element).parent().parent().parent();
-				var qtde = $('div[abbr="diferenca"]', tr).html();
-				
-				dados+='{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId",value:'+produtoEdicaoId+'}, {name:"filtro.listaTransferencia['+index+'].qtde",value:'+qtde+'}';
-				index++;
-			}
 		});
 
 		var params = '['+dados+']';
@@ -278,6 +350,8 @@ var visaoEstoqueController = $.extend(true, {
 		}
 		
 		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
+		
+		visaoEstoqueController.tipoEstoque = tipoEstoque;
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
@@ -306,6 +380,13 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	preProcessPopupDetalhe : function(data) {
+	
+		if (visaoEstoqueController.tipoEstoque != 'LANCAMENTO_JURAMENTADO') {
+
+			visaoEstoqueController.toggleFlexiGridColumn("visaoEstoqueDetalheGrid", "valor", (!data.isBuscaHistorico));
+		}
+		
+		data = data.listDetalhe;
 		
 		$.each(data.rows, function(index, value) {
 			
@@ -321,6 +402,20 @@ var visaoEstoqueController = $.extend(true, {
 		return data;
 	},
 	
+	toggleFlexiGridColumn: function(gridClassName, column, visible) {
+	
+		var grid = $("." + gridClassName).closest(".flexigrid");
+		
+		var colHeader = $('th[abbr="' + column + '"]', grid);
+		var colIndex = $(colHeader).attr('axis').replace(/col/, "");
+		
+		$(colHeader).toggle(visible);
+		
+		$('tbody tr', grid).each(function () {
+			$('td:eq(' + colIndex + ')', this).toggle(visible);
+		});
+	},
+	
 	popup_transferencia : function(tipoEstoque, estoque) {
 		
 		visaoEstoqueController.montaSelectIncluirEstoque(tipoEstoque);
@@ -329,6 +424,8 @@ var visaoEstoqueController = $.extend(true, {
 		$("#visaoEstoque_transferencia_dataMovimentacao", this.workspace).html($("#visaoEstoque_filtro_dataMovimentacao").val());
 		
 		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
+		
+		$("#visaoEstoqueCheckSelecionarTodos", this.workspace).uncheck();
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
@@ -349,15 +446,21 @@ var visaoEstoqueController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					//$(this).dialog("close");
+					
 					$("#effect").show("highlight", {}, 1000, callback);
+					
 					visaoEstoqueController.confirmarTransferencia();
+					
+					$(this).dialog("close");
+					
 				},
 				"Cancelar": function() {
+					visaoEstoqueController.visaoEstoqueTransferenciaArray = {};
 					$(this).dialog("close");
 				},
 			},
-			form: $("#dialog-visaoEstoque-transferencia", visaoEstoqueController.workspace).parents("form")
+			form: $("#dialog-visaoEstoque-transferencia", visaoEstoqueController.workspace).parents("form"),
+			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueTransferenciaArray = {}; },
 		});
 	},
 	
@@ -371,7 +474,7 @@ var visaoEstoqueController = $.extend(true, {
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
-		params +="&filtro.paginar=false";
+		params +="&filtro.paginar=true";
 		
 		$(".visaoEstoqueInventarioGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params,
@@ -393,10 +496,12 @@ var visaoEstoqueController = $.extend(true, {
 					visaoEstoqueController.popupConfirmaInventario();
 				},
 				"Cancelar": function() {
+					visaoEstoqueController.visaoEstoqueInventarioArray = {};
 					$( this ).dialog( "close" );
 				},
 			},
-			form: $("#dialog-visaoEstoque-inventario", visaoEstoqueController.workspace).parents("form")
+			form: $("#dialog-visaoEstoque-inventario", visaoEstoqueController.workspace).parents("form"),
+			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueInventarioArray = {}; },
 		});
 	},
 	
@@ -415,9 +520,11 @@ var visaoEstoqueController = $.extend(true, {
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
+					visaoEstoqueController.visaoEstoqueInventarioArray = {};
 				},
 			},
-			form: $("#dialog-visaoEstoque-inventario-confirm", visaoEstoqueController.workspace).parents("form")
+			form: $("#dialog-visaoEstoque-inventario-confirm", visaoEstoqueController.workspace).parents("form"),
+			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueInventarioArray = {}; $(this).close(); },
 		});
 	},
 	
@@ -653,15 +760,13 @@ var visaoEstoqueController = $.extend(true, {
 				width : 80,
 				sortable : true,
 				align : 'center'
-			}, {
-				display : '',
-				name : 'check',
-				width : 50,
-				sortable : true,
-				align : 'center'
 			}],
 			width : 870,
 			height : 200,
+			usepager : true,
+			useRp : true,
+			rpOptions: [50, 100, 200],
+			rp: 50,
 			sortname : "codigo",
 			sortorder : "asc"
 		});
@@ -728,6 +833,10 @@ var visaoEstoqueController = $.extend(true, {
 			}],
 			width : 870,
 			height : 300,
+			usepager : true,
+			useRp : true,
+			rpOptions: [50, 100, 200],
+			rp: 50,
 			sortname : "codigo",
 			sortorder : "asc"
 		});

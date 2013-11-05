@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
@@ -230,7 +233,7 @@ public class DescontoServiceImpl implements DescontoService {
 		if(fornecedores != null && !fornecedores.isEmpty()) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
-			Date dataAtual = new Date();
+			Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 			
 			/*
 			 * Cria um desconto a ser utilizado em um ou mais fornecedores
@@ -285,7 +288,7 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 
-		Date dataAtual = new Date();
+		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Distribuidor distribuidor = distribuidorRepository.obter(); 
 		
@@ -372,7 +375,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
-		Date dataAtual = new Date();
+		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 
 		/**
 		 * 		Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica
@@ -546,10 +549,11 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProximosLancamentos.setDesconto(desconto);
 				descontoProximosLancamentos.setAplicadoATodasAsCotas(descontoDTO.isTodasCotas());
 				
-				if(descontoDTO.isTodasCotas()) 
+				if(descontoDTO.isTodasCotas()) {
 					descontoProximosLancamentos.setCotas(null);
-				else
+				} else {
 					descontoProximosLancamentos.setCotas(cotas);
+				}
 				
 				descontoProximosLancamentos.setUsuario(usuario);
 				descontoProximosLancamentos.setDistribuidor(distribuidor);
@@ -934,22 +938,41 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		List<Produto> produtos = descontoRepository.buscarProdutosQueUsamDescontoProduto(desconto);
 		
-		for(ProdutoEdicao produtoEdicao : produtosEdicoes) {
-			
-			HistoricoDescontoProdutoEdicao hdpe = historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
-			historicoDescontoProdutoEdicaoRepository.remover(hdpe);
-			
-			produtoEdicao.setDescontoProdutoEdicao(null);
-			
-		}
+		List<DescontoProximosLancamentos> descontoProximosLancamentos = descontoRepository.buscarProximosLancamentosQueUsamDescontoProduto(desconto);
 		
-		for(Produto produto : produtos) {
+		if(!desconto.isUsado()) {
 			
-			HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);
-			historicoDescontoProdutoRepository.remover(hdp);
+			for(ProdutoEdicao produtoEdicao : produtosEdicoes) {
+				
+				HistoricoDescontoProdutoEdicao hdpe = historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
+				historicoDescontoProdutoEdicaoRepository.remover(hdpe);
+				
+				produtoEdicao.setDescontoProdutoEdicao(null);
+				
+			}
 			
-			produto.setDescontoProduto(null);
+			for(Produto produto : produtos) {
+				
+				produto.setDescontoProduto(null);
+				
+				HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);				
+				historicoDescontoProdutoRepository.remover(hdp);
+				
+			}
 			
+			
+			for(DescontoProximosLancamentos dpl : descontoProximosLancamentos) {
+				
+				dpl.setDesconto(null);
+				descontoProximosLancamentosRepository.merge(dpl);
+			}
+			
+			if( (produtos != null && produtos.isEmpty()) 
+					&& (produtosEdicoes != null && produtosEdicoes.isEmpty())
+					&& (descontoProximosLancamentos != null && descontoProximosLancamentos.isEmpty())) {
+				
+				descontoRepository.removerPorId(idDesconto);
+			}
 		}
 		
 	}
@@ -1061,6 +1084,121 @@ public class DescontoServiceImpl implements DescontoService {
 	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
 			Cota cota, String sortorder, String sortname) {		
 		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
+	@Override
+	public Map<String, DescontoDTO> obterDescontosPorLancamentoProdutoEdicaoMap(
+			Long lancamentoId, Long produtoEdicaoId) {
+		
+		Map<String, DescontoDTO> descontosMap = new HashMap<String, DescontoDTO>();
+		List<DescontoDTO> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(lancamentoId, produtoEdicaoId);
+		
+		for(DescontoDTO desc : descontos) {
+			String key = new StringBuilder()
+				.append(desc.getCotaId() != null ? "c" : "")
+				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
+				.append(desc.getFornecedorId() != null ? "f" : "")
+				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
+				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
+				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
+				.append(desc.getProdutoId() != null ? "p" : "")
+				.append(desc.getProdutoId() != null ? desc.getProdutoId() : "")
+				.toString();
+			descontosMap.put(key, desc);
+		}		
+		
+		return descontosMap;
+	}
+	
+	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, long cotaId, long fornecedorId, long produtoId, long produtoEdicaoId) throws Exception {
+		
+		/**
+		 * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
+		 */
+		String key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.append("pe")
+				.append(produtoEdicaoId)
+				.append("p")
+				.append(produtoId)
+				.toString();
+		
+		DescontoDTO descontoDTO = descontos.get(key);
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.append("pe")
+				.append(produtoEdicaoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.append("p")
+				.append(produtoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("pe")
+				.append(produtoEdicaoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("p")
+				.append(produtoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("f")
+				.append(fornecedorId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");
+			
+		}
+		
+		return null;
 	}
 
 }

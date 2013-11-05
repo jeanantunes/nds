@@ -1,34 +1,51 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
+import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -37,6 +54,12 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoFinanceiroCota, Long> 
 												   implements MovimentoFinanceiroCotaRepository {
 
+	@Autowired
+	private DataSource dataSource;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
 	public MovimentoFinanceiroCotaRepositoryImpl() {
 		super(MovimentoFinanceiroCota.class);
 	}
@@ -46,84 +69,108 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		StringBuilder sql = new StringBuilder("");
 		
-		sql.append(" SELECT  ");
-		
-		sql.append(" SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor,    	");
-		sql.append(" PN.DATA_VENCIMENTO AS dataVencimento,    		");
-		sql.append(" MFC.DATA as dataLancamento                    ");
-		
-		sql.append(" FROM  PARCELA_NEGOCIACAO PN                                     ");
-		
-		sql.append(" INNER JOIN NEGOCIACAO N ON (                                    ");
-		sql.append(" 	N.ID = PN.NEGOCIACAO_ID                                      ");
-		sql.append(" )                                                               ");
-		
-		sql.append(" INNER JOIN MOVIMENTO_FINANCEIRO_COTA MFC ON (                   ");
-		sql.append(" 	PN.MOVIMENTO_FINANCEIRO_ID = MFC.ID                          ");
-		sql.append(" )                                                               ");
+		sql.append("    SELECT ");
+		sql.append("        SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor, ");
+		sql.append("        PN.DATA_VENCIMENTO AS dataVencimento, ");
+		sql.append("        MFC.DATA as dataLancamento ");
+		sql.append("    FROM ");
+		sql.append("        PARCELA_NEGOCIACAO PN");
+		sql.append("    INNER JOIN ");
+		sql.append("        NEGOCIACAO N  ");
+		sql.append("   ON ( ");
+		sql.append("       N.ID = PN.NEGOCIACAO_ID ");
+		sql.append("   )  ");
+		sql.append("    INNER JOIN ");
+		sql.append("        MOVIMENTO_FINANCEIRO_COTA MFC  ");
+		sql.append("   ON ( ");
+		sql.append("       PN.MOVIMENTO_FINANCEIRO_ID = MFC.ID       ");
+		sql.append("   )  ");
+		sql.append("    INNER JOIN ");
+		sql.append("        COTA  ");
+		sql.append("   ON ( ");
+		sql.append("       COTA.ID = MFC.COTA_ID   ");
+		sql.append("   )  ");
+		sql.append("    LEFT JOIN ");
+		sql.append("        CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC  ");
+		sql.append("   ON ( ");
+		sql.append("       CMFC.MVTO_FINANCEIRO_COTA_ID = MFC.ID     ");
+		sql.append("   )  ");
+		sql.append("    LEFT JOIN ");
+		sql.append("        CONSOLIDADO_FINANCEIRO_COTA CFC  ");
+		sql.append("   ON ( ");
+		sql.append("       CFC.ID = CMFC.CONSOLIDADO_FINANCEIRO_ID   ");
+		sql.append("   )  ");
+		sql.append("    WHERE ");
+		sql.append("        N.NEGOCIACAO_AVULSA = false  ");
+		sql.append("        AND       COTA.NUMERO_COTA = :numeroCota  ");
+		sql.append("        AND    CFC.ID IS NULL");
+		sql.append("    GROUP BY ");
+		sql.append("        PN.ID, ");
+		sql.append("        MFC.ID ");
+			
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
-		sql.append(" INNER JOIN COTA ON (                    						 ");
-		sql.append(" 	COTA.ID = MFC.COTA_ID                           			 ");
-		sql.append(" )                                                               ");
+		parameters.put("numeroCota", numeroCota);
+		
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
 
-		sql.append(" LEFT JOIN CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC ON (            ");
-		sql.append(" 	CMFC.MVTO_FINANCEIRO_COTA_ID = MFC.ID                        ");
-		sql.append(" )                                                               ");
-		
-		sql.append(" LEFT JOIN CONSOLIDADO_FINANCEIRO_COTA CFC ON (                  ");
-		sql.append(" 	CFC.ID = CMFC.CONSOLIDADO_FINANCEIRO_ID                      ");
-		sql.append(" )                                                               ");
-		
-		sql.append(" WHERE                                                           ");
-		
-		sql.append(" N.NEGOCIACAO_AVULSA = false AND     	");
-		sql.append(" COTA.NUMERO_COTA = :numeroCota AND  	");
-		sql.append(" CFC.ID IS NULL							");
-		sql.append(" GROUP BY PN.ID, MFC.ID                 ");
-		
-		
-		Query query = getSession().createSQLQuery(sql.toString());
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		return query.list();
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
+				
+				dto.setValor(rs.getBigDecimal("valor"));
+				dto.setDataVencimento(rs.getDate("dataVencimento"));
+				dto.setDataLancamento(rs.getDate("dataLancamento"));
+				
+				return dto;
+			}
+		};
+
+		return (List<DebitoCreditoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 		
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select mfc ");
-		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
-		   .append(" join mfc.cota cota ")   
-		   .append(" left join mfc.movimentos movimentoEstoque ")
-		   .append(" left join movimentoEstoque.produtoEdicao pe ")
-		   .append(" left join pe.produto p ")
-		   .append(" left join p.fornecedores fornecedor ")
-		   .append(" where mfc.data <= d.dataOperacao ")
-		   .append(" and mfc.status = :statusAprovado ");
+		StringBuilder hql = new StringBuilder("select mfc ")
+		
+	   .append(" from MovimentoFinanceiroCota mfc ")
+	
+	   .append(" join mfc.cota cota ")
+	   
+	   .append(" join mfc.fornecedor fornecedor ")
+	   
+	   .append(" where mfc.data <= (select d.dataOperacao from Distribuidor d) ")
+	   
+	   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
+			
 			hql.append(" and cota.id = :idCota ");
 		}
 		
 		hql.append(" and cota.situacaoCadastro != :inativo and cota.situacaoCadastro != :pendente ")
-		   .append(" and mfc.id not in ")
-		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+		
+		   .append(" and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
 		
 		hql.append(" group by mfc.id ")
+		
 		   .append(" order by cota.id, fornecedor.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
 		
 		if (idCota != null){
+			
 			query.setParameter("idCota", idCota);
 		}
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO);
+		
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE);
 		
 		return query.list();
@@ -131,63 +178,91 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, 
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
-		StringBuilder hql = new StringBuilder(" select ");
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" mfc.tipoMovimento.operacaoFinaceira as tipoLancamento, ");
-		
-		hql.append(" mfc.valor as valor, ");
-		
-		hql.append(" mfc.data as dataLancamento, ");
-		
-		hql.append(" mfc.observacao as observacoes");
-		
-		hql.append(" from MovimentoFinanceiroCota mfc ");
-		   
-		hql.append(" where ");
-		
-		hql.append(" mfc.data = :dataOperacao and ");
-		
-		hql.append(" mfc.status = :statusAprovado and ");
-		
-		hql.append(" mfc.cota.numeroCota = :numeroCota ");
+		sql.append("select ");
+		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamento, ");
+		sql.append("	tipomovime1_.DESCRICAO as observacoes, ");
+		sql.append("	movimentof0_.VALOR as valor, ");
+		sql.append("	movimentof0_.DATA as dataLancamento, ");
+		sql.append("	movimentof0_.OBSERVACAO as descricao ");
+		sql.append(" from ");
+		sql.append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_, ");
+		sql.append("	TIPO_MOVIMENTO tipomovime1_ cross  ");
+		sql.append(" join ");
+		sql.append("	COTA cota3_  ");
+		sql.append(" where ");
+		sql.append("	movimentof0_.TIPO_MOVIMENTO_ID=tipomovime1_.ID  ");
+		sql.append("	and movimentof0_.COTA_ID=cota3_.ID  ");
+		sql.append("	and movimentof0_.DATA = :dataOperacao  ");
+		sql.append("	and movimentof0_.STATUS = :statusAprovado  ");
+		sql.append("	and cota3_.NUMERO_COTA = :numeroCota  ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
+			
+			sql.append("	and ( ");
+			sql.append("		movimentof0_.TIPO_MOVIMENTO_ID not in  ( ");
+			sql.append("			:tiposMovimentoFinanceiroIgnorados ");
+			sql.append("		) ");
+			sql.append("	)  ");
 		}
 		
-		hql.append(" and mfc.id not in ");
+		sql.append("	and ( ");
+		sql.append("		movimentof0_.ID not in  ( ");
+		sql.append("			select ");
+		sql.append("				distinct movimentof6_.ID  ");
+		sql.append("			from ");
+		sql.append("				CONSOLIDADO_FINANCEIRO_COTA consolidad4_  ");
+		sql.append("			inner join ");
+		sql.append("				CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos5_  ");
+		sql.append("					on consolidad4_.ID=movimentos5_.CONSOLIDADO_FINANCEIRO_ID  ");
+		sql.append("			inner join ");
+		sql.append("				MOVIMENTO_FINANCEIRO_COTA movimentof6_  ");
+		sql.append("					on movimentos5_.MVTO_FINANCEIRO_COTA_ID=movimentof6_.ID cross  ");
+		sql.append("			join ");
+		sql.append("				COTA cota7_  ");
+		sql.append("			where ");
+		sql.append("				consolidad4_.COTA_ID=cota7_.ID  ");
+		sql.append("				and cota7_.NUMERO_COTA = :numeroCota ");
+		sql.append("		) ");
+		sql.append("	)  ");
+		sql.append(" order by ");
+		sql.append("	movimentof0_.DATA ");
 		
-		hql.append(" (   ");
-		
-		hql.append(" select distinct(movimentos.id) ");
-
-		hql.append(" from ConsolidadoFinanceiroCota c join c.movimentos movimentos ");
-		
-		hql.append(" where ");
-		
-		hql.append(" c.cota.numeroCota = :numeroCota  ");
-		
-		hql.append(" ) ");
-		
-		hql.append(" order by mfc.data ");
-		
-		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
-		
-		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
 		query.setParameter("numeroCota", numeroCota);
-		
 		query.setParameter("dataOperacao", dataOperacao);
 		
-		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
+		if(tiposMovimentoFinanceiroIgnorados!=null && 
+				!tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			
+			query.setParameterList("tiposMovimentoFinanceiroIgnorados", getListaTiposMovimentoFinanceiroIgnorados(tiposMovimentoFinanceiroIgnorados));
 		}
 		
-		return query.list();
+		query.addScalar("tipoLancamento", StandardBasicTypes.STRING);
+		query.addScalar("descricao", StandardBasicTypes.STRING);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("observacoes", StandardBasicTypes.STRING);
+		
+		return (List<DebitoCreditoCotaDTO>) query.list();
 	}
 	
+	private List<Long> getListaTiposMovimentoFinanceiroIgnorados(
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados) {
+		ArrayList<Long> ret = new ArrayList<Long>();
+		for(TipoMovimentoFinanceiro tipo : tiposMovimentoFinanceiroIgnorados){
+			ret.add(tipo.getId());
+		}
+		
+		return ret;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
@@ -267,9 +342,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setMaxResults(1);
 		
 		return query.list();
-		
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -333,25 +406,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@Override
-	public Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual){
-		
-		StringBuilder hql = new StringBuilder("select count(mfc.data) ");
-		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
-		   .append(" where mfc.data = d.dataOperacao ")
-		   .append(" and mfc.status = :statusAprovado ");
-		
-		hql.append(" and mfc.cota.id not in ")
-		   .append(" (select distinct c.cota.id from ConsolidadoFinanceiroCota c where c.dataConsolidado <= :dataAtual) ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		query.setParameter("dataAtual", dataAtual);
-		
-		
-		return (Long) query.uniqueResult();
-	}
-
-	@Override
 	public Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		String hql = " select count(movimentoFinanceiroCota) " + 
@@ -401,10 +455,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		if (filtroDebitoCreditoDTO.getPaginacao() != null 
 				&& filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial() != null) { 
 			
-			query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			boolean selecionouFiltro = false;
+			if(filtroDebitoCreditoDTO.getNumeroCota() != null || filtroDebitoCreditoDTO.getIdTipoMovimento() != null ||
+					filtroDebitoCreditoDTO.getDataLancamentoInicio() != null || filtroDebitoCreditoDTO.getDataLancamentoFim() != null ||
+					filtroDebitoCreditoDTO.getDataVencimentoInicio() != null || filtroDebitoCreditoDTO.getDataVencimentoFim() != null){
+				selecionouFiltro = true;
+			}
 			
+			if(!selecionouFiltro){
+				query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			}else{
+				
+				int obterContagemMovimentosFinanceiroCota = obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+				
+				if(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina() < obterContagemMovimentosFinanceiroCota){
+					
+					query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+				}
+			}
+		
 			query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
 		}
+		
 		
 		return query.list();
 	}
@@ -851,35 +923,73 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	@Override
 	public Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
-
+		PaginacaoVO paginacaoVO = filtro.getPaginacao();
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		
+				
 		StringBuilder hql = new StringBuilder();
-		hql.append("select count(transportador.id)");
+		
+		hql.append("select 	 pessoaTransportador.razaoSocial as transportador, " +
+						 	"roteiro.descricaoRoteiro as roteiro, " +
+						 	"rota.descricaoRota as rota, " +
+						 	"cota.numeroCota as numCota, " +
+						 	"pessoaCota.nome as nomeCota, " +
+						 	"sum(movimento.valor) as valor, " +
+						 	"transportador.id as idTransportador, " +
+						 	"cota.id as idCota ");
+		
 		addFromJoinObterDadosTransportador(hql);
+		
 		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+		
 		hql.append(" group by transportador.id ");
-
+		
+		getOrderByObterResumoTransportadorCota(paginacaoVO); 
+		
 		Query query = getSession().createQuery(hql.toString());
-
+		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		Long count = (Long) query.uniqueResult();
-		
-		if (count == null) {
-			count = 0L;
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
 		}
-
-		return count;
+		
+		query.setResultTransformer(Transformers.aliasToBean(CotaTransportadorDTO.class));
+		
+		return Long.parseLong(String.valueOf(query.list()));
+		
+//		HashMap<String, Object> param = new HashMap<String, Object>();
+//		
+//		StringBuilder hql = new StringBuilder();
+//		hql.append("select count(transportador.id)");
+//		addFromJoinObterDadosTransportador(hql);
+//		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+//		hql.append(" group by transportador.id ");
+//
+//		Query query = getSession().createQuery(hql.toString());
+//
+//		for(String key : param.keySet()){
+//			query.setParameter(key, param.get(key));
+//		}
+//		
+//		Long count = (Long) query.uniqueResult();
+//		
+//		if (count == null) {
+//			count = 0L;
+//		}
+//
+//		return count;
 	}
-	
+		
 	@Override
 	public BigDecimal obterSaldoDistribuidor(Date data, 
 									 	     TipoCota tipoCota, 
 									 	     OperacaoFinaceira operacaoFinaceira) {
-		
+
 		StringBuilder hql = new StringBuilder(" select sum(mfc.valor) ");
 		
 		hql.append(" from MovimentoFinanceiroCota mfc ");
@@ -919,7 +1029,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			
 			query.setParameter("data", data);
 		}
-		
+
 		Object result = query.uniqueResult();
 
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
@@ -947,13 +1057,14 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.cota.id = :idCota ");
 			
-			indWhere = true;
+			indWhere = true; 
 		}
 		
 		if (dataCriacao != null){
 			
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.dataCriacao = :data ");
+			indWhere = true;
 		}
 		
 		hql.append(indWhere ? " and " : " where ")
@@ -1051,7 +1162,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@Override
-	public BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado, Date dataCriacao, 
+	public BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado, Date data, 
 			Integer numeroCota, Collection<TipoMovimentoFinanceiro> tiposMovimento){
 		
 		StringBuilder hql = new StringBuilder("select sum (m.valor) ");
@@ -1067,10 +1178,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			indWhere = true;
 		}
 		
-		if (dataCriacao != null){
+		if (data != null){
 			
 			hql.append(indWhere ? " and " : " where ")
-			   .append(" m.dataCriacao = :dataCriacao ");
+			   .append(" m.data = :data ");
 			indWhere = true;
 		}
 		
@@ -1085,14 +1196,345 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			query.setParameter("idConsolidado", idConsolidado);
 		}
 		
-		if (dataCriacao != null){
+		if (data != null){
 			
-			query.setParameter("dataCriacao", dataCriacao);
+			query.setParameter("data", data);
 		}
 		
 		query.setParameterList("tiposMovimento", tiposMovimento);
 		query.setParameter("numeroCota", numeroCota);
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+	
+	
+	/**
+	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @return Long
+	 */
+	@Override
+	public Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data){
+	    
+	    StringBuilder hql = new StringBuilder("select ");
+	    
+	    hql.append(" count(c) ")
+	
+	       .append(" from Cota c ")
+	       
+	       .append(" where c.tipoCota = :tipoCota ")
+	    
+	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	    
+	    if (numeroCota != null){
+	      
+	      hql.append(" and c.numeroCota = :numeroCota ");
+	    }
+	    
+	    Query query = this.getSession().createQuery(hql.toString());
+	
+	    if (numeroCota != null){
+	      
+	      query.setParameter("numeroCota", numeroCota);
+	    }
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("data", data);
+	    
+	    return (Long) query.uniqueResult();
+	}
+    
+    /**
+	 * FROM: Movimentos financeiros de Debito da cota
+	 * @param paramIdCota
+	 * @return String
+	 */
+    public String getFromDebitoCota(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+	       .append("  join mfc.cota c3 ")
+	       
+	       .append("  join mfc.tipoMovimento tm ")
+	    
+	       .append("  where mfc.data <= :data ")
+	       
+	       .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
+	    
+	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	    
+	       .append("  and c3.id = ").append(paramIdCota)
+	       
+	       .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)");
+    	
+		return hql.toString();
+	}
+    
+    /**
+   	 * FROM: Movimentos financeiros de Credito da cota
+   	 * @param paramIdCota
+   	 * @return String
+   	 */
+    public String getFromCreditoCota(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+	      .append("  join mfc.cota c4 ")
+	       
+	      .append("  join mfc.tipoMovimento tm ")
+	    
+	      .append("  where mfc.data <= :data ")
+	       
+	      .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
+	       
+	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	       
+	      .append("  and c4.id = ").append(paramIdCota)
+	       
+	      .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)");
+    	
+		return hql.toString();
+	}
+	
+	/**
+	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * @return List<ProcessamentoFinanceiroCotaDTO>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
+	                                                                             Date data, 
+	                                                                             String sortorder, 
+	                                                                             String sortname,
+	                                                                             int initialResult, 
+	                                                                             int maxResults){
+	    
+	    StringBuilder hql = new StringBuilder("select ");
+	    
+	    hql.append(" c.numeroCota as numeroCota, ")
+	    
+	
+	       .append(" case when (p.nome is not null) then ( p.nome )")
+	       
+	       .append("      when (p.razaoSocial is not null) then ( p.razaoSocial )")
+	       
+	       .append("      else null end as nomeCota, ")
+	
+	      
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	       
+	       .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
+	       
+	       .append("),0) as valorConsignado, ")
+
+	       
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+
+	       .append(this.movimentoEstoqueCotaRepository.getFromAVistaCotaAVista("c.id"))
+
+	       .append("),0) as valorAVista, ")
+
+	       
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	      
+	       .append(this.movimentoEstoqueCotaRepository.getFromEstornoCotaAVista("c.id"))
+	    
+	       .append("),0) as valorEstornado, ")
+	       
+	
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mfc.valor) ")
+	      
+	       .append(this.getFromCreditoCota("c.id"))
+	       
+	       .append("),0) as creditos, ")
+	       
+	 
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mfc.valor) ")
+	      
+	       .append(this.getFromDebitoCota("c.id"))
+	    
+	       .append("),0) as debitos, ")
+	
+	       
+	       .append(" (")
+	       
+	         .append(" (")
+	         
+	           .append(" coalesce(((")
+	           
+	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	          
+	           .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
+	        
+	           .append(")*(-1)),0) + ")
+	    
+	           
+	           .append(" coalesce((")
+	           
+	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	          
+	           .append(this.movimentoEstoqueCotaRepository.getFromEstornoCotaAVista("c.id"))
+	        
+	           .append("),0) ")
+	           
+	         .append(" ) + ")
+	         
+	         .append(" (")
+	         
+	           .append(" coalesce(((")
+	           
+	           .append("  select sum(coalesce(mfc.valor,0)) ")
+	          
+	           .append(this.getFromDebitoCota("c.id"))
+	        
+	           .append(")*(-1)),0) + ")
+	           
+	    
+	           .append(" coalesce((")
+	           
+	           .append("  select sum(coalesce(mfc.valor,0)) ")
+	          
+	           .append(this.getFromCreditoCota("c.id"))
+	           
+	           .append("),0) ")
+	
+	        .append(") ")
+	        
+	      .append(")*(-1) as saldo ")
+	       
+	       
+	      .append(" from Cota c ")
+	       
+	      .append(" join c.pessoa p ")
+	       
+	      .append(" where c.tipoCota = :tipoCota ")
+	    
+	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	    
+	    if (numeroCota != null){
+	      
+	        hql.append(" and c.numeroCota = :numeroCota ");
+	    }
+	
+	    if (sortname != null){
+	      
+	        hql.append(" order by ").append(sortname);
+	      
+	        if (sortorder != null){
+	        
+	            hql.append(" ").append(sortorder);
+	        }
+	    }
+	    
+	    Query query = this.getSession().createQuery(hql.toString());
+	    
+	    query.setFirstResult(initialResult > 1?maxResults:0);
+	    
+	    query.setMaxResults(maxResults);
+	    
+	    if (numeroCota != null){
+	      
+	        query.setParameter("numeroCota", numeroCota);
+	    }
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
+	    
+	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+	    
+	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
+	                                               				       GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+	    
+	    query.setParameterList("gruposMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+	    
+	    query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
+	                                                                             GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+	                                                                             GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+	                                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+	                                                                             GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
+	    
+	    query.setParameterList("gruposMovimentoFinanceiroDebito", Arrays.asList(GrupoMovimentoFinaceiro.DEBITO,
+	                                                                            GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
+	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR,
+	                                                                            GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+	                                                                            GrupoMovimentoFinaceiro.JUROS,
+	                                                                            GrupoMovimentoFinaceiro.MULTA,
+	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,                                                            				
+	                                                                            GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,	                                                             				
+	                                                                            GrupoMovimentoFinaceiro.VENDA_TOTAL,	                                                             				                                                          					                                                             				
+	                                                                            GrupoMovimentoFinaceiro.PENDENTE));
+	
+	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+	    
+	    query.setParameter("data", data);
+	
+	    query.setResultTransformer(new AliasToBeanResultTransformer(ProcessamentoFinanceiroCotaDTO.class));
+	    
+        return query.list();
+	}
+	
+	/**
+	 * Obtem Movimentos Financeiros da Cota na data que ainda nao foram consolidados
+	 * Movimentos de reparte ou encalhe
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @return List<MovimentoFinanceiroCota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao){
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append("  select mfc from MovimentoFinanceiroCota mfc ");
+		
+		hql.append("  join mfc.cota c ");
+        
+        hql.append("  join mfc.tipoMovimento tm ");
+     
+        hql.append("  where mfc.data = :data ");
+        
+        hql.append("  and c.numeroCota = :numeroCota ");
+        
+        hql.append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroReparteEncalhe) ");
+        
+        hql.append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+        
+        Query query = this.getSession().createQuery(hql.toString());
+          
+        query.setParameter("data", dataOperacao);
+        
+        query.setParameter("numeroCota", numeroCota);
+        
+        query.setParameterList("gruposMovimentoFinanceiroReparteEncalhe", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE, 
+                															            GrupoMovimentoEstoque.ENVIO_ENCALHE));
+        return query.list();
 	}
 }

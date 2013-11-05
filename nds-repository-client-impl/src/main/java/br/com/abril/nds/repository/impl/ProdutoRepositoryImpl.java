@@ -47,6 +47,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
 		String hql = "from Produto produto "
@@ -146,25 +147,16 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql.append(" coalesce(descontoLogistica.percentualDesconto, produto.desconto, 0) as percentualDesconto, ");
 		hql.append(" produto.periodicidade as periodicidade 	");
 		
-		try {
-			
-			Query query = 
-				this.getQueryBuscaProdutos(
-					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, sortname, sortorder, false);
-			
-			query.setResultTransformer(
-				new AliasToBeanResultTransformer(
-					ConsultaProdutoDTO.class));
-			
-			query.setMaxResults(rp);
-			query.setFirstResult(page);
-			
-			return query.list();
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		Query query = this.getQueryBuscaProdutos(
+				hql, codigo, produto, fornecedor, 
+				editor, codigoTipoProduto, sortname, sortorder, false);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaProdutoDTO.class));
+		
+		query.setMaxResults(rp);
+		query.setFirstResult(page);
+		
+		return query.list();
 	}
 
 	@Override

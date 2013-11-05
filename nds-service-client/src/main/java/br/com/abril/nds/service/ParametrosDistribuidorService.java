@@ -1,8 +1,10 @@
 package br.com.abril.nds.service;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 
 /**
  * Interface de serviços do parametrosDistribuidorVO
@@ -33,5 +35,6 @@ public interface ParametrosDistribuidorService {
 	 * @return InputStream do logotipo
 	 */
 	public InputStream getLogotipoDistribuidor();
-
+	
+	public ControleConferenciaEncalhe obterControleConferenciaEncalhe(Date dataOperacao);
 }

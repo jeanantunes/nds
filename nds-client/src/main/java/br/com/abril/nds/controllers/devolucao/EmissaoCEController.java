@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -32,6 +32,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -53,6 +54,9 @@ public class EmissaoCEController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -108,6 +112,7 @@ public class EmissaoCEController extends BaseController {
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 		
 		if(lista == null || lista.isEmpty()){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum dado foi encontrado!");
 		}
 		
@@ -242,27 +247,53 @@ public class EmissaoCEController extends BaseController {
 
 	public void modelo1() {
 				
-		setDados();		
+		setDados(TipoImpressaoCE.MODELO_1);		
 				
 	}
 	
-	public void setDados() {
+	public void setDados(TipoImpressaoCE tipoImpressao) {
 		
 		FiltroEmissaoCE filtro = getFiltroSessao();
 		
-		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
+		filtro.setTipoImpressao(tipoImpressao);
+		
+		if(TipoImpressaoCE.MODELO_1.equals(tipoImpressao)) {
+			filtro.setQtdProdutosPorPagina(20);
+			filtro.setQtdCapasPorPagina(81);
+			filtro.setQtdMaximaProdutosComTotalizacao(19);
+		} else {
+			filtro.setQtdProdutosPorPagina(25);
+			filtro.setQtdCapasPorPagina(49);
+			filtro.setQtdMaximaProdutosComTotalizacao(20);
+		}
+		
+		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
+		
+		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
+		
+		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
-		if(!filtro.getPersonalizada()) {
-			
-			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
-			
-			result.include("capas", capas);
-			
+		if(apresentaCapas && !apresentaCapasPersonalizadas) {
+			result.include("capasPaginadas", dados.getCapasPaginadas());
 		}
+		
+		if(apresentaCapas && !apresentaCapasPersonalizadas) {
+			result.include("capasPaginadas", dados.getCapasPaginadas());
+		}
+		
+		String dataRecolhimento = null;
+		
+		if(filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe());
+		else
+			dataRecolhimento =  "De " + DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) 
+							 + " até " + DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+		
+		result.include("dataRecolhimento",  dataRecolhimento);
 			
-		result.include("cotasEmissao", cotasEmissao);
+		result.include("cotasEmissao", dados.getCotasEmissao());
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
 		
@@ -274,7 +305,7 @@ public class EmissaoCEController extends BaseController {
 	
 	public void modelo2() {
 		
-		setDados();
+		setDados(TipoImpressaoCE.MODELO_2);
 	}
 
 	

@@ -3,17 +3,14 @@ package br.com.abril.nds.integracao.ems0127.processor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
@@ -22,6 +19,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0127Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0127InputItem;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -29,6 +27,7 @@ import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -44,7 +43,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
-	private NdsiLoggerFactory ndsiLoggerFactory; 
+	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -54,13 +56,13 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 		
-		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : TH152 : icd_user");
-		
 		CouchDbClient dbClient = null;
 
 		Connection connection = null;
 		
 		EMS0127Input input = (EMS0127Input) message.getBody();
+		
+		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : "+ input.getBaseDeDados() +" : "+ input.getUsuarioBaseDeDados());
 
 		try {	
 
@@ -68,12 +70,13 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			
 			// Validar código do distribuidor:
 			Distribuidor distribuidor = this.distribuidorService.obter();
-			if(!distribuidor.getCodigoDistribuidorDinap().equals(
-					input.getCodigoDistribuidor())){			
+			if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())) {
+				
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
 						"Código do distribuidor do arquivo não é o mesmo do Sistema.");
 				return;
+				
 			}
 			
 			dbClient = getCouchDBClient(codigoDistribuidor);
@@ -82,6 +85,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			
 			getSession().merge(ce);
 			getSession().flush();
+			
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Chamada Encalhe Fornecedor inserida com sucesso: "+ input.getCePK().getNumeroChamadaEncalhe());
+			return;
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -124,8 +132,18 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		ce.setTotalVendaApurada(input.getValorTotalVendaApurada());
 		ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
 		
-		if(ce.getItens() == null && input.getItems().size() > 0) {
+		if(input.getItems() != null && !input.getItems().isEmpty()) {
 			ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+			
+			//orientação de Cesar - item 5, planilha sprint 5, as informações faltantes dizem respeito a fornecedor
+			//que nunca foi inserido
+			String codigoProduto = input.getItems().get(0).getLancamentoEdicaoPublicacao().getCodigoPublicacao();
+			
+			List<Fornecedor> fornecedores = this.fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
+			
+			if (fornecedores != null && !fornecedores.isEmpty()){
+				ce.setFornecedor(fornecedores.get(0));
+			}
 		}
 
 		montarItensChamadaEncalheFornecedor(message, input, ce);
@@ -171,7 +189,8 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			if (produtoEdicao == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						"Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: "
+						"Não foi possível incluir registro - Chamada de Encalhe/Item: "+ input.getCePK().getNumeroChamadaEncalhe() 
+						+ "/"+ item.getCeItemPK().getNumeroItem() +" - Nenhum resultado encontrado para Produto/Edição: "
 						+ codigoProduto + " e Edicao: " + numeroEdicao
 						+ " no cadastro de edições do Novo Distrib");
 				continue;

@@ -33,6 +33,9 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 </c:if>
 
 <c:if test="${notaEnvio != null}">
+
+<c:forEach items="${notaEnvio}" var="notaEnvio">
+
 	<table width="760" border="0" align="center" cellpadding="0"
 		cellspacing="0" style="margin-bottom: 10px; margin-top: 10px;">
 		<tr>
@@ -47,7 +50,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				class="titulo" style="font-size: 13px !important;"><strong>NOTA
 						DE ENVIO</strong></span></td>
 			<td width="20" align="right"><span class="titulo"
-				style="font-size: 13px !important;"><strong></strong></span></td>
+				style="font-size: 13px !important;"><strong></strong> <c:if test="${notaEnvio.numero!= null}">Número</c:if></span></td>
 			<td width="116" align="center"><span class="dadosNota"><strong
 					style="font-size: 14px !important;"><c:out value="${notaEnvio.numero}"/> </strong></span></td>
 		</tr>
@@ -73,7 +76,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		<tr>
 			<td colspan="2"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.logradouro}"/> <br />
+				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.tipoLogradouro}"/>&nbsp;<c:out value="${notaEnvio.emitente.endereco.logradouro}"/> <br />
 			</span></td>
 			<td style="border-bottom: 1px solid #000;"><span
 				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.numero}"/></span></td>
@@ -119,7 +122,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				class="titulo">Box / Rota</span></td>
 			<td width="124"
 				style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 1px solid #000;"><span
-				class="titulo">Data de Emissão</span></td>
+				class="titulo">Data de Lançamento</span></td>
 		</tr>
 		<tr>
 			<td colspan="3"
@@ -127,10 +130,10 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				class="dadosNota"><strong><c:out value="${notaEnvio.destinatario.numeroCota}"/> - <c:out value="${notaEnvio.destinatario.nome}"/></strong></span></td>
 			<td colspan="3"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota">BOX:<c:out value="${notaEnvio.destinatario.codigoBox}"/> - ROTA:<c:out value="${notaEnvio.destinatario.codigoRota}"/> - <c:out value="${notaEnvio.destinatario.descricaoRota}"/></span></td>
+				class="dadosNota">BOX:<c:out value="${notaEnvio.destinatario.codigoBox}"/> - ROTA: <c:out value="${notaEnvio.destinatario.descricaoRota}"/></span></td>
 			<td
-				style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000;"><span
-				class="dadosNota"><fmt:formatDate value="${notaEnvio.dataEmissao}" /></span></td>
+				style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000;text-align: center;">
+			<span class="dadosNota">${dataLancamento}</span></td>
 		</tr>
 		<tr>
 			<td width="232" style="border-left: 1px solid #000;"><span
@@ -152,7 +155,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		<tr>
 			<td
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.destinatario.endereco.logradouro}"/><br />
+				class="dadosNota"><c:out value="${notaEnvio.destinatario.endereco.tipoLogradouro}"/>&nbsp;<c:out value="${notaEnvio.destinatario.endereco.logradouro}"/><br />
 			</span></td>
 			<td
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
@@ -211,7 +214,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				<td width="80" align="center"
 					style="border-bottom: 1px solid #000; padding-left: 5px;"><c:out value="${itemNotaEnvio.reparte}" /></td>
 				<td width="68" align="center"
-					style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-left: 5px;"><c:out value="${itemNotaEnvio.itemNotaEnvioPK.sequencia}" /></td>
+					style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-left: 5px;"><c:out value="${itemNotaEnvio.sequenciaMatrizLancamento}" /></td>
 			</tr>		
 		</c:forEach>
 		
@@ -237,7 +240,14 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		<tr>
 			<td>&nbsp;</td>
 			<td align="right"><strong>DESCONTO %</strong></td>
-			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${(totalPrecoCapa - totalComDesconto) * 100 / totalPrecoCapa}"  type="NUMBER"  maxFractionDigits="2"/></td>
+			<td align="right" style="border-bottom: 1px solid #000;">
+				<c:if test="${totalPrecoCapa.compareTo(BigDecimal.ZERO)!=0}">
+					<fmt:formatNumber value="${(totalPrecoCapa - totalComDesconto) * 100 / totalPrecoCapa}"  type="NUMBER"  maxFractionDigits="2"/>
+				</c:if>
+				<c:if test="${totalPrecoCapa.compareTo(BigDecimal.ZERO)==0}">
+					0,00
+				</c:if>
+			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
@@ -246,6 +256,11 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				Exemplares</td>
 		</tr>
 	</table>
+	
+	<br></br>
+	<br></br>
+</c:forEach>
+	
 </c:if>
 
 </body>

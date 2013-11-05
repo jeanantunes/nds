@@ -36,7 +36,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
+		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, ")
+		   .append(" nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), ")
+		   .append(" SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -56,10 +58,13 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return q.list().size();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNotaEnvio(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(ne.numero, ne.notaImpressa, cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
+		sql.append("select new ")
+		   .append(NotasCotasImpressaoNfeDTO.class.getCanonicalName())
+		   .append(" (ne.numero, ne.notaImpressa, cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -78,6 +83,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return q.list().size();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		
@@ -90,6 +96,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return q.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NotaEnvio> buscarNotasEnvioParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
@@ -475,6 +482,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Produto> buscarProdutosParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
@@ -485,7 +493,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			StringBuilder sql = new StringBuilder();
 			sql.append("select distinct p ");
 			sql.append("from Lancamento l join l.produtoEdicao pe join pe.produto p join p.fornecedores f ");
-			sql.append("where l.dataLancamentoDistribuidor between :dataMovimentoInicial and :dataMovimentoFinal ");
+			sql.append("where 1 = 1 ");
+			
+			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
+				sql.append("and l.dataLancamentoDistribuidor between :dataMovimentoInicial and :dataMovimentoFinal ");
+			}
 			
 			if(filtro.getIdsFornecedores() != null) {
 				sql.append("and f.id in (:idsFornecedores) ");
@@ -501,22 +513,25 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 			Query q = getSession().createQuery(sql.toString());
 			
-			Calendar dataMovimentoInicial = Calendar.getInstance();
-			dataMovimentoInicial.setTime(filtro.getDataMovimentoInicial());
-			dataMovimentoInicial.set(Calendar.HOUR_OF_DAY, 0);
-			dataMovimentoInicial.set(Calendar.MINUTE, 0);
-			dataMovimentoInicial.set(Calendar.SECOND, 0);
-			dataMovimentoInicial.set(Calendar.MILLISECOND, 0);
-			
-			Calendar dataMovimentoFinal = Calendar.getInstance();
-			dataMovimentoFinal.setTime(filtro.getDataMovimentoFinal());
-			dataMovimentoFinal.set(Calendar.HOUR_OF_DAY, 23);
-			dataMovimentoFinal.set(Calendar.MINUTE, 59);
-			dataMovimentoFinal.set(Calendar.SECOND, 59);
-			dataMovimentoFinal.set(Calendar.MILLISECOND, 999);
-			
-			q.setParameter("dataMovimentoInicial", new java.sql.Date(dataMovimentoInicial.getTime().getTime()));
-			q.setParameter("dataMovimentoFinal", new java.sql.Date(dataMovimentoFinal.getTime().getTime()));
+			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
+				Calendar dataMovimentoInicial = Calendar.getInstance();
+				dataMovimentoInicial.setTime(filtro.getDataMovimentoInicial());
+				dataMovimentoInicial.set(Calendar.HOUR_OF_DAY, 0);
+				dataMovimentoInicial.set(Calendar.MINUTE, 0);
+				dataMovimentoInicial.set(Calendar.SECOND, 0);
+				dataMovimentoInicial.set(Calendar.MILLISECOND, 0);
+				
+				Calendar dataMovimentoFinal = Calendar.getInstance();
+				dataMovimentoFinal.setTime(filtro.getDataMovimentoFinal());
+				dataMovimentoFinal.set(Calendar.HOUR_OF_DAY, 23);
+				dataMovimentoFinal.set(Calendar.MINUTE, 59);
+				dataMovimentoFinal.set(Calendar.SECOND, 59);
+				dataMovimentoFinal.set(Calendar.MILLISECOND, 999);
+				
+				q.setParameter("dataMovimentoInicial", new java.sql.Date(dataMovimentoInicial.getTime().getTime()));
+				q.setParameter("dataMovimentoFinal", new java.sql.Date(dataMovimentoFinal.getTime().getTime()));
+			}
+		
 			q.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
 			
 			if(filtro.getCodigoProduto() != null) {

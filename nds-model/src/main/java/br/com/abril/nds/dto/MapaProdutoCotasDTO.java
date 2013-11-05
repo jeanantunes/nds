@@ -10,22 +10,26 @@ public class MapaProdutoCotasDTO implements Serializable{
 	private String codigoProduto;
 	private String nomeProduto;
 	private Long numeroEdicao;
+	private String codigoDeBarras;
 	private String precoCapa;
 	private Map<Integer, Integer> cotasQtdes;
+	private Map<String, Integer> boxQtdes;
 	
 	public MapaProdutoCotasDTO() {
 		
 	}
 
 	public MapaProdutoCotasDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, String precoCapa,
-			Map<Integer, Integer> cotasQtdes) {
+			Long numeroEdicao, String codigoDeBarras, String precoCapa,
+			Map<Integer, Integer> cotasQtdes, Map<String, Integer> boxQtdes) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
+		this.codigoDeBarras = codigoDeBarras;
 		this.precoCapa = precoCapa;
 		this.setCotasQtdes(cotasQtdes);
+		this.boxQtdes = boxQtdes;
 	}
 
 	/**
@@ -92,6 +96,28 @@ public class MapaProdutoCotasDTO implements Serializable{
 
 	public void setCotasQtdes(Map<Integer, Integer> cotasQtdes) {
 		this.cotasQtdes = cotasQtdes;
+	}
+
+	/**
+	 * @return the boxQtdes
+	 */
+	public Map<String, Integer> getBoxQtdes() {
+		return boxQtdes;
+	}
+
+	/**
+	 * @param boxQtdes the boxQtdes to set
+	 */
+	public void setBoxQtdes(Map<String, Integer> boxQtdes) {
+		this.boxQtdes = boxQtdes;
+	}
+
+	public String getCodigoDeBarras() {
+		return codigoDeBarras;
+	}
+
+	public void setCodigoDeBarras(String codigoDeBarras) {
+		this.codigoDeBarras = codigoDeBarras;
 	}
 	
 }

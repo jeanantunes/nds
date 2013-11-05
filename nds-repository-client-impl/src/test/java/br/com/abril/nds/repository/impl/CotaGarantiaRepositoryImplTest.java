@@ -171,7 +171,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		TipoFornecedor tipoFornecedorPublicacao;
 		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-		fornecedor = Fixture.fornecedor(this.ciclana, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, 0);
+		fornecedor = Fixture.fornecedor(this.ciclana, SituacaoCadastro.ATIVO, tipoFornecedorPublicacao, 0);
 		save(fornecedor);
 
 		
@@ -246,7 +246,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		FiltroRelatorioGarantiasDTO filtro = new FiltroRelatorioGarantiasDTO();
 		filtro.setDataBaseCalculo(data);
 		filtro.setTipoGarantia(null);
-		filtro.setStatusGarantiaEnum(TipoStatusGarantia.VENCIDA);
+		filtro.setStatusGarantia(TipoStatusGarantia.VENCIDA);
 		
 		return filtro;
 	}
@@ -595,42 +595,42 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		this.setupReparteEncalhe();
 		
 		FiltroRelatorioGarantiasDTO filtro = this.getFiltroGarantias();
-		filtro.setTipoGarantiaEnum(TipoGarantia.CAUCAO_LIQUIDA);
+		filtro.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
 
 		List<RelatorioDetalheGarantiaDTO> detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		filtro.setTipoGarantiaEnum(TipoGarantia.CHEQUE_CAUCAO);
+		filtro.setTipoGarantia(TipoGarantia.CHEQUE_CAUCAO);
 
 		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(15)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		filtro.setTipoGarantiaEnum(TipoGarantia.FIADOR);
+		filtro.setTipoGarantia(TipoGarantia.FIADOR);
 
 		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
         
-		filtro.setTipoGarantiaEnum(TipoGarantia.NOTA_PROMISSORIA);
+		filtro.setTipoGarantia(TipoGarantia.NOTA_PROMISSORIA);
 
 		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(20)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(30)));
 		
-		filtro.setTipoGarantiaEnum(TipoGarantia.IMOVEL);
+		filtro.setTipoGarantia(TipoGarantia.IMOVEL);
 
 		detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
 		Assert.assertEquals(0, detalhesGgarantia.get(0).getVlrGarantia().compareTo(new BigDecimal(10)));
 		Assert.assertEquals(0, detalhesGgarantia.get(1).getVlrGarantia().compareTo(new BigDecimal(10)));
 		
-		filtro.setTipoGarantiaEnum(TipoGarantia.OUTROS);
+		filtro.setTipoGarantia(TipoGarantia.OUTROS);
 
         detalhesGgarantia = this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro);
 		Assert.assertNotNull(detalhesGgarantia);
@@ -644,7 +644,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		this.setupReparteEncalhe();
 
 		FiltroRelatorioGarantiasDTO filtro = this.getFiltroGarantias();
-		filtro.setTipoGarantiaEnum(TipoGarantia.CAUCAO_LIQUIDA);
+		filtro.setTipoGarantia(TipoGarantia.CAUCAO_LIQUIDA);
 		
 		Integer count = this.cotaGarantiaRepository.obterCountDetalheGarantiaCadastrada(filtro).intValue();
 		Assert.assertNotNull(count);

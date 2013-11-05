@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -72,7 +74,13 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private Date dataRecolhimento;
 	
-	private TipoLancamento tipoLancamento;	
+	private TipoLancamento tipoLancamento;
+	
+	private BigDecimal percentualDesconto;
+	
+	private BigDecimal valorTotalDesconto;
+	
+	private boolean produtoSemCadastro;
 	
 	public RecebimentoFisicoDTO() {}
 	
@@ -82,6 +90,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 			Long idItemRecebimentoFisico,
 			String codigoProduto, 
 			String nomeProduto, 
+			Origem origem,
 			Long edicao,
 			Long idProdutoEdicao,
 			BigDecimal precoCapa,
@@ -118,7 +127,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.diferenca = diferenca;
 		this.tipoDiferenca = tipoDiferenca;
 		this.origemItemNota = origemItemNota;
+		this.percentualDesconto = percentualDesconto;
 		
+		if (origem != null && origem == Origem.PRODUTO_SEM_CADASTRO){
+			this.produtoSemCadastro = true;
+		}
 	}
 
 	public Long getIdItemNota() {
@@ -142,7 +155,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	}
 
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 	}
 
 	public String getNomeProduto() {
@@ -336,6 +349,30 @@ public class RecebimentoFisicoDTO implements Serializable {
 			return false;
 		}
 		return true;
+	}
+
+	public BigDecimal getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
+	}
+
+	public BigDecimal getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	public void setValorTotalDesconto(BigDecimal valorTotaDesconto) {
+		this.valorTotalDesconto = valorTotaDesconto;
+	}
+
+	public boolean isProdutoSemCadastro() {
+		return produtoSemCadastro;
+	}
+
+	public void setProdutoSemCadastro(boolean produtoSemCadastro) {
+		this.produtoSemCadastro = produtoSemCadastro;
 	}
 
 	

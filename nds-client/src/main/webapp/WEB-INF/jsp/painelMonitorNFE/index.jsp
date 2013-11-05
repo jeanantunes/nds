@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
@@ -9,6 +10,7 @@
 
 $(function() {
 	PainelMonitorNFE.init();
+	bloquearItensEdicao(PainelMonitorNFE.workspace);
 });
 	
 </script>
@@ -19,7 +21,7 @@ $(function() {
 <div class="areaBts">
 	<div class="area">
 		<span class="bt_novos">
-			<a onclick="PainelMonitorNFE.cancelarNfe()" href="javascript:;" rel="tipsy" title="Cancelar NF-e">
+			<a isEdicao="true" onclick="PainelMonitorNFE.cancelarNfe()" href="javascript:;" rel="tipsy" title="Cancelar NF-e">
 				<img 	src="${pageContext.request.contextPath}/images/ico_bloquear.gif" 
 					alt="Cancelar NF-e" width="16" 
 					height="16" 
@@ -28,7 +30,7 @@ $(function() {
 		</span>
 		
 		<span  class="bt_novos">
-			<a onclick="PainelMonitorNFE.imprimirDanfes(true)" href="javascript:;" rel="tipsy" title="Emitir em DEPEC">
+			<a isEdicao="true" onclick="PainelMonitorNFE.imprimirDanfes(true)" href="javascript:;" rel="tipsy" title="Emitir em DEPEC">
 				<img 	src="${pageContext.request.contextPath}/images/bt_expedicao.png" 	
 				     	alt="Emitir em DEPEC" 
 					hspace="5" border="0">
@@ -36,7 +38,7 @@ $(function() {
 		</span>
 		
 		<span class="bt_novos">
-			<a 	onclick="PainelMonitorNFE.imprimirDanfes(false)" href="javascript:;" rel="tipsy" title="Imprimir Seleção">
+			<a  isEdicao="true" onclick="PainelMonitorNFE.imprimirDanfes(false)" href="javascript:;" rel="tipsy" title="Imprimir Seleção">
 				<img 	src="${pageContext.request.contextPath}/images/ico_impressora.gif"
 						alt="Imprimir Seleção" 
 						hspace="5" 
@@ -182,7 +184,7 @@ $(function() {
 		
 		<span class="bt_sellAll" style="float: right;">
 			<label for="sel">Selecionar Todos</label>
-			<input 	type="checkbox" id="sel" name="Todos" 
+			<input isEdicao="true" 	type="checkbox" id="sel" name="Todos" 
 					onclick="PainelMonitorNFE.checkAll(this);"
 					style="float: left; margin-right: 25px;" />
 		</span>

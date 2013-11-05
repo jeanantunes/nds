@@ -135,9 +135,24 @@ public enum Permissao {
 	
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO("Recebimento Físico",											Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO, true),
+
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO_ALTERACAO("Recebimento Físico, botão Confirmar", null, false),
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO("Recebimento Físico, botão Confirmar",	ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO_ALTERACAO, false),
+
+	//ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO_ALTERACAO("Recebimento Físico, coluna Reparte Previsto", null, false),
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO("Recebimento Físico, coluna Reparte Previsto",	ROLE_ESTOQUE, null, false),
+
+	//ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA_ALTERACAO("Recebimento Físico, coluna Diferença", null, false),
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA("Recebimento Físico, coluna Diferença", ROLE_ESTOQUE, null, false),
+
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL("Recebimento Físico, coluna Valor Total", ROLE_ESTOQUE, null, false),
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL_DESCONTO("Recebimento Físico, coluna Valor Total com Desconto", ROLE_ESTOQUE, null, false),
 	
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO("Lançamento Faltas e Sobras",							Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO, true),
+	 
+	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO_ALTERACAO("Lançamento Faltas e Sobras, botão Confirmar", null, false),
+	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO("Lançamento Faltas e Sobras, botão Confirmar",	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO_ALTERACAO, false),
 	
 	ROLE_ESTOQUE_CONSULTA_NOTAS_ALTERACAO("Consulta de Notas",												Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_CONSULTA_NOTAS("Consulta de Notas",													   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_CONSULTA_NOTAS_ALTERACAO, true),
@@ -204,8 +219,14 @@ public enum Permissao {
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO("Venda de Encalhe / Suplementar",								Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE("Venda de Encalhe / Suplementar",									   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO, true),
 	
+	ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO_ALTERACAO("Estoque Produtos em Recolhimento",					   	Permissao.ROLE_RECOLHIMENTO, true),
+	ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO("Estoque Produtos em Recolhimento",					   			Permissao.ROLE_RECOLHIMENTO, ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO_ALTERACAO, true),
+	
 	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO("Fechamento Encalhe",									Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE("Fechamento Encalhe",											   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO, true),
+
+	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO_ALTERACAO("Fechamento Encalhe, coluna exempl. devolução", null, false),
+	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO("Fechamento Encalhe, coluna exempl. devolução",	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO_ALTERACAO, false),
 	
 	ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO("Fechamento CE - Integração",							Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO("Fechamento CE - Integração",								   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO, true),
@@ -289,6 +310,9 @@ public enum Permissao {
 	
 	ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO("Parâmetros de Cobrança",                                	Permissao.ROLE_FINANCEIRO, true), 
 	ROLE_FINANCEIRO_PARAMETROS_COBRANCA("Parâmetros de Cobrança",                                	 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO, true), 
+	
+	ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO("Processamento Financeiro",                                	Permissao.ROLE_FINANCEIRO, true), 
+	ROLE_MOVIMENTO_FINANCEIRO_COTA("Processamento Financeiro",                                	 	   	    Permissao.ROLE_FINANCEIRO, ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO, true),
 	
 	ROLE_FINANCEIRO_HELP_ALTERACAO("Help",           														Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_HELP("Help",           															 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_HELP_ALTERACAO, true),

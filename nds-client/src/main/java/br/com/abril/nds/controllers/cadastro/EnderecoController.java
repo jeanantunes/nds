@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -250,7 +251,7 @@ public class EnderecoController extends BaseController {
 	 * Método responsável por incluir/alterar um endereço para a pessoa em questão. 
 	 * @param enderecoAssociacao
 	 */
-	public void incluirNovoEndereco(Tela tela,EnderecoAssociacaoDTO enderecoAssociacao) {
+	public void incluirNovoEndereco(Tela tela, EnderecoAssociacaoDTO enderecoAssociacao) {
 		
 		tela.setarParametros();
 		
@@ -499,7 +500,7 @@ public class EnderecoController extends BaseController {
 			
 			return;
 		}
-		
+	
 		List<String> localidades = this.enderecoService.obterLocalidadesPorUFNome(nomeLocalidade, siglaUF);
 		
 		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
@@ -572,13 +573,18 @@ public class EnderecoController extends BaseController {
 	@Post
 	public void obterEnderecoPorCep(String cep) {
 		
+		if (StringUtil.isEmpty(cep)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP deve ser informado!");
+		}
+		
 		cep = retirarFormatacaoCep(cep);
 		
 		EnderecoVO enderecoRetornado = this.enderecoService.obterEnderecoPorCep(cep);
 		
 		if (enderecoRetornado == null) {
 			
-			this.result.use(Results.json()).from("", "result").recursive().serialize();
+			throw new ValidacaoException(TipoMensagem.WARNING, "CEP não encontrado!");
 		
 		} else {
 
@@ -770,7 +776,7 @@ public class EnderecoController extends BaseController {
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
 				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
-				enderecoAssociacao.getEndereco().getTipoLogradouro() + " " + enderecoAssociacao.getEndereco().getLogradouro() 
+				(enderecoAssociacao.getEndereco().getTipoLogradouro() != null ? enderecoAssociacao.getEndereco().getTipoLogradouro() : "" )+ " " + enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),
 				Util.adicionarMascaraCEP(enderecoAssociacao.getEndereco().getCep()), 
@@ -796,13 +802,37 @@ public class EnderecoController extends BaseController {
 		listaEnderecos.addAll(listaEnderecosSalvar);
 		
 		boolean hasPrincipal = false;
+		boolean enderecoNovo = false;
 		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
-			
-			hasPrincipal = !hasPrincipal?enderecoAssociacao.isEnderecoPrincipal():hasPrincipal;	
+		EnderecoDTO endereco = (enderecoAssociacaoAtual != null) ? enderecoAssociacaoAtual.getEndereco() : null;
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecosExibir) {
+			if(!enderecoAssociacao.getEndereco().getId().equals(endereco.getId())
+					|| !enderecoAssociacao.getEndereco().getLogradouro().equals(endereco.getLogradouro())
+					|| !enderecoAssociacao.getEndereco().getNumero().equals(endereco.getNumero())) {
+				enderecoNovo = true;
+			}
 		}
 		
-		if (!hasPrincipal && !enderecoAssociacaoAtual.isEnderecoPrincipal()) {
+		if(!enderecoAssociacaoAtual.isEnderecoPrincipal()) {
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
+				
+				if(enderecoAssociacao.isEnderecoPrincipal()) {
+					if(listaEnderecosSalvar != null && listaEnderecosSalvar.size() == 1
+							&& enderecoAssociacao.getEndereco() != null && enderecoAssociacao.getEndereco().getId() != null					 
+								&& enderecoAssociacao.getEndereco().getId().equals(endereco.getId())) 
+						hasPrincipal = false;
+				} else {
+					hasPrincipal = false;	
+				}
+				
+			}
+				
+		} else {
+			hasPrincipal = true;
+		}
+			
+		if (!enderecoNovo && !hasPrincipal && !enderecoAssociacaoAtual.isEnderecoPrincipal()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário pelo menos um endereço principal.");
 		}

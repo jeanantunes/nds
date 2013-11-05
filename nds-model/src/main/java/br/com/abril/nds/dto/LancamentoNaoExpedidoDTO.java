@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 
 public class LancamentoNaoExpedidoDTO implements Serializable {
@@ -8,7 +9,6 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private static final long serialVersionUID = 6884763521167786938L;
 
 	private Long idLancamento;		
-	private String dataEntrada;
 	private String codigo;
 	private String produto;
 	private Long edicao;
@@ -20,12 +20,11 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private String fornecedor;
 	private Integer estudo;
 	private Boolean selecionado; 
-	private Integer estoqueLancamentoPE;
+	private BigInteger fisico;
 	
-	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, Integer estoqueLancamentoPE) {
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, BigInteger fisico) {
 		super();
 		this.idLancamento = idLancamento;
-		this.dataEntrada = dataEntrada;
 		this.codigo = codigo;
 		this.produto = produto;
 		this.edicao = edicao;
@@ -37,7 +36,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.fornecedor = fornecedor;
 		this.estudo = estudo;
 		this.selecionado = selecionado;
-		this.estoqueLancamentoPE = estoqueLancamentoPE;
+		this.fisico = fisico;
 	}
 
 	public Long getIdLancamento() {
@@ -50,23 +49,6 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
-
-
-
-
-	public String getDataEntrada() {
-		return dataEntrada;
-	}
-
-
-
-
-	public void setDataEntrada(String dataEntrada) {
-		this.dataEntrada = dataEntrada;
-	}
-
-
-
 
 	public String getCodigo() {
 		return codigo;
@@ -162,8 +144,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	public void setReparte(Integer reparte) {
 		this.reparte = reparte;
 	}
-
-
+	
 
 
 	public String getDataChamada() {
@@ -222,17 +203,17 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 
 
 	/**
-	 * @return the estoqueLancamentoPE
+	 * @return the fisico
 	 */
-	public Integer getEstoqueLancamentoPE() {
-		return estoqueLancamentoPE;
+	public BigInteger getFisico() {
+		return fisico;
 	}
 
 	/**
-	 * @param estoqueLancamentoPE the estoqueLancamentoPE to set
+	 * @param fisico the fisico to set
 	 */
-	public void setEstoqueLancamentoPE(Integer estoqueLancamentoPE) {
-		this.estoqueLancamentoPE = estoqueLancamentoPE;
+	public void setFisico(BigInteger fisico) {
+		this.fisico = fisico;
 	}
 
 
@@ -251,7 +232,8 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		QTDE_REPARTE("reparte"),
 		DATA_CHAMADA("dataChamada"),
 		FORNECEDOR("fornecedor"),
-		ID_ESTUDO("estudo");
+		QTDE_FISICO("fisico"),
+		QTDE_ESTUDO("estudo");
 		
 		private SortColumn(String property) {
 			this.property = property;

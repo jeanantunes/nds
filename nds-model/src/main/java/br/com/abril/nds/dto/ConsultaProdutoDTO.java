@@ -104,7 +104,7 @@ public class ConsultaProdutoDTO implements Serializable {
 	 * @param nomeEditor the nomeEditor to set
 	 */
 	public void setNomeEditor(String nomeEditor) {
-		this.nomeEditor = nomeEditor;
+		this.nomeEditor = nomeEditor == null ? "" : nomeEditor;
 	}
 
 	/**

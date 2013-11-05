@@ -1,3 +1,4 @@
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <div id="tabOperacao">
 	<br/>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -90,7 +91,13 @@
             <table width="390" border="0" cellspacing="1" cellpadding="0">
               <tr>
                 <td width="222" align="left">Reutilização de Código de Cota Inativa:</td>
-                <td width="40" align="center"><input name="parametrosDistribuidor.reutilizacaoCodigoCotaInativa" value="${parametrosDistribuidor.reutilizacaoCodigoCotaInativa}" type="text" id="reutilizacaoCodigoCotaInativa" style="width:40px; text-align:center;" value="06" /></td>
+                <td width="40" align="center">
+                	<input name="parametrosDistribuidor.reutilizacaoCodigoCotaInativa"
+                		   value='<fmt:formatNumber value="${parametrosDistribuidor.reutilizacaoCodigoCotaInativa/30}" maxFractionDigits="0" />'
+                		   type="text" 
+                		   id="reutilizacaoCodigoCotaInativa" 
+                		   style="width:40px; text-align:center;" />
+               	</td>
                 <td width="124" align="left"> &nbsp;( meses )</td>
               </tr>
             </table>
@@ -294,18 +301,14 @@
                 <td>Dias</td>
               </tr>
               <tr>
-                <td>Aceita devolução antecipada cota:</td>
+              
+              
+                <td>&nbsp;</td>
                 <td>
-                  <c:if test="${parametrosDistribuidor.limiteCEProximaSemana}">
-                      <input name="parametrosDistribuidor.limiteCEProximaSemana" 
-                         type="checkbox" id="limiteCEProximaSemana" checked="checked" />
-                  </c:if>
-                  <c:if test="${not parametrosDistribuidor.limiteCEProximaSemana}">
-                      <input name="parametrosDistribuidor.limiteCEProximaSemana" 
-                         type="checkbox" id="limiteCEProximaSemana"/>
-                  </c:if>           
+                	 &nbsp;           
                 </td>
-                <td colspan="10">Limite CE Próxima Semana</td>
+                <td colspan="10">&nbsp;</td>
+              
               </tr>
                     <tr>
                       <td colspan="11">Em casos de Venda Negativa, solicita a senha de aprovação do Supervisor?</td>

@@ -207,5 +207,4 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 		
 		return criteria.list();
 	}
-	
 }

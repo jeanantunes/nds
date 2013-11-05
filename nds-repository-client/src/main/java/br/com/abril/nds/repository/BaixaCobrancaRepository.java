@@ -2,7 +2,6 @@ package br.com.abril.nds.repository;
 
 import java.util.Date;
 import java.util.List;
-
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
@@ -29,8 +28,9 @@ public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> 
 	 */
 	public Date buscarDiaUltimaBaixaAutomatica();
 	
-	
 	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroConsultaDividasCota);
+	
+	public Long countBuscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro);
 	
 	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca);
 	

@@ -18,7 +18,7 @@ import br.com.abril.nds.model.integracao.icd.pks.DfsPK;
 import br.com.abril.nds.model.integracao.icd.pks.MfsPK;
 
 @Repository
-@Transactional("transactionManagerIcd")
+@Transactional("transactionManagerGfs")
 public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryModel<SolicitacaoFaltaSobra, Long>
 		implements SolicitacaoFaltasSobrasRepository {
 
@@ -54,38 +54,26 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	@Override
 	public SolicitacaoFaltaSobra recuperaSolicitacao(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao) {
 
-		return (SolicitacaoFaltaSobra) getSessionIcd()
+		return (SolicitacaoFaltaSobra) getSessionGfs()
 			.createCriteria(SolicitacaoFaltaSobra.class, "s")
 			.createAlias("s.itens", "d")			
 			.createAlias("d.motivoSituacaoFaltaSobra","m", JoinType.LEFT_OUTER_JOIN)
-			/*
-	        .setProjection(
-	       		 Projections.projectionList()	       		 	
-						.add(Projections.property("s.sfsPK.codigoDistribuidor"), "codigoDistribuidor")
-						.add(Projections.property("s.sfsPK.dataSolicitacao"), "solicitacao")
-						.add(Projections.property("d.codigoAcerto"), "codigoAcerto")
-						.add(Projections.property("d.codigoSituacao"), "codigoSituacao")
-						.add(Projections.property("m.numeroSequencia"), "numeroSequencia")
-						.add(Projections.property("m.descricaoMotivo"), "descricaoMotivo")
-						.add(Projections.property("m.codigoMotivo"), "codigoMotivo")
-						)
-	        .setResultTransformer(Transformers.aliasToBean(SolicitacaoDTO.class))
-	        */
 	        .add(
 	        	Restrictions.and(
-	        		Restrictions.eq("s.sfsPK.codigoDistribuidor", codigoDistribuidor )	
-	        		, Restrictions.eq("s.sfsPK.dataSolicitacao", dataSolicitacao )
-	        		, Restrictions.eq("s.sfsPK.horaSolicitacao", horaSolicitacao )
-	        	).add(Restrictions.in("s.codigoSituacao", 
+	        		Restrictions.eq("s.sfsPK.codigoDistribuidor", codigoDistribuidor )
+	        	)
+	        	.add(Restrictions.eq("s.sfsPK.dataSolicitacao", dataSolicitacao ))
+	        	.add(Restrictions.eq("s.sfsPK.horaSolicitacao", horaSolicitacao ))
+	        	.add(Restrictions.in("s.codigoSituacao", 
 	        			new String[] {"EM PROCESSAMENTO", "PROCESSADO"} 
 	        	))	        	
 	        )
-	        .uniqueResult();       		
+	        .uniqueResult();     		
 	}	
 	
 	@Override
 	public void save(SolicitacaoFaltaSobra sfs) {
-		this.getSessionIcd().persist(sfs);		
+		this.getSessionGfs().persist(sfs);		
 	}
 
 	@Override
@@ -97,7 +85,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 		id.setDataSolicitacao(pkItem.getDataSolicitacao());
 		id.setHoraSolicitacao(pkItem.getHoraSolicitacao());
 		id.setNumeroSequencia(pkItem.getNumeroSequencia());
-		return (MotivoSituacaoFaltaSobra) getSessionIcd().get(MotivoSituacaoFaltaSobra.class, id);		
+		return (MotivoSituacaoFaltaSobra) getSessionGfs().get(MotivoSituacaoFaltaSobra.class, id);		
 	}
 	
 }

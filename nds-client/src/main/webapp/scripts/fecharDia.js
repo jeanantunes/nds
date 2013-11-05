@@ -59,7 +59,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 165
 		});
 		
-		$(".lctoFaltasSobrasGrid").flexigrid({
+		$(".lctoFaltasSobrasGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoLancamentoFaltaESobra,
 			dataType : 'json',
 			colModel : [ {
@@ -91,7 +91,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 155
 		});
 		
-		$(".reparteDialogGrid").flexigrid({
+		$(".reparteDialogGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoReparte,
 			dataType : 'json',
 			colModel : [ {
@@ -114,7 +114,7 @@ var fecharDiaController =  $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoVenda',
+				name : 'valorPrecoCapaFormatado',
 				width : 60,
 				sortable : false,
 				align : 'right'
@@ -125,13 +125,13 @@ var fecharDiaController =  $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Sobra em',
+				display : 'Sobras',
 				name : 'qtdeSobra',
 				width : 50,
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Falta em',
+				display : 'Faltas',
 				name : 'qtdeFalta',
 				width : 50,
 				sortable : false,
@@ -177,7 +177,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
 		
-		$(".vendasDialogGrid").flexigrid({
+		$(".vendasDialogGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoVendaSuplementar,
 			dataType : 'json',
 			colModel : [ {
@@ -379,7 +379,7 @@ var fecharDiaController =  $.extend(true, {
             height : 220
         });
         
-        $(".recolhimentoDialogGrid").flexigrid({
+        $(".recolhimentoDialogGrid", fecharDiaController.workspace).flexigrid({
         	preProcess: fecharDiaController.executarPreProcessamentoEncalhe,
 			dataType : 'json',
 			colModel : [ {
@@ -447,38 +447,53 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
         
-        $(".suplementarDialogGrid").flexigrid({
+        $(".suplementarDialogGrid", fecharDiaController.workspace).flexigrid({
         	preProcess: fecharDiaController.executarPreProcessamentoSuplementar,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
 				width : 60,
-				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 250,
-				sortable : true,
+				width : 200,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 120,
-				sortable : true,
+				width : 60,
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoVenda',
-				width : 100,
-				sortable : true,
+				name : 'precoVendaFormatado',
+				width : 60,
 				align : 'right'
 			}, {
 				display : 'Qtde',
-				name : 'quantidadeContabil',
+				name : 'quantidadeLogico',
 				width : 90,
-				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Entrada Suplementar',
+				name : 'quantidadeTransferenciaEntrada',
+				width : 90,
+				align : 'center'
+			}, {
+				display : 'Saída Suplementar',
+				name : 'quantidadeTransferenciaSaida',
+				width : 90,
+				align : 'center'
+			}, {
+				display : 'Qtde Venda',
+				name : 'quantidadeVenda',
+				width : 90,
+				align : 'center'
+			}, {
+				display : 'Saldo',
+				name : 'saldo',
+				width : 90,
 				align : 'center'
 			}],
 			sortname : "codigo",
@@ -490,6 +505,14 @@ var fecharDiaController =  $.extend(true, {
 			width : 850,
 			height : 255
 		});
+        
+        $("#dataDaOperacao", fecharDiaController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+        $("#dataDaOperacao", fecharDiaController.workspace).mask("99/99/9999");
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -543,7 +566,7 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).show();
-		fecharDiaController.redirecionarFaltasESobras();
+		
 		
 		return resultado;
 		
@@ -618,6 +641,18 @@ var fecharDiaController =  $.extend(true, {
 
 			return resultado;
 		}
+
+		$.each(resultado.rows, function(index, row) {
+			
+			var entrada = row.cell.quantidadeTransferenciaEntrada ? parseInt(row.cell.quantidadeTransferenciaEntrada) : 0;
+			var saida = row.cell.quantidadeTransferenciaSaida ? parseInt(row.cell.quantidadeTransferenciaSaida) : 0;
+			var venda = row.cell.quantidadeVenda ? parseInt(row.cell.quantidadeVenda) : 0;
+			var logico = row.cell.quantidadeLogico ? parseInt(row.cell.quantidadeLogico) : 0;
+			
+			row.cell.quantidadeTransferenciaEntrada = entrada;
+			row.cell.quantidadeTransferenciaSaida = saida;
+			row.cell.saldo = logico + entrada - saida - venda;
+		});
 		
 		$("#dialog-suplementares", fecharDiaController.workspace).show();
 		
@@ -652,8 +687,8 @@ var fecharDiaController =  $.extend(true, {
 				contextPath + "/administracao/fecharDia/obterDataOperacao",
 				null, 
 				function(result){
-					$('#dataDaOperacao').html(result.string);
-					$('.grids').find('legend').html('Confirmação de Valores em: ' + result.string);
+					$('#dataDaOperacao', fecharDiaController.workspace).val(result.string);
+					$('.grids', fecharDiaController.workspace).find('legend').html('Confirmação de Valores em: ' + result.string);
 				});
 				
 		
@@ -677,7 +712,8 @@ var fecharDiaController =  $.extend(true, {
                         }
                     });
 				    
-				    $(".grids").hide();
+				    $(".grids", fecharDiaController.workspace).hide();
+				    $("#btnConfirmarFechamento", fecharDiaController.workspace).hide();
 				}
 				
 			);
@@ -764,14 +800,14 @@ var fecharDiaController =  $.extend(true, {
 	popup_vendasTot : function(tipoVenda) {
 		
 		if(tipoVenda == "encalhe"){
-			$("#tipoVenda").val(tipoVenda);
+			$("#tipoVenda", fecharDiaController.workspace).val(tipoVenda);
 			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 				url: contextPath + "/administracao/fecharDia/obterGridVenda",
 				dataType : 'json',
 				params: [{name: "tipoVenda", value: tipoVenda}]
 			});
 		}else{
-			$("#tipoVenda").val(tipoVenda);
+			$("#tipoVenda", fecharDiaController.workspace).val(tipoVenda);
 			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 				url: contextPath + "/administracao/fecharDia/obterGridVenda",
 				dataType : 'json',
@@ -807,11 +843,11 @@ var fecharDiaController =  $.extend(true, {
 		
 		var _this = this;
 		
-		$("#lnkExportacaoCotaXLS").click(function(event) {
+		$("#lnkExportacaoCotaXLS", fecharDiaController.workspace).click(function(event) {
 			_this.exportacaoDetalhesCota("XLS", tipoResumo);
 		});
 		
-		$("#lnkExportacaoCotaPDF").click(function(event) {
+		$("#lnkExportacaoCotaPDF", fecharDiaController.workspace).click(function(event) {
 			_this.exportacaoDetalhesCota("PDF", tipoResumo);
 		});
 		
@@ -884,7 +920,7 @@ var fecharDiaController =  $.extend(true, {
 	//callback function to bring a hidden box back
 	callback : function(){
 		setTimeout(function() {
-			$( "#effect:visible").removeAttr( "style" ).fadeOut();
+			$( "#effect:visible", fecharDiaController.workspace).removeAttr( "style" ).fadeOut();
 
 		}, 1000 );
 	},
@@ -903,7 +939,7 @@ var fecharDiaController =  $.extend(true, {
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
-					$(".grids").show();
+					$(".grids", fecharDiaController.workspace).show();
 					fecharDiaController.limparTabela();
 					fecharDiaController.iniciarResumoReparte();
 					fecharDiaController.iniciarResumoEncalhe();
@@ -915,73 +951,66 @@ var fecharDiaController =  $.extend(true, {
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
-		});
-		
-		
-		      
+		});		 
 	},
 	
 	limparTabela : function(){
-		$('#baixaBancaria').remove();
-		$('#geracaoDeCobranca').remove();
-		$('#recebimentoFisico').remove();
-		$('#confirmacaoDeExpedicao').remove();
-		$('#fechamentoDeEncalhe').remove();
-		$('#lancamentoDeFaltasESobras').remove();
-		$('#controleDeAplicacao').remove();
-		
+		$('#baixaBancaria', fecharDiaController.workspace).remove();
+		$('#geracaoDeCobranca', fecharDiaController.workspace).remove();
+		$('#recebimentoFisico', fecharDiaController.workspace).remove();
+		$('#confirmacaoDeExpedicao', fecharDiaController.workspace).remove();
+		$('#fechamentoDeEncalhe', fecharDiaController.workspace).remove();
+		$('#lancamentoDeFaltasESobras', fecharDiaController.workspace).remove();
+		$('#controleDeAplicacao', fecharDiaController.workspace).remove();
+		$('#consolidarFinanceiro', fecharDiaController.workspace).remove();
 	},
 	
 	iniciarValidacoes : function(){
-		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
-				function(result){	
-					$('#tabela-validacao').clear();
-					fecharDiaController.validacaoBaixaBancaria(result);
-					fecharDiaController.validacaoGeracaoCobranca(result);
-					fecharDiaController.validacaoRecebimentoFisico(result);
-					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
-					fecharDiaController.validacaoFechamentoDeEncalhe(result);
-					fecharDiaController.validacaoLancamentoFaltasESobras(result);
-					fecharDiaController.validacaoControleDeAprovacao(result);
-				});
+		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes",
+			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
+			function(result){	
+				$('#tabela-validacao', fecharDiaController.workspace).clear();
+				fecharDiaController.validacaoBaixaBancaria(result);
+				fecharDiaController.validacaoRecebimentoFisico(result);
+				fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
+				fecharDiaController.validacaoFechamentoDeEncalhe(result);
+				fecharDiaController.validacaoLancamentoFaltasESobras(result);
+				fecharDiaController.validacaoControleDeAprovacao(result);
+				fecharDiaController.validacaoConsolidarFinanceiro(result);
+				
+				if (result.habilitarConfirmar){
+					$('#btnConfirmarFechamento', fecharDiaController.workspace).show();
+				} else {
+					$('#btnConfirmarFechamento', fecharDiaController.workspace).hide();
+				}
+			}
+		);
 	},
 	
 	validacaoBaixaBancaria : function(result){
 		var baixaBancaria = "<tr class='class_linha_1' id='baixaBancaria'><td>Baixa Bancária</td>";					
 		var iconeBaixaBancaria = null;
 		if(result.baixaBancaria){
-			iconeBaixaBancaria = 'ico_bloquear.gif';
-		}else{
 			iconeBaixaBancaria = 'ico_check.gif';
+		}else{
+			iconeBaixaBancaria = 'ico_bloquear.gif';
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(baixaBancaria + imagem);
-	},
-	
-	validacaoGeracaoCobranca : function(result){
-		var geracaoCobranca = "<tr class='class_linha_2' id='geracaoDeCobranca'><td>Geração de Cobrança</td>";					
-		var iconeGeracaoCobranca = null;
-		if(result.geracaoDeCobranca){
-			iconeGeracaoCobranca = 'ico_check.gif';
-		}else{
-			iconeGeracaoCobranca = 'ico_bloquear.gif';
-		}
-		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeGeracaoCobranca+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(geracaoCobranca + imagem);
+		$('#tabela-validacao', fecharDiaController.workspace).append(baixaBancaria + imagem);
 	},
 	
 	validacaoRecebimentoFisico : function(result){
 		var recebimentoFisico = null;				
 		var iconeRecebimentoFisico = null;		
 		if(result.recebimentoFisico){
-			recebimentoFisico = "<tr class='class_linha_1' id='recebimentoFisico'><td>Recebimento Físico:</td>";
+			recebimentoFisico = "<tr class='class_linha_2' id='recebimentoFisico'><td>Recebimento Físico:</td>";
 			iconeRecebimentoFisico = 'ico_check.gif';
 		}else{
-			recebimentoFisico = "<tr class='class_linha_1' id='recebimentoFisico'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
+			recebimentoFisico = "<tr class='class_linha_2' id='recebimentoFisico'><td><a href='javascript:;' onclick='fecharDiaController.popup_recebimentoFisico();'>Recebimento Físico</a>:</td>";
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(recebimentoFisico + imagem);		
+		$('#tabela-validacao', fecharDiaController.workspace).append(recebimentoFisico + imagem);		
 	},
 	
 	popup_recebimentoFisico : function() {
@@ -1003,7 +1032,8 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
-			}
+			},
+			form: $("#dialog-recebe-fisico", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
@@ -1011,14 +1041,14 @@ var fecharDiaController =  $.extend(true, {
 		var confirmacaoDeExpedicao = null;				
 		var iconeConfirmacaoDeExpedicao = null;		
 		if(result.confirmacaoDeExpedicao){
-			confirmacaoDeExpedicao = "<tr class='class_linha_2' id='confirmacaoDeExpedicao'><td>Confirmação de Expedição:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_1' id='confirmacaoDeExpedicao'><td>Confirmação de Expedição:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_check.gif';
 		}else{
-			confirmacaoDeExpedicao = "<tr class='class_linha_2' id='confirmacaoDeExpedicao'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
+			confirmacaoDeExpedicao = "<tr class='class_linha_1' id='confirmacaoDeExpedicao'><td><a href='javascript:;' onclick='fecharDiaController.popup_confirma_expedicao();'>Confirmação de Expedição</a>:</td>";
 			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(confirmacaoDeExpedicao + imagem);
+		$('#tabela-validacao', fecharDiaController.workspace).append(confirmacaoDeExpedicao + imagem);
 		
 	},
 	
@@ -1041,7 +1071,8 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
-			}
+			},
+			form: $("#dialog-confirma-expedicao", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
@@ -1049,25 +1080,25 @@ var fecharDiaController =  $.extend(true, {
 		
 		var img = (result.fechamentoEncalhe ? '/images/ico_check.gif' : '/images/ico_bloquear.gif');
 		
-		var fechamentoDeEncalhe = "<tr class='class_linha_1' id='fechamentoDeEncalhe'>" + 
+		var fechamentoDeEncalhe = "<tr class='class_linha_2' id='fechamentoDeEncalhe'>" + 
         "<td>Fechamento de Encalhe:</td>" +
         "<td align='center'><img src='"+ contextPath + img + "' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
         "</tr>";
-		$('#tabela-validacao').append(fechamentoDeEncalhe);
+		$('#tabela-validacao', fecharDiaController.workspace).append(fechamentoDeEncalhe);
 	},
 	
 	validacaoLancamentoFaltasESobras : function(result){
 		var lancamentoFaltasESobras = null;				
 		var iconeLancamentoFaltasESobras = null;		
 		if(result.lancamentoFaltasESobras){
-			lancamentoFaltasESobras = "<tr class='class_linha_2' id='lancamentoDeFaltasESobras'><td>Lançamento de Faltas e Sobras:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_1' id='lancamentoDeFaltasESobras'><td>Lançamento de Faltas e Sobras:</td>";
 			iconeLancamentoFaltasESobras = 'ico_check.gif';
 		}else{
-			lancamentoFaltasESobras = "<tr class='class_linha_2' id='lancamentoDeFaltasESobras'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
+			lancamentoFaltasESobras = "<tr class='class_linha_1' id='lancamentoDeFaltasESobras'><td><a href='javascript:;' onclick='fecharDiaController.popup_lctoFaltas();'>Lançamento de Faltas e Sobras</a>:</td>";
 			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(lancamentoFaltasESobras + imagem);		
+		$('#tabela-validacao', fecharDiaController.workspace).append(lancamentoFaltasESobras + imagem);		
 	},
 	
 	popup_lctoFaltas : function() {
@@ -1089,7 +1120,12 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
-			}
+			},
+			open : function(event, ui) {
+				fecharDiaController.redirecionarFaltasESobras();
+			},
+			
+			form: $("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
@@ -1099,7 +1135,7 @@ var fecharDiaController =  $.extend(true, {
 					function(result){
 						
 						var conferenciaDeAprovacao = 
-							"<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
+							"<tr class='class_linha_2' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
 						
 						var imagem = "<td align='center'><img src='"+ contextPath;
 						if(result.boolean===true){							
@@ -1109,24 +1145,48 @@ var fecharDiaController =  $.extend(true, {
 							
 							imagem += "/images/ico_check.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 						}
-						$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
+						$('#tabela-validacao', fecharDiaController.workspace).append(conferenciaDeAprovacao + imagem);
 					}
 				);
 		}
+	},
+
+	validacaoConsolidarFinanceiro : function(result){
+		var consolidarFinanceiro = null;					
+		var iconeConsolidarFinanceiro = null;
+		if(result.consolidadoCota){
+			
+			consolidarFinanceiro = "<tr class='class_linha_2' id='consolidarFinanceiro'><td>Cobrar/Postergar Financeiro de Cotas À Vista</td>";
+			
+			iconeConsolidarFinanceiro = 'ico_check.gif';
+		}else{
+			
+			consolidarFinanceiro = "<tr class='class_linha_2' id='consolidarFinanceiro'><td><a href='javascript:;' onclick='fecharDiaController.redirecionarProcessamentoFinanceiro();'>Cobrar/Postergar Financeiro de Cotas À Vista</a>:</td>";
+			
+			iconeConsolidarFinanceiro = 'ico_bloquear.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConsolidarFinanceiro+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao', fecharDiaController.workspace).append(consolidarFinanceiro + imagem);
+	},
+
+	redirecionarProcessamentoFinanceiro : function(){
+		
+		adicionarTab("Processamento Financeiro","/financeiro/movimentoFinanceiroCota/");
 	},
 	
 	iniciarResumoReparte : function(){
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result.totalReparteFormatado);
-					$("#totalSobras").html(result.totalSobrasFormatado);
-					$("#totalFaltas").html(result.totalFaltasFormatado);
-					$("#totalTransferencia").html(result.totalsTranferenciasFormatado);
-					$("#totalADistribuir").html(result.totalDistribuirFormatado);
-					$("#totalDistribuido").html(result.totalDistribuidoFormatado);
-					$("#totalSobraDistribuido").html(result.totalSobraDistribuicaoFormatado);
-					$("#totalDiferenca").html(result.totalDiferencaFormatado);
+
+					$("#totalReparte", fecharDiaController.workspace).html(result.totalReparteFormatado);
+					$("#totalSobras", fecharDiaController.workspace).html(result.totalSobrasFormatado);
+					$("#totalFaltas", fecharDiaController.workspace).html(result.totalFaltasFormatado);
+					$("#totalTransferencia", fecharDiaController.workspace).html(result.totalTransferenciasFormatado);
+					$("#totalADistribuir", fecharDiaController.workspace).html(result.totalDistribuirFormatado);
+					$("#totalDistribuido", fecharDiaController.workspace).html(result.totalDistribuidoFormatado);
+					$("#totalSobraDistribuido", fecharDiaController.workspace).html(result.totalSobraDistribuicaoFormatado);
+					$("#totalDiferenca", fecharDiaController.workspace).html(result.totalDiferencaFormatado);
 				}
 			);
 	},
@@ -1134,13 +1194,13 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoEncalhe : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
 				function(result){
-					$("#totalEncalheLogico").html(result.totalLogicoFormatado);
-					$("#totalEncalheFisico").html(result.totalFisicoFormatado);
-					$("#totalEncalheJuramentada").html(result.totalJuramentadoFormatado);
-					$("#vendaEncalhe").html(result.vendaFormatado);
-					$("#totalSobraEncalhe").html(result.totalSobrasFormatado);
-					$("#totalFaltaEncalhe").html(result.totalFaltasFormatado);
-					$("#saldoEncalhe").html(result.saldoFormatado);
+					$("#totalEncalheLogico", fecharDiaController.workspace).html(result.totalLogicoFormatado);
+					$("#totalEncalheFisico", fecharDiaController.workspace).html(result.totalFisicoFormatado);
+					$("#totalEncalheJuramentada", fecharDiaController.workspace).html(result.totalJuramentadoFormatado);
+					$("#vendaEncalhe", fecharDiaController.workspace).html(result.vendaFormatado);
+					$("#totalSobraEncalhe", fecharDiaController.workspace).html(result.totalSobrasFormatado);
+					$("#totalFaltaEncalhe", fecharDiaController.workspace).html(result.totalFaltasFormatado);
+					$("#saldoEncalhe", fecharDiaController.workspace).html(result.saldoFormatado);
 				}
 			);
 	},
@@ -1148,10 +1208,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoSuplementar : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
-					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogicoFormatado);
-					$("#totalSuplementarTransferencia").html(result.totalTransferenciaFormatado);
-					$("#totalSuplementarVenda").html(result.totalVendaFormatado);
-					$("#totalSuplementarSaldo").html(result.saldoFormatado);
+					$("#totalSuplementarEstoqueLogico", fecharDiaController.workspace).html(result.totalEstoqueLogicoFormatado);
+					$("#totalSuplementarTransferencia", fecharDiaController.workspace).html(result.totalTransferenciaFormatado);
+					$("#totalSuplementarVenda", fecharDiaController.workspace).html(result.totalVendaFormatado);
+					$("#totalSuplementarSaldo", fecharDiaController.workspace).html(result.saldoFormatado);
 				}
 			);
 	},
@@ -1416,7 +1476,7 @@ var fecharDiaController =  $.extend(true, {
 			'value' : tipoArquivo
 		},{
 			'name' : 'tipoVenda',
-			'value' : $("#tipoVenda").val()
+			'value' : $("#tipoVenda", fecharDiaController.workspace).val()
 		});
 		
 		
@@ -1434,14 +1494,31 @@ var fecharDiaController =  $.extend(true, {
 		var link = '<span class="bt_novos"> <a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Lançamento Faltas e Sobras\', ' + url + '),fecharDiaController.customizarDialogFaltasESobras(); "  style="cursor:pointer">' +
 						   	 '<img src="' + contextPath + '/images/ico_check.gif" hspace="5" border="0" />Sim' +
 						   '</a> </span>';
-		$("#linkParaFaltasESobra").html(link);
+		$("#linkParaFaltasESobra", fecharDiaController.workspace).html(link);
 		
 	},
+	
 	customizarDialogFaltasESobras : function(){		
 		
-		parent.$('#dialog-lancto-faltas-sobras').dialog("option", "modal", false);
-		parent.$('#dialog-lancto-faltas-sobras').dialog('close');
+		parent.$('#dialog-lancto-faltas-sobras', fecharDiaController.workspace).dialog("option", "modal", false);
+		parent.$('#dialog-lancto-faltas-sobras', fecharDiaController.workspace).dialog('close');
 		
+	},
+	
+	transferirDiferencasParaEstoqueDePerdaGanho : function() {
+		
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/transferirDiferencasParaEstoqueDePerdaGanho",
+			null,
+			function(result) {
+
+				$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).dialog("close");
+				
+				$("#dialog-processos", fecharDiaController.workspace).dialog("close");
+				
+				fecharDiaController.popup_processos();
+			}
+		);
 	}
 
 }, BaseController);

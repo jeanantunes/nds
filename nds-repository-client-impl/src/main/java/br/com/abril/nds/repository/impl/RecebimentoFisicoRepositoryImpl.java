@@ -42,6 +42,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 		hql.append(" 	itemRecebimentoFisico.id, 											");
 		hql.append(" 	produto.codigo, 													");
 		hql.append("  	produto.nome, 														");
+		hql.append("  	produtoEdicao.origem, 												");
 		hql.append("  	produtoEdicao.numeroEdicao, 										");
 		hql.append("  	produtoEdicao.id, 													");
 		hql.append(" 	produtoEdicao.precoVenda as precoCapa,							    ");
@@ -128,6 +129,26 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 
 		// Caso não seja encontrado nenhum resultado para a nota, ela não existe
 		return query.uniqueResult() != null;
+	}
+	
+	
+	/**
+	 * Verifica se produto possui recebimento físico
+	 * @param idProduto
+	 * @return boolean
+	 */
+	@Override
+	public boolean produtoPossuiRecebimentoFisico(Long idProduto) {
+		
+		String hql = " select itemRecebimentoFisico "
+				   + " from ItemRecebimentoFisico itemRecebimentoFisico "
+				   + " where itemRecebimentoFisico.itemNotaFiscal.produtoEdicao.produto.id = :idProduto ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("idProduto", idProduto);
+		
+		return query.list().size() > 0;
 	}
 
 }

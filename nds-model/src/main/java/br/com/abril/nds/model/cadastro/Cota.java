@@ -100,6 +100,10 @@ public class Cota implements Serializable {
 	
 	@OneToOne(mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)", nullable=false)
+	private TipoCota tipoCota;
 		
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
@@ -174,6 +178,10 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "ALTERACAO_TIPO_COTA")
+	private Date alteracaoTipoCota;
 	
 	public Cota() {
         this.inicioAtividade = new Date();
@@ -314,6 +322,14 @@ public class Cota implements Serializable {
 	
 	public void setParametroCobranca(ParametroCobrancaCota parametroCobranca) {
 		this.parametroCobranca = parametroCobranca;
+	}
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
 	}
 
 	public Fiador getFiador() {
@@ -547,16 +563,6 @@ public class Cota implements Serializable {
 	public void setCotaGarantia(CotaGarantia cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
 	}
-	
-	public EnderecoCota getEnderecoPrincipal(){
-		for(EnderecoCota item:this.getEnderecos()){
-			if(item.isPrincipal()){
-				return item;
-			}
-		}
-		return null;
-	}
-
 
 	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
 		return tipoDistribuicaoCota;
@@ -566,10 +572,41 @@ public class Cota implements Serializable {
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
+	
+	public EnderecoCota getEnderecoPrincipal(){
+		for(EnderecoCota item:this.getEnderecos()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		return null;
+	}
+	
+	public PDV getPDVPrincipal(){
+		for(PDV item : this.getPdvs()){
+			if(item.getCaracteristicas().isPontoPrincipal()){
+				return item;
+			}
+		}
+		return null;
+	}
+	
+	public EnderecoCota getEnderecoPorTipoEndereco(TipoEndereco tipoEndereco){
+		for(EnderecoCota item : this.getEnderecos()){
+			if(item.getTipoEndereco() == tipoEndereco){
+				return item;
+			}
+		}
+		return null;
+	}
 
 
-	
-	
-	
+	public Date getAlteracaoTipoCota() {
+		return alteracaoTipoCota;
+	}
 
+
+	public void setAlteracaoTipoCota(Date alteracaoTipoCota) {
+		this.alteracaoTipoCota = alteracaoTipoCota;
+	}
 }

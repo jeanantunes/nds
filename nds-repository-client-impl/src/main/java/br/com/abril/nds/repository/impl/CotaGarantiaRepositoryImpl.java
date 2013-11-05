@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
@@ -66,8 +67,28 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return (T) criteria.uniqueResult();
 	}
 	
+	/**
+	 * Obtem lista de CaucaoLiquida da Cota
+	 * @param idCota
+	 * @return List<CaucaoLiquida>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CaucaoLiquida> getCaucaoLiquidasCota(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" cgcl.caucaoLiquidas ")
+		   .append(" from  CotaGarantiaCaucaoLiquida cgcl ")
+		   .append(" join  cgcl.cota cota ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+	}
 	
-
 	@Override
 	public void deleteListaImoveis(Long idGarantia) {
 		
@@ -145,7 +166,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   .append(" left join garantia.outros as garantiaOutros ")
 		   .append(" where garantia.tipoGarantia in (select tga.tipoGarantia from Distribuidor d join d.tiposGarantiasAceita tga) ");
 		   
-	   TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
+	   TipoStatusGarantia status = filtro.getStatusGarantia();	
 
 	   Date data = filtro.getDataBaseCalculo();
 	   if (status!=null && data!=null){
@@ -215,7 +236,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		   	.append(" left join garantia.outros as garantiaOutros ")
 			.append(" where garantia.tipoGarantia in (select tga.tipoGarantia from Distribuidor d join d.tiposGarantiasAceita tga) ");
 		
-		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
+		TipoStatusGarantia status = filtro.getStatusGarantia();	
 	
 	    Date data = filtro.getDataBaseCalculo();
 		if (status!=null && data!=null){
@@ -271,8 +292,8 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		
 		StringBuilder hql = new StringBuilder();
 
-		TipoGarantia tipoGarantia = filtro.getTipoGarantiaEnum();
-		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();	
+		TipoGarantia tipoGarantia = filtro.getTipoGarantia();
+		TipoStatusGarantia status = filtro.getStatusGarantia();	
 		Date data = filtro.getDataBaseCalculo();
 		
 		switch(tipoGarantia){
@@ -351,7 +372,7 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 
 		StringBuilder hql = new StringBuilder();
 		
-		TipoGarantia tipoGarantia = filtro.getTipoGarantiaEnum();	
+		TipoGarantia tipoGarantia = filtro.getTipoGarantia();	
 		Date data = filtro.getDataBaseCalculo();
 
 		hql.append(" select ")
@@ -419,11 +440,11 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		
 		StringBuilder hql = new StringBuilder();
 		
-		TipoStatusGarantia status = filtro.getStatusGarantiaEnum();
+		TipoStatusGarantia status = filtro.getStatusGarantia();
 		
 		Date data = filtro.getDataBaseCalculo();
 
-		hql.append(" select count(distinct cota) ");
+		hql.append(" select count(distinct garantia) ");
  
 		hql.append(this.obterHqlTipoGarantia(filtro));
 		
@@ -435,5 +456,35 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		
 		return (Long) query.uniqueResult();
 	}
-	
+
+	@Override
+	public boolean existeCaucaoLiquidasCota(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select case count(cgcl.id) when 0 then false else true end ");
+		hql.append(" from  CotaGarantiaCaucaoLiquida cgcl ")
+		   .append(" join  cgcl.cota cota ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		return (boolean) query.uniqueResult();
+	}
+
+	@Override
+	public boolean verificarQuitacaoCaucaoLiquida(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select case p.valor when 0 then false else true end ");
+		hql.append(" from  CotaGarantiaCaucaoLiquida cgcl ")
+		   .append(" join  cgcl.formaPagamento p ")
+		   .append(" join  cgcl.cota cota ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		return (boolean) query.uniqueResult();
+	}
 }

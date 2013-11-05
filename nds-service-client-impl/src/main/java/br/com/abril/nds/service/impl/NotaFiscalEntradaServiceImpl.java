@@ -42,6 +42,7 @@ import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -231,13 +232,13 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 	@Override
 	@Transactional
-	public DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal) {
+	public DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal, PaginacaoVO paginacao) {
 		
 		if (idNotaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro inesperado. ID da nota fiscal não pode ser nulo.");
 		}
 
-		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalEntradaRepository.obterDetalhesNotaFical(idNotaFiscal);
+		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalEntradaRepository.obterDetalhesNotaFical(idNotaFiscal, paginacao);
 
 		DetalheNotaFiscalDTO detalheNotaFiscalDTO = new DetalheNotaFiscalDTO();
 		
@@ -245,18 +246,21 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		BigInteger totalExemplares = BigInteger.ZERO;
 		BigDecimal totalSumarizado = BigDecimal.ZERO;
+		BigDecimal totalSumarizadoComDesconto = BigDecimal.ZERO;
 		
 		for (DetalheItemNotaFiscalDTO item : itensDetalhados) {
 			
 			BigDecimal valorTotal =
 				(item.getValorTotal() == null) ? BigDecimal.ZERO : item.getValorTotal();
-			
+
 			totalExemplares = totalExemplares.add(item.getQuantidadeExemplares() == null ? BigInteger.ZERO : item.getQuantidadeExemplares());
 			totalSumarizado = totalSumarizado.add(item.getPrecoVenda() == null ? BigDecimal.ZERO : MathUtil.round(valorTotal, 2));
+			totalSumarizadoComDesconto = totalSumarizadoComDesconto.add(item.getValorTotalComDesconto());
 		}
 
 		detalheNotaFiscalDTO.setTotalExemplares(totalExemplares);
 		detalheNotaFiscalDTO.setValorTotalSumarizado(MathUtil.round(totalSumarizado, 2));
+		detalheNotaFiscalDTO.setValorTotalSumarizadoComDesconto(MathUtil.round(totalSumarizadoComDesconto, 4));
 		
 		return detalheNotaFiscalDTO;
 	}
@@ -270,7 +274,11 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	
 	}
 
+	@Override
+	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
+			Long idPessoaJuridica, Date dataEmissao) {
+		
+		return this.notaFiscalEntradaRepository.existeNotaFiscalEntradaFornecedor(numeroNotaEnvio,
+				idPessoaJuridica, dataEmissao);
+	}
 }
-
-
-

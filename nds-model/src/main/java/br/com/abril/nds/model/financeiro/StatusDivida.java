@@ -5,13 +5,19 @@ public enum StatusDivida {
 	EM_ABERTO("Em Aberto"), 
 	QUITADA("Quitada"),
 	NEGOCIADA("Negociada"),
-	POSTERGADA("Postergada");
+	POSTERGADA("Postergada"),
+	PENDENTE("Pendente"),
+	PENDENTE_INADIMPLENCIA("Pendente por inadimplência");
 
 	private String descricao;
 	
 	private StatusDivida(String descricao) {
 		
 		this.descricao = descricao;
+	}
+	
+	public String getDescricao(){
+		return this.descricao;
 	}
 	
 	@Override

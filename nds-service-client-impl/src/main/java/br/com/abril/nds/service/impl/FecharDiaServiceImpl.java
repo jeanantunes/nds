@@ -2,13 +2,14 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +25,10 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.DiferencaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
@@ -38,18 +39,28 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProdu
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
@@ -70,17 +81,21 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoAvista;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsignado;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
-import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoCotaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoEncalheRepository;
@@ -99,22 +114,30 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsignadoRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
-import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.HistoricoEstoqueProdutoRepository;
+import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.repository.VisaoEstoqueRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
-import br.com.abril.nds.service.ImpressaoDividaService;
+import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -123,12 +146,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
-	
-	@Autowired
-	private ImpressaoDividaService impressaoDividaService;
-	
-	@Autowired
-	private FormaCobrancaRepository formaCobrancaRepository;
 	
 	@Autowired
 	private DividaService dividaService;
@@ -209,9 +226,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private FechamentoDiarioConsolidadoEncalheRepository fechamentoDiarioConsolidadoEncalheRepository;
 	
 	@Autowired
-	private UsuarioRepository usuarioRepository;
-	
-	@Autowired
 	private DiferencaEstoqueRepository diferencaRepository;
 	
 	@Autowired 
@@ -227,13 +241,55 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	@Autowired
+	private MovimentoEstoqueRepository movimentoEstoqueRepository;
+	
+	@Autowired
 	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
+	
+	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRepository;
+	
+	@Autowired
+	private HistoricoEstoqueProdutoRepository historicoEstoqueProdutoRepository;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private VisaoEstoqueRepository visaoEstoqueRepository;
+	
+	@Autowired
+	private BoletoService boletoService;
+	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
 	@Override
 	@Transactional
 	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
-		Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
-		return this.fecharDiaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
+		
+		return false;
+		
+		//TODO verificar com o cesar com ficara a regra para validação de baixa de cobrança no fechamento diario
+		
+		//Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
+		//return this.fecharDiaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
 	}
 
 	@Override
@@ -273,6 +329,30 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		return this.fecharDiaRepository.existeLancamentoFaltasESobrasPendentes(dataOperacaoDistribuidor);
 	}
 
+	/**
+	 * Verifica se cotas a vista tiveram seus movimentos financeiros consolidados
+	 * @param data
+	 * @return boolean
+	 */
+	@Override
+	@Transactional
+	public boolean isConsolidadoCotaAVista(Date data){
+
+		List<Cota> cotas = this.cotaRepository.obterCotasTipoAVista(data);
+		
+		for (Cota c : cotas){
+		
+		    ConsolidadoFinanceiroCota cfc = this.consolidadoFinanceiroRepository.buscarPorCotaEData(c.getId(), data);
+		    
+		    if (cfc == null){
+		    	
+		    	return false;
+		    }
+		}
+		
+		return true;
+	}
+	
 	@Override
 	@Transactional
 	public boolean existePendenciasDeAprovacao(Date dataOperacao) {
@@ -362,6 +442,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 						)
 					);
 				}
+
+                if (parametrosAprovacaoDistribuidor.isConsolidadoCota()){
+            	   
+            	   if (this.isConsolidadoCotaAVista(dataOperacao) == false){
+            		   
+            		   return true;
+            	   }
+				}	
 			}
 			
 			return this.fecharDiaRepository.existePendenciasDeAprovacao(
@@ -372,43 +460,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	@Override
-	@Transactional
-	public Boolean existeGeracaoDeCobranca(Date dataOperacao) {
-		
-		Calendar dataBase = Calendar.getInstance();
-		dataBase.setTime(dataOperacao);
-		int diaDaSemanaDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_WEEK);
-		int diaDaMesDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_MONTH);
-		
-		List<ValidacaoGeracaoCobrancaFecharDiaDTO> listaDePoliticaCobranca = this.fecharDiaRepository.obterFormasDeCobranca();
-		
-		for(ValidacaoGeracaoCobrancaFecharDiaDTO dto: listaDePoliticaCobranca){
-			FormaCobranca fc = this.formaCobrancaRepository.buscarPorId(dto.getFormaCobrancaId());
-			if(dto.getTipoFormaCobranca().equals("Diária")){	
-				return impressaoDividaService.validarDividaGerada(dataOperacao);				
-			}
-			if(dto.getTipoFormaCobranca().equals("Semanal")){
-				List<ValidacaoGeracaoCobrancaFecharDiaDTO> lista = this.fecharDiaRepository.obterDiasDaConcentracao(fc);
-				for(ValidacaoGeracaoCobrancaFecharDiaDTO con: lista){					
-					if(con.getDiaDoMes() == diaDaSemanaDaDataDeOperacao){
-						return impressaoDividaService.validarDividaGerada(dataOperacao);
-					}					
-				}
-				
-			}
-			if(fc.getTipoFormaCobranca().getDescricao().equals("Mensal") || fc.getTipoFormaCobranca().getDescricao().equals("Quinzenal") ){
-				for(Integer diaDeCobranca: fc.getDiasDoMes()){
-					if(diaDeCobranca ==  diaDaMesDaDataDeOperacao){
-						return impressaoDividaService.validarDividaGerada(dataOperacao);
-					}
-				}
-			}
-		}
-		 
-		return true;
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -448,38 +499,39 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
 			resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
+		//Consignado
 		resumoConsignado.setSaldoAnterior(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.CONSIGNADO, null));
-
+				this.fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento));
+		
 		resumoConsignado.setValorEntradas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.DEBITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONSIGNADO));
 		
 		resumoConsignado.setValorSaidas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.CREDITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
 		
 		resumoConsignado.setSaldoAtual(
 			resumoConsignado.getSaldoAnterior().add(
 				resumoConsignado.getValorEntradas()).subtract(resumoConsignado.getValorSaidas()));
+		
 		
 		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 		
 		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
 			resumoFechamentoDiarioConsignado.new ResumoAVista();
 		
+		//A Vista
 		resumoAVista.setSaldoAnterior(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.A_VISTA, null));
+				this.fechamentoDiarioResumoAvistaRepository.obterSaldoAVistaFechamentoDiarioAnterior(dataFechamento));
 
 		resumoAVista.setValorEntradas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.DEBITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONTA_FIRME));
 		
 		resumoAVista.setValorSaidas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.CREDITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
 		
 		resumoAVista.setSaldoAtual(
 			resumoAVista.getSaldoAnterior().add(
@@ -513,7 +565,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
         return dividaService.obterDividasReceberEm(data, paginacao);
     }
 
@@ -522,7 +574,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
         return dividaService.obterDividasVencerApos(data, paginacao);
     }
 
@@ -547,15 +599,16 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     private FechamentoDiarioDTO salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
     	
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
-    	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
+    	validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
     	
-    	validarDadosFechamentoDiario(usuario, "Usúario não identificado para operação de fechamento do dia!");
+    	validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
     	
     	FechamentoDiario fechamento = new FechamentoDiario();
     	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
     	
     	fechamento.setDataFechamento(dataFechamento);
     	fechamento.setUsuario(usuario);
+    	fechamento.setDataCriacao(new Date());
     	
     	fechamento = fechamentoDiarioRepository.merge(fechamento);
     	
@@ -585,35 +638,130 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	List<DiferencaDTO> diferencasDTO = incluirFaltasSobras(fechamento);
     	builder.faltasSobras(diferencasDTO);
     	
-    	liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	Date novaDataOperacaoDistribuidor =
+    		liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	
+    	processarSituacoesCota(novaDataOperacaoDistribuidor, dataFechamento);
     	
     	return builder.build();
     }
 
-    private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+    private void processarSituacoesCota(Date novaDataOperacaoDistribuidor, 
+    									Date antigaDataOperacaoDistribuidor) {
+
+    	List<HistoricoSituacaoCota> situacoesARestaurar = new ArrayList<>();
+    	
+    	situacoesARestaurar.addAll(
+    		this.historicoSituacaoCotaRepository.obterNaoRestauradosComTerminoEm(
+    			antigaDataOperacaoDistribuidor));
+    	
+    	situacoesARestaurar.addAll(
+        	this.historicoSituacaoCotaRepository.obterNaoRestauradosComTerminoEm(
+        		novaDataOperacaoDistribuidor));
+    	
+    	for (HistoricoSituacaoCota historicoSituacaoCota : situacoesARestaurar) {
+    		
+    		Cota cota = this.cotaRepository.buscarPorId(historicoSituacaoCota.getCota().getId());
+    		
+    		if (cota == null) {
+    			
+    			throw new RuntimeException("Cota inexistente!");
+    		}
+    		
+    		historicoSituacaoCota.setRestaurado(true);
+    		
+    		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
+    		
+    		HistoricoSituacaoCota novoHistoricoSituacaoCota = new HistoricoSituacaoCota();
+    		
+    		novoHistoricoSituacaoCota.setDataInicioValidade(novaDataOperacaoDistribuidor);
+    		novoHistoricoSituacaoCota.setDataFimValidade(null);
+    		novoHistoricoSituacaoCota.setNovaSituacao(historicoSituacaoCota.getSituacaoAnterior());
+    		novoHistoricoSituacaoCota.setDescricao(null);
+    		novoHistoricoSituacaoCota.setMotivo(null);
+    		novoHistoricoSituacaoCota.setSituacaoAnterior(cota.getSituacaoCadastro());
+			novoHistoricoSituacaoCota.setDataEdicao(new Date());    		
+			novoHistoricoSituacaoCota.setProcessado(false);
+			novoHistoricoSituacaoCota.setRestaurado(false);
+			novoHistoricoSituacaoCota.setResponsavel(this.usuarioService.getUsuarioLogado());
+			novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+			novoHistoricoSituacaoCota.setCota(cota);
+
+    		this.historicoSituacaoCotaRepository.adicionar(novoHistoricoSituacaoCota);
+    	}
+    	
+    	List<HistoricoSituacaoCota> situacoesAProcessar = new ArrayList<>();
+    	
+    	situacoesAProcessar.addAll(
+    		this.historicoSituacaoCotaRepository.obterNaoProcessadosComInicioEm(
+    			novaDataOperacaoDistribuidor));
+    	
+    	for (HistoricoSituacaoCota historicoSituacaoCota : situacoesAProcessar) {
+    		
+    		Cota cota = this.cotaRepository.buscarPorId(historicoSituacaoCota.getCota().getId());
+    		
+    		if (cota == null) {
+    			
+    			throw new RuntimeException("Cota inexistente!");
+    		}
+
+    		historicoSituacaoCota.setDataEdicao(new Date());    		
+    		
+			historicoSituacaoCota.setProcessado(true);
+			
+			cota.setSituacaoCadastro(historicoSituacaoCota.getNovaSituacao());
+			
+			this.cotaRepository.alterar(cota);
+
+    		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
+    	}
+    }
+    
+    private Date liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
     	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
 		
-		List<Integer> dias = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
+		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null);
 		
-		Date novaData = obterDataValida(distribuidor.getDataOperacao(), dias);
+		if(diasSemanaDistribuidorOpera == null || diasSemanaDistribuidorOpera.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível realizar fechamento diário. Nenhum dia da semana com operação cadastradado para o Distribuidor."); 
+		}
+		
+		Date novaData = obterDataValida(distribuidor.getDataOperacao(), diasSemanaDistribuidorOpera);
 				
 		distribuidor.setDataOperacao(novaData);
 		
 		distribuidorRepository.alterar(distribuidor);
-		
+	
+		return novaData;
 	}
-		
-	public Date obterDataValida(Date dataAtual, List<Integer> dias) {
+	
+    /**
+     * Retorna a próxima data em que o distribuidor opera.
+     *
+     * @param dataAtual
+     * @param diasSemanaDistribuidorOpera
+     * 
+     * @return Date
+     */
+	public Date obterDataValida(Date dataAtual, List<Integer> diasSemanaDistribuidorOpera) {
 		
 		Date novaData = DateUtil.adicionarDias(dataAtual, 1);
 		
-		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
 
-		if (dias.contains(codigoDiaCorrente))
+		if ( 	diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) && 
+				!calendarioService.isFeriadoSemOperacao(novaData) && 
+				!calendarioService.isFeriadoMunicipalSemOperacao(novaData) 	) {
+			
 			return novaData;
-		else
-			return obterDataValida(novaData, dias);
+			
+		} else {
+
+			return obterDataValida(novaData, diasSemanaDistribuidorOpera);
+			
+		}
+			
 		
 	}
 
@@ -793,7 +941,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Vencer!");
 		
-		List<Divida> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
+		List<Cobranca> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
 		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_VENCER);
 		
@@ -806,7 +954,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Receber!");
 		
-		List<Divida> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
+		List<Cobranca> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
 		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_RECEBER);
 		
@@ -814,7 +962,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	}
 
 	private void incluirDividas(FechamentoDiario fechamento,
-			List<SumarizacaoDividasDTO> resumoDividas, List<Divida> dividas,TipoDividaFechamentoDia tipoDividaFechamentoDia) throws FechamentoDiarioException {
+			List<SumarizacaoDividasDTO> resumoDividas, List<Cobranca> dividas,TipoDividaFechamentoDia tipoDividaFechamentoDia) throws FechamentoDiarioException {
 		
 		FechamentoDiarioConsolidadoDivida resumoConsolidadoDivida = new FechamentoDiarioConsolidadoDivida();
 		
@@ -843,7 +991,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		if(dividas!= null && !dividas.isEmpty()){
 			
-			for(Divida item : dividas ){
+			for(Cobranca item : dividas ){
 				
 				FechamentoDiarioDivida dividaFechamentoDiario = new FechamentoDiarioDivida();
 				
@@ -967,8 +1115,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<EncalheFecharDiaDTO> incluirLancamentosEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe)
 			throws FechamentoDiarioException {
 		
-		List<EncalheFecharDiaDTO> listaEncalhe = 
-		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
 		
 		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
@@ -1064,7 +1211,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    return listaReparte;
 	}
 
-	
 	private void processarControleDeAprovacao() {
 
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
@@ -1097,7 +1243,58 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	@Transactional(readOnly=true)
 	public ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao){		
-		return  this.fecharDiaRepository.obterResumoEstoque(dataOperacao);
+		
+		ResumoEstoqueDTO resumoDTO = new ResumoEstoqueDTO();
+		ResumoEstoqueDTO.ResumoEstoqueExemplar exemplar = resumoDTO.new ResumoEstoqueExemplar();
+		ResumoEstoqueDTO.ResumoEstoqueProduto produto = resumoDTO.new ResumoEstoqueProduto();
+		ResumoEstoqueDTO.ValorResumoEstoque valor = resumoDTO.new ValorResumoEstoque();
+		
+		FiltroConsultaVisaoEstoque filtro = new FiltroConsultaVisaoEstoque();
+		
+		filtro.setDataMovimentacao(dataOperacao);
+		
+		VisaoEstoqueDTO visaoEstoqueDTO = null;
+		
+		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeLancamento(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeLancamento(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorLancamento(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro);
+		
+		exemplar.setQuantidadeJuramentado(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeJuramentado(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorJuramentado(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeSuplementar(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeSuplementar(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorSuplementar(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeRecolhimento(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeRecolhimento(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorRecolhimento(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeDanificados(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeDanificados(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorDanificados(visaoEstoqueDTO.getValor());
+		
+		resumoDTO.setResumEstoqueExemplar(exemplar);
+		resumoDTO.setResumoEstoqueProduto(produto);
+		resumoDTO.setValorResumoEstoque(valor);
+		
+		return resumoDTO;
 	}
 	
 	private void validarDadosFechamentoDiario(Object objeto, String mensagem) throws FechamentoDiarioException{
@@ -1110,20 +1307,130 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			throw new FechamentoDiarioException(mensagem);
 		}
 	}
-	
+
 	@Transactional
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
 		processarControleDeAprovacao();
-				
-		try {
+
+		LOG.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
 		
-			return salvarResumoFechamentoDiario(usuario, dataFechamento);
+		processarDividasNaoPagas(usuario, dataFechamento);
+		
+		LOG.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
+		
+		try {
+
+			
+			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
+
+			LOG.info("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
+			
+			atualizarHistoricoEstoqueProduto(dataFechamento);
+
+			LOG.info("FECHAMENTO DIARIO - ATUALIZADO HISTORICO ESTOQUE PRODUTO ");
+			
+			this.processarLancamentosRecolhimento(usuario);
+
+			LOG.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
+
+			
+			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
 			
+			LOG.error("FALHA AO PROCESSAR FECHAMENTO DO DIA", e);
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+		}
+	}
+	
+	private void processarDividasNaoPagas(Usuario usuario, Date dataPagamento) {
+
+		this.boletoService.adiarDividaBoletosNaoPagos(usuario, dataPagamento);
+	}
+
+	private void atualizarHistoricoEstoqueProduto(Date dataFechamento) {
+		
+		List<EstoqueProdutoDTO> estoquesProdutos = estoqueProdutoRepository.buscarEstoquesProdutos();
+		
+		for(EstoqueProdutoDTO ep : estoquesProdutos) {
+			
+			HistoricoEstoqueProduto hep = new HistoricoEstoqueProduto();
+			hep.setData(dataFechamento);
+			hep.setProdutoEdicao(new ProdutoEdicao(ep.getProdutoEdicaoId()));
+			hep.setQtde(ep.getQtde() != null ? ep.getQtde() : BigInteger.ZERO);
+			hep.setQtdeDanificado(ep.getQtdeDanificado() != null ? ep.getQtdeDanificado() : BigInteger.ZERO);
+			hep.setQtdeDevolucaoEncalhe(ep.getQtdeDevolucaoEncalhe() != null ? ep.getQtdeDevolucaoEncalhe() : BigInteger.ZERO);
+			hep.setQtdeSuplementar(ep.getQtdeSuplementar() != null ? ep.getQtdeSuplementar() : BigInteger.ZERO);
+			hep.setQtdeJuramentado(ep.getQtdeJuramentado() != null ? ep.getQtdeJuramentado() : BigInteger.ZERO);
+			
+			historicoEstoqueProdutoRepository.adicionar(hep);
+		}
+	}
+
+	private void processarLancamentosRecolhimento(Usuario usuario) {
+		
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		this.processarLancamentosEmRecolhimento(dataOperacao, usuario);
+		
+		this.processarLancamentosVencidos(dataOperacao, usuario);
+	}
+
+	private void processarLancamentosEmRecolhimento(Date dataOperacao, Usuario usuario) {
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosBalanceadosPorDataRecolhimentoDistrib(dataOperacao);
+		
+		for (Lancamento lancamento : lancamentos) {
+			
+			lancamento.setStatus(StatusLancamento.EM_RECOLHIMENTO);
+			lancamento.setUsuario(usuario);
+			
+			this.lancamentoRepository.merge(lancamento);
+		}
+	}
+	
+	private void processarLancamentosVencidos(Date dataOperacao, Usuario usuario) {
+		
+		Integer ultimoDiaRecolhimento = this.obterUltimoDiaRecolhimento();
+		
+		Date dataBase = calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento - 1);
+		
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
+		
+		for (Lancamento lancamento : lancamentos) {
+			
+			lancamento.setStatus(StatusLancamento.RECOLHIDO);
+			lancamento.setUsuario(usuario);
+			
+			this.lancamentoRepository.merge(lancamento);
+		}
+	}
+
+	private Integer obterUltimoDiaRecolhimento() {
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		boolean primeiro = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro();
+		boolean segundo = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo();
+		boolean terceiro = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro();
+		boolean quarto = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto();
+		boolean quinto = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto();
+		
+		if (quinto) {
+			return 5;
+		} else if (quarto) {
+			return 4;
+		} else if (terceiro) {
+			return 3;
+		} else if (segundo) {
+			return 2;
+		} else if (primeiro) {
+			return 1;
+		} else {
+			return 0;
 		}
 	}
 
@@ -1147,5 +1454,79 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         Objects.requireNonNull(data, "Data para recuperação das diferenças não deve ser nula!");
         return diferencaRepository.obterDiferencas(data);
     }
+	
+	 /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional
+	public void transferirDiferencasParaEstoqueDePerdaGanho(Date dataOperacao, Long idUsuario) {
+		
+		List<Diferenca> diferencasATransferir = this.diferencaRepository.obterDiferencas(dataOperacao, StatusConfirmacao.PENDENTE);
+		
+		for (Diferenca diferenca : diferencasATransferir) {
+			
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+			
+			TipoDiferenca novoTipoDiferenca = null;
+			
+			LancamentoDiferenca lancamentoDiferenca = diferenca.getLancamentoDiferenca();
+			
+			switch (diferenca.getTipoDiferenca()) {
+			
+				case FALTA_DE: 
+					
+					novoTipoDiferenca = TipoDiferenca.PERDA_DE;
+					
+					break;
+				
+				case FALTA_EM: 
+					
+					novoTipoDiferenca = TipoDiferenca.PERDA_EM;
+					
+					break;
+					
+				case SOBRA_DE:
+					
+					novoTipoDiferenca = TipoDiferenca.GANHO_DE;
+					
+					break;
+				
+				case SOBRA_EM:
+					
+					novoTipoDiferenca = TipoDiferenca.GANHO_EM;
+					
+					break;
+
+				default:
+					
+					throw new RuntimeException("Tipo de Diferença não identificado");
+			}
+			
+			if (lancamentoDiferenca != null) {
+				
+				if (novoTipoDiferenca.isPerda()) {
+					
+					lancamentoDiferenca.setStatus(StatusAprovacao.PERDA);
+					
+				} else if (novoTipoDiferenca.isGanho()) {
+					
+					lancamentoDiferenca.setStatus(StatusAprovacao.GANHO);
+				}
+			}
+			
+			diferenca.setTipoDiferenca(novoTipoDiferenca);
+			
+			this.diferencaRepository.merge(diferenca);
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque = 
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					novoTipoDiferenca.getTipoMovimentoEstoque());
+			
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				null, diferenca.getProdutoEdicao().getId(), idUsuario, 
+					diferenca.getQtde(), tipoMovimentoEstoque);
+		}
+	}
   
 }

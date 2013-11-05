@@ -16,22 +16,6 @@ import br.com.abril.nds.model.financeiro.Cobranca;
 
 public interface CobrancaService {
     
-	/**
-	 * Obtém o valor do juros, respeitando a ordem dos parâmetros informados,
-	 * ou seja, se existir taxa de juros no banco informado, utiliza essa taxa.
-	 * Senão utilizada da cota caso exista ou do distribuídor.
-	 * 
-	 * @param banco - banco
-	 * @param cota - cota
-	 * @param valor - valor a ser calculado
-	 * @param dataVencimento - data de vencimento
-	 * @param dataCalculoJuros - data a ser calculado o juros
-	 * 
-	 * @return valor calculado com o juros
-	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
-	 */	
-	public BigDecimal calcularJuros(Banco banco, Cota cota,
-									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
 
 	/**
 	 * Obtém o valor do juros, respeitando a ordem dos parâmetros informados,
@@ -44,7 +28,7 @@ public interface CobrancaService {
 	 * @param dataVencimento - data de vencimento
 	 * @param dataCalculoJuros - data a ser calculado o juros
 	 * 
-	 * @return valor calculado com o juros
+	 * @return valor calculado com o juros 
 	 */	
 	public BigDecimal calcularJuros(Banco banco, Long idCota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
@@ -90,9 +74,10 @@ public interface CobrancaService {
 	/**
 	 * Método responsável por obter dados de cobrança por código
 	 * @param idCobranca
+	 * @param dataPagamento
 	 * @return value object com dados da cobranca encontrada
 	 */
-	CobrancaVO obterDadosCobranca(Long idCobranca);
+	CobrancaVO obterDadosCobranca(Long idCobranca, Date dataPagamento);
 	
 	
 	/**
@@ -100,14 +85,7 @@ public interface CobrancaService {
 	 * @param List<Long> idCobrancas
 	 * @return Data Transfer object com dados somados das cobrancas encontradas e calculadas.
 	 */
-	CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas);
-	
-	
-	/**
-	 *Método responsável por validar baixa de dividas, verificando se existem boletos envolvidos 
-	 * @param idCobrancas
-	 */
-	boolean validaBaixaManualDividas(List<Long> idCobrancas);
+	CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas, Date dataPagamento);
 	
 	
 	/**
@@ -156,4 +134,6 @@ public interface CobrancaService {
 	void confirmarBaixaManualDividas(List<Long> idsBaixaCobranca);
 
 	List<TipoCobranca> obterTiposCobrancaCadastradas();
+
+	
 }

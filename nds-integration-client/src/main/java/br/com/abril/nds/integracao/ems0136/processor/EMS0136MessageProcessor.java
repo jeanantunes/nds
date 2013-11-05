@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0136.processor;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -56,8 +57,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		// Validar código do distribuidor:
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(
-				input.getCodigoDistribuidor())){			
+		
+		if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())){
+			
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
 					"Código do distribuidor do arquivo não é o mesmo do Sistema.");
@@ -67,9 +69,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Validar Produto/Edicao
 		final String codigoProduto = input.getCodigoProduto();
 		final Long numeroEdicao = input.getEdicaoCapa();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				numeroEdicao);
+		
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,numeroEdicao);
+		
 		if (produtoEdicao == null) {
+			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
@@ -78,12 +82,25 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return;
 		}
 		
-		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
-				input, produtoEdicao);
+		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(input, produtoEdicao);
 
 		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);
+		
+		this.atualizarProdutoEdicaoParcial(produtoEdicao);
 	}
 	
+	/**
+	 * Atualiza o campo que identifica o produto edição como parcial. 
+	 * 
+	 * @param produtoEdicao
+	 */
+	private void atualizarProdutoEdicaoParcial(ProdutoEdicao produtoEdicao) {
+		
+		produtoEdicao.setParcial(true);
+		
+		this.getSession().persist(produtoEdicao);
+	}
+
 	/**
 	 * Obtém o Produto Edição cadastrado previamente.
 	 * 
@@ -97,8 +114,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
@@ -124,16 +140,18 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * 
 	 * @return
 	 */
-	private LancamentoParcial obterLancalmentoParcial(EMS0136Input input,
-			ProdutoEdicao produtoEdicao) {
+	private LancamentoParcial obterLancalmentoParcial(EMS0136Input input,ProdutoEdicao produtoEdicao) {
 		
 		/* 
 		 * Obtém o Lançamento Parcial já cadastrado.
 		 * Caso não exista, irá criar um novo Lançamento Parcial.
 		 */
 		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
+		criteria.setFetchMode("periodos", FetchMode.JOIN);
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		
 		LancamentoParcial parcial = (LancamentoParcial) criteria.uniqueResult();
+		
 		if (parcial == null) {
 			parcial = new LancamentoParcial();
 			parcial.setProdutoEdicao(produtoEdicao);
@@ -143,8 +161,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * Insere/Atualiza o restante dos dados do Lançamento Parcial vindo
 		 * da Interface. 
 		 */
-		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(
-				input);	
+		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(input);	
 		parcial.setStatus(status);
 		
 		/*
@@ -153,8 +170,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * - Data vinda da Interface é MENOR que a do LançamentoParcial;
 		 */
 		if (parcial.getLancamentoInicial() == null 
-				|| input.getDataLancamento().before(
-						parcial.getLancamentoInicial())) {
+				|| input.getDataLancamento().before(parcial.getLancamentoInicial())) {
+			
 			parcial.setLancamentoInicial(input.getDataLancamento());
 		}
 		
@@ -164,8 +181,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * - Data vinda da Interface é MAIOR que a do LançamentoParcial;
 		 */
 		if (parcial.getRecolhimentoFinal() == null
-				|| input.getDataRecolhimento().after(
-						parcial.getRecolhimentoFinal())) {
+				|| input.getDataRecolhimento().after(parcial.getRecolhimentoFinal())) {
+			
 			parcial.setRecolhimentoFinal(input.getDataRecolhimento());
 		}
 		
@@ -214,20 +231,54 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 
 		// Resgata todos os itens recebimentos fisicos para armazenar no novo lancamento
-		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(
-				lancamentoParcial, dataOperacao);
+		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(lancamentoParcial, dataOperacao);
 		
-		/*getSession().flush();
-		getSession().clear();
-		Set<ItemRecebimentoFisico> itens = new HashSet<ItemRecebimentoFisico>();
-		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
-			if (periodo.getLancamento() != null) {
-				for (ItemRecebimentoFisico item : periodo.getLancamento().getRecebimentos()) {
-					itens.add(item);
-				}
-			}
-		}*/
+		this.excluirPeriodoLancamentoParcial(lancamentoParcial, dataOperacao);
+		
+		Integer numeroPeriodo = input.getNumeroPeriodo();
+		
+		Criteria criteria = getSession().createCriteria(PeriodoLancamentoParcial.class);
+		criteria.add(Restrictions.eq("lancamentoParcial", lancamentoParcial));
+		criteria.add(Restrictions.eq("numeroPeriodo", numeroPeriodo));
+		
+		PeriodoLancamentoParcial pParcial = (PeriodoLancamentoParcial) criteria.uniqueResult();
+		
+		if (pParcial == null) {
+			pParcial = new PeriodoLancamentoParcial();
+			pParcial.setNumeroPeriodo(numeroPeriodo);
+			pParcial.setLancamentoParcial(lancamentoParcial);
+		}
 
+		Lancamento lancamento = this.obterLancamento(input,lancamentoParcial.getProdutoEdicao());
+		lancamento.setRecebimentos(new HashSet(itens));
+		
+		pParcial.setLancamento(lancamento);
+		pParcial.setDataCriacao(dataOperacao);
+		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
+		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
+				? StatusLancamentoParcial.RECOLHIDO
+				: StatusLancamentoParcial.PROJETADO));
+
+		input.getDataRecolhimento();
+		
+		if (pParcial.getId() == null) {
+			this.getSession().persist(pParcial);
+		} else {
+			this.getSession().update(pParcial);
+		}
+		
+		this.excluirLancamentosSemVinculosDePeriodoLancamento(lancamentoParcial, dataOperacao);
+		
+		return pParcial;
+	}
+
+	/**
+	 * Exclui os periodos de lançamentos parciais vinculados aos lançamentos parciais para inserção de novos
+	 * @param lancamentoParcial
+	 * @param dataOperacao
+	 */
+	private void excluirPeriodoLancamentoParcial(LancamentoParcial lancamentoParcial,
+			Date dataOperacao) {
 		/* 
 		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
 		 */
@@ -245,41 +296,103 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Executa as exclusões e limpa a sessão.
 		getSession().flush();
 		getSession().clear();
-
-		
-		Integer numeroPeriodo = input.getNumeroPeriodo();
-		Criteria criteria = getSession().createCriteria(
-				PeriodoLancamentoParcial.class);
-		criteria.add(Restrictions.eq("lancamentoParcial", lancamentoParcial));
-		criteria.add(Restrictions.eq("numeroPeriodo", numeroPeriodo));
-		PeriodoLancamentoParcial pParcial = (PeriodoLancamentoParcial) criteria.uniqueResult();
-		
-		if (pParcial == null) {
-			pParcial = new PeriodoLancamentoParcial();
-			pParcial.setNumeroPeriodo(numeroPeriodo);
-			pParcial.setLancamentoParcial(lancamentoParcial);
-		}
-
-		Lancamento lancamento = this.obterLancamento(input, 
-				lancamentoParcial.getProdutoEdicao());
-		lancamento.setRecebimentos(new HashSet(itens));
-		pParcial.setLancamento(lancamento);
-		pParcial.setDataCriacao(dataOperacao);
-		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
-		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
-				? StatusLancamentoParcial.RECOLHIDO
-				: StatusLancamentoParcial.PROJETADO));
-
-		input.getDataRecolhimento();
-		if (pParcial.getId() == null) {
-			this.getSession().persist(pParcial);
-		} else {
-			this.getSession().update(pParcial);
-		}
-		
-		return pParcial;
 	}
 
+	/**
+	 * Exclui os lançamentos e históricos de lançamentos sem vinculos com periodos de lançamentos de lançamentos parciais
+	 * @param lancamentoParcial
+	 * @param dataOperacao
+	 */
+	private void excluirLancamentosSemVinculosDePeriodoLancamento(
+			LancamentoParcial lancamentoParcial, Date dataOperacao) {
+		
+		
+		if(lancamentoParcial == null || lancamentoParcial.getPeriodos() == null || lancamentoParcial.getPeriodos().isEmpty())
+			return;
+		
+		// Obtém os lançamentos vinculados aos PeriodoLancamentoParcials gerados
+		List<Lancamento> lancamentosVinculados = new ArrayList<Lancamento>();
+		for (PeriodoLancamentoParcial periodoLancamentoParcial : lancamentoParcial.getPeriodos()) {
+			lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
+		}
+
+		
+		/*StringBuilder hqlListarLancamentosComItens = new StringBuilder();
+		hqlListarLancamentosComItens.append("SELECT l.recebimentos FROM Lancamento l ");
+		hqlListarLancamentosComItens.append(" WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlListarLancamentosComItens.append("   AND l.produtoEdicao = :produtoEdicao ");
+		hqlListarLancamentosComItens.append("   AND l NOT IN (:lancamentosVinculados)");		
+		hqlListarLancamentosComItens.append(" GROUP BY 1");*/		
+		
+		StringBuilder hqlListarLancamentosComItens = new StringBuilder();
+		hqlListarLancamentosComItens.append("SELECT l FROM Lancamento l ");
+		hqlListarLancamentosComItens.append(" INNER JOIN l.recebimentos r ");
+		hqlListarLancamentosComItens.append(" WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlListarLancamentosComItens.append("   AND l.produtoEdicao = :produtoEdicao ");
+		hqlListarLancamentosComItens.append("   AND l NOT IN (:lancamentosVinculados)");		
+		hqlListarLancamentosComItens.append(" GROUP BY 1");		
+		
+		Query queryListarLancamentosComItens = getSession().createQuery(hqlListarLancamentosComItens.toString());
+		queryListarLancamentosComItens.setParameter("produtoEdicao", lancamentoParcial.getProdutoEdicao());
+		queryListarLancamentosComItens.setParameterList("lancamentosVinculados", lancamentosVinculados);
+		List<Lancamento> listaLancamentosComItens = queryListarLancamentosComItens.list();
+		
+		// Caso tenha recebimento físico, não apaga os lançamentos 
+		/*if (!listaLancamentosComItens.isEmpty()) {
+			return;
+		}*/
+		
+		/*
+		 * Exclui os históricos de lançamentos QUE NÃO ESTÃO vinculados aos periodos de lançamento parcial
+		 */
+		StringBuilder hqlExclusaoHistoricoLancamento = new StringBuilder();
+		hqlExclusaoHistoricoLancamento.append("DELETE FROM HistoricoLancamento hl ");
+		hqlExclusaoHistoricoLancamento.append(" WHERE hl.lancamento IN (select l FROM Lancamento l ");
+		hqlExclusaoHistoricoLancamento.append(" 					     WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlExclusaoHistoricoLancamento.append(" 					     AND l NOT IN (:lancamentosVinculados) ");
+		if (!listaLancamentosComItens.isEmpty()) {
+			hqlExclusaoHistoricoLancamento.append(" 					     AND l NOT IN (:listaLancamentosComItens) ");
+		}
+		hqlExclusaoHistoricoLancamento.append(" 					     AND l.produtoEdicao = :produtoEdicao) ");		
+		
+		Query queryExclusaoHistoricoLancamento = getSession().createQuery(hqlExclusaoHistoricoLancamento.toString());
+		queryExclusaoHistoricoLancamento.setParameterList("lancamentosVinculados", lancamentosVinculados);
+		if (!listaLancamentosComItens.isEmpty()) {
+			queryExclusaoHistoricoLancamento.setParameterList("listaLancamentosComItens", listaLancamentosComItens);
+		}
+		queryExclusaoHistoricoLancamento.setParameter("produtoEdicao", lancamentoParcial.getProdutoEdicao());
+		queryExclusaoHistoricoLancamento.executeUpdate();
+		
+		// Executa as exclusões e limpa a sessão.
+		getSession().flush();
+		getSession().clear();	
+		
+		/*
+		 * Exclui os lançamentos QUE NÃO ESTÃO vinculados aos periodos de lançamento parcial
+		 */
+		StringBuilder hqlExclusaoLancamento = new StringBuilder();
+		hqlExclusaoLancamento.append("DELETE FROM Lancamento l ");
+		hqlExclusaoLancamento.append("      WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlExclusaoLancamento.append(" 		  AND l NOT IN (:lancamentosVinculados) ");		
+		if (!listaLancamentosComItens.isEmpty()) {
+			hqlExclusaoLancamento.append(" 		  AND l NOT IN (:listaLancamentosComItens) ");
+		}
+		hqlExclusaoLancamento.append(" 		  AND l.produtoEdicao = :produtoEdicao ");
+		
+		Query queryExclusaoLancamento = getSession().createQuery(hqlExclusaoLancamento.toString());
+		queryExclusaoLancamento.setParameterList("lancamentosVinculados", lancamentosVinculados);
+		if (!listaLancamentosComItens.isEmpty()) {
+			queryExclusaoLancamento.setParameterList("listaLancamentosComItens", listaLancamentosComItens);
+		}
+		queryExclusaoLancamento.setParameter("produtoEdicao", lancamentoParcial.getProdutoEdicao());
+		queryExclusaoLancamento.executeUpdate();
+		
+		// Executa as exclusões e limpa a sessão.
+		getSession().flush();
+		getSession().clear();	
+	}
+
+	
 	private List<ItemRecebimentoFisico> obtemItensRecebimentosFisicos(
 			LancamentoParcial lancamentoParcial, Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();
@@ -307,8 +420,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * 
 	 * @return
 	 */
-	private Lancamento obterLancamento(EMS0136Input input,
-			ProdutoEdicao produtoEdicao) {
+	private Lancamento obterLancamento(EMS0136Input input,ProdutoEdicao produtoEdicao) {
 		
 		/*
 		 * Verifica se existe um lançamento já criado anteriormente (via outra
@@ -319,10 +431,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Criteria criteria = getSession().createCriteria(Lancamento.class);
 		
 		Date dtLancamento = input.getDataLancamento();
-		Criterion criDataPrevista = Restrictions.eq(
-				"dataLancamentoPrevista", dtLancamento);
-		Criterion criDataDistribuidor = Restrictions.eq(
-				"dataLancamentoDistribuidor", dtLancamento);
+		Criterion criDataPrevista = Restrictions.eq("dataLancamentoPrevista", dtLancamento);
+		Criterion criDataDistribuidor = Restrictions.eq("dataLancamentoDistribuidor", dtLancamento);
 		criteria.add(Restrictions.or(criDataPrevista, criDataDistribuidor));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		
@@ -347,7 +457,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setSequenciaMatriz(null);
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		} else {
-			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) || lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) ) {
+			
+			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) 
+					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) ) {
+				
 				lancamento.setDataLancamentoDistribuidor(dtLancamento);
 				lancamento.setDataLancamentoPrevista(dtLancamento);
 			}
@@ -355,7 +468,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) ||
 				 lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO) ||
 				 lancamento.getStatus().equals(StatusLancamento.BALANCEADO) ||
-				 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ) {
+				 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ||
+				 lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)||
+				 lancamento.getStatus().equals(StatusLancamento.FECHADO)) {
+				
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
 				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
 			}

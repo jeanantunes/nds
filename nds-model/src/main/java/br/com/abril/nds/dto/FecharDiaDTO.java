@@ -9,21 +9,31 @@ public class FecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 4116643880953265518L;
 	
-	private Boolean baixaBancaria;
+	private Boolean baixaBancaria = false;
 	
-	private Boolean geracaoDeCobranca;
+	private Boolean recebimentoFisico = false;
 	
-	private Boolean recebimentoFisico;
+	private Boolean confirmacaoDeExpedicao = false;	
 	
-	private Boolean confirmacaoDeExpedicao;	
+	private Boolean lancamentoFaltasESobras = false;
 	
-	private Boolean lancamentoFaltasESobras;
+	private Boolean controleDeAprovacao = false;
 	
-	private Boolean controleDeAprovacao;
+	private Boolean fechamentoEncalhe = false;
 	
-	private Boolean manutencaoStatusCota;
+	private Boolean habilitarConfirmar = false;
 	
-	private Boolean fechamentoEncalhe;
+	private Boolean consolidadoCota = false;
+	
+	public boolean isFechamentoPermitido() {
+		
+		return this.baixaBancaria 
+				&& this.recebimentoFisico 
+				&& this.confirmacaoDeExpedicao 
+				&& this.lancamentoFaltasESobras
+				&& this.fechamentoEncalhe
+				&& this.consolidadoCota;
+	}
 
 	public Boolean getBaixaBancaria() {
 		return baixaBancaria;
@@ -31,14 +41,6 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setBaixaBancaria(Boolean baixaBancaria) {
 		this.baixaBancaria = baixaBancaria;
-	}
-
-	public Boolean getGeracaoDeCobranca() {
-		return geracaoDeCobranca;
-	}
-
-	public void setGeracaoDeCobranca(Boolean geracaoDeCobranca) {
-		this.geracaoDeCobranca = geracaoDeCobranca;
 	}
 
 	public Boolean getRecebimentoFisico() {
@@ -73,14 +75,6 @@ public class FecharDiaDTO implements Serializable {
 		this.controleDeAprovacao = controleDeAprovacao;
 	}
 
-	public Boolean getManutencaoStatusCota() {
-		return manutencaoStatusCota;
-	}
-
-	public void setManutencaoStatusCota(Boolean manutencaoStatusCota) {
-		this.manutencaoStatusCota = manutencaoStatusCota;
-	}
-
 	public Boolean getFechamentoEncalhe() {
 		return fechamentoEncalhe;
 	}
@@ -88,5 +82,20 @@ public class FecharDiaDTO implements Serializable {
 	public void setFechamentoEncalhe(Boolean fechamentoEncalhe) {
 		this.fechamentoEncalhe = fechamentoEncalhe;
 	}
-	
+
+	public Boolean getHabilitarConfirmar() {
+		return habilitarConfirmar;
+	}
+
+	public void setHabilitarConfirmar(Boolean habilitarConfirmar) {
+		this.habilitarConfirmar = habilitarConfirmar;
+	}
+
+	public Boolean getConsolidadoCota() {
+		return consolidadoCota;
+	}
+
+	public void setConsolidadoCota(Boolean consolidadoCota) {
+		this.consolidadoCota = consolidadoCota;
+	}
 }

@@ -1,4 +1,4 @@
-var semanaPesquisa;
+var anoSemanaPesquisa;
 var emissaoBandeiraController = $.extend(true, {
 	
 	init : function() {
@@ -60,10 +60,12 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-		semanaPesquisa = $("#semanaPesquisa").val();
+		
+		emissaoBandeiraController.anoSemanaPesquisa = $("#semanaPesquisa", this.workspace).val;
+		
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: [{name:'semana', value:semanaPesquisa}] 
+			params: [{name:'anoSemana', value:emissaoBandeiraController.anoSemanaPesquisa}] 
 		   ,
 			newp: 1
 		});
@@ -91,8 +93,9 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	imprimirArquivo : function(fileType) {
+		
 		window.location = contextPath + "/devolucao/emissaoBandeira/imprimirArquivo?"
-			+ "semana=" + semanaPesquisa
+			+ "anoSemana=" + emissaoBandeiraController.anoSemanaPesquisa
 			+ "&sortname=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).getSortOrder()
 			+ "&rp=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetRowsPerPage()
@@ -112,15 +115,13 @@ var emissaoBandeiraController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
-			
-
-					
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + emissaoBandeiraController.anoSemanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-pallets", this.workspace).parents("form")
 		});
 		
 		
@@ -145,7 +146,7 @@ var emissaoBandeiraController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeiraManual?"+
-					"semana=" + $.trim( $("#semanaBandeiraManual").val())
+					"anoSemana=" + $.trim( $("#semanaBandeiraManual").val())
 					+ "&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
 					+"&nome="+$.trim( $("#tipoOperacaoBandeiraManual").val())
 					+"&codigoPracaNoProdin="+$.trim( $("#codigoPracaProconBandeiraManual").val())
@@ -158,12 +159,13 @@ var emissaoBandeiraController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-pallets-bandeira-manual", this.workspace).parents("form")
 		});
 		return false;
 
 	},
-	
+		
 }, BaseController);
 
 

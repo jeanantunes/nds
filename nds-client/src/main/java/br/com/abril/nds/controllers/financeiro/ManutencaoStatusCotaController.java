@@ -16,8 +16,8 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.job.StatusCotaJob;
@@ -26,6 +26,7 @@ import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -36,6 +37,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
@@ -101,7 +103,11 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Autowired
 	private TelefoneService telefoneService;
 	
-	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaManutencaoStatusCota";
+	@Autowired
+	private ConsultaConsignadoCotaService consignadoCotaService;
+	
+	@Autowired
+	private SchedulerFactoryBean schedulerFactoryBean;
 	
 	@Get
 	@Path("/")
@@ -114,27 +120,38 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(FiltroStatusCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
-		this.validarPeriodoHistoricoStatusCota(filtro.getPeriodo());
-		
-		this.configurarFiltroPesquisa(filtro, sortorder, sortname, page, rp);
-		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota =
-			this.situacaoCotaService.obterHistoricoStatusCota(filtro);
-		
-		if (listaHistoricoStatusCota == null || listaHistoricoStatusCota.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-			
-		} else {
-
-			this.processarHistoricoStatusCota(listaHistoricoStatusCota, filtro);
+		if (filtro.getPeriodo() != null){
+			this.validarPeriodoHistoricoStatusCota(filtro.getPeriodo());
 		}
 		
-		result.nothing();
+		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+		
+		Long qtdeTotalRegistros = this.situacaoCotaService.obterTotalHistoricoStatusCota(filtro);
+		
+		if (qtdeTotalRegistros == null || qtdeTotalRegistros == 0L){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		} else {
+			
+			List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota =
+					this.situacaoCotaService.obterHistoricoStatusCota(filtro);
+			
+			TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>> tableModel =
+				new TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>>();
+			
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoStatusCota));
+
+			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+			
+			tableModel.setTotal(qtdeTotalRegistros.intValue());
+		
+			result.use(Results.json()).from(tableModel, "result").recursive().serialize();
+		}
 	}
 	
 	@Post
 	@Path("/novo")
+	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO)
 	public void novo(FiltroStatusCotaDTO filtro) {
 		
 		 Cota cota = this.validarDadosCota(filtro);
@@ -149,9 +166,14 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Post
 	@Path("/novo/confirmar")
+	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO)
 	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
 		
 		this.validarAlteracaoStatus(novoHistoricoSituacaoCota);
+		
+		this.validarInativacaoCota(novoHistoricoSituacaoCota.getNovaSituacao(), novoHistoricoSituacaoCota.getCota().getNumeroCota());
+		
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
@@ -162,19 +184,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
 			
-			novoHistoricoSituacaoCota.setDataInicioValidade(new Date());
+			novoHistoricoSituacaoCota.setDataInicioValidade(dataOperacaoDistribuidor);
 		}
-		
-		//Objeto Cota removido, existe muita informação não usada nessa entidade nesse ponto
-		//do sistema, estava ocasionando erro no quartz por ser um objeto que ultrapassa
-		//o tamanho máximo pertmitido. O processo executado pelo quartz, até essa data,
-		//só o id da cota.
+
 		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
+		
 		novoHistoricoSituacaoCota.setCota(new Cota(idCota));
 		
-		this.criarJobAtualizacaoNovaSituacaoCota(novoHistoricoSituacaoCota);
-		
-		this.criarJobAtualizacaoSituacaoAnteriorCota(novoHistoricoSituacaoCota);
+		this.situacaoCotaService.atualizarSituacaoCota(
+			novoHistoricoSituacaoCota, dataOperacaoDistribuidor);
 
 		ValidacaoVO validacao = 
 			new ValidacaoVO(TipoMensagem.SUCCESS, "A alteração do Status da Cota foi agendada com sucesso!");
@@ -261,100 +279,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 		    			.withMisfireHandlingInstructionFireNow()
 		    	).build();
 
-	    Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+	    Scheduler scheduler = this.schedulerFactoryBean.getScheduler();
 	    
 	    scheduler.scheduleJob(job, trigger);
-	}
-	
-	/*
-	 * Processa o histórico da situação da cota.
-	 *  
-	 * @param listaHistoricoStatusCota - lista de histórico
-	 * @param filtro - filtro de pesquisa
-	 */
-	private void processarHistoricoStatusCota(List<HistoricoSituacaoCota> listaHistoricoStatusCota,
-											  FiltroStatusCotaDTO filtro) {
-		
-		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCotaVO = new ArrayList<HistoricoSituacaoCotaVO>();
-		
-		for (HistoricoSituacaoCota historicoSituacaoCota : listaHistoricoStatusCota) {
-			
-			HistoricoSituacaoCotaVO historicoSituacaoCotaVO = new HistoricoSituacaoCotaVO();
-			
-			historicoSituacaoCotaVO.setData(
-				DateUtil.formatarDataPTBR(historicoSituacaoCota.getDataInicioValidade()));
-			
-			String descricao = 
-				historicoSituacaoCota.getDescricao() == null ? "" : historicoSituacaoCota.getDescricao();
-			
-			historicoSituacaoCotaVO.setDescricao(descricao);
-			
-			String motivo = 
-				historicoSituacaoCota.getMotivo() == null ? "" : historicoSituacaoCota.getMotivo().toString();
-
-			historicoSituacaoCotaVO.setMotivo(motivo);
-			
-			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
-			
-			if (historicoSituacaoCota.getSituacaoAnterior() != null) {
-				historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
-			}
-			
-			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
-			
-			historicoSituacaoCotaVO.setNomeCota(historicoSituacaoCota.getCota().getPessoa().getNome());
-			
-			historicoSituacaoCotaVO.setNumeroCota(historicoSituacaoCota.getCota().getNumeroCota());
-			
-			listaHistoricoSituacaoCotaVO.add(historicoSituacaoCotaVO);
-		}
-		
-		TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>> tableModel =
-			new TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoSituacaoCotaVO));
-
-		Long qtdeTotalRegistros = this.situacaoCotaService.obterTotalHistoricoStatusCota(filtro);
-		
-		if (qtdeTotalRegistros != null) {
-		
-			tableModel.setTotal(qtdeTotalRegistros.intValue());
-		}
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-	
-		result.use(Results.json()).from(tableModel, "result").recursive().serialize();
-	}
-	
-	/*
-	 * Configura o filtro da pesquisa.
-	 * 
-	 * @param filtroAtual - filtro de pesquisa atual
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 * 
-	 * @return Filtro
-	 */
-	private void configurarFiltroPesquisa(FiltroStatusCotaDTO filtroAtual, 
-										  String sortorder, 
-										  String sortname, 
-										  int page, 
-										  int rp) {
-
-		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
-		
-		FiltroStatusCotaDTO filtroSessao =
-			(FiltroStatusCotaDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-		
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
 	/*
@@ -373,6 +300,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 											 int rp) {
 		
 		if (filtro != null) {
+			
+			if (filtro.getPeriodo() != null){
+				
+				if (filtro.getPeriodo().getDataInicial() == null ||
+					filtro.getPeriodo().getDataFinal() == null){
+					
+					filtro.setPeriodo(null);
+				}
+			}
 			
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 	
@@ -399,16 +335,26 @@ public class ManutencaoStatusCotaController extends BaseController {
 		List<ItemDTO<SituacaoCadastro, String>> listaSituacoesStatusCota =
 			new ArrayList<ItemDTO<SituacaoCadastro, String>>();
 		
+		List<ItemDTO<SituacaoCadastro, String>> listaSituacoesNovoStatusCota =
+			new ArrayList<ItemDTO<SituacaoCadastro, String>>();
+		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
-			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
-				listaSituacoesStatusCota.add(
+			listaSituacoesStatusCota.add(
+				new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+			);
+
+			if (!SituacaoCadastro.PENDENTE.equals(situacaoCadastro)) {
+				
+				listaSituacoesNovoStatusCota.add(
 					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
 				);
 			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
+
+		result.include("listaSituacoesNovoStatusCota", listaSituacoesNovoStatusCota);
 	}
 	
 	/*
@@ -504,21 +450,21 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
 				
+				List<String> msgs = new ArrayList<String>();
+				
 				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
 				
 			    if (qtde == null || qtde == 0){
 			    	
-			    	throw new ValidacaoException(
-			    			TipoMensagem.WARNING, 
-			    			"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
+			    	msgs.add(
+			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
 			    }
 			    
 			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
 			    if (qtde == null || qtde == 0){
 			    	
-			    	throw new ValidacaoException(
-			    			TipoMensagem.WARNING, 
-			    			"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
+			    	msgs.add(
+			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
 			    }
 			    
 				if (this.distribuidorService.utilizaGarantiaPdv()){
@@ -527,9 +473,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 					
 					if (qtde == null || qtde == 0){
 						
-						throw new ValidacaoException(
-								TipoMensagem.WARNING, 
-								"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
+						msgs.add(
+							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
 					}
 				}
 				
@@ -537,9 +482,13 @@ public class ManutencaoStatusCotaController extends BaseController {
 				
 				if (qtde == null || qtde == 0){
 					
-					throw new ValidacaoException(
-							TipoMensagem.WARNING, 
-							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+					msgs.add(
+						"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+				}
+				
+				if (!msgs.isEmpty()){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,msgs);
 				}
 			}
 	
@@ -561,11 +510,11 @@ public class ManutencaoStatusCotaController extends BaseController {
 					listaMensagens.add("Informe um período válido!");
 				}
 				
-				Date dataAtual = DateUtil.removerTimestamp(new Date());
+				Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 				
-				if (novoHistoricoSituacaoCota.getDataInicioValidade().compareTo(dataAtual) < 0) {
+				if (novoHistoricoSituacaoCota.getDataInicioValidade().compareTo(dataOperacao) < 0) {
 					
-					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data atual!");
+					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data de operação!");
 				}
 			}
 		}
@@ -577,7 +526,27 @@ public class ManutencaoStatusCotaController extends BaseController {
 			throw new ValidacaoException(validacao);
 		}
 	}
-	
+
+	private void validarInativacaoCota(SituacaoCadastro situacaoCadastro, Integer numeroCota) {
+		
+		if (!SituacaoCadastro.INATIVO.equals(situacaoCadastro)) {
+			
+			return;
+		}
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+
+		FiltroConsultaConsignadoCotaDTO filtro = new FiltroConsultaConsignadoCotaDTO();
+		filtro.setIdCota(cota.getId());
+		
+		BigDecimal totalConsignado = this.consignadoCotaService.buscarTotalGeralDaCota(filtro);
+		
+		if (totalConsignado != null && totalConsignado.compareTo(BigDecimal.ZERO) > 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalConsignado.floatValue()) +" em consignado e não pode ser inativada!");
+		}
+	}
+
 	/**
 	 * Verifica se a cota possui dividas em aberto
 	 * @param numeroCota
@@ -585,7 +554,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Post
 	@Path("/dividasAbertoCota")
 	public void dividasAbertoCota(Integer numeroCota){
-		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
 		ValidacaoVO validacao = null;

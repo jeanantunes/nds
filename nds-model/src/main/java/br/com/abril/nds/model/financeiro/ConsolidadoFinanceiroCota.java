@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -70,7 +71,7 @@ public class ConsolidadoFinanceiroCota implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name = "CONSOLIDADO_MVTO_FINANCEIRO_COTA",
 			   joinColumns = {@JoinColumn(name = "CONSOLIDADO_FINANCEIRO_ID")}, 
 			   inverseJoinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID", unique = true)})

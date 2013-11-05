@@ -86,18 +86,20 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 					Arrays.asList(
 						GrupoMovimentoFinaceiro.CREDITO,
-						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA
 					)
 				);
 		
 		List<Long> tiposMovimentoDebito =
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-					Arrays.asList(
+					Arrays.asList(	
 						GrupoMovimentoFinaceiro.DEBITO,
 						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
 						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
 						GrupoMovimentoFinaceiro.VENDA_TOTAL,
-						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS
+						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
+						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA
 					)
 				);
 		
@@ -124,6 +126,10 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 						Arrays.asList(GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR));
 		
+		List<Long> tipoMovimentoVendaPendente = 
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.PENDENTE));
+		
 		List<Long> tiposMovimentoConsignado = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 						Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE));
@@ -132,7 +138,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 				tiposMovimentoCredito, tiposMovimentoDebito, tipoMovimentoEncalhe, 
 				tiposMovimentoEncargos, tiposMovimentoPostergadoCredito, 
 				tiposMovimentoPostergadoDebito, tipoMovimentoVendaEncalhe,
-				tiposMovimentoConsignado);
+				tiposMovimentoConsignado, tipoMovimentoVendaPendente);
 	}
 	
 	@Override

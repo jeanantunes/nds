@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript" src="scripts/suspensaoCota.js"></script>
@@ -5,6 +6,7 @@
 <script type="text/javascript">
 $(function(){
 	suspensaoCotaController.init();
+	bloquearItensEdicao(suspensaoCotaController.workspace);
 });
 </script>
 
@@ -12,6 +14,31 @@ $(function(){
 
 <body>
 <form action="" method="get" id="form1" name="form1">
+
+<div class="areaBts">
+		<div class="area">
+			
+			<span class="bt_novos" title="Suspender Cota">
+                   	<a isEdicao="true" href="javascript:;" onclick="suspensaoCotaController.popupConfirmar();">
+                   		<img src="${pageContext.request.contextPath}/images/ico_suspender.gif" hspace="5" border="0"/>
+                   	</a>
+                   	
+                   </span>
+                   <span class="bt_novos" title="Gerar Arquivo">
+                    <a href="${pageContext.request.contextPath}/suspensaoCota/exportar?fileType=XLS">
+                    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+                    </a>
+                   </span>
+
+			<span class="bt_novos" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/suspensaoCota/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+	
+	<div class="linha_separa_fields">&nbsp;</div>
 
 <div id="divRelatorio" title="Cota Suspensa" style="display:none">
 
@@ -45,38 +72,14 @@ $(function(){
     <div class="container">
       
       
-       <fieldset class="classFieldset">
+       <fieldset class="fieldFiltro">
        	  <legend>Suspender Cotas</legend>
         <div class="grids" style="display:block;">
 			<table class="suspensaoGrid"></table>
           	<table width="100%" border="0" cellspacing="2" cellpadding="2">
               <tr>
                 <td width="36%">
-                	 
-                     <span class="bt_novos" title="Suspender Cota">
-<!-- SUSPENDER COTAS -->
-                     	<a href="javascript:;" onclick="suspensaoCotaController.popupConfirmar();">
-                     		<img src="${pageContext.request.contextPath}/images/ico_suspender.gif" hspace="5" border="0"/>
-                     		Suspender Cotas
-                     	</a>
-                     	
-                     </span>
-<!-- GERAR EXCEL -->
-                     <span class="bt_novos" title="Gerar Arquivo">
-	                     <a href="${pageContext.request.contextPath}/suspensaoCota/exportar?fileType=XLS">
-	                     	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-	                     	Arquivo
-	                     </a>
-                     </span>
-
-				<span class="bt_novos" title="Imprimir">
-<!-- IMPRIMIR -->
-					<a href="${pageContext.request.contextPath}/suspensaoCota/exportar?fileType=PDF">
-						<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-						Imprimir
-					</a>
-				</span>
-                    
+                	
                 </td>
                 
                 <td width="18%">
@@ -104,7 +107,7 @@ $(function(){
 <!-- SELECIONAR TODOS -->	                
 	                <span class="bt_sellAll">
 	                	<label for="sel">Selecionar Todos</label>
-	                	<input type="checkbox" id="sel" name="Todos" onclick="suspensaoCotaController.selecionarTodos(this)" style="float:left;"/>
+	                	<input isEdicao="true" type="checkbox" id="sel" name="Todos" onclick="suspensaoCotaController.selecionarTodos(this)" style="float:left;"/>
 	                </span>
 	                
                 </td>

@@ -344,7 +344,7 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR("28/02/2012"));
 		
-		this.fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, 0, 15);
+		this.fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro);
 		
 	}
 	

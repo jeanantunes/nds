@@ -21,9 +21,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.BaixaBancariaSerivice;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -61,18 +59,16 @@ public class SuspensaoCotaController extends BaseController {
 	private HttpServletResponse httpResponse;
 	private final Result result;
 	private final HttpSession session;
-	private BaixaBancariaSerivice baixaBancariaSerivice;
+	
 	private CotaService cotaService;
-	private DistribuidorService distribuidorService;
+	
 	
 	public SuspensaoCotaController(Result result,HttpSession session,
-			CotaService cotaService, BaixaBancariaSerivice baixaBancariaSerivice, DistribuidorService distribuidorService) {
+			CotaService cotaService) {
 		
 		this.result = result;
 		this.session = session;
 		this.cotaService = cotaService;
-		this.baixaBancariaSerivice = baixaBancariaSerivice;
-		this.distribuidorService = distribuidorService;
 	}
 	
 	/**
@@ -83,28 +79,17 @@ public class SuspensaoCotaController extends BaseController {
 		
 		session.setAttribute("selecionados",null);
 	}
-
-	private void verificarBaixaBancariaNaData() {
-		
-		boolean existeBaixa = 
-				this.baixaBancariaSerivice.verificarBaixaBancariaNaData(
-						this.distribuidorService.obterDataOperacaoDistribuidor());
-		
-		if ( !existeBaixa ) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));
-		}
-	}
 	
 	public void obterCotasSuspensaoJSON(Integer page, Integer rp, String sortname, 
 			String sortorder) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
+		
 		List<String> mensagens = new ArrayList<String>();
 	
 		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = null;
 		
 		try {
-			verificarBaixaBancariaNaData();
 			
 			grid = obterCotasSuspensao(sortname,sortorder,page,rp);			
 				
@@ -121,10 +106,12 @@ public class SuspensaoCotaController extends BaseController {
 			grid = new TableModel<CellModelKeyValue<CotaSuspensaoDTO>>();
 		}
 		
-		Object[] retorno = new Object[3];
+		Object[] retorno = new Object[5];
 		retorno[0] = grid;
 		retorno[1] = mensagens;
 		retorno[2] = status.name();
+		retorno[3] = grid.getTotal();
+		retorno[4] = CurrencyUtil.formatarValor(this.cotaService.obterTotalDividaCotasSujeitasSuspensao());
 		
 		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();	
 	}
@@ -247,6 +234,7 @@ public class SuspensaoCotaController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_SUSPENSAO_COTA_ALTERACAO)
 	public void suspenderCotas() {
 		
 		TipoMensagem status =  TipoMensagem.SUCCESS;
@@ -323,14 +311,8 @@ public class SuspensaoCotaController extends BaseController {
 				
 		List<CotaSuspensaoDTO> listaDividasGeradas = cotaService.obterDTOCotasSujeitasSuspensao(null,null,null,null);
 		
-		Double total = 0.0;
-		
-		for(CotaSuspensaoDTO cota : listaDividasGeradas) {
-			total+= cota.getDoubleDividaAcumulada();
-		}
-			
-	
-		RodapeDTO rodape = new RodapeDTO(listaDividasGeradas.size(), CurrencyUtil.formatarValor(total));
+		RodapeDTO rodape = new RodapeDTO(listaDividasGeradas.size(), 
+			CurrencyUtil.formatarValor(this.cotaService.obterTotalDividaCotasSujeitasSuspensao()));
 		
 		FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null, rodape, 
 				listaDividasGeradas, CotaSuspensaoDTO.class, this.httpResponse);

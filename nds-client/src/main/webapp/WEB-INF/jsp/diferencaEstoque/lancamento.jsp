@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <head>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -15,6 +17,8 @@
 		var pesquisaCotaLancamentoFaltasSobras = new PesquisaCota();
 	
 		lancamentoController.inicializar();
+		
+		bloquearItensEdicao(lancamentoController.workspace);
 		
 	</script>
 	
@@ -64,7 +68,7 @@
 			<div class="areaBts">
 					<div class="area">
 						<span class="bt_novos">
-							<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy"
+							<a isEdicao="true" href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy"
 							   title="Incluir Novo">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
 							</a>
@@ -72,29 +76,32 @@
 						
 							
 						<span class="bt_novos">
-							<a href="javascript:"  onclick="lancamentoController.imprimirRelatorioFaltasSobras();" rel="tipsy" title="Imprimir confer&ecirc;cia manual">
+							<a isEdicao="true" href="javascript:"  onclick="lancamentoController.imprimirRelatorioFaltasSobras();" rel="tipsy" title="Imprimir confer&ecirc;cia manual">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"  border="0" />
 							</a>
 						</span>
 						
 						
 						<div id="btnsControleDiferenca">
-							<span class="bt_novos">
-								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();"
-								   title="Confirmar Lançamento de Faltas e Sobras">
-									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
-								</a>
-							</span>
+							
+							<c:if test="${permissaoBotaoConfirmacao eq true}">
+								<span class="bt_novos">
+									<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupConfirmar();"
+									   title="Confirmar Lançamento de Faltas e Sobras">
+										<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
+									</a>
+								</span>
+							</c:if>
 							
 							<span class="bt_novos">
-								<a href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();"
+								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();"
 								   title="Salvar">
 									<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
 								</a>
 							</span>
 							
 							<span class="bt_novos">
-								<a href="javascript:;" onclick="lancamentoController.popupCancelarLancamentos();"
+								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupCancelarLancamentos();"
 								   title="Cancelar Lançamento de Faltas e Sobras">
 							 		<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" border="0" />
 							 	</a>
@@ -152,13 +159,18 @@
 				
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="459">&nbsp;</td>
+						<td width="440">&nbsp;</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">
 							<strong>Total Geral:</strong>
 						</td>
-					    <td id="qtdeTotalDiferencas" width="108" class="total"></td>
-					    <td width="104" align="center" class="total">&nbsp;</td>
-					    <td id="valorTotalDiferencas" width="145" class="total"></td>
+					    <td id="qtdeTotalDiferencas" width="170" class="total"></td>
+					    <td id="valorTotalDiferencas" width="100" class="total" style="text-align: right;"></td>
+					    <td id="selecionarTodos" width="110">
+					    	<span class="bt_sellAll" style="float: right;">
+								<label for="sel">Selecionar Todos</label>					
+								<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosID" onclick="lancamentoController.selecionarTodos(this);" style="float: left;">
+							</span>
+					    </td>
 					</tr>
 				</table>
 			</fieldset>

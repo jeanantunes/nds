@@ -1,8 +1,11 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
+	<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/furoProduto.js"></script>
 	<script language="javascript" type="text/javascript">
 		$(function(){
 			furoProdutoController.init();
+			bloquearItensEdicao(furoProdutoController.workspace);
 		});
 	</script>
 </head>
@@ -15,10 +18,15 @@
 		<div id="dialog-novo" title="Furo de Produto">
 			<strong>Confirma o Furo de Produto?</strong>
 		</div>
+		
+		<div id="dialog-confirm_button" title="Furo de Produto" style="display:none;">
+			<strong>Essa data é uma data já confirmada. Você deseja continuar?</strong>
+		</div>
+		
 		<div class="areaBts">
 			<div class="area">
-				<span style="cursor: pointer;" class="bt_novos" onclick="furoProdutoController.popup();" rel="tipsy" title="Confirmar Furo de Produto">
-	            	<a href="javascript:;" id="linkConfirmar"><img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /></a>
+				<span style="cursor: pointer;" class="bt_novos" rel="tipsy" title="Confirmar Furo de Produto">
+	            	<a isEdicao="true" href="javascript:;" onclick="furoProdutoController.popup();" id="linkConfirmar"><img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /></a>
 	            </span>
 			</div>
 		</div>
@@ -29,11 +37,12 @@
 	        	<tr>
 	        		<td width="45" align="right">Código:</td>
 	        		<td width="79">
-	        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255" onblur="furoProdutoController.buscarNomeProduto();"/>
+	        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255" onblur="furoProdutoController.buscarNomeProdutoFuro();"/>
 	        		</td>
 					<td width="64" align="right">Produto:</td>
 					<td width="196">
-						<input type="text" name="produto" id="produto" style="width:150px;" maxlength="255" onkeyup="furoProdutoController.pesquisarPorNomeProduto();"/>
+						<input type="text" name="produto" id="produto" style="width:150px;" maxlength="255" onkeypress="furoProdutoController.pesquisarPorNomeProduto();"/>
+
 					</td>
 					<td width="50" align="right">Edição:</td>
 					<td width="90">
@@ -45,7 +54,7 @@
 					</td>
 					<td width="258">
 						<span style="cursor: pointer;" class="bt_novos" onclick="furoProdutoController.pesquisar();">
-							<a href="javascript:;" id="linkPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
+							<a href="javascript:;" id="linkPesquisarFuro"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 						</span>
 					</td>
 	  			</tr>

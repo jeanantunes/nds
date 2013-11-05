@@ -13,6 +13,9 @@
 		var pesquisaProdutoMapaAbastecimento = new PesquisaProduto();
 	
 		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA', BaseController.workspace);
+		
+		$(".areaBts", BaseController.workspace).hide();	
+		
 	</script>
 	
 		
@@ -44,7 +47,7 @@
     <div class="areaBts">
 	    <div class="area">
 			<span class="bt_arq">
-			    <a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" rel="tipsy" title="Imprimir">
+			    <a href="${pageContext.request.contextPath}/mapaAbastecimento/imprimirMapaAbastecimento" rel="tipsy" title="Imprimir" target="_blank">
 				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -105,6 +108,7 @@
       <option value="PRODUTO_X_COTA">Produto X Cota</option>
       <option value="PRODUTO">Produto</option>
       <option value="ENTREGADOR">Entregador</option>
+      <option value="PROMOCIONAL">Reparte Promocional</option>
 </select>
 			  
 			  </td>
@@ -199,7 +203,8 @@
 			  
 <!-- Código Cota -->              
 <input id="codigoCota" disabled="disabled" type="text" style="width:80px; float:left; margin-right:5px;"
-			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
+			onchange="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});" 
+			onblur="pesquisaCotaMapaAbastecimento.pesquisarPorNumeroCota('#codigoCota', '#nomeCota',false,function(){MA.atualizarBoxRota(true)});"/>
 
 			  
 			  </td>
@@ -265,6 +270,11 @@
 			<div id="gridProduto" style="display:none;">
 				<table class="mapaAbastecimentoProdutoGrid"></table>
 			</div>
+			
+			<div id="gridPromocional" style="display:none;">
+				<table class="mapaAbastecimentoPromocionalGrid"></table>
+			</div>
+			
 			<div id="gridProdutoEspecifico" style="display:none;">
 				<span>
 					<strong>Código:</strong>  <span id="codigoProdutoHeader">  </span> - 

@@ -22,8 +22,8 @@ p{margin:0px; padding:0px; font-size:11px;}
 </style>
 <script language="javascript" type="text/javascript">
 function imprimir(){
-	$( "#btImpressao", BaseController.workspace ).hide();
-	window.print();
+$( "#btImpressao", BaseController.workspace ).hide();
+window.print();
 }
 </script>
 </head>
@@ -33,11 +33,11 @@ function imprimir(){
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
     <td width="121" height="21" align="center">
-    	<span>
-    		<span class="">
-    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" height="70" width="110"  />
-    		</span>
-    	</span>
+     <span>
+     <span class="">
+     <img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" height="70" width="110" />
+     </span>
+     </span>
     </td>
     <td width="269" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
     <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento por Cota&nbsp;</h1>
@@ -54,18 +54,20 @@ function imprimir(){
   <tr>
     <td width="390" align="left" valign="top"><table width="390" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong><br /><strong>Código de Barras</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
+        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Preço Capa R$</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
       
       <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" end="${mapa.produtos.size()%2==0?(mapa.produtos.size()/2)-1:(mapa.produtos.size()/2)}">
       
       <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${produto.value.codigoDeBarras}</td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
         <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
+        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.precoCapa}</strong></td>
         <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
       </tr>
       
@@ -77,24 +79,33 @@ function imprimir(){
     
     <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong><br /><strong>Código de Barras</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
+        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Preço Capa R$</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
         <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" begin="${mapa.produtos.size()%2==0?mapa.produtos.size()/2:(mapa.produtos.size()/2)+1}" >
       
       <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${produto.value.codigoDeBarras}</td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
         <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
+        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.precoCapa}</strong></td>
         <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
       </tr>
       
       </c:forEach>
       
-    </table></td>
+    </table>
+    </td>
+  </tr>
+  <tr style="float: left; margin-top: 20px;">
+   <td style="font-size: 12px; font-weight: bold;">
+   * Cota possui produtos juramentados.
+   </td>
   </tr>
 </table>
+
 </body>
 </html>

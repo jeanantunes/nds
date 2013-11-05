@@ -18,6 +18,7 @@ var suspensaoCotaController = $.extend(true, {
 			url : contextPath + '/suspensaoCota/obterCotasSuspensaoJSON',
 			dataType : 'json',
 			preProcess:suspensaoCotaController.processaRetornoPesquisa,
+			onSuccess: function() {bloquearItensEdicao(suspensaoCotaController.workspace);},
 			colModel : [  {
 				display : 'Cota',
 				name : 'numCota',
@@ -115,7 +116,7 @@ var suspensaoCotaController = $.extend(true, {
 					
 				},
 			},
-			form: $("#dialog-detalhes", this.workspace).parents("form")
+			form: $("#dialog-detalhes", suspensaoCotaController.workspace).parents("form")
 		});
 	},
 	
@@ -161,7 +162,7 @@ var suspensaoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-suspender", this.workspace).parents("form")
+			form: $("#dialog-suspender", suspensaoCotaController.workspace).parents("form")
 		});	
 		      
 	},
@@ -180,7 +181,7 @@ var suspensaoCotaController = $.extend(true, {
 					
 				}
 			},
-			form: $("#dialog-nao-selecionada", this.workspace).parents("form")
+			form: $("#dialog-nao-selecionada", suspensaoCotaController.workspace).parents("form")
 		});	
 	},
 	
@@ -216,7 +217,7 @@ var suspensaoCotaController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#divRelatorio", this.workspace).parents("form")
+				form: $("#divRelatorio", suspensaoCotaController.workspace).parents("form")
 			});
 		} else {
 			$(".suspensaoGrid", suspensaoCotaController.workspace).flexReload();
@@ -250,7 +251,7 @@ var suspensaoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-excluir", this.workspace).parents("form")
+			form: $("#dialog-excluir", suspensaoCotaController.workspace).parents("form")
 		});
 	},
 	
@@ -266,6 +267,7 @@ var suspensaoCotaController = $.extend(true, {
 		input.name=name;
 		input.style.cssText = "float:left;" + input.style.cssText;
 		input.type="checkbox";
+		input.setAttribute("isEdicao",true);
 		input.setAttribute("onclick","suspensaoCotaController.adicionarSelecao("+idCota+",this);");
 		
 		if(selecionado==true) {
@@ -438,8 +440,6 @@ var suspensaoCotaController = $.extend(true, {
 				
 		if(!grid.rows || status=="error") {
 			
-			/*document.getElementById("total").innerText = "0,00";
-			document.getElementById("totalSugerida").innerText = "0";*/	
 			$("#total", suspensaoCotaController.workspace).text("0,00");
 			$("#totalSugerida", suspensaoCotaController.workspace).text("0");	
 
@@ -450,23 +450,16 @@ var suspensaoCotaController = $.extend(true, {
 		}
 		
 
-		var totalSugerida = grid.rows.length;
-		var total = 0.0;
-		
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
-			
-			total += parseFloat(cell.dividaAcumulada.replace(".","").replace(",","."));
 			
 			cell.acao = suspensaoCotaController.gerarAcoes(cell.idCota,cell.dividas,cell.nome);
 			cell.selecionado = suspensaoCotaController.gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
 		}
 		
-		/*document.getElementById("total").innerHTML  = total.toFixed(2).replace(".",",");
-		document.getElementById("totalSugerida").innerHTML  = totalSugerida;*/	
-		$("#total", suspensaoCotaController.workspace).text(total.toFixed(2).replace(".",","));
-		$("#totalSugerida", suspensaoCotaController.workspace).text(totalSugerida);	
+		$("#total", suspensaoCotaController.workspace).text(data[4]);
+		$("#totalSugerida", suspensaoCotaController.workspace).text(data[3]);	
 
 		
 		return grid;

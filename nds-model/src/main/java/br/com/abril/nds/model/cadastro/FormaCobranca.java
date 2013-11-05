@@ -12,6 +12,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -60,6 +61,9 @@ public class FormaCobranca implements Serializable {
 	@Column(name = "TAXA_MULTA", precision=18, scale=4)
 	private BigDecimal taxaMulta;
 	
+	@Column(name = "VALOR_MULTA", precision=18, scale=4)
+	private BigDecimal valorMulta;
+	
 	@Column(name = "TAXA_JUROS_MENSAL", precision=18, scale=4)
 	private BigDecimal taxaJurosMensal;
 	
@@ -84,20 +88,20 @@ public class FormaCobranca implements Serializable {
 	@OneToOne(mappedBy="formaCobranca")
 	private PoliticaCobranca politicaCobranca;
 	
-	@ManyToMany
+	@ManyToMany  
 	@JoinTable(name = "FORMA_COBRANCA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORMA_COBRANCA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)  
 	@JoinColumn(name = "PARAMETRO_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
-			
-	@ElementCollection
+
+	@ElementCollection(fetch = FetchType.EAGER)  
 	@OrderBy
 	private List<Integer> diasDoMes; 
 	
-	@OneToMany(mappedBy="formaCobranca")
+	@OneToMany(mappedBy="formaCobranca", fetch = FetchType.EAGER)
 	@OrderBy("codigoDiaSemana ASC")
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 	
@@ -149,6 +153,20 @@ public class FormaCobranca implements Serializable {
 		this.taxaMulta = taxaMulta;
 	}
 	
+	/**
+	 * @return the valorMulta
+	 */
+	public BigDecimal getValorMulta() {
+		return valorMulta;
+	}
+
+	/**
+	 * @param valorMulta the valorMulta to set
+	 */
+	public void setValorMulta(BigDecimal valorMulta) {
+		this.valorMulta = valorMulta;
+	}
+
 	public BigDecimal getTaxaJurosMensal() {
 		return taxaJurosMensal;
 	}
@@ -225,7 +243,6 @@ public class FormaCobranca implements Serializable {
 		this.parametroCobrancaCota = parametroCobrancaCota;
 	}
 
-		
 	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
 		return concentracaoCobrancaCota;
 	}

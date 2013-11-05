@@ -40,6 +40,11 @@
     </fieldset>
 </div>
 
+<div id="dialog-excutarInterface" title="Processar Interface" style="display:none;">
+	<br />
+    <p>Deseja reprocessar interface?</p>
+</div>
+
 <form id="detalhesInterface">
 <div id="dialog-detalhes" title="Detalhes da Interface">
     <fieldset>

@@ -137,12 +137,12 @@ var entradaNFETerceirosController = $.extend(true, {
 			
 			$.each(resultado.rows, function(index, row) {					
 				
-				var linkLancamento = '<a href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+
+				var linkLancamento = '<a isEdicao="true" href="javascript:;"  onclick="entradaNFETerceirosController.popup_nfe(\''+
 									 row.cell.numeroCota+'\',\''+row.cell.nome+'\',\''+row.cell.idControleConferenciaEncalheCota+
 									 '\');" style="cursor:pointer">' +
 								   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/bt_lancamento.png" hspace="5" border="0px" />' +
 								   '</a>';
-				var linkCadastro = '<a href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
+				var linkCadastro = '<a isEdicao="true" href="javascript:;" onclick="entradaNFETerceirosController.popup_dadosNotaFiscal('+row.cell.numeroNfe+','
 					   																		+row.cell.dataEncalhe+','
 					   																		+row.cell.chaveAcesso+','
 					   																		+row.cell.serie+','
@@ -385,6 +385,7 @@ var entradaNFETerceirosController = $.extend(true, {
 	initEncalheNfeGrid :function(){
 		$(".encalheNfeGrid", this.workspace).flexigrid({
 			preProcess: this.executarPreProcessamento,
+			onSuccess: function() {bloquearItensEdicao(entradaNFETerceirosController.workspace);},
 			dataType : 'json',
 				colModel : [ {
 					display : 'Cota',

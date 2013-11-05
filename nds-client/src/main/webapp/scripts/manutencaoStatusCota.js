@@ -128,11 +128,8 @@ obterColunasGridPesquisaSemCota:function(){
 	
 	configurarFlexiGrid : function(colunas) {
 		
-		$(".grids", this.workspace).empty();
-		
-		$(".grids", this.workspace).append($("<table>").attr("class", "manutencaoStatusCotaGrid"));
-
 		$(".manutencaoStatusCotaGrid", manutencaoStatusCotaController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(manutencaoStatusCotaController.workspace);},
 			preProcess: manutencaoStatusCotaController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : colunas,
@@ -167,14 +164,22 @@ obterColunasGridPesquisaSemCota:function(){
 		}
 		
 		$.each(data.result.rows, function(index, row) {
+
+			row.cell.statusAtualizado = 
+				(row.cell.processado)
+					? row.cell.statusAtualizado : row.cell.statusAtualizado + ' (Não processado)';
 			
 			if(row.cell.numeroCota){
 				
-				var linkEdicao = '<a href="javascript:;" onclick="manutencaoStatusCotaController.novo('+ row.cell.numeroCota +');" style="cursor:pointer">' +
+				var linkEdicao = '<a isEdicao="true" href="javascript:;" onclick="manutencaoStatusCotaController.novo('+ row.cell.numeroCota +');" style="cursor:pointer">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Incluir Novo Status" />' +
 				 '</a>';			
 			
-				row.cell.acao = linkEdicao; 
+				row.cell.acao = linkEdicao;
+				
+				row.cell.statusAnterior = row.cell.statusAnterior ? row.cell.statusAnterior : "";
+				
+				row.cell.data = row.cell.data.$;
 			}
 			
 		});
@@ -241,12 +246,12 @@ obterColunasGridPesquisaSemCota:function(){
 				$("#novoNomeCota", manutencaoStatusCotaController.workspace).html(result.nome);
 
 				$("#novoStatusCota", manutencaoStatusCotaController.workspace).val("");
-					$("#novaDataInicialStatusCota", manutencaoStatusCotaController.workspace).val("");
-					$("#novaDataFinalStatusCota", manutencaoStatusCotaController.workspace).val("");
-					$("#novoMotivo", manutencaoStatusCotaController.workspace).val("");
-					$("#novaDescricao", manutencaoStatusCotaController.workspace).val("");
-				
-					manutencaoStatusCotaController.popupDialogNovo();
+				$("#novaDataInicialStatusCota", manutencaoStatusCotaController.workspace).val("");
+				$("#novaDataFinalStatusCota", manutencaoStatusCotaController.workspace).val("");
+				$("#novoMotivo", manutencaoStatusCotaController.workspace).val("");
+				$("#novaDescricao", manutencaoStatusCotaController.workspace).val("");
+			
+				manutencaoStatusCotaController.popupDialogNovo();
 			}
 		);    
 	},
@@ -330,14 +335,16 @@ obterColunasGridPesquisaSemCota:function(){
 			
 			filtro = manutencaoStatusCotaController.obterDadosFiltro();
 			
-			if(manutencaoStatusCotaController.isCotainformadaParaPesquisa()){
-				
-				colunas = manutencaoStatusCotaController.obterColunasGridPesquisaComCota();
-			}
-			else{
-				
-				colunas = manutencaoStatusCotaController.obterColunasGridPesquisaSemCota();
-			}
+			
+		}
+		
+		if(manutencaoStatusCotaController.isCotainformadaParaPesquisa()){
+			
+			colunas = manutencaoStatusCotaController.obterColunasGridPesquisaComCota();
+		}
+		else{
+			
+			colunas = manutencaoStatusCotaController.obterColunasGridPesquisaSemCota();
 		}
 		
 		manutencaoStatusCotaController.configurarFlexiGrid(colunas);

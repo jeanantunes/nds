@@ -4,14 +4,14 @@ public enum StatusLancamento {
 	
 	PLANEJADO("Planejado"),
 	CONFIRMADO("Confirmado"),
+	FURO("Furo"),
 	EM_BALANCEAMENTO("Em Balanceamento"),
 	BALANCEADO("Balanceado"),
 	ESTUDO_FECHADO("Estudo Fechado"),
-	FURO("Furo"),
 	EXPEDIDO("Expedido"),
 	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
 	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
-	EXCLUIDO_RECOLHIMENTO("Excluído Recolhimento"),
+	EM_RECOLHIMENTO("Em Recolhimento"),
 	RECOLHIDO("Recolhido"),
 	CANCELADO("Cancelado"),
 	FECHADO("Fechado");

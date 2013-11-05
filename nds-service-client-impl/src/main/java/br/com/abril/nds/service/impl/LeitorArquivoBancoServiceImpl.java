@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,11 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.cnab.CNAB;
+import br.com.abril.nds.util.cnab.UtilitarioCNAB;
+import br.com.abril.nds.util.cnab.UtilitarioCNAB.PadraoCNAB;
 import br.com.abril.nds.vo.ValidacaoVO;
-
 /**
  * Classe de implementação de serviços referentes 
  * a leitura de arquivo de retorno do banco.
@@ -26,39 +29,12 @@ import br.com.abril.nds.vo.ValidacaoVO;
  */
 @Service
 public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService {
-
+	
+	
 	private static final String[] EXTENSOES_ARQUIVO_VALIDAS = {"dat", "ret"};
 	
-	private static final String REGISTRO_TIPO_HEADER = "0";
-	private static final String REGISTRO_TIPO_DETALHE = "1";
-	private static final String REGISTRO_TIPO_TRAILER = "9";
-	
-	private static final int PADRAO_ARQUIVO_CNAB_400 = 400;
-	private static final int PADRAO_ARQUIVO_CNAB_240 = 240;
-	
-	private static final int INDEX_CNAB_400_NUMERO_AGENCIA_INICIO = 26;
-	private static final int INDEX_CNAB_400_NUMERO_AGENCIA_FIM = 31;
-	
-	private static final int INDEX_CNAB_400_NUMERO_CONTA_INICIO = 33;
-	private static final int INDEX_CNAB_400_NUMERO_CONTA_FIM = 44;
-	
-	private static final int INDEX_CNAB_400_CODIGO_BANCO_INICIO = 76;
-	private static final int INDEX_CNAB_400_CODIGO_BANCO_FIM = 79;
-	
-	private static final int INDEX_CNAB_400_DATA_PAGAMENTO_INICIO = 110;
-	private static final int INDEX_CNAB_400_DATA_PAGAMENTO_FIM = 116;
-	
-	private static final int INDEX_CNAB_400_NOSSO_NUMERO_INICIO = 37;
-	private static final int INDEX_CNAB_400_NOSSO_NUMERO_FIM = 53;
-	
-	private static final int INDEX_CNAB_400_VALOR_PAGAMENTO_INICIO = 253;
-	private static final int INDEX_CNAB_400_VALOR_PAGAMENTO_FIM = 266;
-	
-	private static final int INDEX_CNAB_400_NUMERO_REGISTRO_INICIO = 394;
-	private static final int INDEX_CNAB_400_NUMERO_REGISTRO_FIM = 400;
-	
 	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
-		
+	    
 		this.validarDadosEntrada(file, nomeArquivo);
 		
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = null;
@@ -66,98 +42,156 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		List<String> lines = null;
 		
 		try {
+			
 			lines = FileUtils.readLines(file, "UTF8");
 			
 		} catch (IOException e) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Falha ao processar o arquivo!");
 		}
+
+		PadraoCNAB padraoCNAB = obterPadraoCNAB(lines);
 		
-		validarConteudoLinhas(lines);
+		validarConteudoLinhasCNAB(padraoCNAB, lines);
 		
-		//Verifica a quantidade de caractres da primeira linha para determinar o padrão do arquivo
-		if (lines.get(0).length() == PADRAO_ARQUIVO_CNAB_400) {
-			
-			arquivoPagamentoBanco = this.lerLinhasCNAB400(lines, nomeArquivo);
-			
-		} else if (lines.get(1).length() == PADRAO_ARQUIVO_CNAB_240) {
-			
-			//TODO: ler arquivo no padrão CNAB 240
-		} else {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
-		}
+		arquivoPagamentoBanco = this.lerLinhasCNAB(padraoCNAB, lines, nomeArquivo);
 		
 		return arquivoPagamentoBanco;
 	}
+	
+	/**
+	 * Obtem o padrão CNAB a ser utilizado verificando
+	 * o tamanho da primeira linha.
+	 * 
+	 * @param lines
+	 * 
+	 * @return PadraoCNAB
+	 */
+	private PadraoCNAB obterPadraoCNAB(List<String> lines) {
+		
+		if(lines == null || lines.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo vazio!");
+		}
+		
+		int sizePrimeiraLinha = lines.get(0).length();
+		
+		if(PadraoCNAB.CNAB240.getSize() == sizePrimeiraLinha) {
+			
+			validarTodasLinhasSeguemPadraoCNAB(PadraoCNAB.CNAB240, lines);
+			
+			return PadraoCNAB.CNAB240;
+			
+		}
+		
+		if(PadraoCNAB.CNAB400.getSize() == sizePrimeiraLinha) {
 
-	private ArquivoPagamentoBancoDTO lerLinhasCNAB400(List<String> lines, String nomeArquivo) {
+			validarTodasLinhasSeguemPadraoCNAB(PadraoCNAB.CNAB400, lines);
+
+			return PadraoCNAB.CNAB400;
+		}
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
+		
+	}
+	
+	private void validarTodasLinhasSeguemPadraoCNAB(PadraoCNAB padraoCNAB, List<String> lines) {
+		
+		for(String line : lines) {
+			
+			if(line == null ||  padraoCNAB.getSize() != line.length() ) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
+			}
+			
+		}
+		
+	}
+
+	
+	protected ArquivoPagamentoBancoDTO lerLinhasCNAB(PadraoCNAB padraoCNAB, List<String> lines, String nomeArquivo) {
+		
+		String primeiraLinha = lines.get(0);
+	
+		String codigoBanco = padraoCNAB.obterCodigoBanco(primeiraLinha);
+		
+		CNAB bancoCNAB = CNAB.obterCNAB(padraoCNAB, codigoBanco);
+		
+		String strNumeroAgencia = null;
+		String strNumeroConta = null;
+		String strNumeroRegistro = null;
+		String strDataPagamento = null;
+		String strNossoNumero = null;
+        BigDecimal somaPagamentos = BigDecimal.ZERO;
+		BigDecimal valorPagamento = BigDecimal.ZERO;
 		
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = new ArquivoPagamentoBancoDTO();
+		arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
 		
-		BigDecimal somaPagamentos = BigDecimal.ZERO;
-		
-		BigDecimal valorPagemento = BigDecimal.ZERO;
-		
-		List<PagamentoDTO> listaPagamento = new ArrayList<PagamentoDTO>();
+		Map<Long, PagamentoDTO> mapaPagamento = new HashMap<Long, PagamentoDTO>();
 		
 		PagamentoDTO pagamento = null;
 		
-		String line = null;
-		
-		for (int i = 0; i < lines.size(); i++) {
+		for(String line: lines) {
 			
-			line = lines.get(i);
-			
-			if (line.startsWith(REGISTRO_TIPO_HEADER)) {
+			if (padraoCNAB.isHeader(line)) {
 				
-				arquivoPagamentoBanco.setNumeroAgencia(
-					this.parseLong(line.substring(INDEX_CNAB_400_NUMERO_AGENCIA_INICIO,
-												  INDEX_CNAB_400_NUMERO_AGENCIA_FIM)));
-				
-				arquivoPagamentoBanco.setNumeroConta(
-					this.parseLong(line.substring(INDEX_CNAB_400_NUMERO_CONTA_INICIO,
-												  INDEX_CNAB_400_NUMERO_CONTA_FIM)));
-				
-				arquivoPagamentoBanco.setCodigoBanco(
-					line.substring(INDEX_CNAB_400_CODIGO_BANCO_INICIO, INDEX_CNAB_400_CODIGO_BANCO_FIM));
-				
-			} else if (line.startsWith(REGISTRO_TIPO_DETALHE)) {
-				
-				if (line.length() == PADRAO_ARQUIVO_CNAB_400) {
-		
-					pagamento = new PagamentoDTO();
+				if ( !UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco)  &&
+					 !UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL.equals(codigoBanco) ){
 					
-					pagamento.setNumeroRegistro(
-						this.parseLong(line.substring(INDEX_CNAB_400_NUMERO_REGISTRO_INICIO,
-													  INDEX_CNAB_400_NUMERO_REGISTRO_FIM)));
-					
-					pagamento.setDataPagamento(
-						DateUtil.parseData(
-							line.substring(INDEX_CNAB_400_DATA_PAGAMENTO_INICIO, INDEX_CNAB_400_DATA_PAGAMENTO_FIM),
-							Constantes.FORMATO_DATA_ARQUIVO_CNAB));
-					
-					pagamento.setNossoNumero(line.substring(INDEX_CNAB_400_NOSSO_NUMERO_INICIO,
-															INDEX_CNAB_400_NOSSO_NUMERO_FIM));
-					
-					valorPagemento =
-						this.parseBigDecimal(line.substring(INDEX_CNAB_400_VALOR_PAGAMENTO_INICIO,
-				  			 								INDEX_CNAB_400_VALOR_PAGAMENTO_FIM));
-					
-					pagamento.setValorPagamento(valorPagemento);
-					
-					validarLeituraLinha(pagamento);
-					
-					somaPagamentos = somaPagamentos.add(valorPagemento);
-					
-					listaPagamento.add(pagamento);
-				
-				} else {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-						"Falha ao processar o arquivo: todas as linhas devem estar no padrão CNAB 400!");
+					strNumeroAgencia = bancoCNAB.obterNumeroAgencia(line);
+					strNumeroConta =   bancoCNAB.obterNumeroConta(line);
+					arquivoPagamentoBanco.setNumeroAgencia(this.parseLong(strNumeroAgencia));
+				    arquivoPagamentoBanco.setNumeroConta(this.parseLong(strNumeroConta));
+				    
 				}
+			    
+			} else if (padraoCNAB.isDetalhe(line)) {
+					
+				
+				if ( UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco) ||
+					 UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL.equals(codigoBanco)	){
+					
+					strNumeroAgencia 	= bancoCNAB.obterNumeroAgencia(line);
+					strNumeroConta 		= bancoCNAB.obterNumeroConta(line);
+					arquivoPagamentoBanco.setNumeroAgencia(this.parseLong(strNumeroAgencia));
+					arquivoPagamentoBanco.setNumeroConta(this.parseLong(strNumeroConta));
+					
+				}	           
+						                
+				strNumeroRegistro 	= bancoCNAB.obterNumeroRegistro(line);
+				
+				if(mapaPagamento.containsKey(this.parseLong(strNumeroRegistro))) {
+					pagamento = mapaPagamento.get(this.parseLong(strNumeroRegistro));
+				} else {
+					pagamento = new PagamentoDTO();
+					pagamento.setNumeroRegistro(this.parseLong(strNumeroRegistro));
+					mapaPagamento.put(this.parseLong(strNumeroRegistro), pagamento);
+				}
+				
+				if(bancoCNAB.containsDataPagamento(line)) {
+					strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
+					pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento, padraoCNAB.getFormatoDataArquivoCNAB()));
+
+				}
+				
+				if(bancoCNAB.containsNossoNumero(line)) {
+					strNossoNumero 		= bancoCNAB.obterNossoNumero(line);
+					pagamento.setNossoNumero(strNossoNumero);
+				}
+				
+				if(bancoCNAB.containsValorPagamento(line)) {
+					valorPagamento 		= this.parseBigDecimal(bancoCNAB.obterValorPagamento(line));
+					pagamento.setValorPagamento(valorPagamento);
+				}
+				
 			}
+			
+		}
+		
+		List<PagamentoDTO> listaPagamento = new ArrayList(mapaPagamento.values());
+		
+		for(PagamentoDTO p : listaPagamento) {
+			validarLeituraLinha(p);
+			somaPagamentos = somaPagamentos.add(p.getValorPagamento());
 		}
 		
 		arquivoPagamentoBanco.setListaPagemento(listaPagamento);
@@ -170,61 +204,56 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	private void validarDadosEntrada(File file, String nomeArquivo) {
 		
 		if (nomeArquivo == null || nomeArquivo.trim().length() == 0) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nome do arquivo é obrigatório!");
 		}
 		
 		if (nomeArquivo.trim().length() > 255) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"O nome do arquivo deve possuir até 255 caracteres!");
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O nome do arquivo deve possuir até 255 caracteres!");
 		}
 		
 		if (!isExtensaoArquivoValida(nomeArquivo)) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Extensão do arquivo inválida!");
 		}
 		
 		if (file == null || !file.isFile()) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo inválido!");
 		}
 	}
 	
-	private void validarConteudoLinhas(List<String> lines) {
+	private void validarConteudoLinhasCNAB(PadraoCNAB padraoCNAB, List<String> lines) {
 		
-		//O arquivo deve possuir ao menos 3 linhas para estar no padrão CNAB
-		// 0 - Header
-		// 1 - Detalhe
-		// 9 - Trailer
+		int qtdLinhas = lines.size();
 		
-		if (lines.size() < 3) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
+		if (!padraoCNAB.possuiQuantidadeMinimaLinhas(qtdLinhas)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão " + padraoCNAB.getDescricao());
 		}
 		
-		if (!lines.get(0).startsWith(REGISTRO_TIPO_HEADER)
-				|| !lines.get(lines.size() - 1).startsWith(REGISTRO_TIPO_TRAILER)) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
+		String primeiraLinha =  lines.get(0);
+		String ultimaLinha = lines.get(lines.size() - 1);
+		
+		
+		if (!padraoCNAB.isHeader(primeiraLinha) || !padraoCNAB.isTrailer(ultimaLinha)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão " + padraoCNAB.getDescricao());
 		}
 		
-		String line = null;
-		
-		boolean existeLinhaDetalhe = false;
-		
-		for (int i = 0; i < lines.size(); i++) {
+		for(String line : lines) {
 			
-			line = lines.get(i);
-		
-			if (line.startsWith(REGISTRO_TIPO_DETALHE)) {
-				
-				existeLinhaDetalhe = true;
-				
-				break;
+			if (padraoCNAB.isDetalhe(line)) {
+				return;
 			}
+			
 		}
 		
-		if (!existeLinhaDetalhe) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
-		}
+		throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão " + padraoCNAB.getDescricao());
+		
 	}
+	
+	
+
 	
 	private void validarLeituraLinha(PagamentoDTO pagamento) {
 		
@@ -255,6 +284,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			ValidacaoVO validacao = new ValidacaoVO();
 			
 			validacao.setTipoMensagem(TipoMensagem.WARNING);
+			
 			validacao.setListaMensagens(listaMensagens);
 			
 			throw new ValidacaoException(validacao);
@@ -281,8 +311,8 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	private Long parseLong(String valor) {
 		
 		try {
-			return Long.valueOf(valor);
 			
+			return Long.valueOf(valor);
 		} catch(NumberFormatException e) {
 			
 			return null;
@@ -296,8 +326,8 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		sb.insert(valor.length() - 2, ".");
 		
 		try {
+			
 			return new BigDecimal(sb.toString());
-		
 		} catch(NumberFormatException e) {
 			
 			return null;

@@ -2,6 +2,8 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -59,4 +61,8 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	 * @return TipoProduto
 	 */
 	public abstract TipoProduto obterPorCodigo(Long codigo);
+	
+	List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro);
+	
+	Long obterQunatidade(FiltroRelatorioTiposProdutos filtro);
 }

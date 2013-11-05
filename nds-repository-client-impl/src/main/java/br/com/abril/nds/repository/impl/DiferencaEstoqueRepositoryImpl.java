@@ -3,12 +3,17 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -17,6 +22,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -73,12 +79,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					break;
 				case VALOR_TOTAL_DIFERENCA:
 					hql += " order by "
-					+ " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-					+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-					+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
-					+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-					+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
-					+ " else 0 end ";
+						+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100)) ";
 
 					break;
 
@@ -144,9 +145,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		String hql = this.gerarQueryDiferencasLancamento(filtro, true);
 		
 		Query query = getSession().createQuery(hql);
-		
+
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
-		
+
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -180,12 +181,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		} else {
 
 			hql = " select diferenca, "
-				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
-				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
-				+ " else 0 end) as valorTotalDiferenca ";
+				+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100)) as valorTotalDiferenca ";
 		}
 
 		hql += " from Diferenca diferenca " 
@@ -253,14 +249,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.statusConfirmacao ";
 					break;
 				case VALOR_TOTAL_DIFERENCA:
-					 //+ " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 					hql += " order by "
-						 + " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-						 + " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * diferenca.produtoEdicao.produto.desconto / 100))) "
-						 + " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * diferenca.produtoEdicao.produto.desconto / 100))) "
-						 + " else 0 end ";
+						 + " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * diferenca.produtoEdicao.produto.desconto / 100)) ";
 					break;
 				default:
 					break;
@@ -288,6 +278,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		List<Object[]> listaResultados = query.list();
 		
+		Set<Diferenca> setDiferencas = new HashSet<Diferenca>();
+		
 		List<Diferenca> listaDiferencas = new ArrayList<Diferenca>();
 		
 		for (Object[] resultado : listaResultados) {
@@ -300,8 +292,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 									
 			diferenca.setQtde((BigInteger) resultado[3]);
 			
-			listaDiferencas.add(diferenca);
+			setDiferencas.add(diferenca);
 		}
+		
+		listaDiferencas.addAll(setDiferencas);
 		
 		return listaDiferencas;
 	}
@@ -343,26 +337,16 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			if (filtro.getNumeroCota()!=null){
 				
-				hqlCota += " ((select rd.qtde from Diferenca d join d.rateios rd where rd.cota.numeroCota = :numeroCota and d = diferenca) * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
+				hqlCota += " ((select rd.qtde from Diferenca d join d.rateios rd where rd.cota.numeroCota = :numeroCota and d = diferenca) * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) as valorTotalDiferenca ";
 			}
 			else{
 			
-				hqlCota += " (diferenca.qtde * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
+				hqlCota += " (diferenca.qtde * coalesce(diferenca.produtoEdicao.precoVenda, 0)) as valorTotalDiferenca ";
 			}
 			
 			hql = " select distinct(diferenca), "
-					
-				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-				
-				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then "
-				
-			    + hqlCota
-				
-				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then "
-				
-			    + hqlCota
-				
-				+ " else 0 end) as valorTotalDiferenca, "
+
+			    + hqlCota + ", "
 				
 				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id ";
 			
@@ -400,7 +384,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			hql += " where diferenca.lancamentoDiferenca is not null "
 				+ " and diferenca.statusConfirmacao = :statusConfirmacao "
-				+ " and (movimentoEstoque.status=:statusAprovado or movimentoEstoqueCota.status=:statusAprovado)";
+				+ " and (movimentoEstoque.status=:statusAprovado or movimentoEstoqueCota.status=:statusAprovado or movimentoEstoqueCota.status is null)";
 				
 			if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 				hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
@@ -426,7 +410,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
-				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+				hql += " and diferenca.tipoDiferenca in (:tipoDiferenca) ";
 			}
 		}
 		
@@ -476,7 +460,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
-			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+			if(filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
+				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA});
+			} else if (filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
+				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA});
+			} else {
+				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+			}
 		}
 	}
 	
@@ -515,20 +505,21 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		hql.append("select sum( ")
 			
-			//.append(" (- diferenca.qtde * produtoEdicao.pacotePadrao) ")
 			.append(" case when (diferenca.tipoDiferenca = 'FALTA_DE') then ")
 			.append(" (- diferenca.qtde) ")
 			.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then ")
 			.append(" (- diferenca.qtde) ")
-			
-			//.append(" (diferenca.qtde * produtoEdicao.pacotePadrao) ")
+			.append(" when (diferenca.tipoDiferenca = 'PERDA_EM') then ")
+			.append(" (- diferenca.qtde) ")
+		
 			.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then ")
 			.append(" (diferenca.qtde) ")
 			.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then ")
 			.append(" (diferenca.qtde) ")
+			.append(" when (diferenca.tipoDiferenca = 'GANHO_EM') then ")
+			.append(" (diferenca.qtde) ")
 			
-			.append(" else 0 end")
-			.append(" )")
+			.append(" else 0 end) ")
 			
 			.append(" from Diferenca diferenca ")
 			.append(" join diferenca.produtoEdicao produtoEdicao ")
@@ -590,5 +581,98 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
         query.setParameter("data", data);
         return query.list();
     }
+	
+	@Override
+	@SuppressWarnings("unchecked")
+    public List<Diferenca> obterDiferencas(Date dataMovimento, StatusConfirmacao statusConfirmacao) {
+		
+		String hql = " from Diferenca diferenca where diferenca.dataMovimento = :dataMovimento "
+				   + " and diferenca.statusConfirmacao = :statusConfirmacao ";
+		
+        Query query = getSession().createQuery(hql);
+        
+        query.setParameter("dataMovimento", dataMovimento);
+        query.setParameter("statusConfirmacao", statusConfirmacao);
+        
+        return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ImpressaoDiferencaEstoqueDTO> obterDadosParaImpressaoNaData(Date data) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select distinct produtoEdicao as produtoEdicao, ")
+		   .append(" sum( ")
+		   .append(" coalesce( ")
+		   .append(" case when (diferenca.tipoDiferenca = :faltaDe or diferenca.tipoDiferenca = :faltaEm) ")
+		   .append(" then diferenca.qtde else 0 end ")
+		   .append(" , 0)) as qtdeFaltas, ")
+		   .append(" sum( ")
+		   .append(" coalesce( ")
+		   .append(" case when (diferenca.tipoDiferenca = :sobraDe or diferenca.tipoDiferenca = :sobraEm or ")
+		   .append(" 	diferenca.tipoDiferenca = :sobraDeDirCota or diferenca.tipoDiferenca = :sobraEmDirCota) ")
+		   .append(" then diferenca.qtde else 0 end ")
+		   .append(" , 0)) as qtdeSobras, ")
+		   .append(" diferenca.id as idDiferenca ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" left join produtoEdicao.diferencas diferenca ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
+		   .append(" and lancamento.status not in (:statusLancamento) ")
+		   .append(" and (diferenca.statusConfirmacao != :statusConfirmacao or diferenca.statusConfirmacao is null) ")
+		   .append(" group by produtoEdicao.id ")
+		   .append(" order by produtoEdicao.produto.nome, produtoEdicao.numeroEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataBalanceamento", data);
+
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.CANCELADO,
+										                         StatusLancamento.PLANEJADO,
+										                         StatusLancamento.EM_BALANCEAMENTO,
+										                         StatusLancamento.FURO));
+		
+		query.setParameter("statusConfirmacao", StatusConfirmacao.CANCELADO);
+		query.setParameter("faltaDe", TipoDiferenca.FALTA_DE);
+		query.setParameter("faltaEm", TipoDiferenca.FALTA_EM);
+		
+		query.setParameter("sobraDe", TipoDiferenca.SOBRA_DE);
+		query.setParameter("sobraEm", TipoDiferenca.SOBRA_EM);
+		query.setParameter("sobraDeDirCota", TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA);
+		query.setParameter("sobraEmDirCota", TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA);
+		
+		query.setResultTransformer(
+			new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
+
+		return query.list();
+	}
+	
+	@Override
+	public Long obterQuantidadeDadosParaImpressaoNaData(Date data) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(distinct produtoEdicao) ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" left join produtoEdicao.diferencas diferenca ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
+		   .append(" and lancamento.status not in (:statusLancamento) ")
+		   .append(" group by produtoEdicao.id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataBalanceamento", data);
+		
+		query.setParameterList(
+			"statusLancamento", Arrays.asList(StatusLancamento.CANCELADO,
+					                          StatusLancamento.PLANEJADO,
+					                          StatusLancamento.EM_BALANCEAMENTO,
+					                          StatusLancamento.FURO));
+
+		return (Long) query.uniqueResult();
+	}
 	
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -22,7 +23,6 @@ import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -38,6 +38,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -79,6 +80,8 @@ public class ConsultaEncalheController extends BaseController {
 	@Autowired
 	private ConsultaEncalheService consultaEncalheService;
 	
+	
+	
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -112,7 +115,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
 
-		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe());
+		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe(), filtroConsultaEncalhe);
 		
 		ResultadoConsultaEncalheVO resultadoPesquisa = new ResultadoConsultaEncalheVO();
 		
@@ -313,7 +316,7 @@ public class ConsultaEncalheController extends BaseController {
 
 		Integer quantidadeRegistros = infoConsultaEncalhe.getQtdeConsultaEncalhe();
 		
-		List<ConsultaEncalheVO> listaResultadosVO = getListaConsultaEncalheVO(listaResultado);
+		List<ConsultaEncalheVO> listaResultadosVO = getListaConsultaEncalheVO(listaResultado, filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEncalheVO>>();
 
@@ -343,7 +346,7 @@ public class ConsultaEncalheController extends BaseController {
 		String valorVendaDia = ( infoConsultaEncalhe.getValorVendaDia() != null ) ? infoConsultaEncalhe.getValorVendaDia().toString() : "0" ;
 		String valorDebitoCredito = ( infoConsultaEncalhe.getValorDebitoCredito() != null ) ? infoConsultaEncalhe.getValorDebitoCredito().toString() : "0" ;
 		String valorPagar = ( infoConsultaEncalhe.getValorPagar() != null ) ? infoConsultaEncalhe.getValorPagar().toString() : "0" ;
-		String valorReparte = (infoConsultaEncalhe.getValorReparte() != null) ? infoConsultaEncalhe.getValorReparte().toString() : "0";
+		String valorReparte = (infoConsultaEncalhe.getValorReparte() != null) ? MathUtil.round(infoConsultaEncalhe.getValorReparte(), 2).toString() : "0";
 		String valorEncalhe = (infoConsultaEncalhe.getValorEncalhe() != null) ? infoConsultaEncalhe.getValorEncalhe().toString() : "0";
 
 		resultadoPesquisa.setValorReparte(valorReparte);
@@ -368,13 +371,14 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisarDetalhe")
-	public void pesquisarDetalhe(Long idProdutoEdicao, Long idFornecedor, Long idCota, String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
+	public void pesquisarDetalhe(Long idProdutoEdicao, Long idFornecedor, Integer numeroCota, 
+			String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
 		
 		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
 		
 		filtro.setDataRecolhimento(DateUtil.parseData(dataRecolhimento, "dd/MM/yyyy"));
 		filtro.setDataMovimento(DateUtil.parseData(dataMovimento, "dd/MM/yyyy"));
-		filtro.setIdCota(idCota);
+		filtro.setNumeroCota(numeroCota);
 		filtro.setIdProdutoEdicao(idProdutoEdicao);
 		
 		configurarPaginacaoPesquisaDetalhe(filtro, sortorder, sortname, page, rp);
@@ -494,10 +498,11 @@ public class ConsultaEncalheController extends BaseController {
 	 * Obtém lista de ConsultaEncalheVO a partir de um lista de ConsultaEncalheDTO
 	 * 
 	 * @param listaConsultaEncalheDTO
+	 * @param filtro 
 	 * 
 	 * @return List - ConsultaEncalheVO
 	 */
-	private List<ConsultaEncalheVO> getListaConsultaEncalheVO( List<ConsultaEncalheDTO> listaConsultaEncalheDTO ) {
+	private List<ConsultaEncalheVO> getListaConsultaEncalheVO( List<ConsultaEncalheDTO> listaConsultaEncalheDTO, FiltroConsultaEncalheDTO filtro ) {
 		
 		List<ConsultaEncalheVO> listaResultadosVO = new ArrayList<ConsultaEncalheVO>();
 		
@@ -527,22 +532,35 @@ public class ConsultaEncalheController extends BaseController {
 			nomeProduto 		= (consultaEncalheDTO.getNomeProduto() != null) ? consultaEncalheDTO.getNomeProduto() : "";
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
 			precoVenda 			= CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoVenda());
-			precoComDesconto 	= CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoComDesconto());
-			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
-			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
+			precoComDesconto 	= CurrencyUtil.formatarValorQuatroCasas(consultaEncalheDTO.getPrecoComDesconto());
+			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte() == null ? 0 : consultaEncalheDTO.getReparte().intValue());
+			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe() == null ? 0 : consultaEncalheDTO.getEncalhe().intValue());
 			idFornecedor		= (consultaEncalheDTO.getIdFornecedor()!=null) ? consultaEncalheDTO.getIdFornecedor().toString() : "";
 			idCota				= (consultaEncalheDTO.getIdCota()!=null) ? consultaEncalheDTO.getIdCota().toString() : "";
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
 			valor 				= CurrencyUtil.formatarValor(consultaEncalheDTO.getValor());
-			valorComDesconto	= CurrencyUtil.formatarValor(consultaEncalheDTO.getValorComDesconto());
+			valorComDesconto	= CurrencyUtil.formatarValorQuatroCasas(consultaEncalheDTO.getValorComDesconto());
 			dataRecolhimento	= (consultaEncalheDTO.getDataDoRecolhimentoDistribuidor() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()) : "" ;
 			dataMovimento		= (consultaEncalheDTO.getDataMovimento() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataMovimento()) : "" ;
 			
+			boolean diaUnico = DateUtils.isSameDay(filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal());
 			
-			if(consultaEncalheDTO.getRecolhimento()<=0) {
-				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+			if( !diaUnico ) {
+				
+				if(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()!=null) {
+					
+					recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+					
+				} else {
+					
+					recolhimento = "";
+					
+				}
+			
 			} else {
-				recolhimento = (consultaEncalheDTO.getRecolhimento()!=null) ? (consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA) : "" ;
+				
+				recolhimento = consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA;
+				
 			}
 
 			
@@ -665,7 +683,7 @@ public class ConsultaEncalheController extends BaseController {
 		FiltroConsultaEncalheDTO filtroSession = 
 				(FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		if (filtroSession != null && !filtroSession.equals(filtro)) {
+		if (filtroSession != null && !filtroSession.equals(filtro) && filtroSession.getPaginacao() != null) {
 
 			filtroSession.getPaginacao().setPaginaAtual(1);
 		}

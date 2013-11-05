@@ -96,6 +96,9 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 			LogicalExpression condicao = Restrictions.or(Restrictions.ilike("nome", "%" + nome + "%"), Restrictions.ilike("sobrenome", "%" + nome + "%"));
 			criteria.add(Restrictions.or(condicao, Restrictions.ilike("login", "%" + nome + "%")));
 		}
+		
+		//Deve trazer apenas registros diferentes de usuários do sistema.
+		criteria.add(Restrictions.eq("sys", false));
 
 		return criteria;
 	}

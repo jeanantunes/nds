@@ -466,6 +466,15 @@ public class PDV implements Serializable {
 		}
 		return null;
 	}
+    
+    public EnderecoPDV getEnderecoPrincipal(){
+		for(EnderecoPDV item:this.getEnderecos()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public int hashCode() {

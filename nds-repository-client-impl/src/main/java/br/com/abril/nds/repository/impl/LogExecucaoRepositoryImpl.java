@@ -1,8 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +12,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
@@ -22,16 +19,13 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
 
 @Repository
 public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecucao, Long>  implements LogExecucaoRepository {
 
-	@Autowired
-	DistribuidorRepository distribuidorRepository;
-	
 	/**
 	 * Construtor padrão.
 	 */
@@ -52,6 +46,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("status", StandardBasicTypes.STRING)
 				.addScalar("nome", StandardBasicTypes.STRING)
 				.addScalar("id", StandardBasicTypes.LONG)
+				.addScalar("idLogExecucao", StandardBasicTypes.LONG)
 				.addScalar("descricao", StandardBasicTypes.STRING)
 				.addScalar("nomeArquivo", StandardBasicTypes.STRING)
 				.addScalar("extensaoArquivo", StandardBasicTypes.STRING)
@@ -84,30 +79,22 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 		StringBuffer sql = new StringBuffer("");
 
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
-		
 		if (totalizar) {
-
 			sql.append(" SELECT COUNT(*) FROM ("); 
-
 		}
 		
-		String data = sdf.format(new Date());
-		sql.append("select ie.id, ie.nome, ie.extensao_arquivo ");
+		sql.append("select le.id as idLogExecucao, ie.id, ie.nome, ie.extensao_arquivo ");
 		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ");
 		sql.append("	case when (le.status = 'S' and lem.nome_arquivo is null and ie.extensao_arquivo <> 'BANCO') then 'V' "); 
 		sql.append("	else coalesce(le.status, 'N') end as status ");
-		sql.append("	, le.data_inicio as dataInicio, lem.nome_arquivo as nomeArquivo ");
+		sql.append("	, le.data_inicio as dataInicio, lem.nome_arquivo as nomeArquivo, ");
+		sql.append("case when descricao like 'Prodin > NDS%' then 0 ");
+		sql.append("when descricao like 'MDC > NDS%' then 1 ");
+		sql.append("when descricao like 'NDS > MDC%' then 2 ");
+		sql.append("else 3 end as ordenacao ");
 		sql.append(" from interface_execucao ie ");
-		sql.append(" left join ( ");
-		sql.append(" 	select le.id, le.interface_execucao_id, le.status, MAX(le.data_inicio) as data_inicio ");
-		sql.append(" 	from log_execucao le ");
-		sql.append(" 	where date(le.data_inicio) between '"+ data +" 00:00:00' and '"+ data +" 23:59:59' ");
-		sql.append(" 	group by interface_execucao_id) le on ie.id = le.interface_execucao_id ");
-		sql.append(" left join ( ");
-		sql.append(" 	select id, log_execucao_id, MAX(NOME_ARQUIVO) as NOME_ARQUIVO ");
-		sql.append(" 	from log_execucao_mensagem lem ");
-		sql.append(" 	group by log_execucao_id) lem on le.id = lem.log_execucao_id ");
+		sql.append(" left join log_execucao le on le.id = (select MAX(lei.id) as id from log_execucao lei where lei.interface_execucao_id = ie.id) ");
+		sql.append(" left join log_execucao_mensagem lem on le.id = lem.log_execucao_id ");
 		sql.append(" group by ie.id ");
 
 		if (filtro.getOrdenacaoColuna() != null) {
@@ -119,13 +106,13 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				switch (filtro.getOrdenacaoColuna()) {
 				
 					case DESCRICAO_INTERFACE:
-						orderByColumn = " ie.descricao ";
+						orderByColumn = "ordenacao, ie.descricao ";
 						break;
 					case STATUS:
-						orderByColumn = " status ";
+						orderByColumn = "ordenacao, status ";
 						break;
 					case DATA_PROCESSAMENTO:
-						orderByColumn = " dataInicio ";
+						orderByColumn = "ordenacao, dataInicio ";
 						break;
 						
 					default:
@@ -173,9 +160,10 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	}
 
 	@Override
-	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro) {
-		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
-		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(dataOperacao), this.getPeriodoFinalDia(dataOperacao)) );
+	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro) {
+		Criteria criteria = addMensagensLogInterfaceRestrictions(filtro.getCodigoLogExecucao());
+		criteria.add(Restrictions.eq("logExecucao.id", filtro.getIdLogExecucao()));
+		criteria.add(Restrictions.not(Restrictions.eq("logExecucao.status", StatusExecucaoEnum.SUCESSO)));//Ignorar casos de sucesso na apresentacao do detalhe
 
 		boolean desc = true;
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null) {
@@ -267,9 +255,9 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	}
 
 	@Override
-	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro) {
-		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
-		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(dataOperacao), this.getPeriodoFinalDia(dataOperacao)) );
+	public Long obterTotalMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro) {
+		Criteria criteria = addMensagensLogInterfaceRestrictions(filtro.getCodigoLogExecucao());
+		criteria.add(Restrictions.eq("logExecucao.id", filtro.getIdLogExecucao()));
 		criteria.setProjection(Projections.rowCount());
 		return (Long) criteria.uniqueResult();
 	}

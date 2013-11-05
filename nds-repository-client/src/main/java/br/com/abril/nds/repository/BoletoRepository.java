@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -191,5 +192,9 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return List<Boleto>
 	 */
 	List<Boleto> obterBoletosGeradosNaDataOperacaoDistribuidor(Date dataOperacao);
+
+	List<Cobranca> obterBoletosNaoPagos(Date data);
+	
+	Long verificaEnvioDeEmail(Boleto boleto);
 	
 }

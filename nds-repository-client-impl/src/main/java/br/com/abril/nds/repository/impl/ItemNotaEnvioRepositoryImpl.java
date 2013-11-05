@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 
@@ -53,20 +55,44 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvioLancamentoProduto(Date dataEmissao, Integer numeroCota) {
+
+		String hqlFaltasSobras = " select sum( "
+						       + "            case tm.grupoMovimentoEstoque when 'FALTA_EM_COTA' then (mEstCota.qtde * -1) else "
+						       + "            case tm.grupoMovimentoEstoque when 'FALTA_DE_COTA' then (mEstCota.qtde * -1) else "
+				               + "            case tm.grupoMovimentoEstoque when 'SOBRA_EM_COTA' then (mEstCota.qtde) else "
+				               + "            case tm.grupoMovimentoEstoque when 'SOBRA_DE_COTA' then (mEstCota.qtde) end end end end "
+						       + "            ) "
+						       + " from MovimentoEstoqueCota mEstCota "
+						       + " join mEstCota.tipoMovimento tm "
+						       + " join mEstCota.cota c "
+						       + " join mEstCota.produtoEdicao pEdicao "
+						       + " join mEstCota.lancamento lcto "
+		                       + " where pEdicao.id = produtoEdicao.id "
+		                       + " and c.numeroCota = cota.numeroCota "
+		                       + " and lcto.dataLancamentoDistribuidor = :dataEmissao ";
 		
-		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
-				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
-				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao, "
+		String hqlFaltasSobrasTratado = " COALESCE(("+hqlFaltasSobras+"),0) ";
+		
+		String hql = " select produto.codigo as codigoProduto, "
+				   + " produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, "
+				   + " produtoEdicao.precoVenda as precoVenda, "  
+				   + " sum(CASE tipoMovimento.operacaoEstoque WHEN 'ENTRADA' THEN (mec.qtde) ELSE (mec.qtde * -1) END) as quantidadeExemplares,"
+				   +   hqlFaltasSobrasTratado + " as sobrasFaltas,"
+				   + " produtoEdicao.id as idProdutoEdicao, "
 				   + " produtoEdicao.pacotePadrao as pacotePadrao "
-				   + " from ItemNotaEnvio itemNotaEnvio "
-				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
-				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " from MovimentoEstoqueCota mec "
+				   + " join mec.cota cota "
+				   + " join mec.lancamento lancamento "
+				   + " join mec.estudoCota estudoCota "
+				   + " join mec.tipoMovimento tipoMovimento "
+				   + " join mec.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
-				   + " join produtoEdicao.lancamentos lancamento "
 				   + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
-				   + " and notaEnvio.destinatario.numeroCota = :numeroCota "
-				   + " and itemNotaEnvio.estudoCota is not null" // Condicao para ignorar itens provenientes de furo
-				   + " group by produtoEdicao.id ";
+				   + " and cota.numeroCota = :numeroCota "
+				   + " and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentosEstoqueFaltasESobras) "
+				   + " group by produtoEdicao.id "
+				   + " order by produto.nome ";		
 		
 		Query query = super.getSession().createQuery(hql);
 		
@@ -74,7 +100,13 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 			new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
 
 		query.setParameter("dataEmissao", dataEmissao);
+		
 		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameterList("gruposMovimentosEstoqueFaltasESobras", Arrays.asList(GrupoMovimentoEstoque.FALTA_DE_COTA,
+				                                                                     GrupoMovimentoEstoque.FALTA_EM_COTA,
+				                                                                     GrupoMovimentoEstoque.SOBRA_DE_COTA,
+				                                                                     GrupoMovimentoEstoque.SOBRA_EM_COTA));
 		
 		query.setResultTransformer(resultTransformer);
 		
@@ -127,7 +159,9 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
 				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
-				   + " join produtoEdicao.lancamentos lancamento "
+ 				   + " join itemNotaEnvio.estudoCota estudoCota "
+ 				   + " join estudoCota.estudo estudo "
+ 				   + " join estudo.lancamentos lancamento "
 				   + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
 				   + " and notaEnvio.destinatario.numeroCota = :numeroCota "
 				   + " and produtoEdicao.id = :idProdutoEdicao "

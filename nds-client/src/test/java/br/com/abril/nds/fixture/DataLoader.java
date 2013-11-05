@@ -169,7 +169,6 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
@@ -246,6 +245,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.EntityUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
 
@@ -329,7 +329,7 @@ public class DataLoader {
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
-	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPendente;	
+	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroPendente;	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergado;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCreditoPostergado;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoPostergadoNegociado;
@@ -757,11 +757,6 @@ public class DataLoader {
 	private static Divida dividaAcumuladaMurilo1;
 	private static Divida dividaAcumuladaMariana1;
 
-	private static HistoricoAcumuloDivida acumDividaGuilherme1;
-	private static HistoricoAcumuloDivida acumDividaGuilherme2;
-	private static HistoricoAcumuloDivida acumDividaMurilo1;
-	private static HistoricoAcumuloDivida acumDividaMariana1;
-
 	private static EstoqueProdutoCota estoqueProdutoCotaVeja1;
 	private static EstoqueProdutoCota estoqueProdutoCotaVeja2;
 	private static EstoqueProdutoCota estoqueProdutoCotaVeja3;
@@ -997,6 +992,10 @@ public class DataLoader {
 
 	private static Object tipoMovimentoEstornoCompraEncalhe;
 
+	private static Object tipoMovimentoSaidaMaterialPromocional;
+
+	private static Object tipoMovimentoEntradaEstoqueSuplementar;
+	
 	private static ConsolidadoFinanceiroCota consolidadoDividaCobrancaOriginariaNegociacao;
 
 	private static Divida dividaCobrancaOriginariaNegociacao;
@@ -1105,7 +1104,6 @@ public class DataLoader {
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
 		gerarCotasAusentes(session);
-		gerarHistoricosAculoDivida(session);
 
 		//massaDadosContaCorrenteTipoMovimento(session);
 
@@ -2610,27 +2608,6 @@ public class DataLoader {
 		save(session, tipoPontoPDVBanca, tipoPontoPDVRevistaria, tipoPontoPDVLivraria, tipoPontoPDVEtc);
 	}
 
-	private static void gerarHistoricosAculoDivida(Session session) {
-
-		acumDividaGuilherme1 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaGuilherme1,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.ATIVA);
-
-		acumDividaGuilherme2 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaGuilherme2,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-
-		acumDividaMariana1 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaMariana1,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-
-		acumDividaMurilo1 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaMurilo1,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-
-		save(session, acumDividaGuilherme1,acumDividaGuilherme2,acumDividaMariana1,acumDividaMurilo1);
-	}
-
 	private static void tabelaNCM(Session session){
 		
 		
@@ -2671,7 +2648,7 @@ public class DataLoader {
 
 		TipoMovimentoEstoque tipoMovimentoConsignado = Fixture.tipoMovimentoEnvioJornaleiro();
 		save(session,tipoMovimentoConsignado);
-
+	
 		Usuario usuario = Fixture.usuarioJoao();
 		save(session,usuario);
 
@@ -6050,7 +6027,7 @@ public class DataLoader {
 
 		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
-		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,123456);
+		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, tipoFornecedorOutros,123456);
 		fornecedor.setEmailNfe("email@email.com");
 		save(session, fornecedor);
 	}
@@ -6157,11 +6134,14 @@ public class DataLoader {
 		tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado = Fixture.tipoMovimentoRecebimentoJornaleiroJuramentado();
 		tipoMovimentoEstoqueEnvioJornaleiroJuramentado = Fixture.tipoMovimentoEnvioJornaleiroJuramentado();
 
+		tipoMovimentoSaidaMaterialPromocional = Fixture.tipoMovimentoSaidaMaterialPromocional();
 
+		tipoMovimentoEntradaEstoqueSuplementar = Fixture.tipoMovimentoEntradaEstoqueSuplementar();
+		
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
 					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao,
-					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado);
+					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado, tipoMovimentoSaidaMaterialPromocional, tipoMovimentoEntradaEstoqueSuplementar);
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
@@ -6191,7 +6171,7 @@ public class DataLoader {
 		tipoMovimentoFinanceiroJuros = Fixture.tipoMovimentoFinanceiroJuros();
 		tipoMovimentoFinanceiroMulta = Fixture.tipoMovimentoFinanceiroMulta();
 		tipoMovimentoFinanceiroEnvioEncalhe = Fixture.tipoMovimentoFinanceiroEnvioEncalhe();
-		tipoMovimentoFinanceiroDebitoPendente = Fixture.tipoMovimentoFinanceiroDebitoPendente();
+		tipoMovimentoFinanceiroPendente = Fixture.tipoMovimentoFinanceiroDebitoPendente();
 		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
 		tipoMovimentoFinanceiroCreditoPostergado = Fixture.tipoMovimentoFinanceiroCreditoPostergado();
 		tipoMovimentoFinanceiroDebitoPostergadoNegociado = Fixture.tipoMovimentoFinanceiroDebitoPostergadoNegociado();
@@ -6201,7 +6181,8 @@ public class DataLoader {
 		save(session, tipoMovimentoEnvioJornaleiro,
 				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado,
 				tipoMovimentoFinanceiroDebitoPostergado,
-				tipoMovimentoFinanceiroCreditoPostergado);
+				tipoMovimentoFinanceiroCreditoPostergado,
+				tipoMovimentoFinanceiroPendente);
 
 		tipoMovimentoFinanceiroCredito.setAprovacaoAutomatica(false);
 		tipoMovimentoFinanceiroDebito.setAprovacaoAutomatica(false);
@@ -6404,7 +6385,7 @@ public class DataLoader {
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 			session.save(tipoFornecedorPublicacao);
 
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, tipoFornecedorPublicacao, null);
 			session.save(fornecedor);
 
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
@@ -7123,7 +7104,7 @@ public class DataLoader {
 					"30.000.000/0001-00", "000000000005", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, tipoFornecedorPublicacao, null);
 			save(session,fornecedor);
 
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
@@ -7229,42 +7210,6 @@ public class DataLoader {
 
 		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6, boleto7, boleto8, boleto9);
 
-		HistoricoAcumuloDivida histInadimplencia1 =
-				Fixture.criarHistoricoAcumuloDivida( boleto1.getDivida(), Fixture.criarData(10, 3, 2012),
-						usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia1);
-	    HistoricoAcumuloDivida histInadimplencia2 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto2.getDivida(), Fixture.criarData(10, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia2);
-	    HistoricoAcumuloDivida histInadimplencia3 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto3.getDivida(), Fixture.criarData(11, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia3);
-	    HistoricoAcumuloDivida histInadimplencia4 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto4.getDivida(), Fixture.criarData(12, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia4);
-	    HistoricoAcumuloDivida histInadimplencia5 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto5.getDivida(), Fixture.criarData(13, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia5);
-	    HistoricoAcumuloDivida histInadimplencia6 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto6.getDivida(), Fixture.criarData(14, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia6);
-	    HistoricoAcumuloDivida histInadimplencia7 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto7.getDivida(), Fixture.criarData(15, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia7);
-	    HistoricoAcumuloDivida histInadimplencia8 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto8.getDivida(), Fixture.criarData(16, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia8);
-	    HistoricoAcumuloDivida histInadimplencia =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto9.getDivida(), Fixture.criarData(17, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia);
 
 	    EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaJose, BigInteger.valueOf(10), BigInteger.ZERO);
@@ -9634,15 +9579,8 @@ public class DataLoader {
 
 	private static void criarDadosBalanceamentoLancamento(Session session) {
 
-		Date dataAtual = new Date();
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(
-				dataAtual, distribuidor.getInicioSemana().getCodigoDiaSemana());
-
 		Date dataLancamento =
-			DateUtil.obterDataDaSemanaNoAno(
-				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
+			SemanaUtil.obterDataInicioSemana(distribuidor.getInicioSemana().getCodigoDiaSemana(), new Date());
 
 		Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, 15);
 
@@ -10667,15 +10605,8 @@ public class DataLoader {
 
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 
-		Date dataAtual = new Date();
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(
-				dataAtual, distribuidor.getInicioSemana().getCodigoDiaSemana());
-
 		Date dataInicioSemanaAtual =
-			DateUtil.obterDataDaSemanaNoAno(
-				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
+			SemanaUtil.obterDataInicioSemana(distribuidor.getInicioSemana().getCodigoDiaSemana(), new Date());
 
 		Date dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataInicioSemanaAtual, 7);
 

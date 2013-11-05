@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.fixture.Fixture;
@@ -81,7 +82,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void obterHistoricoStatusCotaSemFiltro() {
 		
-		List<HistoricoSituacaoCota> listaHistoricoSituacaoCota =
+		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCota =
 			this.historicoSituacaoCotaRepository.obterHistoricoStatusCota(null);
 		
 		Assert.assertNotNull(listaHistoricoSituacaoCota);
@@ -97,7 +98,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		filtro.setPeriodo(new PeriodoVO(this.dataInicialPeriodo, this.dataFinalPeriodo));
 		filtro.setMotivoStatusCota(MotivoAlteracaoSituacao.INCIDENTES);
 		
-		List<HistoricoSituacaoCota> listaHistoricoSituacaoCota =
+		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCota =
 			this.historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
 		
 		Assert.assertNotNull(listaHistoricoSituacaoCota);
@@ -126,7 +127,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		filtro.setPaginacao(paginacao);
 		
-		List<HistoricoSituacaoCota> listaHistoricoSituacaoCota =
+		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCota =
 			this.historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
 		
 		Assert.assertNotNull(listaHistoricoSituacaoCota);
@@ -162,7 +163,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void testarCriarQueryHistoricoStatusCotaNumeroCota() {
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setNumeroCota(1);
@@ -177,7 +178,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void testarCriarQueryHistoricoStatusCotaStatusCota() {
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();		
 		filtro.setStatusCota(SituacaoCadastro.ATIVO);
@@ -192,7 +193,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void testarCriarQueryHistoricoStatusCotaPeriodo() {
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();	
 		
@@ -213,7 +214,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void testarCriarQueryHistoricoStatusCotaMotivoStatusCota() {
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();			
 		filtro.setMotivoStatusCota(MotivoAlteracaoSituacao.CHAMADAO);
@@ -233,7 +234,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -252,7 +253,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -271,7 +272,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -290,7 +291,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -309,7 +310,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -328,7 +329,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		PaginacaoVO paginacao = new PaginacaoVO(1,1,"asc");
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota;
+		List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -382,7 +383,7 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void testarObterUltimoHistoricoStatusCota() {
 		
-		List<HistoricoSituacaoCota> listaUltimoHistorico;
+		List<HistoricoSituacaoCotaVO> listaUltimoHistorico;
 		
 		FiltroStatusCotaDTO filtro = new FiltroStatusCotaDTO();
 		

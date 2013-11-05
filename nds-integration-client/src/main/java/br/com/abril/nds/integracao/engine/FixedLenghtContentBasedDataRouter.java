@@ -31,11 +31,14 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+import com.ancientprogramming.fixedformat4j.format.ParseException;
 
-@Component
-
+@Component("fixedLenghtContentBasedDataRouter")
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
+	
 	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
+	
+	private static final int START_TIME_POSITION_COLON = 100;
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -113,69 +116,108 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 			int lineNumber = 0;
 			Scanner scanner = new Scanner(in);
 			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				lineNumber++;
-
-				if (StringUtils.isEmpty(line)) {
-					continue;
-				}
-
-				Class<?> targetClass = findType(line,
-						(FixedLengthRouteTemplate) fileRouteTemplate);
-
-				if (targetClass != null) {
-					Object bean = fixedFormatManager.load(targetClass, line);
-
-					final Message message = new Message();
-					
-					// FAZ MERGE COM OS PARAMETROS
-					message.getHeader().putAll(fileRouteTemplate.getParameters());
-					
+				final Message message = new Message();
+				
+				try {
 					// ADICIONA OUTRAS INFORMACOES NO HEADER (METADATA)
 					message.getHeader().put(MessageHeaderProperties.URI.getValue(), fileRouteTemplate.getUri());
-					message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), line);
 					message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), file.getName());
 					message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), new Date(file.lastModified()));
 					message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), lineNumber);
 					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), fileRouteTemplate.getUserName());
 					message.setTempVar(tempVar);
-					message.setBody(bean);
-
-					if (messageProcessor != null) {
-						if (!fileRouteTemplate.isCommitAtEnd()) {
-							TransactionTemplate template = new TransactionTemplate(
-									transactionManager);
+					
+					String line = scanner.nextLine();
+					lineNumber++;
 	
-							try {
-								template.execute(new TransactionCallback<Void>() {
-		
-									@Override
-									public Void doInTransaction(TransactionStatus status) {
-										messageProcessor.processMessage(message);
-										
-										getSession().flush();
-										getSession().clear();
+					if (StringUtils.isEmpty(line)) {
+						continue;
+					}
+	
+					Class<?> targetClass = findType(line, (FixedLengthRouteTemplate) fileRouteTemplate);
+	
+					if (targetClass != null) {
+						Object bean = fixedFormatManager.load(targetClass, line);
+	
 
-										return null;
-									}
-								});
+						// FAZ MERGE COM OS PARAMETROS
+						message.getHeader().putAll(fileRouteTemplate.getParameters());
+
+						message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), line);
+						message.setBody(bean);
+	
+						if (messageProcessor != null) {
+							if (!fileRouteTemplate.isCommitAtEnd()) {
+								TransactionTemplate template = new TransactionTemplate(transactionManager);
+		
+								try {
+									template.execute(new TransactionCallback<Void>() {
+			
+										@Override
+										public Void doInTransaction(TransactionStatus status) {
+											
+											long start = System.currentTimeMillis();
+											//LOGGER.info("Interface: Chamando método: "+ pjp.toShortString() +".");
+											
+											/*StringBuilder msgRep = new StringBuilder("");
+											int indexRep = 0;
+											StringBuilder spacesRep = new StringBuilder("");*/
+											
+											messageProcessor.processMessage(message);
+											
+											getSession().flush();
+											getSession().clear();
+											/*
+											long elapsedTime = System.currentTimeMillis() - start;
+											
+											msgRep = new StringBuilder("");
+												
+											String str = "Interface: Tempo total da execução do método messageProcessor.processMessage(..) " + elapsedTime + " milisegundos ("+ ((double) elapsedTime / 1000) +" segundos).";
+											indexRep = str.toString().lastIndexOf(':');
+											while(indexRep < START_TIME_POSITION_COLON) {
+												spacesRep.append(" ");
+												indexRep++;
+											}
+											msgRep.append(str.substring(0, str.lastIndexOf(':')));
+											msgRep.append(spacesRep.toString());
+											msgRep.append(str.substring(str.lastIndexOf(':'), str.length()));
+											
+											logger.info(msgRep.toString());*/
+	
+											return null;
+										}
+									});
+								}catch (Exception e) {
+									logger.error(e.getMessage(), e);
+									
+									ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());								
+								}
 							}
-							catch (Exception e) {
-								logger.error(e.getMessage(), e);
+							// BULK LOAD DO ARQUIVO (TABELA TEMPORARIA)
+							else {
+								messageProcessor.processMessage(message);
 								
-								ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());								
+								// BATCH DE 100 LINHAS
+								if ((lineNumber % 100) == 0) {
+									getSession().flush();
+									getSession().clear();
+								}
 							}
 						}
-						// BULK LOAD DO ARQUIVO (TABELA TEMPORARIA)
-						else {
-							messageProcessor.processMessage(message);
-							
-							// BATCH DE 100 LINHAS
-							if ((lineNumber % 100) == 0) {
-								getSession().flush();
-								getSession().clear();
-							}
-						}
+					}
+					
+				}catch (Exception e) {
+					logger.error(e.getMessage(), e);
+					
+					if(e instanceof ParseException){
+						
+						String nomeArquivo = (String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue());
+						Integer numeroLinha = (Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue());
+						
+						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, "Erro no layout do arquivo: "+  nomeArquivo + " linha: "+numeroLinha);								
+					}else{
+						
+						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());								
 					}
 				}
 			}

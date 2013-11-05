@@ -210,8 +210,14 @@ public class EnderecoServiceImpl implements EnderecoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<String> obterUnidadeFederativaAssociadaComEndereco() {
-		return enderecoRepository.obterUFs();
+	public List<String> obterUnidadeFederativaPDVSemRoteirizacao() {
+		return enderecoRepository.obterUFsPDVSemRoteirizacao();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade) {
+		return this.enderecoRepository.obterBairrosPDVSemRoteirizacao(uf, cidade);
 	}
 	
 
@@ -413,13 +419,13 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 	@Override
 	@Transactional(readOnly = true)	
-	public List<String> obterLocalidadesPorUF(String uf) {
+	public List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf) {
 		if (uf == null || uf.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
 		}
 		
-		return this.enderecoRepository.obterLocalidadesPorUF(uf);
+		return this.enderecoRepository.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
 	}
 
 
@@ -439,5 +445,23 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public Long obterQtdEnderecoAssociadoCota(Long idCota) {
 		
 		return this.enderecoCotaRepository.obterQtdEnderecoAssociadoCota(idCota);
+	}
+
+
+	@Override
+	public List<String> obterLocalidadesPorUFPDVBoxEspecial(String uf) {
+		
+		if (uf == null || uf.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
+		}
+		
+		return this.enderecoRepository.obterLocalidadesPorUFPDVBoxEspecial(uf);
+	}
+
+
+	@Override
+	public List<String> obterBairrosPDVBoxEspecial(String uf, String cidade) {
+		return this.enderecoRepository.obterBairrosPDVBoxEspecial(uf, cidade);
 	}
 }

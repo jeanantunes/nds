@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,8 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,10 +62,14 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 
 @Service
 public class NFeServiceImpl implements NFeService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(NFeServiceImpl.class);
+	
 	@Autowired
 	protected NotaFiscalRepository notaFiscalRepository;
 	
@@ -122,7 +130,7 @@ public class NFeServiceImpl implements NFeService {
 	}
 	
 	@Transactional
-	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA) {
+	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA, Intervalo<Date> intervaloLancamento) {
 				
 		List<NfeImpressaoWrapper> listaNEWrapper = new ArrayList<NfeImpressaoWrapper>();
 
@@ -131,6 +139,10 @@ public class NFeServiceImpl implements NFeService {
 			NfeImpressaoDTO nfeImpressao = obterDadosNENECA(ne);
 
 			if(nfeImpressao!=null) {
+				
+				if(intervaloLancamento != null)
+					nfeImpressao.setDataLancamentoDeAte(this.getStringDataDeAte(intervaloLancamento));
+				
 				listaNEWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
 			}
 
@@ -141,6 +153,7 @@ public class NFeServiceImpl implements NFeService {
 			return gerarDocumentoIreportNE(listaNEWrapper, false);
 
 		} catch(Exception e) {
+			LOGGER.error("Falha na geração dos arquivos NE!"+ e.getMessage(), e);
 			throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
 	}
@@ -736,6 +749,10 @@ public class NFeServiceImpl implements NFeService {
 		
 			path += "/ne_modelo2_wrapper.jasper";
 		
+		} else if (TipoImpressaoNENECADANFE.DANFE.equals(tipoImpressaoNENECADANFE)) {
+			
+			path += "/danfeWrapper.jasper";
+		
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
@@ -835,7 +852,7 @@ public class NFeServiceImpl implements NFeService {
 
 		if(endereco!=null) {
 
-			emissorLogradouro 	= endereco.getLogradouro();
+			emissorLogradouro 	= endereco.getTipoLogradouro() +" "+ endereco.getLogradouro();
 			emissorNumero 		= endereco.getNumero().toString();
 			emissorBairro 		= endereco.getBairro();
 			emissorMunicipio 	= endereco.getCidade();
@@ -903,7 +920,7 @@ public class NFeServiceImpl implements NFeService {
 
 		if(endereco != null) {
 
-			destinatarioLogradouro 	= endereco.getLogradouro();
+			destinatarioLogradouro 	= endereco.getTipoLogradouro() +" "+ endereco.getLogradouro();
 			destinatarioNumero		= endereco.getNumero()!=null?endereco.getNumero().toString():"";
 			destinatarioComplemento	= endereco.getComplemento();
 			destinatarioBairro		= endereco.getBairro();
@@ -956,6 +973,22 @@ public class NFeServiceImpl implements NFeService {
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
 		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+		
+		Collections.sort(itensNotaEnvio, new Comparator<ItemNotaEnvio>(){
+			@Override
+			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
+			    
+			    	if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null) {
+			    	    return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
+			    	} else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
+			    		&& (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
+    						o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+    				}
+    							    	
+			    	return 0;
+			}
+			
+		});
 
 		for(ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
 
@@ -976,7 +1009,7 @@ public class NFeServiceImpl implements NFeService {
 			item.setValorUnitarioProduto(valorUnitarioProduto);
 			item.setValorTotalProduto(valorTotalProduto);
 			item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
-			item.setSequencia(itemNotaEnvio.getSequencia());
+			item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
 			item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
 
 			listaItemImpressaoNfe.add(item);
@@ -985,6 +1018,19 @@ public class NFeServiceImpl implements NFeService {
 
 		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 
+	}
+	
+	private String getStringDataDeAte(Intervalo<Date> intervalo) {
+		
+		String dataRecolhimento = null;
+		
+		if(intervalo.getDe().equals(intervalo.getAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(intervalo.getDe());
+		else
+			dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(intervalo.getDe()) + 
+								" até " + DateUtil.formatarDataPTBR(intervalo.getAte());
+		
+		return dataRecolhimento;
 	}
 	
 }

@@ -141,7 +141,7 @@ public class Rota implements Serializable {
         RotaPDV rotaPDV = new RotaPDV(this, pdv, ordem);
         rotaPDVs.add(rotaPDV);
         
-        if (pdv.getCaracteristicas().isPontoPrincipal()) {
+        if (pdv.getCaracteristicas().isPontoPrincipal() && box != null) {
         	
         	pdv.getCota().setBox(box);
         }

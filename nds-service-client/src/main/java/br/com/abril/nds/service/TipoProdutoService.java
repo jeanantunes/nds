@@ -2,6 +2,8 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
+import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.NCM;
@@ -16,14 +18,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  *
  */
 public interface TipoProdutoService {
-	
-	/**
-	 * Busca o Tipo Produto pelo id. 
-	 * @param id
-	 * @return o TipoProduto
-	 */
-	public abstract TipoProduto obterPorId(Long id);
-	
+
 	/**
 	 * Remove o Tipo Produto do repositório de dados.
 	 * @param id
@@ -101,4 +96,8 @@ public interface TipoProdutoService {
 	 * @return NCM
 	 */
 	public abstract NCM obterNCMporCodigo(Long codigoNcm);
+	
+	List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro);
+	
+	Long obterQunatidade(FiltroRelatorioTiposProdutos filtro);
 }

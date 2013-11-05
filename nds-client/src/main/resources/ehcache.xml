@@ -10,4 +10,12 @@
 		memoryStoreEvictionPolicy="LRU"
 	/>
 	
+	<cache
+    	name="br.com.abril.nds.model.cadastro.Feriado"
+    	maxElementsInMemory="1000"
+    	eternal="false"
+    	timeToIdleSeconds="300"
+    	timeToLiveSeconds="600"
+ 	/>
+	
 </ehcache>

@@ -145,15 +145,16 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void selecionarTodos(Boolean selecionado){
 			
-			if(selecionado==false) {
+			if(selecionado == false) {
+				
 				session.setAttribute("selecionados", null);
+				
 			} else {
 			
 				Date date = (Date) session.getAttribute("date");
 				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
 				
-				List<Long> listaIdsExpedicoes = 
-						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor);
+				List<Long> listaIdsExpedicoes = lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor, true);
 								
 				session.setAttribute("selecionados", listaIdsExpedicoes);
 			}
@@ -193,8 +194,10 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
 			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
-		
+
 			try {
+
+				verificarExecucaoInterfaces();
 				
 				if(selecionados==null  || selecionados.isEmpty()) {
 					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, NENHUM_REGISTRO_SELECIONADO));
@@ -204,22 +207,20 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				
 				TipoMovimentoEstoque tipoMovimento =
 					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				
 				TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
 				for(int i=0; i<selecionados.size(); i++) {
-					
 					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
-					
-					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
+					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));	
 				}
 				
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
 				
-				
-				grid = gerarGrid(
-						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+				grid = gerarGrid(page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 							
 				session.setAttribute("selecionados",null);
 				
@@ -233,7 +234,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 					status=TipoMensagem.WARNING.name();
 				}
 				
-			}catch(Exception e) {
+			} catch(Exception e) {
 				mensagens.clear();
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();
@@ -251,7 +252,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			retorno[0] = grid;
 			retorno[1] = mensagens;
 			retorno[2] = status;
-			
+
 			
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
@@ -266,8 +267,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			String status = (String) session.getAttribute(STATUS_EXPEDICAO);
 			
-			
-			result.use(Results.json()).withoutRoot().from(status==null?"Processando Expedições..." : status).recursive().serialize();
+			result.use(Results.json()).withoutRoot().from(status == null ? "Processando Expedições..." : status).recursive().serialize();
 		}
 		
 	
@@ -309,14 +309,15 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
 						String dtLancamento, Boolean estudo, String ultimaPesquisa){
-			
+						
 			String status= SUCESSO;
 			
 			boolean isNewSearch = !ultimaPesquisa.equals((String)session.getAttribute("ultimaPesquisa"));
 			
 			if(isNewSearch) {
 				session.setAttribute("selecionados", null);
-				session.setAttribute("ultimaPesquisa", ultimaPesquisa);				
+				session.setAttribute("ultimaPesquisa", ultimaPesquisa);
+				page = 1;
 			}			
 			
 			List<String> mensagens = new ArrayList<String>();
@@ -326,12 +327,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			try {
 				validarExistenciaMatriz(DateUtil.parseData(dtLancamento, Constantes.DATE_PATTERN_PT_BR));
 				
-				grid = gerarGrid(
-						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+				grid = gerarGrid(page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 			
 			} catch(ValidacaoException e) {
 				mensagens = e.getValidacao().getListaMensagens();
-				status=e.getValidacao().getTipoMensagem().name();
+				status = e.getValidacao().getTipoMensagem().name();
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			
 			} catch (Exception e) {
@@ -382,12 +382,12 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			session.setAttribute("estudo",estudo);
 			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				throw new ValidacaoException("/pesquisarExpedicoes", new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
+				throw new ValidacaoException("/pesquisarExpedicoes", new ValidacaoVO(TipoMensagem.WARNING, DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
 						lancamentoService.obterLancamentosNaoExpedidos(paginacaoVO, date, idFornecedor, estudo);
-				
+
 				Long total = lancamentoService.obterTotalLancamentosNaoExpedidos(date, idFornecedor, estudo);
 				
 				List<CellModelKeyValue<LancamentoNaoExpedidoDTO>> listaCelula = new LinkedList<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
@@ -428,4 +428,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO));
 			}
 		}
+		
+		private void verificarExecucaoInterfaces() {
+			if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+			}
+		}
+		
 	}

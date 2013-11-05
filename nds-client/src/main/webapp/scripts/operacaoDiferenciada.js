@@ -71,6 +71,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	limparSelecoes : function(callback) {
 		
+	$("#selecionarTodosID", OperacaoDiferenciadaController.workspace).attr('checked', false);	
 		$.postJSON(contextPath + '/administracao/parametrosDistribuidor/limparSelecoes',
 				null,
 				callback);		
@@ -125,7 +126,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	novoGrupo : function() {
 		
-		this.grupoSelecionado = null;
+		this.grupoSelecionado = null;	
 		
 		$('#comboTipoCota', OperacaoDiferenciadaController.workspace).hide();
 		$('#radioTipoCota', OperacaoDiferenciadaController.workspace).prop('checked', false);
@@ -153,27 +154,6 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		$( "#dialog-confirm-grupo" , OperacaoDiferenciadaController.workspace).dialog( "close" );
 		
 	},
-
-	confirmarGrupo : function() {
-
-		var data = [];
-		
-		data.push({name: "nomeDiferenca", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace).val()});
-		
-		$.each($("#diaSemana", OperacaoDiferenciadaController.workspace).val(), 
-			function(index, val) {
-				
-				data.push({name: "diasSemana", value: val});
-			}
-		);
-		
-		$.postJSON(contextPath + "/administracao/parametrosDistribuidor/cadastrarOperacaoDiferenciada", data,
-			function(result){
-				
-				$( this, OperacaoDiferenciadaController.workspace ).dialog( "close" );
-			}, null, true
-		);
-	},
 	
 	processaMunicipios : function(result) {
 		
@@ -181,8 +161,13 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			
 			var municipio = row.cell.municipio;
 			
-			if(!municipio || municipio.length < 1)
+			if(!municipio || municipio.length < 1){
 				municipio = " null ";
+			}
+			
+			if (!row.cell.municipio && "" != row.cell.municipio){
+				row.cell.municipio = 'Cota sem endereço';
+			}
 			
 			row.cell.selecionado="<input type='checkbox' name='selecao' " +
 			"id='municipio["+municipio+"]' " +
@@ -306,8 +291,6 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	confirmarOperacao : function() {
 		var data = [];
 		
-		data.push({name: "nome", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace ).val()});
-		
 		if(OperacaoDiferenciadaController.grupoSelecionado)
 			data.push({name: "idGrupo", value: OperacaoDiferenciadaController.grupoSelecionado.idGrupo});
 		
@@ -316,7 +299,23 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				data.push({name: "diasSemana", value: val});
 			}
 		);
-							
+		
+		var tipoOperacaoDiferenciada;
+		
+		var radioTipoCota = $('#radioTipoCota', OperacaoDiferenciadaController.workspace).prop('checked');
+		
+		if (radioTipoCota) {
+			
+			tipoOperacaoDiferenciada = "TIPO_COTA";
+			
+		} else {
+			
+			tipoOperacaoDiferenciada = "MUNICIPIO";
+		}
+		
+		data.push({name: "tipoOperacaoDiferenciada", value: tipoOperacaoDiferenciada});
+		data.push({name: "nome", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace ).val()});
+		
 		$.postJSON(contextPath + "/administracao/parametrosDistribuidor/cadastrarOperacaoDiferenciada", data,
 			function(result){
 				
@@ -343,6 +342,11 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function() {
+				
+				$("#nomeDiferenca", this.workspace).val("");
+				$("#diaSemana", this.workspace).val("");
 			},
 			form: $("#dialog-confirm-grupo", OperacaoDiferenciadaController.workspace).parents("form")
 		});
@@ -409,7 +413,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				display : '',
 				name : 'selecionado',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "municipio",
@@ -455,7 +459,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				display : '',
 				name : 'selecionado',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numCota",
@@ -484,17 +488,19 @@ var OperacaoDiferenciadaController = $.extend(true, {
 				display : 'Recolhimento',
 				name : 'recolhimento',
 				width : 180,
-				sortable : true,
+				sortable : false,
 				align : 'LEFT'
 			},{
 				display : 'Ação',
 				name : 'acao',
 				width : 60,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			width : 800,
-			height : 150
+			height : 150,
+			sortname : "nome",
+			sortorder : "asc"
 		});
 	}
 		

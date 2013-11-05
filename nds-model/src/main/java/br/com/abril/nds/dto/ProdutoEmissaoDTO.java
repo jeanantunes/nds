@@ -14,27 +14,55 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	
 	private Long idProdutoEdicao;
+	
 	private Integer sequencia;
+	
 	private String codigoBarras;
+	
 	private String codigoProduto;
+	
 	private String nomeProduto;
+	
+	private String notaEnvio;
+	
+	private String descricaoNotaEnvio;
+	
 	private Long edicao;
+	
 	private String desconto;
+	
 	private String tipoRecolhimento;
+	
 	private String dataLancamento;
+	
 	private String precoComDesconto;
 	
 	private BigInteger reparte;
 	
 	private BigInteger quantidadeDevolvida;
 	
+	private Boolean confereciaRealizada;
+	
 	private BigDecimal precoVenda;
+	
 	private BigDecimal vlrPrecoComDesconto;
-	public BigDecimal vlrDesconto;
 	
-	public BigInteger vendido;
+	private BigDecimal vlrDesconto;
 	
-	public String vlrVendido;
+	private BigInteger vendido;
+	
+	private String vlrVendido;
+	
+	/**
+	 * A flag abaixo indica se a instância
+	 * em questão é um objeto duplicado para
+	 * conter informações da nota de envio.
+	 * Flag utilizada na lógica do relatório 
+	 * de Emissao CE modelo 2.
+	 */
+	private boolean produtoDuplicadoDetalheNota;
+	
+	private boolean apresentaQuantidadeEncalhe;
 	
 	public String getVlrVendido() {
 		return vlrVendido;
@@ -263,6 +291,46 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public String getNotaEnvio() {
+		return notaEnvio;
+	}
+
+	public void setNotaEnvio(String notaEnvio) {
+		this.notaEnvio = notaEnvio;
+	}
+
+	public boolean isApresentaQuantidadeEncalhe() {
+		return apresentaQuantidadeEncalhe;
+	}
+
+	public void setApresentaQuantidadeEncalhe(boolean apresentaQuantidadeEncalhe) {
+		this.apresentaQuantidadeEncalhe = apresentaQuantidadeEncalhe;
+	}
+
+	public String getDescricaoNotaEnvio() {
+		return descricaoNotaEnvio;
+	}
+
+	public void setDescricaoNotaEnvio(String descricaoNotaEnvio) {
+		this.descricaoNotaEnvio = descricaoNotaEnvio;
+	}
+
+	public boolean isProdutoDuplicadoDetalheNota() {
+		return produtoDuplicadoDetalheNota;
+	}
+
+	public void setProdutoDuplicadoDetalheNota(boolean produtoDuplicadoDetalheNota) {
+		this.produtoDuplicadoDetalheNota = produtoDuplicadoDetalheNota;
+	}
+	
+	public Boolean getConfereciaRealizada() {
+		return confereciaRealizada;
+	}
+
+	public void setConfereciaRealizada(Boolean confereciaRealizada) {
+		this.confereciaRealizada = confereciaRealizada;
 	}
 	
 }

@@ -18,9 +18,9 @@ var vendaEncalhe = $.extend(true, {
 							var nomeFornecedor = value.cell.nomeFornecedor;	
 							
 							if(!totalFonecedor[nomeFornecedor]){
-								totalFonecedor[nomeFornecedor] = value.cell.total;
+								totalFonecedor[nomeFornecedor] = parseFloat(value.cell.total);
 							}else{
-								totalFonecedor[nomeFornecedor] += value.cell.total;
+								totalFonecedor[nomeFornecedor] += parseFloat(value.cell.total);
 							}
 									
 						});
@@ -53,7 +53,7 @@ var vendaEncalhe = $.extend(true, {
 					      var cell2=row.insertCell(2);
 					      cell1.innerHTML='<strong>' + fornecedor + ':</strong>';
 					      cell2.align="right";
-					      cell2.innerHTML=totalFonecedor[fornecedor];
+					      cell2.innerHTML=formatMoneyValue(totalFonecedor[fornecedor]);
 					 }
 					 //$(gridId).flexToggleCol(6,count>1);
 					
@@ -141,7 +141,7 @@ var vendaEncalhe = $.extend(true, {
 		showDialog:function(idConsolidado,dataEscolhida,numeroCota,numeroBox){			
 			this.dialog(this.dialogId);
 			this.loadData(this.url, idConsolidado, dataEscolhida,numeroCota);
-			this.exportButtons(idConsolidado);
+			this.exportButtons(idConsolidado,dataEscolhida,numeroCota);
 			
 			
 			 $("#datacotanome-venda-encalhe").html(dataEscolhida+" Cota: "+$("#cotaHidden").val()+" - "+$("#nomeCotaHidden").val());

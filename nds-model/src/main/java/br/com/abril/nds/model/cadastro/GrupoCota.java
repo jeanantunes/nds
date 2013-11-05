@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -16,6 +17,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -37,7 +40,7 @@ public class GrupoCota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name="NOME")
+	@Column(name="NOME", nullable=false)
 	private String nome;
 	
 	@Enumerated(EnumType.STRING)
@@ -65,6 +68,10 @@ public class GrupoCota implements Serializable {
 	@JoinTable(name = "COTA_GRUPO", joinColumns = {@JoinColumn(name = "GRUPO_COTA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private Set<Cota> cotas;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_CADASTRO", nullable = false)
+	private Date dataCadastro;
 	
 	public GrupoCota() {
 		
@@ -197,6 +204,20 @@ public class GrupoCota implements Serializable {
 	 */
 	public void setMunicipios(Set<String> municipios) {
 		this.municipios = municipios;
+	}
+
+	/**
+	 * @return the dataCadastro
+	 */
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	/**
+	 * @param dataCadastro the dataCadastro to set
+	 */
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
 	}
 	
 }

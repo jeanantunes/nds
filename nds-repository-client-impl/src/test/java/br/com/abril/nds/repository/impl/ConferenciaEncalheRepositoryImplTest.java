@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -15,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
@@ -46,7 +44,6 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
@@ -473,54 +470,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		// Assert.assertNull(chamadaEncalheCota);
 
 	}
-
-	@Test
-	public void testarObterComposicaoCobrancaSlip() {
-
-		List<ComposicaoCobrancaSlipDTO> composicaoCobranca;
-
-		Integer numeroCota = 1;
-
-		Calendar data = Calendar.getInstance();
-		Date dataOperacao = data.getTime();
-
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-
-		composicaoCobranca = conferenciaEncalheRepository
-				.obterComposicaoCobrancaSlip(numeroCota, dataOperacao,
-						tiposMovimentoFinanceiroIgnorados);
-
-		Assert.assertNotNull(composicaoCobranca);
-
-	}
-
-	// Testa condição TipoMovimentoFinanceiro dentro de
-	// obterComposicaoCobrancaSlip()
-	@Test
-	public void testarObterComposicaoCobrancaSlipTipoMovimentoFinanceiro() {
-
-		List<ComposicaoCobrancaSlipDTO> composicaoCobranca;
-
-		Integer numeroCota = 1;
-
-		Calendar data = Calendar.getInstance();
-		Date dataOperacao = data.getTime();
-
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-		tipoMovimentoFinanceiro.setAprovacaoAutomatica(true);
-		tipoMovimentoFinanceiro.setDescricao("testeDescricao");
-		tipoMovimentoFinanceiro.setId(1L);
-
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiro);
-
-		composicaoCobranca = conferenciaEncalheRepository
-				.obterComposicaoCobrancaSlip(numeroCota, dataOperacao,
-						tiposMovimentoFinanceiroIgnorados);
-
-		Assert.assertNotNull(composicaoCobranca);
-
-	}
+	
 
 	@Test
 	public void testarObterListaConferenciaEncalheDTOContigencia() {
@@ -639,4 +589,10 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		
 	}
 
+	@Test
+	public void obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarrasTest() {
+		
+		this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(1, "000");
+	}
+	
 }

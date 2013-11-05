@@ -50,6 +50,26 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		return (EstudoCota) query.uniqueResult();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<EstudoCota> obterEstudoCota(Long idCota, Date dataDe, Date dataAte) {
+		
+		String hql = " from EstudoCota estudoCota "
+				   + " join estudoCota.estudo estudo "
+				   + " join estudoCota.cota cota "
+				   + " join estudo.lancamentos lancamento "
+				   + " where cota.id = :idCota"
+				   + " and lancamento.dataLancamentoDistribuidor between :dataDe AND :dataAte ";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("idCota", idCota);
+		query.setParameter("dataDe", dataDe);
+		query.setParameter("dataAte", dataAte);
+		
+		return query.list();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
@@ -121,39 +141,38 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, 
+	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> idCotas, 
 														  Intervalo<Date> periodo, 
 														  List<Long> listaIdsFornecedores) {
 		
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");	
 		
 		sql.append(" FROM EstudoCota estudoCota ");
-
+		sql.append(" JOIN estudoCota.cota cota ");
 		sql.append(" JOIN estudoCota.estudo estudo ");
 		sql.append(" JOIN estudo.lancamentos lancamento ");
-		sql.append(" JOIN estudoCota.cota cota ");
 		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
-		
 		sql.append(" JOIN produtoEdicao.produto produto ");
 		sql.append(" JOIN produto.fornecedores fornecedor ");
-		
-		sql.append(" WHERE cota.id = :idCota ");
-		
-		sql.append(" AND lancamento.status IN (:listaStatusLancamento) ");
-		
-		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
-			
-			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
-		}	
+		sql.append(" WHERE cota.id IN (:idCotas) ");
+		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
+		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");
 		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			
 			sql.append(" AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
-		}		
+		}
+		
+        if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+			
+			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		}	
 		
 		Query query = getSession().createQuery(sql.toString());
 		
-		query.setParameter("idCota", idCota);
+		query.setParameterList("idCotas", idCotas);
+
+		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO, StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO});
 	
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			
@@ -163,13 +182,10 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
 			
 			query.setParameter("dataInicio", periodo.getDe());
+			
 			query.setParameter("dataFim", periodo.getAte());
 		}
 
-		query.setParameterList(
-			"listaStatusLancamento", 
-				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
-		
 		return query.list();
 	}
 	

@@ -1,4 +1,4 @@
-function MapaAbastecimento(pathTela, objName, workspace) {
+ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	var _workspace = workspace;
 	
@@ -18,7 +18,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		if (codigoProduto && codigoProduto.length > 0) {
 			
 			$.postJSON(contextPath + "/mapaAbastecimento/getProdutosPorCodigo",
-					   {codigoProduto:codigoProduto,
+					   {'filtro.codigo': codigoProduto,
 					    dataLancamento: T.get("dataLancamento")},
 					   function(result) {
 							
@@ -168,6 +168,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		$("#gridRota", _workspace).hide();
 		$("#gridRotaQuebraCota", _workspace).hide();
 		$("#gridProduto", _workspace).hide();
+		$("#gridPromocional", _workspace).hide();
 		$("#gridProdutoEspecifico", _workspace).hide();
 		$("#gridProdutoCota", _workspace).hide();
 		$("#gridEntregador", _workspace).hide();
@@ -228,6 +229,19 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			);
 
 			break;
+		
+		case 'PROMOCIONAL':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoPromocionalGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				"#gridPromocional",
+				params
+			);
+
+			break;
+		
 		case 'PRODUTO_ESPECIFICO':
 
 			T.preencherGrid(
@@ -279,13 +293,24 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		});
 		$(tableClass, _workspace).flexReload();
 		$(grid, _workspace).show();
+		
+		$(".areaBts", _workspace).show();	
 	},
 	
 	this.processarMensagens = function(result) {
 
-		if(result.mensagens)
+		if(result.mensagens) {
 			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
-		
+		} else {
+			$(result.rows).each(function(){
+				if(this.cell.codigoBox == undefined) {
+					this.cell.codigoBox = "Sem box definido";
+				}
+				if(this.cell.codigoRota == undefined) {
+					this.cell.codigoRota = "Sem rota definida";
+				}
+			});	
+		}
 		return result;
 	},
 	
@@ -369,8 +394,12 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	this.processarLinha = function(index,cell) {
 		
-		T.mapas.push(cell);
+		if(cell.box == undefined || cell.box == 'undefined') {
+			cell.box = "Sem box definido";
+		}
 		
+		T.mapas.push(cell);
+			
 		cell.acao =	'<a href="javascript:;" onclick="' + objName +'.carregarDetalhes(\''+ index + '\')">' +
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
 	},
@@ -465,8 +494,14 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
 			break;
+		case 'PROMOCIONAL':
+			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
+			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.displayEntregador(false);
+			T.desbloquearLinkProdutos();
+			break;
 		case 'PRODUTO_ESPECIFICO':
-			T.bloquearCampos('box','rota','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
 			T.desbloquearLinkProdutos();
 			break;
@@ -487,6 +522,14 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	this.bloquearCampos = function() {
 		for(var campo in arguments) {
 
+			if($('#' + arguments[campo], _workspace).is("select")) {
+				$('#' + arguments[campo], _workspace)
+			    .find('option')
+			    .remove()
+			    .end()
+			    .append('<option value="">Selecione</option>')
+			    .val('');
+			}
 			$('#' + arguments[campo], _workspace).val('');
 			$('#' + arguments[campo], _workspace).disable();
 		}
@@ -618,33 +661,27 @@ $(function() {
 		colModel: [ {
 			display : 'Box',
 			name : 'box',
-			width : 100,
+			width : 150,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 200,
+			width : 230,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Reparte',
 			name : 'totalReparte',
-			width : 200,
+			width : 230,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 200,
+			width : 225,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Material Promocional',
-			name : 'materialPromocional',
-			width : 135,
-			sortable : true,
-			align : 'center'
 		}, {
 			display : 'Ação',
 			name : 'acao',
@@ -662,6 +699,49 @@ $(function() {
 		height : 255
 	})); 
 	
+	$(".mapaAbastecimentoPromocionalGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 280,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 175,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Promocional',
+			name : 'materialPromocional',
+			width : 175,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 150,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
+	
 	$(".mapaAbastecimentoGridQuebraCota", BaseController.workspace).flexigrid($.extend({},{
 		colModel: [ {
 			display : 'Cota',
@@ -672,39 +752,33 @@ $(function() {
 		},{
 			display : 'Nome',
 			name : 'nomeCota',
-			width : 200,
+			width : 220,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Box',
 			name : 'box',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Reparte',
 			name : 'totalReparte',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'right'
-		},  {
-			display : 'Material Promocional',
-			name : 'materialPromocional',
-			width : 100,
-			sortable : true,
-			align : 'center'
 		},{
 			display : 'Ação',
 			name : 'acao',
@@ -811,7 +885,7 @@ $(function() {
 		colModel: [ {
 			display : 'Box',
 			name : 'codigoBox',
-			width : 100,
+			width : 150,
 			sortable : true,
 			align : 'left'
 		},{
@@ -823,27 +897,21 @@ $(function() {
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 150,
+			width : 180,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Reparte',
 			name : 'reparte',
-			width : 150,
+			width : 180,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 150,
+			width : 175,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Material Promocional',
-			name : 'materialPromocional',
-			width : 135,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -866,25 +934,25 @@ $(function() {
 		},{
 			display : 'Nome',
 			name : 'nomeCota',
-			width : 150,
+			width : 180,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Box',
 			name : 'codigoBox',
-			width : 100,
+			width : 130,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Rota',
 			name : 'codigoRota',
-			width : 100,
+			width : 130,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 100,
+			width : 110,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -899,12 +967,6 @@ $(function() {
 			width : 100,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Material Promocional',
-			name : 'materialPromocional',
-			width : 100,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -958,27 +1020,21 @@ $(function() {
 		colModel : [ {
 			display : 'Box',
 			name : 'codigoBox',
-			width : 140,
+			width : 240,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total Reparte',
 			name : 'reparte',
-			width : 250,
+			width : 325,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 250,
+			width : 325,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Material Promocional',
-			name : 'materialPromocional',
-			width : 250,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -995,33 +1051,27 @@ $(function() {
 		colModel : [ {
 			display : 'Cota',
 			name : 'codigoCota',
-			width : 100,
+			width : 140,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Nome',
 			name : 'nomeCota',
-			width : 300,
+			width : 340,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total Reparte',
 			name : 'reparte',
-			width : 160,
+			width : 200,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 160,
+			width : 200,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Material Promocional',
-			name : 'materialPromocional',
-			width : 160,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoCota",
 		sortorder : "asc",

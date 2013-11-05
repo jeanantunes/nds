@@ -1,8 +1,8 @@
 var messageTimeout;
 var messageDialogTimeout;
 
-$(document).ready(function(){
-	
+$(document).ready(function() {
+
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
 	    var valFocus;
@@ -40,7 +40,7 @@ $(document).ready(function(){
 		if(keycode == 17){
 			pressedCtrl=false; 
 		}
-	})
+	});
 	
 	$(document.body).keydown(function(e) {
 		
@@ -59,28 +59,28 @@ $(document).ready(function(){
 
 			focusFirstContentView(this);
 			
-		}else if( keycode == $.ui.keyCode.ENTER ) {
+		} else if( keycode == $.ui.keyCode.ENTER ) {
 			
 			//Confirmação genérica para modais por tec ENTER
 			
 			var refButtonsDialog = $(".ui-dialog:visible").find("button");
 			
 			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
-			if( refButtonsDialog.size()==2 ) {
+			if( refButtonsDialog.size() == 2 ) {
 
 				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
-				if(eventoJs.target!=refButtonsDialog[1]){
+				if(eventoJs.target != refButtonsDialog[1] && eventoJs.target != $('.pcontrol input:visible')[0]){
 					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
 				}
 				return true;
 		    }
-		}else{
+		} else {
 			
 			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
 			
 			var refTabs = $("li", $('.ui-tabs-nav'));
-			var qtdAbasAbertas =  $('.ui-corner-top').size()
-			if(qtdAbasAbertas > 1){
+			var qtdAbasAbertas =  $('.ui-corner-top').size();
+			if(qtdAbasAbertas > 1) {
 				
 				if(keycode == 17){
 					pressedCtrl = true; 
@@ -92,20 +92,20 @@ $(document).ready(function(){
 					var indexSelecionar = indexSecionado;
 					
 					if(keycode == 37 && pressedCtrl == true) {//Esquerda
-						if(indexSecionado == 0){
+						if(indexSecionado == 0) {
 							indexSelecionar == qtdAbasAbertas-1;
-						}else{
+						} else {
 							indexSelecionar--;
 						}
 					}else if(keycode == 39 && pressedCtrl == true) {//Direita
-						if(indexSecionado == (qtdAbasAbertas-1)){
+						if(indexSecionado == (qtdAbasAbertas-1)) {
 							indexSelecionar = 0;
-						}else{
+						} else {
 							indexSelecionar++;
 						}
 					}
 					
-					if(indexSelecionar != -1){
+					if(indexSelecionar != -1) {
 						refTabs.children('a')[indexSelecionar].click();
 					}
 				}
@@ -360,7 +360,7 @@ function doGet(url, params, target) {
 }
 
 function newOption(value, label) {
-    return "<option value='" + value + "'>" + label + "</option>"
+    return "<option value='" + value + "'>" + label + "</option>";
 }
 
 function replaceAll(string, token, newtoken) {
@@ -374,6 +374,11 @@ function replaceAll(string, token, newtoken) {
 
 function intValue(valor) {
 
+	if (!valor) {
+		
+		return 0;
+	}
+	
 	return parseInt(valor, 10);
 }
 
@@ -390,7 +395,7 @@ function priceToFloat(field) {
 	field = replaceAll(field, ".", "");
 	field = replaceAll(field, ",", ".");
 	
-	return parseFloat(field).toFixed(2);
+	return parseFloat(field).toFixed(4);
 }
 
 function floatToPrice(field) {
@@ -398,7 +403,7 @@ function floatToPrice(field) {
 	var price = String(field);
 
 	if (price.indexOf(".") == -1) {
-		price = price + ".00";
+		price = price + ".0000";
 	}
 	
 	if(price.indexOf(",") > -1) {
@@ -491,15 +496,15 @@ function onlyNumeric(event){
 }
 
 function focusSelectRefField(objectField){
-	setTimeout (function () {objectField.focus();objectField.select()}, 500);
+	setTimeout (function () {objectField.focus();objectField.select();}, 500);
 }
 
 function focusFirstContentView(context){
-	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus()}, 1);
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
 }
 
 function focusFirstContentModal(){
-	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus()}, 1);
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus();}, 1);
 }
 
 function keyEventEnterAux(e){
@@ -531,6 +536,7 @@ function bloquearItensEdicao(workspace) {
 	$('a[isEdicao="true"]',workspace).each(function() {
 		this.href="#";
 		$(this).removeAttr("onClick");
+		$(this).unbind('click');
 		$(this).click(function(e){
 			exibirAcessoNegado();
 		});
@@ -555,3 +561,33 @@ function verificarPermissaoAcesso(workspace) {
 	
 	return false;
 }
+
+function direcionar(novaTab, path){
+	    
+	$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+		
+	$(".tipsy").hide();
+	
+	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
+}
+
+function adicionarTab(novaTab, path){
+	
+	$(".tipsy").hide();
+	
+	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
+}
+
+function disableF5(e) { if ((e.which || e.keyCode) == 116) e.preventDefault(); };
+
+//simply visual, let's you know when the correct iframe is selected
+/*$(window).on("focus", function(e) {
+ $("html, body").css({ background: "#FFF", color: "#000" })
+ .find("h2").html("THIS BOX NOW HAS FOCUS<br />F5 should not work.");
+})
+.on("blur", function(e) {
+ $("html, body").css({ background: "", color: "" })
+ .find("h2").html("CLICK HERE TO GIVE THIS BOX FOCUS BEFORE PRESSING F5");
+});*/
+
+//@ sourceURL=util.js

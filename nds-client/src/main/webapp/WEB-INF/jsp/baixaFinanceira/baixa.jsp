@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -11,6 +12,8 @@
 		var pesquisaCotaBaixaFinanceira = new PesquisaCota(baixaFinanceiraController.workspace);
 		$(function(){
 			baixaFinanceiraController.init();
+
+			bloquearItensEdicao(baixaFinanceiraController.workspace);
 		});
 	</script>
 	
@@ -50,13 +53,13 @@
 			
 			<div id="botoesDividasNaoPagas">
 				<span class="bt_novos">
-					<a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;" rel="tipsy" title="À Vista">
+					<a isEdicao="true" onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;" rel="tipsy" title="À Vista">
 						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 					</a>
 				</span>
 				
 				<span class="bt_novos">
-					<a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;" rel="tipsy" title="Postergar">
+					<a isEdicao="true" onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;" rel="tipsy" title="Postergar">
 						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reprogramar.gif">
 					</a>
 				</span>
@@ -193,7 +196,7 @@
 				
 				<td width="30">
 				    <span class="bt_pesquisar">
-				        <a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a>
+				        <a href="javascript:;" onclick="baixaFinanceiraController.buscaManual('PESQUISA');"></a>
 				    </span>
 				</td>
 				
@@ -283,18 +286,27 @@
 		      	    <td class="linha_borda"><strong>Valor R$:</strong></td>
 		      	    <td class="linha_borda" id="valorBoleto" />
 		   	      </tr>
+		   	      <tr>
+		   	      		<td class="dataPagamentoManualBoleto" width="100">Data Pagamento:</td>
+			            <td class="dataPagamentoManualBoleto">
+							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManualBoleto();" name="dtPagamentoManualBoleto" type="text" id="dtPagamentoManualBoleto" style="width:120px; text-align:right;" />
+						</td>
+				  </tr>
 		   	      
 		   	      <tr>
-		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
-		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
+		   	      
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Juros R$:</strong></td>
 		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
+		   	      
+		   	      
 		   	      <tr>
-		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
-		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      
 		   	      <tr>
@@ -353,7 +365,7 @@
 		                            Marcar Todos
 		                        </label>
 		                        
-		                        <input title="Selecionar todas as Dívidas" type="checkbox" id="selTodos" name="selTodos" onclick="baixaFinanceiraController.selecionarTodos(this.checked);" style="float:left;"/>
+		                        <input isEdicao="true" title="Selecionar todas as Dívidas" type="checkbox" id="selTodos" name="selTodos" onclick="baixaFinanceiraController.selecionarTodos(this.checked);" style="float:left;"/>
 		                    </span>
 
 		                </td>
@@ -373,42 +385,48 @@
 				    <jsp:include page="../messagesDialog.jsp"></jsp:include>
 				    
 				
-					<table width="433" border="0" cellpadding="2" cellspacing="2">
+					<table width="433" border="0" cellpadding="2" cellspacing="2" id="pagarDividas">
 					  <tr>
-					    <td width="153"><strong>Valor Dívida R$:</strong>
+					    <td width="90"><strong>Valor Dívida R$:</strong>
 					    
 					    </td>
-					    <td width="266" id="valorDividas" ></td>
+					    <td width="100" id="valorDividas" ></td>
+					    
+					    <td class="dataPagamentoManual" width="100">Data Pagamento:</td>
+			            <td class="dataPagamentoManual">
+							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManual();" name="dtPagamentoManual" type="text" id="dtPagamentoManual" style="width:80px; text-align:right;" />
+						</td>
+					    
 					  </tr>
 					  <tr>
 					    <td><strong>Multa R$:</strong></td>
-					    <td><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input  maxlength="16" id="multaDividas" name="multaDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td><strong>Juros R$:</strong></td>
-					    <td><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input maxlength="16" id="jurosDividas" name="jurosDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td><strong>Desconto R$:</strong></td>
-					    <td><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input maxlength="16" id="descontoDividas" name="descontoDividas" onblur="baixaFinanceiraController.calculaTotalManualDividas();baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td><strong>Valor pago R$:</strong></td>
-					    <td><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
+					    <td colspan="3"><input maxlength="16" id="valorPagoDividas" name="valorPagoDividas" onblur="baixaFinanceiraController.calculaSaldoDividas();" type="text" style="width:80px; text-align:right;" /></td>
 					  </tr>
 					  <tr>
 					    <td>&nbsp;</td>
-					    <td style="border-bottom:1px solid #000;">&nbsp;</td>
+					    <td colspan="3" style="border-bottom:1px solid #000;">&nbsp;</td>
 					  </tr>
 					  <tr>
 					    <td><strong>Saldo R$:</strong></td>
-					    <td id="valorSaldoDividas" ></td>
+					    <td colspan="3" id="valorSaldoDividas" ></td>
 					  </tr>
 					  
 					  
 					  <tr>
 					    <td><strong>Forma Recebimento:</strong></td>
-					    <td>
+					    <td colspan="3">
 					        <select name="formaRecebimentoDividas" id="formaRecebimentoDividas"  onchange="baixaFinanceiraController.mostrarBancos(this.value);" style="width:150px;">
 		                        <option value="">Selecione</option>
 		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
@@ -420,7 +438,7 @@
 					  
 					  <tr>
 					    <td><strong><span id="labelBanco">Banco:</span></strong></td>
-					    <td>
+					    <td colspan="3">
 					        <select name="idBanco" id="bancoDividas" style="width:150px;">
 		                        <option value="">Selecione</option>
 		                        <c:forEach items="${bancos}" var="banco">
@@ -437,7 +455,7 @@
 					  </tr>
 					  <tr>
 					    <td><strong>Observação:</strong></td>
-					    <td><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
+					    <td colspan="3"><textarea maxlength="150" name="observacoesDividas" id="observacoesDividas" cols="45" rows="3" style="width:260px;"></textarea></td>
 					  </tr>
 					</table>
 				</div>
@@ -465,7 +483,7 @@
 					<table width="230" border="0" cellspacing="2" cellpadding="0">
 			          <tr>
 			            <td width="121">Nova Data:</td>
-			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="baixaFinanceiraController.obterPostergacao();" /></td>
+			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="baixaFinanceiraController.obterPostergacao(true);" /></td>
 			          </tr>
 			          <tr>
 			            <td>Encargos R$:</td>
@@ -473,7 +491,7 @@
 			          </tr>
 			          <tr>
 			            <td>Isentos Encargos</td>
-			            <td><input type="checkbox" name="checkIsIsento" id="checkIsIsento" /></td>
+			            <td><input onchange="baixaFinanceiraController.alterarIsencao(this.checked === true)" type="checkbox" name="checkIsIsento" id="checkIsIsento" /></td>
 			          </tr>
 			        </table>
 			    </fieldset>

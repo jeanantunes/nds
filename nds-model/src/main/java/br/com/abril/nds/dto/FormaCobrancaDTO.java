@@ -2,7 +2,10 @@ package br.com.abril.nds.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -17,6 +20,7 @@ public class FormaCobrancaDTO {
 	String concentracaoPagto = "";
 	String tipoPagto;
 	String detalhesTipoPagto = "";
+	boolean parametroDistribuidor;
 	
 	//DADOS DO FORMULARIO
 	TipoCobranca tipoCobranca;
@@ -34,6 +38,7 @@ public class FormaCobrancaDTO {
 	Integer diaDoMes;
 	Integer primeiroDiaQuinzenal;
 	Integer segundoDiaQuinzenal;
+	List<Integer> diasDoMes;
 	
 	boolean domingo;
 	boolean segunda;
@@ -44,7 +49,8 @@ public class FormaCobrancaDTO {
 	boolean sabado;
 	
 	List<Long> fornecedoresId;
-	
+	Set<Fornecedor> fornecedores;
+	Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota;
 	
 	public FormaCobrancaDTO(){
 		
@@ -52,13 +58,15 @@ public class FormaCobrancaDTO {
 
 	//CONTRUTOR PARA DADOS DA GRID
 	public FormaCobrancaDTO(Long idFormaCobranca, String fornecedor,
-			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto) {
+			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto,
+			boolean parametroDistribuidor) {
 		super();
 		this.idFormaCobranca = idFormaCobranca;
 		this.fornecedor = fornecedor;
 		this.concentracaoPagto = concentracaoPagto;
 		this.tipoPagto = tipoPagto;
 		this.detalhesTipoPagto = detalhesTipoPagto;
+		this.parametroDistribuidor = parametroDistribuidor;
 	}
 	
 	//CONTRUTOR PARA O FORMULARIO
@@ -148,6 +156,14 @@ public class FormaCobrancaDTO {
 
 	public void setDetalhesTipoPagto(String detalhesTipoPagto) {
 		this.detalhesTipoPagto = detalhesTipoPagto;
+	}
+
+	public boolean isParametroDistribuidor() {
+		return parametroDistribuidor;
+	}
+
+	public void setParametroDistribuidor(boolean parametroDistribuidor) {
+		this.parametroDistribuidor = parametroDistribuidor;
 	}
 
 	public TipoCobranca getTipoCobranca() {
@@ -327,5 +343,30 @@ public class FormaCobrancaDTO {
        }
        fornecedoresId.add(id);
     }
+
+	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
+		return concentracaoCobrancaCota;
+	}
+
+	public void setConcentracaoCobrancaCota(
+			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
+		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
+	}
+
+	public List<Integer> getDiasDoMes() {
+		return diasDoMes;
+	}
+
+	public void setDiasDoMes(List<Integer> diasDoMes) {
+		this.diasDoMes = diasDoMes;
+	}
+
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
+	}
 
 }

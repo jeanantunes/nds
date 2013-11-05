@@ -31,7 +31,7 @@ public class ItemRecebimentoFisico implements Serializable {
 	@Column(name = "QTDE_FISICO", nullable = false)
 	private BigInteger qtdeFisico;
 	@OneToOne
-	@JoinColumn(name = "DIFERENCA_ID")
+	@JoinColumn(name = "DIFERENCA_ID", updatable = true, insertable = true, nullable = true)
 	private Diferenca diferenca;
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RECEBIMENTO_FISICO_ID")

@@ -13,17 +13,16 @@ var furoProdutoController = $.extend(true, {
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
-		$("#produto", furoProdutoController.workspace).autocomplete({source: ""});
 		
 		$("#dataLancamento", furoProdutoController.workspace).mask("99/99/9999");
 		$("#novaData", furoProdutoController.workspace).mask("99/99/9999");
-		$("#edicao", furoProdutoController.workspace).mask("?99999999999999999999", {placeholder:""});
+		$("#edicao", furoProdutoController.workspace).numeric();
 		
 		$(document).ready(function(){
 			
 			focusSelectRefField($("#codigo"));
 			
-			$(document.body).keydown(function(e) {
+			$('#linkPesquisarFuro').keydown(function(e) {
 				
 				if(keyEventEnterAux(e)){
 					furoProdutoController.pesquisar();
@@ -90,13 +89,17 @@ var furoProdutoController = $.extend(true, {
 	},
 	
 	pesquisarPorNomeProduto : function(){
+		
+		var produto = $("#produto", furoProdutoController.workspace).val().trim();
+		
+		if (!produto || produto.trim().length <= 2)
+			return;
+		
 		if(!isPesquisarPorNomeProdutoRequestCallBack){
 			isPesquisarPorNomeProdutoRequestCallBack = true;
-			var produto = $("#produto", furoProdutoController.workspace).val().trim();
 			
-			if (produto && produto.length > 2){
-				$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
-			}
+			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
+			
 		}
 	},
 	
@@ -107,21 +110,70 @@ var furoProdutoController = $.extend(true, {
 			select: function(event, ui){
 				furoProdutoController.completarPesquisa(ui.item.chave);
 			},
-			delay : 0
+			delay : 1
 		});
 	},
 	
 	completarPesquisa : function(chave){
 		$("#codigo", furoProdutoController.workspace).val(chave.codigoProduto);
-		$("#edicao", furoProdutoController.workspace).focus();
 	},
 	
-	confirmar : function(){
+	confirmar : function() {
+		
+		var dataConfirmarFuro = {'produtoLancamento.novaDataLancamento': $("#novaData", furoProdutoController.workspace).val()};
+		
 		var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
-				idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
-				novaData:$("#novaData", furoProdutoController.workspace).val(),
-				idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
-		$.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data) } );
+				  idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
+				  novaData:$("#novaData", furoProdutoController.workspace).val(),
+				  idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
+		
+		$.postJSON(
+				contextPath + "/matrizLancamento/perguntarDataConfirmadaOuNao",
+				dataConfirmarFuro,
+				function(retorno) {
+
+					if(retorno.boolean) {
+					
+						$( "#dialog-confirm_button", furoProdutoController.workspace ).dialog({
+							resizable: false,
+							height:'auto',
+							width:300,
+							modal: true,
+							buttons: [
+							          {
+							        	  id: "dialogConfirmarBtnConfirmar",
+							        	  text: "Confirmar",
+							        	  click: function() {
+
+							        		  $.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
+
+							        		  $(this).dialog("close");
+							        	  }
+							          },
+							          {
+							        	  id: "dialogConfirmarBtnCancelar",
+							        	  text: "Cancelar",
+							        	  click: function() {
+
+							        		  $(this).dialog("close");
+							        	  }
+							          }
+							          ],
+							          beforeClose: function() {
+							        	  clearMessageDialogTimeout("#dialog-confirm_button");
+							          },
+							          form: $("#dialog-confirm_button", furoProdutoController.workspace).parents("form")
+						});
+						
+						$("#dialogConfirmarBtnConfirmar", furoProdutoController.workspace).focus();
+					} else {
+
+		        		  $.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
+
+					}
+
+				});
+
 	},
 	
 	posProcessarConfirmacao : function(result, data) {
@@ -167,26 +219,29 @@ var furoProdutoController = $.extend(true, {
 		$("#resultado", furoProdutoController.workspace).hide();
 		$("#codigo", furoProdutoController.workspace).val("");
 		$("#produto", furoProdutoController.workspace).val("");
-		$("#edicao", furoProdutoController.workspace).mask("?99999999999999999999", {placeholder:""}).val("");
+		$("#edicao", furoProdutoController.workspace).val("");
 		$("#dataLancamento", furoProdutoController.workspace).val("");
 		$("#novaData", furoProdutoController.workspace).val("");
 		$("#codigo", furoProdutoController.workspace).focus();
 	},
 	
-	buscarNomeProduto : function(){
+	buscarNomeProdutoFuro : function(){
 		if ($("#codigo", furoProdutoController.workspace).val().length > 0){
 			var data = {codigoProduto: $("#codigo", furoProdutoController.workspace).val()};
 			$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
 				function(result){
 					if (result && result.string != ""){
 						$("#produto", furoProdutoController.workspace).val(result);
-						$("#edicao", furoProdutoController.workspace).focus();
 					} else {
 						$("#produto", furoProdutoController.workspace).val("");
 						$("#produto", furoProdutoController.workspace).focus();
 					}
 				}
 			);
+		}
+		else{
+			$("#edicao", furoProdutoController.workspace).val("");
+			$("#produto", furoProdutoController.workspace).val("");
 		}
 	}
 	

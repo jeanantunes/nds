@@ -28,10 +28,9 @@ import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -197,11 +196,11 @@ public class ConsultaInformeEncalheController extends BaseController {
 		
 		this.result.include("diaMesInicioRecolhimento", 1);
 		this.result.include("dataInicioRecolhimento", new SimpleDateFormat("dd/MM").format(dataInicioRecolhimento.getTime()));
-		this.result.include("diaSemanaInicioRecolhimento", DateUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
+		this.result.include("diaSemanaInicioRecolhimento", SemanaUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
 		this.result.include("diaMesFimRecolhimento", maxDiaSemanaRecolhimento);
 		this.result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataImpressãoFimRecolhimento.getTime()));
-		this.result.include("diaSemanaFimRecolhimento", DateUtil.obterDiaSemana(dataImpressãoFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
+		this.result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataImpressãoFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
 		List<ColunaRelatorioInformeEncalhe> colunas = new ArrayList<ColunaRelatorioInformeEncalhe>();
 		

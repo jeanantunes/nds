@@ -27,7 +27,7 @@ public class DetalheFaltaSobra {
 	private Integer codigoTipoAcerto;
 		
 	@Column(name = "COD_PUBLICACAO_ADABAS", nullable = true)    
-	private Long codigoPublicacaoAdabas;
+	private String codigoPublicacaoAdabas;
 	
 	@Column(name = "NUM_EDICAO", nullable = true)
 	private Long numeroEdicao;
@@ -121,7 +121,7 @@ public class DetalheFaltaSobra {
 	/**
 	 * @return the codigoPublicacaoAdabas
 	 */
-	public Long getCodigoPublicacaoAdabas() {
+	public String getCodigoPublicacaoAdabas() {
 		return codigoPublicacaoAdabas;
 	}
 
@@ -130,7 +130,7 @@ public class DetalheFaltaSobra {
 	/**
 	 * @param codigoPublicacaoAdabas the codigoPublicacaoAdabas to set
 	 */
-	public void setCodigoPublicacaoAdabas(Long codigoPublicacaoAdabas) {
+	public void setCodigoPublicacaoAdabas(String codigoPublicacaoAdabas) {
 		this.codigoPublicacaoAdabas = codigoPublicacaoAdabas;
 	}
 

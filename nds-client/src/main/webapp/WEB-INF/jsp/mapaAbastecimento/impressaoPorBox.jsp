@@ -26,7 +26,6 @@ function imprimir(){
 
 <body>
 
-
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
   <td width="121" height="21" align="center">
@@ -51,7 +50,7 @@ function imprimir(){
               <td width="560" rowspan="2" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000; border-top:1px solid #000;"><strong>BOX</strong></td>
             </tr>
             <tr class="class_linha_3">
-              <td width="151" class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; border-left:1px solid #000;"><strong>Código</strong></td>
+              <td width="151" class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; border-left:1px solid #000;"><strong>Código de Barras</strong></td>
               <td width="89" style="padding-left:5px; border-bottom:1px solid #000; border-right:1px solid #000;" class="relatorios"><strong>Preço Capa</strong></td>
             </tr>
             
@@ -85,7 +84,7 @@ function imprimir(){
             </tr>
 
             <tr class="class_linha_${status.index%2==0 ? 1:2}">
-              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
+              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">${produto.codigoDeBarras}</td>
               <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> ${produto.precoCapa}</td>
             </tr>
            

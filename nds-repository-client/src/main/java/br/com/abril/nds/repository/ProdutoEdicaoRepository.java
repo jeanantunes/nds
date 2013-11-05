@@ -34,10 +34,11 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @param idProdutoEdicao
 	 * @param dataRecolhimento
+	 * @param numeroCota
 	 * 
 	 * @return Integer
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento);
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento, Integer numeroCota);
 	
 	/**
 	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.
@@ -83,6 +84,9 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto,
 														   Long numeroEdicao);
 	
+	
+	ProdutoEdicao obterMaxProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, Long numeroEdicao);
+	
 	/**
 	 * Obtém produtos edição de acordo com o 
 	 * produto e o produto edição.
@@ -114,7 +118,9 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 	
-	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, 
+												  Integer numeroCota,
+												  Integer quantidadeRegistros);
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
@@ -157,7 +163,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param dto
 	 * @return
 	 */
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
@@ -336,5 +342,14 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	BigDecimal obterDescontoLogistica(Long idPropdutoEdicao);
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
-
+	
+	/**
+	 * Verifica se uma edição é parcial
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return Boolean
+	 */
+	public Boolean isEdicaoParcial(Long idProdutoEdicao);
+	
 }

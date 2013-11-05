@@ -28,7 +28,7 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	
 	private Intervalo<Date> periodoMovimento;
 	
-	private TipoNotaFiscal tipoNotaFiscal;
+	private Set<TipoNotaFiscal> tipoNotaFiscal;
 	
 	private List<Long> listaIdFornecedores;
 	
@@ -86,14 +86,14 @@ public class ConsultaLoteNotaFiscalDTO implements Serializable {
 	/**
 	 * @return the tipoNotaFiscal
 	 */
-	public TipoNotaFiscal getTipoNotaFiscal() {
+	public Set<TipoNotaFiscal> getTipoNotaFiscal() {
 		return tipoNotaFiscal;
 	}
 
 	/**
 	 * @param tipoNotaFiscal the tipoNotaFiscal to set
 	 */
-	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
+	public void setTipoNotaFiscal(Set<TipoNotaFiscal> tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 

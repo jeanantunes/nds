@@ -7,20 +7,24 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
-import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
+import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheService {
 	
@@ -40,39 +44,40 @@ public interface ConferenciaEncalheService {
 	 */
 	public boolean isCotaEmiteNfe(Integer numeroCota);
 	
+	/**
+	 * Obtém lista de debito crédito relativa a cobrança 
+	 * relacionada com uma operação de encalhe.
+	 * 
+	 * @param controleConferenciaEncalheCota
+	 * 
+	 * @return List - ComposicaoCobrancaSlipDTO
+	 */
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
+	
 	
 	/**
 	 * 
 	 * @param conferenciaEncalhe
-	 * @param numeroCota
+	 * @param cota
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
-			Integer numeroCota, 
+			Cota cota, 
 			Date dataOperacao, 
 			boolean indConferenciaContingencia);
 	
+	
 	/**
-	 * Método faz seguintes verificações:
-	 * 
-	 * Se a cota ja possui uma conferencia de encalhe 
-	 * para a data de operação atual, caso positivo, será lancada 
-	 * uma exception para informando que é necessaria a reabertura
-	 * desta conferência.
-	 * 
-	 * Senão, é verificado se existe alguma chamada de encalhe para
-	 * a cota em questão. Se nenhuma chamada de encalhe atual ou 
-	 * futura for encontrada, é lançada exception informando que não
-	 * existe uma chamada de encalhe prevista para esta cota.
+	 * Verifica se a cota em questão possui uma conferencia de encalhe
+	 * ja finalizada na data de operação atual.
 	 * 
 	 * @param numeroCota
 	 * 
-	 * @throws ConferenciaEncalheExistenteException
-	 * @throws ChamadaEncalheCotaInexistenteException
+	 * @return boolean
 	 */
-	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
+	public boolean verificarCotaComConferenciaEncalheFinalizada(Integer numeroCota);
 	
 	
 	/**
@@ -126,8 +131,10 @@ public interface ConferenciaEncalheService {
 	/**
 	 * Gera documentação referente a conferência de encalhe.
 	 * 
-	 * @param dadosDocumentacaoConfEncalheCotaDTO
+	 * @param idControleConferenciaEncalheCota
+	 * @param nossoNumero
 	 * @param tipoDocumentoConferenciaEncalhe
+	 * @param geraNovoNumeroSlip
 	 * 
 	 * @return byte
 	 */
@@ -135,8 +142,8 @@ public interface ConferenciaEncalheService {
 	public byte[] gerarDocumentosConferenciaEncalhe(			
 			Long idControleConferenciaEncalheCota,
 			String nossoNumero,
-			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe			
-			);
+			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe,
+			boolean geraNovoNumeroSlip);
 
 	
 	/**
@@ -147,10 +154,9 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return ProdutoEdicaoDTO
 	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código de barras do mesmo se houver chamada de encalhe.
@@ -160,10 +166,9 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return List<ProdutoEdicaoDTO>
 	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.
@@ -173,10 +178,9 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return ProdutoEdicaoDTO
 	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém detalhes do item de conferencia de encalhe.
@@ -210,7 +214,6 @@ public interface ConferenciaEncalheService {
 			Usuario usuario,
 			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
 	
-	
 	/**
 	 * Finaliza uma conferência de encalhe gerando os movimentos financeiros 
 	 * relativos a mesma, faz chamada também ao rotinas relativas a cobrança.
@@ -232,13 +235,22 @@ public interface ConferenciaEncalheService {
 			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException;
 	
 	/**
+	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota para impressora matricial
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param incluirNumeroSlip
+	 * @return
+	 */
+	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	
+	/**
 	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
 	 * 
 	 * @param idControleConferenciaEncalheCota
 	 * @param incluirNumeroSlip
 	 * @return
 	 */
-	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
 	
 	/**
 	 * Obtem valor total para geração de crédito na C.E.
@@ -246,5 +258,19 @@ public interface ConferenciaEncalheService {
 	 * @return BigDecimal
 	 */
 	BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota);
-		
+
+	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao);
+	
+	public SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+
+	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao);
+	
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
+	
+	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
+	
+	boolean isLancamentoParcial(Long idProdutoEdicao);
+	
+	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao);
+	
 }

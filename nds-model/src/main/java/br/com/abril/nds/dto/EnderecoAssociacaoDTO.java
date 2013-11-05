@@ -69,8 +69,7 @@ public class EnderecoAssociacaoDTO implements Serializable {
 		BAIRRO,
 		CEP,
 		CIDADE,
-		PRINCIPAL
-		;
+		PRINCIPAL;
 	}
 	
 	/**

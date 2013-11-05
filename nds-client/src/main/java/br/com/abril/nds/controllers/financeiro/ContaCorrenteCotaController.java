@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -137,10 +138,9 @@ public class ContaCorrenteCotaController extends BaseController {
 		}
 
 		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
-				consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
+			consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
 		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
-
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				totalGeral = totalGeral.add(dto.getValorTotal());
 			}
 			
-			dados[2] = totalGeral;
+			dados[2] = totalGeral.setScale(4, RoundingMode.HALF_EVEN);
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
 		}else{
@@ -205,15 +205,14 @@ public class ContaCorrenteCotaController extends BaseController {
 	 * @param page
 	 */
 	@SuppressWarnings("unused")
-	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtro){
+	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtro, String sortname, String sortorder){
 		
 		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO, filtro);
 		
-		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
-				.obterMovimentoEstoqueCotaConsignado(filtro);
+		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
 		
 		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
-		
+
 		TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsignadoCotaDTO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsignadoCota));
@@ -222,6 +221,13 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		if(listaConsignadoCota != null){
 			
+			if(listaInfoTotalFornecedor != null && !listaInfoTotalFornecedor.isEmpty()) {
+				
+				for(InfoTotalFornecedorDTO info : listaInfoTotalFornecedor) {
+					info.setValorTotal(info.getValorTotal().setScale(4, RoundingMode.HALF_EVEN));
+				}
+				
+			}
 			
 			ResultadosContaCorrenteConsignadoDTO resultado = new ResultadosContaCorrenteConsignadoDTO(
 					tableModel,
@@ -230,9 +236,17 @@ public class ContaCorrenteCotaController extends BaseController {
 			
 			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
 									
-			Object[] dados = new Object[2];
+			Object[] dados = new Object[3];
 			dados[0] = temMaisQueUm;
-			dados[1] = resultado;		
+			dados[1] = resultado;
+			
+			BigDecimal total = BigDecimal.ZERO;
+			for (ConsignadoCotaDTO c : listaConsignadoCota){
+				
+				total = total.add(c.getTotal());
+			}
+			total = total.setScale(4, RoundingMode.HALF_EVEN);
+			dados[2] = total;
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
 						
@@ -260,10 +274,14 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(4, RoundingMode.HALF_EVEN)));
 			
 		}
 		
+		for (Entry<String, InfoTotalFornecedorDTO> info : mapFornecedores.entrySet()) {
+		
+			info.getValue().setValorTotal(info.getValue().getValorTotal().setScale(4, RoundingMode.HALF_EVEN));
+		}
 
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
 		infoTotalFornecedorDTOs.addAll( mapFornecedores.values() );
@@ -297,7 +315,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = BigDecimal.ZERO;
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(4, RoundingMode.HALF_EVEN)));
 			
 		}
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
@@ -460,8 +478,19 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		for(ConsultaVendaEncalheDTO eDTO : encalheDTOs){
 			
-			eDTO.setPrecoComDesconto( (eDTO.getPrecoComDesconto()==null)?BigDecimal.ZERO:eDTO.getPrecoComDesconto().setScale(2,1));
-			eDTO.setTotal( (eDTO.getTotal()==null)?BigDecimal.ZERO:eDTO.getTotal().setScale(2,1));
+			eDTO.setPrecoComDesconto(
+				(eDTO.getPrecoComDesconto()==null)?BigDecimal.ZERO:
+					eDTO.getPrecoComDesconto().setScale(4,RoundingMode.HALF_EVEN));
+			
+			eDTO.setTotal(
+				(eDTO.getTotal()==null)?BigDecimal.ZERO:
+					eDTO.getTotal().setScale(4,RoundingMode.HALF_EVEN));
+			
+			if(eDTO.getPrecoCapa() == null){
+				eDTO.setPrecoCapa(BigDecimal.ZERO);
+			}
+			
+			eDTO.setPrecoCapa(eDTO.getPrecoCapa().setScale(2,RoundingMode.HALF_EVEN));
 		}
 
 		TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>>();
@@ -535,6 +564,7 @@ public class ContaCorrenteCotaController extends BaseController {
 		result.use(Results.nothing());
 	}
 	
+	@Rules(Permissao.ROLE_FINANCEIRO_CONTA_CORRENTE_ALTERACAO)
 	public void enviarEmail(String mensagem, String[] destinatarios) throws IOException {
 		
 		AnexoEmail anexoXLS = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.XLS), TipoAnexo.XLS);
@@ -563,15 +593,20 @@ public class ContaCorrenteCotaController extends BaseController {
 			emailService.enviar(assunto, mensagem, destinatarios, anexos);
 			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
 		} catch (AutenticacaoEmailException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
-		}
-		
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, 
+					"[Falha de autenticação] Não foi possível enviar o e-mail, "
+						+ "verifique o servidor de e-mail e os dados de autenticação.");
+		}		
 	}
 	
 	public void pesquisarEmailCota(Integer numeroCota){
+
 		String email = cotaService.obterPorNumeroDaCota(numeroCota).getPessoa().getEmail();
 		
-		result.use(Results.json()).from(email, "result").recursive().serialize();
+		email = email == null ? "" : email;
+
+		this.result.use(Results.json()).withoutRoot().from(email).recursive().serialize();
 	}
 	
 	private byte[] gerarAnexo(FileType tipo) throws IOException{
@@ -631,13 +666,13 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		BigDecimal valor = this.contaCorrenteCotaService.consultarJurosCota(idConsolidado, data, numeroCota);
 		dados.add(valor == null ? 
-				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
-				valor.setScale(2, RoundingMode.HALF_EVEN));
+				BigDecimal.ZERO.setScale(4, RoundingMode.HALF_EVEN) : 
+				valor.setScale(4, RoundingMode.HALF_EVEN));
 		
 		valor = this.contaCorrenteCotaService.consultarMultaCota(idConsolidado, data, numeroCota);
 		dados.add(valor == null ? 
-				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
-				valor.setScale(2, RoundingMode.HALF_EVEN));
+				BigDecimal.ZERO.setScale(4, RoundingMode.HALF_EVEN) : 
+				valor.setScale(4, RoundingMode.HALF_EVEN));
 		
 		this.result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}

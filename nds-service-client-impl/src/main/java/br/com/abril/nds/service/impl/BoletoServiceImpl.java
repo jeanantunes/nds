@@ -2,12 +2,18 @@ package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.xml.bind.ValidationException;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,22 +38,27 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
@@ -57,8 +68,10 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.AcumuloDividasService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
@@ -66,6 +79,7 @@ import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
@@ -128,6 +142,14 @@ public class BoletoServiceImpl implements BoletoService {
 	@Autowired
 	protected DividaRepository dividaRepository;
 	
+	@Autowired
+	protected AcumuloDividasService acumuloDividasService;
+	
+	@Autowired
+	protected FormaCobrancaRepository formaCobrancaRepository;
+	
+	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
+	
 	/**
 	 * Método responsável por obter boletos por numero da cota
 	 * @param filtro
@@ -186,8 +208,11 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setQuantidadeInadimplentes(
 			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
 		
-		resumoBaixaBoletos.setValorTotalBancario(
-			this.boletoRepository.obterValorTotalBancario(data));
+		BigDecimal valorTotalBancario = this.boletoRepository.obterValorTotalBancario(data);
+		
+		valorTotalBancario = (valorTotalBancario == null) ? BigDecimal.ZERO : valorTotalBancario;
+		
+		resumoBaixaBoletos.setValorTotalBancario(valorTotalBancario.setScale(2, RoundingMode.HALF_EVEN));
 		
 		List<ControleBaixaBancaria> listaControleBaixa =
 			this.controleBaixaRepository.obterListaControleBaixaBancaria(
@@ -265,14 +290,15 @@ public class BoletoServiceImpl implements BoletoService {
 			resumoBaixaBoletos.setNomeArquivo(arquivoPagamento.getNomeArquivo());
 			resumoBaixaBoletos.setDataCompetencia(DateUtil.formatarDataPTBR(dataOperacao));
 			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
-			
+
 		} catch (Exception e) {
-			
+
+			//gerar movimentos financeiros para cobranças não pagas
 			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-														   dataOperacao, dataPagamento, usuario, banco);
+                    dataOperacao, dataPagamento, usuario, banco);
 			
 			if (e instanceof ValidacaoException) {
-				
+
 				throw new ValidacaoException(((ValidacaoException) e).getValidacao());
 			
 			} else {
@@ -282,7 +308,226 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	public void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento) {
+
+		LOG.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
+		
+		List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
+		
+		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
+		
+		Integer numeroMaximoAcumulosDistribuidor = this.distribuidorRepository.numeroMaximoAcumuloDividas();
+		
+		int contador = 0;
+		
+		int qtdBoletosNaoPagos = 0;
+		
+		if(boletosNaoPagos!=null) {
+			qtdBoletosNaoPagos = boletosNaoPagos.size();
+		}
+		
+		String nossoNumero = "";
+		
+		for (Cobranca boleto : boletosNaoPagos) {
+			
+			LOG.info("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
+			
+			nossoNumero = boleto.getNossoNumero();
+			
+			Divida divida = boleto.getDivida();
+			
+			try {
+
+				this.validarAcumuloDivida(divida, naoAcumulaDividas, numeroMaximoAcumulosDistribuidor);
+
+				divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
+				this.dividaRepository.alterar(divida);
+				
+				boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
+				this.cobrancaRepository.alterar(boleto);
+				
+				Date dataVencimento = this.obterNovaDataVencimentoAcumulo(dataPagamento);
+				
+				//movimentoFinanceiro do valor do boleto
+				MovimentoFinanceiroCota movimentoPendente = this.gerarMovimentoFinanceiro(
+						dataPagamento,
+						usuario,
+						boleto.getCota(),
+						dataVencimento,
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.PENDENTE),
+						"Oriundo de cobrança não paga");
+				
+				MovimentoFinanceiroCota movimentoJuros = null;
+				
+				MovimentoFinanceiroCota movimentoMulta = null;
+				
+				BigDecimal valor = this.cobrancaService.calcularJuros(
+						boleto.getBanco(), 
+						boleto.getCota().getId(), 
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
+						boleto.getDataVencimento(), 
+						this.calendarioService.adicionarDiasRetornarDiaUtil(dataPagamento, 1));
+					
+				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+					
+					//movimento finaceiro juros
+					movimentoJuros = this.gerarMovimentoFinanceiro(
+							dataPagamento,
+							usuario,
+							boleto.getCota(),
+							dataVencimento,
+							valor,
+							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+									GrupoMovimentoFinaceiro.JUROS),
+							"Oriundos de cobrança não paga");
+				}
+				
+				valor = this.cobrancaService.calcularMulta(
+						boleto.getBanco(), 
+						boleto.getCota(), 
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+				
+				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+					
+					//movimento financeiro multa
+					movimentoMulta = this.gerarMovimentoFinanceiro(
+							dataPagamento,
+							usuario,
+							boleto.getCota(), 
+							dataVencimento,
+							valor,
+							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+									GrupoMovimentoFinaceiro.MULTA),
+							"Oriunda de cobrança não paga");
+				}
+
+				this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
+
+			} catch (IllegalArgumentException e) {
+			
+				LOG.error("FALHA AO ADIAR BOLETO DIVIDA NÃO PAGA NOSSO NUMERO [" + nossoNumero + "]", e);
+				
+				//Caso a dívida exceder o limite de acúmulos do distribuidor, 
+				//esta não será persistida, dando continuidade ao fluxo.
+				continue;
+			}
+		}
+	}
 	
+	private Date obterNovaDataVencimentoAcumulo(Date dataOperacao) {
+
+		boolean isVencimentoDiaUtil = this.formaCobrancaRepository.obterFormaCobranca().isVencimentoDiaUtil();
+		
+		if (isVencimentoDiaUtil) {
+			
+			return this.calendarioService.adicionarDiasUteis(dataOperacao, 1);
+		
+		} else {
+			
+			return this.calendarioService.adicionarDiasRetornarDiaUtil(dataOperacao, 1);
+		}
+	}
+	
+	private MovimentoFinanceiroCota gerarMovimentoFinanceiro(Date dataOperacao, Usuario usuario, Cota cota, 
+			Date dataVencimento, BigDecimal valor, TipoMovimentoFinanceiro tipoMovimentoFinanceiro, String observacao) {
+
+		MovimentoFinanceiroCotaDTO dto = new MovimentoFinanceiroCotaDTO();
+		dto.setAprovacaoAutomatica(true);
+		dto.setCota(cota);
+		dto.setDataCriacao(dataOperacao);
+		dto.setDataOperacao(dataOperacao);
+		dto.setDataVencimento(dataVencimento);
+		dto.setLancamentoManual(false);
+		dto.setObservacao(observacao);
+		dto.setTipoEdicao(TipoEdicao.INCLUSAO);
+		dto.setUsuario(usuario);
+		dto.setValor(valor);
+		dto.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		dto.setFornecedor(this.obterFornecedorPadraoCota(cota));
+	
+		try {
+			
+			return this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(dto).get(0);
+		
+		} catch (NoSuchElementException e) {
+			
+			return null;
+
+		} catch (IndexOutOfBoundsException e) {
+			
+			return null;
+		} 
+	}
+	
+	private AcumuloDivida gerarAcumuloDivida(Usuario usuario, Divida divida, 
+											 MovimentoFinanceiroCota movimentoPendente,
+										     MovimentoFinanceiroCota movimentoJuros,
+										     MovimentoFinanceiroCota movimentoMulta) {
+
+		AcumuloDivida acumuloDivida = new AcumuloDivida();
+
+		acumuloDivida.setDividaAnterior(divida);
+
+		acumuloDivida.setMovimentoFinanceiroPendente(movimentoPendente);
+
+		acumuloDivida.setMovimentoFinanceiroJuros(movimentoJuros);
+
+		acumuloDivida.setMovimentoFinanceiroMulta(movimentoMulta);
+
+		acumuloDivida.setNumeroAcumulo(this.obterNumeroDeAcumulosDivida(divida));
+		
+		acumuloDivida.setDataCriacao(new Date());
+		
+		acumuloDivida.setResponsavel(usuario);
+		
+		acumuloDivida.setStatus(StatusInadimplencia.ATIVA);
+		
+		acumuloDivida.setCota(divida.getCota());
+
+		return this.acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
+	}
+
+	private BigInteger obterNumeroDeAcumulosDivida(Divida divida) {
+
+		BigInteger numeroAcumulos = BigInteger.ONE;
+		
+		List<MovimentoFinanceiroCota> movimentos = divida.getConsolidado().getMovimentos();
+		
+		for (MovimentoFinanceiroCota movimento : movimentos) {
+			
+			if (GrupoMovimentoFinaceiro.PENDENTE.equals(((TipoMovimentoFinanceiro) movimento.getTipoMovimento()).getGrupoMovimentoFinaceiro())) {
+
+				AcumuloDivida acumuloDivida = this.acumuloDividasService.obterAcumuloDividaPorMovimentoPendente(movimento.getId());
+
+				if (acumuloDivida != null) {
+					
+					numeroAcumulos = acumuloDivida.getNumeroAcumulo().add(BigInteger.ONE);
+					
+					break;
+				}
+			}			
+		}
+		
+		return numeroAcumulos;
+	}
+
+	private void validarAcumuloDivida(Divida divida, boolean naoAcumulaDividas, Integer numeroMaximoAcumulosDistribuidor) {
+
+		Integer numeroMaximoAcumuloCota = this.acumuloDividasService.obterNumeroMaximoAcumuloCota(divida.getCota().getId()).intValue();
+		
+		if (!naoAcumulaDividas && (numeroMaximoAcumuloCota >= numeroMaximoAcumulosDistribuidor)) {
+			
+			throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
+		}
+	}
+
 	@Override
 	@Transactional
 	public void baixarBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
@@ -321,7 +566,9 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
-			boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
+			//boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
+			
+			boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
 			
 		} else {
 		
@@ -461,7 +708,7 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, pagamento.getValorPagamento(),
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 	}
 	
 	private void baixarBoletoVencidoAutomatico(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
@@ -490,7 +737,7 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, pagamento.getValorPagamento(),
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 			
 			return;
 		}
@@ -520,7 +767,7 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.JUROS,
 												  usuario, valorJurosCalculado,
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 		}
 		
 		BigDecimal valorMultaCalculado = 
@@ -535,14 +782,20 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.MULTA,
 												  usuario, valorMultaCalculado,
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 		}
 		
 		BigDecimal diferencaValor = null;
 		
+		String observacao = null;
+		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
+		
 		if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 1) {
 		
 			diferencaValor = pagamento.getValorPagamento().subtract(boleto.getValor());
+			
+			observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -550,11 +803,13 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, diferencaValor,
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, observacao));
 			
 		} else if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == -1) {
 			
 			diferencaValor = boleto.getValor().subtract(pagamento.getValorPagamento());
+			
+			observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -562,7 +817,7 @@ public class BoletoServiceImpl implements BoletoService {
 											   	  GrupoMovimentoFinaceiro.DEBITO,
 											   	  usuario, diferencaValor,
 											   	  dataOperacao, baixaCobranca,
-											   	  dataNovoMovimento));
+											   	  dataNovoMovimento, observacao));
 		}
 	}
 	
@@ -582,7 +837,7 @@ public class BoletoServiceImpl implements BoletoService {
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
 						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 
-		efetivarBaixaCobranca(boleto, dataOperacao);
+		efetivarBaixaCobranca(boleto, dataPagamento);
 	}
 	
 	private void baixarBoletoValorCorreto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
@@ -624,7 +879,7 @@ public class BoletoServiceImpl implements BoletoService {
 							   						  GrupoMovimentoFinaceiro.CREDITO,
 							   						  usuario, pagamento.getValorPagamento(),
 							   						  dataOperacao, baixaCobranca,
-							   						  dataNovoMovimento));
+							   						  dataNovoMovimento, null));
 				
 				return;
 			}
@@ -643,13 +898,17 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BigDecimal valorCredito = pagamento.getValorPagamento().subtract(boleto.getValor());
 		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
+		
+		String observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+		
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
 				getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 											  GrupoMovimentoFinaceiro.CREDITO,
 											  usuario, valorCredito,
 											  dataOperacao, baixaCobranca,
-											  dataNovoMovimento));
+											  dataNovoMovimento, observacao));
 	}
 	
 	private void baixarBoletoValorAbaixo(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
@@ -670,14 +929,14 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
 					   						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
-
+			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 							   					  GrupoMovimentoFinaceiro.CREDITO,
 							   					  usuario, pagamento.getValorPagamento(),
 							   					  dataOperacao, baixaCobranca,
-							   					  dataNovoMovimento));
+							   					  dataNovoMovimento, null));
 			
 			return;
 		}
@@ -694,6 +953,10 @@ public class BoletoServiceImpl implements BoletoService {
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
 		BigDecimal valorDebito = boleto.getValor().subtract(pagamento.getValorPagamento());
+
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
+		
+		String observacao = "Diferença de Pagamento a Menor (" + dataPagamentoFormatada + ")";
 		
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
@@ -701,7 +964,7 @@ public class BoletoServiceImpl implements BoletoService {
 											  GrupoMovimentoFinaceiro.DEBITO,
 											  usuario, valorDebito,
 											  dataOperacao, baixaCobranca,
-											  dataNovoMovimento));
+											  dataNovoMovimento, observacao));
 	}
 	
 	private void validarDadosEntradaBaixaAutomatica(PagamentoDTO pagamento) {
@@ -791,64 +1054,47 @@ public class BoletoServiceImpl implements BoletoService {
 			baixaCobrancaRepository.adicionar(baixaAutomatica);
 			
 			return baixaAutomatica;
-			
-		} else {
-			
-			BigDecimal valorPagamento = BigDecimal.ZERO;
-			BigDecimal valorJuros = BigDecimal.ZERO;
-			BigDecimal valorMulta = BigDecimal.ZERO;
-			BigDecimal valorDesconto = BigDecimal.ZERO;
-			
-			if (pagamento.getValorPagamento() != null) {
-				
-				valorPagamento = pagamento.getValorPagamento();
-			}
-			
-			if (pagamento.getValorJuros() != null) {
-				
-				valorJuros = pagamento.getValorJuros();
-			}
-			
-			if (pagamento.getValorMulta() != null) {
-				
-				valorMulta = pagamento.getValorMulta();
-			}
-			
-			if (pagamento.getValorDesconto() != null) {
-						
-				valorDesconto = pagamento.getValorDesconto();
-			}
-			
-			BigDecimal valorCalculadoPagamento = 
-				valorPagamento.add(valorJuros).add(valorMulta).subtract(valorDesconto);
-				
-			BaixaManual baixaManual = new BaixaManual();
-			
-			baixaManual.setDataBaixa(dataBaixa);
-			baixaManual.setDataPagamento(dataPagamento);
-			baixaManual.setValorPago(valorCalculadoPagamento);
-			baixaManual.setCobranca(boleto);
-			
-			baixaManual.setResponsavel(usuario);
-			baixaManual.setValorJuros(pagamento.getValorJuros());
-			baixaManual.setValorMulta(pagamento.getValorMulta());
-			baixaManual.setValorDesconto(pagamento.getValorDesconto());
-			
-			baixaCobrancaRepository.adicionar(baixaManual);
-			
-			return baixaManual;
 		}
+		
+		if (boleto != null) {
+
+			this.acumuloDividasService.quitarDividasAcumuladas(boleto.getDivida());
+		}
+			
+		BigDecimal valorPagamento = BigDecimal.ZERO;
+		
+		if (pagamento.getValorPagamento() != null) {
+			
+			valorPagamento = pagamento.getValorPagamento();
+		}
+
+		BaixaManual baixaManual = new BaixaManual();
+		
+		baixaManual.setDataBaixa(dataBaixa);
+		baixaManual.setDataPagamento(dataPagamento);
+		baixaManual.setValorPago(valorPagamento);
+		baixaManual.setCobranca(boleto);
+		
+		baixaManual.setResponsavel(usuario);
+		baixaManual.setValorJuros(pagamento.getValorJuros());
+		baixaManual.setValorMulta(pagamento.getValorMulta());
+		baixaManual.setValorDesconto(pagamento.getValorDesconto());
+		baixaManual.setStatus(StatusBaixa.PAGO);
+		
+		baixaCobrancaRepository.adicionar(baixaManual);
+		
+		return baixaManual;
 	}
 	
-	private void efetivarBaixaCobranca(Boleto boleto, Date dataOperacao) {
+	private void efetivarBaixaCobranca(Boleto boleto, Date dataPagamento) {
 		
-		boleto.setDataPagamento(dataOperacao);
+		boleto.setDataPagamento(dataPagamento);
 		boleto.setStatusCobranca(StatusCobranca.PAGO);
 		boleto.getDivida().setStatus(StatusDivida.QUITADA);
 		
 		boletoRepository.alterar(boleto);
 		
-		this.pagarCobrancasRaizes(boleto.getDivida(), dataOperacao);	
+		this.pagarCobrancasRaizes(boleto.getDivida(), dataPagamento);	
 	}
 
 	private void pagarCobrancasRaizes(Divida divida, Date dataOperacao) {
@@ -876,7 +1122,7 @@ public class BoletoServiceImpl implements BoletoService {
 	private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(Cota cota,
 			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro, Usuario usuario,
 			BigDecimal valorPagamento, Date dataOperacao,
-			BaixaCobranca baixaCobranca, Date dataNovoMovimento) {
+			BaixaCobranca baixaCobranca, Date dataNovoMovimento, String observacao) {
 
 		TipoMovimentoFinanceiro tipoMovimento = this.tipoMovimentoFinanceiroRepository
 				.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
@@ -900,20 +1146,21 @@ public class BoletoServiceImpl implements BoletoService {
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataNovoMovimento);
 		
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+				
+		movimentoFinanceiroCotaDTO.setObservacao(observacao);
 
 		return movimentoFinanceiroCotaDTO;
 	}
 	
 	
-	private CorpoBoleto gerarCorpoBoletoCota(Boleto boleto){
+	private CorpoBoleto gerarCorpoBoletoCota(Boleto boleto, Pessoa pessoaCedente, boolean aceitaPagamentoVencido){
 		
 		String nossoNumero = boleto.getNossoNumero();
 		String digitoNossoNumero = boleto.getDigitoNossoNumero();
-		BigDecimal valor = boleto.getValor();
+		BigDecimal valor = boleto.getValor() != null ? boleto.getValor().abs() : BigDecimal.ZERO;
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
 		Pessoa pessoaSacado = boleto.getCota().getPessoa();
 		
 		Endereco endereco = null;
@@ -940,11 +1187,13 @@ public class BoletoServiceImpl implements BoletoService {
 				pessoaCedente, 
 				pessoaSacado, 
 				endereco, 
-				boleto.getTipoCobranca());
+				boleto.getTipoCobranca(),
+				boleto.getCota().getNumeroCota(),
+				aceitaPagamentoVencido);
 		
 	}
 	
-	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto) {
+	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto, Pessoa pessoaSacado, boolean aceitaPagamentoVencido) {
 		
 		String nossoNumero = boleto.getNossoNumeroDistribuidor();
 		String digitoNossoNumero = boleto.getDigitoNossoNumeroDistribuidor();
@@ -952,8 +1201,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = this.distribuidorRepository.juridica();
-		Pessoa pessoaSacado = boleto.getFornecedor().getJuridica();
+		Pessoa pessoaCedente = boleto.getFornecedor().getJuridica();
 		
 		Endereco endereco = null;
 		
@@ -977,9 +1225,11 @@ public class BoletoServiceImpl implements BoletoService {
 				dataEmissao, 
 				dataVencimento, 
 				pessoaCedente, 
-				pessoaSacado, 
+				pessoaSacado,
 				endereco,
-				boleto.getTipoCobranca()
+				boleto.getTipoCobranca(),
+				null,
+				aceitaPagamentoVencido
 				);
 		
 	}
@@ -987,6 +1237,7 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	/**
 	 * Método responsável por gerar corpo do boleto com os atributos definidos
+	 * @param numeroCota 
 	 * @param boleto
 	 * @return GeradorBoleto: corpo do boleto carregado
 	 */
@@ -1000,7 +1251,8 @@ public class BoletoServiceImpl implements BoletoService {
 			Pessoa pessoaCedente, 
 			Pessoa pessoaSacado,
 			Endereco enderecoSacado,
-			TipoCobranca tipoCobranca
+			TipoCobranca tipoCobranca, Integer numeroCota,
+			boolean aceitaPagamentoVencido
 			
 			){
 
@@ -1043,7 +1295,13 @@ public class BoletoServiceImpl implements BoletoService {
 			nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
 			documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
 		}
-		corpoBoleto.setSacadoNome(nomeSacado);          
+		
+		if(numeroCota != null && numeroCota >0){
+			corpoBoleto.setSacadoNome(numeroCota + " - "+ nomeSacado);
+		}else{
+			corpoBoleto.setSacadoNome(nomeSacado);
+		}
+		          
 		corpoBoleto.setSacadoDocumento(documentoSacado); 
 
 		
@@ -1054,7 +1312,7 @@ public class BoletoServiceImpl implements BoletoService {
 			corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());     
 			corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());         
 			corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro()); 
-			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getLogradouro()); 
+			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getTipoLogradouro() + " " + enderecoSacado.getLogradouro()); 
 			corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero()); 
 		}
 		else{
@@ -1115,19 +1373,27 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setTituloAceite("A");
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
-        corpoBoleto.setTituloValor(valor);   
+        corpoBoleto.setTituloValor(valor.setScale(2, RoundingMode.HALF_EVEN));   
         corpoBoleto.setTituloDataDoDocumento(dataEmissao);   
         corpoBoleto.setTituloDataDoVencimento(dataVencimento);  
-        corpoBoleto.setTituloDesconto(BigDecimal.ZERO);
-        corpoBoleto.setTituloDeducao(BigDecimal.ZERO);
-        corpoBoleto.setTituloMora(BigDecimal.ZERO);
-        corpoBoleto.setTituloAcrecimo(BigDecimal.ZERO);
-        corpoBoleto.setTituloValorCobrado(BigDecimal.ZERO);
+        
+        BigDecimal valorParaPagamentosVencidos = null;
+        
+        if (!aceitaPagamentoVencido) {
+        	
+        	valorParaPagamentosVencidos = BigDecimal.ZERO;
+        } 
+        
+        corpoBoleto.setTituloDesconto(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloDeducao(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloMora(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloAcrecimo(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloValorCobrado(valorParaPagamentosVencidos);
         
 
         //INFORMAÇOES DO BOLETO
         //PARAMETROS ?
-        corpoBoleto.setBoletoLocalPagamento("Local do pagamento.");
+        corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
         corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes());
         corpoBoleto.setBoletoInstrucao2("");
@@ -1151,10 +1417,15 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param boleto
 	 * @return f: Boleto PDF em File.
 	 * @throws IOException
+	 * @throws ValidationException 
 	 */
-	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException {
+	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException, ValidationException {
 		
-		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
 		
 		byte[] b = geradorBoleto.getBytePdf();
         
@@ -1188,10 +1459,15 @@ public class BoletoServiceImpl implements BoletoService {
 					     destinatarios, 
 					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
 					     true);
+		} catch(AutenticacaoEmailException e){
+			e.printStackTrace();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao conectar-se com o servidor de e-mail. ");
 		} catch(ValidacaoException e){
+			e.printStackTrace();
 			throw e;
 		}catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");
+			e.printStackTrace();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio. ");
 		}
 	}
 	
@@ -1200,14 +1476,19 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param nossoNumero
 	 * @return b: Boleto PDF em Array de bytes
 	 * @throws IOException
+	 * @throws ValidationException 
 	 */
 	@Override
 	@Transactional
-	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
+	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException, ValidationException {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		
-		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
 		
 		byte[] b = geradorBoleto.getBytePdf();
 		
@@ -1220,23 +1501,26 @@ public class BoletoServiceImpl implements BoletoService {
 	 * Método responsável pela busca de dados referentes à cobrança
 	 * @param nossoNumero
 	 * @return CobrancaVO: dados da cobrança
+	 * @throws ValidationException 
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException {
+	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		
 		Boleto boleto = null;
 		
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+		
 		for(String nossoNumero  : nossoNumeros){
 			
 			boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
-			
-			
-			
+
 			if(boleto!= null){
-				corpos.add(this.gerarCorpoBoletoCota(boleto));
+				corpos.add(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
 			}
 		}
 		
@@ -1250,12 +1534,16 @@ public class BoletoServiceImpl implements BoletoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException {
+	public byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException, ValidationException {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		
+		Pessoa pessoaSacado = this.distribuidorRepository.juridica();
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+
 		for(BoletoDistribuidor boletoDistribuidor  : listaBoletoDistribuidor){
-				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor));
+				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor, pessoaSacado, aceitaPagamentoVencido));
 		}
 		
 		if(!corpos.isEmpty()){
@@ -1270,17 +1558,18 @@ public class BoletoServiceImpl implements BoletoService {
 	/**
 	 * Método responsável por obter os dados de uma cobrança
 	 * @param nossoNumero
+	 * @param dataPagamento
 	 * @return CobrancaVO: dados da cobrança
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero) {
+	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero, Date dataPagamento) {
 		
 		CobrancaVO cobrancaVO = null;
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		if (boleto!=null){
-		    cobrancaVO = this.cobrancaService.obterDadosCobranca(boleto.getId());
+		    cobrancaVO = this.cobrancaService.obterDadosCobranca(boleto.getId(), dataPagamento);
 		}
 		
 		return cobrancaVO;
@@ -1413,4 +1702,47 @@ public class BoletoServiceImpl implements BoletoService {
 		return this.boletoRepository.obterQuantidadeTotalBancario(filtro.getData());
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Boleto> verificaEnvioDeEmail(List<Boleto> boletos) {
+		for(Boleto boleto : boletos)
+		{
+			Long verificaSeRecebeEmail = this.boletoRepository.verificaEnvioDeEmail(boleto);
+			if(verificaSeRecebeEmail.intValue() == 0)
+			{
+				boleto.setRecebeCobrancaEmail(false);
+			}
+			else
+			{
+				boleto.setRecebeCobrancaEmail(true);
+			}
+		}
+		
+		return boletos;
+	}
+	
+	/**
+	 * Obtém o fornecedor padrão da cota para cobrança. 
+	 * 
+	 * @param cota Cota que deseja obter o fornecedor.
+	 * 
+	 * @return Fornecedor padrão da cota.
+	 */
+	private Fornecedor obterFornecedorPadraoCota(Cota cota) {
+		
+		Fornecedor fornecedor = cota.getParametroCobranca() == null ? 
+										null : cota.getParametroCobranca().getFornecedorPadrao();
+
+		if (fornecedor == null && cota.getFornecedores() != null && !cota.getFornecedores().isEmpty()) {
+			
+			if (cota.getFornecedores()!=null && !cota.getFornecedores().isEmpty()) {
+				
+				fornecedor = cota.getFornecedores().iterator().next();
+				
+			}
+			
+		}
+
+		return fornecedor;
+	}
 }

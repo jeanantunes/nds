@@ -42,12 +42,22 @@ function PesquisaProduto(workspace) {
 	this.autoCompletarPorNomeProduto = function(idProduto, isFromModal) {
 		
 		pesquisaProduto.pesquisaRealizada = false;
+		
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).attr("value");
 		
-		if (nomeProduto && nomeProduto.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
-					   function(result) { pesquisaProduto.exibirAutoComplete(result, idProduto); },
-					   null, isFromModal);
+		if (nomeProduto && nomeProduto.length > 2){
+
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nomeProduto},
+					   function(result) { 
+				
+				           pesquisaProduto.exibirAutoComplete(result, idProduto); 
+				       },
+					   null, 
+					   isFromModal);
+		}	
+		else{
+			
+			$(idProduto, pesquisaProduto.workspace).autocomplete({source:[]});
 		}
 	},
 	
@@ -71,7 +81,8 @@ function PesquisaProduto(workspace) {
 															isFromModal, successCallBack, errorCallBack);
 			}
 			
-		}, 100);
+		}, 
+		100);
 	},
 	
 	//Validação do número da edição
@@ -82,7 +93,7 @@ function PesquisaProduto(workspace) {
 		if (codigoProduto && codigoProduto.length > 0
 				&& numeroEdicao && numeroEdicao.length > 0) {
 			
-			var data = {codigoProduto:codigoProduto,numeroEdicao:numeroEdicao};
+			var data = {'filtro.codigo': codigoProduto, numeroEdicao: numeroEdicao};
 
 			$.postJSON(contextPath + "/produto/validarNumeroEdicao",
 					data, function(result) { pesquisaProduto.validaNumeroEdicaoSucessoCallBack(idCodigo, idEdicao, successCallBack); },
@@ -173,8 +184,8 @@ function PesquisaProduto(workspace) {
 		$(idEdicao, pesquisaProduto.workspace).val("");
 		$(idEdicao, pesquisaProduto.workspace).attr("disabled", "disabled");
 		
-		 var data = [{name:"nomeProduto",  value:nomeProduto},
-        			 {name:"codigoProduto",value:codigoProduto}
+		 var data = [{name:"filtro.nome",  value: nomeProduto},
+        			 {name:"filtro.codigo",value: codigoProduto}
 					];
 		
 		if (nomeProduto && nomeProduto.length > 0) {
@@ -228,7 +239,7 @@ function PesquisaProduto(workspace) {
 	},
 	
 	this.pesquisarPorNomeErrorCallBack = function(idCodigo, idProduto, idEdicao, errorCallBack) {
-		$(idProduto, pesquisaProduto.workspace).val("");
+
 		$(idProduto, pesquisaProduto.workspace).focus();
 		
 		if (errorCallBack) {

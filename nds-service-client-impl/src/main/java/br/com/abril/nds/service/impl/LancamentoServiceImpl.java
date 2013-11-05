@@ -1,10 +1,10 @@
 package br.com.abril.nds.service.impl;
 
-import java.text.SimpleDateFormat;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,22 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -39,6 +44,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
+	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
 
 	@Autowired
@@ -47,16 +58,26 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
 	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private CotaService cotaService;
+	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
-		List<Lancamento> lancametos = lancamentoRepository.obterLancamentosNaoExpedidos(
+		Intervalo<Date> intervaloDataLancamento = new Intervalo<Date>(data, data);
+		
+		this.cotaService.verificarCotasSemRoteirizacao(null, intervaloDataLancamento, null);
+		
+		List<Lancamento> lancamentos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
 		
-		 List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
+		List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
 		
-		for(Lancamento lancamento:lancametos) {
+		for(Lancamento lancamento:lancamentos) {
 			dtos.add(montarDTOExpedicao(lancamento));
 		}
 		return dtos;
@@ -64,10 +85,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional
-	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor) {
+	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente) {
 		
-		return lancamentoRepository.obterIdsLancamentosNaoExpedidos(
-				paginacaoVO, data, idFornecedor);
+		return lancamentoRepository.obterIdsLancamentosNaoExpedidos(paginacaoVO, data, idFornecedor, isSaldoInsuficiente);
 	}
 	
 	@Transactional
@@ -85,42 +105,31 @@ public class LancamentoServiceImpl implements LancamentoService {
 			fornecedor = lancamento.getProdutoEdicao().getProduto().getFornecedor().getJuridica().getRazaoSocial();			
 		}
 		
-		Date maisRecente = null;
+		// Conforme solicitado pelo Cesar, caso não encontre preço de venda utiliza o preço previsto
+		String preco = "";
+		if (lancamento.getProdutoEdicao().getPrecoVenda() != null) {
+			preco = lancamento.getProdutoEdicao().getPrecoVenda().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",");
+		} else if (lancamento.getProdutoEdicao().getPrecoPrevisto() != null) {
+			preco = lancamento.getProdutoEdicao().getPrecoPrevisto().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",");
+		} else {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem preço de venda e preco previsto. Codigo: " + lancamento.getProdutoEdicao().getProduto().getCodigo() + ", Edicao: " + lancamento.getProdutoEdicao().getProduto().getNome());
+		}
 		
-		if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()==1) {
-			maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
-		
-		} else if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()>1) {
-			
-			Iterator<ItemRecebimentoFisico> itemFisico = lancamento.getRecebimentos().iterator();
-			
-			while(itemFisico.hasNext()) {
-				
-				ItemRecebimentoFisico item = itemFisico.next();
-			
-				if(maisRecente == null || maisRecente.getTime()<item.getRecebimentoFisico().getDataRecebimento().getTime()) {
-					maisRecente = item.getRecebimentoFisico().getDataRecebimento();
-				}
-			}
-		} 
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
-		LancamentoNaoExpedidoDTO dto = new LancamentoNaoExpedidoDTO(
+		LancamentoNaoExpedidoDTO dto = 
+			new LancamentoNaoExpedidoDTO(
 				lancamento.getId(), 
-				maisRecente==null?"":sdf.format(maisRecente), 
 				lancamento.getProdutoEdicao().getProduto().getCodigo(), 
 				lancamento.getProdutoEdicao().getProduto().getNome(), 
 				lancamento.getProdutoEdicao().getNumeroEdicao(), 
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
-				lancamento.getProdutoEdicao().getPrecoVenda().toString().replace(".", ","), 
+				preco, 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
-				lancamento.getReparte().intValue(), 
-				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
+				lancamento.getReparte() != null ? lancamento.getReparte().intValue() : 0,
+				DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
 				false,
-				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde().intValue():0);
+				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde():BigInteger.ZERO);
 		
 		return dto;
 	}
@@ -129,8 +138,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
+		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 
+		
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(dataOperacao);
 		expedicao.setResponsavel(new Usuario(idUsuario));
@@ -145,12 +156,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setLancamento(new Lancamento(idLancamento));
 		
 		historico.setResponsavel(new Usuario(idUsuario));
-		historico.setStatus(StatusLancamento.EXPEDIDO);
+		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
-		historicoLancamentoRepository.adicionar(historico);
+		
+		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+		//historicoLancamentoRepository.adicionar(historico);
+		
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
-				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
+					lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
+		
+				
 		
 		return true;
 	}
@@ -199,6 +215,32 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		return lancamentoRepository.obterPrimeiroLancamentoDaEdicao(idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		if (idCota == null || Long.valueOf(0).equals(idCota)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
+		}
+		
+		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<InformeEncalheDTO> obterLancamentoInformeRecolhimento(
 			Long idFornecedor, Calendar dataInicioRecolhimento,
 			Calendar dataFimRecolhimento) {
@@ -226,6 +268,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional(readOnly=true)
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status){
+		return lancamentoRepository.obterLancamentoDataDistribuidorInStatus(dataRecebimentoDistribuidor, status);
+	}
+	
+	
+	@Override
+	@Transactional(readOnly=true)
 	public Date buscarDiaUltimoBalanceamentoRecolhimentoRealizado() {
 		return lancamentoRepository.buscarDiaUltimoBalanceamentoRecolhimentoRealizado();
 	}
@@ -233,7 +282,46 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+		
+		Boolean isEdicaoParcial = produtoEdicaoRepository.isEdicaoParcial(idProdutoEdicao);
+		
+		if(isEdicaoParcial){
+			
+			return lancamentoRepository.obterLancamentosParcialEdicao(idProdutoEdicao, sortorder, sortname);
+		}
+		
 		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao) {
+		
+		return this.lancamentoRepository.existeMatrizRecolhimentoConfirmado(dataChamadao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Date getMaiorDataLancamento(Long idProdutoEdicao) {
+		
+		Date maiorDataLancamentoPrevisto = 
+			this.lancamentoRepository.getMaiorDataLancamentoPrevisto(idProdutoEdicao);
+		
+		Date maiorDataLancamentoDistribuidor =
+			this.lancamentoRepository.getMaiorDataLancamentoDistribuidor(idProdutoEdicao);
+		
+		if (maiorDataLancamentoPrevisto == null || maiorDataLancamentoDistribuidor == null) {
+		
+			return null;
+		}
+		
+		if (maiorDataLancamentoPrevisto.after(maiorDataLancamentoDistribuidor)) {
+			
+			return maiorDataLancamentoPrevisto;
+		} else {
+			
+			return maiorDataLancamentoDistribuidor;
+		}
+	}
+	
 }

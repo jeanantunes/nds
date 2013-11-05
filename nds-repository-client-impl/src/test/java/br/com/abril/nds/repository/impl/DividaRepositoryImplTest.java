@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
-import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
@@ -56,11 +54,11 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -260,7 +258,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   divida,0);
 		save(boleto);		
 		
-		HistoricoAcumuloDivida acumDividaGuilherme2;
 		CobrancaDinheiro cobrancaAcumuloGuilherme2;
 		
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
@@ -269,12 +266,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Divida dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaManoel, Fixture.criarData(2, 2, 2010),
 				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),false);
-		
-		
-		acumDividaGuilherme2 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaGuilherme2, 
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-		
 		
 		
 		
@@ -287,7 +278,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		dividaAcumuladaGuilherme2.getAcumulado().add(divida);
 		
-		save(consolidadoAcumuloGuilherme2,dividaAcumuladaGuilherme2,acumDividaGuilherme2,cobrancaAcumuloGuilherme2);
+		save(consolidadoAcumuloGuilherme2,dividaAcumuladaGuilherme2,cobrancaAcumuloGuilherme2);
 		
 		
 	}
@@ -563,11 +554,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNomeCota("Manoel da Silva");
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
-		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
-		filtro.setStatusCota("Ativo");
+		filtro.setPeriodoAte("02/03/2012");		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
 		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
@@ -585,9 +572,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(false);
-		filtro.setSituacaoNegociada(true);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -605,9 +589,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(false);
-		filtro.setSituacaoNegociada(true);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -625,9 +606,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(false);
-		filtro.setSituacaoNegociada(true);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(null);
 		
@@ -645,9 +623,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -666,9 +641,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -687,9 +659,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -708,9 +677,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -731,9 +697,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -752,9 +715,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -773,9 +733,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -794,9 +751,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -815,9 +769,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -844,9 +795,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -872,9 +820,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -901,37 +846,10 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
 
-        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(verificacao);
+        List<SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(verificacao);
 
         Assert.assertNotNull(sumarizacao);
         Assert.assertEquals(3, sumarizacao.size());
-        
-        SumarizacaoDividasDTO sumarizacaoBoleto = sumarizacao.get(TipoCobranca.BOLETO);
-        Assert.assertNotNull(sumarizacaoBoleto);
-        Assert.assertEquals(TipoCobranca.BOLETO, sumarizacaoBoleto.getTipoCobranca());
-        Assert.assertEquals(vencimento, sumarizacaoBoleto.getData());
-        Assert.assertEquals(TipoDivida.DIVIDA_A_RECEBER, sumarizacaoBoleto.getTipoSumarizacao());
-        Assert.assertEquals(BigDecimal.valueOf(1375.5).setScale(4), sumarizacaoBoleto.getTotal());
-        Assert.assertEquals(BigDecimal.valueOf(923.5).setScale(4), sumarizacaoBoleto.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(452).setScale(4), sumarizacaoBoleto.getInadimplencia());
-        
-        SumarizacaoDividasDTO sumarizacaoDeposito = sumarizacao.get(TipoCobranca.DEPOSITO);
-        Assert.assertNotNull(sumarizacaoDeposito);
-        Assert.assertEquals(TipoCobranca.DEPOSITO, sumarizacaoDeposito.getTipoCobranca());
-        Assert.assertEquals(vencimento, sumarizacaoDeposito.getData());
-        Assert.assertEquals(TipoDivida.DIVIDA_A_RECEBER, sumarizacaoDeposito.getTipoSumarizacao());
-        Assert.assertEquals(BigDecimal.valueOf(1371.56).setScale(4), sumarizacaoDeposito.getTotal());
-        Assert.assertEquals(BigDecimal.valueOf(621.56).setScale(4), sumarizacaoDeposito.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(750).setScale(4), sumarizacaoDeposito.getInadimplencia());
-        
-        SumarizacaoDividasDTO sumarizacaoDinheiro = sumarizacao.get(TipoCobranca.DINHEIRO);
-        Assert.assertNotNull(sumarizacaoDinheiro);
-        Assert.assertEquals(TipoCobranca.DINHEIRO, sumarizacaoDinheiro.getTipoCobranca());
-        Assert.assertEquals(vencimento, sumarizacaoDinheiro.getData());
-        Assert.assertEquals(TipoDivida.DIVIDA_A_RECEBER, sumarizacaoDinheiro.getTipoSumarizacao());
-        Assert.assertEquals(BigDecimal.valueOf(989.32).setScale(4), sumarizacaoDinheiro.getTotal());
-        Assert.assertEquals(BigDecimal.valueOf(489.32).setScale(4), sumarizacaoDinheiro.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(500).setScale(4), sumarizacaoDinheiro.getInadimplencia());
     }
     
     @Test
@@ -940,7 +858,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(5, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
 
-        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(verificacao);
+        List<SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasReceberEm(verificacao);
 
         Assert.assertNotNull(sumarizacao);
         Assert.assertTrue(sumarizacao.isEmpty());
@@ -952,36 +870,9 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(8, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasVencerApos(verificacao);
+        List<SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasVencerApos(verificacao);
         Assert.assertNotNull(sumarizacao);
         Assert.assertEquals(3, sumarizacao.size());
-        
-        SumarizacaoDividasDTO sumarizacaoBoleto = sumarizacao.get(TipoCobranca.BOLETO);
-        Assert.assertNotNull(sumarizacaoBoleto);
-        Assert.assertEquals(TipoCobranca.BOLETO, sumarizacaoBoleto.getTipoCobranca());
-        Assert.assertEquals(verificacao, sumarizacaoBoleto.getData());
-        Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoBoleto.getTipoSumarizacao());
-        Assert.assertEquals(BigDecimal.valueOf(1375.5).setScale(4), sumarizacaoBoleto.getTotal());
-        Assert.assertEquals(BigDecimal.valueOf(923.5).setScale(4), sumarizacaoBoleto.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(0).setScale(2), sumarizacaoBoleto.getInadimplencia());
-        
-        SumarizacaoDividasDTO sumarizacaoDeposito = sumarizacao.get(TipoCobranca.DEPOSITO);
-        Assert.assertNotNull(sumarizacaoDeposito);
-        Assert.assertEquals(TipoCobranca.DEPOSITO, sumarizacaoDeposito.getTipoCobranca());
-        Assert.assertEquals(verificacao, sumarizacaoDeposito.getData());
-        Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoDeposito.getTipoSumarizacao());
-        Assert.assertEquals(BigDecimal.valueOf(1371.56).setScale(4), sumarizacaoDeposito.getTotal());
-        Assert.assertEquals(BigDecimal.valueOf(621.56).setScale(4), sumarizacaoDeposito.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(0).setScale(2), sumarizacaoDeposito.getInadimplencia());
-        
-        SumarizacaoDividasDTO sumarizacaoDinheiro = sumarizacao.get(TipoCobranca.DINHEIRO);
-        Assert.assertNotNull(sumarizacaoDinheiro);
-        Assert.assertEquals(TipoCobranca.DINHEIRO, sumarizacaoDinheiro.getTipoCobranca());
-        Assert.assertEquals(verificacao, sumarizacaoDinheiro.getData());
-        Assert.assertEquals(TipoDivida.DIVIDA_A_VENCER, sumarizacaoDinheiro.getTipoSumarizacao());
-        Assert.assertEquals(BigDecimal.valueOf(989.32).setScale(4), sumarizacaoDinheiro.getTotal());
-        Assert.assertEquals(BigDecimal.valueOf(489.32).setScale(4), sumarizacaoDinheiro.getValorPago());
-        Assert.assertEquals(BigDecimal.valueOf(0).setScale(2), sumarizacaoDinheiro.getInadimplencia());
     }
     
     @Test
@@ -990,7 +881,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasVencerApos(verificacao);
+        List<SumarizacaoDividasDTO> sumarizacao = dividaRepository.sumarizacaoDividasVencerApos(verificacao);
         Assert.assertNotNull(sumarizacao);
         Assert.assertTrue(sumarizacao.isEmpty());
     }
@@ -1001,7 +892,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        List<Divida> dividas = dividaRepository.obterDividasReceberEm(verificacao, null);
+        List<Cobranca> dividas = dividaRepository.obterDividasReceberEm(verificacao, null);
         Assert.assertNotNull(dividas);
         Assert.assertEquals(6, dividas.size());
         Assert.assertTrue(dividas.contains(dividaManoel));
@@ -1018,7 +909,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(5, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        List<Divida> dividas = dividaRepository.obterDividasReceberEm(verificacao, null);
+        List<Cobranca> dividas = dividaRepository.obterDividasReceberEm(verificacao, null);
         Assert.assertNotNull(dividas);
         Assert.assertTrue(dividas.isEmpty());
     }
@@ -1029,7 +920,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        List<Divida> dividas = dividaRepository.obterDividasReceberEm(verificacao, new PaginacaoVO(1, 3, null));
+        List<Cobranca> dividas = dividaRepository.obterDividasReceberEm(verificacao, new PaginacaoVO(1, 3, null));
         Assert.assertNotNull(dividas);
         Assert.assertEquals(3, dividas.size());
         Assert.assertTrue(dividas.contains(dividaManoel));
@@ -1050,7 +941,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(7, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        List<Divida> dividas = dividaRepository.obterDividasVencerApos(verificacao, null);
+        List<Cobranca> dividas = dividaRepository.obterDividasVencerApos(verificacao, null);
         Assert.assertNotNull(dividas);
         Assert.assertEquals(6, dividas.size());
         Assert.assertTrue(dividas.contains(dividaManoel));
@@ -1067,7 +958,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(6, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        List<Divida> dividas = dividaRepository.obterDividasVencerApos(verificacao, null);
+        List<Cobranca> dividas = dividaRepository.obterDividasVencerApos(verificacao, null);
         Assert.assertNotNull(dividas);
         Assert.assertTrue(dividas.isEmpty());
     }
@@ -1078,7 +969,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         Date vencimento = Fixture.criarData(7, Calendar.NOVEMBER, 2012);
         criarDadosSumarizacaoDividas(vencimento);
         
-        List<Divida> dividas = dividaRepository.obterDividasVencerApos(verificacao, new PaginacaoVO(1, 3, null));
+        List<Cobranca> dividas = dividaRepository.obterDividasVencerApos(verificacao, new PaginacaoVO(1, 3, null));
         Assert.assertNotNull(dividas);
         Assert.assertEquals(3, dividas.size());
         Assert.assertTrue(dividas.contains(dividaManoel));

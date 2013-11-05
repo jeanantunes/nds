@@ -63,6 +63,56 @@ public enum GrupoMovimentoEstoque  {
 	FALTA_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
+	 * Ganho em pacote distribuidor
+	 */
+	GANHO_EM(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
+	
+	/**
+	 * Ganho de pacote distribuidor
+	 */
+	GANHO_DE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
+	
+	/**
+	 * Perda em pacote distribuidor
+	 */
+	PERDA_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	
+	/**
+	 * Perda de pacote distribuidor
+	 */
+	PERDA_DE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	
+	/**
+	 * Sobra de pacote distribuidor
+	 */
+	SOBRA_DE_COTA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO), 
+	
+	/**
+	 * Sobra em pacote distribuidor
+	 */
+	SOBRA_EM_COTA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Sobra de pacote direcionada para cota
+	 */
+	SOBRA_DE_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	
+	/**
+	 * Sobra em pacote direcionada para cota
+	 */
+	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	
+	/**
+	 * Falta de pacote distribuidor
+	 */
+	FALTA_DE_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO), 
+	
+	/**
+	 * Falta em pacote distribuidor
+	 */
+	FALTA_EM_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
 	 * Recebimento do reparte cota
 	 */
 	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
@@ -130,7 +180,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Devolução de encalhe do distruibuidor para o fornecedor.
 	 */
-	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
 	
 	/**
 	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
@@ -247,8 +297,20 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * 
 	 */
-	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR);
+	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR), 
+	
+	TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	
+	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 
+	GRUPO_MATERIAL_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.MATERIAL_PROMOCIONAL),
+	
+	/**
+	 * Entrada de estoque suplementar rollout do sistema
+	 * Criado em conjunto com Cesar Marracho
+	 */
+	ENTRADA_ESTOQUE_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR);
+	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;
 	private TipoEstoque tipoEstoque;

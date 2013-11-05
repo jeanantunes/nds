@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
@@ -8,6 +7,7 @@
 
 	$(function() {
 		fechamentoCEIntegracaoController.init();		
+		bloquearItensEdicao(fechamentoCEIntegracaoController.workspace);
 	});	
 
 </script>
@@ -23,13 +23,13 @@
     <div class="areaBts">
     	<div class="area">
     		<span class="bt_novos bt_acoes_grid_ce" id="btnFechamento" >
-		      	<a href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
+		      	<a isEdicao="true" href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
 		      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
 		      	</a>
 		    </span>
 		      
 		    <span class="bt_novos bt_acoes_grid_ce" id="btnReabertura">
-		      	<a href="javascript:;" title="Reabertura" rel="tipsy">
+		      	<a isEdicao="true" href="javascript:;" title="Reabertura" rel="tipsy">
 		      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" />
 		      	</a>
 		    </span>
@@ -38,7 +38,7 @@
     
 		    	<c:if test="${BOLETO}">
 		    	
-			    	<a 	href="javascript:;"
+			    	<a isEdicao="true"	href="javascript:;"
 			    		rel="tipsy" title="Imprimir Boleto">
 			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" id="imagemImpressaoBoleto" hspace="5" border="0" />
 			    	</a>
@@ -50,7 +50,7 @@
 
 				
 				<c:if test="${BOLETO_EM_BRANCO}">
-			       	<a href="javascript:;"		       	
+			       	<a isEdicao="true" href="javascript:;"		       	
 			       	rel="tipsy" title="Imprimir Boleto em Branco">
 			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" id="imagemBoletoEmBranco" hspace="5" border="0" />
 			       	</a>
@@ -60,7 +60,7 @@
 		       
 		       
 		       <span class="bt_arq bt_acoes_grid_ce">
-				  	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				  	<a isEdicao="true" href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				  		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					</a>
 			</span>
@@ -120,4 +120,3 @@
 		</fieldset>
 
 </body>
-</html>

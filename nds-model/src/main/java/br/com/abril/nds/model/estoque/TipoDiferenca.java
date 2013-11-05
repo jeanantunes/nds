@@ -12,14 +12,22 @@ import java.util.Set;
  */
 public enum TipoDiferenca {
 	
-	FALTA_DE(GrupoMovimentoEstoque.FALTA_DE, "Falta de"),
-	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em"),
-	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de"),
-	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em");
+	FALTA_DE(GrupoMovimentoEstoque.FALTA_DE, "Falta de", GrupoMovimentoEstoque.FALTA_DE_COTA),
+	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em", GrupoMovimentoEstoque.FALTA_EM_COTA),
+	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de", GrupoMovimentoEstoque.SOBRA_DE_COTA),
+	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em", GrupoMovimentoEstoque.SOBRA_EM_COTA),
+	SOBRA_DE_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA, "Sobra DE direcionada para Cota", GrupoMovimentoEstoque.SOBRA_DE_COTA),
+	SOBRA_EM_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA, "Sobra EM direcionada para Cota", GrupoMovimentoEstoque.SOBRA_EM_COTA),
+	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),
+	PERDA_DE(GrupoMovimentoEstoque.PERDA_DE, "Perda de"),
+	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em"),
+	GANHO_DE(GrupoMovimentoEstoque.GANHO_DE, "Ganho de");
 	
-	private GrupoMovimentoEstoque tipoMovimentoEstoque;
+	private GrupoMovimentoEstoque grupoMovimentoEstoque;
 	
 	private String descricao;
+	
+	private GrupoMovimentoEstoque grupoMovimentoEstoqueCota;
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_DE = EnumSet.of(FALTA_DE, SOBRA_DE);
 
@@ -27,17 +35,36 @@ public enum TipoDiferenca {
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_FALTA = EnumSet.of(FALTA_DE, FALTA_EM);
 	
-	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM);
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM, SOBRA_DE_DIRECIONADA_COTA, SOBRA_EM_DIRECIONADA_COTA);
 	
-	private TipoDiferenca(GrupoMovimentoEstoque tipoMovimentoEstoque, String descricao) {
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_PERDA = EnumSet.of(PERDA_DE, PERDA_EM);
+	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_GANHO = EnumSet.of(GANHO_DE, GANHO_EM);
+	
+	private TipoDiferenca(GrupoMovimentoEstoque grupoMovimentoEstoqueCota, 
+						  String descricao) {
 		
-		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
+		this.grupoMovimentoEstoque = grupoMovimentoEstoqueCota;
 		this.descricao = descricao;
+	}
+	
+	private TipoDiferenca(GrupoMovimentoEstoque tipoMovimentoEstoque, 
+						  String descricao,
+						  GrupoMovimentoEstoque grupoMovimentoEstoqueCota) {
+		
+		this.grupoMovimentoEstoque = tipoMovimentoEstoque;
+		this.descricao = descricao;
+		this.grupoMovimentoEstoqueCota = grupoMovimentoEstoqueCota;
 	}
 	
 	public GrupoMovimentoEstoque getTipoMovimentoEstoque() {
 		
-		return tipoMovimentoEstoque;
+		return grupoMovimentoEstoque;
+	}
+	
+	public GrupoMovimentoEstoque getGrupoMovimentoEstoqueCota() {
+		
+		return grupoMovimentoEstoqueCota;
 	}
 
 	public String getDescricao() {
@@ -69,6 +96,14 @@ public enum TipoDiferenca {
      */
 	public boolean isSobra() {
 	    return TIPOS_DIFERENCA_SOBRA.contains(this);
+	}
+	
+	public boolean isPerda() {
+		return TIPOS_DIFERENCA_PERDA.contains(this);  
+	}
+	
+	public boolean isGanho() {
+		return TIPOS_DIFERENCA_GANHO.contains(this);  
 	}
 	
 	/**

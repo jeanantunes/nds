@@ -44,6 +44,16 @@ public class SumarizacaoDividasDTO implements Serializable {
         this.inadimplencia = inadimplencia;
     }
     
+    public SumarizacaoDividasDTO(Date data, TipoCobranca tipoCobranca, BigDecimal total,
+    		BigDecimal valorPago, BigDecimal inadimplencia) {
+        
+    	this.data = data;
+    	this.tipoCobranca = tipoCobranca;
+    	this.total = total;
+    	this.valorPago = valorPago;
+    	this.inadimplencia = inadimplencia;
+    }
+    
     /**
      * @return the data
      */

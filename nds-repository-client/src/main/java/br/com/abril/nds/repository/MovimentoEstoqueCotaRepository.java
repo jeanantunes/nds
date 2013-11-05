@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
@@ -29,8 +31,26 @@ import br.com.abril.nds.util.Intervalo;
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
 	
+	/**
+	 * FROM: Consignado da cota com chamada de encalhe ou produto conta firme
+	 * @param paramIdCota
+	 * @return String
+	 */
+	String getFromConsignadoCotaAVista(String paramIdCota);
 	
-
+	/**
+	 * FROM: À Vista da cota sem chamada de encalhe e produtos diferentes de conta firme
+	 * @param paramIdCota
+	 * @return String
+	 */
+	String getFromAVistaCotaAVista(String paramIdCota);
+	
+	/**
+	 * FROM: Movimentos de Estorno da cota
+	 * @param paramIdCota
+	 * @return String
+	 */
+	String getFromEstornoCotaAVista(String paramIdCota);
 	
 	/**
 	 * Obtém as qtdes de devolução de encalhe juramentado
@@ -70,7 +90,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQuantidadeContagemDevolucao(
+	public ContagemDevolucaoAgregationValuesDTO obterQuantidadeContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
 	
@@ -99,6 +119,19 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
 	/**
+	 * Obtém o somatorio do campo qtde do Movimento de Estoque da cota pelo Tipo de Movimento.
+	 * 
+	 * @param periodo
+	 * @param idCota
+	 * @param gruposMovimentoEstoque
+	 * 
+	 * @return Map<Long, BigInteger>
+	 */
+	Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, 
+													            Long idCota, 
+													            GrupoMovimentoEstoque... gruposMovimentoEstoque);
+		
+	/**
 	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
 	 * 
 	 * @param filtro
@@ -116,6 +149,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return BigDecimal
 	 */
 	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro);
+	
+	public ConsultaEncalheDTO obterValorTotalReparteEncalheDataCotaFornecedor(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
@@ -202,7 +237,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBox(
 			FiltroMapaAbastecimentoDTO filtro);
-
+	
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoBoxRota(
+		FiltroMapaAbastecimentoDTO filtro);
+	
 	/**
 	 * Obtém dados do Mapa de Abastecimento por Rota
 	 * 
@@ -334,7 +372,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public Long countObterMapaDeAbastecimentoPorEntregador(
 			FiltroMapaAbastecimentoDTO filtro);
 	
-
 	/**
 	 * Obtém dados do Mapa de Abastecimento por Entregador
 	 * 
@@ -348,20 +385,38 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @param data
 	 * @param idCota
-	 * @param grupoMovimentoEstoque
+	 * @param gruposMovimentoEstoque
 	 * 
 	 * @return List - MovimentoEstoqueCota
 	 */
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque);
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 	
 	/**
-	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
-	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
+     * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição - movimentos à vista
 	 * @param idCota
 	 * @param dataControleConferencia
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
+	public List<MovimentoEstoqueCota> obterMovimentosAVistaPendentesGerarFinanceiro(Long idCota, Date dataLancamento);
+	
+	/**
+     * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição - movimentos à vista ou consignados com conferencia prevista no dia
+	 * @param idCota
+	 * @param dataControleConferencia
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public List<MovimentoEstoqueCota> obterMovimentosConsignadosCotaAVistaPrevistoDia(Long idCota, Date dataLancamento);
+	
+	/**
+	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe ou com Produtos Conta Firme
+	 * @param idCota
+	 * @param dataControleConferencia
+	 * @return List<MovimentoEstoqueCota>
+	 */
+    public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(Long idCota, Date dataControleConferencia);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
@@ -387,7 +442,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																			Long idCota, 
-																			GrupoMovimentoEstoque grupoMovimentoEstoque);
+																			List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 
 	/**
 	 * Obtém movimentos de estoque cota que não possuem estudos.
@@ -413,4 +468,26 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
 			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
+	/**
+	 * Obtém a data da última movimentação de reparte expedida.
+	 * 
+	 * @param numeroCota - numero da cota
+	 * @param idProdutoEdicao - id do produto edição
+	 * 
+	 * @return {@link Date}
+	 */
+	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
+			   											   Long idProdutoEdicao);
+	
+	/**
+	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota);
+	
+	/**
+	 * Adiciona em lote a lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
 }
