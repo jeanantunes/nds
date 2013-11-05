@@ -37,12 +37,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 	    Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
         
-        Date dataInicio = DateUtil.removerTimestamp(data);
-        Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
-       
         String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
            .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
-           .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
+        .append("  lancamento.status <> :statusFuro and lancamento.dataLancamentoDistribuidor =:data )").toString();
         
         String templateHqlDiferenca =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
 	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
@@ -55,13 +52,16 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido)
 	        .append(" and diferenca.id in ( select distinct rateio.diferenca.id from RateioDiferenca rateio where rateio.dataMovimento =:data ) ").append(")").toString();
         
-        String templateHqlHistoricoEstoque = new StringBuilder(" COALESCE( (select sum(hstEstoque.qtde * hstEstoque.produtoEdicao.precoVenda) ")
-        	.append(" from HistoricoEstoqueProduto hstEstoque  ") 
-        	.append(" where hstEstoque.data =:dataConsultaHistorico ")
-        	.append(" and hstEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(" ),0) ").toString();
         
-        StringBuilder hql = new StringBuilder(" select sum(me.qtde * produtoEdicao.precoVenda) + ").append(templateHqlHistoricoEstoque).append(" as totalReparte, ");
+        String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
+        	.append(" (select COALESCE(sum(me.qtde*produtoEdicaoME.precoVenda),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+	        .append(" where me.dataAprovacao = :data ")
+	        .append(" and me.status = :statusAprovado ")
+	        .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
+	        .append(" and produtoEdicaoME.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
         
+        StringBuilder hql = new StringBuilder(" select COALESCE(sum(hstEstoque.qtde * produtoEdicao.precoVenda),0) + ").append(templateHqlRecebimentoEstoqueFisico).append(" as totalReparte, ");
+                
 	    hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobras", "totalSobras")).append(",")
 	       .append(String.format(templateHqlDiferenca,  "tipoDiferencaFaltas", "totalFaltas")).append(",");
 	    
@@ -78,24 +78,26 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
            .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") - ")
            .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaFaltas")).append(" as totalDistribuido ");
         
-        hql.append(" from MovimentoEstoque me ")
-           .append(" join me.produtoEdicao produtoEdicao ") 
-           .append(" where me.data = :data ")
-           .append(" and me.status = :statusAprovado ")
-           .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
-           .append(" and produtoEdicao in ").append(templateHqlProdutoEdicaoExpedido);
- 
+        hql.append(" from Expedicao expedicao ")
+	        .append(" join expedicao.lancamentos lancamento " )
+	        .append(" join lancamento.produtoEdicao produtoEdicao ")
+	        .append(" join produtoEdicao.produto produto ")
+	        .append(" left join produtoEdicao.historicoEstoqueProduto hstEstoque ")
+	        .append(" where  ")
+	        .append(" (hstEstoque.data is null or hstEstoque.data =:dataConsultaHistorico ) ")
+	        .append("  and lancamento.status <> :statusFuro ")
+	        .append(" and lancamento.dataLancamentoDistribuidor =:data ) ");
+        
         Query query = getSession().createQuery(hql.toString());
         
         query.setParameter("dataConsultaHistorico", dataReparteHistoico);
         query.setParameter("data", data);
-        query.setParameter("dataInicio", dataInicio);
-        query.setParameter("dataFim", dataFim);
         query.setParameter("statusFuro", StatusLancamento.FURO);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
         query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
         query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
         query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+        query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
 
         query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
@@ -147,29 +149,20 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
         
         Date dataInicio = DateUtil.removerTimestamp(data);
-        Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
+     
+        StringBuilder hql = new StringBuilder("select count(distinct lancamento.id) ");
         
-        String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
-           .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
-           .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
-        
-        StringBuilder hql = new StringBuilder("select count(me) ");
-        
-        hql.append(" from MovimentoEstoque me ")
-	       .append(" join me.produtoEdicao produtoEdicao ") 
-	       .append(" join produtoEdicao.produto produto ") 
-	       .append(" where me.data = :data ")
-	       .append(" and me.status = :statusAprovado ")
-	       .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
-	       .append(" and produtoEdicao in ").append(templateHqlProdutoEdicaoExpedido);
+        hql.append(" from Expedicao expedicao ")
+        .append(" join expedicao.lancamentos lancamento " )
+        .append(" join lancamento.produtoEdicao produtoEdicao ")
+        .append(" join produtoEdicao.produto produto ")
+        .append(" where  ")
+        .append(" lancamento.status <> :statusFuro ")
+        .append(" and lancamento.dataLancamentoDistribuidor =:data ) ");
  
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("data", dataInicio);
-        query.setParameter("dataInicio", dataInicio);
-        query.setParameter("dataFim", dataFim);
-        query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
         query.setParameter("statusFuro", StatusLancamento.FURO);
-        query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
         
         return (Long) query.uniqueResult();
     }
@@ -180,27 +173,22 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         Objects.requireNonNull(data, "Data para consulta ao resumo do reparte não deve ser nula!");
 
         Date dataInicio = DateUtil.removerTimestamp(data);
-        Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
-        
-        String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
-           .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
-           .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro )").toString();
-        
         
         String templateHqlDiferenca = new StringBuilder("(select sum(diferenca.qtde) from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca  ") 
         	.append("where diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDiferenca in (:%s) ) as %s ").toString();
         
-        String templateHqlHistoricoEstoque = new StringBuilder(" COALESCE( (select hstEstoque.qtde ")
-	    	.append(" from HistoricoEstoqueProduto hstEstoque  ") 
-	    	.append(" where hstEstoque.data =:dataConsultaHistorico ")
-	    	.append(" and hstEstoque.produtoEdicao.id = produtoEdicao.id ")
-	    	.append(" and hstEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(" ),0) ").toString();
-        
-        StringBuilder hql = new StringBuilder("select produtoEdicao.id as idProdutoEdicao, produto.codigo as codigo, ");
+        String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
+           .append(" (select COALESCE(sum(me.qtde),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
+	       .append(" where me.dataAprovacao = :data ")
+	       .append(" and me.status = :statusAprovado ")
+	       .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
+	       .append(" and produtoEdicaoME.id = produtoEdicao.id )").toString();
+     
+        StringBuilder hql = new StringBuilder("select distinct produtoEdicao.id as idProdutoEdicao, produto.codigo as codigo, ");
 				      hql.append("produto.nome as nomeProduto, ");
 				      hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
 				      hql.append("produtoEdicao.precoVenda as precoVenda, ");
-				      hql.append("me.qtde + ").append(templateHqlHistoricoEstoque).append(" as qtdeReparte, ");
+				      hql.append("COALESCE( hstEstoque.qtde,0 ) + ").append(templateHqlRecebimentoEstoqueFisico).append(" as qtdeReparte, ");
         
         //Diferenças, convertendo as qtde sempre para exemplares
         hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobraDe", "qtdeSobraDe")).append(",");
@@ -219,25 +207,26 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         hql.append("then movimentoEstoque.qtde else (movimentoEstoque.qtde * -1) end) from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data "); 
         hql.append("and movimentoEstoque.produtoEdicao.id = produtoEdicao.id and movimentoEstoque.status = :statusAprovado ");
         hql.append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoTransferenciaLancamentoEntrada, :grupoTransferenciaLancamentoSaida)) as qtdeTransferencia ");
-
-        hql.append(" from MovimentoEstoque me ")
-	       .append(" join me.produtoEdicao produtoEdicao ") 
-	       .append(" join produtoEdicao.produto produto ") 
-	       .append(" where me.data = :data ")
-	       .append(" and me.status = :statusAprovado ")
-	       .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ")
-	       .append(" and produtoEdicao in ").append(templateHqlProdutoEdicaoExpedido);
         
+    	 hql.append(" from Expedicao expedicao ")
+	         .append(" join expedicao.lancamentos lancamento " )
+	         .append(" join lancamento.produtoEdicao produtoEdicao ")
+	         .append(" join produtoEdicao.produto produto ")
+	         .append(" left join produtoEdicao.historicoEstoqueProduto hstEstoque ")
+	         .append(" where  ")
+	         .append(" (hstEstoque.data is null or hstEstoque.data =:dataConsultaHistorico ) ")
+	         .append(" and lancamento.status <> :statusFuro ")
+	         .append(" and lancamento.dataLancamentoDistribuidor =:data ) ");
+	    	
         hql.append("order by produto.codigo asc");
     
         Query query = getSession().createQuery(hql.toString());
         
         query.setParameter("dataConsultaHistorico", dataReparteHistoico);
         query.setParameter("data", dataInicio);
-        query.setParameter("dataInicio", dataInicio);
-        query.setParameter("dataFim", dataFim);
         query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
         query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+        query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
         query.setParameter("grupoTransferenciaLancamentoEntrada", GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO);
         query.setParameter("grupoTransferenciaLancamentoSaida", GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO);
