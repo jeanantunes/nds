@@ -287,7 +287,7 @@ var fechamentoEncalheController = $.extend(true, {
 		for (var i = 0; i<tabela.rows.length; i++) {
 			if (replicar){
 			
-				fechamentoEncalheController.replicarItem(i);
+				fechamentoEncalheController.replicarItem(i, false);
 			
 			} else {
 				
@@ -304,7 +304,7 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			if ($(this).find('input[name="checkgroupFechamento"]').is(":checked")) {
 				
-				fechamentoEncalheController.replicarItem(index);
+				fechamentoEncalheController.replicarItem(index, true);
 			}
 			
 			index++;
@@ -313,7 +313,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	replicar:function(index){
 		$("#sel",this.workspace).attr("checked",false);
-		fechamentoEncalheController.replicarItem(index);
+		fechamentoEncalheController.replicarItem(index, true);
 	},
 	
 	limparInputsFisico: function(index) {
@@ -329,82 +329,49 @@ var fechamentoEncalheController = $.extend(true, {
 		}
 	},
 	
-	replicarItem : function(index) {
+	replicarItem : function(index, manual) {
 
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		var valor = tabela.rows[index].cells[6].firstChild.innerHTML;
 		var campo = tabela.rows[index].cells[8].firstChild.firstChild;
 		var diferenca = tabela.rows[index].cells[9].firstChild;
 		
-		if($('#ch'+index).is(':checked'))
-		{
-			if($(campo).val() != null || $(campo).val() != "")
-			{
-				$(campo).parent('div').children('.divEscondidoValorFisico_' + index).remove();
-				$(campo).parent('div').append('<div class="divEscondidoValorFisico_' + index + '" style="display:none;">' + $(campo).val() + '</div>');
-			}
-		}	
-		
-		if(campo.disabled){
+		if (campo.disabled) {
+			
 			return;
 		}
 		
-		if (!$("#ch" + index, this.workspace).attr("checked")) {
+		if ($('#ch'+index).is(':checked') || !manual) {
+			
+			if ($(campo).val() != null || $(campo).val() != "") {
+				
+				$(campo).parent('div').children('.divEscondidoValorFisico_' + index).remove();
+				$(campo).parent('div').append('<div class="divEscondidoValorFisico_' + index + '" style="display:none;">' + $(campo).val() + '</div>');
+			}
+			
+			campo.value = valor;
+			diferenca.innerHTML = "0";
+			
+		} else {
 			
 			campo.value = "";
 			diferenca.innerHTML = "";
-		
-		} else {
-		
-			campo.value = valor;
-			diferenca.innerHTML = "0";
-		}
-		
-		
-		if(! $('#ch'+index).is(':checked'))
-		{
+			
 			var valorAntigo = $(campo).parent('div').children('.divEscondidoValorFisico_' + index).html();
-			$(campo).val(valorAntigo);			
-		}
+			$(campo).val(valorAntigo);		
+		}			
 	},
 	
 	checkAll:function(input){
-		if($('input[name=Todos]').is(":checked"))
-		{
-			gridVerificacaoEscritos = [];
-			$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
-				if($(this).children('td').children('div').children('input[name=fisico]').val().toString() != '')
-				{
-					gridVerificacaoEscritos.push({codigo : $(this).children('td[abbr="codigo"]').children('div').html().toString(), 
-							fisico : $(this).children('td').children('div').children('input[name=fisico]').val().toString()});
-				}	
-			});
-		
-		}	
-		
+
 		checkAll(input,"checkgroupFechamento");
 		
 		fechamentoEncalheController.replicarTodos(input.checked);
-	
-		if(! $('input[name=Todos]').is(":checked"))
-		{	
-			$(gridVerificacaoEscritos).each(function(key, valor){
-				$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(chave, valorSegundo){
-					if(valor.codigo == $(valorSegundo).children('td[abbr="codigo"]').children('div').html().toString())
-					{
-						$(this).children('td').children('div').children('input[name=fisico]').val(valor.fisico);
-					}
-					
-				});
-			});
-		}
 		
 		fechamentoEncalheController.checkAllGrid = input.checked;
 		
 		fechamentoEncalheController.fechamentosManuais = new Array();
 		fechamentoEncalheController.nonSelected = new Array();
-		 
-
 	},
 	
 	onChangeFisico : function(campo, index, produtoEdicao) {
