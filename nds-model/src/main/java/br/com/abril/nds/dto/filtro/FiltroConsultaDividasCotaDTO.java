@@ -89,7 +89,7 @@ public class FiltroConsultaDividasCotaDTO implements Serializable {
 	 */
 	public enum OrdenacaoColunaDividas{
 		
-		CODIGO("codigo"),
+		NUMERO_COTA("numeroCota"),
 		NOME_COTA("nome"),
 		DATA_EMISSAO("dataEmissao"),
 		DATA_VENCIMENTO("dataVencimento"),

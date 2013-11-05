@@ -14,8 +14,10 @@ public class CobrancaVO implements Serializable  {
 	private static final long serialVersionUID = -5988272381369010529L;
 
 	//BOLETO
-	@Export(label = "Código")
 	private String codigo;
+	
+	@Export(label = "Cota", widthPercent=5)
+	private Integer numeroCota;
 	
 	@Export(label = "Nome")
 	private String nome;
@@ -295,6 +297,16 @@ public class CobrancaVO implements Serializable  {
 			return false;
 		return true;
 	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+	
+	
 
 
 }

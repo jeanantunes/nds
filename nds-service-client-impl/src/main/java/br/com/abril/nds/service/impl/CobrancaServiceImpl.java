@@ -261,6 +261,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 				for (Cobranca itemCobranca:cobrancas){
 					
 					cobrancaVO = new CobrancaVO();
+					cobrancaVO.setNumeroCota((itemCobranca.getCota()!= null)? itemCobranca.getCota().getNumeroCota():null);
 					cobrancaVO.setCodigo(itemCobranca.getId()!=null?itemCobranca.getId().toString():"");
 					cobrancaVO.setNome(itemCobranca.getCota()!=null?(itemCobranca.getCota().getPessoa()!=null?itemCobranca.getCota().getPessoa().getNome():""):"");
 					cobrancaVO.setDataEmissao(itemCobranca.getDataEmissao()!=null?DateUtil.formatarData(itemCobranca.getDataEmissao(),"dd/MM/yyyy"):"");
