@@ -392,7 +392,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setPaginacao(paginacao);
-		filtro.setOrdenacaoColuna(OrdenacaoColunaDividas.CODIGO);
+		filtro.setOrdenacaoColuna(OrdenacaoColunaDividas.NUMERO_COTA);
 
 		cobrancas = cobrancaRepository.obterCobrancasPorCota(filtro);
 
