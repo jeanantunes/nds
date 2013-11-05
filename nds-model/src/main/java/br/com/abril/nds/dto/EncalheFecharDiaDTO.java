@@ -36,7 +36,6 @@ public class EncalheFecharDiaDTO implements Serializable {
 	@Export(label = "Lógico", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private BigInteger qtdeLogico;
 	
-	@Export(label = "Venda Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private BigDecimal venda;
 	
 	@Export(label = "Diferenças", alignment=Alignment.CENTER, exhibitionOrder = 9)
@@ -58,6 +57,7 @@ public class EncalheFecharDiaDTO implements Serializable {
 	 * Quantidade de exemplares de cada produto e edição que vendidos do
 	 * encalhe
 	 */
+	@Export(label = "Venda Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private BigInteger qtdeVendaEncalhe;
 	
 	private String qtdeFormatado;
@@ -120,6 +120,7 @@ public class EncalheFecharDiaDTO implements Serializable {
 
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+		this.precoVendaFormatado = (precoVenda == null)?CurrencyUtil.formatarValor(BigDecimal.ZERO):CurrencyUtil.formatarValor(precoVenda);
 	}
 
 	public BigInteger getQtdeLogico() {
@@ -199,5 +200,27 @@ public class EncalheFecharDiaDTO implements Serializable {
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+
+	public void setQtdeLogico(BigInteger qtdeLogico) {
+		this.qtdeLogico = qtdeLogico;
+	}
+
+	public void setQtdeDiferenca(BigInteger qtdeDiferenca) {
+		this.qtdeDiferenca = qtdeDiferenca;
+	}
+
+	public void setQtdeFisico(BigInteger qtdeFisico) {
+		this.qtdeFisico = qtdeFisico;
+	}
+
+	public void setQtdeLogicoJuramentado(BigInteger qtdeLogicoJuramentado) {
+		this.qtdeLogicoJuramentado = qtdeLogicoJuramentado;
+	}
+
+	public void setQtdeVendaEncalhe(BigInteger qtdeVendaEncalhe) {
+		this.qtdeVendaEncalhe = qtdeVendaEncalhe;
+	}
+	
+	
 	
 }
