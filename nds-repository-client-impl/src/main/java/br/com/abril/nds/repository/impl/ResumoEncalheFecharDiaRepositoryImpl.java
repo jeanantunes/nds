@@ -125,8 +125,8 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         	
         	 BigInteger qtdeFisicoLogicoJuramentado = item.getQtdeFisico().add(item.getQtdeLogicoJuramentado());
         	 
-             //Diferenca = (Físico + Lógico Juramentado) - Lógico - Venda de Encalhe;
-             BigInteger qtdeDiferenca = qtdeFisicoLogicoJuramentado.subtract(item.getQtdeLogico()).subtract(item.getQtdeVendaEncalhe());
+             //Diferenca = (Físico + Lógico Juramentado) - (Lógico - Venda de Encalhe);
+             BigInteger qtdeDiferenca = qtdeFisicoLogicoJuramentado.subtract((item.getQtdeLogico()).subtract(item.getQtdeVendaEncalhe()));
              
              item.setQtdeDiferenca(qtdeDiferenca);
         }

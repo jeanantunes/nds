@@ -1276,26 +1276,18 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		StringBuilder subquery = new StringBuilder();
 			
-		subquery.append(" select vp.qntProduto as exemplaresDevolucao, ");
+		subquery.append(" select sum(vp.qntProduto) as exemplaresDevolucao, ");
 		subquery.append(" produtoEdicao.id as produtoEdicao, ");
 		subquery.append(" produto.codigo as codigo ");
-		subquery.append(" from VendaProduto vp, ConferenciaEncalhe conferenciaEncalhe ");
-		subquery.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
-		subquery.append("join produtoEdicao.produto as produto ");
+		subquery.append(" from VendaProduto vp ");
+		subquery.append(" join vp.produtoEdicao as produtoEdicao ");
+		subquery.append(" join produtoEdicao.produto as produto ");
 		
-		subquery.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.dataOperacao = :dataEncalhe and ");
-		subquery.append(" conferenciaEncalhe.controleConferenciaEncalheCota.status = :statusOperacaoFinalizada and ");
-		subquery.append(" conferenciaEncalhe.produtoEdicao.id = vp.produtoEdicao.id and ");
-		subquery.append(" conferenciaEncalhe.controleConferenciaEncalheCota.cota.id = vp.cota.id and ");
-		//subquery.append(" vp.produtoEdicao.id = pe.id and ");
-		subquery.append(" vp.dataOperacao = :dataEncalhe and ");
-		subquery.append(" vp.tipoVenda = :tipoVenda ");
+		subquery.append(" where ");
+		subquery.append(" vp.dataOperacao = :dataEncalhe ");
+		subquery.append(" and vp.tipoVenda = :tipoVenda ");
 		subquery.append(" and vp.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
-		subquery.append("and produtoEdicao.id in (:produtosEdicoesId)");
-		
-		if (filtro.getBoxId() != null) {
-			subquery.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
-		}
+		subquery.append(" and produtoEdicao.id in (:produtosEdicoesId)");
 		
 		Query query = this.getSession().createQuery(subquery.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
@@ -1304,12 +1296,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
 		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);
-		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 	
-		if (filtro.getBoxId() != null) {
-			query.setLong("boxId", filtro.getBoxId());
-		}
-		
 		return query.list();
 
 	}
