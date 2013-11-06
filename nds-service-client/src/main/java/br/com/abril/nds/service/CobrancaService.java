@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
@@ -27,11 +28,13 @@ public interface CobrancaService {
 	 * @param valor - valor a ser calculado
 	 * @param dataVencimento - data de vencimento
 	 * @param dataCalculoJuros - data a ser calculado o juros
+	 * @param formaCobrancaPrincipal - forma de cobrança principal
 	 * 
 	 * @return valor calculado com o juros 
 	 */	
 	public BigDecimal calcularJuros(Banco banco, Long idCota,
-									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
+									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros,
+									FormaCobranca formaCobrancaPrincipal);
 	
 	/**
 	 * Obtém o valor da multa, respeitando a ordem dos parâmetros informados,
@@ -42,9 +45,11 @@ public interface CobrancaService {
 	 * @param cota - cota
 	 * @param valor - valor a ser calculado
 	 * @return valor calculado com a multa
+	 * @param formaCobrancaPrincipal - forma de cobrança principal
 	 */
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									BigDecimal valor);
+									BigDecimal valor,
+									FormaCobranca formaCobrancaPrincipal);
 
 	
 	/**

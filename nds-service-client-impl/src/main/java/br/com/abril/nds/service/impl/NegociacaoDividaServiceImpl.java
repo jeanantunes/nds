@@ -169,6 +169,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
 		Date data = DateUtil.removerTimestamp(new Date());
 
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
 		for (NegociacaoDividaDTO divida : dividas) {
 			
 			if (divida.getPrazo() != 0){
@@ -179,12 +182,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 	
 				encargo = encargo.add(cobrancaService.calcularJuros(banco,
 						cota.getId(),
-						divida.getVlDivida(), divida.getDtVencimento(), data));
+						divida.getVlDivida(), divida.getDtVencimento(), data, formaCobrancaPrincipal));
 	
 				
 				if (divida.getDtVencimento().compareTo(data) < 0) {
 					encargo = encargo.add(cobrancaService.calcularMulta(banco,
-							cota, divida.getVlDivida()));
+							cota, divida.getVlDivida(), formaCobrancaPrincipal));
 				}
 				divida.setEncargos(encargo);
 				divida.setTotal(divida.getVlDivida().add(encargo));
@@ -906,6 +909,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		}
 		BigDecimal valorParcela;
 		BigDecimal valorTotal = BigDecimal.ZERO;
+		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
 		for (int i=0;i < parcelas.size();i++) {				
 			
 			CalculaParcelasVO calculaParcelasVO = parcelas.get(i);
@@ -936,11 +943,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				
 				BigDecimal juros = cobrancaService.calcularJuros(banco,
 						cota.getId(),
-						valorParcela, dataVencimento, new Date());
+						valorParcela, dataVencimento, new Date(), formaCobrancaPrincipal);
 
 				BigDecimal multas = cobrancaService.calcularMulta(banco,
 						cota,
-						valorParcela);
+						valorParcela, formaCobrancaPrincipal);
 
 				encargos = juros.add(multas);
 			}			
