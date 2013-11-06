@@ -199,24 +199,39 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
 		
 		
-		sql.append(" AND (");
-			
+        sql.append(" AND (");
+		
 		sql.append("        (c.TIPO_COTA = :tipoCotaConsignado) OR ");
 		
 		sql.append("        ( ");
 		
 		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
 		
-		sql.append("          (   ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) AND ");
+		sql.append("          (   ");
 		
-		sql.append("          ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE)   ) ");
+		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) OR ");
+		
+		sql.append("              (");
+		
+		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
+		
+		sql.append("                  (");
+		
+		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
+		
+		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
+		
+		sql.append("                  )");
+		
+		sql.append("              ) ");
+		
+		sql.append("          ) ");
 		
 		sql.append("        ) ");
 
 		sql.append("     )");
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
@@ -276,7 +291,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
 		
 
-        sql.append(" AND (");
+		sql.append(" AND (");
 		
 		sql.append("        (c.TIPO_COTA = :tipoCotaConsignado) OR ");
 		
@@ -284,9 +299,25 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append("          (c.TIPO_COTA = :tipoCotaAVista) AND ");
 		
-		sql.append("          (   ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) AND ");
+		sql.append("          (   ");
 		
-		sql.append("          ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE)   ) ");
+		sql.append("              ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA <= c.ALTERACAO_TIPO_COTA)) OR ");
+		
+		sql.append("              (");
+		
+		sql.append("                  ((c.ALTERACAO_TIPO_COTA IS NOT NULL AND MEC.DATA > c.ALTERACAO_TIPO_COTA)) AND ");
+		
+		sql.append("                  (");
+		
+		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) IS NULL) OR ");
+		
+		sql.append("                      ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = c.ID) = TRUE) ");
+		
+		sql.append("                  )");
+		
+		sql.append("              ) ");
+		
+		sql.append("          ) ");
 		
 		sql.append("        ) ");
 
@@ -509,9 +540,25 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("          (cota.tipoCota = :tipoCotaAVista) AND ");
 		
-		hql.append("          (   ((cota.alteracaoTipoCota is not null AND movimento.data <= cota.alteracaoTipoCota)) AND ");
+		hql.append("          (   ");
 		
-		hql.append("          ((SELECT pcc.devolveEncalhe FROM ParametroCobrancaCota pcc WHERE pcc.cota.id = cota.id) = true)   ) ");
+		hql.append("           ((cota.alteracaoTipoCota is not null AND movimento.data <= cota.alteracaoTipoCota)) OR ");
+		
+		hql.append("           (");
+		
+		hql.append("               ((cota.alteracaoTipoCota is not null AND movimento.data > cota.alteracaoTipoCota)) AND ");
+		
+		hql.append("               (   ");
+		
+		hql.append("                   (cota.parametroCobranca is null) OR ");
+		
+		hql.append("                   (cota.parametroCobranca.devolveEncalhe = true)   ");
+		
+		hql.append("               )   ");
+		
+		hql.append("           )");
+		
+	    hql.append("          )   ");
 		
 		hql.append("        ) ");
 
