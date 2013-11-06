@@ -1111,7 +1111,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
 		
