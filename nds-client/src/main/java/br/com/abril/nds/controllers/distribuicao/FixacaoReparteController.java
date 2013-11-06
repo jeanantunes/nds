@@ -639,7 +639,7 @@ public class FixacaoReparteController extends BaseController {
 			 
 			List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
 			
-			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getCodigoProduto());
+			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
 			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {

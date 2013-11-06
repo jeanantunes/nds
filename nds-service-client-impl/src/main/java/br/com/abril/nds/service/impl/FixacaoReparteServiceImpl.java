@@ -111,7 +111,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			FiltroConsultaFixacaoProdutoDTO filtroProduto) {
 		List<FixacaoReparteDTO> resultado = null;
 		if(filtroProduto != null && filtroProduto.getCodigoProduto()!=null){
-			Produto produto = produtoRepository.obterProdutoPorCodigoProdin(filtroProduto.getCodigoProduto());
+			Produto produto = produtoService.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
 			 resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto) ;
 		}
 		return resultado; 
