@@ -334,7 +334,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		query.setResultTransformer(Transformers
 				.aliasToBean(CotaSuspensaoDTO.class));
-
+ 
+		
 		return query.list();
 	}
 
