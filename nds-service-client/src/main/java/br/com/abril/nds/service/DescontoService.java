@@ -160,7 +160,7 @@ public interface DescontoService {
 	 * @param produtoEdicao
 	 * @return
 	 */
-	Map<String, DescontoDTO> obterDescontosPorLancamentoProdutoEdicaoMap(Long lancamentoId, Long produtoEdicaoId);
+	Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao(Long lancamentoId, Long produtoEdicaoId);
 	
 	/**
 	 * @param descontos

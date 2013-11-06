@@ -170,18 +170,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento
 			, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
-		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.
-			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
+		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
 
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(idLancamento, idProdutoEdicao);
-		
-		//FIXME: Remover essa parte
-		for(String s : descontos.keySet()) {
-			System.out.println("key: "+ s);
-		}
-		
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(idLancamento, idProdutoEdicao);
+				
 		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
 		
 		//System.out.println("Listagem Produto-Edicao / Cotas: "+ idProdutoEdicao +" / "+ listaEstudoCota.size());
@@ -1281,9 +1275,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			if (idLancamento==null) {
 				
-				idLancamento = 
-					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-						new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+				idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+									new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
 			}
 			
 				
@@ -1295,103 +1288,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 
-				//Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
 				/**
 				 * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
 				 */
-				String key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.append("pe")
-						.append(produtoEdicao.getId())
-						.append("p")
-						.append(produtoEdicao.getProduto().getId())
-						.toString();
-				
-				DescontoDTO descontoDTO = descontos.get(key);
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.append("pe")
-						.append(produtoEdicao.getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
+				DescontoDTO descontoDTO = null;
+				try {
+					descontoDTO = descontoService.obterDescontoPor(descontos, idCota, produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+				} catch (Exception e) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto: "+ produtoEdicao.getProduto().getCodigo() +" / "+ produtoEdicao.getNumeroEdicao());
 				}
 				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.append("p")
-						.append(produtoEdicao.getProduto().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("pe")
-						.append(produtoEdicao.getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("p")
-						.append(produtoEdicao.getProduto().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					
-					ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-					
-					if(pe != null && pe.getProduto() != null)
-						throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto: "+ pe.getProduto().getCodigo() +" / "+ pe.getNumeroEdicao());
-					else
-						throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");
-					
-				}
-				
-				BigDecimal desconto = descontoDTO.getValor();				
+				BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;				
 				
 				BigDecimal precoComDesconto = 
-						produtoEdicao.getPrecoVenda().subtract(
-								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
+						produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
 
 				movimentoEstoqueCota.setPrecoVenda(produtoEdicao.getPrecoVenda());
 				movimentoEstoqueCota.setPrecoComDesconto(precoComDesconto);				
