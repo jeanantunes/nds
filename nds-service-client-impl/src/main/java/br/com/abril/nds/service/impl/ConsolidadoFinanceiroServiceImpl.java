@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -17,13 +18,14 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
-import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 
 @Service
@@ -36,9 +38,6 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	FornecedorService fornecedorService;
 	
 	@Autowired
-	private FormaCobrancaService formaCobrancaService;
-	
-	@Autowired
 	private CotaRepository cotaRepository;
 	
 	@Autowired
@@ -49,21 +48,38 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		return consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaEncalhe(filtro);		
 	}
+	
 	@Transactional(readOnly=true)
 	public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(FiltroConsolidadoVendaCotaDTO filtro) {
 		return consolidadoFinanceiroRepository.obterMovimentoVendaEncalhe(filtro);
 	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public ConsolidadoFinanceiroCota buscarPorId(Long id) {
 		return consolidadoFinanceiroRepository.buscarPorId(id);
 	}
 	
-
-	
 	@Transactional(readOnly=true)
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
-		return consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
+		
+		List<ConsignadoCotaDTO> consigadoDTO = new ArrayList<ConsignadoCotaDTO>();
+		
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || 
+		    ((cota.getTipoCota().equals(TipoCota.A_VISTA)) && 
+		     (cota.getAlteracaoTipoCota()!=null && 
+		      filtro.getDataConsolidado().compareTo(cota.getAlteracaoTipoCota()) < 0))){
+			
+			consigadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaConsignado(filtro);
+		}
+		else{
+			
+			consigadoDTO = consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaAVistaConsignado(filtro);
+		}
+		
+		return consigadoDTO;
 	}
 
 	@Override

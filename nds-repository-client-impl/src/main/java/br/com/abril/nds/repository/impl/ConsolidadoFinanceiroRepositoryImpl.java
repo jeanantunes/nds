@@ -512,11 +512,318 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		return query.list();
 	}
+	
+	/**
+	 * Obtem ordenacao da consulta do detalhe do consignado da conta corrente da cota
+	 * @param filtro
+	 * @return StringBuffer
+	 */
+	private StringBuffer getOrdenacaoConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
+		
+		StringBuffer hql = new StringBuffer();
+		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		if (filtro.getOrdenacaoColuna() != null) {
+
+			hql.append(" order by ");
+			
+			String orderByColumn = "";
+			
+				switch (filtro.getOrdenacaoColuna()) {
+				
+					case CODIGO_PRODUTO:
+						orderByColumn = " codigoProduto ";
+						break;
+					case NOME_PRODUTO:
+						orderByColumn = " nomeProduto ";
+						break;
+					case NUMERO_EDICAO:
+						orderByColumn = " numeroEdicao ";
+						break;
+					case PRECO_CAPA:
+						orderByColumn = " precoCapa ";
+						break;
+					case PRECO_COM_DESCONTO:
+						orderByColumn = " precoComDesconto ";
+						break;				
+					case REPARTE_SUGERIDO:
+						orderByColumn = " reparteSugerido ";
+						break;
+					case REPARTE_FINAL:
+						orderByColumn = " reparteFinal ";
+						break;
+					case DIFERENCA:
+						orderByColumn = " diferenca ";
+						break;
+					case MOTIVO:
+						orderByColumn = " motivoTexto ";
+						break;						
+					case FORNECEDOR:
+						orderByColumn = " nomeFornecedor ";
+						break;
+					case TOTAL:
+						orderByColumn = " total ";
+						break;
+					case SEQUENCIA:
+						orderByColumn = " sequencia ";
+					break;
+					default:
+						orderByColumn = " sequencia ";
+					break;
+				}
+			
+			hql.append(orderByColumn);
+			
+			if (paginacao.getOrdenacao() != null) {
+				
+				hql.append(paginacao.getOrdenacao().toString());
+				
+			}			
+		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
+		
+		return hql;
+	}
+	
+	/**
+	 * Obtem query do detalhe do consignado da conta corrente da cota
+	 * @param hql
+	 * @param filtro
+	 * @return SQLQuery
+	 */
+	private SQLQuery getSQLQueryConsignado(StringBuffer hql, FiltroConsolidadoConsignadoCotaDTO filtro){
+		
+		Session session = getSession();
+		
+		SQLQuery query = session.createSQLQuery(hql.toString());
+		
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeFornecedor", StandardBasicTypes.STRING);
+		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
+		query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparteSugerido", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("reparteFinal", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("motivoTexto", StandardBasicTypes.STRING);
+		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("sequencia", StandardBasicTypes.STRING);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsignadoCotaDTO.class));
+		
+		query.setParameter("numeroCota", filtro.getNumeroCota());
+		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
+		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.toString());
+		
+		return query;
+	}
+	
+	/**
+	 * Obtem paginacao do detalhe do consignado da conta corrente da cota
+	 * @param query
+	 * @param filtro
+	 * @return SQLQuery
+	 */
+	private SQLQuery getPaginacaoConsignado(SQLQuery query, FiltroConsolidadoConsignadoCotaDTO filtro){
+		
+        PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		if (paginacao != null &&
+				paginacao.getQtdResultadosPorPagina() != null &&
+				paginacao.getPaginaAtual() != null){
+			
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+			query.setFirstResult(paginacao.getPaginaAtual() - 1 * paginacao.getQtdResultadosPorPagina());
+		}
+		
+		return query;
+	}
+	
+	/**
+	 * Método que obtem os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota do tipo À Vista
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
+		
+        StringBuffer hql = new StringBuffer("select ");
+		
+        hql.append("	produto11_.CODIGO as codigoProduto, ")
+        
+		   .append("	produto11_.NOME as nomeProduto, ")
+		   
+		   .append("	pessoajuri14_.RAZAO_SOCIAL as nomeFornecedor, ")
+		   
+		   .append("	produtoedi8_.NUMERO_EDICAO as numeroEdicao, ")
+		   
+		   .append("	produtoedi8_.PRECO_VENDA as precoCapa, ")
+		   
+		   .append("	movimentos4_.VALOR_DESCONTO as desconto, ")
+		   
+		   .append("	coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as precoComDesconto, ")
+
+		   .append("	coalesce(movimentos4_.QTDE,0) as reparteSugerido, ")
+		   
+		   .append("	coalesce(movimentos4_.QTDE,0) as reparteFinal, ")	
+		   
+		   .append("	coalesce(0,0) as diferenca, ")
+		   
+		   .append("	'Reparte à Vista' as motivoTexto, ")
+
+		   .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
+
+		   .append("	'À Vista' as sequencia ")
+
+		   .append("from ")
+		   .append("	CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
+		   .append("inner join ")
+		   .append("	COTA cota1_  ")
+		   .append("		on consolidad0_.COTA_ID=cota1_.ID  ")
+		   .append("inner join ")
+		   .append("	CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos2_  ")
+		   .append("		on consolidad0_.ID=movimentos2_.CONSOLIDADO_FINANCEIRO_ID  ")
+		   .append("inner join ")
+		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof3_  ")
+		   .append("		on movimentos2_.MVTO_FINANCEIRO_COTA_ID=movimentof3_.ID  ")
+		   .append("inner join ")
+		   .append("	MOVIMENTO_ESTOQUE_COTA movimentos4_  ")
+		   .append("		on movimentof3_.ID=movimentos4_.MOVIMENTO_FINANCEIRO_COTA_ID  ")
+		   .append("inner join ")
+		   .append("	ESTOQUE_PRODUTO_COTA estoquepro6_  ")
+		   .append("		on movimentos4_.ESTOQUE_PROD_COTA_ID=estoquepro6_.ID  ")
+		   .append("inner join ")
+		   .append("	PRODUTO_EDICAO produtoedi8_  ")
+		   .append("		on estoquepro6_.PRODUTO_EDICAO_ID=produtoedi8_.ID  ")
+		   .append("inner join ")
+		   .append("	PRODUTO produto11_  ")
+		   .append("		on produtoedi8_.PRODUTO_ID=produto11_.ID  ")
+		   .append("inner join ")
+		   .append("	PRODUTO_FORNECEDOR fornecedor12_  ")
+		   .append("		on produto11_.ID=fornecedor12_.PRODUTO_ID  ")
+		   .append("inner join ")
+		   .append("	FORNECEDOR fornecedor13_  ")
+		   .append("		on fornecedor12_.fornecedores_ID=fornecedor13_.ID  ")
+		   .append("inner join ")
+		   .append("	PESSOA pessoajuri14_  ")
+		   .append("		on fornecedor13_.JURIDICA_ID=pessoajuri14_.ID  ")
+		   .append("inner join ")
+		   .append("	TIPO_MOVIMENTO tipomovime5_  ")
+		   .append("		on movimentof3_.TIPO_MOVIMENTO_ID=tipomovime5_.ID  ")
+		   .append("where ")
+		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
+		   .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
+		   .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+		   .append("group by ")
+		   .append("	produto11_.CODIGO , ")
+		   .append("	produto11_.NOME , ")
+		   .append("	produtoedi8_.NUMERO_EDICAO , ")
+		   .append("	produtoedi8_.PRECO_VENDA , ")
+		   .append("	pessoajuri14_.RAZAO_SOCIAL ")
+		   
+		   .append("union all ")
+		   
+		   .append("select ")
+		   
+		   .append("	produto9_.CODIGO as codigoProduto, ")
+		   
+		   .append("	produto9_.NOME as nomeProduto, ")
+		   
+		   .append("	pessoajuri12_.RAZAO_SOCIAL as nomeFornecedor, ")
+		   
+		   .append("	produtoedi6_.NUMERO_EDICAO as numeroEdicao, ")
+		   
+		   .append("	produtoedi6_.PRECO_VENDA as precoCapa, ")
+		   
+		   .append("	movimentos2_.VALOR_DESCONTO as desconto, ")
+		   
+		   .append("	coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as precoComDesconto, ")
+		   
+		    .append("	coalesce(movimentos2_.QTDE,0) as reparteSugerido, ")
+		   
+		   .append("	coalesce(movimentos2_.QTDE,0) as reparteFinal, ")	
+		   
+		   .append("	coalesce(0,0) as diferenca, ")
+		   
+		   .append("	'Reparte à Vista' as motivoTexto, ")
+		   
+		   .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total, ")
+		   
+		   .append("	'À Vista' as sequencia ")
+		   
+		   .append("from ")
+		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
+		   .append("inner join ")
+		   .append("	COTA cota1_  ")
+		   .append("		on movimentof0_.COTA_ID=cota1_.ID  ")
+		   .append("inner join ")
+		   .append("	MOVIMENTO_ESTOQUE_COTA movimentos2_  ")
+		   .append("		on movimentof0_.ID=movimentos2_.MOVIMENTO_FINANCEIRO_COTA_ID  ")
+		   .append("inner join ")
+		   .append("	ESTOQUE_PRODUTO_COTA estoquepro4_  ")
+		   .append("		on movimentos2_.ESTOQUE_PROD_COTA_ID=estoquepro4_.ID  ")
+		   .append("inner join ")
+		   .append("	PRODUTO_EDICAO produtoedi6_  ")
+		   .append("		on estoquepro4_.PRODUTO_EDICAO_ID=produtoedi6_.ID  ")
+		   .append("inner join ")
+		   .append("	PRODUTO produto9_  ")
+		   .append("		on produtoedi6_.PRODUTO_ID=produto9_.ID  ")
+		   .append("inner join ")
+		   .append("	PRODUTO_FORNECEDOR fornecedor10_  ")
+		   .append("		on produto9_.ID=fornecedor10_.PRODUTO_ID  ")
+		   .append("inner join ")
+		   .append("	FORNECEDOR fornecedor11_  ")
+		   .append("		on fornecedor10_.fornecedores_ID=fornecedor11_.ID  ")
+		   .append("inner join ")
+		   .append("	PESSOA pessoajuri12_  ")
+		   .append("		on fornecedor11_.JURIDICA_ID=pessoajuri12_.ID  ")
+		   .append("inner join ")
+		   .append("	TIPO_MOVIMENTO tipomovime3_  ")
+		   .append("		on movimentof0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID  ")
+		   .append("where ")
+		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
+		   .append("	and movimentof0_.DATA = :dataConsolidado ")
+		   .append("	and tipomovime3_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+		   .append("	and ( ")
+		   .append("		movimentof0_.ID not in  ( ")
+		   .append("			select ")
+		   .append("				movimentof15_.ID  ")
+		   .append("			from ")
+		   .append("				CONSOLIDADO_FINANCEIRO_COTA consolidad13_  ")
+		   .append("			inner join ")
+		   .append("				CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos14_  ")
+		   .append("					on consolidad13_.ID=movimentos14_.CONSOLIDADO_FINANCEIRO_ID  ")
+		   .append("			inner join ")
+		   .append("				MOVIMENTO_FINANCEIRO_COTA movimentof15_  ")
+		   .append("					on movimentos14_.MVTO_FINANCEIRO_COTA_ID=movimentof15_.ID ")
+		   .append("			) ")
+		   .append("		)  ")
+		   .append("group by ")
+		   .append("	produto9_.CODIGO , ")
+		   .append("	produto9_.NOME , ")
+		   .append("	produtoedi6_.NUMERO_EDICAO , ")
+		   .append("	produtoedi6_.PRECO_VENDA , ")
+		   .append("	pessoajuri12_.RAZAO_SOCIAL ");
+		
+		hql.append(this.getOrdenacaoConsignado(filtro));
+				
+		SQLQuery query = this.getSQLQueryConsignado(hql, filtro);
+		
+		query = this.getPaginacaoConsignado(query, filtro);
+		
+		return query.list();
+	}
 
 	/**
 	 * Método que obtem os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
 		
 		StringBuffer hql = new StringBuffer("select ");
@@ -684,103 +991,13 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	produtoedi6_.PRECO_VENDA , ")
 		   .append("	pessoajuri12_.RAZAO_SOCIAL ");
 		
-		PaginacaoVO paginacao = filtro.getPaginacao();
-
-		if (filtro.getOrdenacaoColuna() != null) {
-
-			hql.append(" order by ");
-			
-			String orderByColumn = "";
-			
-				switch (filtro.getOrdenacaoColuna()) {
-				
-					case CODIGO_PRODUTO:
-						orderByColumn = " codigoProduto ";
-						break;
-					case NOME_PRODUTO:
-						orderByColumn = " nomeProduto ";
-						break;
-					case NUMERO_EDICAO:
-						orderByColumn = " numeroEdicao ";
-						break;
-					case PRECO_CAPA:
-						orderByColumn = " precoCapa ";
-						break;
-					case PRECO_COM_DESCONTO:
-						orderByColumn = " precoComDesconto ";
-						break;				
-					case REPARTE_SUGERIDO:
-						orderByColumn = " reparteSugerido ";
-						break;
-					case REPARTE_FINAL:
-						orderByColumn = " reparteFinal ";
-						break;
-					case DIFERENCA:
-						orderByColumn = " diferenca ";
-						break;
-					case MOTIVO:
-						orderByColumn = " motivoTexto ";
-						break;						
-					case FORNECEDOR:
-						orderByColumn = " nomeFornecedor ";
-						break;
-					case TOTAL:
-						orderByColumn = " total ";
-						break;
-					case SEQUENCIA:
-						orderByColumn = " sequencia ";
-					break;
-					default:
-						orderByColumn = " sequencia ";
-					break;
-				}
-			
-			hql.append(orderByColumn);
-			
-			if (paginacao.getOrdenacao() != null) {
-				
-				hql.append(paginacao.getOrdenacao().toString());
-				
-			}			
-		}
-		else{
-			
-			hql.append(" order by sequencia ");
-		}
-		
-		Session session = getSession();
+		hql.append(this.getOrdenacaoConsignado(filtro));
 					
-		SQLQuery query = session.createSQLQuery(hql.toString());
-		
-		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
-		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
-		query.addScalar("nomeFornecedor", StandardBasicTypes.STRING);
-		query.addScalar("numeroEdicao", StandardBasicTypes.LONG);
-		query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("reparteSugerido", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("reparteFinal", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("motivoTexto", StandardBasicTypes.STRING);
-		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("sequencia", StandardBasicTypes.STRING);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ConsignadoCotaDTO.class));
-		
-		query.setParameter("numeroCota", filtro.getNumeroCota());
-		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
-		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.toString());
-		
+		SQLQuery query = this.getSQLQueryConsignado(hql, filtro);
+
 		query.setParameter("naoPostergado", false);
 		
-		if (paginacao != null &&
-				paginacao.getQtdResultadosPorPagina() != null &&
-				paginacao.getPaginaAtual() != null){
-			
-			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-			query.setFirstResult(paginacao.getPaginaAtual() - 1 * paginacao.getQtdResultadosPorPagina());
-		}
+		query = this.getPaginacaoConsignado(query, filtro);
 		
 		return query.list();
  	}

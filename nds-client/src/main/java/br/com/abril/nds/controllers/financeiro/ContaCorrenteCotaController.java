@@ -49,7 +49,6 @@ import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -90,9 +89,6 @@ public class ContaCorrenteCotaController extends BaseController {
 	
 	@Autowired
 	private EmailService emailService;
-
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroContaCorrente";
 
