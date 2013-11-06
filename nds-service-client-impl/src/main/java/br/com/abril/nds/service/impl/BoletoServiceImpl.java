@@ -77,6 +77,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -105,6 +106,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected PoliticaCobrancaService politicaCobrancaService;
+	
+	@Autowired
+	protected FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	protected PoliticaCobrancaRepository politicaCobrancaRepository;
@@ -321,7 +325,8 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
 		
-		Integer numeroMaximoAcumulosDistribuidor = this.distribuidorRepository.numeroMaximoAcumuloDividas();
+		Integer numeroMaximoAcumulosDistribuidor = 
+			this.distribuidorRepository.numeroMaximoAcumuloDividas();
 		
 		int contador = 0;
 		
@@ -332,6 +337,24 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		String nossoNumero = "";
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroPendente =
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+				GrupoMovimentoFinaceiro.PENDENTE);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroJuros =
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+				GrupoMovimentoFinaceiro.JUROS);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroMulta =
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+				GrupoMovimentoFinaceiro.MULTA);
+		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
+		Date dataCalculoJuros = 
+			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPagamento, 1);
 		
 		for (Cobranca boleto : boletosNaoPagos) {
 			
@@ -360,8 +383,7 @@ public class BoletoServiceImpl implements BoletoService {
 						boleto.getCota(),
 						dataVencimento,
 						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-								GrupoMovimentoFinaceiro.PENDENTE),
+						tipoMovimentoFinanceiroPendente,
 						"Oriundo de cobrança não paga");
 				
 				MovimentoFinanceiroCota movimentoJuros = null;
@@ -373,7 +395,7 @@ public class BoletoServiceImpl implements BoletoService {
 						boleto.getCota().getId(), 
 						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
 						boleto.getDataVencimento(), 
-						this.calendarioService.adicionarDiasRetornarDiaUtil(dataPagamento, 1));
+						dataCalculoJuros, formaCobrancaPrincipal);
 					
 				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
 					
@@ -384,15 +406,15 @@ public class BoletoServiceImpl implements BoletoService {
 							boleto.getCota(),
 							dataVencimento,
 							valor,
-							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-									GrupoMovimentoFinaceiro.JUROS),
+							tipoMovimentoFinanceiroJuros,
 							"Oriundos de cobrança não paga");
 				}
 				
 				valor = this.cobrancaService.calcularMulta(
 						boleto.getBanco(), 
 						boleto.getCota(), 
-						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN),
+						formaCobrancaPrincipal);
 				
 				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
 					
@@ -403,8 +425,7 @@ public class BoletoServiceImpl implements BoletoService {
 							boleto.getCota(), 
 							dataVencimento,
 							valor,
-							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-									GrupoMovimentoFinaceiro.MULTA),
+							tipoMovimentoFinanceiroMulta,
 							"Oriunda de cobrança não paga");
 				}
 
@@ -481,7 +502,9 @@ public class BoletoServiceImpl implements BoletoService {
 
 		acumuloDivida.setMovimentoFinanceiroMulta(movimentoMulta);
 
-		acumuloDivida.setNumeroAcumulo(this.obterNumeroDeAcumulosDivida(divida));
+		acumuloDivida.setNumeroAcumulo(
+			this.acumuloDividasService.obterNumeroDeAcumulosDivida(
+				divida.getConsolidado().getId()).add(BigInteger.ONE));
 		
 		acumuloDivida.setDataCriacao(new Date());
 		
@@ -754,10 +777,14 @@ public class BoletoServiceImpl implements BoletoService {
 
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
 		BigDecimal valorJurosCalculado = 
 				cobrancaService.calcularJuros(null, boleto.getCota().getId(),
 											  boleto.getValor(), boleto.getDataVencimento(),
-											  pagamento.getDataPagamento());
+											  pagamento.getDataPagamento(),
+											  formaCobrancaPrincipal);
 		
 		if (valorJurosCalculado.compareTo(BigDecimal.ZERO) == 1) {
 			
@@ -772,7 +799,8 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BigDecimal valorMultaCalculado = 
 				cobrancaService.calcularMulta(null, boleto.getCota(),
-											  boleto.getValor());
+											  boleto.getValor(),
+											  formaCobrancaPrincipal);
 		
 		if (valorMultaCalculado.compareTo(BigDecimal.ZERO) == 1) {
 			

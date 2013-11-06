@@ -30,6 +30,8 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		
 		criteria.setMaxResults(1);
 		
+		criteria.setCacheable(true);
+		
 		return (TipoMovimentoFinanceiro) criteria.uniqueResult();
 	}
 	

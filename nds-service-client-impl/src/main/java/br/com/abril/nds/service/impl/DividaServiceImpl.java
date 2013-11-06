@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
@@ -40,6 +41,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -77,6 +79,8 @@ public class DividaServiceImpl implements DividaService {
 	@Autowired
 	private DistribuidorService distribuidorService;
 
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Override
 	@Transactional
@@ -246,6 +250,9 @@ public class DividaServiceImpl implements DividaService {
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 					GrupoMovimentoFinaceiro.MULTA);
 		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
 		for (Cobranca cobranca : listaCobranca) {
 			
 			Date backupDataVencimento = cobranca.getDataVencimento();
@@ -295,7 +302,8 @@ public class DividaServiceImpl implements DividaService {
 			
 				BigDecimal juros = this.cobrancaService.calcularJuros(
 					cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota().getId(), 
-					cobrancaAtualizada.getValor(), backupDataVencimento, dataPostergacao);
+					cobrancaAtualizada.getValor(), backupDataVencimento, 
+					dataPostergacao, formaCobrancaPrincipal);
 					
 				movimentoFinanceiroCotaDTO.setValor(juros);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoJuros);
@@ -304,7 +312,8 @@ public class DividaServiceImpl implements DividaService {
 				
 				BigDecimal multa = this.cobrancaService.calcularMulta(
 					cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(),
-					cobrancaAtualizada.getValor());
+					cobrancaAtualizada.getValor(),
+					formaCobrancaPrincipal);
 				
 				movimentoFinanceiroCotaDTO.setValor(multa);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoMulta);
@@ -326,17 +335,21 @@ public class DividaServiceImpl implements DividaService {
 		
 		BigDecimal encargos = BigDecimal.ZERO;
 		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
 		for (Cobranca cobranca : listaCobrancas) {
 			
 			BigDecimal juros = 
 				this.cobrancaService.calcularJuros(
 					cobranca.getBanco(), cobranca.getCota().getId(), 
-					cobranca.getValor(), cobranca.getDataVencimento(), dataPostergacao);
+					cobranca.getValor(), cobranca.getDataVencimento(), 
+					dataPostergacao, formaCobrancaPrincipal);
 			
 			BigDecimal multa = 
 				this.cobrancaService.calcularMulta(
 					cobranca.getBanco(), cobranca.getCota(), 
-					cobranca.getValor());
+					cobranca.getValor(), formaCobrancaPrincipal);
 			
 			encargos = encargos.add(juros).add(multa);
 		}

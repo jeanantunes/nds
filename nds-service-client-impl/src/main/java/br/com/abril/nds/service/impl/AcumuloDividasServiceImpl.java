@@ -123,4 +123,23 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 			}
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota) {
+		
+		BigInteger numeroDeAcumulosDivida =
+			this.acumuloDividasRepository.obterNumeroDeAcumulosDivida(idConsolidadoFinanceiroCota);
+		
+		if (numeroDeAcumulosDivida == null) {
+			
+			return BigInteger.ZERO;
+		}
+		
+		return numeroDeAcumulosDivida; 
+	}
+	
 }
