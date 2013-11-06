@@ -1061,12 +1061,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
 			} 
 			
-			// Criando novo chamadaEncalheCota
-			ChamadaEncalheCota cce = new ChamadaEncalheCota();
-			cce.setChamadaEncalhe(chamadaEncalhe);
-			cce.setCota(chamadaEncalheCota.getCota());
-			cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
-			this.chamadaEncalheCotaRepository.adicionar(cce);
+			if(BigInteger.ZERO.compareTo(chamadaEncalheCota.getQtdePrevista()) < 0 ) {
+
+				// Criando novo chamadaEncalheCota
+				ChamadaEncalheCota cce = new ChamadaEncalheCota();
+				cce.setChamadaEncalhe(chamadaEncalhe);
+				cce.setCota(chamadaEncalheCota.getCota());
+				cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
+				this.chamadaEncalheCotaRepository.adicionar(cce);
+				
+			}
+			
 		}
 	}
 
