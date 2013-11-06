@@ -58,7 +58,8 @@ public class FixacaoReparteController extends BaseController {
 	@Autowired
 	private ExcecaoSegmentoParciaisService excecaoSegmentoParciaisService;
 	
-	@Autowired
+	@SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
 	private Result result;
 	
 	@Autowired
@@ -82,7 +83,8 @@ public class FixacaoReparteController extends BaseController {
 	@Autowired
 	HttpServletRequest request;
 	
-	@Autowired
+	@SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
 	private HttpServletResponse httpResponse;
 
 	@Rules(Permissao.ROLE_DISTRIBUICAO_FIXACAO_REPARTE)
@@ -639,7 +641,7 @@ public class FixacaoReparteController extends BaseController {
 			 
 			List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
 			
-			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getCodigoProduto());
+			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
 			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
