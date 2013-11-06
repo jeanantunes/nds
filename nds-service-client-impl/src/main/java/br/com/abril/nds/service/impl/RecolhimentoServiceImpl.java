@@ -568,13 +568,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	private void criarChamadaEncalheCota(EstoqueProdutoCota estoqueProdutoCota,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe) {
-		
-		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
-		
-		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-		chamadaEncalheCota.setFechado(false);
-		chamadaEncalheCota.setCota(cota);
-		
+
 		BigInteger qtdPrevista = BigInteger.ZERO;
 		
 		if (estoqueProdutoCota != null) {
@@ -583,7 +577,17 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				estoqueProdutoCota.getQtdeDevolvida());
 		}
 		
-		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
+			return;
+		}
+
+		
+		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+		
+		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+		chamadaEncalheCota.setFechado(false);
+		chamadaEncalheCota.setCota(cota);
+		
 		
 		this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 	}

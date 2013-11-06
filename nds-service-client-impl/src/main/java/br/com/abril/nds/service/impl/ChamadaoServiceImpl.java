@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
@@ -378,17 +379,11 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 		
-		
-		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
-		
-		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
-		chamadaEncalheCota.setFechado(Boolean.FALSE);
-		chamadaEncalheCota.setCota(cota);
-		
+
 		EstoqueProdutoCota estoqueProdutoCota =
-			this.estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
-				produtoEdicao.getId(), cota.getId());
-		
+				this.estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(
+					produtoEdicao.getId(), cota.getId());
+			
 		BigInteger qtdPrevista = BigInteger.ZERO;
 		
 		if (estoqueProdutoCota != null) {
@@ -396,10 +391,23 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
 				estoqueProdutoCota.getQtdeDevolvida());
 		}
+
 		
-		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+		if(BigInteger.ZERO.compareTo(qtdPrevista) < 0) {
+
+			ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+			
+			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
+			chamadaEncalheCota.setFechado(Boolean.FALSE);
+			chamadaEncalheCota.setCota(cota);
+			
+			
+			chamadaEncalheCota.setQtdePrevista(qtdPrevista);
+			
+			this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+			
+		}
 		
-		this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 	}
 
 	private void tratarChamadaEncalheCotaExistente(Long idCota, Long idProdutoEdicao, Date dataChamadao) {
