@@ -48,5 +48,9 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota);
 	
 	Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota);
-	
+
+	/**
+	 * Método que obtem os movimentos de Envio ao Jornaleiro (Consignado) para conta corrente da Cota do tipo À Vista
+	 */
+	List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaAVistaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro);
 }
