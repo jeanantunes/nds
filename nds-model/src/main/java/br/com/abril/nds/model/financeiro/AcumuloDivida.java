@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.financeiro;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -12,13 +13,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-@Entity(name="ACUMULO_DIVIDA")
+@SuppressWarnings("serial")
+@Entity
+@Table(name = "ACUMULO_DIVIDA")
 @SequenceGenerator(name="ACUMULO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
-public class AcumuloDivida {
+public class AcumuloDivida implements Serializable {
 	
 	@Id
 	@GeneratedValue(generator = "ACUMULO_DIVIDA_SEQ")
