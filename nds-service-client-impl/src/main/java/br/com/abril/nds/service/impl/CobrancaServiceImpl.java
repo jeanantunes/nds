@@ -96,12 +96,14 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularJuros(Banco banco, Long idCota,
-									BigDecimal valorDivida, Date dataVencimento, Date dataCalculoJuros) {
+	public BigDecimal calcularJuros(Banco banco, 
+									Long idCota,
+									BigDecimal valorDivida, 
+									Date dataVencimento, 
+									Date dataCalculoJuros,
+									FormaCobranca formaCobrancaPrincipal) {
 
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-		
-		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
 		Banco bancoFormaCobrancaPrincipal = null;
 		
@@ -147,12 +149,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									BigDecimal valor) {
+									BigDecimal valor,
+									FormaCobranca formaCobrancaPrincipal) {
 		
 
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-		
-		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
 		Banco bancoFormaCobrancaPrincipal = null;
 		
@@ -337,15 +338,18 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			if (dataVencimento.compareTo(dataPagamento) < 0) {
 				
+				FormaCobranca formaCobrancaPrincipal = 
+					this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+				
 				//CALCULA JUROS
 				valorJurosCalculado =
 					this.calcularJuros(cob.getBanco(), cob.getCota().getId(),
 							           cob.getValor().subtract(saldoDivida), cob.getDataVencimento(),
-							           dataPagamento);
+							           dataPagamento, formaCobrancaPrincipal);
 				//CALCULA MULTA
 				valorMultaCalculado =
 					this.calcularMulta(cob.getBanco(), cob.getCota(),
-							           cob.getValor().subtract(saldoDivida));
+							           cob.getValor().subtract(saldoDivida), formaCobrancaPrincipal);
 			}
 			
 			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataPagamento) );
@@ -379,8 +383,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 		BigDecimal totalDividas = BigDecimal.ZERO;
 		BigDecimal totalSaldoDividas = BigDecimal.ZERO;
 		
-	
 		dataPagamento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataPagamento)));
+		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
 		for (Long item : idCobrancas){
         
@@ -411,10 +417,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 						this.calcularJuros(cobranca.getBanco(), cobranca.getCota().getId(),
 											valorCobrancaJuros, 
 										    cobranca.getDataVencimento(),
-										    dataPagamento);
+										    dataPagamento, formaCobrancaPrincipal);
 					valorMultaCalculado =
 						this.calcularMulta(cobranca.getBanco(), cobranca.getCota(),
-											valorCobranca.subtract(saldoDivida));
+											valorCobranca.subtract(saldoDivida), formaCobrancaPrincipal);
 				}
 				
 			    BigDecimal valor  = cobranca.getValor();
@@ -783,6 +789,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		BigDecimal totalMulta = BigDecimal.ZERO;
 		
+		FormaCobranca formaCobrancaPrincipal = 
+			this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
 		for(Cobranca cobranca : cobrancas) {
 			
 			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
@@ -805,10 +814,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 					this.calcularJuros(cobranca.getBanco(), cobranca.getCota().getId(),
 										valorCobrancaJuros, 
 									    cobranca.getDataVencimento(),
-									    dataPagamento);
+									    dataPagamento, formaCobrancaPrincipal);
 				valorMultaCalculado =
 					this.calcularMulta(cobranca.getBanco(), cobranca.getCota(),
-										valorCobranca.subtract(saldoDivida));
+										valorCobranca.subtract(saldoDivida), formaCobrancaPrincipal);
 			}
 			
 		    BigDecimal valor  = cobranca.getValor();

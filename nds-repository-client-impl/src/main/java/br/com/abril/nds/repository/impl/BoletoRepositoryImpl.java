@@ -729,10 +729,11 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select cobranca ");
 		hql.append(" from Cobranca cobranca ");
+		hql.append(" join cobranca.divida divida ");
 		hql.append(" where cobranca.dataVencimento < :data ");
-		hql.append(" and cobranca.statusCobranca =:statusCobranca");
+		hql.append(" and cobranca.statusCobranca =:statusCobranca ");
 		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
-		hql.append(" and cobranca.divida.status != :statusPendente ");
+		hql.append(" and divida.status != :statusPendente ");
 		
 		Query query = this.obterQueryBoletosInadimplentes(hql.toString(), data);
 

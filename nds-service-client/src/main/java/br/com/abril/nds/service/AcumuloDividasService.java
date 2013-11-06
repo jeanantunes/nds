@@ -55,6 +55,15 @@ public interface AcumuloDividasService {
 	 * @return - Número de maior acúmulo de suas dívidas.
 	 */
 	BigInteger obterNumeroMaximoAcumuloCota(Long idCota);
+	
+	/**
+	 * Obtém o número atual de acúmulos de dívida da cota.
+	 * 
+	 * @param idConsolidadoFinanceiroCota - id do consolidado financeiro da cota.
+	 * 
+	 * @return Número de acúmulos da dívida 
+	 */
+	BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota);
 
 	void quitarDividasAcumuladas(Divida dividaAtual);
 }
