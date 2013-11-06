@@ -236,13 +236,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				this.getSession().persist(produtoEdicao);
 				
 				Date dataAtual = new Date();
-				Date dataPrevista = DateUtil.adicionarDias(dataAtual, produto.getPeb());
+				Date dataLancamento = DateUtil.adicionarDias(dataAtual, 2);
+				Date dataRecolhimento = DateUtil.adicionarDias(dataAtual, produto.getPeb());
 				Lancamento lancamento = new Lancamento();
 				lancamento.setDataCriacao(dataAtual);
-				lancamento.setDataLancamentoPrevista(dataAtual);
-				lancamento.setDataLancamentoDistribuidor(dataAtual);
-				lancamento.setDataRecolhimentoPrevista(dataPrevista);
-				lancamento.setDataRecolhimentoDistribuidor(dataPrevista);
+				lancamento.setDataLancamentoPrevista(dataLancamento);
+				lancamento.setDataLancamentoDistribuidor(dataLancamento);
+				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+				lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 				lancamento.setProdutoEdicao(produtoEdicao);
 				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 				lancamento.setDataStatus(dataAtual);

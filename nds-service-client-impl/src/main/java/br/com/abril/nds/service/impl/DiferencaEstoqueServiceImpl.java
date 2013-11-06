@@ -1073,14 +1073,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 		} else {
 			
-			if(TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())
-					&& TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())) {
-				
-				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_EM;
-			} else {
-				
-				grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
-			}
+			grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
 		
 		}
 		
