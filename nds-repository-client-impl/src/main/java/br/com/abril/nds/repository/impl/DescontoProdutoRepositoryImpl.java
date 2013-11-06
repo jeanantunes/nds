@@ -47,7 +47,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" SELECT dados.DESCONTO_ID as idTipoDesconto,p.CODIGO as codigoProduto, p.NOME as nomeProduto, "
-				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, u.NOME as nomeUsuario, "
+				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, u.NOME as nomeUsuario, d.predominante, "
 				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas");
 		
 		addQueryTipoDescontoProduto(hql);
@@ -76,21 +76,21 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	
 	private StringBuilder addQueryTipoDescontoProduto(StringBuilder sql) {
 			
-		sql.append(" FROM (SELECT DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "  
+		sql.append(" FROM (SELECT DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, hdp.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "  
 					+"	 FROM HISTORICO_DESCONTO_PRODUTOS hdp "	
 					+"	 UNION "	
 					
-					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, count(COTA_ID) as QTDE_COTAS "
+					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, hdcpe.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, count(COTA_ID) as QTDE_COTAS "
 					+"	 FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe " 
 					+"	 where produto_id is not null " 
 					+"	 group by DESCONTO_ID "	
 					+"	 UNION "	
 					
-					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "
+					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, hdpe.USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "
 					+"	 FROM HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe "	
 					+"	 UNION "	
 					
-					+"	 SELECT dpl.DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, USUARIO_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS as QTDE_PROX_LANCAMENTOS, " 
+					+"	 SELECT dpl.DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, dpl.USUARIO_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS as QTDE_PROX_LANCAMENTOS, " 
 					+"	 CASE WHEN dpl.APLICADO_A_TODAS_AS_COTAS=1 THEN null ELSE count(dlc.DESCONTO_LANCAMENTO_ID) END as QTDE_COTAS " 
 					+"	 FROM DESCONTO_PROXIMOS_LANCAMENTOS dpl "
 					+"	 LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on (dlc.DESCONTO_LANCAMENTO_ID=dpl.ID) "
