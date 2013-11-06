@@ -86,6 +86,7 @@ import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -652,16 +653,19 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			return boleto;
 		}
-			
+		
+		BigDecimal valorBoleto = MathUtil.round(boleto.getValor(), 2);
+		BigDecimal valorPagamento = MathUtil.round(pagamento.getValorPagamento(), 2);
+		
 		// Boleto pago com valor correto
-		if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 0) {
+		if (valorPagamento.compareTo(valorBoleto) == 0) {
 			
 			baixarBoletoValorCorreto(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
 									 dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
 			
 			return boleto;
 			
-		} else if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 1) {
+		} else if (valorPagamento.compareTo(valorBoleto) == 1) {
 			
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			

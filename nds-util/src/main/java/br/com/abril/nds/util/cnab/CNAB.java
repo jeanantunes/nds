@@ -357,7 +357,7 @@ public class CNAB {
 		cnab.indiceDataPagamentoFim = 116;
 		
 		cnab.indiceNossoNumeroInicio = 37;
-		cnab.indiceNossoNumeroFim = 53;
+		cnab.indiceNossoNumeroFim = 50;
 		
 		cnab.indiceValorPagamentoInicio = 253;
 		cnab.indiceValorPagamentoFim = 266;
