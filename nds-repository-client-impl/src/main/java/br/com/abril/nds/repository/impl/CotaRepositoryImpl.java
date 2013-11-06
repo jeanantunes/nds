@@ -348,10 +348,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		sql.append(" FROM COTA COTA_ ")
-		.append(" JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
+		.append(" LEFT JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
 		.append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
 		.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
-		.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO=true ")
+		.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
 		
 		.append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
 		.append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")

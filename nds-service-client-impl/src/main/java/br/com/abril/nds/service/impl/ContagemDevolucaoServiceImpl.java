@@ -907,13 +907,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
                 .obterChamadasEncalheFornecedor(idFornecedor, numeroSemana,
                         periodo);
 
+        if(chamadasEncalheFornecedor.isEmpty())
+        	throw new ValidacaoException(TipoMensagem.WARNING, "");
+        
         Distribuidor distribuidor = distribuidorService.obter();
         Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
                 .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
                         distribuidor);
-        
-        if(chamadasEncalheDTO.isEmpty())
-        	throw new ValidacaoException(TipoMensagem.WARNING, "");
         
         return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
     }
