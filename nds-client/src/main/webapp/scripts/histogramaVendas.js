@@ -172,12 +172,18 @@ var histogramaVendasController = $.extend(true, {
 			labelElemento=$("#elemento").children("option:selected:first").text();
 			
 		}
-		
+
+        var classificacoes = $('table#edicaoProdCadastradosGrid:visible input[type="checkbox"]:checked').closest('tr').find('td[abbr="descricaoTipoClassificacao"]').map(function(){return $(this).text();}).toArray();
+        var uniqueClassificacoes = [];
+        $.each(classificacoes, function(i, el){
+            if($.inArray(el, uniqueClassificacoes) === -1) uniqueClassificacoes.push(el);
+        });
+
 		var data = {"edicoes":edicoesEscolhidas_HistogramaVenda.sort().toString(),
 				"segmento":descricaoTipoSegmento,
 				"nomeProduto":nomeProduto,
 				"codigoProduto":codigoProduto_HistogramaVenda,
-				"classificacaoLabel":descricaoTipoClassificacao_histogramaVenda,
+				"classificacaoLabel":uniqueClassificacoes.join(', '),
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
 		
