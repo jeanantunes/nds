@@ -2710,21 +2710,25 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
 		return distribuidorClassificacaoCotaRepository.buscarTodos();
 	}
 
+	@Transactional
 	@Override
 	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray) {
 		return cotaRepository.numeroCotaExiste(tipoDistribuicaoCota, cotaIdArray);
 	}
 	
+	@Transactional
 	@Override
 	public boolean cotaVinculadaCotaBase(Long idCota) {
 		return cotaRepository.cotaVinculadaCotaBase(idCota);
 	}
 
+	@Transactional
 	@Override
 	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
 	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);

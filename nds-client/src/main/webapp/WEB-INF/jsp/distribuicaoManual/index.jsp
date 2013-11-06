@@ -36,6 +36,7 @@
 	</div>
 	<div id="dialog-status-suspenso" title="Cota com status suspenso" style="display: none;">
 		<p>Cota suspensa, deseja continuar?</p>
+		<p>Posteriormente será solicitado senha.</p>
 	</div>
 
 	<div id="dialog-cancelar" title="Cancelar Operação"
