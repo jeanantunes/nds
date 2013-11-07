@@ -311,7 +311,12 @@ var painelProcessamentoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-			row.cell.numeroLinha = "Linha: " + row.cell.numeroLinha;
+			if(row.cell.numeroLinha ){ 
+				row.cell.numeroLinha = "Linha: " + row.cell.numeroLinha;
+			}
+			else{
+				row.cell.numeroLinha="";
+			}
 		});
 		
 		return resultado;

@@ -25,7 +25,7 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
-	@Export(label = "Preço Capa", alignment=Alignment.RIGHT, exhibitionOrder = 4)
+	
 	private BigDecimal precoVenda;
 	
 	/**
@@ -54,6 +54,7 @@ public class SuplementarFecharDiaDTO implements Serializable {
      */
     private BigInteger quantidadeTransferenciaSaida;
 
+    @Export(label = "Preço Capa", alignment=Alignment.RIGHT, exhibitionOrder = 4)
     private String precoVendaFormatado;
 	
 	public String getCodigo() {
@@ -85,8 +86,11 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	}
 
 	public void setPrecoVenda(BigDecimal precoVenda) {
+		
 		this.precoVenda = precoVenda;
-		this.precoVendaFormatado = CurrencyUtil.formatarValorQuatroCasas(precoVenda);
+		
+		this.precoVendaFormatado = (precoVenda == null)?CurrencyUtil.formatarValorQuatroCasas(BigDecimal.ZERO):
+			CurrencyUtil.formatarValorQuatroCasas(precoVenda);
 	}
 
 	public BigInteger getQuantidadeContabil() {
