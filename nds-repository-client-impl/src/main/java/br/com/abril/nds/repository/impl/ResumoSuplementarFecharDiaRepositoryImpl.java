@@ -59,10 +59,9 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append("SELECT ");
 		hql.append("SUM( " +
 		  "  CASE WHEN tm.grupoMovimentoEstoque in (:grupoEntradaSuplementar) " +
-		  "  THEN COALESCE( me.qtde, 0) " +
-		  "  ELSE (CASE WHEN tm.grupoMovimentoEstoque in (:grupoSaidaSuplementar) THEN COALESCE( -(me.qtde), 0) ELSE 0 END)" +
+		  "  THEN (COALESCE( me.qtde, 0) * pe.precoVenda) " +
+		  "  ELSE (CASE WHEN tm.grupoMovimentoEstoque in (:grupoSaidaSuplementar) THEN (COALESCE( -(me.qtde), 0) * pe.precoVenda) ELSE 0 END)" +
 		  "  END) ");       
-		hql.append("  * pe.precoVenda");
 		hql.append(" FROM MovimentoEstoque as me ");
 		hql.append(" JOIN me.tipoMovimento as tm ");       
 		hql.append(" JOIN me.produtoEdicao as pe ");
@@ -188,9 +187,11 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" and vendaprodu8_.ID_PRODUTO_EDICAO=produtoedi1_.ID ");
 	    sql.append("                 and vendaprodu8_.DATA_OPERACAO= :data ");
 	    sql.append(" and vendaprodu8_.TIPO_VENDA_ENCALHE=:tipoVendaSuplementar ");
-	    sql.append(" ) as quantidadeVenda, ( ");
+	    sql.append(" ) as quantidadeVenda,  ");
+	    
+	    sql.append(" coalesce(( ");
 	    sql.append(" select ");
-	    sql.append(" sum(movimentoe10_.QTDE) ");
+	    sql.append(" sum(coalesce(movimentoe10_.QTDE, 0)) ");
 	    sql.append(" from ");
 	    sql.append(" MOVIMENTO_ESTOQUE movimentoe10_, ");
 	    sql.append(" PRODUTO_EDICAO produtoedi11_, ");
@@ -204,9 +205,12 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append(" and ( ");
 	    sql.append(" tipomovime12_.GRUPO_MOVIMENTO_ESTOQUE in (:grupoEntradaSuplementar) ) ");
 	    
-	    sql.append(" ) as quantidadeTransferenciaEntrada, ( ");
+	    sql.append(" ), 0) as quantidadeTransferenciaEntrada,  ");
+	    
+	   
+	    sql.append(" coalesce(( ");
 	    sql.append(" select ");
-	    sql.append(" sum(movimentoe13_.QTDE) ");
+	    sql.append(" sum(coalesce(movimentoe13_.QTDE, 0)) ");
 	    sql.append(" from ");
 	    sql.append(" MOVIMENTO_ESTOQUE movimentoe13_, ");
 	    sql.append(" PRODUTO_EDICAO produtoedi14_, ");
@@ -220,7 +224,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    sql.append("             and ( ");
 	    sql.append(" tipomovime15_.GRUPO_MOVIMENTO_ESTOQUE in ( :grupoSaidaSuplementar ) ");
 	    sql.append(" ) ");
-	    sql.append(" ) as quantidadeTransferenciaSaida ");
+	    sql.append(" ), 0) as quantidadeTransferenciaSaida ");
 	    
 	    sql.append(" from ");
 	    sql.append(" ESTOQUE_PRODUTO estoquepro0_ ");
