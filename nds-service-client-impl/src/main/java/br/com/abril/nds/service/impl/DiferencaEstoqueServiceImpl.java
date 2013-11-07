@@ -247,7 +247,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 											   StatusAprovacao statusAprovacao,
 											   Origem origem) {
 		
-		processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
+		diferenca = processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
 		
 		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca), statusAprovacao, true, origem);
 		

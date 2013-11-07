@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao" pageWidth="842" pageHeight="600" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="810" leftMargin="16" rightMargin="16" topMargin="8" bottomMargin="8" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.zoom" value="1.9453068450750013"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -58,7 +58,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="75" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<elementGroup>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement x="152" y="3" width="54" height="15" isPrintWhenDetailOverflows="true" forecolor="#01649E"/>
@@ -82,19 +82,19 @@
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement positionType="Float" x="0" y="67" width="802" height="1" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement positionType="Float" x="0" y="57" width="802" height="1" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<line direction="BottomUp">
-				<reportElement stretchType="RelativeToBandHeight" x="802" y="8" width="1" height="60" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToBandHeight" x="802" y="8" width="1" height="50" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<line direction="BottomUp">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="8" width="1" height="60" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="8" width="1" height="50" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -106,7 +106,7 @@
 				</graphicElement>
 			</line>
 			<subreport isUsingCache="false">
-				<reportElement stretchType="RelativeToBandHeight" x="3" y="21" width="788" height="38"/>
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="16" width="788" height="38"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(Arrays.asList($P{fechamentoDiarioDTO}))]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_detalhe.jasper").toURI().getPath()]]></subreportExpression>
 			</subreport>
