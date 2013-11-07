@@ -19,4 +19,10 @@ public interface DescontoLogisticaService {
 	 */
 	List<DescontoLogistica> obterTodos();
 	
+	/**
+	 * Realiza a alteração do desconto logistica em função do historico gerado pela importação da interface EMS0113
+	 * 
+	 */
+	void alterarDescontoLogistica();
+	
 }
