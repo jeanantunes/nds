@@ -1,11 +1,16 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
@@ -20,14 +25,13 @@ implements DescontoProximosLancamentosRepository{
 
 	
 	@Override
-	public DescontoProximosLancamentos obterDescontoProximosLancamentosPor(
-			Long idProduto, Date dataLancamento) {
+	public DescontoProximosLancamentos obterDescontoProximosLancamentosPor(Long idProduto, Date dataLancamento) {
 		
 		StringBuilder jpql = new StringBuilder();
 			jpql.append(" SELECT dpl FROM DescontoProximosLancamentos dpl ")
 				.append(" WHERE dpl.produto.id = :idProduto and ")
 				.append(" dpl.quantidadeProximosLancamaentos > 0 and ")
-				.append(" dpl.dataInicioDesconto > :dataLancamento ");
+				.append(" dpl.dataInicioDesconto <= :dataLancamento ");
 
 		Query query = this.getSession().createQuery(jpql.toString());	
 		
@@ -40,6 +44,41 @@ implements DescontoProximosLancamentosRepository{
 			return null;
 		}
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DescontoDTO> obterDescontosProximosLancamentos(Date dataOperacaoInicioDesconto) {
+		
+		StringBuilder hql = new StringBuilder("")
+			.append(" SELECT cota_id AS cotaId ")
+			.append(" 		, null AS fornecedorId ")
+			.append(" 		, null AS produtoEdicaoId ")
+			.append(" 		, produto_id AS produtoId ")
+			.append(" 		, valor ")
+			.append(" 		, predominante ")
+			.append("		, true as proximoLancamento ")
+			.append(" FROM desconto_proximos_lancamentos AS dpl ")
+			.append(" INNER JOIN desconto d ON d.id = dpl.desconto_id ")
+			.append(" LEFT OUTER JOIN desconto_lancamento_cota dlc ON dlc.DESCONTO_LANCAMENTO_ID = dpl.ID ")
+			.append(" LEFT OUTER JOIN cota c ON c.ID = dlc.COTA_ID ")
+			.append(" WHERE dpl.QUANTIDADE_PROXIMOS_LANCAMENTOS > 0 ")
+			.append(" AND dpl.DATA_INICIO_DESCONTO <= :dataOperacaoInicioDesconto ");
+
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoDTO.class));
+		
+		query.setParameter("dataOperacaoInicioDesconto", dataOperacaoInicioDesconto);
+		
+		query.addScalar("cotaId", StandardBasicTypes.LONG);
+		query.addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
+		query.addScalar("produtoId", StandardBasicTypes.LONG);
+		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("predominante", StandardBasicTypes.BOOLEAN);
+		query.addScalar("proximoLancamento", StandardBasicTypes.BOOLEAN);
+		
+		return query.list();
 	}
 
 }

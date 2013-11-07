@@ -37,6 +37,7 @@ import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -45,6 +46,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -90,6 +92,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -167,30 +172,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento
-			, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto, Long idProdutoEdicao,
+			Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
-		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.
-			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
+		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
 
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(idLancamento, idProdutoEdicao);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(idLancamento, idProdutoEdicao);
 		
-		//FIXME: Remover essa parte
-		for(String s : descontos.keySet()) {
-			System.out.println("key: "+ s);
+		DescontoProximosLancamentos descontoProximosLancamentos = descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(idProduto, dataPrevista);
+		
+		DescontoDTO descontoDTO = descontoService.obterDescontoProximosLancamentosPor(descontos, idProduto);
+		if(descontoDTO != null) {
+			Integer quantidadeProximosLancamaentos = descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
+			descontoProximosLancamentos.setQuantidadeProximosLancamaentos(--quantidadeProximosLancamaentos);
+			descontoProximosLancamentosRepository.merge(descontoProximosLancamentos);
 		}
-		
+				
 		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
 		
-		//System.out.println("Listagem Produto-Edicao / Cotas: "+ idProdutoEdicao +" / "+ listaEstudoCota.size());
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
-						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
+						dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
 			
 			total = total.add(estudoCota.getQtdeEfetiva());
 			
@@ -199,7 +206,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
 		
-		movimentoEstoqueCotaRepository.bulkInsert(movimentosEstoqueCota);
+		movimentoEstoqueCotaRepository.adicionarEmLoteDTO(movimentosEstoqueCota);
 		
 	}
 
@@ -1281,9 +1288,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			if (idLancamento==null) {
 				
-				idLancamento = 
-					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
-						new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+				idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+									new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
 			}
 			
 				
@@ -1295,103 +1301,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 
-				//Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
 				/**
 				 * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
 				 */
-				String key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.append("pe")
-						.append(produtoEdicao.getId())
-						.append("p")
-						.append(produtoEdicao.getProduto().getId())
-						.toString();
-				
-				DescontoDTO descontoDTO = descontos.get(key);
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.append("pe")
-						.append(produtoEdicao.getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
+				DescontoDTO descontoDTO = null;
+				try {
+					descontoDTO = descontoService.obterDescontoPor(descontos, idCota, produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+				} catch (Exception e) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto: "+ produtoEdicao.getProduto().getCodigo() +" / "+ produtoEdicao.getNumeroEdicao());
 				}
 				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.append("p")
-						.append(produtoEdicao.getProduto().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("pe")
-						.append(produtoEdicao.getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("p")
-						.append(produtoEdicao.getProduto().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("c")
-						.append(idCota)
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append("f")
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					
-					ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-					
-					if(pe != null && pe.getProduto() != null)
-						throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto: "+ pe.getProduto().getCodigo() +" / "+ pe.getNumeroEdicao());
-					else
-						throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");
-					
-				}
-				
-				BigDecimal desconto = descontoDTO.getValor();				
+				BigDecimal desconto = descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO;				
 				
 				BigDecimal precoComDesconto = 
-						produtoEdicao.getPrecoVenda().subtract(
-								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
+						produtoEdicao.getPrecoVenda().subtract(MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
 
 				movimentoEstoqueCota.setPrecoVenda(produtoEdicao.getPrecoVenda());
 				movimentoEstoqueCota.setPrecoComDesconto(precoComDesconto);				

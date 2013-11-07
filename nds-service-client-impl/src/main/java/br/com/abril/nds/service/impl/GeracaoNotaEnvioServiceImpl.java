@@ -358,12 +358,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			//valorDesconto = obterValorDesconto(cota, mec, produtoEdicao, valorDesconto);
 			DescontoDTO descontoDTO = null;
 			try {
+				
 				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
 			} catch (Exception e) {
 				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao obter desconto: Cota: "+ cota.getNumeroCota() +" / Produto: "+ produtoEdicao.getProduto().getCodigo() +" - "+ produtoEdicao.getNumeroEdicao());
 			}	
+			
+			if(descontoDTO == null) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota/Produto sem desconto: Cota: "+ cota.getNumeroCota() +" / Produto: "+ produtoEdicao.getProduto().getCodigo() +" - "+ produtoEdicao.getNumeroEdicao());
+			}
 
-			if(quantidadeResultante == null){
+			if(quantidadeResultante == null) {
 			
 			    quantidadeResultante = BigInteger.ZERO;
 			}
@@ -758,7 +765,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 													, listaIdFornecedores
 													, GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(null, null);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota, periodo, descontos);
 
