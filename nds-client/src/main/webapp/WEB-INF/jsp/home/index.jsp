@@ -277,14 +277,14 @@
 		$("#ajaxLoading").ajaxStart(function() {
 			$(this).fadeIn(200);
 			pageRefresh.disable();
-			console.log('disable page refresh');
+			
 		});
 		$("#ajaxLoading").ajaxStop(function() {
 			$(document).unbind('keydown');
 			$(this).fadeOut(200);
 			redimensionarWorkspace();
 			pageRefresh.enable();
-			console.log('enable page refresh');
+			
 		});
 		
 		redimensionarWorkspace();
