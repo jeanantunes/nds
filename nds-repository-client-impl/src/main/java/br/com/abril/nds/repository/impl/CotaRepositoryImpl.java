@@ -55,7 +55,6 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -66,7 +65,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -242,6 +240,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						  .append("	FROM DIVIDA D ")
 						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
 						  .append("	WHERE D.COTA_ID = COTA_.ID ")
+						  .append(" AND c.DT_PAGAMENTO is null ")
 						  .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
 						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
 				
@@ -361,6 +360,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("											FROM DIVIDA DIVIDA ")
 		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
 		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao  )")
 		.append("	   ) ")
@@ -373,6 +373,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("											FROM DIVIDA DIVIDA ")
 		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
 		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
 			
@@ -389,6 +390,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("											FROM DIVIDA DIVIDA ")
 		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
 		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao)")
 		.append("	   ) ")
@@ -401,6 +403,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("											FROM DIVIDA DIVIDA ")
 		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("                            								   AND COBRANCA_.DT_PAGAMENTO is null ")
 		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
 		
