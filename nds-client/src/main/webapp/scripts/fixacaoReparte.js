@@ -842,7 +842,7 @@ var fixacaoReparteController = $.extend(true, {
 			if($("#subtitulo1").text() == 'Produto'){
 				data.push({name:'fixacaoReparteDTO.cotaFixada',value: $("#codigoModal").val()});
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#spanCodigoProduto").text()});
-                data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
+                data.push({name:'fixacaoReparteDTO.classificacaoProdutoId',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 			}
 
 			if($("#subtitulo1").text() == 'Cota'){
