@@ -269,7 +269,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("codigoProduto", StandardBasicTypes.STRING)
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
-                .addScalar("periodo", StandardBasicTypes.INTEGER)
+                .addScalar("periodo", StandardBasicTypes.STRING)
                 .addScalar("idTipoClassificacao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("parcial", StandardBasicTypes.BOOLEAN)
                 .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN);
@@ -368,7 +368,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("codigoProduto", StandardBasicTypes.STRING)
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
-                .addScalar("periodo", StandardBasicTypes.INTEGER)
+                .addScalar("periodo", StandardBasicTypes.STRING)
                 .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
 
