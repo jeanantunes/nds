@@ -25,8 +25,7 @@ implements DescontoProximosLancamentosRepository{
 
 	
 	@Override
-	public DescontoProximosLancamentos obterDescontoProximosLancamentosPor(
-			Long idProduto, Date dataLancamento) {
+	public DescontoProximosLancamentos obterDescontoProximosLancamentosPor(Long idProduto, Date dataLancamento) {
 		
 		StringBuilder jpql = new StringBuilder();
 			jpql.append(" SELECT dpl FROM DescontoProximosLancamentos dpl ")

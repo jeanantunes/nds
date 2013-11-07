@@ -37,6 +37,7 @@ import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -45,6 +46,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -90,6 +92,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 	@Autowired
 	private DescontoService descontoService;
+	
+	@Autowired
+	DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -167,24 +172,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento
-			, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto, Long idProdutoEdicao,
+			Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
 		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
 
 		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(idLancamento, idProdutoEdicao);
+		
+		DescontoProximosLancamentos descontoProximosLancamentos = descontoProximosLancamentosRepository.obterDescontoProximosLancamentosPor(idProduto, dataPrevista);
+		
+		DescontoDTO descontoDTO = descontoService.obterDescontoProximosLancamentosPor(descontos, idProduto);
+		if(descontoDTO != null) {
+			Integer quantidadeProximosLancamaentos = descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
+			descontoProximosLancamentos.setQuantidadeProximosLancamaentos(--quantidadeProximosLancamaentos);
+			descontoProximosLancamentosRepository.merge(descontoProximosLancamentos);
+		}
 				
 		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
 		
-		//System.out.println("Listagem Produto-Edicao / Cotas: "+ idProdutoEdicao +" / "+ listaEstudoCota.size());
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
-						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
+						dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
 			
 			total = total.add(estudoCota.getQtdeEfetiva());
 			
@@ -193,7 +206,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
 		
-		movimentoEstoqueCotaRepository.bulkInsert(movimentosEstoqueCota);
+		movimentoEstoqueCotaRepository.adicionarEmLoteDTO(movimentosEstoqueCota);
 		
 	}
 

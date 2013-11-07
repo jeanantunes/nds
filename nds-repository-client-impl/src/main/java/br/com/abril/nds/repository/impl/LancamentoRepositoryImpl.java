@@ -1704,11 +1704,13 @@ public class LancamentoRepositoryImpl extends
 		
 		String hql = " select lancamento.id as id, " 
 				   + " produtoEdicao.id as idProdutoEdicao, "
+				   + " produto.id as idProduto, "
 				   + " lancamento.dataLancamentoPrevista as dataPrevista, "
 				   + " lancamento.dataLancamentoDistribuidor as dataDistribuidor, "
 				   + " lancamento.reparte as reparte "
 				   + " from Lancamento lancamento "
 				   + " join lancamento.produtoEdicao produtoEdicao "
+				   + " join produtoEdicao.produto produto "
 				   + " where lancamento.id = :idLancamento ";
 		
 		Query query = super.getSession().createQuery(hql);

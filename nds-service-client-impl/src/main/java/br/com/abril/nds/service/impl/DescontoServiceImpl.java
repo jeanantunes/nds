@@ -1399,4 +1399,40 @@ public class DescontoServiceImpl implements DescontoService {
 		return descontoDTO;
 	}
 
+	@Override
+	public DescontoDTO obterDescontoProximosLancamentosPor(Map<String, DescontoDTO> descontos, Long idProduto) {
+		
+		DescontoDTO descontoDTO = null;
+		
+		String key = new StringBuilder()
+			.append("p")
+			.append(idProduto)
+			.append("pd")
+			.append("pl")
+			.toString();
+	
+		descontoDTO = descontos.get(key);
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		/**
+		 * Desconto de ProdutoEdicao no proximo lancamento
+		 */
+		key = new StringBuilder()
+			.append("p")
+			.append(idProduto)
+			.append("pl")
+			.toString();
+		
+		descontoDTO = descontos.get(key);
+		
+		if(descontoDTO != null) {
+			return descontoDTO;
+		}
+		
+		return descontoDTO;
+	}
+
 }

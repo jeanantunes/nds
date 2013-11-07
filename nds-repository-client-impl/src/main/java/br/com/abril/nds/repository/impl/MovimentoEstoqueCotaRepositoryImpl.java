@@ -3323,7 +3323,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
-	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
+	public void adicionarEmLoteDTO(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
 
 		if (movimentosEstoqueCota == null || movimentosEstoqueCota.isEmpty()) {
 			return;
