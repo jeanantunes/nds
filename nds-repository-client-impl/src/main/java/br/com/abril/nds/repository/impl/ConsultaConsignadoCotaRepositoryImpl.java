@@ -30,6 +30,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
@@ -74,16 +75,15 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
 		sql.append("		   ) AS totalDesconto ");
 		
-		
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
 		sql.append(" GROUP BY ");
 		sql.append(" PE.ID ");
 //		sql.append(" ,dataLancamento ");
 		
-//		sql.append(" HAVING ");
-//		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
-//				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))>0 "); 
+		sql.append(" HAVING ");
+		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
+				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))>0 "); 
 
 		if(filtro.getPaginacao()!=null){
 			
@@ -118,7 +118,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
-		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 
 		if(filtro.getPaginacao()!=null && limitar){
 			
@@ -195,13 +195,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			
 			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
 		}
-		
-		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
-		
-		
+
         sql.append(" AND (");
-		
-		sql.append("        (c.TIPO_COTA = :tipoCotaConsignado) OR ");
+        
+        sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
 		
 		sql.append("        ( ");
 		
@@ -225,8 +222,18 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append("              ) ");
 		
-		sql.append("          ) ");
-		
+		sql.append("          ) AND ");
+
+		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
+
+		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
+				  
+		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
+				  
+		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
+				 
+		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
+
 		sql.append("        ) ");
 
 		sql.append("     )");
@@ -288,12 +295,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			sql.append(" AND c.ID = :idCota ");
 		}
 		
-		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
-		
-
-		sql.append(" AND (");
-		
-		sql.append("        (c.TIPO_COTA = :tipoCotaConsignado) OR ");
+        sql.append(" AND (");
+        
+        sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
 		
 		sql.append("        ( ");
 		
@@ -317,15 +321,25 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append("              ) ");
 		
-		sql.append("          ) ");
-		
+		sql.append("          ) AND ");
+
+		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
+
+		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
+				  
+		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
+				  
+		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
+				 
+		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
+
 		sql.append("        ) ");
 
 		sql.append("     )");
-		
 
 		sql.append(" GROUP BY pe.ID, c.id ");
-		//sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END) -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
+		
+		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
 
 		sql.append(" ) AS consignadoDistribuidor ");
 		sql.append(" GROUP BY numeroCota, idFornecedor ");
@@ -358,7 +372,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
-		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -471,8 +485,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
         parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
-		
-		parameters.put("tipoCotaConsignado", TipoCota.CONSIGNADO.name());
+        
+        parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -527,14 +541,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
-		
-		hql.append(" AND (movimento.statusEstoqueFinanceiro is null ");
-		hql.append(" or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) " );
-		
-		
+        
 		hql.append(" AND (");
 		
-		hql.append("        (cota.tipoCota = :tipoCotaConsignado) OR ");
+		hql.append("        (movimento.statusEstoqueFinanceiro is null or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) OR " );
 		
 		hql.append("        ( ");
 		
@@ -543,27 +553,38 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append("          (   ");
 		
 		hql.append("           ((cota.alteracaoTipoCota is not null AND movimento.data <= cota.alteracaoTipoCota)) OR ");
-		
+		 
 		hql.append("           (");
 		
 		hql.append("               ((cota.alteracaoTipoCota is not null AND movimento.data > cota.alteracaoTipoCota)) AND ");
 		
 		hql.append("               (   ");
-		
+
 		hql.append("                   (cota.parametroCobranca is null) OR ");
 		
-		hql.append("                   (cota.parametroCobranca.devolveEncalhe = true)   ");
-		
+		hql.append("                   (select pcc.devolveEncalhe from ParametroCobrancaCota pcc join pcc.cota as c where c.id = cota.id and pcc.devolveEncalhe = true) is not null ");
+
 		hql.append("               )   ");
 		
 		hql.append("           )");
 		
-	    hql.append("          )   ");
-		
+	    hql.append("          ) AND ");
+	    
+	    hql.append("          movimento.id not in (select movimentoEstoqueCota.id  "); 
+	    
+	    hql.append("                               from ConferenciaEncalhe conferencia ");
+	    
+	    hql.append("                               join conferencia.controleConferenciaEncalheCota as controleConferenciaEncalheCota ");
+	    
+	    hql.append("                               join controleConferenciaEncalheCota.controleConferenciaEncalhe controleConferenciaEncalhe ");
+	    
+	    hql.append("                               join conferencia.movimentoEstoqueCota movimentoEstoqueCota ");
+	    
+	    hql.append("                               where controleConferenciaEncalhe.status = :statusConferenciaEncalhe) ");
+        
 		hql.append("        ) ");
-
+        
 		hql.append("     )");
-		
 		
 		hql.append(" AND tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
 		
@@ -635,7 +656,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA);
 		
-		query.setParameter("tipoCotaConsignado", TipoCota.CONSIGNADO);
+		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO);
 		
 		if(filtro.getIdCota() != null ) { 
 			
