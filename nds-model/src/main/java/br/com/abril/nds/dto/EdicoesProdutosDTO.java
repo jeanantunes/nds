@@ -15,7 +15,7 @@ public class EdicoesProdutosDTO implements Serializable {
 	private static final long serialVersionUID = 1296064141305343451L;
 	
 	private BigInteger edicao;
-	private Integer periodo;
+	private String periodo;
 	private BigInteger venda;
 	private Date dtLancamento;
 	private Date dtRecolhimento;
@@ -50,10 +50,10 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setEdicao(BigInteger edicao) {
 		this.edicao = edicao;
 	}
-	public Integer getPeriodo() {
+	public String getPeriodo() {
 		return periodo;
 	}
-	public void setPeriodo(Integer periodo) {
+	public void setPeriodo(String periodo) {
 		this.periodo = periodo;
 	}
 	
