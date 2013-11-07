@@ -646,11 +646,11 @@ public class FixacaoReparteController extends BaseController {
 				if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
 					
 					for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {
-						if(prodRecebidoDTO.getCodigoProdin().equals(fixacaoReparteDTO.getCodigoProduto()))
+						if(prodRecebidoDTO.getCodigoProduto().equals(fixacaoReparteDTO.getProdutoFixado()))
 							continue loopSeg;
 					}
 					
-					return "Cota ["+cota.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+fixacaoReparteDTO.getCodigoProduto();
+					return "Cota ["+cota.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+fixacaoReparteDTO.getProdutoFixado();
 
 				}
 				
