@@ -881,8 +881,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		BigInteger qntPrevista = chamadaEncalheCota.getQtdePrevista();
 		chamadaEncalheCota.setQtdePrevista(qntPrevista.add(qntProduto));
-
-		chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		
+		if(BigInteger.ZERO.compareTo(chamadaEncalheCota.getQtdePrevista())<0 ){
+			chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		}
+		
 	}
 
 	/**
@@ -1069,9 +1072,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 				qntPrevistaChamadaEncalhe = qntPrevistaChamadaEncalhe.subtract(vendaProduto.getQntProduto());
 				
-				chamadaEncalheCota.setQtdePrevista(qntPrevistaChamadaEncalhe);
-
-				chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+				if(BigInteger.ZERO.compareTo(qntPrevistaChamadaEncalhe) < 0 ) {
+					
+					chamadaEncalheCota.setQtdePrevista(qntPrevistaChamadaEncalhe);
+					chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+					
+				}
+				
 			}
 		}
 	}
@@ -1101,9 +1108,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 			qnProduto = qnProduto.add(qntProdutoNovo);
 
-			chamadaEncalheCota.setQtdePrevista(qnProduto);
+			if(BigInteger.ZERO.compareTo(qnProduto) <0 ) {
+				chamadaEncalheCota.setQtdePrevista(qnProduto);
+				chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+			}
 			
-			chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		}
 	}
 

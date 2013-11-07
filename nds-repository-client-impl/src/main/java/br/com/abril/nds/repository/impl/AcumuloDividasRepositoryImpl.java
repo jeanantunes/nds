@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
 
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -62,4 +63,26 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 				.setProjection(Projections.max("numeroAcumulo"))
 				.uniqueResult();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota) {
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql.append(" select ad.numeroAcumulo ");
+		jpql.append(" from AcumuloDivida ad ");
+		jpql.append(" join ad.movimentoFinanceiroPendente movimentoFinanceiroPendente ");
+		jpql.append(" join movimentoFinanceiroPendente.consolidadoFinanceiroCota consolidadoFinanceiroCota ");		
+		jpql.append(" where consolidadoFinanceiroCota.id = :idConsolidadoFinanceiroCota ");
+		
+		Query query = this.getSession().createQuery(jpql.toString());
+
+		query.setParameter("idConsolidadoFinanceiroCota", idConsolidadoFinanceiroCota);
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
 }

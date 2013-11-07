@@ -1861,8 +1861,15 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		);
 	},
 	
-	
-
+    limparValorInformadoBaixaAutomatica : function(elm) {
+    	
+    	var dif = (elm.defaultValue != elm.value);
+    	
+    	if (dif == true){ 
+		
+    	    $("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+    	}
+	}
 },
 BaseController);
 

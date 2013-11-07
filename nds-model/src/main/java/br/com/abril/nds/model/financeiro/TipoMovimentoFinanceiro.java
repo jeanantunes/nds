@@ -6,9 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DiscriminatorValue(value = "FINANCEIRO")
 public class TipoMovimentoFinanceiro extends TipoMovimento {
 	

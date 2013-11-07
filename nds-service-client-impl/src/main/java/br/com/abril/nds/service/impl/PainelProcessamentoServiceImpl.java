@@ -171,7 +171,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			String tipoErro = "";
 			detalheProcessamentoVO = new DetalheProcessamentoVO();
 			detalheProcessamentoVO.setMensagem(logExecucaoMensagem.getMensagem());
-			detalheProcessamentoVO.setNumeroLinha(logExecucaoMensagem.getNumeroLinha().toString());
+			detalheProcessamentoVO.setNumeroLinha((logExecucaoMensagem.getNumeroLinha()==null)?null:logExecucaoMensagem.getNumeroLinha().toString());
 			switch (logExecucaoMensagem.getLogExecucao().getStatus()) {
 				case AVISO:
 					tipoErro = ALERTA;
