@@ -59,10 +59,9 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		hql.append("SELECT ");
 		hql.append("SUM( " +
 		  "  CASE WHEN tm.grupoMovimentoEstoque in (:grupoEntradaSuplementar) " +
-		  "  THEN COALESCE( me.qtde, 0) " +
-		  "  ELSE (CASE WHEN tm.grupoMovimentoEstoque in (:grupoSaidaSuplementar) THEN COALESCE( -(me.qtde), 0) ELSE 0 END)" +
+		  "  THEN (COALESCE( me.qtde, 0) * pe.precoVenda) " +
+		  "  ELSE (CASE WHEN tm.grupoMovimentoEstoque in (:grupoSaidaSuplementar) THEN (COALESCE( -(me.qtde), 0) * pe.precoVenda) ELSE 0 END)" +
 		  "  END) ");       
-		hql.append("  * pe.precoVenda");
 		hql.append(" FROM MovimentoEstoque as me ");
 		hql.append(" JOIN me.tipoMovimento as tm ");       
 		hql.append(" JOIN me.produtoEdicao as pe ");
