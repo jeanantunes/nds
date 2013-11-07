@@ -1094,6 +1094,8 @@ public class DescontoServiceImpl implements DescontoService {
 		Map<String, DescontoDTO> descontosMap = new HashMap<String, DescontoDTO>();
 		List<DescontoDTO> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(lancamentoId, produtoEdicaoId);
 		
+		List<DescontoDTO> descontosProximosLancamentos = descontoProximosLancamentosRepository.obterDescontosProximosLancamentos(distribuidorRepository.obterDataOperacaoDistribuidor());
+		
 		for(DescontoDTO desc : descontos) {
 			String key = new StringBuilder()
 				.append(desc.getCotaId() != null ? "c" : "")
@@ -1107,7 +1109,23 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(desc.isPredominante() ? "pd" : "")
 				.toString();
 			descontosMap.put(key, desc);
-		}		
+		}	
+		
+		for(DescontoDTO desc : descontosProximosLancamentos) {
+			String key = new StringBuilder()
+				.append(desc.getCotaId() != null ? "c" : "")
+				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
+				.append(desc.getFornecedorId() != null ? "f" : "")
+				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
+				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
+				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
+				.append(desc.getProdutoId() != null ? "p" : "")
+				.append(desc.getProdutoId() != null ? desc.getProdutoId() : "")
+				.append(desc.isPredominante() ? "pd" : "")
+				.append(desc.isProximoLancamento() ? "pl" : "")
+				.toString();
+			descontosMap.put(key, desc);
+		}
 		
 		return descontosMap;
 	}
@@ -1124,12 +1142,22 @@ public class DescontoServiceImpl implements DescontoService {
 		 *  	4	 	|		X	|				|					|					|		X
 		 *  
 		 *  Para os itens abaixo, prevalece o maior valor de desconto, caso contrario, obedece a ordem de prioridade
+		 *  
+		 *  Prioridade  |	Produto	| ProdutoEdicao	| QuantidadeEdicoes	| Cota Especifica	| Predominante
 		 *  	5		|		X	|		X		|			X		|		X			|
 		 *  	6		|		X	|		X		|					|		X			|
 		 *  	7		|		X	|				|					|		X			|
 		 *  	8		|		X	|		X		|			X		|					|
 		 *  	9		|		X	|		X		|					|					|
 		 *  	10		|		X	|				|					|					|  	
+		 * 
+		 * LEGENDA:
+		 * c : Cota
+		 * f : Fornecedor
+		 * pe: ProdutoEdicao
+		 * p : Produto
+		 * pd: Predominante
+		 * pl: Próximo Lançamento
 		 * 
 		 */
 		
@@ -1215,6 +1243,44 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
+		/**
+		 * Desconto de ProdutoEdicao predominante no proximo lancamento
+		 */
+		if(descontoDTO == null) {
+			
+			key = new StringBuilder()
+				.append("p")
+				.append(produtoId)
+				.append("pd")
+				.append("pl")
+				.toString();
+			
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
+			
+			/**
+			 * Desconto de ProdutoEdicao no proximo lancamento
+			 */
+			key = new StringBuilder()
+				.append("p")
+				.append(produtoId)
+				.append("pl")
+				.toString();
+			
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
+			
+		}
+		
+		/**
+		 * Desconto de ProdutoEdicao para cota específica
+		 */
 		if(descontoDTO == null) {
 			
 			key = new StringBuilder()
@@ -1232,6 +1298,9 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
+		/**
+		 * Desconto de ProdutoEdicao para cota específica
+		 */
 		if(descontoDTO == null || !descontoDTO.isPredominante()) {
 			
 			key = new StringBuilder()
@@ -1248,6 +1317,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 		}
 		
+		/**
+		 * Desconto de Produto para cota específica
+		 */
 		if(descontoDTO == null || !descontoDTO.isPredominante()) {
 			
 			key = new StringBuilder()
@@ -1264,6 +1336,9 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
+		/**
+		 * Desconto de ProdutoEdicao
+		 */
 		if(descontoDTO == null || !descontoDTO.isPredominante()) {
 			
 			key = new StringBuilder()
@@ -1276,6 +1351,9 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
+		/**
+		 * Desconto de Produto
+		 */
 		if(descontoDTO == null || !descontoDTO.isPredominante()) {
 			
 			key = new StringBuilder()
@@ -1288,6 +1366,9 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
+		/**
+		 * Desconto Especifico da Cota
+		 */
 		if(descontoDTO == null || !descontoDTO.isPredominante()) {
 			key = new StringBuilder()
 				.append("c")
@@ -1301,6 +1382,9 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
+		/**
+		 * Desconto Geral (Fornecedor)
+		 */
 		if(descontoDTO == null || !descontoDTO.isPredominante()) {
 			key = new StringBuilder()
 				.append("f")

@@ -23,6 +23,8 @@ public class DescontoDTO implements Serializable {
 	private BigDecimal valor;
 	
 	private boolean predominante;
+	
+	private boolean proximoLancamento;
 
 	public Long getId() {
 		return id;
@@ -78,6 +80,14 @@ public class DescontoDTO implements Serializable {
 
 	public void setPredominante(boolean predominante) {
 		this.predominante = predominante;
+	}
+
+	public boolean isProximoLancamento() {
+		return proximoLancamento;
+	}
+
+	public void setProximoLancamento(boolean proximoLancamento) {
+		this.proximoLancamento = proximoLancamento;
 	}
 	
 }
