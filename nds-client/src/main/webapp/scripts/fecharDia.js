@@ -472,7 +472,7 @@ var fecharDiaController =  $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Qtde',
-				name : 'quantidadeLogico',
+				name : 'quantidadeContabil',
 				width : 90,
 				align : 'center'
 			}, {
@@ -647,11 +647,10 @@ var fecharDiaController =  $.extend(true, {
 			var entrada = row.cell.quantidadeTransferenciaEntrada ? parseInt(row.cell.quantidadeTransferenciaEntrada) : 0;
 			var saida = row.cell.quantidadeTransferenciaSaida ? parseInt(row.cell.quantidadeTransferenciaSaida) : 0;
 			var venda = row.cell.quantidadeVenda ? parseInt(row.cell.quantidadeVenda) : 0;
-			var logico = row.cell.quantidadeLogico ? parseInt(row.cell.quantidadeLogico) : 0;
+			var logico = row.cell.quantidadeContabil ? parseInt(row.cell.quantidadeContabil) : 0;
 			
 			row.cell.quantidadeTransferenciaEntrada = entrada;
 			row.cell.quantidadeTransferenciaSaida = saida;
-			row.cell.saldo = logico + entrada - saida - venda;
 		});
 		
 		$("#dialog-suplementares", fecharDiaController.workspace).show();

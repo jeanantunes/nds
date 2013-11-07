@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -80,8 +81,35 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 	@Override
 	@Transactional
 	public List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao) {
-		return this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar(data, paginacao);
+		
+		List<SuplementarFecharDiaDTO> listaSuplementar = this.resumoSuplementarFecharDiaRepository.obterDadosGridSuplementar(data, paginacao);
+		
+		carregarSaldoGridSuplementar(listaSuplementar);
+		
+		return listaSuplementar;
 	}
+	
+	private void carregarSaldoGridSuplementar(List<SuplementarFecharDiaDTO> listaSuplementar) {
+		
+		if(listaSuplementar == null || listaSuplementar.isEmpty()) {
+			return;
+		}
+		
+		for(SuplementarFecharDiaDTO suplementar : listaSuplementar) {
+
+			BigInteger entrada = (suplementar.getQuantidadeTransferenciaEntrada() == null) ? BigInteger.ZERO : suplementar.getQuantidadeTransferenciaEntrada();
+			BigInteger saida = (suplementar.getQuantidadeTransferenciaSaida() == null) ? BigInteger.ZERO : suplementar.getQuantidadeTransferenciaSaida();
+			BigInteger logico = (suplementar.getQuantidadeContabil() == null) ? BigInteger.ZERO : suplementar.getQuantidadeContabil();
+			BigInteger venda = (suplementar.getQuantidadeVenda() == null) ? BigInteger.ZERO : suplementar.getQuantidadeVenda();
+			
+			BigInteger saldo = logico.add(entrada).subtract(saida).subtract(venda);
+			
+			suplementar.setSaldo(saldo);
+			
+		}
+		
+	}
+	
 
 	@Override
 	@Transactional
