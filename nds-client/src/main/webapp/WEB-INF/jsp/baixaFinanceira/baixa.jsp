@@ -120,7 +120,7 @@
 						<td width="140">Data Pagamento:</td>
 						<td width="200">
 							<input type="text" name="data" id="dataBaixa"
-								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
+								   style="width: 90px; text-align: right;" value="${dataOperacao}" onchange="baixaFinanceiraController.limparValorInformadoBaixaAutomatica(this);" />
 						</td>
 						<td width="65">Arquivo:</td>
 						<td colspan="3">
