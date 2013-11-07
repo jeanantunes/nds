@@ -47,6 +47,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
@@ -93,6 +94,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 	@Autowired
 	protected AcumuloDividasService acumuloDividasService;
+	
+	@Autowired
+	private DividaRepository dividaRepository;
 	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -611,6 +615,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	itemCobranca.setBanco( (pagamento.getBanco()==null)?itemCobranca.getBanco() :  pagamento.getBanco() );
 		    	
+		    	this.dividaRepository.merge(itemCobranca.getDivida());
+		    	
 		    	cobrancaTotal = this.cobrancaRepository.merge(itemCobranca);
 		    	
 		    	baixaManualTotal = this.criarRegistroBaixaManual(
@@ -623,7 +629,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	
 				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorCobrancaCorrigida);
 				
-				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDivida());
+				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDataPagamento(), itemCobranca.getDivida());
 		    
 			} else {
 		    	cobrancaParcial = itemCobranca;

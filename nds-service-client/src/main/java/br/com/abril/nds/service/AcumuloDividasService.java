@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -56,5 +57,5 @@ public interface AcumuloDividasService {
 	 */
 	BigInteger obterNumeroMaximoAcumuloCota(Long idCota);
 
-	void quitarDividasAcumuladas(Divida dividaAtual);
+	void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual);
 }
