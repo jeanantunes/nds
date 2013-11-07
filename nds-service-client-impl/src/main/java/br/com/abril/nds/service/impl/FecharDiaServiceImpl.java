@@ -126,6 +126,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -275,6 +276,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private VisaoEstoqueRepository visaoEstoqueRepository;
+	
+	@Autowired
+	private DescontoLogisticaService descontoLogisticaService;
 	
 	@Autowired
 	private BoletoService boletoService;
@@ -1312,6 +1316,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
+		this.processarAlteracaoDescontoLogistica();
+		
+		LOG.info("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
+		
 		processarControleDeAprovacao();
 
 		LOG.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
@@ -1334,7 +1342,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.processarLancamentosRecolhimento(usuario);
 
 			LOG.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
-
 			
 			return fechamentoDiarioDTO;
 		
@@ -1344,6 +1351,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
+	}
+	
+	private void processarAlteracaoDescontoLogistica(){
+		
+		this.descontoLogisticaService.alterarDescontoLogistica();
 	}
 	
 	private void processarDividasNaoPagas(Usuario usuario, Date dataPagamento) {

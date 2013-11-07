@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -55,10 +54,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		EMS0136Input input = (EMS0136Input) message.getBody();
 		
-		// Validar código do distribuidor:
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())){
+		// Validar código do distribuidor:	
+		if(!this.distribuidorService.isDistribuidor(Integer.valueOf(input.getCodigoDistribuidor()))) {
 			
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
