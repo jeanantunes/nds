@@ -76,10 +76,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	private boolean verificarDistribuidor(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
-		Long codigoDistribuidorSistema = (Long) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
-		Long codigoDistribuidorArquivo = Long.parseLong(input
-				.getCodigoDistribuidor());
+		String codigoDistribuidorSistema = 
+			message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+		
+		String codigoDistribuidorArquivo = input.getCodigoDistribuidor();
 
 		if (codigoDistribuidorSistema != null
 				&& codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {

@@ -68,10 +68,12 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		EMS0111Input input = (EMS0111Input) message.getBody();
 				
 		// Validar Distribuidor:
-		final Number codDistribuidorSistema = (Number) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.name());
-		final Number codDistribuidorArquivo = input.getCodigoDistribuidor();
-		if (codDistribuidorSistema.longValue() != codDistribuidorArquivo.longValue()) {
+		final String codDistribuidorSistema = message.getHeader().get(
+				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.name()).toString();
+		
+		final String codDistribuidorArquivo = input.getCodigoDistribuidor().toString();
+		
+		if (!codDistribuidorSistema.equals(codDistribuidorArquivo)) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Distribuidor nao encontrato. Código: " 
