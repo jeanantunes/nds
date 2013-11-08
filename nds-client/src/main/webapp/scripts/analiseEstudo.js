@@ -61,7 +61,7 @@ var analiseEstudoController = $.extend(true, {
                 align : 'left'
             }, {
                 display : 'Status',
-                name : 'statusEstudo',
+                name : 'descricaoStatus',
                 width : 100,
                 sortable : true,
                 align : 'left'
