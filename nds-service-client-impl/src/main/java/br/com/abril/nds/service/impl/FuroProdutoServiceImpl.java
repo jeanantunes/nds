@@ -235,6 +235,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(dataOperacao);
 		furoProduto.setLancamento(lancamento);
+		furoProduto.setDataLancamentoDistribuidor(lancamento.getDataLancamentoDistribuidor());
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(idProdutoEdicao);
 		furoProduto.setProdutoEdicao(produtoEdicao);
