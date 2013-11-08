@@ -118,6 +118,10 @@
 										<td><strong>Total A Distribuir:</strong></td>
 										<td id="repDistribuir">${produto.reparte}</td>
 									</tr>
+									<tr>
+										<td><strong>Total Geral:</strong></td>
+										<td id="repGeral"></td>
+									</tr>
 								</table>
 							</fieldset>
 						</td>

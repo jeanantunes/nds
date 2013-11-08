@@ -33,6 +33,8 @@ var distribuicaoManual = $.extend(true, {
 		
 		distribuicaoManual.idLancamento = lancamentoSelecionado.idLancamento;
 		this.atualizarTotalDistribuido(0);
+		$('#repGeral').html($('#repDistribuir').text());
+		
 	},
 	
 	voltar : function() {
@@ -107,7 +109,7 @@ var distribuicaoManual = $.extend(true, {
 		if (((repCota / totalGeral) * 100).toFixed(2) >= 5) {
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFF00");
 			
-			exibirMensagemDialog('WARNING', ['Reparte acima de 5%. Posteriormentemente poderá ser liberado mediante senha de autorização!'], '');
+			exibirMensagemDialog('WARNING', ['Reparte acima de 5%. Posteriormente poderá ser liberado mediante senha de autorização!'], '');
 			
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
 		} else {
@@ -298,6 +300,7 @@ var distribuicaoManual = $.extend(true, {
 		var totalDistribuido = distribuicaoManual.somarReparteDistribuido(-1);
 		$('#totalDistribuido').html(totalDistribuido);
 		$('#repDistribuir').html(totalGeral - totalDistribuido);
+		
 	},
 	
 	configAutoComplete : function(idCaixaTexto, index) {
