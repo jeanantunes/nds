@@ -44,7 +44,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean obtemCobrancaOrigemNegociacao) {		
+	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean obtemCobrancaOrigemNegociacao, Date data) {		
 		
 		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
 		
@@ -54,6 +54,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		criteria.add(Restrictions.eq("divida.origemNegociacao", obtemCobrancaOrigemNegociacao));
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		criteria.add(Restrictions.eq("statusCobranca", StatusCobranca.NAO_PAGO));
+		
+		criteria.add(Restrictions.lt("dataVencimento", data));
+		
 		criteria.add(Restrictions.isNull("divida.dividaRaiz"));
 		criteria.addOrder(Order.asc("dataVencimento"));
 		
