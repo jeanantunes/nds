@@ -304,7 +304,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
 				
 				for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {
-					if(prodRecebidoDTO.getCodigoProdin().equals(mixCotaProdutoDTO.getCodigoProduto()))
+					if(prodRecebidoDTO.getCodigoProduto().equals(prd.getCodigoICD()))
 						continue loopSeg;
 				}
 				
