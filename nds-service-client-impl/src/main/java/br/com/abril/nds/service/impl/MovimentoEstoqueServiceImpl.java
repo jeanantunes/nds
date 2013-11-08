@@ -40,6 +40,7 @@ import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -114,7 +115,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, Long idUsuario) {
+	public void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, FuroProduto furoProduto, Long idUsuario) {
 
 		Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
 
@@ -161,7 +162,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		}
 
-		gerarMovimentoEstoque(null, idProdutoEdicao, idUsuario, total, tipoMovimento);
+		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoque(null, idProdutoEdicao, idUsuario, total, tipoMovimento);
+		movimentoEstoque.setFuroProduto(furoProduto);
+		movimentoEstoqueRepository.merge(movimentoEstoque);
 
 	}
 

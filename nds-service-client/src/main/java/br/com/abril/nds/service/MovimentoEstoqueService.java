@@ -14,6 +14,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
@@ -59,7 +60,7 @@ public interface MovimentoEstoqueService {
 	 */
 	void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada);
 	
-	void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, Long idUsuario);
+	void gerarMovimentoEstoqueFuroPublicacao(Lancamento lancamento, FuroProduto furoProduto, Long idUsuario);
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem);
 	

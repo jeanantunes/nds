@@ -162,17 +162,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	public void efetuarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+	
+		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
-		/*if (this.distribuidorService.regimeEspecial()) {
-			
-			List<ItemNotaEnvio> itensNotaEnvio = 
-				this.itemNovaEnvioRepository.obterItemNotaEnvio(idLancamento);
-			
-			for (ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
-				
-				this.itemNovaEnvioRepository.remover(itemNotaEnvio);
-			}
-		}*/
+		FuroProduto furoProduto = criarRegistroFuroProduto(lancamento, idProdutoEdicao, usuario);
 		
 		if (this.verificarProdutoExpedido(idLancamento)) {
 			
@@ -183,7 +176,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			}
 			
 			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
-			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
+			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, furoProduto, idUsuario);
 						
 		}
 		
@@ -210,14 +203,29 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			}
 		}
 		
-		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
-		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setUsuario(usuario);
 		lancamento.setExpedicao(null);
 		
+		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
+		historicoLancamento.setDataEdicao(new Date());
+		historicoLancamento.setLancamento(lancamento);
+		historicoLancamento.setResponsavel(usuario);
+		historicoLancamento.setStatusNovo(lancamento.getStatus());
+		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
-		/*
+		this.lancamentoRepository.alterar(lancamento);
+		
+		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+		//this.historicoLancamentoRepository.adicionar(historicoLancamento);
+	}
+	
+	private FuroProduto criarRegistroFuroProduto(
+			Lancamento lancamento, 
+			Long idProdutoEdicao, 
+			Usuario usuario){
+		
+		/**
 		 * Alterado data do furo p/ inserir com data do sistema
 		 * 
 		 * A data do furo deve estar de acordo com a expedição devido a possibilidade de data do sistema defasada.
@@ -232,19 +240,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		furoProduto.setProdutoEdicao(produtoEdicao);
 		furoProduto.setUsuario(usuario);
 		
-		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
-		historicoLancamento.setDataEdicao(new Date());
-		historicoLancamento.setLancamento(lancamento);
-		historicoLancamento.setResponsavel(usuario);
-		historicoLancamento.setStatusNovo(lancamento.getStatus());
-		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
-		
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
-		this.lancamentoRepository.alterar(lancamento);
+		return furoProduto;
 		
-		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
-		//this.historicoLancamentoRepository.adicionar(historicoLancamento);
 	}
 	
 }
