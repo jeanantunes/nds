@@ -734,6 +734,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" and cobranca.statusCobranca =:statusCobranca ");
 		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
 		hql.append(" and divida.status != :statusPendente ");
+		hql.append(" and cobranca.dataPagamento is null ");
 		
 		Query query = this.obterQueryBoletosInadimplentes(hql.toString(), data);
 
