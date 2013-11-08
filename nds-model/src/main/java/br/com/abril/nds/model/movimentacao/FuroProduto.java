@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -31,7 +33,17 @@ public class FuroProduto {
 	
 	@Column(name = "DATA", nullable = false)
 	private Date data;
-    
+	
+	/**
+	 * Campo corresponde a data de lancamento do 
+	 * distribuidor antes da mesma ser alterada
+	 * para nova data devido a este registro de
+	 * furo de publicação.
+	 */
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_LCTO_DISTRIBUIDOR", nullable = true)
+	private Date dataLancamentoDistribuidor;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -81,5 +93,15 @@ public class FuroProduto {
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
 	}
+
+	public Date getDataLancamentoDistribuidor() {
+		return dataLancamentoDistribuidor;
+	}
+
+	public void setDataLancamentoDistribuidor(Date dataLancamentoDistribuidor) {
+		this.dataLancamentoDistribuidor = dataLancamentoDistribuidor;
+	}
+	
+	
 
 }
