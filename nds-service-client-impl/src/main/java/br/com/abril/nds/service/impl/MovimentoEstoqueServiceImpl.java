@@ -151,7 +151,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimento = 
 				gerarMovimentoCota(
 					null, idProdutoEdicao, movimento.getCota().getId(), idUsuario, 
-						movimento.getQtde(), tipoMovimentoCota, new Date(), null, lancamento.getId(), null);
+						movimento.getQtde(), tipoMovimentoCota,lancamento.getDataLancamentoDistribuidor(), null, lancamento.getId(), null);
 
 			if (movimentoEstoqueCota.getTipoMovimento() != tipoMovimentoEstCotaAusente){
 			
@@ -846,7 +846,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 															boolean isMovimentoDiferencaAutomatico) {
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
-				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
+				idUsuario, quantidade, tipoMovimentoEstoque, dataLancamento, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
 	}
 	
 	
