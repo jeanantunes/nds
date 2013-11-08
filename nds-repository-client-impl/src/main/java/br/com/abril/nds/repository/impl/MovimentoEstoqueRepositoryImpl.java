@@ -135,22 +135,20 @@ implements MovimentoEstoqueRepository {
 	
 	/**
 	 * Obtem os Grupos de Movimento de Estoque de Consignado
-	 * @return List<GrupoMovimentoEstoque>
+	 * @return List<String>
 	 */
-	public List<GrupoMovimentoEstoque> obterListaGrupoMovimentoConsignado(){
+	public List<String> obterListaGrupoMovimentoConsignado(){
 		
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = Arrays.asList(GrupoMovimentoEstoque.ENVIO_JORNALEIRO,
-																			   GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO,
-																			   GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE,
-																			   GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO,
-																			   GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO,
-																			   GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE,
-																			   GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO,
-																			   GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
-																			   GrupoMovimentoEstoque.VENDA_ENCALHE,
-																			   GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR,
-																			   GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE,
-																			   GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR);
+		List<String> listaGrupoMovimentoEstoque = Arrays.asList(GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name(),
+																GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name(),
+																GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name(),
+																GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.name(),
+																GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name(),
+																GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.name(),
+																GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name(),
+																GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name(),
+																GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.name(),
+																GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name());
 		
 		return listaGrupoMovimentoEstoque;
 	}
@@ -165,45 +163,50 @@ implements MovimentoEstoqueRepository {
 	@Override
 	public BigDecimal obterSaldoDistribuidor(Date data, OperacaoEstoque operacaoEstoque, FormaComercializacao formaComercializacao) {
 		
-		StringBuilder hql = new StringBuilder(" select ");
 		
-					  hql.append(" sum(me.qtde * pe.precoVenda) ");
-					  
-					  hql.append(" from MovimentoEstoque me ");
-					  
-					  hql.append(" join me.tipoMovimento tm ");
-					  
-					  hql.append(" join me.produtoEdicao pe ");
-					  
-					  hql.append(" join pe.produto p ");
-					  
-					  hql.append(" where me.data = :data ");
-					  
-					  hql.append(" and me.status = :statusAprovado ");
-					  
-					  hql.append(" and p.formaComercializacao = :formaComercializacao ");
-					  
-					  hql.append(" and tm.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro) ");
-	  
-	    if (operacaoEstoque!=null){
-	      
-		    hql.append(" and tm.operacaoEstoque = :operacaoEstoque ");
-	    }
+		StringBuilder sql = new StringBuilder();
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		sql.append("   SELECT sum(COALESCE(me.QTDE, 0)*pe.PRECO_VENDA)			");
+		sql.append("   FROM MOVIMENTO_ESTOQUE me                        	");
+		
+		sql.append("   INNER JOIN TIPO_MOVIMENTO tipoMovimento 		");
+		sql.append("   ON me.TIPO_MOVIMENTO_ID=tipoMovimento.ID    	");
+		     
+		sql.append("   INNER JOIN PRODUTO_EDICAO pe                	");
+		sql.append("   ON me.PRODUTO_EDICAO_ID=pe.ID               	");
+		     
+		sql.append("   INNER JOIN PRODUTO prod                     	");
+		sql.append("   ON pe.PRODUTO_ID=prod.ID                    	");
+		     
+		sql.append("   LEFT JOIN ( ");
+		sql.append("		select produto_edicao_furo.id as idProdutoEdicaoFuro ");
+		sql.append("		from FURO_PRODUTO fp 								");
+		
+		sql.append("		inner join produto_edicao produto_edicao_furo 		");
+		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
+		
+		sql.append("		where fp.data_lcto_distribuidor = :data	");
+		sql.append("   ) as produtosFuradosNaData     			");
+		sql.append("   ON produtosFuradosNaData.idProdutoEdicaoFuro = me.PRODUTO_EDICAO_ID	");
+		
+		sql.append("   WHERE	");
+		     
+		sql.append("   me.DATA = :data ");
+		sql.append("   AND me.STATUS = :statusAprovado	");
+		sql.append("   AND prod.FORMA_COMERCIALIZACAO = :formaComercializacao ");
+		sql.append("   AND ( ");
+		sql.append("       tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoMovimentoEnvioJornaleiro) ");
+		sql.append("   ) ");
+		sql.append("   AND produtosFuradosNaData.idProdutoEdicaoFuro is null       ");
+		sql.append("   AND tipoMovimento.OPERACAO_ESTOQUE = :operacaoEstoque        ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("data", data);
-		
-		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		
-		query.setParameter("formaComercializacao", formaComercializacao);
-		
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+		query.setParameter("formaComercializacao", formaComercializacao.name());
 		query.setParameterList("grupoMovimentoEnvioJornaleiro", this.obterListaGrupoMovimentoConsignado());
-		
-		if (operacaoEstoque!=null){
-		      
-			query.setParameter("operacaoEstoque", operacaoEstoque);
-	    }
+		query.setParameter("operacaoEstoque", operacaoEstoque.name());
 		
 		Object result = query.uniqueResult();
 		
