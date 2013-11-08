@@ -1297,7 +1297,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
 		}
 		
-		return true;
+		return false;
 	}
 
 	@Override
