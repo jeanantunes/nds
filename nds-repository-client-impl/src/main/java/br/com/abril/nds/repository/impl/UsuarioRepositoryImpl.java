@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.LogicalExpression;
@@ -121,6 +122,8 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 	public Usuario getUsuarioLogado(String login) {
 		Criteria criteria =  getSession().createCriteria(Usuario.class);
 		criteria.add(Restrictions.eq("login", login));
+		criteria.setCacheable(false);
+		criteria.setCacheMode(CacheMode.IGNORE);
 		return (Usuario) criteria.uniqueResult();
 	}
 
