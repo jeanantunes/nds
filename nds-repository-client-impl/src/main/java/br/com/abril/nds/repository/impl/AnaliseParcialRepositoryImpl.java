@@ -250,7 +250,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       p.codigo codigoProduto, ");
         sql.append("       p.nome nomeProduto, ");
         sql.append("       pe.numero_edicao edicao, ");
-        sql.append("       epe.periodo_parcial periodo, ");
+        sql.append("       plp.numero_periodo periodo, ");
         sql.append("       tcp.id idTipoClassificacao, ");
         sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
         sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ");
@@ -258,10 +258,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
         sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
+        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
         sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append(" where epe.estudo_id = :estudoId ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
-        sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
+        sql.append("  , pe.numero_edicao desc, plp.numero_periodo desc ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
