@@ -139,7 +139,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         	hql.append(" GROUP BY cota.id");        	
         }
         
-        hql.append(" order by numeroCota");
+        hql.append(" order by numeroCota ASC");
         
         Query query =  getSession().createQuery(hql.toString());
         
@@ -339,6 +339,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         }
         
         hql.append(" GROUP BY cota.id");
+        
+        hql.append(" ORDER BY cota.numeroCota ASC ");
         
         Query query =  getSession().createQuery(hql.toString());
         
