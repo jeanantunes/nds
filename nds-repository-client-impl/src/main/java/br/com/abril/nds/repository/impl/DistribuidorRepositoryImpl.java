@@ -587,8 +587,9 @@ public class DistribuidorRepositoryImpl extends
 	public boolean naoAcumulaDividas() {
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" d.pararAcumuloDividas ")
-		   .append(" from Distribuidor d ");
+		hql.append(" p.acumulaDivida ")
+		   .append(" from PoliticaCobranca p ")
+		   .append(" where p.principal = true ");
 		
 		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
 	}
