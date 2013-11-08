@@ -1,16 +1,10 @@
 package br.com.abril.nds.integracao.engine;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.View;
@@ -47,10 +41,10 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
-	private Long codDistribuidor = null;
+	private List<String> codDistribuidores = null;
 	
-	private void setCodDistribuidor(Long codDistribuidor) {
-		this.codDistribuidor = codDistribuidor;
+	private void setCodDistribuidores(List<String> codDistribuidores) {
+		this.codDistribuidores = codDistribuidores;
 	}
 	
 	@Override
@@ -65,149 +59,96 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		}
 		
 		this.consultaCodigoDistribuidor();
-		CouchDbClient couchDbClient = this.getCouchDBClient();
+		
+		for (String codDistribuidor : this.codDistribuidores) {
+		
+			CouchDbClient couchDbClient = this.getCouchDBClient(codDistribuidor);
 			
-		View view = couchDbClient.view("importacao/porTipoDocumento");
-		
-		//verifyViewUpdate();
-		
-		view.key(inputModel.getRouteInterface().getName());
-		view.limit(couchDbProperties.getBachSize());
-		view.includeDocs(true);
-		ViewResult<String, Void, ?> result = null;
-		
-		try{
-			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
-		}catch(org.lightcouch.NoDocumentException e){
-			//Nao ha informacoes a serem processadas
-			ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
-			return;
-		}
-		
-		AtomicReference<Object> tempVar = new AtomicReference<Object>();
-		// Processamento a ser executado ANTES do processamento principal:
-		messageProcessor.preProcess(tempVar);
-
-		do {	
+			View view = couchDbClient.view("importacao/porTipoDocumento");
 			
-			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
-				
-				IntegracaoDocument doc = (IntegracaoDocument) row.getDoc(); 
-				
-				final Message message = new Message();
-				message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
-				message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
-				message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), doc.getNomeArquivo());
-				message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
-				message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
-				message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
-				message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), this.codDistribuidor);
-				message.setTempVar(tempVar);
-				
-				message.setBody(doc);
-				
-				try {
-					
-					TransactionTemplate template = new TransactionTemplate(transactionManager);
-					template.execute(new TransactionCallback<Void>() {
-						@Override
-						public Void doInTransaction(TransactionStatus status) {
-						
-							messageProcessor.processMessage(message);
-							
-							getSession().flush();
-							getSession().clear();
-	
-							return null;
-						}
-					});
-				} catch(Throwable e) {
-					ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-					e.printStackTrace();
-				}
-				
-				String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
-				
-				if (erro == null) {
-					couchDbClient.remove(doc);
-				} else {
-					doc.setErro(erro);
-					couchDbClient.update(doc);
-				}
-			}
-			
-			view = couchDbClient.view("importacao/porTipoDocumento");
 			view.key(inputModel.getRouteInterface().getName());
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
+			ViewResult<String, Void, ?> result = null;
 			
 			try{
 				result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
 			}catch(org.lightcouch.NoDocumentException e){
-				//Nao ha mais informacoes a serem processadas
-				break;
+				//Nao ha informacoes a serem processadas
+				ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
+				continue;
 			}
-		} while(!result.getRows().isEmpty());
-		
-		// Processamento a ser executado APÓS o processamento principal:
-		messageProcessor.posProcess(tempVar);
-		
-		couchDbClient.shutdown();
-	}
+			
+			AtomicReference<Object> tempVar = new AtomicReference<Object>();
+			// Processamento a ser executado ANTES do processamento principal:
+			messageProcessor.preProcess(tempVar);
 	
-	private void verifyViewUpdate() {
+			do {	
+				
+				for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
+					
+					IntegracaoDocument doc = (IntegracaoDocument) row.getDoc(); 
+					
+					final Message message = new Message();
+					message.getHeader().put(MessageHeaderProperties.URI.getValue(), inputModel.getRouteInterface().getName());
+					message.getHeader().put(MessageHeaderProperties.PAYLOAD.getValue(), doc);
+					message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), doc.getNomeArquivo());
+					message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
+					message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
+					message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
+					message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), codDistribuidor);
+					message.setTempVar(tempVar);
+					
+					message.setBody(doc);
+					
+					try {
+						
+						TransactionTemplate template = new TransactionTemplate(transactionManager);
+						template.execute(new TransactionCallback<Void>() {
+							@Override
+							public Void doInTransaction(TransactionStatus status) {
+							
+								messageProcessor.processMessage(message);
+								
+								getSession().flush();
+								getSession().clear();
 		
-		String couchURL = String.format("%s://%s:%d",
-				couchDbProperties.getProtocol(),				
-				couchDbProperties.getHost(), 
-				couchDbProperties.getPort());
-
-		URL url = null;
-		HttpURLConnection conn = null;
-		BufferedReader reader = null;
-		String line;
-		try {
-			url = new URL(couchURL + "/_active_tasks");
-			conn = (HttpURLConnection) url.openConnection();
-			conn.setDoOutput(true);
-			conn.setUseCaches(false);
-			conn.setRequestMethod("GET");
-			reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
-			}
- 
-			reader.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+								return null;
+							}
+						});
+					} catch(Throwable e) {
+						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
+						e.printStackTrace();
+					}
+					
+					String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
+					
+					if (erro == null) {
+						couchDbClient.remove(doc);
+					} else {
+						doc.setErro(erro);
+						couchDbClient.update(doc);
+					}
+				}
+				
+				view = couchDbClient.view("importacao/porTipoDocumento");
+				view.key(inputModel.getRouteInterface().getName());
+				view.limit(couchDbProperties.getBachSize());
+				view.includeDocs(true);
+				
+				try{
+					result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+				}catch(org.lightcouch.NoDocumentException e){
+					//Nao ha mais informacoes a serem processadas
+					break;
+				}
+			} while(!result.getRows().isEmpty());
+			
+			// Processamento a ser executado APÓS o processamento principal:
+			messageProcessor.posProcess(tempVar);
+			
+			couchDbClient.shutdown();
 		}
-	}
-
-
-	/**
-	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
-	 * 
-	 * @return client
-	 */
-	private CouchDbClient getCouchDBClient() {
-		
-		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 8, "0"),
-				true,
-				couchDbProperties.getProtocol(),
-				couchDbProperties.getHost(),
-				couchDbProperties.getPort(),
-				couchDbProperties.getUsername(),
-				couchDbProperties.getPassword()
-		);
 	}
 	
 	/**
@@ -218,14 +159,25 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		
 		template.execute(new TransactionCallback<Void>() {
+			
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
 
-				String hql = "SELECT dist.codigoDistribuidorDinap from Distribuidor dist";
+				String hql = "SELECT dist.codigoDistribuidorDinap, dist.codigoDistribuidorFC from Distribuidor dist";
 				
 				Query query = getSession().createQuery(hql);				
 			
-				setCodDistribuidor(Long.parseLong( query.uniqueResult().toString() ));
+				Object[] result = (Object[]) query.uniqueResult();
+				
+				if (result != null && result.length != 0) {
+				
+					List<String> codDistribuidores = new ArrayList<>();
+					
+					codDistribuidores.add(result[0].toString());
+					codDistribuidores.add(result[1].toString());
+					
+					setCodDistribuidores(codDistribuidores);
+				}
 				
 				return null;
 			}

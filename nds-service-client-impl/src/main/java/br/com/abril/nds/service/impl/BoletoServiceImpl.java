@@ -1090,7 +1090,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (boleto != null) {
 
-			this.acumuloDividasService.quitarDividasAcumuladas(boleto.getDivida());
+			this.acumuloDividasService.quitarDividasAcumuladas(dataPagamento, boleto.getDivida());
 		}
 			
 		BigDecimal valorPagamento = BigDecimal.ZERO;

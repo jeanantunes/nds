@@ -578,7 +578,99 @@ function adicionarTab(novaTab, path){
 	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
 }
 
-function disableF5(e) { if ((e.which || e.keyCode) == 116) e.preventDefault(); };
+/**
+ * Objeto para gerenciar quais keys estão pressionadas
+ * 
+ */
+var handler = {
+		keys:[],
+		//Ativa o Handler
+		on:function() {
+			$(document).keydown(handler.keydown);
+			$(document).keyup(handler.keyup);
+		},
+		//Desativa o Handler
+		off:function() {
+			$(document).unbind('keydown',  handler.keydown);
+			$(document).unbind('keyup', handler.keyup);
+		},
+		keydown:function(e){
+			handler.keys[e.which] = true;
+		},
+		keyup:function(e) {
+			delete handler.keys[e.which];
+		}
+}
+
+/**
+ * Objeto para gerenciar pageRefresh
+ */
+var pageRefresh = {
+	
+	/**
+	 * Desabilita o page refresh e informa o usuario sobre os processos que estão rodando
+	 * quando ele tenta fechar o browser ou a aba.
+	 * 
+	 * @param message - mensagem de aviso a ser exibida, quando o usuario tentar fechar o browser ou a aba.
+	 */
+	disable : function(message) {
+		
+		handler.on();
+		
+		$(document).keydown(disableShortcutRefresh);
+		
+		var defaultMessage = "Um processo está sendo executado";
+		
+		window.onbeforeunload = function() {
+			return message || defaultMessage;
+		};
+		
+	},
+	
+	/**
+	 * ReAbilita o page refresh
+	 */
+	enable: function() {
+		
+		handler.off();
+		
+		$(document).unbind('keydown', disableShortcutRefresh);
+		
+		window.onbeforeunload = null;
+		
+	}
+};
+
+/**
+ * Desabilita os atalhos para pageRefresh (F5 e Ctrl+R)
+ * 
+ * @param e - event
+ */
+function disableShortcutRefresh(e) {
+	if(!e) throw "this function must be bind with a key event";
+	
+	if (pressedF5(e) || pressedCtrlR(e)) {
+		
+		e.returnValue = false;
+	    e.keyCode = 0;
+	    
+	    e.preventDefault();
+	    e.stopPropagation();
+	    
+	    return false;
+	}
+	
+    function pressedF5(e) {
+    	return ((e.which || e.keyCode) == 116); 
+    };
+    
+    function pressedCtrlR(e) {
+    	
+    	if(navigator.platform == "MacIntel") return (handler.keys[82] && handler.keys[91]);
+    	return ((e.wich || e.keyCode) == 82 && (e.ctrlKey || window.event.ctrlKey));
+    };
+}
+
 
 //simply visual, let's you know when the correct iframe is selected
 /*$(window).on("focus", function(e) {

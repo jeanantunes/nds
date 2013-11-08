@@ -489,5 +489,5 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Adiciona em lote a lista de Movimentos de Estoque da Cota
 	 * @param movimentosEstoqueCota
 	 */
-	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
+	public void adicionarEmLoteDTO(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
 }

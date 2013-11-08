@@ -26,10 +26,13 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	@Export(label = "Desconto %", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigDecimal desconto;
 	
-	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Predominante", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	private boolean predominante;
+	
+	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private Date dataAlteracao;
 	
-	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 6)
+	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private String nomeUsuario;
 	
 	private Long idTipoDesconto;
@@ -108,6 +111,20 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	 */
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isPredominante() {
+		return predominante;
+	}
+
+	/**
+	 * @param predominante
+	 */
+	public void setPredominante(boolean predominante) {
+		this.predominante = predominante;
 	}
 
 	/**

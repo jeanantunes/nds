@@ -3323,7 +3323,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
-	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
+	public void adicionarEmLoteDTO(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
 
 		if (movimentosEstoqueCota == null || movimentosEstoqueCota.isEmpty()) {
 			return;
@@ -3337,7 +3337,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				
 				NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
-				//.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 				StringBuilder sqlQry = new StringBuilder()
 					.append("insert ") 
 					.append("into MOVIMENTO_ESTOQUE_COTA ")

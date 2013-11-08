@@ -308,25 +308,22 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 	private Query obterDescontoCotaProdutoEdicaoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
-		boolean indWhere = false;
-		
-		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdcfpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ");
+		StringBuilder hql = new StringBuilder("SELECT ")
+			.append(" vdcfpe.desconto_id AS idDesconto ")
+		    .append("FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES AS vdcfpe ")
+		    .append("WHERE 1 = 1 ");
 		
 		if (cota != null) {
 		
-			hql.append(" where vdcfpe.cota_id = :idCota ");
+			hql.append(" AND vdcfpe.cota_id = :idCota ");
 		
-			indWhere = true;
 		}
 
 		if (produtoEdicao != null) {
 
-			hql.append(indWhere ? " and " : " where ")
-			   .append(" vdcfpe.fornecedor_id = :idFornecedor ")
-			   .append(" and vdcfpe.produto_id = :idProduto ")
-			   .append(" and vdcfpe.produto_edicao_id = :idProdutoEdicao ");
+			hql.append(" AND vdcfpe.fornecedor_id = :idFornecedor ")
+			   .append(" AND vdcfpe.produto_id = :idProduto ")
+			   .append(" AND vdcfpe.produto_edicao_id = :idProdutoEdicao ");
 		}
 
 		Query query = getSession().createSQLQuery(hql.toString());
@@ -348,20 +345,20 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	
 	private Query obterDescontoCotaProdutoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
-		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdcfpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where vdcfpe.produto_edicao_id is null ");
+		StringBuilder hql = new StringBuilder("SELECT ")
+			.append(" vdcfpe.desconto_id AS idDesconto ")
+		    .append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES AS vdcfpe ") 
+		    .append(" WHERE vdcfpe.produto_edicao_id IS NULL ");
 		
 		if (cota != null) {
 			
-			hql.append(" and vdcfpe.cota_id = :idCota ");
+			hql.append(" AND vdcfpe.cota_id = :idCota ");
 		}
 		
 		if (produtoEdicao != null) {
 
-			hql.append(" and vdcfpe.fornecedor_id = :idFornecedor ")
-		       .append(" and vdcfpe.produto_id = :idProduto ");
+			hql.append(" AND vdcfpe.fornecedor_id = :idFornecedor ")
+		       .append(" AND vdcfpe.produto_id = :idProduto ");
 		}
 		
 		Query query = getSession().createSQLQuery(hql.toString());
@@ -382,20 +379,20 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	
 	private Query obterDescontoEspecifico(Cota cota, ProdutoEdicao produtoEdicao) {
 		
-		StringBuilder hql = new StringBuilder("select ")
+		StringBuilder hql = new StringBuilder("SELECT ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
-			.append(" where vdcfpe.produto_id is null ")
-			.append(" and vdcfpe.produto_edicao_id is null ");
+		    .append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES AS vdcfpe ")
+			.append(" WHERE vdcfpe.produto_id IS NULL ")
+			.append(" AND vdcfpe.produto_edicao_id IS NULL ");
 		
 		if (cota != null) {
 			
-			hql.append(" and vdcfpe.cota_id = :idCota ");
+			hql.append(" AND vdcfpe.cota_id = :idCota ");
 		}
 		
 		if (produtoEdicao != null) {
 			
-			hql.append(" and vdcfpe.fornecedor_id = :idFornecedor ");
+			hql.append(" AND vdcfpe.fornecedor_id = :idFornecedor ");
 		}
 
 		Query query = getSession().createSQLQuery(hql.toString());
@@ -415,13 +412,13 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	
 	private Query obterDescontoGeral(Fornecedor fornecedor) {
 		
-		StringBuilder hql = new StringBuilder("select ")
+		StringBuilder hql = new StringBuilder("SELECT ")
 			.append(" d.id ")
-		    .append("from Fornecedor f join f.desconto d  ");
+		    .append(" FROM Fornecedor f JOIN f.desconto d  ");
 		
 		if (fornecedor != null) {
 			 
-		    hql.append(" where f.id = :idFornecedor ");
+		    hql.append(" WHERE f.id = :idFornecedor ");
 		}
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -436,14 +433,14 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	
 	private Query obterDescontoProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
-		StringBuilder hql = new StringBuilder("select ")
+		StringBuilder hql = new StringBuilder("SELECT ")
 			.append(" vdpe.desconto_id as idDesconto ")
-		    .append(" from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ");
+		    .append(" FROM VIEW_DESCONTO_PRODUTOS_EDICOES AS vdpe ");
 		
 		if (produtoEdicao != null) {
 		
-			hql.append(" where vdpe.codigo_produto = :codigoProduto ")
-			   .append(" and vdpe.numero_edicao = :numeroEdicao ");
+			hql.append(" WHERE vdpe.codigo_produto = :codigoProduto ")
+			   .append(" AND vdpe.numero_edicao = :numeroEdicao ");
 		}
 
 		Query query = getSession().createSQLQuery(hql.toString());
@@ -459,14 +456,14 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	
 	private Query obterDescontoProduto(ProdutoEdicao produtoEdicao) {
 		
-		StringBuilder hql = new StringBuilder("select ")
-			.append(" vdpe.desconto_id as idDesconto ")
-		    .append(" from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
-		    .append(" where vdpe.numero_edicao is null ");
+		StringBuilder hql = new StringBuilder("SELECT ")
+			.append(" vdpe.desconto_id AS idDesconto ")
+		    .append(" FROM VIEW_DESCONTO_PRODUTOS_EDICOES AS vdpe ")
+		    .append(" WHERE vdpe.numero_edicao IS NULL ");
 		
 		if (produtoEdicao != null) {
 			
-			hql.append(" and vdpe.codigo_produto = :codigoProduto ");
+			hql.append(" AND vdpe.codigo_produto = :codigoProduto ");
 		}
 		
 		Query query = getSession().createSQLQuery(hql.toString());
@@ -500,19 +497,18 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId,
-			Long produtoEdicaoId) {
+	public List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId, Long produtoEdicaoId) {
 
 		StringBuilder hql = new StringBuilder("")
-			.append(" select cota_id as cotaId, fornecedor_id as fornecedorId, produto_edicao_id as produtoEdicaoId, produto_id as produtoId, valor ")
-			.append(" from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
-			.append(" union ")
-			.append(" select null as cotaId, null as fornecedorId, PRODUTO_EDICAO_ID as produtoEdicaoId, PRODUTO_ID as produtoId, valor ")
-			.append(" from view_desconto_produtos_edicoes ")
-			.append(" union ")
-			.append(" select null as cotaId, f.id as fornecedorId, null as produtoEdicaoId, null as produtoId, valor ")
-			.append(" from FORNECEDOR f ")
-			.append(" inner join desconto d on d.id = f.desconto_id ");
+			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor, predominante ")
+			.append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
+			.append(" UNION ")
+			.append(" SELECT null AS cotaId, null AS fornecedorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor, predominante ")
+			.append(" FROM view_desconto_produtos_edicoes ")
+			.append(" UNION ")
+			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS produtoEdicaoId, null AS produtoId, valor, predominante ")
+			.append(" FROM FORNECEDOR f ")
+			.append(" INNER JOIN desconto d ON d.id = f.desconto_id ");
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoDTO.class));
@@ -522,6 +518,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		query.addScalar("produtoId", StandardBasicTypes.LONG);
 		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("predominante", StandardBasicTypes.BOOLEAN);
 
 		return query.list();
 	}

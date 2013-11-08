@@ -276,12 +276,15 @@
 		
 		$("#ajaxLoading").ajaxStart(function() {
 			$(this).fadeIn(200);
+			pageRefresh.disable();
 			
 		});
 		$("#ajaxLoading").ajaxStop(function() {
 			$(document).unbind('keydown');
 			$(this).fadeOut(200);
 			redimensionarWorkspace();
+			pageRefresh.enable();
+			
 		});
 		
 		redimensionarWorkspace();

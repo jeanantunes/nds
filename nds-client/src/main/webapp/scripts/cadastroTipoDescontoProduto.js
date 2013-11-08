@@ -201,25 +201,31 @@ var descontoProdutoController = $.extend(true,{
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
-				width : 100,
+				width : 90,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Desconto %',
 				name : 'desconto',
-				width : 150,
+				width : 90,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Predominante',
+				name : 'predominante',
+				width : 110,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Data Alteração',
 				name : 'dataAlteracao',
-				width : 120,
+				width : 100,
 				sortable : true,
 				align : 'center'			
 			}, {
 				display : 'Usuário',
 				name : 'nomeUsuario',
-				width : 150,
+				width : 130,
 				sortable : false,
 				align : 'left'
 			}, {
