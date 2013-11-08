@@ -863,7 +863,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
 		}
 		var data = [];
-		var idEstudo =  matrizSelecionado_estudo || estudo;
+		var idEstudo =  estudo || matrizSelecionado_estudo;
 		data.push({name: 'id', value: idEstudo});
 		if ($('#parcial').val() === 'true') {
 			data.push({name: "modoAnalise", value: "PARCIAL"});
