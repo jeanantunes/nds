@@ -185,7 +185,7 @@ implements MovimentoEstoqueRepository {
 		sql.append("		inner join produto_edicao produto_edicao_furo 		");
 		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
 		
-		sql.append("		where fp.data_lcto_distribuidor = :data	");
+		sql.append("		where fp.data = :data	");
 		sql.append("   ) as produtosFuradosNaData     			");
 		sql.append("   ON produtosFuradosNaData.idProdutoEdicaoFuro = me.PRODUTO_EDICAO_ID	");
 		
@@ -213,7 +213,65 @@ implements MovimentoEstoqueRepository {
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
 	}
 
-
+	/**
+	 * Obtem valor total de Consignado ou AVista da data
+	 * @param data
+	 * @param formaComercializacao
+	 * @return BigDecimal
+	 */
+	@Override
+	public BigDecimal obterSaldoDistribuidorEntrada(Date data,
+			                                        FormaComercializacao formaComercializacao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("   SELECT SUM(COALESCE(CEC.QTDE_PREVISTA, 0) * PE.PRECO_VENDA) ");
+		
+		sql.append("   FROM CHAMADA_ENCALHE_COTA CEC ");
+		
+		sql.append("   INNER JOIN CHAMADA_ENCALHE CE ON CE.ID = CEC.CHAMADA_ENCALHE_ID ");
+		     
+		sql.append("   INNER JOIN PRODUTO_EDICAO PE ON CE.PRODUTO_EDICAO_ID = PE.ID ");
+		     
+		sql.append("   INNER JOIN PRODUTO P ON PE.PRODUTO_ID = P.ID ");
+		
+		
+		sql.append("   LEFT JOIN ( ");
+		
+		sql.append("		select produto_edicao_furo.id as idProdutoEdicaoFuro ");
+		
+		sql.append("		from FURO_PRODUTO fp 								");
+		
+		sql.append("		inner join produto_edicao produto_edicao_furo 		");
+		
+		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
+		
+		sql.append("		where fp.data = :data	");
+		
+		sql.append("   ) as produtosFuradosNaData     			");
+		
+		sql.append("   ON produtosFuradosNaData.idProdutoEdicaoFuro = PE.ID	");
+		
+		
+		sql.append("   WHERE	");
+		     
+		sql.append("   CE.DATA_RECOLHIMENTO = :data ");
+		
+		sql.append("   AND P.FORMA_COMERCIALIZACAO = :formaComercializacao ");
+		
+		sql.append("   AND produtosFuradosNaData.idProdutoEdicaoFuro is null       ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		
+		query.setParameter("formaComercializacao", formaComercializacao.name());
+		
+		Object result = query.uniqueResult();
+		
+		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MovimentoEstoque> obterMovimentoEstoquePorIdProdutoEdicao(ProdutoEdicao produtoEdicao) {
