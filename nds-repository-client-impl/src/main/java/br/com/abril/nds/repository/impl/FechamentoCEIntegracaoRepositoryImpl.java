@@ -324,7 +324,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 			
 			hql.append(orderByColumn);
 			
-			if (paginacao.getOrdenacao() != null) {
+			if (paginacao != null && paginacao.getOrdenacao() != null) {
 				
 				hql.append(paginacao.getOrdenacao().toString());	
 			}
