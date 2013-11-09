@@ -523,17 +523,20 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
 		
-		for (Long idCota:listaIdCotas){
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		
+		for (Long idCota : listaIdCotas) {
 
 			this.gerarNotaEnvioParaVisualizacao(pessoaEmitente,
 				                                idCota,  
 				                                filtro.getIdRota(), 
-								notasEnvio, 
-								filtro.getDataEmissao(), 
-								filtro.getIntervaloMovimento(), 
-								filtro.getIdFornecedores(), 
-								null, null, null, 
-								mapEstudosCota.get(idCota));
+												notasEnvio, 
+												filtro.getDataEmissao(), 
+												filtro.getIntervaloMovimento(), 
+												filtro.getIdFornecedores(), 
+												null, null, null, 
+												mapEstudosCota.get(idCota),
+												descontos);
 		}
 		
 		return notasEnvio;
@@ -549,7 +552,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 											    String chaveAcesso,
 											    Integer codigoNaturezaOperacao, 
 											    String descricaoNaturezaOperacao,
-											    List<EstudoCota> listaEstudosCota) {
+											    List<EstudoCota> listaEstudosCota,
+											    Map<String, DescontoDTO> descontos) {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
@@ -561,7 +565,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota, periodo);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = 
-				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado, null);
+				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado, descontos);
 
 		NotaEnvio notaEnvio = null;
 		
