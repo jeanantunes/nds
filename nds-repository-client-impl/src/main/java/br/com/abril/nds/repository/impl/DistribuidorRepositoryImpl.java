@@ -189,7 +189,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public Date obterDataOperacaoDistribuidor() {
 		
-		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").uniqueResult();
+		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").setCacheable(true).uniqueResult();
 	}
 	
 	@Override

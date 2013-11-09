@@ -230,15 +230,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
 			
-			BigDecimal valorDesconto = BigDecimal.ZERO;
-			
-			//valorDesconto = obterValorDesconto(cota, mec, produtoEdicao, valorDesconto);
 			DescontoDTO descontoDTO = null;
 			try {
 				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
 			} catch (Exception e) {
+
+				throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao obter desconto: Cota: "+ cota.getNumeroCota() +" / Produto: "+ produtoEdicao.getProduto().getCodigo() +" - "+ produtoEdicao.getNumeroEdicao());
+			}	
+			
+			if(descontoDTO == null) {
 				
-			}			
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota/Produto sem desconto: Cota: "+ cota.getNumeroCota() +" / Produto: "+ produtoEdicao.getProduto().getCodigo() +" - "+ produtoEdicao.getNumeroEdicao());
+			}
 			
 			itemNotaEnvio.setDesconto(descontoDTO.getValor());
 			
@@ -352,10 +355,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			quantidadeResultante = mapProdutos.get(produtoEdicao.getId());
 			
-			
-			//Desconto Produto x cota.
-			//Desconto percentualDesconto = this.descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), cota, produtoEdicao);
-			//valorDesconto = obterValorDesconto(cota, mec, produtoEdicao, valorDesconto);
 			DescontoDTO descontoDTO = null;
 			try {
 				
@@ -524,17 +523,20 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
 		
-		for (Long idCota:listaIdCotas){
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		
+		for (Long idCota : listaIdCotas) {
 
 			this.gerarNotaEnvioParaVisualizacao(pessoaEmitente,
 				                                idCota,  
 				                                filtro.getIdRota(), 
-								notasEnvio, 
-								filtro.getDataEmissao(), 
-								filtro.getIntervaloMovimento(), 
-								filtro.getIdFornecedores(), 
-								null, null, null, 
-								mapEstudosCota.get(idCota));
+												notasEnvio, 
+												filtro.getDataEmissao(), 
+												filtro.getIntervaloMovimento(), 
+												filtro.getIdFornecedores(), 
+												null, null, null, 
+												mapEstudosCota.get(idCota),
+												descontos);
 		}
 		
 		return notasEnvio;
@@ -550,7 +552,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 											    String chaveAcesso,
 											    Integer codigoNaturezaOperacao, 
 											    String descricaoNaturezaOperacao,
-											    List<EstudoCota> listaEstudosCota) {
+											    List<EstudoCota> listaEstudosCota,
+											    Map<String, DescontoDTO> descontos) {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
@@ -562,7 +565,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota, periodo);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = 
-				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
+				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado, descontos);
 
 		NotaEnvio notaEnvio = null;
 		
@@ -700,6 +703,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param codigoNaturezaOperacao
 	 * @param descricaoNaturezaOperacao
 	 * @param listaEstudosCota
+	 * @param descontos TODO
 	 */
 	private void getNotaEnvioCota(PessoaJuridica pessoaEmitente,
 		                          Long idCota, 
@@ -711,7 +715,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
                                   String chaveAcesso,
 			                      Integer codigoNaturezaOperacao, 
 			                      String descricaoNaturezaOperacao,
-			                      List<EstudoCota> listaEstudosCota){
+			                      List<EstudoCota> listaEstudosCota, Map<String, DescontoDTO> descontos){
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
@@ -724,17 +728,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		if(destinatarioAtualizado == null)
 			return;// Caso retorne null pular próxima cota pois não encontrou endereço PDV p uma cota sem movimentoEstudo 
 		
-		List<ItemNotaEnvio> listaItemNotaEnvio = 
-				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
+		List<ItemNotaEnvio> listaItemNotaEnvio = this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, 
+																					listaEstudosCota, destinatarioAtualizado, descontos);
 
 		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
 
-			NotaEnvio notaEnvio = criarNotaEnvio(destinatarioAtualizado,
-								                 chaveAcesso,
-								                 codigoNaturezaOperacao, 
-								                 descricaoNaturezaOperacao, 
-								                 dataEmissao,
-								                 pessoaEmitente);
+			NotaEnvio notaEnvio = criarNotaEnvio(destinatarioAtualizado, chaveAcesso, codigoNaturezaOperacao, 
+								                 descricaoNaturezaOperacao, dataEmissao, pessoaEmitente);
 	
 			notaEnvioRepository.adicionar(notaEnvio);
 			
@@ -745,6 +745,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			notaEnvio = notaEnvioRepository.merge(notaEnvio);
 			
 			notasEnvio.add(notaEnvio);
+			
 		}  
 	}
 	
@@ -757,15 +758,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 								Intervalo<Date> periodo,
 								List<Long> listaIdFornecedores, 
 								List<EstudoCota> listaEstudosCota,
-								IdentificacaoDestinatario destinatarioAtualizado){
+								IdentificacaoDestinatario destinatarioAtualizado,
+								Map<String, DescontoDTO> descontos) {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId()
 													, periodo
 													, listaIdFornecedores
 													, GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
-		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota, periodo, descontos);
 
@@ -891,7 +891,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
 		
-		for (Long idCota:idCotas) {
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		
+		for (Long idCota : idCotas) {
 
 			this.getNotaEnvioCota(pessoaEmitente,
                                   idCota,  
@@ -903,7 +905,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 								  chaveAcesso, 
 								  codigoNaturezaOperacao, 
 								  descricaoNaturezaOperacao, 
-								  mapEstudosCota.get(idCota));
+								  mapEstudosCota.get(idCota), descontos);
 		}
 		
 		return this.ordenarNotasEnvioPorRoteirizacao(notasEnvio);
