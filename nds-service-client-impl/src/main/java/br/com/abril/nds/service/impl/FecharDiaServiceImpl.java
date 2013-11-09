@@ -508,8 +508,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				this.fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento));
 		
 		resumoConsignado.setValorEntradas(
-			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONSIGNADO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidorEntrada(
+				dataFechamento, FormaComercializacao.CONSIGNADO));
 		
 		resumoConsignado.setValorSaidas(
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
@@ -530,8 +530,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				this.fechamentoDiarioResumoAvistaRepository.obterSaldoAVistaFechamentoDiarioAnterior(dataFechamento));
 
 		resumoAVista.setValorEntradas(
-			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONTA_FIRME));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidorEntrada(
+				dataFechamento, FormaComercializacao.CONTA_FIRME));
 		
 		resumoAVista.setValorSaidas(
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
