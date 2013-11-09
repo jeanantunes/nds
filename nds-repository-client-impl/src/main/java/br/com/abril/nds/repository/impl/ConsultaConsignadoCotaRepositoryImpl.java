@@ -75,6 +75,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
 		sql.append("		   ) AS totalDesconto ");
 		
+		
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
 		sql.append(" GROUP BY ");
@@ -154,6 +155,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		};
 		
 		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+				
 	}
 	
 	private void setarFromWhereConsultaConsignado(StringBuilder sql, FiltroConsultaConsignadoCotaDTO filtro){
@@ -195,10 +197,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			
 			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
 		}
+		
+		sql.append("AND (");
 
-        sql.append(" AND (");
-        
-        sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
+		sql.append("        (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) OR ");
 		
 		sql.append("        ( ");
 		
@@ -223,22 +225,23 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("              ) ");
 		
 		sql.append("          ) AND ");
-
+		
 		sql.append("          MEC.ID NOT IN (SELECT CONFE.MOVIMENTO_ESTOQUE_COTA_ID ");
-
+		
 		sql.append("          		         FROM CONFERENCIA_ENCALHE CONFE ");
-				  
+		
 		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC ON CCEC.ID = CONFE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID ");
-				  
+		
 		sql.append("          		         INNER JOIN CONTROLE_CONFERENCIA_ENCALHE CCE ON CCE.ID = CCEC.CTRL_CONF_ENCALHE_ID ");
-				 
+		
 		sql.append("          		         WHERE CCE.STATUS = :statusConferenciaEncalhe ) ");
-
+		
 		sql.append("        ) ");
 
-		sql.append("     )");
+		sql.append("    )");
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
@@ -338,7 +341,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("     )");
 
 		sql.append(" GROUP BY pe.ID, c.id ");
-		
+
 		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
 
 		sql.append(" ) AS consignadoDistribuidor ");
@@ -369,7 +372,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
-
+		
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
@@ -386,7 +389,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		((SQLQuery) query).addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
 		if (filtro.getPaginacao() != null) {
-			
 			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
 			
@@ -471,12 +473,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			new NamedParameterJdbcTemplate(dataSource);
 		
 		if(filtro.getIdCota()!=null) {
-			
 			parameters.put("idCota", filtro.getIdCota());
 		}
 
 		if(filtro.getIdFornecedor() != null ) { 
-			
 			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 
@@ -541,7 +541,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
-        
+		
 		hql.append(" AND (");
 		
 		hql.append("        (movimento.statusEstoqueFinanceiro is null or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) OR " );
@@ -591,14 +591,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
 		if(filtro.getIdCota() != null ) { 
-			
 			hql.append("   AND cota.id = :idCota");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
-			
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
-		
+
 		return hql.toString();
 	}
 
@@ -630,10 +628,13 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			   OperacaoEstoque.ENTRADA.equals(grupoMovimentoEstoque.getOperacaoEstoque())) {
 				
 				listaGrupoMovimentoEstoquesEntrada.add(grupoMovimentoEstoque);
+			
 			}
+			
 		}
 		
 		return listaGrupoMovimentoEstoquesEntrada;
+		
 	}
 	
 	private void buscarParametrosConsignadoCota(Query query, FiltroConsultaConsignadoCotaDTO filtro){
@@ -643,9 +644,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if (filtro.getIdCota() == null) {
 			
 			listaGrupoMovimentoEstoquesEntrada = obterGruposMovimentoEstoqueDeEntradaNaCota();
+			
+
 		} else {
 			
 			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+			
 		}
 		
 		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
@@ -659,12 +663,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO);
 		
 		if(filtro.getIdCota() != null ) { 
-			
 			query.setParameter("idCota", filtro.getIdCota());
 		}
 		
 		if(filtro.getIdFornecedor() != null ) { 
-			
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 	
