@@ -661,7 +661,10 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {	
-		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false);
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false, dataOperacao);
 	}
 
 	@Override

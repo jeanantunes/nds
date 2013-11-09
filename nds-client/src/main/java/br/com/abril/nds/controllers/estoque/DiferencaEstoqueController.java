@@ -1341,7 +1341,7 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		this.validarDiferencasSelecionadas(listaNovasDiferencas);
-		
+
 		this.diferencaEstoqueService.efetuarAlteracoes(
 			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuarioLogado().getId(), modoNovaDiferenca);
 		

@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 
 @Entity
 @Table(name = "MOVIMENTO_ESTOQUE")
@@ -35,6 +36,10 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 
 	@Column(name = "COD_ORIGEM_MOTIVO", nullable = true)
 	private String codigoOrigemMotivo;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "FURO_PRODUTO_ID")
+	private FuroProduto furoProduto;
 	
 	/**
 	 * @return the itemRecebimentoFisico
@@ -105,4 +110,14 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	public void setCodigoOrigemMotivo(String codigoOrigemMotivo) {
 		this.codigoOrigemMotivo = codigoOrigemMotivo;
 	}
+
+	public FuroProduto getFuroProduto() {
+		return furoProduto;
+	}
+
+	public void setFuroProduto(FuroProduto furoProduto) {
+		this.furoProduto = furoProduto;
+	}
+	
+	
 }

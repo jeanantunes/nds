@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,8 +18,9 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "DESCONTO_LOGISTICA")
+@SuppressWarnings("serial")
 @SequenceGenerator(name="DESCONTO_LOGISTICA_SEQ", initialValue = 1, allocationSize = 1)
-public class DescontoLogistica {
+public class DescontoLogistica implements Serializable {
 	
 	@Id
 	@GeneratedValue(generator = "DESCONTO_LOGISTICA_SEQ")

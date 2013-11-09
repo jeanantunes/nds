@@ -268,7 +268,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		Long idCota = 1L;
 
-		cobrancasCota = cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false);
+		cobrancasCota = cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false, dataAtual);
 
 		Assert.assertNotNull(cobrancasCota);
 
