@@ -29,4 +29,12 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	BigDecimal obterSaldoDistribuidor(Date data, OperacaoEstoque operacaoEstoque, FormaComercializacao formaComercializacao);
 
 	List<MovimentoEstoque> obterMovimentoEstoquePorIdProdutoEdicao(ProdutoEdicao produtoEdicao);
+
+	/**
+	 * Obtem valor total de Consignado ou AVista da data
+	 * @param data
+	 * @param formaComercializacao
+	 * @return BigDecimal
+	 */
+	BigDecimal obterSaldoDistribuidorEntrada(Date data, FormaComercializacao formaComercializacao);
 }

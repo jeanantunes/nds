@@ -212,7 +212,7 @@ public abstract class Util {
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_BRADESCO:
-				return padLeft(codSacado + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor), "0", 11);
+				return padLeft(numeroCota.toString() + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor), "0", 11);
 			
 			case BANCO_DO_BRASIL:
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);

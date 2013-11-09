@@ -892,7 +892,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		parameters.put("isPostergado", false);
 		parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
 		
-		if(filtro.getPaginacao() != null) {
+		if(filtro.getPaginacao()!=null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
 				sql.append(" limit :posicaoInicial, :posicaoFinal");
@@ -1809,6 +1809,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and movimento.data = :data ");
 		
+		hql.append(" and movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ");
+		
 		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		
 		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstoque) ");
@@ -1818,6 +1820,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("data", dataLancamento);
 		
 		query.setParameter("idCota", idCota);
+		
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		
 		query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
 		
