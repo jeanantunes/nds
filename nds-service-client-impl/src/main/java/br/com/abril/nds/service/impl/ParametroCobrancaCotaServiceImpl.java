@@ -272,7 +272,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);		
 			
-			if (parametroCobrancaDTO.getVrDividasAberto()==null && parametroCobrancaDTO.getQtdDividasAberto()==null){
+			//Obtem Valor e Qtd do Distribuidor caso sejam null, VAZIO ou ZERO   
+			if ((parametroCobrancaDTO.getVrDividasAberto()==null || "".equals(parametroCobrancaDTO.getVrDividasAberto()) || 
+					CurrencyUtil.converterValor(parametroCobrancaDTO.getVrDividasAberto()).compareTo(BigDecimal.ZERO) < 1) && 
+					(parametroCobrancaDTO.getQtdDividasAberto()==null || parametroCobrancaDTO.getQtdDividasAberto() < 1)){
 			
 				if(distribuidor.getPoliticaSuspensao()!=null){
 					

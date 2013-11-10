@@ -236,7 +236,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 					 .append(" AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ");
 		
 		StringBuilder hqlDividaAcumulada = new StringBuilder();
-		hqlDividaAcumulada.append(" SELECT SUM(COALESCE(D.VALOR,0)) ")
+		hqlDividaAcumulada.append(" SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ")
 						  .append("	FROM DIVIDA D ")
 						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
 						  .append("	WHERE D.COTA_ID = COTA_.ID ")
