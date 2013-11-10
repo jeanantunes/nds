@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
@@ -41,14 +42,15 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida) {
+	public List<AcumuloDivida> obterAcumuloDividaPorDivida(Long idDivida) {
 		
-		return (AcumuloDivida) getSession()
+		return getSession()
 				.createSQLQuery(" SELECT * FROM acumulo_divida WHERE DIVIDA_ID = :idDivida ")
 				.addEntity(AcumuloDivida.class)
 				.setParameter("idDivida", idDivida)
-				.uniqueResult();
+				.list();
 	}
 
 	/**
