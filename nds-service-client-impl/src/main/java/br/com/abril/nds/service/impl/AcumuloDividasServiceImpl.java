@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,16 +42,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	public AcumuloDivida obterAcumuloDividaPorMovimentoPendente(Long idMovimentoPendente) {
 
 		return this.acumuloDividasRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(idMovimentoPendente);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida) {
-		
-		return this.acumuloDividasRepository.obterAcumuloDividaPorDivida(idDivida);
 	}
 
 	/**
@@ -97,16 +88,20 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 			return;
 		}
 
-		AcumuloDivida acumuloDivida = this.acumuloDividasRepository.obterAcumuloDividaPorDivida(dividaAtual.getId());
+		List<AcumuloDivida> acumuloDividas =
+			this.acumuloDividasRepository.obterAcumuloDividaPorDivida(dividaAtual.getId());
 		
-		if (acumuloDivida == null) {
+		if (acumuloDividas.isEmpty()) {
 			
 			return;
 		}
 		
-		acumuloDivida.setStatus(StatusInadimplencia.QUITADA);
-		
-		this.acumuloDividasRepository.alterar(acumuloDivida);
+		for (AcumuloDivida acumuloDivida : acumuloDividas) {
+			
+			acumuloDivida.setStatus(StatusInadimplencia.QUITADA);
+			
+			this.acumuloDividasRepository.alterar(acumuloDivida);
+		}
 		
 		dividaAtual.getCobranca().setDataPagamento(dataPagamento);
 		
