@@ -38,15 +38,6 @@ public interface AcumuloDividasService {
 	 * @return {@link AcumuloDivida}
 	 */
 	AcumuloDivida obterAcumuloDividaPorMovimentoPendente(Long idMovimentoFinanceiro);
-	
-	/**
-	 * Obtém uma acumulo através do ID de um {@link br.com.abril.nds.model.financeiro.Divida} 
-	 * 
-	 * @param idDivida
-	 * 
-	 * @return {@link AcumuloDivida}
-	 */
-	AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida);
 
 	/**
 	 * Obtém o número máximo de acúmulos já atingido por determinada Cota.
