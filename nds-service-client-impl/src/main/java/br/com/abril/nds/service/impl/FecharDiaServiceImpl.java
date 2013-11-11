@@ -516,8 +516,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
 		
 		resumoConsignado.setSaldoAtual(
-			resumoConsignado.getSaldoAnterior().add(
-				resumoConsignado.getValorEntradas()).subtract(resumoConsignado.getValorSaidas()));
+			resumoConsignado.getSaldoAnterior().subtract(
+				resumoConsignado.getValorEntradas()).add(resumoConsignado.getValorSaidas()));
 		
 		
 		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
@@ -538,8 +538,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
 		
 		resumoAVista.setSaldoAtual(
-			resumoAVista.getSaldoAnterior().add(
-				resumoAVista.getValorEntradas()).subtract(resumoAVista.getValorSaidas()));
+			resumoAVista.getSaldoAnterior().subtract(
+				resumoAVista.getValorEntradas()).add(resumoAVista.getValorSaidas()));
 		
 		resumoFechamentoDiarioConsignado.setResumoAVista(resumoAVista);
 		
