@@ -247,7 +247,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(!pularValidacao)			
 			verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()), notaFiscal.getValorBruto());
 		
-		notaFiscal.setDataRecebimento(new Date());
+		notaFiscal.setDataRecebimento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
@@ -276,7 +276,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()),notaFiscal.getValorBruto());
 		
-		notaFiscal.setDataRecebimento(new Date());
+		notaFiscal.setDataRecebimento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 				
