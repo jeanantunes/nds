@@ -396,7 +396,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						sortable : true,
 						align : 'left'
 					},  {
-						display : 'add',
+						display : 'Add',
 						name : 'sel',
 						width : 20,
 						sortable : true,
@@ -716,7 +716,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							sortable : true,
 							align : 'left'
 						},  {
-							display : '',
+							display : 'Add',
 							name : 'sel',
 							width : 20,
 							sortable : true,
