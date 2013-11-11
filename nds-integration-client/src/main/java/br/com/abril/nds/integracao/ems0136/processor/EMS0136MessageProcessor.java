@@ -81,9 +81,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(input, produtoEdicao);
 
+		this.atualizarProdutoEdicaoParcial(produtoEdicao);
+		
 		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);
 		
-		this.atualizarProdutoEdicaoParcial(produtoEdicao);
 	}
 	
 	/**
