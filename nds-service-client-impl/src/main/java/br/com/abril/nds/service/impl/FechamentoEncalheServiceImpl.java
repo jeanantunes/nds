@@ -40,6 +40,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -867,7 +868,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario, this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
-		this.gerarNotaFiscal(dataEncalhe);
+		if(ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
+				|| ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
+			this.gerarNotaFiscal(dataEncalhe);
+		}
+		
 	}
 	
 	/**

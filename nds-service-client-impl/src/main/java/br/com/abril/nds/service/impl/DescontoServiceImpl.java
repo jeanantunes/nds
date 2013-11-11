@@ -1296,6 +1296,10 @@ public class DescontoServiceImpl implements DescontoService {
 			
 			descontoDTO = descontos.get(key);
 			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
+			
 		}
 		
 		/**
@@ -1312,8 +1316,11 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(produtoEdicaoId)
 				.toString();
 		
-			DescontoDTO descontoDTOCandidato = descontos.get(key);
-			descontoDTO = (descontoDTO != null && descontoDTO.getValor().compareTo(descontoDTOCandidato.getValor()) > -1) ? descontoDTO : descontoDTOCandidato;
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
 
 		}
 		
@@ -1331,8 +1338,11 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(produtoId)
 				.toString();
 		
-			DescontoDTO descontoDTOCandidato = descontos.get(key);
-			descontoDTO = (descontoDTO != null && descontoDTO.getValor().compareTo(descontoDTOCandidato.getValor()) > -1) ? descontoDTO : descontoDTOCandidato;
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
 			
 		}
 		
@@ -1346,8 +1356,11 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(produtoEdicaoId)
 				.toString();
 		
-			DescontoDTO descontoDTOCandidato = descontos.get(key);
-			descontoDTO = (descontoDTO != null && descontoDTO.getValor().compareTo(descontoDTOCandidato.getValor()) > -1) ? descontoDTO : descontoDTOCandidato;
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
 			
 		}
 		
@@ -1361,8 +1374,11 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(produtoId)
 				.toString();
 		
-			DescontoDTO descontoDTOCandidato = descontos.get(key);
-			descontoDTO = (descontoDTO != null && descontoDTO.getValor().compareTo(descontoDTOCandidato.getValor()) > -1) ? descontoDTO : descontoDTOCandidato;
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
 			
 		}
 		
