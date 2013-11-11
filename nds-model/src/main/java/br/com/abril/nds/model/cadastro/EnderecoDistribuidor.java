@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
+@Cacheable
 @Table(name = "ENDERECO_DISTRIBUIDOR")
 @SequenceGenerator(name="ENDERECO_DISTRIBUIDOR_SEQ", initialValue = 1, allocationSize = 1)
 public class EnderecoDistribuidor extends AssociacaoEndereco {

@@ -54,6 +54,7 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		
 		Query query = this.getSession().createQuery(hql.toString());
 
+		query.setCacheable(true);
 		query.setParameter("numeroNotaEnvio", numeroNotaEnvio);
 		
 		return (Date) query.uniqueResult();

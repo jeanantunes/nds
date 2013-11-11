@@ -47,6 +47,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -866,13 +867,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	/**
 	 * Grupo do detalhamento de Produtos e Serviços da NF-e
-	 * 
 	 * @param ufOrigem
 	 * @param ufDestino
 	 * @param raizCNPJ
-	 * @param cstICMS
 	 * @param raizCNPJ
 	 *            ,TipoOperacao tipoOperacao
+	 * @param cstICMS
+	 * @param descontos TODO
+	 * 
 	 * @return
 	 */
 	private ProdutoServico carregaProdutoServico(Cota cota,
@@ -880,7 +882,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			TipoOperacao tipoOperacao, String ufOrigem, String ufDestino,
 			int naturezaOperacao, String codigoNaturezaOperacao,
 			Date dataVigencia, BigDecimal valorItem, String raizCNPJ,
-			String cstICMS) {
+			String cstICMS, Map<String, DescontoDTO> descontos) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
@@ -898,15 +900,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		produtoServico.setProdutoEdicao(produtoEdicao);
 		produtoServico.setQuantidade(quantidade);
 		produtoServico.setValorUnitario(valorItem);
-		produtoServico.setUnidade(
-				produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+		produtoServico.setUnidade(produtoEdicao.getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-		BigDecimal percentualDesconto = 
-				descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+		//BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+		DescontoDTO descontoDTO = null;
+		try {
+			descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId()) ;
+		} catch (Exception e) {
+			
+		}
 		
-		BigDecimal valorDesconto = 
-				MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, (descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO));
 		
 		produtoServico.setValorDesconto(valorDesconto);
 
@@ -1153,6 +1158,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 		
 		notaFiscalRepository.adicionar(notaFiscal);
+		
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
 
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
@@ -1164,7 +1171,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					tipoNotaFiscal.getNopCodigo().intValue(),
 					tipoNotaFiscal.getNopDescricao(), dataEmissao,
 					itemNotaFiscal.getValorUnitario(), raizCNPJ,
-					itemNotaFiscal.getCstICMS());
+					itemNotaFiscal.getCstICMS(), descontos);
 
 			produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
 					sequencia++));
@@ -1247,8 +1254,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 				if (!cota.getParametrosCotaNotaFiscalEletronica()
 						.getEmiteNotaFiscalEletronica()) {
-					itensNotaFiscal = this
-							.obterItensNFeEntradaDevolucaoRemessaConsignacao(
+					itensNotaFiscal = this.obterItensNFeEntradaDevolucaoRemessaConsignacao(
 									parametrosRecolhimentoDistribuidor, idCota, periodo,
 									listaIdFornecedores, listaIdProdutos,
 									tipoNotaFiscal);
@@ -1345,8 +1351,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
-		listaGrupoMovimentoEstoque
-		.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
+		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
@@ -1356,8 +1361,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (listaMovimentoEstoqueCota != null
 				&& !listaMovimentoEstoqueCota.isEmpty()) {
-			listaItemNotaFiscal = this.gerarItensNotaFiscal(
-					listaMovimentoEstoqueCota, tipoNotaFiscal, idCota);
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota, tipoNotaFiscal, idCota);
 		}
 
 		return listaItemNotaFiscal;
@@ -1391,8 +1395,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (listaMovimentoEstoqueCota != null
 				&& !listaMovimentoEstoqueCota.isEmpty()) {
-			listaItemNotaFiscal = this.gerarItensNotaFiscal(
-					listaMovimentoEstoqueCota, tipoNotaFiscal, idCota);
+			listaItemNotaFiscal = this.gerarItensNotaFiscal(listaMovimentoEstoqueCota, tipoNotaFiscal, idCota);
 		}
 
 		return listaItemNotaFiscal;
@@ -1465,21 +1468,25 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
+		
 		for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 
-			TipoMovimentoEstoque tipoMovimentoEstoque = (TipoMovimentoEstoque) movimentoEstoqueCota
-					.getTipoMovimento();
+			TipoMovimentoEstoque tipoMovimentoEstoque = (TipoMovimentoEstoque) movimentoEstoqueCota.getTipoMovimento();
 
-			GrupoMovimentoEstoque grupoMovimento = tipoMovimentoEstoque
-					.getGrupoMovimentoEstoque();
+			GrupoMovimentoEstoque grupoMovimento = tipoMovimentoEstoque.getGrupoMovimentoEstoque();
 
-			ProdutoEdicao produtoEdicao = movimentoEstoqueCota
-					.getProdutoEdicao();
+			ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = descontoService
-					.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-					precoVenda, percentualDesconto);
+			//BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+			DescontoDTO descontoDTO = null;
+			try {
+				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+			} catch (Exception e) {
+
+			}
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, (descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO));
 
 			BigDecimal valorUnitario = precoVenda.subtract(valorDesconto);
 
@@ -1490,27 +1497,21 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			listaMovimentoEstoqueItem.add(movimentoEstoqueCota);
 
 			if (grupoMovimento.getDominio().equals(Dominio.COTA)
-					&& grupoMovimento.getOperacaoEstoque().equals(
-							OperacaoEstoque.SAIDA)
-							&& !grupoNotaFiscal
-							.equals(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO)) {
+					&& grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.SAIDA)
+							&& !grupoNotaFiscal.equals(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO)) {
 				quantidade = quantidade.negate();
 			}
 
 			if (grupoMovimento.getDominio().equals(Dominio.COTA)
-					&& grupoMovimento.getOperacaoEstoque().equals(
-							OperacaoEstoque.ENTRADA)
-							&& grupoNotaFiscal
-							.equals(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO)) {
+					&& grupoMovimento.getOperacaoEstoque().equals(OperacaoEstoque.ENTRADA)
+							&& grupoNotaFiscal.equals(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO)) {
 				quantidade = quantidade.negate();
 			}
 
 			if (mapItemNotaFiscal.containsKey(produtoEdicao.getId())) {
-				ItemNotaFiscalSaida item = mapItemNotaFiscal.get(produtoEdicao
-						.getId());
+				ItemNotaFiscalSaida item = mapItemNotaFiscal.get(produtoEdicao.getId());
 				quantidade = quantidade.add(item.getQuantidade());
-				listaMovimentoEstoqueItem.addAll(item
-						.getListaMovimentoEstoqueCota());
+				listaMovimentoEstoqueItem.addAll(item.getListaMovimentoEstoqueCota());
 			}
 
 			ItemNotaFiscalSaida itemNotaFiscal = new ItemNotaFiscalSaida();
@@ -1518,14 +1519,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			itemNotaFiscal.setIdProdutoEdicao(produtoEdicao.getId());
 
 			if (produtoEdicao.getProduto().getTributacaoFiscal() != null) {
-				itemNotaFiscal.setCstICMS(produtoEdicao.getProduto()
-						.getTributacaoFiscal().getCST());
+				itemNotaFiscal.setCstICMS(produtoEdicao.getProduto().getTributacaoFiscal().getCST());
 			}
 
 			itemNotaFiscal.setQuantidade(quantidade);
 			itemNotaFiscal.setValorUnitario(valorUnitario);
-			itemNotaFiscal
-			.setListaMovimentoEstoqueCota(listaMovimentoEstoqueItem);
+			itemNotaFiscal.setListaMovimentoEstoqueCota(listaMovimentoEstoqueItem);
 
 			mapItemNotaFiscal.put(produtoEdicao.getId(), itemNotaFiscal);
 		}

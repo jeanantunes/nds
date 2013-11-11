@@ -97,7 +97,8 @@ public class DistribuidorRepositoryImpl extends
 	 */
 	@Override
 	public EnderecoDistribuidor obterEnderecoPrincipal(){
-		Criteria criteria=  getSession().createCriteria(EnderecoDistribuidor.class);
+		Criteria criteria = getSession().createCriteria(EnderecoDistribuidor.class);
+		criteria.setCacheable(true);
 		criteria.add(Restrictions.eq("principal", true) );
 		criteria.setMaxResults(1);
 
@@ -110,7 +111,8 @@ public class DistribuidorRepositoryImpl extends
 	 */
 	@Override
 	public TelefoneDistribuidor obterTelefonePrincipal(){
-		Criteria criteria=  getSession().createCriteria(TelefoneDistribuidor.class);
+		Criteria criteria = getSession().createCriteria(TelefoneDistribuidor.class);
+		criteria.setCacheable(true);
 		criteria.add(Restrictions.eq("principal", true) );
 		criteria.setMaxResults(1);
 
@@ -552,7 +554,7 @@ public class DistribuidorRepositoryImpl extends
 	public PessoaJuridica juridica(){
 		
 		return (PessoaJuridica)
-				this.getSession().createQuery("select juridica from Distribuidor").uniqueResult();
+				this.getSession().createQuery("select juridica from Distribuidor").setCacheable(true).uniqueResult();
 	}
 
 	@Override
