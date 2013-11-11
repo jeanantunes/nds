@@ -1377,8 +1377,12 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(fornecedorId)
 				.toString();
 		
-			DescontoDTO descontoDTOCandidato = descontos.get(key);
-			descontoDTO = (descontoDTO != null && descontoDTO.getValor().compareTo(descontoDTOCandidato.getValor()) > -1) ? descontoDTO : descontoDTOCandidato;
+			
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
 			
 		}
 		
@@ -1391,8 +1395,11 @@ public class DescontoServiceImpl implements DescontoService {
 				.append(fornecedorId)
 				.toString();
 		
-			DescontoDTO descontoDTOCandidato = descontos.get(key);
-			descontoDTO = (descontoDTO != null && descontoDTO.getValor().compareTo(descontoDTOCandidato.getValor()) > -1) ? descontoDTO : descontoDTOCandidato;
+			descontoDTO = descontos.get(key);
+			
+			if(descontoDTO != null) {
+				return descontoDTO;
+			}
 			
 		}
 				

@@ -782,8 +782,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarNEDadosPrincipais(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
 
-		Date dataLancamento =
-			this.notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
+		Date dataLancamento = this.notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
 		
 		Long numeroNF 	    		= notaEnvio.getNumero();
 		String chave 				= notaEnvio.getChaveAcesso();
