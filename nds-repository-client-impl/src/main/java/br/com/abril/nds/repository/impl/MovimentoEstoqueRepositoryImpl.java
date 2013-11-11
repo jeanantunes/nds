@@ -185,7 +185,7 @@ implements MovimentoEstoqueRepository {
 		sql.append("		inner join produto_edicao produto_edicao_furo 		");
 		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
 		
-		sql.append("		where fp.data = :data	");
+		sql.append("		where fp.data_lcto_distribuidor = :data	");
 		sql.append("   ) as produtosFuradosNaData     			");
 		sql.append("   ON produtosFuradosNaData.idProdutoEdicaoFuro = me.PRODUTO_EDICAO_ID	");
 		
@@ -246,7 +246,7 @@ implements MovimentoEstoqueRepository {
 		
 		sql.append("		on produto_edicao_furo.id = fp.produto_edicao_id 	");
 		
-		sql.append("		where fp.data = :data	");
+		sql.append("		where fp.data_lcto_distribuidor = :data	");
 		
 		sql.append("   ) as produtosFuradosNaData     			");
 		
