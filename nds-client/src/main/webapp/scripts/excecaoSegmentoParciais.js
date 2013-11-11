@@ -49,7 +49,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			excecaoSegmentoParciaisController.limparCampos();
 		});
 		
-		$('#pesquisaPorCota').click(function (){
+		$('#2005_pesquisaPorCota').click(function (){
 			excecaoSegmentoParciaisController.porCota();
 		});
 		
@@ -76,15 +76,15 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		autoComplete.limparCampoOnChange('#nomeCotaFiltroPrincipal', new Array('#numeroCotaFiltroPrincipal'));
 		
-		$('#codigoProduto').blur(function (){
+		$('#2005_codigoProduto').blur(function (){
 			
-			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#codigoProduto','#nomeProduto');
+			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#2005_codigoProduto','#2005_nomeProduto');
 		});
 		
-		autoComplete.limparCampoOnChange('#nomeProduto', new Array('#codigoProduto'));
+		autoComplete.limparCampoOnChange('#2005_nomeProduto', new Array('#2005_codigoProduto'));
 		
-		$('#nomeProduto').keyup(function (){
-			autoComplete.autoCompletar("/produto/autoCompletarPorNomeProdutoAutoComplete", '#codigoProduto', '#nomeProduto');
+		$('#2005_nomeProduto').keyup(function (){
+			autoComplete.autoCompletar("/produto/autoCompletarPorNomeProdutoAutoComplete", '#2005_codigoProduto', '#2005_nomeProduto');
 		});
 		
 		// INSERIR A EXCEÇÃO
@@ -130,7 +130,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							$('#nomeProdutoPrincipal').val(result[0].nome);
 							$('#fornecedorPrincipal').val(result[1].nomeFantasia || result[1].razaoSocial);
 							$('#segmentoProdutoPrincipal').val(result[2].descricao || "Segmento Não Informado");
-							$('#comboClassificacao').val(result[3]);
+							$('#2005_comboClassificacao').val(result[3]);
 						}
 					}
 			);
@@ -165,11 +165,11 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		autoComplete.limparCampoOnChange('#cotasQueNaoRecebemNomeCota', new Array('#cotasQueNaoRecebemNumeroCota'));
 		
 		$('#pesquisarProdutosParciaisNaoRecebidos').click(function (){
-			if ($('#codigoProduto').val() == ''  ||  $('#comboClassificacaoProdNRec').val() == '') {
+			if ($('#2005_codigoProduto').val() == ''  ||  $('#comboClassificacaoProdNRec').val() == '') {
 				exibirMensagem('WARNING', ["Informe o filtro para a pesquisa."]);
 			} else {
 				excecaoSegmentoParciaisController.pesquisarProdutoNaoRecebidoPeloNomeOuCodigo({
-					codigo: $('#codigoProduto').val(), 
+					codigo: $('#2005_codigoProduto').val(), 
 					//nome: $('#nomeProduto').val(),
 					classifProduto: $('#comboClassificacaoProdNRec').val()
 				});
@@ -359,9 +359,9 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						
 						$.each(result.rows, function(index, row) {
 							
-							var checkBox = '<input type="checkbox" name="produtoNaoRecebido" value="' + row.cell.idProduto + '" />';
+							var checkBox = '<input type="checkbox" name="produtoNaoRecebido" disabled="disabled" value="' + row.cell.idProduto + '" checked />';
 							
-							row.cell.sel = '';
+							row.cell.sel = checkBox;
 						});
 						
 						$(".grids").show();
@@ -396,7 +396,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						sortable : true,
 						align : 'left'
 					},  {
-						display : '',
+						display : 'Ok',
 						name : 'sel',
 						width : 20,
 						sortable : true,
@@ -645,6 +645,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 								
 								if(isExistCota == false){
 									if(result.rows.length == 0){
+										
+										exibirMensagem("WARNING",
+												["Cota não encontrada."]);
+										
 										result.total = excecaoSegmentoParciaisController.tempArrayCota.length;
 									}
 									
@@ -667,6 +671,14 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							if(result.rows.length > 0){
 								excecaoSegmentoParciaisController.tempArrayCota = result.rows;
 							}
+						}
+						
+						if(result.rows.length==0){
+							result.rows = 0;
+							exibirMensagem("WARNING",
+									["Cota não encontrada."]);
+							return result;
+							
 						}
 						
 						
@@ -853,7 +865,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 //					$("input[type=checkbox][name='produtoNaoRecebido']:checked").each(function(){
 						params.push({
 							name : "listaIdProduto",
-							value : $("#codigoProduto").val()
+							value : $("#2005_codigoProduto").val()
 						});
 //					});
 					
@@ -1061,7 +1073,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		if (produto.nome.length > 0 || produto.codigo.length > 0) {
 			$.postJSON(
 				excecaoSegmentoParciaisController.Url.pesquisarProduto,
-				[{name : "nomeProduto", value : produto.nome}, {name : "codigoProduto", value : produto.codigo}],
+				[{name : "2005_nomeProduto", value : produto.nome}, {name : "2005_codigoProduto", value : produto.codigo}],
 				function(result){
 					  	if (result.length > 0) {
 					  	$(idCodigoProduto).val(result[0].codigo);
@@ -1083,8 +1095,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	// Produtos não Recebidos - Secundário
 	pesquisarCotasQueNaoRecebemExcessaoPeloNomeOuCodigo : function pesquisarProduto(cota){
 		
-			$("#codigoProduto").val('');
-			$("#nomeProduto").val('');
+			$("#2005_codigoProduto").val('');
+			$("#2005_nomeProduto").val('');
 			$("#cotasQueNaoRecebemNumeroCota").val('');
 			$("#cotasQueNaoRecebemNomeCota").val('');
 		
@@ -1268,7 +1280,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	    $('#nomeProdutoPrincipal').val('');
 	    $('#fornecedorPrincipal').val('');
 	    $('#segmentoProdutoPrincipal').val('');
-	    $("#comboClassificacao").val('');
+	    $("#2005_comboClassificacao").val('');
 	    $('.excessaoGrid').find('[id^=row]').remove();
 	    $('.excessaoBGrid').find('[id^=row]').remove();
 	},
@@ -1282,7 +1294,11 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	    $('#nomeProdutoPrincipal').val('');
 	    $('#fornecedorPrincipal').val('');
 	    $('#segmentoProdutoPrincipal').val('');
-	    $("#comboClassificacao").val('');
+	    $("#2005_comboClassificacao").val('');
+	    $("#2005_codigoProduto").val('');
+	    $("#2005_nomeProduto").val('');
+	    $("#comboClassificacaoProdNRec").val('');
+	    
 	    $('#radio').check();
 	    
 	    excecaoSegmentoParciaisController.tempArrayCota = null;
