@@ -117,7 +117,7 @@ function incluirSegmento() {
 		                <td width="100">
 		                	<input type="text" name="filtro.cotaDto.nomePessoa" id="nomeCotaFiltroPrincipal" style="width:200px;"/>
 		                </td>
-		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisaPorCota" >Pesquisar</a></span></td>
+		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="2005_pesquisaPorCota" >Pesquisar</a></span></td>
 		            </tr>
 	            </table>
             </form>
@@ -136,7 +136,7 @@ function incluirSegmento() {
             <td width="180"><input type="text" name="segmentoProdutoPrincipal" id="segmentoProdutoPrincipal" style="width:110px;" disabled="disabled"/></td>
             <td width="150">Classificação:</td>
             	<td width="180">
-	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacao" style="width:140px;">
+	            <select name="filtro.produtoDto.idClassificacaoProduto" id="2005_comboClassificacao" style="width:140px;">
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
 						<option value="${classificacao.id}">${classificacao.descricao}</option>
 					</c:forEach>
@@ -206,12 +206,12 @@ function incluirSegmento() {
        	      <td width="45">
        	      	Código        	      </td>
        	      <td width="60">
-       	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProduto" onkeydown='onlyNumeric(event);' style="width:60px;"/></td>
+       	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="2005_codigoProduto" onkeydown='onlyNumeric(event);' style="width:60px;"/></td>
               <td width="54">
               	 Produto:
               </td>
               <td width="132">
-              	 <input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>
+              	 <input type="text" name="filtro.produtoDto.nomeProduto" id="2005_nomeProduto" style="width:120px;"/>
               </td>
             </tr>
             <tr>
