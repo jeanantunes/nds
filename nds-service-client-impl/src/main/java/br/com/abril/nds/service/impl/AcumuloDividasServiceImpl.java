@@ -83,41 +83,30 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	@Transactional
 	public void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual) {
 		
-		if (dividaAtual == null) {
-			
+		if (dividaAtual == null) 			
 			return;
-		}
+		
 
 		List<AcumuloDivida> acumuloDividas =
 			this.acumuloDividasRepository.obterAcumuloDividaPorDivida(dividaAtual.getId());
 		
-		if (acumuloDividas.isEmpty()) {
-			
+		if (acumuloDividas.isEmpty()) 			
 			return;
-		}
-		
+				
 		for (AcumuloDivida acumuloDivida : acumuloDividas) {
 			
 			acumuloDivida.setStatus(StatusInadimplencia.QUITADA);
 			
 			this.acumuloDividasRepository.alterar(acumuloDivida);
-		}
-		
-		dividaAtual.getCobranca().setDataPagamento(dataPagamento);
-		
-		this.cobrancaRepository.alterar(dividaAtual.getCobranca());
-		
-		for (MovimentoFinanceiroCota movimento : dividaAtual.getConsolidado().getMovimentos()) {
 			
-			AcumuloDivida acumuloDividaAnterior = this.acumuloDividasRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(movimento.getId());
+			dividaAtual = acumuloDivida.getDividaAnterior();
+					
+			dividaAtual.getCobranca().setDataPagamento(dataPagamento);
 			
-			if (acumuloDividaAnterior != null) {
-				
-				quitarDividasAcumuladas(dataPagamento, acumuloDividaAnterior.getDividaAnterior());
-				
-				break;
-			}
-		}
+			this.cobrancaRepository.alterar(dividaAtual.getCobranca());
+			
+			this.quitarDividasAcumuladas(dataPagamento, dividaAtual);
+		}		
 	}
 	
 	/**
