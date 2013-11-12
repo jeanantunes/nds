@@ -225,6 +225,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
+			itemNotaEnvio.setSequenciaMatrizLancamento(mec.getLancamento().getSequenciaMatriz());
+			
+			for(EstudoCota ec : mec.getLancamento().getEstudo().getEstudoCotas()) {
+				if(ec.getCota().getNumeroCota().equals(mec.getCota().getNumeroCota()) 
+						&& ec.getEstudo().getProdutoEdicao().getId().equals(mec.getProdutoEdicao().getId())) {
+					itemNotaEnvio.setEstudoCota(ec);
+					break;
+				}
+			}
+			
 			itemNotaEnvio.setProdutoEdicao(produtoEdicao);
 			itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 			itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
@@ -332,7 +342,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			return;
 		}
 		
-		
 		//Movimentos de Entrada e Saida para recalcular após Expedicão.
 		Map<Long, BigInteger> mapProdutos = this.obtemQuantidadeMovimentosPorProdutoAposExpedicao(periodo, cota.getId());
 		
@@ -385,8 +394,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					break;
 				}
 				
-				Integer sequenciaMatrizLancamento = item.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
-				item.setSequenciaMatrizLancamento(sequenciaMatrizLancamento);
+				if(item.getEstudoCota() != null) {
+					Integer sequenciaMatrizLancamento = item.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
+					item.setSequenciaMatrizLancamento(sequenciaMatrizLancamento);
+				}
+				
 			}
 			
 			boolean itemExistente = itemNotaEnvio != null;
@@ -806,7 +818,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
     		
         	estudos = estudosCota.get(estudo.getCota().getId());
     		
-        	estudos = estudos==null?new ArrayList<EstudoCota>():estudos;
+        	estudos = estudos == null ? new ArrayList<EstudoCota>() : estudos;
     		
         	estudos.add(estudo);
 			
@@ -845,8 +857,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			mapaNotasEnvioPorCota.put(numeroCota, nes);
 		}
 		
-		List<Integer> numerosCotaOrdenadosPelaRoteirizacao = 
-			this.roteirizacaoRepository.obterNumerosCotaOrdenadosRoteirizacao();
+		List<Integer> numerosCotaOrdenadosPelaRoteirizacao = this.roteirizacaoRepository.obterNumerosCotaOrdenadosRoteirizacao();
 		
 		List<NotaEnvio> notasEnvioOrdenadas = new ArrayList<>();
 		

@@ -231,7 +231,19 @@ public class GeracaoNotaEnvioController extends BaseController {
 		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 		}
 	
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
+		byte[] notasGeradas = null;
+		try {
+			notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
+		} catch(Exception e) {
+			LOGGER.error("Erro ao gerar Nota de Envio.", e);
+			if(e != null && e.getLocalizedMessage() != null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, e.getLocalizedMessage());
+			} else if(e != null && e.getMessage() != null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+			} else {
+				throw e;
+			}
+		}
 	
 		return notasGeradas;
     }
@@ -328,28 +340,28 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Get
     public void visualizarNE() {
 
-	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+    	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 
-	List<NotaEnvio> notaEnvio = null;
+    	List<NotaEnvio> notaEnvio = null;
 
-	if(filtro.getIntervaloCota().getDe() != null) {
-	    notaEnvio = geracaoNotaEnvioService.visualizar(filtro);
+    	if(filtro.getIntervaloCota().getDe() != null) {
+    		notaEnvio = geracaoNotaEnvioService.visualizar(filtro);
 
-	} else {
-	    result.include("errorMessage", "É necessário informar o número da Cota.");
-	}
+    	} else {
+    		result.include("errorMessage", "É necessário informar o número da Cota.");
+    	}
 
-	String dataRecolhimento = null;
+    	String dataRecolhimento = null;
 
-	if(filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte()))
-	    dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());
-	else
-	    dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" +
-		    "até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
+    	if(filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte()))
+    		dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());
+    	else
+    		dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" +
+    				"até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
 
-	result.include("dataLancamento", dataRecolhimento);
-	result.include("notaEnvio", notaEnvio);
-
+    	result.include("dataLancamento", dataRecolhimento);
+    	result.include("notaEnvio", notaEnvio);
+    	
     }
 
 }

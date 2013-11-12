@@ -500,13 +500,13 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 	public List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId, Long produtoEdicaoId) {
 
 		StringBuilder hql = new StringBuilder("")
-			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor, predominante ")
+			.append(" SELECT cota_id AS cotaId, fornecedor_id AS fornecedorId, produto_edicao_id AS produtoEdicaoId, produto_id AS produtoId, valor ")
 			.append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, null AS fornecedorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor, predominante ")
+			.append(" SELECT null AS cotaId, null AS fornecedorId, PRODUTO_EDICAO_ID AS produtoEdicaoId, PRODUTO_ID AS produtoId, valor ")
 			.append(" FROM view_desconto_produtos_edicoes ")
 			.append(" UNION ")
-			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS produtoEdicaoId, null AS produtoId, valor, predominante ")
+			.append(" SELECT null AS cotaId, f.id AS fornecedorId, null AS produtoEdicaoId, null AS produtoId, valor ")
 			.append(" FROM FORNECEDOR f ")
 			.append(" INNER JOIN desconto d ON d.id = f.desconto_id ");
 
@@ -518,7 +518,6 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		query.addScalar("produtoId", StandardBasicTypes.LONG);
 		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("predominante", StandardBasicTypes.BOOLEAN);
 
 		return query.list();
 	}

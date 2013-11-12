@@ -345,7 +345,7 @@ var geracaoNotaEnvioController = $.extend({
                 	} else {
                 		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + response]);
                 	}
-                	//document.location = responseHtml;
+//                	document.location = responseHtml;
 //                	if(responseHtml){
 //                		var data =  $.parseJSON($(responseHtml).html());                   	 
 //                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
