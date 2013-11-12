@@ -14,7 +14,6 @@
 	});
 	
 function excluir_produto() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-excluir" ).dialog({
 		resizable: false,
@@ -34,7 +33,6 @@ function excluir_produto() {
 };		
 		
 function incluirSegmento() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-novo" ).dialog({
 		resizable: false,

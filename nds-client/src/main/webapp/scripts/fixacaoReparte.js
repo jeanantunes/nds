@@ -338,8 +338,6 @@ var fixacaoReparteController = $.extend(true, {
 		var i;
 		for (i = 0 ; i < resultado.rows.length; i++) {
 
-			var lastIndex = resultado.rows[i].cell.length;
-
 			resultado.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoProduto(resultado.rows[i].cell);
 		}
 		$('.fixacaoProdutoGrid').show();
@@ -379,8 +377,6 @@ var fixacaoReparteController = $.extend(true, {
 
 		var i;
 		for (i = 0 ; i < data.rows.length; i++) {
-
-			var lastIndex = data.rows[i].cell.length;
 
 			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell);
 		}
@@ -636,8 +632,6 @@ var fixacaoReparteController = $.extend(true, {
 							$("#dialog-defineReparte").dialog("close");
 						});
 					}
-//					$( this ).dialog( "close" );
-//					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -842,6 +836,7 @@ var fixacaoReparteController = $.extend(true, {
 			if($("#subtitulo1").text() == 'Produto'){
 				data.push({name:'fixacaoReparteDTO.cotaFixada',value: $("#codigoModal").val()});
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#spanCodigoProduto").text()});
+				data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).text()});
                 data.push({name:'fixacaoReparteDTO.classificacaoProdutoId',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 			}
 
