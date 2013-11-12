@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,12 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     	
     	return pesquisar(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao));
     }
-    
+
+    @Override
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao, boolean usarICD) {
+        return pesquisar(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao), usarICD);
+    }
+
     @SuppressWarnings("unchecked")
 	@Override
     @Transactional(readOnly = true)
@@ -99,7 +103,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     @SuppressWarnings("unchecked")
 	@Override
     @Transactional(readOnly = true)
-    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, boolean usarICD) {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select pe.id, ");
@@ -126,15 +130,19 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
 		sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
-		sql.append(" where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
+		sql.append(" where l.status in ('EXPEDIDO', 'EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EXCLUIDO_RECOLHIMENTO', 'FECHADO', 'RECOLHIDO') ");
 		
 		if (filtro.getEdicao() != null) {
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
 		}
 		if (filtro.getCodigo() != null) {
-            sql.append("   and p.codigo_icd = :codigo_produto ");
-		}
-		if (filtro.getClassificacao() != null) {
+            if (usarICD) {
+                sql.append("   and p.codigo_icd = :codigo_produto ");
+            } else {
+                sql.append("   and p.codigo = :codigo_produto ");
+            }
+        }
+        if (filtro.getClassificacao() != null) {
 			sql.append("   and tcp.id = :classificacao ");
 		}
 		
@@ -156,7 +164,12 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 		return query.list();
     }
-    
+
+    @Override
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
+        return pesquisar(filtro, true); //por default usar o codigo ICD
+    }
+
     private String ordenarConsulta(FiltroEdicaoBaseDistribuicaoVendaMedia filtro) {
 
 		StringBuilder hql = new StringBuilder();

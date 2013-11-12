@@ -204,7 +204,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		String auxHql = " where ";
 		
 		if (codigo != null && !codigo.isEmpty()) {
-			hql.append(auxHql).append(" upper(produto.codigo_icd) = :codigo ");
+			hql.append(auxHql).append(" upper(produto.codigoICD) = :codigo ");
 			auxHql = " and ";
 		}
 		

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AnaliseEstudoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -36,21 +35,17 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" produto.periodicidade AS periodoProduto, ");
 		hql.append(" coalesce(tpClassifProduto.descricao, '') AS descicaoTpClassifProd, ");
 		
-		hql.append(" CASE ");
-		hql.append(" WHEN lancamento.status = :RECOLHIDO OR lancamento.status = :EXPEDIDO THEN lancamento.status ");
-		hql.append(" ELSE null ");
-		hql.append(" END AS statusRecolhiOuExpedido, ");
 		hql.append(" prodEdicao.parcial as permiteParcial, ");
-		hql.append(" estudo.liberado AS statusLiberadoOuGerado, ");
-		hql.append(" lancamento.dataLancamentoDistribuidor AS dataLancamento ");
+//		hql.append(" estudo.status AS statusEstudo, ");
+		hql.append(" estudo.liberado AS statusGeradoOuLiberado, ");
+		hql.append(" estudo.dataLancamento AS dataLancamento ");
 		
-		hql.append(" FROM Estudo estudo, ");
-		hql.append(" Lancamento lancamento");
+		hql.append(" FROM Estudo estudo ");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
 		hql.append(" JOIN prodEdicao.produto as produto ");
 		hql.append(" left JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
 		
-		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		hql.append(" WHERE datediff(current_date(), estudo.dataLancamento)<365 ");
 		
 		hql.append(this.getSqlWhereBuscarEstudos(filtro));
 		hql.append(this.ordenarConsultaAnaliseEstudo(filtro));
@@ -59,9 +54,6 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		this.paramsDinamicos(query, filtro);
 
-		query.setParameter("RECOLHIDO", StatusLancamento.RECOLHIDO);
-		query.setParameter("EXPEDIDO", StatusLancamento.EXPEDIDO);
-		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDTO.class));
 		
 		configurarPaginacao(filtro, query);
@@ -89,7 +81,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 			hql.append(" AND tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
 		}
 		if(filtro.getDataLancamento() != null){
-			hql.append(" AND lancamento.dataLancamentoDistribuidor = :DATA_LANCAMENTO ");
+			hql.append(" AND estudo.dataLancamento = :DATA_LANCAMENTO ");
 		}
 		
 		return hql.toString();

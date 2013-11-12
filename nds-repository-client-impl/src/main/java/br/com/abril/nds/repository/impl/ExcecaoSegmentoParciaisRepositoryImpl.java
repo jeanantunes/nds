@@ -138,6 +138,15 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append(" 	) ");
 	hql.append("  and produto.codigoICD = :codProduto	");
 	
+	hql.append(" and produto.tipoSegmentoProduto.id in ( ");
+	hql.append("										SELECT distinct tsp.id  ");
+	hql.append(" 											FROM SegmentoNaoRecebido s ");
+	hql.append(" 											Join s.tipoSegmentoProduto tsp ");
+	hql.append("  											Join s.cota cota");
+	hql.append(" 											WHERE ");
+	hql.append(" 												cota.numeroCota = :numCota ");
+	hql.append(" 										) ");
+	
 	/*
 	hql.append(" and produto.id in (select distinct p.id ");
 	hql.append("                      from SegmentoNaoRecebido s ");
@@ -193,7 +202,8 @@ ExcecaoSegmentoParciaisRepository {
 	return query.list();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<CotaQueNaoRecebeExcecaoDTO> obterCotasQueNaoRecebemExcecaoPorProduto(FiltroExcecaoSegmentoParciaisDTO filtro) {
 
 	StringBuilder hql = new StringBuilder();
@@ -216,13 +226,14 @@ ExcecaoSegmentoParciaisRepository {
 	    hql.append(" join t.produtos p with p.codigoICD = :codProduto) ");
 	}
 	hql.append(" and cota.id not in ");
-	hql.append(" (select cotaJoin.id from ExcecaoProdutoCota e  ");
-	hql.append(" JOIN e.produto prod ");
-	hql.append(" JOIN e.cota cotaJoin ");
-	hql.append(" where e.tipoExcecao = :tipoExcecao " );
-	hql.append(" and prod.codigoICD = :codProduto ");
+	
+	hql.append(" (select cta.id from ExcecaoProdutoCota e  ");
+	hql.append(" join e.cota as cta  ");
+	hql.append(" where cta.numeroCota = :numCota " );
+	hql.append(" and e.tipoExcecao = :tipoExcecao " );
+	hql.append(" and e.codigoICD = :codProduto ");
 	hql.append(" ) ");
-
+	
 	if (filtro.getCotaDto() != null) {		
 	    hql.append(" and cota.numeroCota = :numCota ");
 	}

@@ -704,7 +704,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		//Campos editáveis, independente da Origem
         produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto());
-        produtoEdicao.setPrecoVenda(dto.getPrecoVenda()); // View: Preço Capa - Real;
+        produtoEdicao.setPrecoVenda(dto.getPrecoVenda()==null?dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():new Long("0"));

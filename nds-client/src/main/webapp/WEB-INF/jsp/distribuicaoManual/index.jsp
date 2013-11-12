@@ -36,6 +36,7 @@
 	</div>
 	<div id="dialog-status-suspenso" title="Cota com status suspenso" style="display: none;">
 		<p>Cota suspensa, deseja continuar?</p>
+		<p>Posteriormente será solicitado senha.</p>
 	</div>
 
 	<div id="dialog-cancelar" title="Cancelar Operação"
@@ -116,6 +117,10 @@
 									<tr>
 										<td><strong>Total A Distribuir:</strong></td>
 										<td id="repDistribuir">${produto.reparte}</td>
+									</tr>
+									<tr>
+										<td><strong>Total Geral:</strong></td>
+										<td id="repGeral"></td>
 									</tr>
 								</table>
 							</fieldset>

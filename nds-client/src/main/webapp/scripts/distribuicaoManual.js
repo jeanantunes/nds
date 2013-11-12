@@ -33,6 +33,8 @@ var distribuicaoManual = $.extend(true, {
 		
 		distribuicaoManual.idLancamento = lancamentoSelecionado.idLancamento;
 		this.atualizarTotalDistribuido(0);
+		$('#repGeral').html($('#repDistribuir').text());
+		
 	},
 	
 	voltar : function() {
@@ -106,6 +108,10 @@ var distribuicaoManual = $.extend(true, {
 		var totalDistribuido = distribuicaoManual.somarReparteDistribuido(index);
 		if (((repCota / totalGeral) * 100).toFixed(2) >= 5) {
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFF00");
+			
+			exibirMensagemDialog('WARNING', ['Reparte acima de 5%. Posteriormente poderá ser liberado mediante senha de autorização!'], '');
+			
+			$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
 		} else {
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFFFF");
 		}
@@ -196,6 +202,7 @@ var distribuicaoManual = $.extend(true, {
 	 		$.postJSON(contextPath + "/distribuicaoManual/consultarCotaPorNumero",
 					{numeroCota : numeroCota},
 					function(result){
+						
 						var callback = function() {
 							$('#row'+ (index + 1), distribuicaoManual.workspace).append(
 									distribuicaoManual.hiddenIdCota.replace(/#valor/g, result.idCota).replace(/#index/g, index));
@@ -207,15 +214,26 @@ var distribuicaoManual = $.extend(true, {
 							distribuicaoManual.exibindoMensagem = false;
 							setTimeout(function() { $('#reparteGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
 						};
-						if (result.status == 'SUSPENSO') {
-							distribuicaoManual.exibindoMensagem = true;
-							distribuicaoManual.confirmar('#dialog-status-suspenso', callback, function() {
+						
+						switch (result.status) {
+							case 'SUSPENSO':
+								distribuicaoManual.exibindoMensagem = true;
+								distribuicaoManual.confirmar('#dialog-status-suspenso', callback, function() {
+									distribuicaoManual.limparLinha(index);
+									distribuicaoManual.exibindoMensagem = false;
+									setTimeout(function() { $('#numeroCotaGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
+								});
+							break;
+							case 'INATIVO':
 								distribuicaoManual.limparLinha(index);
-								distribuicaoManual.exibindoMensagem = false;
-								setTimeout(function() { $('#numeroCotaGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
-							});
-						} else {
-							callback();
+								exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' está com status INATIVO.'], '');
+							break;
+							case 'PENDENTE':
+								distribuicaoManual.limparLinha(index);
+								exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' está com status PENDENTE.'], '');
+							break;
+							default:
+								callback();
 						}
 	 				},
 	 				function(result){
@@ -282,6 +300,7 @@ var distribuicaoManual = $.extend(true, {
 		var totalDistribuido = distribuicaoManual.somarReparteDistribuido(-1);
 		$('#totalDistribuido').html(totalDistribuido);
 		$('#repDistribuir').html(totalGeral - totalDistribuido);
+		
 	},
 	
 	configAutoComplete : function(idCaixaTexto, index) {
@@ -298,13 +317,59 @@ var distribuicaoManual = $.extend(true, {
 					}});
 			},
 			select : function(event, ui) {
-				$('#row'+ (index + 1), distribuicaoManual.workspace).append(
-						distribuicaoManual.hiddenIdCota.replace(/#valor/g, ui.item.chave.idCota).replace(/#index/g, index));
-				$('#row'+ (index + 1), distribuicaoManual.workspace).append(
-						distribuicaoManual.hiddenStatusCota.replace(/#valor/g, ui.item.chave.status).replace(/#index/g, index));
-				$('#numeroCotaGrid'+ index, distribuicaoManual.workspace).val(ui.item.value);
-				$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
-				distribuicaoManual.construirLinhaVazia();
+				
+				var callback = function() {
+					
+					if (!distribuicaoManual.cotaJaExiste(ui.item.chave.numeroCota, index)) {
+					
+					$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+							distribuicaoManual.hiddenIdCota.replace(/#valor/g, ui.item.chave.idCota).replace(/#index/g, index));
+					$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+							distribuicaoManual.hiddenStatusCota.replace(/#valor/g, ui.item.chave.status).replace(/#index/g, index));
+					
+					$('#nomeCotaGrid'+ index, distribuicaoManual.workspace).val(ui.item.chave.nomePessoa);
+					
+					$('#numeroCotaGrid'+ index, distribuicaoManual.workspace).val(ui.item.chave.numeroCota);
+					
+					$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
+					distribuicaoManual.construirLinhaVazia();
+					distribuicaoManual.exibindoMensagem = false;
+					setTimeout(function() { $('#reparteGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
+					
+					} else {
+						$("#numeroCotaGrid"+ index, distribuicaoManual.workspace).val('');
+						exibirMensagemDialog('WARNING', ['A cota de nome '+ ui.item.chave.nomePessoa +' já foi inserida anteriormente.'], '');
+					}
+					
+				};
+				
+				//Validar
+				
+				switch (ui.item.chave.status) {
+				
+				case 'SUSPENSO':
+					distribuicaoManual.exibindoMensagem = true;
+					distribuicaoManual.confirmar('#dialog-status-suspenso', callback, function() {
+						distribuicaoManual.limparLinha(index);
+						distribuicaoManual.exibindoMensagem = false;
+						setTimeout(function() { $('#numeroCotaGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
+					});
+				break;
+				
+				case 'INATIVO':
+					distribuicaoManual.limparLinha(index);
+					exibirMensagemDialog('WARNING', ['A cota de número '+ ui.item.chave.numeroCota +' está com status INATIVO.'], '');
+				break;
+				
+				case 'PENDENTE':
+					distribuicaoManual.limparLinha(index);
+					exibirMensagemDialog('WARNING', ['A cota de número '+ ui.item.chave.numeroCota +' está com status PENDENTE.'], '');
+				break;
+				
+				default:
+					callback();
+				}
+				
 			},
 			focus: function( event, ui ) {
 				$('#nomeCotaGrid'+ index, distribuicaoManual.workspace).val(ui.item.label);
@@ -324,7 +389,7 @@ var distribuicaoManual = $.extend(true, {
 			
 			for (var i = 0; i < distribuicaoManual.rowCount; i++) {
 				if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() && ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() > 0)) {
-					data.push({name: "estudoCotasDTO["+ i +"].idCota", value: $("#numeroCotaGrid"+ i, distribuicaoManual.workspace).val()});
+					data.push({name: "estudoCotasDTO["+ i +"].idCota", value: $("#idCotaGrid"+ i, distribuicaoManual.workspace).val()});
 					data.push({name: "estudoCotasDTO["+ i +"].qtdeEfetiva", value: $("#reparteGrid"+ i, distribuicaoManual.workspace).val()});
 				}
 			}

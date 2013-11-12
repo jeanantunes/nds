@@ -396,7 +396,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		if(listaMensagem.isEmpty()){
 		
-			this.result.use(PlainJSONSerialization.class).from(new ValidacaoVO(TipoMensagem.SUCCESS, "result"), "result").recursive().serialize();
+			this.result.use(PlainJSONSerialization.class).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Edições inseridas com sucesso!!"), "result").recursive().serialize();
 
 		}else{
 			

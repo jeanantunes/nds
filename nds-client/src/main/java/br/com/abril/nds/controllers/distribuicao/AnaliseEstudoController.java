@@ -96,8 +96,6 @@ public class AnaliseEstudoController extends BaseController {
 
         List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarTodosEstudos(filtro);
 
-        popularPeriodoEStatus(listaEstudos);
-
         if (listaEstudos == null || listaEstudos.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         }
@@ -119,10 +117,8 @@ public class AnaliseEstudoController extends BaseController {
 			if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){
 				if(filtro.getNome() == null || filtro.getNome().isEmpty()){
 					if(filtro.getNumeroEdicao() == null || filtro.getNumeroEdicao() < 0){
-						if(filtro.getIdTipoClassificacaoProduto() == null || filtro.getIdTipoClassificacaoProduto() < 0){
-							if(filtro.getDataLancamento() == null){
-								throw new ValidacaoException(TipoMensagem.WARNING, "Preencha no mínimo 1 campo.");
-							}
+						if(filtro.getDataLancamento() == null){
+							throw new ValidacaoException(TipoMensagem.WARNING, "Preencha no mínimo 1 campo, desconsiderando a classificação.");
 						}
 					}
 				}
@@ -157,28 +153,6 @@ public class AnaliseEstudoController extends BaseController {
 		}
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
-	}
-	
-	private List<AnaliseEstudoDTO> popularPeriodoEStatus (List<AnaliseEstudoDTO> estudos){
-		for (AnaliseEstudoDTO analiseEstudoDTO : estudos) {
-			Integer periodo = analiseEstudoDTO.getPeriodoProduto().getOrdem();
-			analiseEstudoDTO.setCodPeriodoProd(periodo);
-			
-				if ((analiseEstudoDTO.getStatusRecolhiOuExpedido() == null)) {
-					if (analiseEstudoDTO.getStatusLiberadoOuGerado() != null && analiseEstudoDTO.getStatusLiberadoOuGerado()) {
-						analiseEstudoDTO.setStatusEstudo("Liberado");
-					} else {
-						analiseEstudoDTO.setStatusEstudo("Gerado");
-					}
-				} else {
-					if (analiseEstudoDTO.getStatusRecolhiOuExpedido().toString().equalsIgnoreCase("RECOLHIDO")) {
-						analiseEstudoDTO.setStatusEstudo("Recolhido");
-					} else {
-						analiseEstudoDTO.setStatusEstudo("Expedido");
-					}
-				}
-			}		
-		return estudos;
 	}
 	
 	@Post

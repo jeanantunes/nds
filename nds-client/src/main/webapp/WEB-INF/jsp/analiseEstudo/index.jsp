@@ -44,20 +44,14 @@ $(function(){
               <td width="70"><input type="text" name="edicaoProd" id="edicaoProd"  style="width:60px;" /></td>
               <td width="78">Classifica&ccedil;&atilde;o:</td>
               <td width="152">
+	           
 	            <select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
-                    <option value="-1">SELECIONE</option>
+	              <option selected="selected">SELECIONE</option>
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
-	              		 <c:choose>
-		              		 <c:when test="${classificacao.id == 16}">
-					       			<option selected="selected" value="${classificacao.id}">${classificacao.descricao}</option>
-					    	</c:when>
-						    <c:otherwise>
-								<option value="${classificacao.id}">${classificacao.descricao}</option>
-						    </c:otherwise>
-						    </c:choose>
+						<option value="${classificacao.id}">${classificacao.descricao}</option>
 					</c:forEach>
 	            </select>
-
+	            
 			  <td width="72" align="right">Data Lan&ccedil;amento:</td>
 				<td width="146">
 				<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;"/>
