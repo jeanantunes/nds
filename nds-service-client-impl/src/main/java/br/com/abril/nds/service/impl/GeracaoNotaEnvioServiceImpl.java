@@ -598,7 +598,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				@Override
 				public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
 				    
-				    	if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null) {
+						if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null && o2.getSequenciaMatrizLancamento() != null) {
 				    	    return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
 				    	} else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
 				    		&& (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
