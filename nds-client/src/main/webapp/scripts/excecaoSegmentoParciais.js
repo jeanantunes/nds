@@ -170,7 +170,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			} else {
 				excecaoSegmentoParciaisController.pesquisarProdutoNaoRecebidoPeloNomeOuCodigo({
 					codigo: $('#2005_codigoProduto').val(), 
-					//nome: $('#nomeProduto').val(),
 					classifProduto: $('#comboClassificacaoProdNRec').val()
 				});
 			}
@@ -312,51 +311,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						if(result.rows.length==0){
 							result.rows = 0;
 							exibirMensagem("WARNING",
-									["Não encontrado produtos para essa classificação."]);
+									["Produto já incluso ou não cadastrado para não receber este Segmento/Classificação ou Parcial"]);
 							return result;
 							
 						}
-						/*var isExist = false;
-
-						if(excecaoSegmentoParciaisController.tempArray!=null){
-							
-							if(excecaoSegmentoParciaisController.tempArray.length != 0){
-								
-								$.each(excecaoSegmentoParciaisController.tempArray, function(index, row) {
-									
-									if(result.rows.length > 0){
-										if(result.rows[0].cell.codigoProduto == row.cell.codigoProduto){
-											isExist = true;
-										}
-									}
-								});
-								
-								if(isExist == false){
-									if(result.rows.length == 0){
-										result.total = excecaoSegmentoParciaisController.tempArray.length;
-									}
-									
-									$.each(excecaoSegmentoParciaisController.tempArray, function(index, row) {
-										result.rows.unshift(row);
-									});
-									excecaoSegmentoParciaisController.tempArray = result.rows;
-								}else{
-									
-									result.rows = excecaoSegmentoParciaisController.tempArray;
-								}
-								
-							}else{
-								result.rows = 0;
-								excecaoSegmentoParciaisController.tempArray = null;
-								return result;
-							}
-							
-						}else{
-							if(result.rows.length > 0){
-								excecaoSegmentoParciaisController.tempArray = result.rows;
-							}
-						}*/
-						
 						$.each(result.rows, function(index, row) {
 							
 							var checkBox = '<input type="checkbox" name="produtoNaoRecebido" disabled="disabled" value="' + row.cell.idProduto + '" checked />';
@@ -402,10 +360,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						sortable : true,
 						align : 'center'
 					}],
-//						usepager : true,
-//						useRp : true,
-//						rp : 15,
-//						showTableToggleBtn : true,
 					height : 235
 				})
 			},
@@ -647,7 +601,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 									if(result.rows.length == 0){
 										
 										exibirMensagem("WARNING",
-												["Cota não encontrada."]);
+												["Cota já inclusa ou não cadastrada para não receber este Segmento/Classificação ou Parcial."]);
 										
 										result.total = excecaoSegmentoParciaisController.tempArrayCota.length;
 									}
@@ -676,7 +630,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						if(result.rows.length==0){
 							result.rows = 0;
 							exibirMensagem("WARNING",
-									["Cota não encontrada."]);
+									["Cota já inclusa ou não cadastrada para não receber este Segmento/Classificação ou Parcial."]);
 							return result;
 							
 						}
@@ -734,14 +688,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			focusSelectRefField($("#radio", excecaoSegmentoParciaisController.workspace));
 			$("#radio", excecaoSegmentoParciaisController.workspace).attr("checked", true);
 			
-//			$(document.body).keydown(function(e) {
-//				
-//				if(keyEventEnterAux(e)){
-//					excecaoSegmentoParciaisController.porCota();
-//				}
-//				
-//				return true;
-//			});
 		});
 		
 	},
@@ -862,12 +808,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 
-//					$("input[type=checkbox][name='produtoNaoRecebido']:checked").each(function(){
 						params.push({
 							name : "listaIdProduto",
 							value : $("#2005_codigoProduto").val()
 						});
-//					});
 					
 					params.push({
 						name : "filtro.excecaoSegmento",
