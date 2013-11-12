@@ -483,9 +483,6 @@ public class MixCotaProdutoController extends BaseController {
 			mix.setReparteMinimo(mixCotaDTO.getReparteMinimo().longValue());
 			mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
 			
-			
-			
-			
 			mixCotaProdutoDTOList.add(mix);
 		}
 		
@@ -495,28 +492,45 @@ public class MixCotaProdutoController extends BaseController {
 			
 			if (!mensagens.isEmpty()) {
 				
+				if(!mixCotaDTOInconsistente.isEmpty()){
+					for (MixCotaDTO mixCotaDTO : mixCotaDTOInconsistente) {
+						mensagens.add("[codigoProduto: "+mixCotaDTO.getCodigoProduto()+"],[classificacao: "+mixCotaDTO.getClassificacaoProduto()+"],[numercoCota: "+mixCotaDTO.getNumeroCota()+"] - "+mixCotaDTO.getError());
+					}
+				}
+				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 			}
+		}else{
+			
+			//salvar em sessao mixCotaDTOIconsistente para posteriormente mostrar na tela
+			session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
+			
+			this.result.use(Results.json()).from(mixCotaDTOInconsistente, "mixCotaDTOInconsistente").recursive().serialize();
 		}
 		
-		//salvar em sessao mixCotaDTOIconsistente para posteriormente mostrar na tela
-		session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
-		
-		this.result.use(Results.json()).from(mixCotaDTOInconsistente, "mixCotaDTOInconsistente").recursive().serialize();
 	}
 
 	private List<MixCotaDTO> validaMixEmLote(List<MixCotaDTO> listMixExcel) {
 		List<MixCotaDTO> listCotaInconsistente = new ArrayList<MixCotaDTO>();
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			if ( StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())
-					|| ( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0) )
-					|| ( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )
-					|| ( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0
-						|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ) 
-					) {
+			
+			if(StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())){
+				mixCotaDTO.setError("Código de produto inválido.");
+			}else if( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0)){
 				mixCotaDTO.setError("Número de Cota Inválido.");
+				
+			}else if(( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )){
+				mixCotaDTO.setError("Reparte mínimo Inválido.");
+			}
+			else if( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0 
+					|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ){
+				mixCotaDTO.setError("Reparte Máximo Inválido.");
+			}
+			
+			if(StringUtils.isNotEmpty(mixCotaDTO.getError())){
 				listCotaInconsistente.add(mixCotaDTO);
 			}
+			
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
 		
@@ -560,18 +574,22 @@ public class MixCotaProdutoController extends BaseController {
 			return listCotaInconsistente;
 		}	
 		
-		// validar se o produto é um produtoValido
-		String[] codigoProdutoArray = new String[listMixExcel.size()];
-		for (int i = 0; i < listMixExcel.size(); i++) {
-			codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();
-		}
+		// validar se o produto existe
 		
-		List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			String showMsg=null;
 			
-			if(!verificarProdutoExiste.contains(mixCotaDTO.getCodigoProduto())){
-				mixCotaDTO.setError("Código de produto inválido.");
-				listCotaInconsistente.add(mixCotaDTO);
+			try {
+				Produto p = this.produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto());
+				showMsg = (p==null)?"Produto não encontrado.":null;
+			} catch (Exception e) {
+				showMsg = e.getMessage();
+			}
+			finally{
+				if(showMsg!=null){
+					mixCotaDTO.setError(showMsg);
+					listCotaInconsistente.add(mixCotaDTO);
+				}
 			}
 		}
 		
