@@ -385,7 +385,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					break;
 				}
 				
-				Integer sequenciaMatrizLancamento = item.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
+				Integer sequenciaMatrizLancamento = null;
+				
+				if (item.getEstudoCota() != null) {
+				
+					sequenciaMatrizLancamento = item.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
+				}
+				
 				item.setSequenciaMatrizLancamento(sequenciaMatrizLancamento);
 			}
 			
