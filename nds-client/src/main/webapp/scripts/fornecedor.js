@@ -121,7 +121,6 @@ var fornecedorController = $.extend(true,{
 		
 		bloquearCamposEdicaoFornecedor : function(indBloqueiaCampo){
 			
-			$("#fornecedorController-idFornecedor", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-codigoInterface", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-razaoSocial", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-nomeFantasia", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
@@ -246,6 +245,7 @@ var fornecedorController = $.extend(true,{
 			
 			limparCamposModal:	function () {
 				$("#fornecedorController-idFornecedor", fornecedorController.workspace).val("");
+				$("#fornecedorController-origem", fornecedorController.workspace).val("");
 				$("#fornecedorController-codigoInterface", fornecedorController.workspace).val("");
 				$("#fornecedorController-razaoSocial", fornecedorController.workspace).val("");
 				$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val("");
@@ -401,7 +401,9 @@ var fornecedorController = $.extend(true,{
 					function(result) {
 						
 						$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.inicioAtividade);
+						
 						$("#fornecedorController-idFornecedor", fornecedorController.workspace).val(result.idFornecedor);
+						$("#fornecedorController-origem", fornecedorController.workspace).val(result.origem);
 						$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.codigoInterface);
 						$("#fornecedorController-razaoSocial", fornecedorController.workspace).val(result.razaoSocial);
 						$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val(result.nomeFantasia);
