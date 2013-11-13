@@ -595,7 +595,7 @@ public class DistribuidorRepositoryImpl extends
 		   .append(" from PoliticaCobranca p ")
 		   .append(" where p.principal = true ");
 		
-		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+		return !(boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
 	}
 	
 	/**
