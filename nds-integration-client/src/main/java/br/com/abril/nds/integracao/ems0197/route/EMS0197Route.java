@@ -34,9 +34,11 @@ public class EMS0197Route extends FileOutputRoute{
 		return RouteInterface.EMS0197;
 	}
 	
-	public int execute(String userName, Date data) {
+	public int execute(String userName, Date data, String codigoDistribuidor) {
+		
 		messageProcessor.setDataLctoDistrib(data);
-		execute(userName);
+		
+		execute(userName, codigoDistribuidor);
 		
 		return messageProcessor.getQuantidadeArquivosGerados();
 	}

@@ -68,7 +68,7 @@ public class GeracaoArquivosController extends BaseController {
 		if (operacao.equals("PICKING")) {
 			
 			String mensageValidacao = 
-				route129.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto);
+				route129.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 			
 			if (mensageValidacao != null) {
 				
@@ -78,11 +78,9 @@ public class GeracaoArquivosController extends BaseController {
 			qtdArquivosGerados = 1;
 			
 		} else if (operacao.equals("REPARTE")) {
-			qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(),
-					dataLctoPrevisto);
+			qtdArquivosGerados = route197.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 		} else {
-			qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(),
-					dataLctoPrevisto);
+			qtdArquivosGerados = route198.execute(getUsuarioLogado().getLogin(), dataLctoPrevisto, null);
 		}
 		
 		result.use(Results.json()).from(Integer.valueOf(qtdArquivosGerados), "result").serialize();

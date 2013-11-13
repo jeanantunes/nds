@@ -19,7 +19,7 @@ public class EMS0138Test extends RouteNoTransactionTestTemplate {
 	
 	@Test
 	public void test() {
-		getRoute().execute("test");
+		getRoute().execute("test", "6248116");
 	}
 	
 }
