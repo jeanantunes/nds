@@ -34,9 +34,7 @@ public interface FecharDiaRepository {
 
 	List<ValidacaoGeracaoCobrancaFecharDiaDTO> obterDiasDaConcentracao(FormaCobranca fc);
 	
-	List<Movimento> obterMovimentosPorStatusData(
-			List<GrupoMovimentoEstoque> gruposMovimentoEstoque, 
-			List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
+	List<Movimento> obterMovimentosPorStatusData(List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
 			Date dataMovimento, StatusAprovacao statusAprovacao);
 	
 }
