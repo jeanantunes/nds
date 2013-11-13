@@ -112,7 +112,6 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO);
 
 		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
-												gruposMovimentoEstoque, 
 												gruposMovimentoFinanceiro, 
 												new Date(), 
 												StatusAprovacao.PENDENTE);
@@ -127,7 +126,6 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = null;
 		
 		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
-												gruposMovimentoEstoque, 
 												gruposMovimentoFinanceiro, 
 												new Date(), 
 												StatusAprovacao.PENDENTE);
@@ -144,7 +142,6 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		gruposMovimentoEstoque.add(GrupoMovimentoEstoque.SOBRA_DE);
 
 		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
-												gruposMovimentoEstoque, 
 												gruposMovimentoFinanceiro, 
 												new Date(), 
 												StatusAprovacao.PENDENTE);
@@ -161,7 +158,6 @@ public class FecharDiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		gruposMovimentoFinanceiro.add(GrupoMovimentoFinaceiro.DEBITO);
 
 		List<Movimento> movimentos =  this.fecharDiaRepositoryImpl.obterMovimentosPorStatusData(
-												gruposMovimentoEstoque, 
 												gruposMovimentoFinanceiro, 
 												new Date(), 
 												StatusAprovacao.PENDENTE);
