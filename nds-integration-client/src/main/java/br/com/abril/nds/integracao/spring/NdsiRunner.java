@@ -26,17 +26,24 @@ public abstract class NdsiRunner {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
 		if (args.length == 0) {
 			throw new RuntimeException("Informe o nome da rota a ser executada.");
 		}
 		
 		String username = USER_NAME;
 		
-		if (args.length > 1) {
+		if (args.length > 0) {
 			username = args[1];
 		}
+		
+		String codigoDistribuidor = null;
+		
+		if (args.length > 1) {
+			codigoDistribuidor = args[2];
+		}
 
-		getRouteTemplate(args[0]).execute(username);
+		getRouteTemplate(args[0]).execute(username, codigoDistribuidor);
 	}
 	
 	private static RouteTemplate getRouteTemplate(String className) {

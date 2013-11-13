@@ -42,11 +42,12 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	@Value("${interfacesMDCEntrada:}")
 	private String interfacesMDC;
 	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, br.com.abril.nds.model.seguranca.Usuario, java.lang.String)
 	 */
 	@Override
-	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
+	public void executarInterface(String classeExecucao, Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException {
 
 		// Inclui o pacote na classe
 		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao + ROUTE;
@@ -54,7 +55,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		try {
 		
 			RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classe));
-			route.execute(usuario.getNome());
+			route.execute(usuario.getNome(), codigoDistribuidor);
 		
 		} catch (NoDocumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
@@ -65,11 +66,12 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarTodasInterfacesEmOrdem(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarTodasInterfacesEmOrdem(br.com.abril.nds.model.seguranca.Usuario, java.lang.String)
 	 */
 	@Override
-	public void executarTodasInterfacesEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException {
+	public void executarTodasInterfacesEmOrdem(Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException {
 		
 		String[] interfacesProdinReprocessar = interfacesProdin.split(",");
 		
@@ -82,7 +84,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 					.append(StringUtils.leftPad(interfaceProdin.trim(), 4, '0')).toString());
 			
 			try {
-				this.executarInterface(classeExecucao.get(), usuario);
+				this.executarInterface(classeExecucao.get(), usuario, codigoDistribuidor);
 			} catch (ValidacaoException ve) {
 				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), ve);
 			} catch(Exception e) {
@@ -97,7 +99,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 					.append(StringUtils.leftPad(interfaceMDC, 4, '0')).toString());
 			
 			try {
-				this.executarInterface(classeExecucao.get(), usuario);
+				this.executarInterface(classeExecucao.get(), usuario, codigoDistribuidor);
 			} catch (ValidacaoException ve) {
 				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), ve);
 			} catch(Exception e) {
