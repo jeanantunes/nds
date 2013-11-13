@@ -78,7 +78,7 @@ $(function(){
 
 						<input type="text" name="produto" id="idProdutoExtratoEdicao" style="width: 220px;" 
 							   maxlength="255"
-					       	   onkeyup="pesquisaProdutoExtratoEdicao.autoCompletarPorNomeProduto('#produto', false);"
+					       	   onkeyup="pesquisaProdutoExtratoEdicao.autoCompletarPorNomeProduto('#idProdutoExtratoEdicao', false);"
 					       	   onblur="jsExtratoEdicao.pesquisarProdutoPorNome();"/>
 
 						

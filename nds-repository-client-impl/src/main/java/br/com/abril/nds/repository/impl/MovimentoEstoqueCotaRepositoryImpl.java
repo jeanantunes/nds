@@ -74,7 +74,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	@Autowired
 	private DataSource dataSource;
-	
+
 	/**
 	 * FROM: Consignado da cota com chamada de encalhe ou produto conta firme
 	 * @param paramIdCota
@@ -406,8 +406,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
 				                                                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
 				                                                GrupoMovimentoEstoque.SOBRA_EM_COTA,                                                
-				                                                GrupoMovimentoEstoque.FALTA_EM_COTA                                                
-				));
+				                                                GrupoMovimentoEstoque.FALTA_EM_COTA));
 		
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);

@@ -757,7 +757,6 @@ public class FechamentoEncalheController extends BaseController {
 		} catch(ValidacaoException ve){
 			throw ve;
 		} catch (Exception e) {
-			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
 		}
 		
