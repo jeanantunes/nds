@@ -34,6 +34,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				width : 960,
 				height : 180
 			});
+
+			$(".areaBts", digitacaoContagemDevolucaoController.workspace).hide();
 			
 			$("#dataDe", digitacaoContagemDevolucaoController.workspace).focus();
 			
@@ -79,6 +81,9 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",
 				params: formData,
 				onSuccess: function(){
+					
+					$(".areaBts", digitacaoContagemDevolucaoController.workspace).show();
+					
 					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
 					
 					$(".edicaoFechada").parents("tr").css("background", "#ffeeee");
