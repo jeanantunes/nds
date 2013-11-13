@@ -56,7 +56,6 @@ implements DescontoProximosLancamentosRepository{
 			.append(" 		, null AS produtoEdicaoId ")
 			.append(" 		, produto_id AS produtoId ")
 			.append(" 		, valor ")
-			.append(" 		, predominante ")
 			.append("		, true as proximoLancamento ")
 			.append(" FROM desconto_proximos_lancamentos AS dpl ")
 			.append(" INNER JOIN desconto d ON d.id = dpl.desconto_id ")
@@ -75,7 +74,6 @@ implements DescontoProximosLancamentosRepository{
 		query.addScalar("produtoId", StandardBasicTypes.LONG);
 		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("predominante", StandardBasicTypes.BOOLEAN);
 		query.addScalar("proximoLancamento", StandardBasicTypes.BOOLEAN);
 		
 		return query.list();

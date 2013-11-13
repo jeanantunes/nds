@@ -787,7 +787,8 @@ public class NFeServiceImpl implements NFeService {
 		Collections.sort(lista, new Comparator<ItemNotaEnvio>() {
 
 			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
-				if(o1 != null && o2 != null && o1.getEstudoCota() != null && o2.getEstudoCota() != null) {
+				if(o1 != null && o2 != null && o1.getEstudoCota() != null && o2.getEstudoCota() != null
+						&& o1.getEstudoCota().getEstudo() != null && o2.getEstudoCota().getEstudo() != null) {
 					if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() < o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
 						return -1;
 					}
@@ -795,13 +796,24 @@ public class NFeServiceImpl implements NFeService {
 						return 1;
 					}
 				}
-				
+				if(o1 != null && o2 != null && o1.getEstudoCota() != null) {
+					return -1;
+				}
 				return 0;
 			}
 			
 		});
-		Date dataLancamento = lista.get(0).getEstudoCota().getEstudo().getDataLancamento();
-		//Date dataLancamento = this.notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
+		
+		Date dataLancamento = null;
+		
+		if(lista.get(0) != null 
+				&& lista.get(0).getEstudoCota() != null 
+				&& lista.get(0).getEstudoCota().getEstudo() != null
+				&& lista.get(0).getEstudoCota().getEstudo().getDataLancamento() != null) {
+			dataLancamento = lista.get(0).getEstudoCota().getEstudo().getDataLancamento();
+		} else {
+			dataLancamento = this.notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
+		}
 		
 		Long numeroNF 	    		= notaEnvio.getNumero();
 		String chave 				= notaEnvio.getChaveAcesso();
