@@ -211,7 +211,17 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	public PoliticaCobranca obterPoliticaCobrancaPrincipal() {
 		return this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
 	}
-
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<PoliticaCobranca> obterDadosPoliticaCobranca(TipoCobranca tipoCobranca) {
+		
+		List<TipoCobranca> tipos = new ArrayList<>();
+		tipos.add(tipoCobranca);
+		
+		return politicaCobrancaRepository.obterPoliticasCobranca(tipos);
+	}
+	
 	/**
 	 * Método responsável por obter os dados da politica de cobranca
 	 * @param idPolitica: ID da politica de cobranca

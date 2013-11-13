@@ -288,6 +288,22 @@ $(function(){
                            
 			    <table width="434" height="25" border="0" cellpadding="1" cellspacing="1">
 				    
+				     <tr style="height: 40px;">
+				        <td valign="top"><strong>Tipo de Pagamento:</strong></td>
+					    <td valign="top">&nbsp;</td>
+					    <td valign="top">
+		
+					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" style="width:150px;" onchange="parametroCobrancaCotaController.obterParametrosDistribuidor(this.value);">
+		                        <option value="">Selecione</option>
+		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
+				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
+				                </c:forEach>
+		                    </select> 
+		
+				        </td>    
+				     </tr>
+				    
+				    
 				     <tr class="header_table">
 				         <td align="left">Fornecedores</td>
 				         <td align="left">&nbsp;</td>
@@ -432,20 +448,6 @@ $(function(){
 					 </tr>
 		
 					  
-					 <tr>
-				        <td valign="top"><strong>Tipo de Pagamento:</strong></td>
-					    <td valign="top">&nbsp;</td>
-					    <td valign="top">
-		
-					        <select name="tipoCobrancaParametroCobrancaCota" id="tipoCobrancaParametroCobrancaCota" style="width:150px;" onchange="parametroCobrancaCotaController.opcaoPagto(this.value);">
-		                        <option value="">Selecione</option>
-		                        <c:forEach varStatus="counter" var="itemTipoCobranca" items="${listaTiposCobranca}">
-				                    <option value="${itemTipoCobranca.key}">${itemTipoCobranca.value}</option>
-				                </c:forEach>
-		                    </select> 
-		
-				        </td>    
-				     </tr>
 	
 				</table>
 
