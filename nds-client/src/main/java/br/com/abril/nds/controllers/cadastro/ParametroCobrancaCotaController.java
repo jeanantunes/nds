@@ -265,6 +265,43 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
+	
+	@Post
+	@Path("/obterParametroCobrancaDistribuidor")
+	public void obterParametroCobrancaDistribuidor(String op) {
+
+		if(op==null || op.isEmpty() || op.equals("-1"))
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Pagamento não selecionado.");
+		
+		TipoCobranca tipoCobranca = TipoCobranca.valueOf(op);
+		
+		List<PoliticaCobranca> politicasCobranca = politicaCobrancaService.obterDadosPoliticaCobranca(tipoCobranca);
+				
+		ParametroCobrancaDTO parametroCobranca = null;
+				
+		if(!politicasCobranca.isEmpty())
+			parametroCobranca = this.politicaCobrancaService.obterDadosPoliticaCobranca(politicasCobranca.get(0).getId());
+		
+		FormaCobrancaDTO forma = new FormaCobrancaDTO();
+		
+		if(parametroCobranca!=null) {
+			forma = new FormaCobrancaDTO();
+			forma.setTipoCobranca(parametroCobranca.getTipoCobranca());
+			forma.setTipoFormaCobranca(parametroCobranca.getTipoFormaCobranca());
+			forma.setIdBanco(parametroCobranca.getIdBanco());
+			forma.setRecebeEmail(parametroCobranca.isEnvioEmail());
+			forma.setDomingo(parametroCobranca.isDomingo());
+			forma.setSegunda(parametroCobranca.isSegunda());
+			forma.setTerca(parametroCobranca.isTerca());
+			forma.setQuarta(parametroCobranca.isQuarta());
+			forma.setQuinta(parametroCobranca.isQuinta());
+			forma.setSexta(parametroCobranca.isSexta());
+			forma.setSabado(parametroCobranca.isSabado());
+			forma.setFornecedoresId(parametroCobranca.getFornecedoresId());
+		}
+		
+		result.use(Results.json()).from(forma,"result").recursive().serialize();
+	}
 
 	/**
 	 * Método responsável por obter os dados da uma forma de cobranca do parametro de cobranca da Cota para a aba 'Financeiro'.
