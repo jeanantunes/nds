@@ -1288,6 +1288,8 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			){
 
+		valor = (valor == null) ? BigDecimal.ZERO : valor.abs();
+		
 		CorpoBoleto corpoBoleto = new CorpoBoleto();
 		
 		String nomeCedente = "";
