@@ -851,6 +851,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			for(FechamentoFisicoLogicoDTO itemFechamento : listaEncalhe) {
 				if(itemSessao.getCodigo().equals(itemFechamento.getCodigo())
 						&& itemSessao.getEdicao().equals(itemFechamento.getEdicao())) {
+					
+					if(itemSessao.getFisico()==null)
+						itemSessao.setFisico(itemFechamento.getExemplaresDevolucao().longValue());
+						
 					itemFechamento.setFisico(itemSessao.getFisico());
 					itemFechamento.setDiferenca(itemSessao.getFisico().longValue() - itemFechamento.getExemplaresDevolucao().longValue());
 				}
