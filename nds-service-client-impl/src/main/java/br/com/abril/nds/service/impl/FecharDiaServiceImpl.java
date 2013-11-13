@@ -1219,8 +1219,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
 
-		List<Movimento> movimentosPendentes = this.fecharDiaRepository.obterMovimentosPorStatusData(
-				null, gruposMovimentoFinanceiro, this.distribuidorRepository.obterDataOperacaoDistribuidor(), 
+		List<Movimento> movimentosPendentes = this.fecharDiaRepository.obterMovimentosPorStatusData(gruposMovimentoFinanceiro, this.distribuidorRepository.obterDataOperacaoDistribuidor(), 
 				StatusAprovacao.PENDENTE);
 
 		for (Movimento movimento : movimentosPendentes) {
