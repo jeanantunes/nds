@@ -151,7 +151,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    }
 	} else {
 	    EstudoTransient estudoTemp = new EstudoTransient();
-	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(codigoProduto, edicao));
+	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(codigoProduto, edicao, lancamentoId));
 	    try {
 		definicaoBases.executar(estudoTemp);
 		selecionados.clear();
@@ -333,7 +333,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Path("gerarEstudo")
     @Post
-    public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao) throws Exception {
+    public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento) throws Exception {
 	EstudoTransient estudo = null;
 	int qtdEdicoesAbertas = 0;
 
@@ -356,6 +356,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 	produto.setNumeroEdicao(numeroEdicao);
+	produto.setIdLancamento(idLancamento);
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 
