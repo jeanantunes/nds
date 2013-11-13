@@ -14,17 +14,19 @@ public interface InterfaceExecucaoService {
 	 * Executa Interfaces
 	 * @param classeExecucao
 	 * @param usuario
+	 * @param codigoDistribuidor
 	 * @throws ClassNotFoundException 
 	 * @throws BeansException 
 	 */
-	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException;
+	public void executarInterface(String classeExecucao, Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException;
 	
 	/**
 	 * Executa as Interfaces em Ordem de Prioridade 
 	 * @param usuario
+	 * @param codigoDistribuidor
 	 * @throws BeansException
 	 * @throws ClassNotFoundException
 	 */
-	public void executarTodasInterfacesEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException;
+	public void executarTodasInterfacesEmOrdem(Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException;
 	
 }

@@ -135,8 +135,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			}
 
 			if(logExecucao != null && logExecucao.getNomeArquivo() != null) {
-				interfaceDTO.setNomeArquivo(logExecucao.getNomeArquivo().split(DELIMITADOR_PONTO)[0]); // logExecucao.getNome());
-				interfaceDTO.setStatus(logExecucao.getStatus().toString());
+				interfaceDTO.setNomeArquivo(logExecucao.getNomeArquivo().split(DELIMITADOR_PONTO)[0]);
 			} else {
 				interfaceDTO.setNomeArquivo("");
 			}

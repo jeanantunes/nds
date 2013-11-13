@@ -57,6 +57,9 @@ public class LogExecucao implements Serializable {
 	@Column(name = "NOME_LOGIN_USUARIO", nullable = false, length = 20)
 	private String nomeLoginUsuario;
 	
+	@Column(name = "COD_DISTRIBUIDOR", length = 20, nullable = true)
+	private String codigoDistribuidor;
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "logExecucao")
 	private List<LogExecucaoMensagem> listLogExecucaoMensagem;
 	
@@ -115,6 +118,14 @@ public class LogExecucao implements Serializable {
 	public void setListLogExecucaoMensagem(
 			List<LogExecucaoMensagem> listLogExecucaoMensagem) {
 		this.listLogExecucaoMensagem = listLogExecucaoMensagem;
+	}
+
+	public String getCodigoDistribuidor() {
+		return codigoDistribuidor;
+	}
+
+	public void setCodigoDistribuidor(String codigoDistribuidor) {
+		this.codigoDistribuidor = codigoDistribuidor;
 	}
 	
 }
