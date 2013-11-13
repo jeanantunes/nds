@@ -25,6 +25,7 @@ import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -311,7 +312,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				.addScalar("dividaAcumulada").addScalar("nome")
 				.addScalar("razaoSocial").addScalar("dataAbertura")
 				.addScalar("faturamento").addScalar("percDivida")
-				.addScalar("diasAberto");
+				.addScalar("diasAberto", IntegerType.INSTANCE);
 		
 		this.setParametrosCotasSujeitasSuspensao(query, dataOperacao);
 		

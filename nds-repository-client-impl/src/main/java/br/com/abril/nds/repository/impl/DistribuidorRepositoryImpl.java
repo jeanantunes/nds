@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
@@ -99,6 +100,7 @@ public class DistribuidorRepositoryImpl extends
 	public EnderecoDistribuidor obterEnderecoPrincipal(){
 		Criteria criteria = getSession().createCriteria(EnderecoDistribuidor.class);
 		criteria.setCacheable(true);
+		criteria.setCacheMode(CacheMode.NORMAL);
 		criteria.add(Restrictions.eq("principal", true) );
 		criteria.setMaxResults(1);
 
