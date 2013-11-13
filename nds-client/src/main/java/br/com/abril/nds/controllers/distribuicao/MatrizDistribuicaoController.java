@@ -594,7 +594,7 @@ public class MatrizDistribuicaoController extends BaseController {
 
         EstudoTransient estudoTemp = new EstudoTransient();
 
-        ProdutoEdicaoEstudo prod = produtoEdicaoDAO.getProdutoEdicaoEstudo(produtoDistribuicaoVO.getCodigoProduto(), produtoDistribuicaoVO.getNumeroEdicao().longValue());
+        ProdutoEdicaoEstudo prod = produtoEdicaoDAO.getProdutoEdicaoEstudo(produtoDistribuicaoVO.getCodigoProduto(), produtoDistribuicaoVO.getNumeroEdicao().longValue(), produtoDistribuicaoVO.getIdLancamento() == null ? null : produtoDistribuicaoVO.getIdLancamento().longValue());
         estudoTemp.setProdutoEdicaoEstudo(prod);
 
         definicaoBases.executar(estudoTemp);

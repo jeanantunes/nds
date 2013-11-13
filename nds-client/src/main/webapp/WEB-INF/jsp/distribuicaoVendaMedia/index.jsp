@@ -397,6 +397,7 @@ function limparLstExcecao1(){
                 <div id="tab-distribuicao-1" class="distribuicaoVendaMedia-tab">
                 	<fieldset style="width:280px!important; margin-bottom:10px; float:left;">
                     	<legend>Dados da Distribuição</legend>
+                        <input type="hidden" id="idLancamento" value="${lancamento.id}"/>
                     	<table width="280" border="0" cellspacing="2" cellpadding="2">
                           <tr>
                             <td>Produto:</td>

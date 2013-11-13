@@ -313,7 +313,8 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 			return false;
 		ProdutoDistribuicaoVO other = (ProdutoDistribuicaoVO) obj;
 		
-		boolean equal = (this.getIdLancamento().equals(other.getIdLancamento()) &&
+		boolean equal = (((this.getIdLancamento() == null && other.getIdLancamento() == null) ||
+                (this.getIdLancamento() != null && this.getIdLancamento().equals(other.getIdLancamento()))) &&
 		 this.getCodigoProduto().equals(other.getCodigoProduto()) &&
 		 this.getNumeroEdicao().equals(other.getNumeroEdicao())) &&
 		 ((this.getIdCopia() == null && other.getIdCopia() == null) || 

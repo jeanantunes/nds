@@ -636,6 +636,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 		data.push({name : "codigoProduto", value : $('#codigoProduto').text()});
 		data.push({name : "numeroEdicao", value : $('#numeroEdicao').html()});
+		data.push({name : "idLancamento", value : $('#idLancamento').val()});
+        //TODO adicionar numero periodo caso o idLancamento nao seja o suficiente
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    myWindow = window.open('', '_blank');

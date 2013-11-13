@@ -98,10 +98,11 @@ public class ProdutoEdicaoDAO {
 		return 0;
 	}
 
-	public ProdutoEdicaoEstudo getProdutoEdicaoEstudo(String codigoProduto, Long numeroEdicao) {
+	public ProdutoEdicaoEstudo getProdutoEdicaoEstudo(String codigoProduto, Long numeroEdicao, Long idLancamento) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("CODIGO_PRODUTO", codigoProduto);
 		params.put("NUMERO_EDICAO", numeroEdicao);
+		params.put("LANCAMENTO_ID", idLancamento);
 
         try {
             return jdbcTemplate.queryForObject(queryProdutoEdicaoEstudo, params, new RowMapper<ProdutoEdicaoEstudo>() {

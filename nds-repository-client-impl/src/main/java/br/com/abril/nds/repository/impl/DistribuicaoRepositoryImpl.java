@@ -27,7 +27,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		StringBuilder sql = new StringBuilder();
 		
 	 sql.append(" select ")
-		.append(" lanc.ID as idLancamento,")
+		.append(" plp.lancamento_id as idLancamento,")
 		.append(" prod.CODIGO as codigoProduto,") 
 		.append(" prod.NOME as nomeProduto,")
 		.append(" prodEdic.ID as idProdutoEdicao,")
