@@ -62,7 +62,6 @@ $(function(){
 	                  	<option selected="selected"> </option>
 	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
 	             	 </select>
 	             </td>
 	            </tr>	           
@@ -109,7 +108,6 @@ $(function(){
                 		<option selected="selected"> </option>
 	                    <option value="ENCALHE">Encalhe</option>
 	                    <option value="LANCAMENTO">Lan&ccedil;amento</option>
-	                    <option value="POSTO_AVANCADO">Posto Avan&ccedilado</option>
               </select></td>
               <td width="474"><span class="bt_novos"><a href="javascript:;" id="btnPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
             </tr>

@@ -43,7 +43,6 @@ public class LogExecucaoMensagem implements Serializable {
 	@Column(name = "MENSAGEM_INFO", length = 500, nullable = true)
 	private String mensagemInfo;
 	
-
 	public Long getId() {
 		return id;
 	}
@@ -99,4 +98,5 @@ public class LogExecucaoMensagem implements Serializable {
 	public void setMensagemInfo(String mensagemInfo) {
 		this.mensagemInfo = mensagemInfo;
 	}
+	
 }

@@ -159,12 +159,43 @@ public class FornecedorController extends BaseController {
 		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
 	
+	private Origem obterOrigemFornecedor(FornecedorDTO fornecedorDTO) {
+
+		Origem origemFornecedor = null;
+		
+		if(fornecedorDTO.getIdFornecedor()!=null) {
+			
+			Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(fornecedorDTO.getIdFornecedor());	
+			
+			if(fornecedor == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Falha na edição do registro de Fornecedor.");
+			}
+			
+			origemFornecedor = fornecedor.getOrigem();
+			
+		} else {
+			
+			origemFornecedor = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
+		}
+		
+		return origemFornecedor;
+		
+	}
+	
 	@Post
 	public void cadastrarFornecedor(FornecedorDTO fornecedorDTO) {
-
-		validarFornecedorDTO(fornecedorDTO);
 		
-		Fornecedor fornecedor = criarFornecedor(fornecedorDTO);
+		Origem origemFornecedor = obterOrigemFornecedor(fornecedorDTO);
+		
+		Fornecedor fornecedor = null;
+		
+		if(Origem.MANUAL.equals(origemFornecedor)) {
+			validarFornecedorOrigemManual(fornecedorDTO);
+			fornecedor = criarObjetoFornecedorOrigemManual(fornecedorDTO);
+		} else {
+			validarFornecedorOrigemInterface(fornecedorDTO);
+			fornecedor = criarObjetoFornecedorOrigemInterface(fornecedorDTO);
+		}
 		
 		String mensagemSucesso;
 		
@@ -378,12 +409,25 @@ public class FornecedorController extends BaseController {
 			}
 		}
     }
+    
+    private void validarFornecedorOrigemInterface(FornecedorDTO fornecedorDTO) {
 
-	private void validarFornecedorDTO(FornecedorDTO fornecedorDTO) {
+    	List<String> mensagens = new ArrayList<String>();
+    	
+		if(fornecedorDTO.getIdBanco() == null) {
+			mensagens.add("O preenchimento do [Banco] é obrigatório.");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
+    }
+    
+	private void validarFornecedorOrigemManual(FornecedorDTO fornecedorDTO) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		
-		Origem origemFornecedor = fornecedorDTO.getOrigem() == null ? Origem.MANUAL : fornecedorDTO.getOrigem(); 
 		
 		if(fornecedorDTO.getInscricaoEstadual() == null || fornecedorDTO.getInscricaoEstadual().isEmpty()) {
 			mensagens.add("O preenchimento do campo [Inscrição Estadual] é obrigatório.");
@@ -395,17 +439,19 @@ public class FornecedorController extends BaseController {
 		
 		} else {
 			
-			if(	Origem.MANUAL.equals(origemFornecedor) && 
-				fornecedorDTO.getCodigoInterface() > Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL) {
+			if(	fornecedorDTO.getCodigoInterface() > Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL) {
 				
 				mensagens.add(	" Valor do campo [Codigo] não deve exceder "+ Constantes.MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL + 
 								" para fornecedor de origem MANUAL.");
 				
 			} else {
+				
 				Fornecedor fornecedor = fornecedorService.obterFornecedorPorCodigoInterface(fornecedorDTO.getCodigoInterface());
+				
 				if(fornecedor!=null && !fornecedor.getId().equals(fornecedorDTO.getIdFornecedor())) {
 					mensagens.add(" Valor do campo [Codigo] já esta sendo utilizado.");
 				}
+				
 			}
 			
 		}
@@ -590,7 +636,35 @@ public class FornecedorController extends BaseController {
 		return telefonesSessao;
 	}
 	
-	private Fornecedor criarFornecedor(FornecedorDTO fornecedorDTO) {
+	private Fornecedor criarObjetoFornecedorOrigemInterface(FornecedorDTO fornecedorDTO){
+		
+		Fornecedor fornecedor = null;
+		
+		if(Origem.INTERFACE.equals(fornecedorDTO.getOrigem())){
+			
+			fornecedor = this.fornecedorService.obterFornecedorPorId(fornecedorDTO.getIdFornecedor());
+			
+			if(fornecedor == null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Falha ao editar forncedor de origem ["+Origem.INTERFACE.name()+"].");
+			}
+			
+			Banco banco = null;
+			
+			if (fornecedorDTO.getIdBanco() != null) {
+				banco = this.bancoService.obterBancoPorId(fornecedorDTO.getIdBanco());
+			}
+			
+			fornecedor.setBanco(banco);
+			
+		}
+		
+		return fornecedor;
+		
+	}
+	
+	private Fornecedor criarObjetoFornecedorOrigemManual(FornecedorDTO fornecedorDTO) {
+		
+		Fornecedor fornecedor = null;
 		
 		PessoaJuridica pessoaJuridica = this.pessoaJuridicaService.buscarPorCnpj(Util.removerMascaraCnpj( fornecedorDTO.getCnpj()));
 		
@@ -610,8 +684,6 @@ public class FornecedorController extends BaseController {
 		pessoaJuridica.setRazaoSocial(fornecedorDTO.getRazaoSocial());
 		
 		pessoaJuridica = this.pessoaJuridicaService.salvarPessoaJuridica(pessoaJuridica);
-		
-		Fornecedor fornecedor = null;
 		
 		if (fornecedorDTO.getIdFornecedor() != null) {
 		
@@ -634,11 +706,6 @@ public class FornecedorController extends BaseController {
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
 		Banco banco = null;
-		
-		if (fornecedorDTO.getIdBanco() != null) {
-
-			banco = this.bancoService.obterBancoPorId(fornecedorDTO.getIdBanco());
-		}
 
 		fornecedor.setBanco(banco);
 		
@@ -688,6 +755,8 @@ public class FornecedorController extends BaseController {
 		fornecedorDTO.setRazaoSocial(fornecedor.getJuridica().getRazaoSocial());
 		
 		fornecedorDTO.setResponsavel(fornecedor.getResponsavel());
+		
+		fornecedorDTO.setOrigem(fornecedor.getOrigem());
 		
 		if (fornecedor.getTipoFornecedor() != null) {
 

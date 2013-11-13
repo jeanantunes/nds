@@ -1,10 +1,18 @@
 <div id="fornecedorController-tabpj-1">
+	
 	<input type="hidden" name="fornecedorDTO.idFornecedor" id="fornecedorController-idFornecedor" style="width:100px" />
+
+    <input type="hidden" name="fornecedorDTO.origem" id="fornecedorController-origem"/>
+
+
     <table width="754" cellpadding="2" cellspacing="2" style="text-align:left;">
     <tr>
       <td><strong>Código:</strong></td>
       <td>
+      
       	<input type="text" name="fornecedorDTO.codigoInterface" id="fornecedorController-codigoInterface" maxlength="11" style="width:100px" />
+      	
+      
       </td>
       <td><strong>Início de Atividade:</strong></td>
       <td><span id="fornecedorController-inicioAtividade"></span></td>

@@ -547,72 +547,53 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			BoletoDistribuidor boletoDistribuidor = 
 					boletoDistribuidorRepository.obterBoletoDistribuidorPorChamadaEncalheFornecedor(chamadaEncalheFornecedor.getId());
 			
+			if(boletoDistribuidor != null) {
+				boletoDistribuidorRepository.remover(boletoDistribuidor);
+			}
+			
 			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
 			
-			if(boletoDistribuidor != null) {
-				
-				Integer vias = boletoDistribuidor.getVias();
-				
-				vias+=1;
-				
-				boletoDistribuidor.setVias(vias);
-				
-				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
-					
-					BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
-					
-					boletoDistribuidor.setValor(valorLiquidoBoleto);
-					
-					boletoDistribuidor.setTipoCobranca(tipoCobranca);
-					
-					boletoDistribuidorRepository.alterar(boletoDistribuidor);
-					
-				}
-				
-			} else {
+			Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
+			
+			if (chamadaEncalheFornecedor.getFornecedor().getBanco() == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor selecionado não possui banco vinculado!");
+			}
+			
+			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+			
+			String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
+					codigoDistribuidor, 
+					dataOperacao, 
+					banco.getNumeroBanco(), 
+					fornecedor.getId(), 
+					chamadaEncalheFornecedor.getId());
+			
+			boletoDistribuidor = new BoletoDistribuidor();
+			
+			boletoDistribuidor.setBanco(banco);
+			boletoDistribuidor.setChamadaEncalheFornecedor(chamadaEncalheFornecedor);
+			
+			boletoDistribuidor.setDataEmissao(dataAtual);
+			
+			boletoDistribuidor.setDataVencimento(obterDataVencimentoBoletoDistribuidor(semana));
+			
+			boletoDistribuidor.setNossoNumeroDistribuidor(nossoNumeroDistribuidor);
+			boletoDistribuidor.setStatus(null);
+			
+			boletoDistribuidor.setFornecedor(chamadaEncalheFornecedor.getFornecedor());
+			
+			boletoDistribuidor.setTipoCobranca(tipoCobranca);
+			
+			if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
 				
 				BigDecimal valorLiquidoBoleto = obterValorBoleto(chamadaEncalheFornecedor.getId(), chamadaEncalheFornecedor.getTotalVendaApurada());
 				
-				Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
-				
-				if (chamadaEncalheFornecedor.getFornecedor().getBanco() == null) {
-					throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor selecionado não possui banco vinculado!");
-				}
-				
-				Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
-				
-				String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
-						codigoDistribuidor, 
-						dataOperacao, 
-						banco.getNumeroBanco(), 
-						fornecedor.getId(), 
-						chamadaEncalheFornecedor.getId());
-				
-				boletoDistribuidor = new BoletoDistribuidor();
-				
-				boletoDistribuidor.setBanco(banco);
-				boletoDistribuidor.setChamadaEncalheFornecedor(chamadaEncalheFornecedor);
-				
-				boletoDistribuidor.setDataEmissao(dataAtual);
-				
-				boletoDistribuidor.setDataVencimento(obterDataVencimentoBoletoDistribuidor(semana));
-				
-				boletoDistribuidor.setNossoNumeroDistribuidor(nossoNumeroDistribuidor);
-				boletoDistribuidor.setStatus(null);
-				
-				boletoDistribuidor.setFornecedor(chamadaEncalheFornecedor.getFornecedor());
-				
-				boletoDistribuidor.setTipoCobranca(tipoCobranca);
-				
-				if(TipoCobranca.BOLETO.equals(tipoCobranca)) {
-					boletoDistribuidor.setValor(valorLiquidoBoleto);
-				}
-				
-				boletoDistribuidor.setVias(1);
-				
-				boletoDistribuidorRepository.adicionar(boletoDistribuidor);
-				
+				boletoDistribuidor.setValor(valorLiquidoBoleto);
 			}
+			
+			boletoDistribuidor.setVias(1);
+			
+			boletoDistribuidorRepository.adicionar(boletoDistribuidor);
 			
 			listaBoletoDistribuidor.add(boletoDistribuidor);
 		}

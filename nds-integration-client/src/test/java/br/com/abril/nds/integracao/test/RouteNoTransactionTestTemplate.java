@@ -21,6 +21,6 @@ public abstract class RouteNoTransactionTestTemplate extends AbstractJUnit4Sprin
 	
 	@Test
 	public void test() {
-		getRoute().execute("test");
+		getRoute().execute("test", "6248116");
 	}
 }

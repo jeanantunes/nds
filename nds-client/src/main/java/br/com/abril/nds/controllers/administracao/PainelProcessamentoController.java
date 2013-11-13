@@ -27,6 +27,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
@@ -68,6 +69,9 @@ public class PainelProcessamentoController extends BaseController {
 	
 	@Autowired
 	private InterfaceExecucaoService interfaceExecucaoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -476,7 +480,13 @@ public class PainelProcessamentoController extends BaseController {
 	 * @param classeInterface
 	 */
 	public void executarInterface(String classeInterface) throws Exception {
-		interfaceExecucaoService.executarInterface(classeInterface, getUsuarioLogado());
+		
+		interfaceExecucaoService.executarInterface(
+			classeInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
+		
+		interfaceExecucaoService.executarInterface(
+			classeInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
 	
@@ -485,7 +495,13 @@ public class PainelProcessamentoController extends BaseController {
 	 * @param classeInterface
 	 */
 	public void executarTodasInterfacesEmOrdem() throws Exception {
-		interfaceExecucaoService.executarTodasInterfacesEmOrdem(getUsuarioLogado());
+		
+		interfaceExecucaoService.executarTodasInterfacesEmOrdem(
+			getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
+		
+		interfaceExecucaoService.executarTodasInterfacesEmOrdem(
+			getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
 	
