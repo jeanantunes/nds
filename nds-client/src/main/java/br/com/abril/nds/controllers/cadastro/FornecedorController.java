@@ -706,6 +706,10 @@ public class FornecedorController extends BaseController {
 		fornecedor.setTipoFornecedor(tipoFornecedor);
 		
 		Banco banco = null;
+		
+		if (fornecedorDTO.getIdBanco() != null) {
+			banco = this.bancoService.obterBancoPorId(fornecedorDTO.getIdBanco());
+		}
 
 		fornecedor.setBanco(banco);
 		
