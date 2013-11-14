@@ -11,9 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.sql.DataSource;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -28,7 +26,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
-
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
@@ -94,8 +91,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	       .append("  join mec.cota c1 ")
 	       
 	       .append("  join mec.tipoMovimento tipoMovimento ")
+
+	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro)) ")
 	       
-	       .append("  where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota >= mec.data)")
+
+	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
 	    
 	       .append("  and mec.status = :statusAprovacao ")
 	    
@@ -328,8 +329,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	                                                                   GrupoMovimentoEstoque.COMPRA_ENCALHE, 
 	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
 	    
-	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
+	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
 	    query.setParameter("statusOperacaoConferencia", StatusOperacao.CONCLUIDO);
 	    query.setParameter("idCota", idCota);
 	    query.setParameter("data", dataLancamento);
