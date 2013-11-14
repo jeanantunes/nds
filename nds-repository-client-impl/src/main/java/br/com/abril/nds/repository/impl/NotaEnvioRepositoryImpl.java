@@ -150,22 +150,22 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 				.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 				.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 				
-		if (idCota != null){
+		if (idCota != null) {
 			
 		    query.setParameter("idCota", idCota);
 		}
 		
-		if (idsProdutoEdicao != null && idsProdutoEdicao.size() > 0){
+		if (idsProdutoEdicao != null && idsProdutoEdicao.size() > 0) {
 		    
 			query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
 		}
 		
-		if (dataRecolhimentoCE != null){
+		if (dataRecolhimentoCE != null) {
 			
 		    query.setParameter("dataRecolhimentoCE", dataRecolhimentoCE);
 		}
 		
-		if (dataOperacao != null){
+		if (dataOperacao != null) {
 		
 			query.setParameter("dataOperacao", dataOperacao);
 		}

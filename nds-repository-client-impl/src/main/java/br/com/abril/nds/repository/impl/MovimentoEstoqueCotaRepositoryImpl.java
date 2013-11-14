@@ -329,7 +329,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
 	    
 	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
-	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 	    query.setParameter("statusOperacaoConferencia", StatusOperacao.CONCLUIDO);
 	    query.setParameter("idCota", idCota);
