@@ -479,13 +479,20 @@ public class PainelProcessamentoController extends BaseController {
 	 * Executa uma interface
 	 * @param classeInterface
 	 */
-	public void executarInterface(String classeInterface) throws Exception {
+	public void executarInterface(String idInterface) throws Exception {
 		
-		interfaceExecucaoService.executarInterface(
-			classeInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
-		
-		interfaceExecucaoService.executarInterface(
-			classeInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+		if (this.interfaceExecucaoService.isInterfaceProdin(idInterface)) {
+			
+			interfaceExecucaoService.executarInterface(
+				idInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
+			
+			interfaceExecucaoService.executarInterface(
+				idInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+			
+		} else {
+			
+			interfaceExecucaoService.executarInterface(idInterface, getUsuarioLogado(), null);
+		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
@@ -496,11 +503,13 @@ public class PainelProcessamentoController extends BaseController {
 	 */
 	public void executarTodasInterfacesEmOrdem() throws Exception {
 		
-		interfaceExecucaoService.executarTodasInterfacesEmOrdem(
+		interfaceExecucaoService.executarTodasInterfacesProdinEmOrdem(
 			getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
 		
-		interfaceExecucaoService.executarTodasInterfacesEmOrdem(
+		interfaceExecucaoService.executarTodasInterfacesProdinEmOrdem(
 			getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+		
+		interfaceExecucaoService.executarTodasInterfacesMDCEmOrdem(getUsuarioLogado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}

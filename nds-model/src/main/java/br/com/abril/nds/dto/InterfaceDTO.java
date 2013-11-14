@@ -10,6 +10,8 @@ public class InterfaceDTO implements Serializable {
 
 	private static final long serialVersionUID = 7870636987847534600L;
 
+	private String idInterface;
+	
 	private String idLogProcessamento;
 	
 	private Long idLogExecucao;
@@ -105,6 +107,14 @@ public class InterfaceDTO implements Serializable {
 
 	public void setIdLogExecucao(Long idLogExecucao) {
 		this.idLogExecucao = idLogExecucao;
+	}
+
+	public String getIdInterface() {
+		return idInterface;
+	}
+
+	public void setIdInterface(String idInterface) {
+		this.idInterface = idInterface;
 	}
 
 }
