@@ -38,14 +38,16 @@ public abstract class NdsiRunner {
 			username = args[1];
 		}
 
-		String codigoDistribuidorDinap = getDistribuidorRepository().codigoDistribuidorDinap();
+		DistribuidorRepository distribuidorRepository = getDistribuidorRepository();
+		
+		String codigoDistribuidorDinap = distribuidorRepository.codigoDistribuidorDinap();
 		
 		if (codigoDistribuidorDinap != null) {
 
 			getRouteTemplate(args[0]).execute(username, codigoDistribuidorDinap);
 		}
 		
-		String codigoDistribuidorFC = getDistribuidorRepository().codigoDistribuidorFC();
+		String codigoDistribuidorFC = distribuidorRepository.codigoDistribuidorFC();
 		
 		if (codigoDistribuidorFC != null) {
 		
