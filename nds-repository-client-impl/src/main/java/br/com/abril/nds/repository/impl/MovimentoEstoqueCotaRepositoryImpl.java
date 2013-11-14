@@ -586,8 +586,30 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		BeanUtils.copyProperties(filtro, f);		
 		f.setPaginacao(null);
 		
-		sql.append("select sum(a.precoComDesconto * a.reparte) as totalReparte, sum(a.precoComDesconto * a.encalhe) as totalEncalhe  from ( ");
+		sql.append("select ");
+		
+		sql.append(" sum( ");
+		
+		
+		sql.append("     case when tipoCota = 'A_VISTA' then ");
+		
+		sql.append("         case when alteracaoTipoCota >= dataMovimentoEstoque then ");
+		
+		sql.append("             (a.precoComDesconto * a.reparte) ");
+		
+		sql.append("         else 0 end ");
+		
+		sql.append("     else (a.precoComDesconto * a.reparte) end ");
+		
+		sql.append("    ) as totalReparte, ");
+		
+		
+		sql.append(" sum(a.precoComDesconto * a.encalhe) as totalEncalhe  ");
+		
+		sql.append(" from ( ");
+		
 		sql.append(obterQueryListaConsultaEncalhe(f));
+		
 		sql.append(" ) a ");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -747,6 +769,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("                 AND CONTROLE_CONFERENCIA_ENCALHE_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
 		sql.append(" ) ");
 		sql.append(" left join MOVIMENTO_ESTOQUE_COTA mec2 on (CONFERENCIA_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID = mec2.ID ) ");
+		
+		sql.append(" inner join COTA cota on cota.ID = MEC_REPARTE.COTA_ID ");
 		
 		sql.append(" where ( "); 
 		sql.append(" 		(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
@@ -1044,10 +1068,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		} else {
 		
-			sql.append(" CONFERENCIA_ENCALHE.OBSERVACAO AS observacaoConferenciaEncalhe ");
+			sql.append(" CONFERENCIA_ENCALHE.OBSERVACAO AS observacaoConferenciaEncalhe, ");
 		}
 		
+		sql.append(" cota.TIPO_COTA as tipoCota, ");
+				
+		sql.append(" cota.ALTERACAO_TIPO_COTA as alteracaoTipoCota, ");
+		
+		sql.append(" MEC_REPARTE.DATA as dataMovimentoEstoque ");
+		
 		sql.append(getFromWhereConsultaEncalhe(filtro));
+		
 		return sql;
 	}
 	
