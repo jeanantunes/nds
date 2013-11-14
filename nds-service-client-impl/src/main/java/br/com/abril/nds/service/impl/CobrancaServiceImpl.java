@@ -60,6 +60,7 @@ import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
@@ -924,10 +925,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 		Date dataVencimento = obterProximaDataVencimentoParaCota(cobrancaTotal.getCota().getId());
 		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(pagamento.getDataPagamento());
+		
+		String observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+		
+		if (!StringUtil.isEmpty(pagamento.getObservacoes())) {
+			
+			observacao += " - " + pagamento.getObservacoes();
+		}
+		
 		gerarMovimentoFinanceiroCota(
 				baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorExcedentePagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN), 
 				pagamento.getDataPagamento(), dataVencimento,
-				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
+				observacao, GrupoMovimentoFinaceiro.CREDITO,
 				cobrancaTotal.getFornecedor()
 		);
 
@@ -989,10 +999,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		valorEmDebito = valorEmDebito.setScale(2, RoundingMode.HALF_EVEN);
 		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(pagamento.getDataPagamento());
+		
+		String observacao = "Diferença de Pagamento a Menor (" + dataPagamentoFormatada + ")";
+		
+		if (!StringUtil.isEmpty(pagamento.getObservacoes())) {
+			
+			observacao += " - " + pagamento.getObservacoes();
+		}
+		
 		gerarMovimentoFinanceiroCota(
 			baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valorEmDebito, 
 			cobrancaParcial.getDataVencimento(), dataVencimento, 
-			pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
+			observacao, GrupoMovimentoFinaceiro.DEBITO,
 			cobrancaParcial.getFornecedor()
 		);
 	}
