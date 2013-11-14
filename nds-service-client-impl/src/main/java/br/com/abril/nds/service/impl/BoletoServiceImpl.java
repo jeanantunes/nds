@@ -322,9 +322,14 @@ public class BoletoServiceImpl implements BoletoService {
 
 		LOG.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
 		
-		List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
-		
 		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
+		
+		if(naoAcumulaDividas == true) {
+			LOG.info("DISTRIBUIDOR NÃO ACUMULA DIVIDAS");
+			return;
+		}
+		
+		List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
 		
 		Integer numeroMaximoAcumulosDistribuidor = 
 			this.distribuidorRepository.numeroMaximoAcumuloDividas();
@@ -367,7 +372,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			try {
 
-				this.validarAcumuloDivida(divida, naoAcumulaDividas, numeroMaximoAcumulosDistribuidor);
+				this.validarAcumuloDivida(divida, numeroMaximoAcumulosDistribuidor);
 
 				divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
 				this.dividaRepository.alterar(divida);
@@ -542,11 +547,11 @@ public class BoletoServiceImpl implements BoletoService {
 		return numeroAcumulos;
 	}
 
-	private void validarAcumuloDivida(Divida divida, boolean naoAcumulaDividas, Integer numeroMaximoAcumulosDistribuidor) {
+	private void validarAcumuloDivida(Divida divida, Integer numeroMaximoAcumulosDistribuidor) {
 
 		Integer numeroMaximoAcumuloCota = this.acumuloDividasService.obterNumeroMaximoAcumuloCota(divida.getCota().getId()).intValue();
 		
-		if (!naoAcumulaDividas && (numeroMaximoAcumuloCota >= numeroMaximoAcumulosDistribuidor)) {
+		if (numeroMaximoAcumuloCota >= numeroMaximoAcumulosDistribuidor) {
 			
 			throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
 		}

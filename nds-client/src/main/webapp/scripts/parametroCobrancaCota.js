@@ -394,7 +394,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	opcaoPagto : function(op){
-		
+				
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
 			$('#divComboBanco', this.workspace).show();
 			$('#divRecebeEmail', this.workspace).show();
@@ -415,6 +415,23 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$('#divComboBanco', this.workspace).hide();
 			$('#divDadosBancarios', this.workspace).hide();
 		}	
+	},
+	
+	obterParametrosDistribuidor : function (op) {
+		
+		this.opcaoPagto(op);
+		
+		var data = [{name: 'op', value: op}];
+		
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterParametroCobrancaDistribuidor",
+				   data,
+				   parametroCobrancaCotaController.sucessCallbackParametroCobrancaDistribuidor, 
+				   null,
+				   true);
+	},
+	
+	sucessCallbackParametroCobrancaDistribuidor : function(result) {
+		parametroCobrancaCotaController.sucessCallbackFormaCobranca(result);
 	},
 	
 	mostraDiario : function(){

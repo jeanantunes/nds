@@ -17,7 +17,6 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.StatusRecebimento;
 import br.com.abril.nds.model.movimentacao.Movimento;
@@ -251,49 +250,28 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Movimento> obterMovimentosPorStatusData(List<GrupoMovimentoEstoque> gruposMovimentoEstoque,
-														List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
+	public List<Movimento> obterMovimentosPorStatusData(List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro,
 														Date dataMovimento, StatusAprovacao statusAprovacao) {
 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT movimento ");
 
-		hql.append(" FROM Movimento movimento ");
+		hql.append(" FROM MovimentoFinanceiroCota movimento ");
 		hql.append(" WHERE movimento.data = :dataMovimento ");
 		hql.append("  AND  movimento.status = :statusAprovacao ");
 		
-		String restricaoGrupos = "";		
-
-		if (gruposMovimentoEstoque != null) {
-		
-			restricaoGrupos = " movimento.tipoMovimento.grupoMovimentoEstoque IN (:gruposMovimentoEstoque) ";
-		}
 		
 		if (gruposMovimentoFinanceiro != null) {
 		
-			restricaoGrupos += restricaoGrupos.isEmpty() ? " " : " OR ";
-			
-			restricaoGrupos += " movimento.tipoMovimento.grupoMovimentoFinaceiro IN (:gruposMovimentoFinanceiro) "; 
-		}
-
-		if (!restricaoGrupos.isEmpty()) {
-
-			hql.append(" AND ( ");
-			hql.append(restricaoGrupos);
-			hql.append(" ) ");
+			hql.append(" AND movimento.tipoMovimento.grupoMovimentoFinaceiro IN (:gruposMovimentoFinanceiro) ");
 		}
 		
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataMovimento", dataMovimento);
 		query.setParameter("statusAprovacao", statusAprovacao);
-		
-		if (gruposMovimentoEstoque != null) {
-		
-			query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
-		}
-		
+				
 		if (gruposMovimentoFinanceiro != null) {
 		
 			query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);

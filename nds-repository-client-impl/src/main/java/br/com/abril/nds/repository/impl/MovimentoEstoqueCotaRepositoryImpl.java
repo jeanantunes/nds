@@ -95,19 +95,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	       
 	       .append("  join mec.tipoMovimento tipoMovimento ")
 	       
-	       .append("  join mec.lancamento lancamento ")
-	       
-	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-	       
-	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	       .append("  where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
 	    
 	       .append("  and mec.status = :statusAprovacao ")
 	    
 	       .append("  and c1.id = ").append(paramIdCota)
 	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
-	       
-	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota >= lancamento.dataLancamentoDistribuidor)")
+	       .append("  and mec.data <= :data")
 	       
 	       .append("  and ( ")
 	    
@@ -124,10 +118,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		   .append("                           join cc.cota cota ")
 				
 		   .append("                           join c.produtoEdicao pe ")
-				
+		   
+		   .append("                           left join cc.conferenciasEncalhe conferencia ")
+		   
+		   .append("                           left join conferencia.controleConferenciaEncalheCota as controleConferencia with controleConferencia.status = :statusOperacaoConferencia ")
+			
 		   .append("                           where c.dataRecolhimento = :data ")
 				
 		   .append("                           and cota.id = c1.id ")
+		   
+		   .append("                           and controleConferencia is null ")
 				
 		   .append("                       ) ")
 				
@@ -158,9 +158,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	       
 	       .append("  join mec.cota c1 ")
 	       
-	       .append("  join mec.tipoMovimento tipoMovimento ")
-	       
-	       .append("  join mec.lancamento lancamento ")
+	       .append("  join mec.tipoMovimento tipoMovimento ")	 
 	       
 	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
 	       
@@ -170,9 +168,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    
 	       .append("  and c1.id = ").append(paramIdCota)
 	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       .append("  and mec.data <= :data")
 	       
-	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < mec.data)");
 
 		return hql.toString();
 	}
@@ -195,8 +193,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	       
 	       .append("  join mec.tipoMovimento tipoMovimento ")
 	       
-	       .append("  join mec.lancamento lancamento ")
-	       
 	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
 	       
 	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstorno) ")
@@ -205,9 +201,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    
 	       .append("  and c2.id = ").append(paramIdCota)
 	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       .append("  and mec.data <= :data")
 	       
-	       .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
+	       .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < mec.data)");
 	       
 		return hql.toString();
 	}
@@ -333,8 +329,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
 	    
 	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
-	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+	    query.setParameter("statusOperacaoConferencia", StatusOperacao.CONCLUIDO);
 	    query.setParameter("idCota", idCota);
 	    query.setParameter("data", dataLancamento);
 	    
