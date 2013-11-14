@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AcumuloDividasRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
