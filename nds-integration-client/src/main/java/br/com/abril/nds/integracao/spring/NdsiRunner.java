@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.repository.DistribuidorRepository;
 
 
 public abstract class NdsiRunner {
@@ -36,14 +37,12 @@ public abstract class NdsiRunner {
 		if (args.length > 0) {
 			username = args[1];
 		}
-		
-		String codigoDistribuidor = null;
-		
-		if (args.length > 1) {
-			codigoDistribuidor = args[2];
-		}
 
-		getRouteTemplate(args[0]).execute(username, codigoDistribuidor);
+		getRouteTemplate(args[0]).execute(
+			username, getDistribuidorRepository().codigoDistribuidorDinap());
+		
+		getRouteTemplate(args[0]).execute(
+			username, getDistribuidorRepository().codigoDistribuidorFC());
 	}
 	
 	private static RouteTemplate getRouteTemplate(String className) {
@@ -53,4 +52,14 @@ public abstract class NdsiRunner {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	private static DistribuidorRepository getDistribuidorRepository() {
+		
+		try {
+			return (DistribuidorRepository) applicationContext.getBean(DistribuidorRepository.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }
