@@ -523,29 +523,6 @@ public class BoletoServiceImpl implements BoletoService {
 		return this.acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
 	}
 
-	private BigInteger obterNumeroDeAcumulosDivida(Divida divida) {
-
-		BigInteger numeroAcumulos = BigInteger.ONE;
-		
-		List<MovimentoFinanceiroCota> movimentos = divida.getConsolidado().getMovimentos();
-		
-		for (MovimentoFinanceiroCota movimento : movimentos) {
-			
-			if (GrupoMovimentoFinaceiro.PENDENTE.equals(((TipoMovimentoFinanceiro) movimento.getTipoMovimento()).getGrupoMovimentoFinaceiro())) {
-
-				AcumuloDivida acumuloDivida = this.acumuloDividasService.obterAcumuloDividaPorMovimentoPendente(movimento.getId());
-
-				if (acumuloDivida != null) {
-					
-					numeroAcumulos = acumuloDivida.getNumeroAcumulo().add(BigInteger.ONE);
-					
-					break;
-				}
-			}			
-		}
-		
-		return numeroAcumulos;
-	}
 
 	private void validarAcumuloDivida(Divida divida, Integer numeroMaximoAcumulosDistribuidor) {
 
