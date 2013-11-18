@@ -395,6 +395,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 			}
 		});	
+		
+		
 	 },	
 	
 	/*
@@ -1898,10 +1900,77 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	irParaContigencia: function(){
-		$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
-		$(".tipsy").hide();
-		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
-				contextPath + "/devolucao/conferenciaEncalhe/contingencia" + "?random=" + Math.random());
+		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarConferenciaEncalheCotaStatus", null,
+				
+				function(result){
+					
+					if(result.CONFERENCIA_ENCALHE_COTA_STATUS == 'INICIADA_NAO_SALVA') {
+				
+						ConferenciaEncalhe.modalAberta = true;
+						
+						$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog({
+							resizable : false,
+							height : 180,
+							width : 460,
+							modal : true,
+							buttons : {
+								"Sim" : function() {
+									
+									window.event.preventDefault();
+									
+									ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+									
+									$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
+									
+									$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+									
+									$(".tipsy").hide();
+									
+									$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
+											contextPath + "/devolucao/conferenciaEncalhe/contingencia" + "?random=" + Math.random());
+									
+									ConferenciaEncalhe.modalAberta = false;
+									
+									ConferenciaEncalhe.numeroCotaEditavel(true);
+									
+								},
+								"Não" : function() {
+									
+									window.event.preventDefault();
+									
+									$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
+									
+									ConferenciaEncalhe.modalAberta = false;
+									
+									ConferenciaEncalhe.numeroCotaEditavel(false);
+									
+								}
+							},
+							
+							form: $("#dialog-conferencia-nao-salva", this.workspace).parents("form")
+						});
+						
+						
+					} else {
+						
+						ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+						
+						$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+						
+						$(".tipsy").hide();
+						
+						$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
+								contextPath + "/devolucao/conferenciaEncalhe/contingencia" + "?random=" + Math.random());
+
+						ConferenciaEncalhe.modalAberta = false;
+						
+						ConferenciaEncalhe.numeroCotaEditavel(true);
+
+						
+					}
+				});	
+	
 	},
 	
 
