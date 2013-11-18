@@ -34,7 +34,7 @@ public abstract class NdsiRunner {
 		
 		String username = USER_NAME;
 		
-		if (args.length > 0) {
+		if (args.length > 1) {
 			username = args[1];
 		}
 
