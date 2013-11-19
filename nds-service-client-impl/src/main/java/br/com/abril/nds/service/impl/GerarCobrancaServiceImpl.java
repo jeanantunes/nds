@@ -932,7 +932,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					cobranca.getDataEmissao(), 
 					banco!=null?banco.getNumeroBanco():"0",
 					fornecedor != null ? fornecedor.getId() : null,
-					movimentos.get(0).getId(),
+					novaDivida.getId(),
 					banco!=null?banco.getAgencia():0,
 					banco!=null?banco.getConta():0,
 					banco!=null?banco.getCarteira():0);
