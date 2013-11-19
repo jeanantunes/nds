@@ -226,6 +226,7 @@ var analiseParcialController = $.extend(true, {
         var totalJuramento = 0,
             totalUltimoReparte = 0,
             totalReparteSugerido = 0,
+            totalReparteEstudoOrigem = 0,
             totais = [];
 
         for (var i=1; i<7; i++) {
@@ -240,6 +241,7 @@ var analiseParcialController = $.extend(true, {
             totalJuramento += $tr.find('td[abbr="juramento"] div').text() * 1;
             totalUltimoReparte += $tr.find('td[abbr="ultimoReparte"] div').text() * 1;
             totalReparteSugerido += $tr.find('td[abbr="reparteSugerido"] input').val() * 1;
+            totalReparteEstudoOrigem += $tr.find('td[abbr="reparteEstudoOrigemCopia"] div').text() * 1;
 
             for (var i=1; i<7; i++) {
                 totais[i].reparte += $tr.find('td[abbr="reparte' + i + '"] div').text() * 1;
@@ -251,6 +253,7 @@ var analiseParcialController = $.extend(true, {
         $('#total_juramento').text(totalJuramento);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
+        $('#total_reparte_origem').text(totalReparteEstudoOrigem);
         $('#total_de_cotas').text(totalCotas);
 
         for (var j = 1; j < 7; j++) {
@@ -290,7 +293,7 @@ var analiseParcialController = $.extend(true, {
 
         $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
             var tr = $(this);
-            var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"],[abbr="juramento"]');
+            var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"],[abbr="juramento"],[abbr="reparteEstudoOrigemCopia"]');
             if (td1.index() > 7) {
                 var td2 = tr.find('[abbr="npdv"]');
             } else {
@@ -301,7 +304,7 @@ var analiseParcialController = $.extend(true, {
             //reparte/venda
             var last = tr.find('[abbr^="venda"]:last');
             var tempReparte;
-            tr.find('[abbr^="reparte"],[abbr^="venda"]').not(last).not(last.prev()).not('[abbr="reparteSugerido"]').each(function(){
+            tr.find('[abbr^="reparte"],[abbr^="venda"]').not(last).not(last.prev()).not('[abbr="reparteSugerido"],[abbr="reparteEstudoOrigemCopia"]').each(function(){
                 var $this = $(this);
                 if ($this.attr('abbr').indexOf('reparte') > -1) {
                     tempReparte = $this;
@@ -314,7 +317,7 @@ var analiseParcialController = $.extend(true, {
 
         $('#baseEstudoGridParcial tr').each(function() {
             var tr = $(this);
-            var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"],[abbr="juramento"]');
+            var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"],[abbr="juramento"],[abbr="reparteEstudoOrigemCopia"]');
             if (td1.index() > 7) {
                 var td2 = tr.find('[abbr="npdv"]');
             } else {
@@ -325,7 +328,7 @@ var analiseParcialController = $.extend(true, {
             //reparte/venda
             var last = tr.find('[abbr^="venda"]:last');
             var tempReparte;
-            tr.find('[abbr^="reparte"],[abbr^="venda"]').not(last).not(last.prev()).not('[abbr="reparteSugerido"]').each(function(){
+            tr.find('[abbr^="reparte"],[abbr^="venda"]').not(last).not(last.prev()).not('[abbr="reparteSugerido"],[abbr="reparteEstudoOrigemCopia"]').each(function(){
                 var $this = $(this);
                 if ($this.attr('abbr').indexOf('reparte') > -1) {
                     tempReparte = $this;
@@ -338,7 +341,7 @@ var analiseParcialController = $.extend(true, {
 
         $('.tableTotais tr').each(function() {
             var tr = $(this);
-            var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda,#total_juramento');
+            var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda,#total_juramento,#total_reparte_origem');
             if (td1.index() > 7) {
                 var td2 = tr.find('#total_de_cotas');
             } else {
@@ -349,7 +352,7 @@ var analiseParcialController = $.extend(true, {
             //reparte/venda
             var last = tr.find('[id^="total_venda"]:last');
             var tempReparte;
-            tr.find('[id^="total_reparte"],[id^="total_venda"]').not(last).not(last.prev()).not('#total_reparte_sugerido').each(function(){
+            tr.find('[id^="total_reparte"],[id^="total_venda"]').not(last).not(last.prev()).not('#total_reparte_sugerido,#total_reparte_origem').each(function(){
                 var $this = $(this);
                 if ($this.attr('id').indexOf('reparte') > -1) {
                     tempReparte = $this;
@@ -380,7 +383,7 @@ var analiseParcialController = $.extend(true, {
                 $header.prepend($('<tr>').append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
                     .append('<div style="text-align: right;">Edições Base:</div>')));
 
-                if (colSpanEdicoesBase === 7) {
+                if (colSpanEdicoesBase === 7 || colSpanEdicoesBase === 8) {
                     for (var i=0; i<6; i++) {
                         var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
                         $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(edicao.edicao)));
@@ -630,8 +633,8 @@ var analiseParcialController = $.extend(true, {
         }
     },
 
-    modeloNormal : function() {
-        return [
+    modeloNormal : function (estudoOrigem) {
+        var modelo = [
             {display: 'Cota',       name: 'cota',               width: 35, sortable: true, align: 'right'},
 //            {display: 'Cota Nova',  name: 'cotaNova',           width: 1,  hide: true},
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
@@ -639,7 +642,12 @@ var analiseParcialController = $.extend(true, {
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
             {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
-            {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
+            {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'}];
+
+        if (estudoOrigem) {
+            modelo = modelo.concat([{display: 'Est. Orig.', name: 'reparteEstudoOrigemCopia', width: 50, sortable: true, align: 'right'}]);
+        }
+        modelo = modelo.concat([
 //            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  hide: true},
 //          {display: 'Média. VDA',  name: 'mediaVenda',         width: 60, sortable: true, align: 'right'},
             {display: 'REP',        name: 'reparte1',           width: 30, sortable: true, align: 'right'},
@@ -653,7 +661,9 @@ var analiseParcialController = $.extend(true, {
             {display: 'REP',        name: 'reparte5',           width: 30, sortable: true, align: 'right'},
             {display: 'VDA',        name: 'venda5',             width: 30, sortable: true, align: 'right'},
             {display: 'REP',        name: 'reparte6',           width: 30, sortable: true, align: 'right'},
-            {display: 'VDA',        name: 'venda6',             width: 30, sortable: true, align: 'right'}];
+            {display: 'VDA',        name: 'venda6',             width: 30, sortable: true, align: 'right'}]);
+
+        return modelo;
     },
     
     modeloParcial : function() {
@@ -917,27 +927,28 @@ var analiseParcialController = $.extend(true, {
 
         analiseParcialController.tipoExibicao = _tipoExibicao;
 
+        var estudoOrigem = $('#estudoOrigem').val();
         var parameters = [];
         parameters.push({name: 'id', value: _id});
         parameters.push({name: 'faixaDe', value: _faixaDe});
         parameters.push({name: 'faixaAte', value: _faixaAte});
         parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
-        parameters.push({name: 'estudoOrigem', value: $('#estudoOrigem').val()});
+        parameters.push({name: 'estudoOrigem', value: estudoOrigem});
         parameters.push({name: 'dataLancamentoEdicao', value: $('#dataLancamentoEdicao').val()});
         
         if(typeof(histogramaPosEstudo_cotasRepMenorVenda)!="undefined"){
         	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
         }
 
-        var modelo = _tipoExibicao == 'NORMAL' ? analiseParcialController.modeloNormal() : analiseParcialController.modeloParcial();
+        var modelo = _tipoExibicao == 'NORMAL' ? analiseParcialController.modeloNormal(estudoOrigem) : analiseParcialController.modeloParcial();
         $('#baseEstudoGridParcial').flexigrid({
             preProcess : analiseParcialController.preProcessGrid,
             url : analiseParcialController.path + '/distribuicao/analise/parcial/init',
             params: parameters,
             dataType : 'json',
             colModel : modelo,
-            width: 980,
+            width: estudoOrigem?1035:980,
             height: 200,
             colMove: false,
             showToggleBtn: false,

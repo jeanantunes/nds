@@ -102,7 +102,10 @@ public class Estudo implements Serializable {
 	
 	@ManyToOne (optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "USUARIO_ID")
-	private Usuario usuario; 
+	private Usuario usuario;
+
+    @Column(name = "ESTUDO_ORIGEM_COPIA")
+    private Long idEstudoOrigemCopia; //Estudo usado para gerar copia proporcional
 	
 	public Long getId() {
 		return id;
@@ -242,4 +245,11 @@ public class Estudo implements Serializable {
 		this.sobra = sobra;
 	}
 
+    public Long getIdEstudoOrigemCopia() {
+        return idEstudoOrigemCopia;
+    }
+
+    public void setIdEstudoOrigemCopia(Long idEstudoOrigemCopia) {
+        this.idEstudoOrigemCopia = idEstudoOrigemCopia;
+    }
 }

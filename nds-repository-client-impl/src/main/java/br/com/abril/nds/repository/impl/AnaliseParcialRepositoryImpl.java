@@ -45,6 +45,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
         sql.append("       pdv_qtd.quantidade npdv, ");
         sql.append("       ec.qtde_efetiva reparteEstudo, ");
+        sql.append("       (select coalesce(qtde_efetiva, 0) ");
+        sql.append("          from estudo_cota ");
+        sql.append("         where estudo_id = e.estudo_origem_copia ");
+        sql.append("           and cota_id = ec.cota_id) reparteEstudoOrigemCopia, ");
         sql.append("       coalesce(ec.reparte,0) reparteSugerido, ");
         sql.append("       ec.classificacao leg, ");
         sql.append("       ec.cota_nova cotaNova, ");

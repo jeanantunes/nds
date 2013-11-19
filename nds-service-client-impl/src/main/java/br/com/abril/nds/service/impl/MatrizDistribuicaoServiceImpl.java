@@ -521,6 +521,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCota>());
 	estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
 	estudoCopia.setLancamentoID(lancamento.getId());
+        estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
 
 	Long id = estudoRepository.adicionar(estudoCopia);
 	estudoCopia = estudoRepository.buscarPorId(id);
