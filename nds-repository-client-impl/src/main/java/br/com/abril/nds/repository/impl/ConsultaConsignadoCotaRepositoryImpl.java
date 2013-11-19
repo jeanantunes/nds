@@ -31,6 +31,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 
@@ -120,6 +121,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
 		parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
+		
+		parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		if(filtro.getPaginacao()!=null && limitar){
 			
@@ -164,7 +167,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
 		
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID ");
 		
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		
@@ -187,6 +190,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
+		
+		sql.append(" AND LCTO.STATUS <> :statusRecolhido ");
 		
 		if(filtro.getIdCota() != null ) { 
 			
@@ -287,6 +292,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		sql.append(" WHERE (MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL)  ");
 		sql.append(" AND (TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno)) ");
+		sql.append(" AND LCTO.STATUS <> :statusRecolhido ");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -376,6 +382,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA.name());
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
+		
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
@@ -487,6 +495,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
         parameters.put("tipoCotaAVista", TipoCota.A_VISTA.name());
         
         parameters.put("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO.name());
+        
+        parameters.put("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {
@@ -531,6 +541,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 	
 		hql.append(" FROM MovimentoEstoqueCota movimento ");
+		hql.append(" LEFT JOIN movimento.lancamento as lancamento ");
 		hql.append(" JOIN movimento.cota as cota ");
 		hql.append(" JOIN movimento.tipoMovimento as tipoMovimento ");
 		hql.append(" JOIN movimento.produtoEdicao as pe ");
@@ -541,6 +552,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
+		
+		hql.append(" AND lancamento.status <> :statusRecolhido ");
 		
 		hql.append(" AND (");
 		
@@ -661,6 +674,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoCotaAVista", TipoCota.A_VISTA);
 		
 		query.setParameter("statusConferenciaEncalhe", StatusOperacao.CONCLUIDO);
+		
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
 		
 		if(filtro.getIdCota() != null ) { 
 			query.setParameter("idCota", filtro.getIdCota());
