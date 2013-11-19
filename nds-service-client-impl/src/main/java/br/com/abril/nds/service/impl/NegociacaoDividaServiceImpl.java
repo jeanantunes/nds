@@ -431,20 +431,21 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 					cobranca.setValor(valorTotalParcela);
 					cobranca.setEncargos(parcelaNegociacao.getEncargos());
 
+					this.dividaRepository.adicionar(divida);
+					
 					cobranca.setNossoNumero(
 							Util.gerarNossoNumero(
 									numeroCota, 
 									dataAtual, 
 									banco.getNumeroBanco(),
 									null, 
-									parcelaNegociacao.getMovimentoFinanceiroCota().getId(),
+									divida.getId(),
 									banco.getAgencia(),
 									banco.getConta(),
 									banco.getCarteira()
 							)
 					);
 					
-					this.dividaRepository.adicionar(divida);
 					this.cobrancaRepository.adicionar(cobranca);
 				}
 			}
