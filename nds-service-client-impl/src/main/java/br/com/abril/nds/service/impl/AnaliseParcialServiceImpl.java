@@ -104,14 +104,14 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             	
             	if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {
             		edicaoDoEstudoOrigem = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoOrigem(),null);
-            		if(edicaoDoEstudoOrigem.size()==6){
-            			edicaoDoEstudoOrigem.remove(edicaoDoEstudoOrigem.size()-1);
-            		}
+//            		if(edicaoDoEstudoOrigem.size()==6){
+//            			edicaoDoEstudoOrigem.remove(edicaoDoEstudoOrigem.size()-1);
+//            		}
             	}
             	if(edicaoDoEstudoOrigem!=null && edicaoDoEstudoOrigem.size()>0){
             		List<EdicoesProdutosDTO> listConcat = new ArrayList<EdicoesProdutosDTO>();
             		listConcat.addAll(edicaoDoEstudoOrigem);
-            		listConcat.addAll(edicoesBaseList);
+//            		listConcat.addAll(edicoesBaseList);
             		queryDTO.setEdicoesBase(listConcat);
             	}else{
             		queryDTO.setEdicoesBase(edicoesBaseList);
