@@ -47,6 +47,9 @@ public class FechamentoDiarioConsolidadoReparte implements Serializable{
 	@Column(name = "VALOR_DIFERENCA", precision=18, scale=4)
 	private BigDecimal valorDiferenca;
 	
+	@Column(name="VALOR_A_DISTRIBUIR",  precision=18, scale=4)
+	private BigDecimal valorADistribuir;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "FECHAMENTO_DIARIO_ID")
 	private FechamentoDiario fechamentoDiario;
@@ -135,6 +138,12 @@ public class FechamentoDiarioConsolidadoReparte implements Serializable{
 	public void setFechamentoDiario(FechamentoDiario fechamentoDiario) {
 		this.fechamentoDiario = fechamentoDiario;
 	}
-	
-	
+
+	public BigDecimal getValorADistribuir() {
+		return valorADistribuir;
+	}
+
+	public void setValorADistribuir(BigDecimal valorADistribuir) {
+		this.valorADistribuir = valorADistribuir;
+	}
 }

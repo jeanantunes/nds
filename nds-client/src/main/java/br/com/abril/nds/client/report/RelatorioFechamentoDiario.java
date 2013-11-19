@@ -35,6 +35,11 @@ public class RelatorioFechamentoDiario {
      * Nome do parâmetro de data de fechamento
      */
     private static final String PARAMETRO_DATA_FECHAMENTO = "dataFechamento";
+    
+    /**
+     * Nome do parâmetro de logo do relatorio
+     */
+    private static final String PARAMETRO_LOGO_RELATORIO = "logoRelatorio";
 
     /**
      * Nome do parâmetro do DTO de fechamento diário
@@ -167,6 +172,7 @@ public class RelatorioFechamentoDiario {
         protected Map<String, Object> getDefaultParameters(FechamentoDiarioDTO dto) {
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put(PARAMETRO_DATA_FECHAMENTO, dto.getDataFechamento());
+            parameters.put(PARAMETRO_LOGO_RELATORIO, dto.getImagemLogoDistribuidor());
             return parameters;
         }
              

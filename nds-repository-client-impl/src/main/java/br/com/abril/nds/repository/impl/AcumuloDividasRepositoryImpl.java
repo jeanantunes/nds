@@ -92,6 +92,8 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 
 		query.setParameter("idConsolidadoFinanceiroCota", idConsolidadoFinanceiroCota);
 		
+		query.setMaxResults(1);
+		
 		return (BigInteger) query.uniqueResult();
 	}
 	

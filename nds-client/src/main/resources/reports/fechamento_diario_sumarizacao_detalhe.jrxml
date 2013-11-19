@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao_detalhe" pageWidth="800" pageHeight="495" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fechamento_diario_sumarizacao_detalhe" pageWidth="800" pageHeight="495" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="6be43037-702c-47e6-b961-dbc2c6dd6e76">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="207"/>
+	<property name="ireport.y" value="96"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\workspace\\NDS\\nds-client\\src\\main\\resources\\reports\\"]]></defaultValueExpression>
 	</parameter>
@@ -59,10 +59,14 @@
 	<field name="resumoConsignado.resumoAVista.valorEntradas" class="java.math.BigDecimal"/>
 	<field name="resumoConsignado.resumoAVista.valorSaidas" class="java.math.BigDecimal"/>
 	<field name="resumoConsignado.resumoAVista.saldoAtual" class="java.math.BigDecimal"/>
+	<field name="resumoCotas.quantidadeAusentesExpedicaoReparte" class="java.lang.Long"/>
+	<field name="resumoCotas.quantidadeAusentesRecolhimentoEncalhe" class="java.lang.Long"/>
+	<field name="resumoCotas.quantidadeNovas" class="java.lang.Long"/>
+	<field name="resumoCotas.quantidadeInativas" class="java.lang.Long"/>
 	<detail>
 		<band height="495" splitType="Stretch">
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="3" y="161" width="790" height="66"/>
+				<reportElement uuid="e127aa35-4774-4866-9a09-bb37ac143b2d" stretchType="RelativeToBandHeight" x="3" y="161" width="790" height="66"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -71,7 +75,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<frame>
-					<reportElement mode="Opaque" x="0" y="0" width="395" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<reportElement uuid="0787d9b8-d14f-4e08-9052-c216f1ba3b37" mode="Opaque" x="0" y="0" width="395" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
 					<box>
 						<pen lineColor="#999999"/>
 						<topPen lineColor="#999999"/>
@@ -81,36 +85,36 @@
 					</box>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="394" y="0" width="396" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<reportElement uuid="69d05e44-7b36-4490-848d-dff3923eb7dd" mode="Opaque" x="394" y="0" width="396" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
 					<box>
 						<leftPen lineWidth="0.0" lineColor="#999999"/>
 					</box>
 				</frame>
 				<staticText>
-					<reportElement mode="Transparent" x="394" y="0" width="394" height="20" backcolor="#FFFFFF"/>
+					<reportElement uuid="b579a321-4ce5-4aaa-8ce3-aec5efd22678" mode="Transparent" x="394" y="0" width="394" height="20" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
 					<text><![CDATA[DÍVIDAS A VENCER]]></text>
 				</staticText>
 				<subreport isUsingCache="false">
-					<reportElement stretchType="RelativeToBandHeight" x="400" y="27" width="385" height="33"/>
+					<reportElement uuid="275418a1-24b7-44b9-bfcc-43c296339239" stretchType="RelativeToBandHeight" x="400" y="27" width="385" height="33"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{dividasVencer})]]></dataSourceExpression>
-					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
+					<subreportExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
 				</subreport>
 				<subreport isUsingCache="false">
-					<reportElement stretchType="RelativeToBandHeight" x="6" y="26" width="385" height="33"/>
+					<reportElement uuid="c011ae50-b8d4-4e19-a8fb-8c22952eb51a" stretchType="RelativeToBandHeight" x="6" y="26" width="385" height="33"/>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{dividasReceber})]]></dataSourceExpression>
-					<subreportExpression class="java.lang.String"><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
+					<subreportExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/fechamento_diario_sumarizacao_dividas_receber_vencer.jasper").toURI().getPath()]]></subreportExpression>
 				</subreport>
 				<line>
-					<reportElement stretchType="RelativeToBandHeight" x="394" y="0" width="1" height="66"/>
+					<reportElement uuid="bae6d769-9c85-4fe9-9385-eb54d143c05f" stretchType="RelativeToBandHeight" x="394" y="0" width="1" height="66"/>
 					<graphicElement>
 						<pen lineWidth="0.25" lineColor="#999999"/>
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement mode="Transparent" x="0" y="0" width="395" height="20" backcolor="#FFFFFF"/>
+					<reportElement uuid="846dbcd3-0670-4e2c-ad23-d254feefc2bf" mode="Transparent" x="0" y="0" width="395" height="20" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
@@ -118,7 +122,7 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement x="3" y="6" width="790" height="150"/>
+				<reportElement uuid="00b4a031-ec1b-4a87-ad26-1db4421b838d" x="3" y="6" width="790" height="150"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -127,28 +131,28 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<staticText>
-					<reportElement mode="Opaque" x="0" y="0" width="264" height="20" backcolor="#E3E3E3"/>
+					<reportElement uuid="8f0dc6e0-e36a-48c9-9837-a7f740b2803e" mode="Opaque" x="0" y="0" width="264" height="20" backcolor="#E3E3E3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
 					<text><![CDATA[REPARTE]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="526" y="0" width="264" height="20" backcolor="#E3E3E3"/>
+					<reportElement uuid="7db9c284-bfd8-439c-963b-157518ca7afd" mode="Opaque" x="526" y="0" width="264" height="20" backcolor="#E3E3E3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
 					<text><![CDATA[SUPLEMENTAR]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="264" y="0" width="262" height="20" backcolor="#E3E3E3"/>
+					<reportElement uuid="24265dad-d0ae-410d-9142-8d8adc5710e5" mode="Opaque" x="264" y="0" width="262" height="20" backcolor="#E3E3E3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
 					<text><![CDATA[ENCALHE]]></text>
 				</staticText>
 				<frame>
-					<reportElement x="527" y="0" width="262" height="150"/>
+					<reportElement uuid="b7c82e16-4a0e-4993-a622-497ccd36f8f6" x="527" y="0" width="262" height="150"/>
 					<box>
 						<pen lineWidth="0.25" lineColor="#999999"/>
 						<topPen lineWidth="0.0" lineColor="#999999"/>
@@ -157,7 +161,7 @@
 						<rightPen lineWidth="0.0" lineColor="#999999"/>
 					</box>
 					<textField pattern="#,##0.00">
-						<reportElement x="124" y="72" width="119" height="15"/>
+						<reportElement uuid="06deb0cf-dbe6-4c69-8593-7b803e8e4843" x="124" y="72" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -168,10 +172,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.saldo}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoSuplementar.saldo}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="25" y="43" width="100" height="15"/>
+						<reportElement uuid="a0d91ab7-9708-460d-821a-8fb37b1da354" x="25" y="43" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -185,7 +189,7 @@
 						<text><![CDATA[Transferências]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="25" y="29" width="100" height="15"/>
+						<reportElement uuid="eef26304-0960-4df2-95cb-5c969c357506" x="25" y="29" width="100" height="15"/>
 						<box>
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -199,7 +203,7 @@
 						<text><![CDATA[Estoque Lógico]]></text>
 					</staticText>
 					<textField pattern="#,##0.00">
-						<reportElement x="124" y="56" width="119" height="15"/>
+						<reportElement uuid="a88edeef-d861-468c-ab3c-c2578b917c17" x="124" y="56" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -210,10 +214,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.totalVenda}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoSuplementar.totalVenda}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="25" y="56" width="100" height="15"/>
+						<reportElement uuid="88747f45-caf3-452d-8969-c20c19959d62" x="25" y="56" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -227,7 +231,7 @@
 						<text><![CDATA[Vendas]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="25" y="72" width="100" height="15"/>
+						<reportElement uuid="aca4d7c6-56ce-496d-a91d-83e9ed0a4f78" x="25" y="72" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -241,7 +245,7 @@
 						<text><![CDATA[Saldo]]></text>
 					</staticText>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="124" y="29" width="119" height="15"/>
+						<reportElement uuid="c5d3ed1b-a9a2-48a5-9b32-66337ce1ef29" x="124" y="29" width="119" height="15"/>
 						<box>
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -252,10 +256,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.totalEstoqueLogico}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoSuplementar.totalEstoqueLogico}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00">
-						<reportElement x="124" y="43" width="119" height="15"/>
+						<reportElement uuid="a2bfb34c-d462-4318-a468-67763a7d5001" x="124" y="43" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -266,13 +270,13 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoSuplementar.totalTransferencia}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoSuplementar.totalTransferencia}]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
-					<reportElement x="264" y="0" width="262" height="150"/>
+					<reportElement uuid="d167385f-e8d8-4ccf-bc37-27cecc8df128" x="264" y="0" width="262" height="150"/>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="112" width="119" height="15"/>
+						<reportElement uuid="708efa12-5589-494b-bb23-bcd91e9a0f86" x="116" y="112" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -283,10 +287,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.saldo}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.saldo}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="57" width="119" height="15"/>
+						<reportElement uuid="bb959cbf-0291-43a3-bde3-6490a1a7cecf" x="116" y="57" width="119" height="15"/>
 						<box>
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -297,10 +301,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalJuramentado}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.totalJuramentado}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="84" width="119" height="15"/>
+						<reportElement uuid="992ed578-ed27-4e5d-b87c-1688029cef5c" x="116" y="84" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -311,10 +315,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalSobras}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.totalSobras}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="99" width="119" height="15"/>
+						<reportElement uuid="58ce031e-a4a1-4376-9a7c-f3111444cd4e" x="116" y="99" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -325,10 +329,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalFaltas}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.totalFaltas}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="17" y="112" width="100" height="15"/>
+						<reportElement uuid="5c521848-0268-40d0-aa11-bb2e01d55d06" x="17" y="112" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -342,7 +346,7 @@
 						<text><![CDATA[Saldo]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="17" y="28" width="100" height="15"/>
+						<reportElement uuid="5e827023-7eb3-4ffa-85f6-cbd3ef10bc98" x="17" y="28" width="100" height="15"/>
 						<box>
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -356,7 +360,7 @@
 						<text><![CDATA[Lógico]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="17" y="84" width="100" height="15"/>
+						<reportElement uuid="8c706064-6e92-4b4d-a160-43f852246151" x="17" y="84" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -370,7 +374,7 @@
 						<text><![CDATA[Sobras em]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="17" y="99" width="100" height="15"/>
+						<reportElement uuid="44b07282-0b79-4911-9a01-b27689a9c334" x="17" y="99" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -384,7 +388,7 @@
 						<text><![CDATA[Faltas em]]></text>
 					</staticText>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="28" width="119" height="15"/>
+						<reportElement uuid="1cc82f72-19a9-4e46-87c4-54335a6d80a6" x="116" y="28" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -395,10 +399,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalLogico}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.totalLogico}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="17" y="57" width="100" height="15"/>
+						<reportElement uuid="fe0469fc-68e8-40f6-81e4-b2646f6b3364" x="17" y="57" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -412,7 +416,7 @@
 						<text><![CDATA[Juramentado]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="17" y="70" width="100" height="15"/>
+						<reportElement uuid="50076d2f-4681-4019-9e04-b4ef1c2e2791" x="17" y="70" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -426,7 +430,7 @@
 						<text><![CDATA[Venda]]></text>
 					</staticText>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="70" width="119" height="15"/>
+						<reportElement uuid="9b7adb34-6a96-4395-96ef-3c26c909aae1" x="116" y="70" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -437,10 +441,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.venda}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.venda}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement x="116" y="43" width="119" height="15"/>
+						<reportElement uuid="2cd02e57-af52-4d5d-8e54-6eabffdde942" x="116" y="43" width="119" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -451,10 +455,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEncalhe.totalFisico}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoEncalhe.totalFisico}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="17" y="43" width="100" height="15"/>
+						<reportElement uuid="726e1ec2-491b-4052-85c7-c6798118d9c2" x="17" y="43" width="100" height="15"/>
 						<box>
 							<pen lineWidth="0.25" lineStyle="Dashed"/>
 							<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -469,13 +473,13 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement x="2" y="0" width="262" height="150"/>
+					<reportElement uuid="4070da8a-a8c1-44b0-9470-3db1e067ecf5" x="2" y="0" width="262" height="150"/>
 					<box>
 						<rightPen lineWidth="0.25" lineColor="#999999"/>
 					</box>
 				</frame>
 				<staticText>
-					<reportElement x="14" y="29" width="100" height="15"/>
+					<reportElement uuid="fc3bd64c-c47b-40a9-a935-4bc7460a1f2d" x="14" y="29" width="100" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -489,7 +493,7 @@
 					<text><![CDATA[(+) Reparte R$]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="43" width="100" height="15"/>
+					<reportElement uuid="b0fa9d3e-cb0c-4ac0-9888-5827057023f2" x="14" y="43" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -503,7 +507,7 @@
 					<text><![CDATA[(+) Sobras]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="56" width="100" height="15"/>
+					<reportElement uuid="ef0387f7-b859-4dba-becc-837822b7f4a6" x="14" y="56" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -517,7 +521,7 @@
 					<text><![CDATA[(-) Faltas]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="71" width="100" height="15"/>
+					<reportElement uuid="dabab50f-6724-45cf-8f73-b8c8484e3ec8" x="14" y="71" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -531,7 +535,7 @@
 					<text><![CDATA[(+) Transferência]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="85" width="100" height="15"/>
+					<reportElement uuid="5fa4218b-547d-46bc-909d-b0b0390ebb7b" x="14" y="85" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -545,7 +549,7 @@
 					<text><![CDATA[(=) A Distribuir]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="98" width="100" height="15"/>
+					<reportElement uuid="94a78bab-a5b0-46f3-8764-1a45d55b50c9" x="14" y="98" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -559,7 +563,7 @@
 					<text><![CDATA[Distribuído]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="113" width="100" height="15"/>
+					<reportElement uuid="8d1c200f-e41f-4eb9-a3b0-87ba41df6426" x="14" y="113" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -573,7 +577,7 @@
 					<text><![CDATA[Sobra Dist.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="14" y="127" width="100" height="15"/>
+					<reportElement uuid="e8079068-5b50-4792-b2d9-c47c959c1f53" x="14" y="127" width="100" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -587,7 +591,7 @@
 					<text><![CDATA[Diferença]]></text>
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
-					<reportElement x="113" y="29" width="119" height="15"/>
+					<reportElement uuid="56397549-9bc6-4663-ac0b-8c8d755c36d3" x="113" y="29" width="119" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -598,10 +602,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalReparte}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalReparte}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="43" width="119" height="15"/>
+					<reportElement uuid="065b22f0-e265-44d7-a6c9-d57e6fb2cce3" x="113" y="43" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -612,10 +616,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalSobras}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalSobras}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="56" width="119" height="15"/>
+					<reportElement uuid="568d1da4-9357-4fec-a343-41a372112ed5" x="113" y="56" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -626,10 +630,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalFaltas}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalFaltas}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="71" width="119" height="15"/>
+					<reportElement uuid="9f825228-eb7f-47d5-bf57-31abeef14eb2" x="113" y="71" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -640,10 +644,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalTransferencias}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalTransferencias}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="85" width="119" height="15"/>
+					<reportElement uuid="41bbebc0-257f-40b4-ad49-ee71fd31d144" x="113" y="85" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -654,10 +658,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDistribuir}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalDistribuir}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="98" width="119" height="15"/>
+					<reportElement uuid="cc97f828-6b9e-45a7-a2a5-d360e3e7b83d" x="113" y="98" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -668,10 +672,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDistribuido}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalDistribuido}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="113" width="119" height="15"/>
+					<reportElement uuid="95a3c08c-c87f-424c-b604-2dc028a1310d" x="113" y="113" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -682,10 +686,10 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalSobraDistribuicao}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalSobraDistribuicao}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement x="113" y="127" width="119" height="15"/>
+					<reportElement uuid="ab008812-49ca-4349-81af-002d227d219b" x="113" y="127" width="119" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -696,11 +700,11 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{resumoReparte.totalDiferenca}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoReparte.totalDiferenca}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" x="3" y="232" width="790" height="66"/>
+				<reportElement uuid="a6481446-0b96-47b2-b754-3421ecb0b082" positionType="Float" x="3" y="232" width="790" height="66"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -709,7 +713,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<frame>
-					<reportElement mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<reportElement uuid="8f8478ab-6671-491d-b1fa-1f49019dad5f" mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
 					<box>
 						<pen lineColor="#999999"/>
 						<topPen lineColor="#999999"/>
@@ -719,16 +723,16 @@
 					</box>
 				</frame>
 				<staticText>
-					<reportElement mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
+					<reportElement uuid="c4430b08-2b15-4fd3-8835-f53b3e5aea43" mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
 					<text><![CDATA[COTAS]]></text>
 				</staticText>
 				<frame>
-					<reportElement mode="Opaque" x="4" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="2d1627d3-54b5-4def-8dec-2d25c5ca49bb" mode="Opaque" x="4" y="28" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="c73520c8-faf9-4c19-b296-90fecbec1607" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -736,9 +740,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="134" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="70e23136-2020-4d60-bad8-827ed6ba9331" mode="Opaque" x="134" y="28" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="37282135-391f-4bc4-9c8f-af3e3a639084" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -746,9 +750,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="264" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="03112a7a-c19f-4820-9703-d07f171129a3" mode="Opaque" x="264" y="28" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="6cd3f755-a15b-4ba8-b491-47567731f575" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -756,9 +760,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="394" y="28" width="130" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="cec443cb-29cc-4229-9be7-fbe6d793ee18" mode="Opaque" x="394" y="28" width="130" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="1" y="0" width="129" height="15"/>
+						<reportElement uuid="654c80c9-fd3c-45c6-9ddd-f32098ba8ac1" x="1" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -766,9 +770,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="525" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="e4832907-99a5-4d59-9ad7-c3d0d739a013" mode="Opaque" x="525" y="28" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="381533d1-32fe-429e-9435-aa421f1cf9f5" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -776,9 +780,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="655" y="28" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="ba7d6b09-d46b-4605-b06a-d88fbfbb567f" mode="Opaque" x="655" y="28" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="ef6a995c-5d7b-461f-96e0-adb1d63a7fb3" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -786,7 +790,7 @@
 					</staticText>
 				</frame>
 				<textField pattern="" isBlankWhenNull="true">
-					<reportElement x="4" y="43" width="129" height="15"/>
+					<reportElement uuid="b383bef5-0ca9-446c-968f-17bf0b4cfc7a" x="4" y="43" width="129" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -797,10 +801,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.quantidadeTotal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoCotas.quantidadeTotal}]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
-					<reportElement x="134" y="43" width="129" height="15"/>
+					<reportElement uuid="10103b0c-b75b-4035-b4a1-91107b7e4c6a" x="134" y="43" width="129" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -811,10 +815,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.quantidadeAtivas}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoCotas.quantidadeAtivas}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="264" y="43" width="129" height="15"/>
+					<reportElement uuid="ece94606-9bda-46e1-8b57-f07781e17b37" x="264" y="43" width="129" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -825,10 +829,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.ausentesExpedicaoReparte}.size()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoCotas.quantidadeAusentesExpedicaoReparte}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="394" y="43" width="129" height="15"/>
+					<reportElement uuid="47986fc8-5b50-49ac-9e5b-315771a2ddbc" x="394" y="43" width="129" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -839,10 +843,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.ausentesRecolhimentoEncalhe}.size()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoCotas.quantidadeAusentesRecolhimentoEncalhe}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="525" y="43" width="129" height="15"/>
+					<reportElement uuid="d9308853-2179-49a9-a3b8-4549e58227b1" x="525" y="43" width="129" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -853,10 +857,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.novas}.size()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoCotas.quantidadeNovas}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="655" y="43" width="129" height="15"/>
+					<reportElement uuid="8c025844-ee6b-4725-b379-81b10bfe73db" x="655" y="43" width="129" height="15"/>
 					<box>
 						<pen lineWidth="0.25" lineStyle="Dashed"/>
 						<topPen lineWidth="0.0" lineStyle="Dashed"/>
@@ -867,11 +871,11 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoCotas.inativas}.size()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoCotas.quantidadeInativas}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" x="3" y="304" width="790" height="95" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="ad52bc88-50dd-41ce-a4b0-f6ef0ecce561" positionType="Float" x="3" y="304" width="790" height="95" isRemoveLineWhenBlank="true"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -880,7 +884,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<frame>
-					<reportElement mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+					<reportElement uuid="e9a7aaa0-c79d-4ca9-a3dd-bce8669a22fd" mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
 					<box>
 						<pen lineColor="#999999"/>
 						<topPen lineColor="#999999"/>
@@ -890,16 +894,16 @@
 					</box>
 				</frame>
 				<staticText>
-					<reportElement mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
+					<reportElement uuid="411d5085-cdcf-4593-be7d-c14903f2ad77" mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial" isBold="true" isUnderline="false"/>
 					</textElement>
 					<text><![CDATA[ESTOQUE]]></text>
 				</staticText>
 				<frame>
-					<reportElement mode="Opaque" x="4" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="64aaad4f-89d2-4620-a83e-e704c99377b9" mode="Opaque" x="4" y="29" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="3a76b62f-8d44-4184-b923-0268c0a889bd" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -907,12 +911,12 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="134" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="59857dec-7683-48c7-8ca8-ebf3474f126d" mode="Opaque" x="134" y="29" width="129" height="15" backcolor="#E3E3E3"/>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="264" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="d4d90cbc-0f73-4ca0-9b93-296758c39be7" mode="Opaque" x="264" y="29" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="df94823a-1a1b-4158-9480-1415bb50f339" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -920,9 +924,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="394" y="29" width="130" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="18462587-20c9-4f51-a9b7-5e222d45d48c" mode="Opaque" x="394" y="29" width="130" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="0c619e6d-c835-424c-85a3-06a27424e9fb" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -930,9 +934,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="525" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="4c83bd05-83c3-4db6-b89f-73f7d0ccf7e8" mode="Opaque" x="525" y="29" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="0e4aa2f0-0f41-4660-889e-dfdfcc1a8d66" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -940,9 +944,9 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement mode="Opaque" x="655" y="29" width="129" height="15" backcolor="#E3E3E3"/>
+					<reportElement uuid="1ed00a2c-7f17-44f7-91d1-771fdbf29024" mode="Opaque" x="655" y="29" width="129" height="15" backcolor="#E3E3E3"/>
 					<staticText>
-						<reportElement x="0" y="0" width="129" height="15"/>
+						<reportElement uuid="b83ad334-0881-4d4b-b33b-d2348f0e9405" x="0" y="0" width="129" height="15"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial"/>
 						</textElement>
@@ -950,7 +954,7 @@
 					</staticText>
 				</frame>
 				<staticText>
-					<reportElement x="4" y="45" width="129" height="15"/>
+					<reportElement uuid="30484788-3fb5-4e51-b118-ba0721086346" x="4" y="45" width="129" height="15"/>
 					<box>
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
@@ -960,7 +964,7 @@
 					<text><![CDATA[Produto]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="134" y="45" width="129" height="15"/>
+					<reportElement uuid="955822ef-e292-4d16-8de9-e48e90f6e8a5" x="134" y="45" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -971,10 +975,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeLancamento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeLancamento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="264" y="45" width="129" height="15"/>
+					<reportElement uuid="818a4907-7ce8-4955-92ce-d32f01303d47" x="264" y="45" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -985,10 +989,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeJuramentado}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeJuramentado}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="394" y="45" width="129" height="15"/>
+					<reportElement uuid="23477a76-179e-4b5a-a293-a0ce010debfc" x="394" y="45" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -999,10 +1003,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeSuplementar}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeSuplementar}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="525" y="45" width="129" height="15"/>
+					<reportElement uuid="79186d3a-7d77-44a1-ab00-5d0cf954f0fb" x="525" y="45" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1013,10 +1017,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeRecolhimento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeRecolhimento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="655" y="45" width="129" height="15"/>
+					<reportElement uuid="66fbb107-888a-47d1-a761-37161a9dcd57" x="655" y="45" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1027,10 +1031,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeDanificados}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueProduto.quantidadeDanificados}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="4" y="59" width="129" height="15"/>
+					<reportElement uuid="90876f90-57d7-42c9-ab4b-20dcb90d38b4" x="4" y="59" width="129" height="15"/>
 					<box>
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
@@ -1040,7 +1044,7 @@
 					<text><![CDATA[Exemplar]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="4" y="73" width="129" height="15"/>
+					<reportElement uuid="1f2c9153-08ac-4482-a03f-b83b44596c77" x="4" y="73" width="129" height="15"/>
 					<box>
 						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 					</box>
@@ -1050,7 +1054,7 @@
 					<text><![CDATA[Valor R$]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="134" y="59" width="129" height="15"/>
+					<reportElement uuid="00cbfe33-de75-45ab-8c96-190c8e075119" x="134" y="59" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1061,10 +1065,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeLancamento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeLancamento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="394" y="59" width="129" height="15"/>
+					<reportElement uuid="93f6d611-fd37-4a80-b146-65a9eebb0d1d" x="394" y="59" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1075,10 +1079,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeSuplementar}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeSuplementar}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="264" y="59" width="129" height="15"/>
+					<reportElement uuid="2e9e5ed1-4de1-4fd8-8c7e-b957741fe7c9" x="264" y="59" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1089,10 +1093,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeJuramentado}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeJuramentado}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="525" y="59" width="129" height="15"/>
+					<reportElement uuid="5232c21d-7937-484b-abd4-7692bd98dd19" x="525" y="59" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1103,10 +1107,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeRecolhimento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeRecolhimento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="655" y="59" width="129" height="15"/>
+					<reportElement uuid="559cee8f-6d4a-44ff-b4b3-7297f00d9f1f" x="655" y="59" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1117,10 +1121,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeDanificados}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.resumoEstoqueExemplar.quantidadeDanificados}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="394" y="73" width="129" height="15"/>
+					<reportElement uuid="0882f844-4b78-478d-877a-13454bfd2453" x="394" y="73" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1131,10 +1135,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorSuplementar}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorSuplementar}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="525" y="73" width="129" height="15"/>
+					<reportElement uuid="a73a4c1c-4fd9-4672-9d88-1dc295bc73db" x="525" y="73" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1145,10 +1149,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorRecolhimento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorRecolhimento}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="264" y="73" width="129" height="15"/>
+					<reportElement uuid="9bed4c69-b762-4a7a-816a-2baf4741aef4" x="264" y="73" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1159,10 +1163,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorJuramentado}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorJuramentado}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="134" y="73" width="129" height="15"/>
+					<reportElement uuid="bc9da364-0d13-459f-849e-bbb4457af6a5" x="134" y="73" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1173,10 +1177,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorLancamento}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorLancamento}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement x="655" y="73" width="129" height="15"/>
+					<reportElement uuid="6f280e4c-571d-4f93-89d6-1478301a287c" x="655" y="73" width="129" height="15"/>
 					<box>
 						<pen lineStyle="Dashed"/>
 						<topPen lineStyle="Dashed"/>
@@ -1187,10 +1191,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 						<font fontName="Arial"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorDanificados}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{resumoEstoque.valorResumoEstoque.valorDanificados}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="134" y="29" width="129" height="15"/>
+					<reportElement uuid="18da89ab-a041-4d3c-b78f-2777d6c3d797" x="134" y="29" width="129" height="15"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial"/>
 					</textElement>
@@ -1198,7 +1202,7 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" x="3" y="406" width="790" height="85" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="2489a7b4-a25a-459e-ad91-c146e5998c2f" positionType="Float" x="3" y="406" width="790" height="85" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1208,7 +1212,7 @@
 				</box>
 				<elementGroup>
 					<frame>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
+						<reportElement uuid="1c619f5f-a3b1-4fb8-9b16-b2eefb4009dd" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="790" height="20" forecolor="#000000" backcolor="#E3E3E3"/>
 						<box>
 							<pen lineColor="#999999"/>
 							<topPen lineColor="#999999"/>
@@ -1218,19 +1222,19 @@
 						</box>
 					</frame>
 					<staticText>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
+						<reportElement uuid="f6cd1c80-9c00-4e13-a7ac-0c53e8eb1303" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="790" height="20" backcolor="#FFFFFF"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle">
 							<font fontName="Arial" isBold="true" isUnderline="false"/>
 						</textElement>
 						<text><![CDATA[CONSIGNADO]]></text>
 					</staticText>
 					<frame>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="9" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<reportElement uuid="f324a43a-1b71-4d01-a9ed-836846e43b57" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="9" y="30" width="154" height="15" backcolor="#E3E3E3"/>
 					</frame>
 					<frame>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="164" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<reportElement uuid="4e23f3c1-a9cd-4f8a-b0dc-9eedcf37beae" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="164" y="30" width="154" height="15" backcolor="#E3E3E3"/>
 						<staticText>
-							<reportElement x="0" y="0" width="154" height="15"/>
+							<reportElement uuid="8d777a89-9e96-400f-918d-f2520e72ea0d" x="0" y="0" width="154" height="15"/>
 							<box rightPadding="5"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Arial"/>
@@ -1239,9 +1243,9 @@
 						</staticText>
 					</frame>
 					<frame>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="319" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<reportElement uuid="c274ddac-616c-466c-8a7c-101cd0d10544" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="319" y="30" width="154" height="15" backcolor="#E3E3E3"/>
 						<staticText>
-							<reportElement x="0" y="0" width="154" height="15"/>
+							<reportElement uuid="1b7d0467-52b7-493e-94aa-23ae0ca4fe0b" x="0" y="0" width="154" height="15"/>
 							<box rightPadding="5"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Arial"/>
@@ -1250,9 +1254,9 @@
 						</staticText>
 					</frame>
 					<frame>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="474" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<reportElement uuid="447bd6dc-93f5-4334-bc75-f3d2c8a30aac" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="474" y="30" width="154" height="15" backcolor="#E3E3E3"/>
 						<staticText>
-							<reportElement x="0" y="0" width="154" height="15"/>
+							<reportElement uuid="88e7e080-355b-41bd-ad2a-3a5da574a430" x="0" y="0" width="154" height="15"/>
 							<box rightPadding="5"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="Arial"/>
@@ -1261,10 +1265,10 @@
 						</staticText>
 					</frame>
 					<frame>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="629" y="30" width="154" height="15" backcolor="#E3E3E3"/>
+						<reportElement uuid="ef13c69d-9af8-4f08-8c76-dd7b91ecdd0b" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="629" y="30" width="154" height="15" backcolor="#E3E3E3"/>
 					</frame>
 					<staticText>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="9" y="46" width="155" height="15"/>
+						<reportElement uuid="1d0d05b1-65a2-4dde-b8e4-62f7170a6c43" positionType="Float" stretchType="RelativeToTallestObject" x="9" y="46" width="155" height="15"/>
 						<box>
 							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						</box>
@@ -1274,7 +1278,7 @@
 						<text><![CDATA[Consignado]]></text>
 					</staticText>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="164" y="46" width="155" height="15"/>
+						<reportElement uuid="e42e4c3f-ccd8-4502-a2ba-64e0000988e4" positionType="Float" stretchType="RelativeToTallestObject" x="164" y="46" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1285,10 +1289,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAnterior}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAnterior}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="319" y="46" width="155" height="15"/>
+						<reportElement uuid="8011445f-12c1-47cd-87b5-65269328b33c" positionType="Float" stretchType="RelativeToTallestObject" x="319" y="46" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1299,10 +1303,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.valorEntradas}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoConsignado.valorEntradas}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="474" y="46" width="155" height="15"/>
+						<reportElement uuid="9ff5fa33-30df-4634-ad5b-6c445ba1e527" positionType="Float" stretchType="RelativeToTallestObject" x="474" y="46" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1313,10 +1317,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.valorSaidas}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoConsignado.valorSaidas}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="629" y="46" width="155" height="15"/>
+						<reportElement uuid="62f67dd4-15da-4f0a-8990-5a63c775ea1f" positionType="Float" stretchType="RelativeToTallestObject" x="629" y="46" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1327,10 +1331,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAtual}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoConsignado.saldoAtual}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="9" y="60" width="155" height="15"/>
+						<reportElement uuid="c854ddc5-92c7-4d8f-85b4-7c4d351b1734" positionType="Float" stretchType="RelativeToTallestObject" x="9" y="60" width="155" height="15"/>
 						<box>
 							<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
 						</box>
@@ -1340,7 +1344,7 @@
 						<text><![CDATA[A Vista]]></text>
 					</staticText>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="164" y="60" width="155" height="15"/>
+						<reportElement uuid="695df163-cd92-42f9-98db-645ce7701e2d" positionType="Float" stretchType="RelativeToTallestObject" x="164" y="60" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1351,10 +1355,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.saldoAnterior}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.saldoAnterior}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="474" y="60" width="155" height="15"/>
+						<reportElement uuid="371dff10-00aa-47d5-9240-d190eae5675b" positionType="Float" stretchType="RelativeToTallestObject" x="474" y="60" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1365,10 +1369,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.valorSaidas}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.valorSaidas}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" x="319" y="60" width="155" height="15"/>
+						<reportElement uuid="3b7c7a7f-85b9-4894-b365-8c4a572a8b66" positionType="Float" x="319" y="60" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1379,10 +1383,10 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.valorEntradas}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.valorEntradas}]]></textFieldExpression>
 					</textField>
 					<textField pattern="#,##0.00" isBlankWhenNull="true">
-						<reportElement positionType="Float" x="629" y="60" width="155" height="15"/>
+						<reportElement uuid="cc55258a-9171-48d2-908d-5dd648e97f47" positionType="Float" x="629" y="60" width="155" height="15"/>
 						<box rightPadding="5">
 							<pen lineStyle="Dashed"/>
 							<topPen lineStyle="Dashed"/>
@@ -1393,11 +1397,11 @@
 						<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 							<font fontName="Arial"/>
 						</textElement>
-						<textFieldExpression class="java.lang.String"><![CDATA[$F{resumoConsignado.resumoAVista.saldoAtual}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{resumoConsignado.resumoAVista.saldoAtual}]]></textFieldExpression>
 					</textField>
 				</elementGroup>
 				<staticText>
-					<reportElement x="629" y="17" width="154" height="15"/>
+					<reportElement uuid="36e45ce8-8042-41f7-b293-fd7e4b6d84f9" x="629" y="17" width="154" height="15"/>
 					<box rightPadding="5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Arial"/>

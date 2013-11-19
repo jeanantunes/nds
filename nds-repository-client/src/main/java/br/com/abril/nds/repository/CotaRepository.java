@@ -393,4 +393,12 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return List<Cota>
 	 */
 	List<Cota> obterCotasTipoAVista(Date data);
+	
+	Long countCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
+	
+	Long countCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
+	
+	Long countCotasComInicioAtividadeEm(Date dataInicioAtividade); 
+	
+	Long countCotas(SituacaoCadastro situacaoCadastro);
 }

@@ -58,7 +58,7 @@ public class DividaDTO implements Serializable {
     @Export(label = "Forma Pagto", exhibitionOrder = 7)
     private String descricaoFormaPagamento;
     
-
+    public DividaDTO() {}
     
     public DividaDTO(Long idDivida, Integer numeroCota, String nomeCota, String nomeBanco,
             String contaCorrente, String nossoNumero, BigDecimal valor,

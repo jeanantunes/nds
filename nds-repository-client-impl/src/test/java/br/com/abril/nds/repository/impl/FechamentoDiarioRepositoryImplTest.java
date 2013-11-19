@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -197,7 +198,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		inserirDividas(fechamentoDiario, TipoDividaFechamentoDia.A_RECEBER);
+		inserirDividas(fechamentoDiario, TipoDivida.DIVIDA_A_RECEBER);
 		
 		fechamentoDiario = diarioRepository.buscarPorId(fechamentoDiario.getId());
 		
@@ -218,7 +219,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		inserirDividas(fechamentoDiario, TipoDividaFechamentoDia.A_VENCER);
+		inserirDividas(fechamentoDiario, TipoDivida.DIVIDA_A_VENCER);
 		
 		fechamentoDiario = diarioRepository.buscarPorId(fechamentoDiario.getId());
 		
@@ -238,8 +239,8 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		fechamentoDiario = merge(fechamentoDiario);
 		Assert.assertNotNull(fechamentoDiario);
 		
-		inserirDividas(fechamentoDiario, TipoDividaFechamentoDia.A_VENCER);
-		inserirDividas(fechamentoDiario, TipoDividaFechamentoDia.A_RECEBER);
+		inserirDividas(fechamentoDiario, TipoDivida.DIVIDA_A_VENCER);
+		inserirDividas(fechamentoDiario, TipoDivida.DIVIDA_A_RECEBER);
 		
 		fechamentoDiario = diarioRepository.buscarPorId(fechamentoDiario.getId());
 		
@@ -336,7 +337,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 	}
 	
 
-	private void inserirDividas(FechamentoDiario fechamentoDiario, TipoDividaFechamentoDia tipoDividaFechamentoDia) {
+	private void inserirDividas(FechamentoDiario fechamentoDiario, TipoDivida tipoDividaFechamentoDia) {
 		
 		FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida 
 				= Fixture.historicoFechamentoDiarioConsolidadoDivida(fechamentoDiario, tipoDividaFechamentoDia);

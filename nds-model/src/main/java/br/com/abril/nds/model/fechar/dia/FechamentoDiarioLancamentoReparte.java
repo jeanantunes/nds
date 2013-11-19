@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fechar.dia;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,28 +35,28 @@ public class FechamentoDiarioLancamentoReparte implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name="QNT_REPARTE")
-	private Integer quantidadeReparte;
+	private BigInteger quantidadeReparte;
 	
 	@Column(name="QNT_SOBRA_EM")
-	private Integer quantidadeSobraEM;
+	private BigInteger quantidadeSobraEM;
 	
 	@Column(name="QNT_FALTA_EM")
-	private Integer quantidadeFaltaEM;
+	private BigInteger quantidadeFaltaEM;
 	
 	@Column(name="QNT_TRANSFERENCIA")
-	private Integer quantidadeTranferencia;
+	private BigInteger quantidadeTranferencia;
 	
 	@Column(name="QNT_A_DISTRIBUIR")
-	private Integer quantidadeADistribuir;
+	private BigInteger quantidadeADistribuir;
 	
 	@Column(name="QNT_DISTRIBUIDO")
-	private Integer quantidadeDistribuido;
+	private BigInteger quantidadeDistribuido;
 	
 	@Column(name="QNT_SOBRA_DISTRIBUIDO")
-	private Integer quantidadeSobraDistribuido;
+	private BigInteger quantidadeSobraDistribuido;
 	
 	@Column(name="QNT_DIFERENCA")
-	private Integer quantidadeDiferenca;
+	private BigInteger quantidadeDiferenca;
 
 	public Long getId() {
 		return id;
@@ -73,67 +74,67 @@ public class FechamentoDiarioLancamentoReparte implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public Integer getQuantidadeReparte() {
+	public BigInteger getQuantidadeReparte() {
 		return quantidadeReparte;
 	}
 
-	public void setQuantidadeReparte(Integer quantidadeReparte) {
+	public void setQuantidadeReparte(BigInteger quantidadeReparte) {
 		this.quantidadeReparte = quantidadeReparte;
 	}
 
-	public Integer getQuantidadeSobraEM() {
+	public BigInteger getQuantidadeSobraEM() {
 		return quantidadeSobraEM;
 	}
 
-	public void setQuantidadeSobraEM(Integer quantidadeSobraEM) {
+	public void setQuantidadeSobraEM(BigInteger quantidadeSobraEM) {
 		this.quantidadeSobraEM = quantidadeSobraEM;
 	}
 
-	public Integer getQuantidadeFaltaEM() {
+	public BigInteger getQuantidadeFaltaEM() {
 		return quantidadeFaltaEM;
 	}
 
-	public void setQuantidadeFaltaEM(Integer quantidadeFaltaEM) {
+	public void setQuantidadeFaltaEM(BigInteger quantidadeFaltaEM) {
 		this.quantidadeFaltaEM = quantidadeFaltaEM;
 	}
 
-	public Integer getQuantidadeTranferencia() {
+	public BigInteger getQuantidadeTranferencia() {
 		return quantidadeTranferencia;
 	}
 
-	public void setQuantidadeTranferencia(Integer quantidadeTranferencia) {
+	public void setQuantidadeTranferencia(BigInteger quantidadeTranferencia) {
 		this.quantidadeTranferencia = quantidadeTranferencia;
 	}
 
-	public Integer getQuantidadeADistribuir() {
+	public BigInteger getQuantidadeADistribuir() {
 		return quantidadeADistribuir;
 	}
 
-	public void setQuantidadeADistribuir(Integer quantidadeADistribuir) {
+	public void setQuantidadeADistribuir(BigInteger quantidadeADistribuir) {
 		this.quantidadeADistribuir = quantidadeADistribuir;
 	}
 
-	public Integer getQuantidadeDistribuido() {
+	public BigInteger getQuantidadeDistribuido() {
 		return quantidadeDistribuido;
 	}
 
-	public void setQuantidadeDistribuido(Integer quantidadeDistribuido) {
+	public void setQuantidadeDistribuido(BigInteger quantidadeDistribuido) {
 		this.quantidadeDistribuido = quantidadeDistribuido;
 	}
 
-	public Integer getQuantidadeSobraDistribuido() {
+	public BigInteger getQuantidadeSobraDistribuido() {
 		return quantidadeSobraDistribuido;
 	}
 
-	public void setQuantidadeSobraDistribuido(Integer quantidadeSobraDistribuido) {
+	public void setQuantidadeSobraDistribuido(BigInteger quantidadeSobraDistribuido) {
 		this.quantidadeSobraDistribuido = quantidadeSobraDistribuido;
 	}
 
-	public Integer getQuantidadeDiferenca() {
+	public BigInteger getQuantidadeDiferenca() {
 		return quantidadeDiferenca;
 	}
 
-	public void setQuantidadeDiferenca(Integer quantidadeDiferenca) {
+	public void setQuantidadeDiferenca(BigInteger quantidadeDiferenca) {
 		this.quantidadeDiferenca = quantidadeDiferenca;
 	}
 
@@ -145,6 +146,7 @@ public class FechamentoDiarioLancamentoReparte implements Serializable {
 			FechamentoDiarioConsolidadoReparte fechamentoDiarioConsolidadoReparte) {
 		this.fechamentoDiarioConsolidadoReparte = fechamentoDiarioConsolidadoReparte;
 	}
+	
 	
 	
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto.fechamentodiario;
 
+import java.awt.Image;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,8 @@ public class FechamentoDiarioDTO implements Serializable {
     private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<SuplementarFecharDiaDTO>();
     
     private List<DiferencaDTO> faltasSobras = new ArrayList<DiferencaDTO>();
+    
+    private Image imagemLogoDistribuidor;
 
     private FechamentoDiarioDTO(Builder builder) {
         this.dataFechamento = builder.dataFechamento;
@@ -53,8 +56,16 @@ public class FechamentoDiarioDTO implements Serializable {
         this.suplementar = builder.suplementar;      
         this.faltasSobras = builder.faltasSobras;
     }
+    
+    public Image getImagemLogoDistribuidor() {
+		return imagemLogoDistribuidor;
+	}
+   
+	public void setImagemLogoDistribuidor(Image imagemLogoDistribuidor) {
+		this.imagemLogoDistribuidor = imagemLogoDistribuidor;
+	}
 
-    /**
+	/**
      * @return the dataFechamento
      */
     public Date getDataFechamento() {
@@ -128,7 +139,7 @@ public class FechamentoDiarioDTO implements Serializable {
         private List<SuplementarFecharDiaDTO> suplementar = new ArrayList<SuplementarFecharDiaDTO>();
         
         private List<DiferencaDTO> faltasSobras = new ArrayList<DiferencaDTO>();
-        
+          
         public Builder(Date dataFechamento) {
             this.dataFechamento = dataFechamento;
         }

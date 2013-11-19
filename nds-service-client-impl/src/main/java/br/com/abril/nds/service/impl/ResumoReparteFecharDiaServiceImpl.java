@@ -10,9 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
+import br.com.abril.nds.repository.FechamentoDiarioConsolidadoReparteRepository;
+import br.com.abril.nds.repository.FechamentoDiarioLancamentoReparteRepository;
 import br.com.abril.nds.repository.FechamentoDiarioRepository;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -26,20 +29,49 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
 	@Autowired
 	private FechamentoDiarioRepository fechamentoDiarioRepository;
 	
+	@Autowired
+	private FecharDiaService fecharDiaService;
+	
+	@Autowired
+	private FechamentoDiarioConsolidadoReparteRepository consolidadoReparteRepository;
+	
+	@Autowired
+	private FechamentoDiarioLancamentoReparteRepository fechamentoDiarioLancamentoReparteRepository;
+	
 	@Override
 	@Transactional
 	public List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao, PaginacaoVO paginacao) {
 		
-		Date dataReparteHistoico = fechamentoDiarioRepository.obterDataUltimoFechamento(dataOperacao);
+		 List<ReparteFecharDiaDTO> reparteFecharDiaDTOs = null;
 		
-		return this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao,dataReparteHistoico);
+		if(fecharDiaService.isDiaComFechamentoRealizado(dataOperacao)){
+			
+			reparteFecharDiaDTOs = fechamentoDiarioLancamentoReparteRepository.obterLancametosReparte(dataOperacao, paginacao);
+			
+		}else{
+			
+			Date dataReparteHistoico = fechamentoDiarioRepository.obterDataUltimoFechamento(dataOperacao);
+			
+			reparteFecharDiaDTOs = this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao,dataReparteHistoico);
+		}
+	
+		return reparteFecharDiaDTOs;
 	}
 
     @Override
     @Transactional(readOnly = true)
     public Long contarLancamentosExpedidos(Date data) {
-        Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
-        return resumoFecharDiaRepository.contarLancamentosExpedidos(data);
+        
+    	Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
+        
+    	if(fecharDiaService.isDiaComFechamentoRealizado(data)){
+    		
+    		return fechamentoDiarioLancamentoReparteRepository.countLancametosReparte(data);
+    	}
+    	else{
+    		
+    		return resumoFecharDiaRepository.contarLancamentosExpedidos(data);
+    	}
     }
 
     /**
@@ -48,11 +80,23 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
     @Override
     @Transactional(readOnly = true)
     public SumarizacaoReparteDTO obterSumarizacaoReparte(Date data) {
-        Objects.requireNonNull(data, "Data para sumarização do reparte não deve ser nula!");
         
-        Date dataReparteHistoico = fechamentoDiarioRepository.obterDataUltimoFechamento(data);
+    	Objects.requireNonNull(data, "Data para sumarização do reparte não deve ser nula!");
         
-        return resumoFecharDiaRepository.obterSumarizacaoReparte(data,dataReparteHistoico);
+    	SumarizacaoReparteDTO reparteDTO = null;
+    	
+        if(fecharDiaService.isDiaComFechamentoRealizado(data)){
+        	
+        	reparteDTO = consolidadoReparteRepository.obterSumarizacaoReparte(data);
+        }
+        else{
+        	
+        	Date dataReparteHistoico = fechamentoDiarioRepository.obterDataUltimoFechamento(data);
+        	
+        	reparteDTO = resumoFecharDiaRepository.obterSumarizacaoReparte(data,dataReparteHistoico);
+        }
+        
+        return reparteDTO;
     }
 
 }

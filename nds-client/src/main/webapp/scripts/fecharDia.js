@@ -930,27 +930,6 @@ var fecharDiaController =  $.extend(true, {
 	
 	popup_processos : function() {
 		fecharDiaController.iniciarValidacoes();
-		$( "#dialog-processos", fecharDiaController.workspace ).dialog({
-			resizable: false,
-			height:'auto',
-			width:300,
-			modal: false,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids", fecharDiaController.workspace).show();
-					fecharDiaController.limparTabela();
-					fecharDiaController.iniciarResumoReparte();
-					fecharDiaController.iniciarResumoEncalhe();
-					fecharDiaController.iniciarResumoSuplementar();
-					fecharDiaController.iniciarResumoDividas();
-					fecharDiaController.iniciarResumoCotas();
-					fecharDiaController.iniciarResumoEstoque();
-					fecharDiaController.iniciarResumoConsignado();
-				}
-			},
-			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
-		});		 
 	},
 	
 	limparTabela : function(){
@@ -968,6 +947,42 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes",
 			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
 			function(result){	
+				
+				if (!result.fechamentoRealizadoNaData){
+						$( "#dialog-processos", fecharDiaController.workspace ).dialog({
+							resizable: false,
+							height:'auto',
+							width:300,
+							modal: false,
+							buttons: {
+								"Fechar": function() {
+									$( this ).dialog( "close" );
+									$(".grids", fecharDiaController.workspace).show();
+									fecharDiaController.limparTabela();
+									fecharDiaController.iniciarResumoReparte();
+									fecharDiaController.iniciarResumoEncalhe();
+									fecharDiaController.iniciarResumoSuplementar();
+									fecharDiaController.iniciarResumoDividas();
+									fecharDiaController.iniciarResumoCotas();
+									fecharDiaController.iniciarResumoEstoque();
+									fecharDiaController.iniciarResumoConsignado();
+								}
+							},
+							form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
+						});		 
+				}else{
+					
+					$(".grids", fecharDiaController.workspace).show();
+					fecharDiaController.limparTabela();
+					fecharDiaController.iniciarResumoReparte();
+					fecharDiaController.iniciarResumoEncalhe();
+					fecharDiaController.iniciarResumoSuplementar();
+					fecharDiaController.iniciarResumoDividas();
+					fecharDiaController.iniciarResumoCotas();
+					fecharDiaController.iniciarResumoEstoque();
+					fecharDiaController.iniciarResumoConsignado();
+				}
+				
 				$('#tabela-validacao', fecharDiaController.workspace).clear();
 				fecharDiaController.validacaoBaixaBancaria(result);
 				fecharDiaController.validacaoRecebimentoFisico(result);
