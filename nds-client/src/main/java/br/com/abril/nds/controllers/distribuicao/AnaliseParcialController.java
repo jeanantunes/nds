@@ -86,7 +86,7 @@ public class AnaliseParcialController extends BaseController {
     private ProdutoService produtoService;
 
     @Path("/")
-    public void index(Long id,Long estudoOrigem, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
+    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
 
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
@@ -103,7 +103,6 @@ public class AnaliseParcialController extends BaseController {
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);
-        result.include("estudoOrigem", (estudoOrigem==null)?0:estudoOrigem);
         result.include("dataLancamentoEdicao", dataLancamentoEdicao);
         result.include("classificacaoList", tipoClassificacaoProdutoRepository.obterTodos());
 

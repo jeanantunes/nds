@@ -43,6 +43,8 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  * @author T30541
@@ -112,6 +114,7 @@ public class ProdutoEdicao implements Serializable {
 	protected Produto produto;
 	
 	@OneToMany(mappedBy = "produtoEdicao")
+    @LazyCollection(LazyCollectionOption.FALSE)
 	protected Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
 	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)

@@ -44,6 +44,9 @@ function escondeDados(){
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
 .detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
+<c:if test="${estudoCota.estudo.idEstudoOrigemCopia != null}">
+.detalhesDados{margin-left: 62px;}
+</c:if>
 #tabelaDetalheAnalise tr { line-height: normal; }
 .class_linha_impar {background:#f0f0f0; }
 .class_linha_par {background:#f8f8f8; }
@@ -81,6 +84,7 @@ table.dadosTab { margin-left: 370px;}
 .paddingTotais td#total_ultimo_reparte {width: 55px;}
 .paddingTotais td#total_reparte_sugerido {width: 56px;}
 .paddingTotais td#lbl_legenda {width: 24px;}
+.paddingTotais td#total_reparte_origem {width: 56px;}
 .paddingTotais td#total_juramento {width: 44px;}
 .linkNomeCota { text-decoration: underline; cursor: pointer; }
 .editaRepartePorPDV { text-decoration: underline; cursor: pointer; }
@@ -95,6 +99,7 @@ table.dadosTab { margin-left: 370px;}
 .repartePDV {width: 35px; text-align: right;}
 #prodCadastradosGrid tbody tr {display: block !important;}
 .sortable-placeholder {height: 33px !important; line-height: 30px !important; border: 1px solid orange !important;}
+.classFieldset {width: 1040px !important;}
 </style>
 
     <br clear="all"/>
@@ -179,7 +184,7 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
 			<input type="hidden" id="produtoId" value="${estudoCota.estudo.produtoEdicao.produto.id}" />
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
-			<input type="hidden" id="estudoOrigem" value="${estudoOrigem}" />
+			<input type="hidden" id="estudoOrigem" value="${estudoCota.estudo.idEstudoOrigemCopia}" />
 			<input type="hidden" id="dataLancamentoEdicao" value="${dataLancamentoEdicao}" />
 			<input type="hidden" id="tipoClassificacaoProdutoId" value="${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.id}" />
 
@@ -301,9 +306,10 @@ table.dadosTab { margin-left: 370px;}
 							<td id="total_de_cotas">0</td>
                             <td id="total_ultimo_reparte">0</td>
                             <td id="total_reparte_sugerido">0</td>
-                            <td id="lbl_legenda">&nbsp;</td><%-- Legenda --%>
-                        <%--<td id="total_juramento">0</td>--%>
-                        <%--<td width="62" align="right" id="total_media_venda">0</td>--%>
+                            <td id="lbl_legenda">&nbsp;</td>
+                            <c:if test="${estudoCota.estudo.idEstudoOrigemCopia != null}">
+                                <td id="total_reparte_origem">0</td>
+                            </c:if>
 							<td id="total_reparte1">0</td>
 							<td id="total_venda1" class="vermelho">0</td>
 							<td id="total_reparte2">0</td>

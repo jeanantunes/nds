@@ -44,6 +44,7 @@ public class AnaliseParcialDTO implements Serializable {
     private boolean cotaNova;
     private String descricaoLegenda;
     private BigInteger reparteEstudo;
+    private BigInteger reparteEstudoOrigemCopia;
 
     public String getDescricaoLegenda() {
         return descricaoLegenda;
@@ -285,6 +286,17 @@ public class AnaliseParcialDTO implements Serializable {
         this.reparteEstudo = null;
         if (reparteEstudo != null) {
             this.reparteEstudo = reparteEstudo.toBigInteger();
+        }
+    }
+
+    public BigInteger getReparteEstudoOrigemCopia() {
+        return reparteEstudoOrigemCopia;
+    }
+
+    public void setReparteEstudoOrigemCopia(BigDecimal reparteEstudoOrigemCopia) {
+        this.reparteEstudoOrigemCopia = null;
+        if (reparteEstudoOrigemCopia != null) {
+            this.reparteEstudoOrigemCopia = reparteEstudoOrigemCopia.toBigInteger();
         }
     }
 }
