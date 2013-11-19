@@ -3,16 +3,18 @@ package br.com.abril.nds.service;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
+import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
+import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -103,12 +105,12 @@ public interface FecharDiaService {
     /**
      * @see DividaService#obterDividasReceberEm(Date, PaginacaoVO)
      */
-    List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
+    List<DividaDTO> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
     
     /**
      * @see DividaService#obterDividasVencerApos(Date, PaginacaoVO)
      */
-    List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
+    List<DividaDTO> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
 
 
     /**
@@ -193,4 +195,16 @@ public interface FecharDiaService {
 	 * @return boolean
 	 */
 	boolean isConsolidadoCotaAVista(Date data);
+	
+	/**
+	 * Verifica se o dia informado ja foi fechado
+	 * 
+	 * @param dataFechamento data informada para o fechamento
+	 * 
+	 * @return boolean
+	 */
+	boolean isDiaComFechamentoRealizado(Date dataFechamento);
+	
+	
+	List<CotaResumoDTO> obterDetalheCotaFechamentoDiario(Date dataFechamento,TipoResumo tipoResumo);
 }

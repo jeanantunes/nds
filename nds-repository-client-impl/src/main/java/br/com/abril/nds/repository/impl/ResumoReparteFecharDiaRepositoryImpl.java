@@ -269,5 +269,5 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         return query.list();
     }
 
-
+    
 }

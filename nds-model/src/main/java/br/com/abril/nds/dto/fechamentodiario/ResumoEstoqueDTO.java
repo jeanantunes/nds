@@ -21,15 +21,15 @@ public class ResumoEstoqueDTO implements Serializable {
 	
 	private abstract class ResumoEstoque{
 		
-		protected Integer quantidadeLancamento;
+		protected Integer quantidadeLancamento = 0;
 		
-		protected Integer quantidadeJuramentado;
+		protected Integer quantidadeJuramentado = 0;
 		
-		protected Integer quantidadeSuplementar;
+		protected Integer quantidadeSuplementar = 0;
 		
-		protected Integer quantidadeRecolhimento;
+		protected Integer quantidadeRecolhimento = 0;
 		
-		protected Integer quantidadeDanificados;
+		protected Integer quantidadeDanificados = 0;
 
 		public Integer getQuantidadeLancamento() {
 			return quantidadeLancamento;
@@ -74,15 +74,15 @@ public class ResumoEstoqueDTO implements Serializable {
 
 	public class ValorResumoEstoque{
 		
-		protected BigDecimal valorLancamento;
+		protected BigDecimal valorLancamento = BigDecimal.ZERO;
 		
-		protected BigDecimal valorJuramentado;
+		protected BigDecimal valorJuramentado = BigDecimal.ZERO;
 		
-		protected BigDecimal valorSuplementar;
+		protected BigDecimal valorSuplementar = BigDecimal.ZERO;
 		
-		protected BigDecimal valorRecolhimento;
+		protected BigDecimal valorRecolhimento = BigDecimal.ZERO;
 		
-		protected BigDecimal valorDanificados;
+		protected BigDecimal valorDanificados = BigDecimal.ZERO;
 		
 		public String getValorLancamentoFormatado(){
 			return CurrencyUtil.formatarValor(valorLancamento);

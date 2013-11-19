@@ -36,7 +36,7 @@ public class FechamentoDiarioDivida implements Serializable {
 	private FechamentoDiarioConsolidadoDivida fechamentoDiarioConsolidadoDivida;
 	
 	@Column(name="NUMERO_COTA")
-	private Long numeroCota;
+	private Integer numeroCota;
 	
 	@Column(name="NOME_COTA")
 	private String nomeCota;
@@ -45,7 +45,7 @@ public class FechamentoDiarioDivida implements Serializable {
 	private String banco;
 	
 	@Column(name="NUMERO_CONTA")
-	private Integer numeroConta;
+	private String numeroConta;
 	
 	@Column(name="NOSSO_NUMERO")
 	private String nossoNumero;
@@ -81,11 +81,11 @@ public class FechamentoDiarioDivida implements Serializable {
 		this.fechamentoDiarioConsolidadoDivida = fechamentoDiarioConsolidadoDivida;
 	}
 
-	public Long getNumeroCota() {
+	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 
-	public void setNumeroCota(Long numeroCota) {
+	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
 
@@ -105,11 +105,11 @@ public class FechamentoDiarioDivida implements Serializable {
 		this.banco = banco;
 	}
 
-	public Integer getNumeroConta() {
+	public String getNumeroConta() {
 		return numeroConta;
 	}
 
-	public void setNumeroConta(Integer numeroConta) {
+	public void setNumeroConta(String numeroConta) {
 		this.numeroConta = numeroConta;
 	}
 

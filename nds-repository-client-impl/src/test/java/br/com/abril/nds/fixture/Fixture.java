@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -134,7 +135,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
-import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida.TipoDividaFechamentoDia;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoEncalhe;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoReparte;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoSuplementar;
@@ -4136,14 +4136,14 @@ public class Fixture {
 	   FechamentoDiarioLancamentoReparte historicoMovimentoReparte = new FechamentoDiarioLancamentoReparte();
 	   
 	   historicoMovimentoReparte.setProdutoEdicao(produtoEdicaoVeja);
-	   historicoMovimentoReparte.setQuantidadeADistribuir(quantidadeADistribuir);
-	   historicoMovimentoReparte.setQuantidadeDiferenca(quantidadeDiferenca);
-	   historicoMovimentoReparte.setQuantidadeDistribuido(quantidadeDistribuido);
-	   historicoMovimentoReparte.setQuantidadeFaltaEM(quantidadeFaltaEM);
-	   historicoMovimentoReparte.setQuantidadeReparte(quantidadeReparte);
-	   historicoMovimentoReparte.setQuantidadeSobraDistribuido(quantidadeSobraDistribuido);
-	   historicoMovimentoReparte.setQuantidadeSobraEM(quantidadeSobraEM);
-	   historicoMovimentoReparte.setQuantidadeTranferencia(quantidadeTranferencia);
+	   historicoMovimentoReparte.setQuantidadeADistribuir(new BigInteger(quantidadeADistribuir.toString()));
+	   historicoMovimentoReparte.setQuantidadeDiferenca(new BigInteger(quantidadeDiferenca.toString()));
+	   historicoMovimentoReparte.setQuantidadeDistribuido(new BigInteger(quantidadeDistribuido.toString()));
+	   historicoMovimentoReparte.setQuantidadeFaltaEM(new BigInteger(quantidadeFaltaEM.toString()));
+	   historicoMovimentoReparte.setQuantidadeReparte(new BigInteger(quantidadeReparte.toString()));
+	   historicoMovimentoReparte.setQuantidadeSobraDistribuido(new BigInteger(quantidadeSobraDistribuido.toString()));
+	   historicoMovimentoReparte.setQuantidadeSobraEM(new BigInteger(quantidadeSobraEM.toString()));
+	   historicoMovimentoReparte.setQuantidadeTranferencia(new BigInteger(quantidadeTranferencia.toString()));
 	   historicoMovimentoReparte.setFechamentoDiarioConsolidadoReparte(consolidadoReparte);
 	   
 	   return historicoMovimentoReparte;
@@ -4155,8 +4155,8 @@ public class Fixture {
 	   FechamentoDiarioLancamentoEncalhe historicoMovimentoEncalhe = new FechamentoDiarioLancamentoEncalhe();
 	   
 	   historicoMovimentoEncalhe.setProdutoEdicao(produtoEdicaoVeja);
-	   historicoMovimentoEncalhe.setQuantidadeDiferenca(quantidadeDiferenca);
-	   historicoMovimentoEncalhe.setQuantidadeVendaEncalhe(quantidadeVendaEncalhe);
+	   historicoMovimentoEncalhe.setQuantidadeDiferenca(new BigInteger(quantidadeDiferenca.toString()));
+	   historicoMovimentoEncalhe.setQuantidadeVendaEncalhe(new BigInteger(quantidadeVendaEncalhe.toString()));
 	   
 	   return historicoMovimentoEncalhe;
    }
@@ -4198,7 +4198,7 @@ public class Fixture {
 	   FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
 	   
 	   historicoMovimentoSuplementar.setProdutoEdicao(produtoEdicaoVeja);
-	   historicoMovimentoSuplementar.setQuantidadeContabilizada(quantidadeContabilizada);
+	   historicoMovimentoSuplementar.setQuantidadeContabilizada(new BigInteger(quantidadeContabilizada.toString()));
 	   
 	   
 	   return historicoMovimentoSuplementar;
@@ -4232,7 +4232,7 @@ public class Fixture {
 	   return consolidadoSuplementar;
    }
    
-   public static FechamentoDiarioConsolidadoDivida historicoFechamentoDiarioConsolidadoDivida(FechamentoDiario fechamentoDiario, TipoDividaFechamentoDia tipoDivida){
+   public static FechamentoDiarioConsolidadoDivida historicoFechamentoDiarioConsolidadoDivida(FechamentoDiario fechamentoDiario, TipoDivida tipoDivida){
 	   
 	   FechamentoDiarioConsolidadoDivida historico = new FechamentoDiarioConsolidadoDivida();
 	   historico.setFechamentoDiario(fechamentoDiario);
@@ -4251,7 +4251,7 @@ public class Fixture {
 	   historico.setIdntificadorDivida(idntificadorDivida);
 	   historico.setNomeCota(nomeCota);
 	   historico.setNossoNumero(nossoNumero);
-	   historico.setNumeroConta(numeroConta);
+	   historico.setNumeroConta(numeroConta.toString());
 	   historico.setValor(valor);
 	   
 	   return historico;

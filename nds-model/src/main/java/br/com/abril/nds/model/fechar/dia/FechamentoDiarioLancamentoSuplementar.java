@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fechar.dia;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,8 +35,22 @@ public class FechamentoDiarioLancamentoSuplementar implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 
 	@Column(name = "QNT_CONTABILIZADA")
-	private Long quantidadeContabilizada;
-
+	private BigInteger quantidadeContabilizada;
+	
+	@Column(name = "QNT_LOGICO")
+	private BigInteger quantidadeLogico;
+	
+	@Column(name = "QNT_VENDA")
+	private BigInteger quantidadeVenda;
+	
+	@Column(name = "QNT_TRANSFERENCIA_ENTRADA")
+	private BigInteger quantidadeTransferenciaEntrada;
+	
+	@Column(name = "QNT_TRANSFERENCIA_SAIDA")
+	private BigInteger quantidadeTransferenciaSaida; 
+	
+	@Column(name = "SALDO")
+	private BigInteger saldo;  
 
 	public Long getId() {
 		return id;
@@ -62,12 +77,56 @@ public class FechamentoDiarioLancamentoSuplementar implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public Long getQuantidadeContabilizada() {
+	public BigInteger getQuantidadeContabilizada() {
 		return quantidadeContabilizada;
 	}
 
-	public void setQuantidadeContabilizada(Long quantidadeContabilizada) {
+	public void setQuantidadeContabilizada(BigInteger quantidadeContabilizada) {
 		this.quantidadeContabilizada = quantidadeContabilizada;
 	}
+
+	public BigInteger getQuantidadeLogico() {
+		return quantidadeLogico;
+	}
+
+	public void setQuantidadeLogico(BigInteger quantidadeLogico) {
+		this.quantidadeLogico = quantidadeLogico;
+	}
+
+	public BigInteger getQuantidadeVenda() {
+		return quantidadeVenda;
+	}
+
+	public void setQuantidadeVenda(BigInteger quantidadeVenda) {
+		this.quantidadeVenda = quantidadeVenda;
+	}
+
+	public BigInteger getQuantidadeTransferenciaEntrada() {
+		return quantidadeTransferenciaEntrada;
+	}
+
+	public void setQuantidadeTransferenciaEntrada(
+			BigInteger quantidadeTransferenciaEntrada) {
+		this.quantidadeTransferenciaEntrada = quantidadeTransferenciaEntrada;
+	}
+
+	public BigInteger getQuantidadeTransferenciaSaida() {
+		return quantidadeTransferenciaSaida;
+	}
+
+	public void setQuantidadeTransferenciaSaida(
+			BigInteger quantidadeTransferenciaSaida) {
+		this.quantidadeTransferenciaSaida = quantidadeTransferenciaSaida;
+	}
+
+	public BigInteger getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigInteger saldo) {
+		this.saldo = saldo;
+	}
+	
+	
 
 }

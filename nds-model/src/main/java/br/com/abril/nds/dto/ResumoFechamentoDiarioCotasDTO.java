@@ -3,8 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.Cota;
-
 /**
  * DTO com informações do resumo de fechamento diário das cotas.
  * 
@@ -16,6 +14,14 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 	private Long quantidadeTotal;
 	
 	private Long quantidadeAtivas;
+	
+	private Long quantidadeAusentesExpedicaoReparte;
+	
+	private Long quantidadeAusentesRecolhimentoEncalhe;
+	
+	private Long quantidadeNovas;
+	
+	private Long quantidadeInativas;
 	
 	private List<CotaResumoDTO> ausentesExpedicaoReparte;
 	
@@ -30,6 +36,20 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 	 */
 	public ResumoFechamentoDiarioCotasDTO() {
 		
+	}
+	
+	public ResumoFechamentoDiarioCotasDTO(Long quantidadeTotal,Long quantidadeAtivas,
+										  Long quantidadeAusentesExpedicaoReparte,
+										  Long quantidadeAusentesRecolhimentoEncalhe,
+										  Long quantidadeNovas,
+										  Long quantidadeInativas) {
+		
+		this.quantidadeTotal = quantidadeTotal;
+		this.quantidadeAtivas = quantidadeAtivas;
+		this.quantidadeAusentesExpedicaoReparte = quantidadeAusentesExpedicaoReparte;
+		this.quantidadeAusentesRecolhimentoEncalhe = quantidadeAusentesRecolhimentoEncalhe;
+		this.quantidadeNovas= quantidadeNovas;
+		this.quantidadeInativas = quantidadeInativas;
 	}
 	
 	/**
@@ -109,113 +129,72 @@ public class ResumoFechamentoDiarioCotasDTO implements Serializable {
 		this.quantidadeAtivas = quantidadeAtivas;
 	}
 
-	/**
-	 * @return the quantidadeAusentesExpedicaoReparte
-	 */
 	public Long getQuantidadeAusentesExpedicaoReparte() {
-		
-		if (this.ausentesExpedicaoReparte != null) {
-			
-			return new Long(this.ausentesExpedicaoReparte.size());
-		}
-		
-		return 0L;
+		return quantidadeAusentesExpedicaoReparte;
 	}
 
-	/**
-	 * @return the quantidadeAusentesRecolhimentoEncalhe
-	 */
+	public void setQuantidadeAusentesExpedicaoReparte(
+			Long quantidadeAusentesExpedicaoReparte) {
+		this.quantidadeAusentesExpedicaoReparte = quantidadeAusentesExpedicaoReparte;
+	}
+
 	public Long getQuantidadeAusentesRecolhimentoEncalhe() {
-
-		if (this.ausentesRecolhimentoEncalhe != null) {
-			
-			return new Long(this.ausentesRecolhimentoEncalhe.size());
-		}
-		
-		return 0L;
+		return quantidadeAusentesRecolhimentoEncalhe;
 	}
 
-	/**
-	 * @return the quantidadeNovas
-	 */
+	public void setQuantidadeAusentesRecolhimentoEncalhe(
+			Long quantidadeAusentesRecolhimentoEncalhe) {
+		this.quantidadeAusentesRecolhimentoEncalhe = quantidadeAusentesRecolhimentoEncalhe;
+	}
+
 	public Long getQuantidadeNovas() {
-		
-		if (this.novas != null) {
-			
-			return new Long(this.novas.size());
-		}
-		
-		return 0L;
+		return quantidadeNovas;
 	}
 
-	/**
-	 * @return the quantidadeInativas
-	 */
+	public void setQuantidadeNovas(Long quantidadeNovas) {
+		this.quantidadeNovas = quantidadeNovas;
+	}
+
 	public Long getQuantidadeInativas() {
-		
-		if (this.inativas != null) {
-			
-			return new Long(this.inativas.size());
-		}
-		
-		return 0L;
+		return quantidadeInativas;
 	}
 
-	/**
-	 * @return the ausentesExpedicaoReparte
-	 */
+	public void setQuantidadeInativas(Long quantidadeInativas) {
+		this.quantidadeInativas = quantidadeInativas;
+	}
+
 	public List<CotaResumoDTO> getAusentesExpedicaoReparte() {
 		return ausentesExpedicaoReparte;
 	}
 
-	/**
-	 * @param ausentesExpedicaoReparte the ausentesExpedicaoReparte to set
-	 */
-	public void setAusentesExpedicaoReparte(List<CotaResumoDTO> ausentesExpedicaoReparte) {
+	public void setAusentesExpedicaoReparte(
+			List<CotaResumoDTO> ausentesExpedicaoReparte) {
 		this.ausentesExpedicaoReparte = ausentesExpedicaoReparte;
 	}
 
-	/**
-	 * @return the ausentesRecolhimentoEncalhe
-	 */
 	public List<CotaResumoDTO> getAusentesRecolhimentoEncalhe() {
 		return ausentesRecolhimentoEncalhe;
 	}
 
-	/**
-	 * @param ausentesRecolhimentoEncalhe the ausentesRecolhimentoEncalhe to set
-	 */
 	public void setAusentesRecolhimentoEncalhe(
 			List<CotaResumoDTO> ausentesRecolhimentoEncalhe) {
 		this.ausentesRecolhimentoEncalhe = ausentesRecolhimentoEncalhe;
 	}
 
-	/**
-	 * @return the novas
-	 */
 	public List<CotaResumoDTO> getNovas() {
 		return novas;
 	}
 
-	/**
-	 * @param novas the novas to set
-	 */
 	public void setNovas(List<CotaResumoDTO> novas) {
 		this.novas = novas;
 	}
 
-	/**
-	 * @return the inativas
-	 */
 	public List<CotaResumoDTO> getInativas() {
 		return inativas;
 	}
 
-	/**
-	 * @param inativas the inativas to set
-	 */
 	public void setInativas(List<CotaResumoDTO> inativas) {
 		this.inativas = inativas;
 	}
-	
+
 }

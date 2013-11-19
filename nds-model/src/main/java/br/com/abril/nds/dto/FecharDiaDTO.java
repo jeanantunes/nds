@@ -25,6 +25,8 @@ public class FecharDiaDTO implements Serializable {
 	
 	private Boolean consolidadoCota = false;
 	
+	private Boolean fechamentoRealizadoNaData = false;
+	
 	public boolean isFechamentoPermitido() {
 		
 		return this.baixaBancaria 
@@ -98,4 +100,14 @@ public class FecharDiaDTO implements Serializable {
 	public void setConsolidadoCota(Boolean consolidadoCota) {
 		this.consolidadoCota = consolidadoCota;
 	}
+
+	public Boolean getFechamentoRealizadoNaData() {
+		return fechamentoRealizadoNaData;
+	}
+
+	public void setFechamentoRealizadoNaData(Boolean fechamentoRealizadoNaData) {
+		this.fechamentoRealizadoNaData = fechamentoRealizadoNaData;
+	}
+	
+	
 }

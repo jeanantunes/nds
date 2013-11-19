@@ -9,4 +9,6 @@ public interface FechamentoDiarioResumoConsignadoRepository extends Repository<F
 
 	public BigDecimal obterSaldoConsignadoFechamentoDiarioAnterior(Date dataAtual);
 	
+	FechamentoDiarioResumoConsignado obterResumoConsignado(Date dataFechamento);
+	
 }

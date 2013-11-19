@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fechar.dia;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,13 +35,19 @@ public class FechamentoDiarioLancamentoEncalhe implements Serializable {
 	private ProdutoEdicao produtoEdicao;
 	
 	@Column(name="QUANTIDADE")
-	private Integer quantidade;
+	private BigInteger quantidade;
 	
 	@Column(name="QNT_VENDA_ENCALHE")
-	private Integer quantidadeVendaEncalhe;
+	private BigInteger quantidadeVendaEncalhe;
 	
 	@Column(name="QNT_DIFERENCA")
-	private Integer quantidadeDiferenca;
+	private BigInteger quantidadeDiferenca;
+	
+	@Column(name="QNT_LOGICO_JURAMENTADO")
+	private BigInteger quantidadeLogicoJuramentado;
+	
+	@Column(name="QNT_FISICO")
+	private BigInteger quantidadeFisico;
 	
 	public Long getId() {
 		return id;
@@ -58,27 +65,28 @@ public class FechamentoDiarioLancamentoEncalhe implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-	public Integer getQuantidade() {
+	
+	public BigInteger getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(Integer quantidade) {
+	public void setQuantidade(BigInteger quantidade) {
 		this.quantidade = quantidade;
 	}
 
-	public Integer getQuantidadeVendaEncalhe() {
+	public BigInteger getQuantidadeVendaEncalhe() {
 		return quantidadeVendaEncalhe;
 	}
 
-	public void setQuantidadeVendaEncalhe(Integer quantidadeVendaEncalhe) {
+	public void setQuantidadeVendaEncalhe(BigInteger quantidadeVendaEncalhe) {
 		this.quantidadeVendaEncalhe = quantidadeVendaEncalhe;
 	}
 
-	public Integer getQuantidadeDiferenca() {
+	public BigInteger getQuantidadeDiferenca() {
 		return quantidadeDiferenca;
 	}
 
-	public void setQuantidadeDiferenca(Integer quantidadeDiferenca) {
+	public void setQuantidadeDiferenca(BigInteger quantidadeDiferenca) {
 		this.quantidadeDiferenca = quantidadeDiferenca;
 	}
 
@@ -90,6 +98,25 @@ public class FechamentoDiarioLancamentoEncalhe implements Serializable {
 			FechamentoDiarioConsolidadoEncalhe fechamentoDiarioConsolidadoEncalhe) {
 		this.fechamentoDiarioConsolidadoEncalhe = fechamentoDiarioConsolidadoEncalhe;
 	}
+
+	public BigInteger getQuantidadeLogicoJuramentado() {
+		return quantidadeLogicoJuramentado;
+	}
+
+	public void setQuantidadeLogicoJuramentado(
+			BigInteger quantidadeLogicoJuramentado) {
+		this.quantidadeLogicoJuramentado = quantidadeLogicoJuramentado;
+	}
+
+	public BigInteger getQuantidadeFisico() {
+		return quantidadeFisico;
+	}
+
+	public void setQuantidadeFisico(BigInteger quantidadeFisico) {
+		this.quantidadeFisico = quantidadeFisico;
+	}
+	
+	
 	
 	
 }

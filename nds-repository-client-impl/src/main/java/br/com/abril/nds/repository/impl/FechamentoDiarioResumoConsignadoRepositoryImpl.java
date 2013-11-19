@@ -37,4 +37,16 @@ public class FechamentoDiarioResumoConsignadoRepositoryImpl extends AbstractRepo
 		return (BigDecimal) query.uniqueResult();
 		
 	}
+	
+	public FechamentoDiarioResumoConsignado obterResumoConsignado(Date dataFechamento){
+		
+		String hql = "select f from FechamentoDiarioResumoConsignado f where f.fechamentoDiario.dataFechamento=:dataFechamento ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("dataFechamento",dataFechamento);
+		query.setMaxResults(1);
+		
+		return (FechamentoDiarioResumoConsignado) query.uniqueResult();
+	}
 }

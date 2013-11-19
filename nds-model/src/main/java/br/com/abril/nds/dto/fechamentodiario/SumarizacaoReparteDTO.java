@@ -31,6 +31,8 @@ public class SumarizacaoReparteDTO implements Serializable {
     private BigDecimal totalSobraDistribuicao;
     
     private BigDecimal totalDiferenca;
+    
+    public SumarizacaoReparteDTO(){}
    
     public SumarizacaoReparteDTO(BigDecimal totalReparte,
             BigDecimal totalSobras, BigDecimal totalFaltas,
@@ -135,4 +137,35 @@ public class SumarizacaoReparteDTO implements Serializable {
         return CurrencyUtil.formatarValor(totalDiferenca);
     }
 
+	public void setTotalReparte(BigDecimal totalReparte) {
+		this.totalReparte = totalReparte;
+	}
+
+	public void setTotalSobras(BigDecimal totalSobras) {
+		this.totalSobras = totalSobras;
+	}
+
+	public void setTotalFaltas(BigDecimal totalFaltas) {
+		this.totalFaltas = totalFaltas;
+	}
+
+	public void setTotalTransferencias(BigDecimal totalTransferencias) {
+		this.totalTransferencias = totalTransferencias;
+	}
+
+	public void setTotalDistribuir(BigDecimal totalDistribuir) {
+		this.totalDistribuir = totalDistribuir;
+	}
+
+	public void setTotalDistribuido(BigDecimal totalDistribuido) {
+		this.totalDistribuido = totalDistribuido;
+	}
+
+	public void setTotalSobraDistribuicao(BigDecimal totalSobraDistribuicao) {
+		this.totalSobraDistribuicao = totalSobraDistribuicao;
+	}
+
+	public void setTotalDiferenca(BigDecimal totalDiferenca) {
+		this.totalDiferenca = totalDiferenca;
+	}
 }

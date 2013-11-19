@@ -1453,7 +1453,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro) {
 		
-		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero  from Cota cota ");
+		StringBuilder hql = new StringBuilder("select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero  from Cota cota ");
 
 		hql.append(" join cota.pessoa pessoa ");
 		
@@ -1472,6 +1472,26 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
 		
 		return query.list();
+	}
+	
+	
+	public Long countCotas(SituacaoCadastro situacaoCadastro) {
+		
+		StringBuilder hql = new StringBuilder("select count(cota.id) from Cota cota ");
+		
+		if (situacaoCadastro != null) {
+			
+			hql.append(" where cota.situacaoCadastro = :situacao ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (situacaoCadastro != null) {
+			
+			query.setParameter("situacao", situacaoCadastro);
+		}
+		
+		return (Long) query.uniqueResult();
 	}
 	
 	@Override
@@ -1497,6 +1517,25 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
 		
 		return query.list();
+	}
+	
+	public Long countCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+		
+		StringBuilder hql = new StringBuilder("select count(cota.id) from Cota cota ");
+
+		if (dataInicioAtividade != null) {
+			
+			hql.append(" where cota.inicioAtividade = :dataInicioAtividade ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (dataInicioAtividade != null) {
+			
+			query.setParameter("dataInicioAtividade", dataInicioAtividade);
+		}
+		
+		return (Long) query.uniqueResult();
 	}
 	
 	@Override
@@ -1527,6 +1566,26 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		return query.list();
 	}
 	
+	
+	public Long countCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+		
+		StringBuilder hql = new StringBuilder(" select count(cotaAusente.id)  from CotaAusente cotaAusente ");
+				
+		if (dataExpedicaoReparte != null) {
+			
+			hql.append(" where cotaAusente.data = :dataExpedicaoReparte ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (dataExpedicaoReparte != null) {
+			
+			query.setParameter("dataExpedicaoReparte", dataExpedicaoReparte);
+		}
+		
+		return (Long) query.uniqueResult();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
@@ -1555,6 +1614,28 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
 		
 		return query.list();
+	}
+	
+	public Long countCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+		
+		StringBuilder hql = 
+			new StringBuilder(" select count(distinct chamadaEncalheCota.cota.id) from ChamadaEncalheCota chamadaEncalheCota ");
+		
+		hql.append(" join chamadaEncalheCota.cota cota ");
+		
+		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
+		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
+		hql.append(" join controleConferenciaEncalheCota.cota cota ");
+		hql.append(" where controleConferenciaEncalheCota.dataOperacao = :dataRecolhimentoEncalhe ");
+		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
+		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
+		query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
+		
+		return (Long) query.uniqueResult();
 	}
 
 	/* (non-Javadoc)

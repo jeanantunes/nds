@@ -9,4 +9,6 @@ public interface FechamentoDiarioResumoAvistaRepository extends Repository<Fecha
 
 	public BigDecimal obterSaldoAVistaFechamentoDiarioAnterior(Date dataAtual);
 	
+	FechamentoDiarioResumoAvista obterResumoConsignado(Date dataFechamento);
+	
 }
