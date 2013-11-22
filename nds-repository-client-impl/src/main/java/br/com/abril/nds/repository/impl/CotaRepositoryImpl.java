@@ -1771,7 +1771,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(mec.QTDE) as exemplares, "
 				+ "	        SUM(mec.QTDE * pe_.PRECO_VENDA) as total, "
-				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
+				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa,	"
+				+ "			roteiro_.ordem ordemRoteiro, "
+				+ "			rota_.ordem ordemRota, "
+				+ "			rota_pdv_.ordem ordemRotaPdv "); 
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
@@ -1894,7 +1897,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 			+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
 			+ "	        SUM(coalesce(nei.reparte, 0) * pe_.PRECO_VENDA) as total, "
-			+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
+			+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa,	"
+			+ "			roteiro_.ordem ordemRoteiro, "
+			+ "			rota_.ordem ordemRota, "
+			+ "			rota_pdv_.ordem ordemRotaPdv ");
 		}
 		sql.append( 
 		  "	    from "
@@ -2004,7 +2010,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
 				+ "	        SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) as total, "
-				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
+				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa,	"
+				+ "			roteiro_.ordem ordemRoteiro, "
+				+ "			rota_.ordem ordemRota, "
+				+ "			rota_pdv_.ordem ordemRotaPdv "); 
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
@@ -2193,6 +2202,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			sql.append(" order by  notaImpressa " + sortOrder);
 		}
 		
+		if("roteirizacao".equals(sortName)) {
+			
+			sql.append(" order by box, ordemRoteiro, ordemRota, ordemRotaPdv " + sortOrder);
+		}
 	}
 
 	
