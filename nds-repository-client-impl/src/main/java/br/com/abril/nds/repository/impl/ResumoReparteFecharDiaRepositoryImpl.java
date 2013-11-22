@@ -38,30 +38,48 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 		
 	    Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
         
+	    //Sql que obtem o os produtos que foram expedidos
         String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
-           .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
-        .append("  lancamento.status <> :statusFuro and lancamento.dataLancamentoDistribuidor =:data )").toString();
+           .append(" join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
+           .append(" lancamento.status <> :statusFuro and lancamento.dataLancamentoDistribuidor =:data )").toString();
         
-        String templateHqlDiferenca =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
+        //Sql que obtem as diferenças apontadas para o distribuidor
+        String templateHqlDiferenca =  new StringBuilder("(select  ")
+	        .append(" COALESCE( sum(CASE  ")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_DE' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda *-1)")
+		    .append(" 		       ELSE 0 END),0) ")
+        	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+	        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:tipoDiferenca) ")
+	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
+       
+        //Sql que obtem as diferencas apontadas para distribuidor que estão pendentes de aprovação do GFS
+        String templateHqlDiferencaGFSPendenteDeAprovacao =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
 	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
+	        .append(" where lancamentoDiferenca.status in (:statusDiferencaGFS) and  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
         
+        //Sql que obtem as diferenças direcionadas apenas para as cotas
         String templateHqlDiferencaRateioCota =  new StringBuilder("(select ")
-	    	
-	        .append("     COALESCE( sum(CASE  ")
+	        .append(" COALESCE( sum(CASE  ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='FALTA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda  * -1) ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='PERDA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda * -1 )")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
+		    .append(" 		       WHEN diferenca.tipoDiferenca='GANHO_EM' THEN (diferenca.qtde * diferenca.produtoEdicao.precoVenda)  ")
 		    .append(" 		       WHEN diferenca.tipoDiferenca='SOBRA_EM_DIRECIONADA_COTA' THEN ( diferenca.qtde * diferenca.produtoEdicao.precoVenda )  ")
 		    .append(" 		       ELSE 0 END),0) ")
-	     		
         	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
 	        .append(" where  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido)
 	        .append(" and diferenca.id in ( select distinct rateio.diferenca.id from RateioDiferenca rateio where rateio.dataMovimento =:data ) ").append(")").toString();
         
-        
+        //Sql que obtem produtos com recebimento fisico
         String templateHqlRecebimentoEstoqueFisico = new StringBuilder()
         	.append(" (select COALESCE(sum(me.qtde*produtoEdicaoME.precoVenda),0) from MovimentoEstoque me join me.produtoEdicao produtoEdicaoME ")
 	        .append(" where me.dataAprovacao = :data ")
@@ -69,10 +87,11 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	        .append(" and me.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoRecebimentoFisico ")
 	        .append(" and produtoEdicaoME.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
         
-        StringBuilder hql = new StringBuilder(" select COALESCE(sum(hstEstoque.qtde * produtoEdicao.precoVenda),0) + ").append(templateHqlRecebimentoEstoqueFisico).append(" as totalReparte, ");
+        StringBuilder hql = new StringBuilder(" select COALESCE(sum(hstEstoque.qtde * produtoEdicao.precoVenda),0)")
+        	.append(" + ").append(templateHqlRecebimentoEstoqueFisico).append(" + ").append(templateHqlDiferenca).append(" as totalReparte, ");
                 
-	    hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobras", "totalSobras")).append(",")
-	       .append(String.format(templateHqlDiferenca,  "tipoDiferencaFaltas", "totalFaltas")).append(",");
+	    hql.append(String.format(templateHqlDiferencaGFSPendenteDeAprovacao,"tipoDiferencaSobras", "totalSobras")).append(",")
+	       .append(String.format(templateHqlDiferencaGFSPendenteDeAprovacao,"tipoDiferencaFaltas", "totalFaltas")).append(",");
 	    
 	    hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ")
            .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
@@ -108,12 +127,27 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("grupoMovimentoEnvioJornaleiro", GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
         query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
-
+        
+        query.setParameterList("statusDiferencaGFS", Arrays.asList(StatusAprovacao.PENDENTE));
+        
         query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
-        															TipoDiferenca.GANHO_DE));
+        															TipoDiferenca.SOBRA_EM,
+        															TipoDiferenca.GANHO_DE,
+        															TipoDiferenca.GANHO_EM));
         
         query.setParameterList("tipoDiferencaFaltas", Arrays.asList(TipoDiferenca.FALTA_DE,
-        															TipoDiferenca.PERDA_DE));
+        															TipoDiferenca.FALTA_EM,
+        															TipoDiferenca.PERDA_DE,
+        															TipoDiferenca.PERDA_EM));
+        
+        query.setParameterList("tipoDiferenca", Arrays.asList(TipoDiferenca.SOBRA_DE,
+															  TipoDiferenca.SOBRA_EM,
+															  TipoDiferenca.GANHO_DE,
+															  TipoDiferenca.GANHO_EM,
+															  TipoDiferenca.SOBRA_DE,
+    														  TipoDiferenca.SOBRA_EM,
+    														  TipoDiferenca.GANHO_DE,
+    														  TipoDiferenca.GANHO_EM));
         
         query.setParameterList("tipoDiferencaRateioCota", Arrays.asList(TipoDiferenca.SOBRA_EM,
 																		TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA, 
@@ -121,7 +155,6 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 																		TipoDiferenca.FALTA_EM,
 																		TipoDiferenca.PERDA_EM));
 
-        
         try {
         	
             Constructor<SumarizacaoReparteDTO> constructor = 
