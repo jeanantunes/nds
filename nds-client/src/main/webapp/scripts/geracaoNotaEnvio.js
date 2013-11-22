@@ -156,7 +156,7 @@ var geracaoNotaEnvioController = $.extend({
 					preProcess : _this.preProcessGridPesquisa,
 					colModel : _this.colunasGridPesquisa,
 					dataType : 'json',
-					sortname : "numeroCota",
+					sortname : "roteirizacao",
 					sortorder : "asc",
 					usepager : true,
 					useRp : true,
