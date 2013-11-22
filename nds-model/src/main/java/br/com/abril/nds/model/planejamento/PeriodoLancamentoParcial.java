@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,9 +49,8 @@ public class PeriodoLancamentoParcial {
 	@Column(name = "TIPO", nullable = false)
 	private TipoLancamentoParcial tipo;
 
-	@OneToOne(optional = false, cascade=CascadeType.REMOVE)
-	@JoinColumn(name = "LANCAMENTO_ID")
-	private Lancamento lancamento;
+	@OneToMany(mappedBy="periodoLancamentoParcial", cascade=CascadeType.REMOVE)
+	private List<Lancamento> lancamentos;
 	
 	/** Número do Período do lançamento parcial. */
 	@Column(name = "NUMERO_PERIODO", nullable = false)
@@ -118,21 +118,21 @@ public class PeriodoLancamentoParcial {
 	public void setTipo(TipoLancamentoParcial tipo) {
 		this.tipo = tipo;
 	}
-
-	/**
-	 * @return the lancamento
-	 */
-	public Lancamento getLancamento() {
-		return lancamento;
-	}
-
-	/**
-	 * @param lancamento the lancamento to set
-	 */
-	public void setLancamento(Lancamento lancamento) {
-		this.lancamento = lancamento;
-	}
 	
+	/**
+	 * @return the lancamentos
+	 */
+	public List<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	/**
+	 * @param lancamentos the lancamentos to set
+	 */
+	public void setLancamentos(List<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
+	}
+
 	public Integer getNumeroPeriodo() {
 		return numeroPeriodo;
 	}
