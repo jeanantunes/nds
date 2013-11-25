@@ -383,14 +383,9 @@
 
 	<repositories>
 		<repository>
-<<<<<<< HEAD
 			<id>nexus</id>
 			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
-=======
-			<id>nexus</id>			
-			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
->>>>>>> fase2
 		</repository>
 		<repository>
 			<id>jrimum.org</id>
