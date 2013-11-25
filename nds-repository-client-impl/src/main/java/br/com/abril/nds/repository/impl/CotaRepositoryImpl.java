@@ -227,6 +227,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 					 .append(" MOVIMENTOCOTA.PRECO_COM_DESCONTO ")
 					 .append(" *(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
 					 .append(" FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
+					 .append(" JOIN LANCAMENTO LCTO on (MOVIMENTOCOTA.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ")
 					 .append(" JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
 					 .append(" JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
 					 .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID  ")
@@ -318,6 +319,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
 		
 		int intervalo = 35;
 		query.setParameter("intervalo", intervalo);
