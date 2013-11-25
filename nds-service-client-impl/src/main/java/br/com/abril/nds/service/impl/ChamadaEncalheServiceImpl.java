@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
-import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
@@ -94,12 +94,11 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		Intervalo<Integer> intervaloCotas = null;
 		
-		if (filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null){
+		if (filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null) {
 			intervaloCotas = new Intervalo<Integer>(filtro.getNumCotaDe(), filtro.getNumCotaAte());
 		}
 		
-		Intervalo<Date> intervaloDataRecolhimento = 
-			new Intervalo<Date>(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		Intervalo<Date> intervaloDataRecolhimento = new Intervalo<Date>(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
 		
 		this.cotaService.verificarCotasSemRoteirizacao(intervaloCotas, null, intervaloDataRecolhimento);
 		
@@ -177,7 +176,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	private void paginarListaDeProdutosDasCotasEmissao(List<CotaEmissaoDTO> cotasEmissao, int qtdProdutosPorPagina, int qtdMaximaProdutosComTotalizacao) {
 		
 		for(CotaEmissaoDTO cota : cotasEmissao) {
-			
 			
 			cota.setPaginasProduto(obterListaPaginada(cota.getProdutos(), qtdProdutosPorPagina));
 			
@@ -287,7 +285,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 	}
 
-	private void processarProdutosEmissaoEncalheDaCota(CotaEmissaoDTO cota, Date dataOperacaoDistribuidor) {
+	private void processarProdutosEmissaoEncalheDaCota(CotaEmissaoDTO cota, Date dataOperacaoDistribuidor, FiltroEmissaoCE filtro, List<CotaProdutoEmissaoCEDTO> produtosSupRedist) {
 		
 		BigDecimal vlrReparte = BigDecimal.ZERO;	
 		BigDecimal vlrDesconto = BigDecimal.ZERO;
@@ -304,16 +302,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				produtoDTO.setQuantidadeDevolvida(null);
 			}
 			
-			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte());
+			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte() );
 			
 			produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
 			
 			produtoDTO.setQuantidadeDevolvida(  (produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
 			
-			if(produtoDTO.getConfereciaRealizada()==true) 
-				produtoDTO.setVendido( produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
-			else 
+			if(produtoDTO.getConfereciaRealizada() == true) { 
+				produtoDTO.setVendido(produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
+			} else { 
 				produtoDTO.setVendido(BigInteger.ZERO);
+			}
 			
 			produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVlrPrecoComDesconto().multiply(BigDecimal.valueOf(produtoDTO.getVendido().longValue()))));
 			
@@ -324,6 +323,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			vlrEncalhe = vlrEncalhe.add(produtoDTO.getVlrPrecoComDesconto()
 					.multiply( BigDecimal.valueOf(produtoDTO.getQuantidadeDevolvida().longValue()) ));
+			
+			formatarLinhaExtraSupRedistCE(cota, produtoDTO, produtosSupRedist);
+			
 		}
 		
 		BigDecimal vlrReparteLiquido = vlrReparte.subtract(vlrDesconto);
@@ -335,11 +337,30 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		cota.setVlrReparteLiquido(CurrencyUtil.formatarValorQuatroCasas(vlrReparteLiquido));
 		cota.setVlrEncalhe(CurrencyUtil.formatarValorQuatroCasas(vlrEncalhe));
 		cota.setVlrTotalLiquido(CurrencyUtil.formatarValorQuatroCasas(totalLiquido));
+				
+	}
+
+	private void formatarLinhaExtraSupRedistCE(CotaEmissaoDTO cota, ProdutoEmissaoDTO produtoEmissaoDTO, List<CotaProdutoEmissaoCEDTO> produtosSupRedist) {
 		
-		Map<Long, List<NotaEnvioProdutoEdicao>> mapaNotaEnvioPE = gerarMapaProdutoEdicaoNotasEmitidas(
-				notaEnvioRepository.obterEmissoesAlemDoConsignado(cota.getIdCota(), idsProdutoEdicao, DateUtil.parseDataPTBR(cota.getDataRecolhimento()), dataOperacaoDistribuidor));
+		for(CotaProdutoEmissaoCEDTO cpece : produtosSupRedist) {
 		
-		carregarDadosNotaEnvioProdutoEdicao(mapaNotaEnvioPE, cota.getProdutos());
+			if(produtoEmissaoDTO.getIdProdutoEdicao().equals(cpece.getIdProdutoEdicao()) && cota.getIdCota().equals(cpece.getIdCota())) {
+				/*
+				if(cpece.getNumeroNotaEnvio() != null) {
+					produtoEmissaoDTO.setNumeroNotaEnvio(cpece.getNumeroNotaEnvio());
+				}
+				*/
+				
+				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exes. ("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
+				
+				if(produtoEmissaoDTO.getDescricaoNotaEnvio() != null) {
+					produtoEmissaoDTO.setDescricaoNotaEnvio(produtoEmissaoDTO.getDescricaoNotaEnvio() +" + "+ descricaoQuebraRelatorioCE);
+				} else {
+					produtoEmissaoDTO.setDescricaoNotaEnvio(descricaoQuebraRelatorioCE);
+				}
+				
+			}
+		}
 	}
 	
 	/**
@@ -511,16 +532,18 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
-		//verificar essa lista para ver a quiantidade de exemplares
+		//verificar essa lista para ver a quantidade de exemplares
 		Cota cota = null;
 		
-		for(CotaEmissaoDTO dto:lista) {
+		List<CotaProdutoEmissaoCEDTO> produtosSupRedist = chamadaEncalheRepository.obterDecomposicaoReparteSuplementarRedistribuicao(filtro);
+		
+		for(CotaEmissaoDTO dto : lista) {
 			
-			cota = cotaRepository.obterPorNumerDaCota( dto.getNumCota());
+			cota = cotaRepository.obterPorNumerDaCota(dto.getNumCota());
 
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 
-			if( endereco!= null) {
+			if(endereco != null) {
 				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
 									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());
 				dto.setUf(endereco.getUf());
@@ -529,15 +552,15 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				dto.setCep(endereco.getCep());
 			}
 			
-			if(cota.getPessoa() instanceof PessoaJuridica)
-				dto.setInscricaoEstadual(((PessoaJuridica)cota.getPessoa()).getInscricaoEstadual());
-			
+			if(cota.getPessoa() instanceof PessoaJuridica) {
+				dto.setInscricaoEstadual(((PessoaJuridica) cota.getPessoa()).getInscricaoEstadual());
+			}
 			
 			dto.setNumeroNome(dto.getNumCota()+ " " + ((dto.getNomeCota()!= null)?dto.getNomeCota().toUpperCase():""));
 		
-			if(cota.getPessoa() instanceof PessoaJuridica){
+			if(cota.getPessoa() instanceof PessoaJuridica) {
 				dto.setCnpj(Util.adicionarMascaraCNPJ(cota.getPessoa().getDocumento()));
-			}else{
+			} else {
 				dto.setCnpj(Util.adicionarMascaraCPF(cota.getPessoa().getDocumento()));
 			}
 												
@@ -545,7 +568,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			dto.setProdutos( obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
 			
-			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor);
+			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor, filtro, produtosSupRedist);
 			
 			if(TipoImpressaoCE.MODELO_2.equals(filtro.getTipoImpressao())) {
 				
@@ -554,7 +577,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 			
 		}
-		
 		
 		paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
 		
