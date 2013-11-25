@@ -8,9 +8,7 @@ public class EstudoCotaDTO implements Serializable {
 	private static final long serialVersionUID = 1031571090326764200L;
 	
 	private Long id;
-	
 	private BigInteger qtdeEfetiva;
-
 	private Long idCota;
 
 	public Long getId() {

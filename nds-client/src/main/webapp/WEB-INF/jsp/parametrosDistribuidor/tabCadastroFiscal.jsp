@@ -81,9 +81,7 @@
 		</table>
 	</fieldset>
 
-	<fieldset
-		style="width: 440px !important; margin-bottom: 5px; float: left;">
-
+<<<<<<< HEAD
 		<legend>Endereço</legend>
 		<table width="443" cellpadding="2" cellspacing="2"
 			style="text-align: left">
@@ -228,4 +226,144 @@
 	</fieldset>
 	
 	<br clear="all" />
+=======
+	<fieldset
+		style="width: 440px !important; margin-bottom: 5px; float: left;">
+
+		<legend>Endereço</legend>
+		<table width="443" cellpadding="2" cellspacing="2"
+			style="text-align: left">
+			<tr>
+				<td width="99">Tipo Endereço:</td>
+				<td width="180">
+					<select style="width: 150px" id="tipoEndereco" name="tipoEndereco">
+						<option value="COMERCIAL">Comercial</option>
+						<option value="LOCAL_ENTREGA">Local de Entrega</option>
+						<option value="RESIDENCIAL">Residencial</option>
+						<option value="COBRANCA">Cobrança</option>
+					</select>
+				</td>
+				<td width="54">&nbsp;</td>
+				<td width="82">&nbsp;</td>
+			</tr>
+			<tr>
+				<td>CEP:</td>
+				<td width="180">
+					<input type="text" style="float: left; margin-right: 5px;" 
+						   id="cep" name="cep"
+						   value="${parametrosDistribuidor.endereco.cep}"
+						   maxlength="9" />
+					<span class="classPesquisar" title="Pesquisar Cep.">
+						<a href="javascript:;" onclick="endereco.pesquisarEnderecoPorCep();">&nbsp;</a>
+					</span>
+				</td>
+				<td>UF:</td>
+				<td>
+					<select style="width: 50px" id="uf" name="uf"></select>
+				</td>
+			</tr>
+			<tr>
+				<td>Cidade:</td>
+				<td>
+					<input type="text" style="width: 180px" id="cidade" name="cidade"
+						   value="${parametrosDistribuidor.endereco.localidade}"
+						   onkeyup="endereco.autoCompletarLocalidades();"
+						   onblur="endereco.autoCompletarLocalidades(true);"
+						   maxlength="60"/>
+				</td>
+			</tr>
+			<tr>
+				<td>Bairro:</td>
+				<td>
+					<input type="text" style="width: 180px" id="bairro" name="bairro"
+						   value="${parametrosDistribuidor.endereco.bairro}"
+						   onkeyup="endereco.autoCompletarBairros();"
+						   onblur="endereco.autoCompletarBairros(true);"
+						   maxlength="60"/>
+				</td>
+				<td>Tipo :</td>
+				<td>
+					<input type="text" style="width: 50px"
+						   id="tipoLogradouro" name="tipoLogradouro"
+						   value="${parametrosDistribuidor.endereco.tipoLogradouro}"
+						   maxlength="255" />
+				</td>
+			</tr>
+			<tr>
+				<td>Logradouro:</td>
+				<td>
+					<input type="text" style="width: 180px" id="logradouro" name="logradouro"
+						   value="${parametrosDistribuidor.endereco.logradouro}"
+						   onkeyup="endereco.autoCompletarLogradouros();"
+						   onblur="endereco.autoCompletarLogradouros(true);"
+						   maxlength="60"/>
+				</td>
+				<td>Número:</td>
+				<td>
+					<input type="text" style="width: 50px" id="numero" name="numero"
+						   value="${parametrosDistribuidor.endereco.numero}"
+						   maxlength="11" />
+				</td>
+			</tr>
+			<tr>
+				<td>Complemento:</td>
+				<td>
+					<input type="text" style="width: 180px" id="complemento" name="complemento"
+						   value="${parametrosDistribuidor.endereco.complemento}"
+						   maxlength="60" />
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+	
+	<fieldset
+		style="width: 440px !important; margin-bottom: 5px; float: left;">
+		<legend>Fiscal</legend>
+		<table width="307" border="0" cellspacing="2" cellpadding="0">
+			<tr>
+				<td>Regime Tributário:</td>
+				<td>
+					<select name="regimeTributario" id="regimeTributario"
+							style="width: 150px;">
+						<option selected="selected"></option>
+						<c:forEach var="regimeTributario" items="${listaRegimeTributario}">
+							<option value="${regimeTributario.key}">${regimeTributario.value}</option>
+						</c:forEach>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td width="102">Obrigação Fiscal</td>
+				<td width="185">
+					<select name="obrigacaoFiscal" id="obrigacaoFiscal"
+							style="width: 150px;">
+						<option selected="selected"></option>
+						<c:forEach var="obrigacaoFiscal" items="${listaObrigacaoFiscal}">
+							<option value="${obrigacaoFiscal.key}">${obrigacaoFiscal.value}</option>
+						</c:forEach>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Regime Especial</td>
+				<td>
+					<c:if test="${parametrosDistribuidor.regimeEspecial}">
+						<input type="checkbox" name="regimeEspecial"
+						   	   id="regimeEspecial" checked="checked" />
+					</c:if>
+                    <c:if test="${empty parametrosDistribuidor.regimeEspecial or (not parametrosDistribuidor.regimeEspecial)}">
+						<input type="checkbox" name="regimeEspecial"
+						   	   id="regimeEspecial" />
+			   	   	</c:if>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
+	</fieldset>
+	
+	<br clear="all" />
+>>>>>>> fase2
 </div>

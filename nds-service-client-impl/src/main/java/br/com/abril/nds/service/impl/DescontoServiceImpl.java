@@ -292,7 +292,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		Distribuidor distribuidor = distribuidorRepository.obter(); 
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 		List<Fornecedor> fornecs = fornecedorRepository.obterFornecedoresPorId(fornecedores);
 		
@@ -391,7 +391,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 			case 1:
 				
-				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 				
 				if(produto != null) {
 					produto.setDescontoProduto(desconto);
@@ -412,14 +412,14 @@ public class DescontoServiceImpl implements DescontoService {
 				
 			case 2:
 				
-				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 				
 				/*
 				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
 				 */
 				for(Integer numeroCota : descontoDTO.getCotas()) {
 					
-					Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+					Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
 					
 					DescontoCotaProdutoExcessao dcpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 							TipoDesconto.PRODUTO, null, null, cota, produto, null);
@@ -488,7 +488,7 @@ public class DescontoServiceImpl implements DescontoService {
 				 */
 				for(Integer numeroCota : descontoDTO.getCotas()) {
 					
-					Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+					Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
 					
 					DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 							TipoDesconto.PRODUTO, null, null, cota, produtoEdicao.getProduto(), produtoEdicao);
@@ -538,7 +538,7 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				Set<Cota> cotas = obterCotas(descontoDTO.getCotas());
 				
-				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 
 				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
 
@@ -636,6 +636,8 @@ public class DescontoServiceImpl implements DescontoService {
 			
 
 			break;
+		default:
+		    break;
 		}
 
 		return listaFornecedores;
@@ -851,7 +853,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 			for (Integer numeroCota : idsCotas) {
 
-				Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+				Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 				cotas.add(cota);
 			}
@@ -1062,7 +1064,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		DescontoCotaProdutoExcessao desconto = 
 				this.descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
-				TipoDesconto.ESPECIFICO, null, null, this.cotaRepository.obterPorNumerDaCota(numeroCota) , null, null);
+				TipoDesconto.ESPECIFICO, null, null, this.cotaRepository.obterPorNumeroDaCota(numeroCota) , null, null);
 		
 		if (desconto != null){
 			

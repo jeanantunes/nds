@@ -214,7 +214,7 @@
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.18</version>
+				<version>5.1.23</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
@@ -259,7 +259,7 @@
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
-				<version>3.8-beta5</version>
+				<version>3.9</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jasperreports</groupId>
@@ -383,9 +383,14 @@
 
 	<repositories>
 		<repository>
+<<<<<<< HEAD
 			<id>nexus</id>
 			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
 			<!-- url>http://177.71.255.76:8080/nexus-2.0.6/content/groups/public/</url -->
+=======
+			<id>nexus</id>			
+			<url>http://177.71.197.202:8080/nexus-2.3.1-01/content/groups/public/</url>
+>>>>>>> fase2
 		</repository>
 		<repository>
 			<id>jrimum.org</id>
@@ -484,6 +489,8 @@
 				<module>nds-integration-client</module>
 				<module>nds-client</module>
 				<module>nds-server</module>
+				<module>nds-estudo-algoritmo</module>
+<!-- 			<module>nds-test</module> -->
 			</modules>
 		</profile>
 
@@ -501,6 +508,15 @@
 				<module>nds-integration-canonical</module>
 				<module>nds-integration-server</module>
 				<module>nds-integration-client</module>
+				<module>nds-estudo-algoritmo</module>
+			</modules>
+		</profile>
+		
+		<profile>
+			<id>testProfile</id>
+			<modules>
+				<module>nds-estudo-algoritmo</module>
+				<module>nds-test</module>
 			</modules>
 		</profile>
 		

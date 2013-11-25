@@ -30,41 +30,42 @@ import br.com.abril.nds.repository.AbstractRepository;
 public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0127MessageProcessor.class);
-	
+
 	@Autowired
 	private SessionFactory sessionFactoryIcd;
-	
+
 	protected Session getSessionIcd() {
-		
+
 		Session session = null;
 		try {
 			session = sessionFactoryIcd.getCurrentSession();
 		} catch(Exception e) {
 			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
-		
+
 		if(session == null) {
 			session = sessionFactoryIcd.openSession();
 		}
-		
+
 		return session;
-		
+
 	}
-	
+
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		
+
 		List<Object> objs = new ArrayList<Object>();
 		Object dummyObj = new Object();
 		objs.add(dummyObj);
-		
+
 		tempVar.set(objs);
-		
+
 	}
 
 	@Override
 	public void processMessage(Message message) {
 
+<<<<<<< HEAD
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-cli.xml");
 
 		DataSource ds = (DataSource) applicationContext.getBean("dataSourceIcd");
@@ -82,15 +83,18 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		
+=======
+>>>>>>> fase2
 		CouchDbClient cdbc = null;
-		
+
 		List<String> distribuidores = obterDistribuidores();
-		
+
 		for(String distribuidor : distribuidores) {
-		
+
 			List<IcdChamadaEncalhe> chamadasEncalhe = obterChamadasEncalhe(distribuidor);
-	
+
 			for(IcdChamadaEncalhe ce : chamadasEncalhe) {
+<<<<<<< HEAD
 				
 				ce.setValorTotalMargemApurado(null);
 				ce.setValorTotalMargemInformado(null);
@@ -115,6 +119,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 					ce.setTipoDocumento("EMS0127");
 					ce.setBaseDeDados(database);
 					ce.setUsuarioBaseDeDados(username);
+=======
+
+				try {
+					ce.setTipoDocumento("EMS0137");
+>>>>>>> fase2
 					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 					cdbc.save(ce);
 				} catch(Exception e) {
@@ -124,56 +133,61 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 						cdbc.shutdown();
 					}			
 				}
-				
+
 			}
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<String> obterDistribuidores() {
-		
+
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select distinct cod_distribuidor ")
 			.append("from chamada_encalhe ")
 			.append("where cod_distribuidor = '6248116' "); //FIXME: remover esta condicao
-		
+
 		Query query = this.getSessionIcd().createSQLQuery(hql.toString());
-		
+
 		List<BigDecimal> codigos = query.list();
 		List<String> codigosConvertidos = new ArrayList<String>();
-		
+
 		for(BigDecimal c : codigos) {
 			codigosConvertidos.add(c.toString());
 		}
-		
+
 		return codigosConvertidos;
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<IcdChamadaEncalhe> obterChamadasEncalhe(String distribuidor) {
-		
+
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select distinct ce ")
+		hql.append(" select ce ")
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
 			.append("where ce.tipoStatus in (:status) ")
+<<<<<<< HEAD
 			.append("and ce.codigoDistribuidor = :distribuidor ")
 			.append("and ce.indiceCEProvisoria = :nao ")
 			.append("and ce.dataAnoReferencia > 2012");
 		
+=======
+			.append("and ce.codigoDistribuidor = :distribuidor ");
+
+>>>>>>> fase2
 		Query query = this.getSessionIcd().createQuery(hql.toString());
-		
+
 		query.setParameterList("status", new String[]{"A"}); //FIXME: Sérgio: deve buscar status 'A'
 		query.setParameter("distribuidor", Long.parseLong(distribuidor));
 		query.setParameter("nao", "N");
 
 		return query.list();
 	}
-		
+
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
 	}
-	
+
 }

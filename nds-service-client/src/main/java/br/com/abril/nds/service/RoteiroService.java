@@ -7,5 +7,5 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 public interface RoteiroService {
 
 	List<Roteiro> obterRoteiros();
-	
+	List<Roteiro> buscarTodos();
 }

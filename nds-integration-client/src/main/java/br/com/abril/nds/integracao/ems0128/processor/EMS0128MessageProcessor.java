@@ -1,6 +1,9 @@
 package br.com.abril.nds.integracao.ems0128.processor;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
+=======
+>>>>>>> fase2
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,12 +21,18 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+<<<<<<< HEAD
 import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+=======
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
+>>>>>>> fase2
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -56,6 +65,10 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		Query query = queryMovimentoEstoque();
 		
 		tempVar.set( query.list() );		
+<<<<<<< HEAD
+=======
+		
+>>>>>>> fase2
 			
 	}
 
@@ -76,15 +89,24 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 				if (!doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
+<<<<<<< HEAD
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
 					for (EMS0128InputItem eitem : doc.getItems()) {
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
 											
+=======
+					for ( EMS0128InputItem eitem : doc.getItems()) {
+						
+						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
+											
+						movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto().replace(" ", "_")));
+>>>>>>> fase2
 						movimento.setMotivo(eitem.getDescricaoMotivo());					
 						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
 						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
 						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
 						
+<<<<<<< HEAD
 						LancamentoDiferenca lancamentoDiferenca = recuperarLancamentoDiferenca(movimento.getId());
 						
 						StatusIntegracao statusIntegracao = StatusIntegracao.obterPelaDescricao(eitem.getSituacaoAcerto());
@@ -126,10 +148,28 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						
 						movimento.setStatusIntegracao(statusIntegracao);
 						
+=======
+						if( StatusIntegracao.REJEITADO.equals(movimento.getStatusIntegracao())
+								|| StatusIntegracao.DESPREZADO.equals(movimento.getStatusIntegracao())){
+							
+							movimento.setStatus(StatusAprovacao.PERDA);
+							
+							LancamentoDiferenca lancamentoDiferenca  = recuperarLancamentoDiferenca(movimento.getId());
+							
+							if(lancamentoDiferenca!= null){
+
+								lancamentoDiferenca.setStatus(StatusAprovacao.PERDA);
+								
+								getSession().merge(lancamentoDiferenca);
+							}
+						}
+						
+>>>>>>> fase2
 						getSession().merge(movimento);
 						getSession().flush();
 					}						
 					
+<<<<<<< HEAD
 					
 					if(!itemsRemove.isEmpty()) {
 						
@@ -148,12 +188,18 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						couchDbClient.remove(doc);
 					}
 					
+=======
+					if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
+						couchDbClient.remove(doc);
+					}
+>>>>>>> fase2
 				}
 			}
 		} catch (NoDocumentException ex) {
 			
 		}
 	}
+<<<<<<< HEAD
 	
 	private void criarAtualizacaoEstoqueGFS(MovimentoEstoque movimentoEstoque, Diferenca diferenca) {
 		
@@ -170,6 +216,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		getSession().merge(atualizacaoEstoqueGFS);
 		getSession().flush();
 	}
+=======
+>>>>>>> fase2
 
 	private MovimentoEstoque recuperaMovimento(Long id) {
 		
@@ -177,6 +225,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 	
+<<<<<<< HEAD
 	
 	private AtualizacaoEstoqueGFS recuperarAtualizacaoEstoqueGFS(MovimentoEstoque movimentoEstoque, Diferenca diferenca){
 		
@@ -195,6 +244,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		return (AtualizacaoEstoqueGFS) query.uniqueResult();
 	}
 	
+=======
+>>>>>>> fase2
 	private LancamentoDiferenca recuperarLancamentoDiferenca(Long idMovimentoEstoque){
 		
 		StringBuilder sql = new StringBuilder();
@@ -215,7 +266,12 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		EMS0128InputItem item = new EMS0128InputItem();
 		
+<<<<<<< HEAD
 		MovimentoEstoque me = (MovimentoEstoque) message.getBody();
+=======
+		MovimentoEstoque me = (MovimentoEstoque)message.getBody();
+		
+>>>>>>> fase2
 		
 		item.setNumSequenciaDetalhe(itens++);
 		item.setIdMovimento(me.getId());
@@ -226,12 +282,18 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 			item.setTipoAcerto( 3 );
 		} else if ( gme.equals( GrupoMovimentoEstoque.FALTA_DE ) ) {			
 			item.setTipoAcerto( 4 );
+<<<<<<< HEAD
 		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_EM ) 
 				|| gme.equals( GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA ) 
 				|| gme.equals( GrupoMovimentoEstoque.SOBRA_EM_COTA )) {
 			item.setTipoAcerto( 5 );
 		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_DE ) 
 				|| gme.equals( GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA ) ) {
+=======
+		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_EM ) ) {
+			item.setTipoAcerto( 5 );
+		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_DE ) ) {
+>>>>>>> fase2
 			item.setTipoAcerto( 6 );
 		}		
 		
@@ -239,11 +301,17 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		item.setNumeroEdicao(me.getProdutoEdicao().getNumeroEdicao());
 		item.setQtd(me.getQtde());
 		item.setPrecoCapa(me.getProdutoEdicao().getPrecoVenda());
+<<<<<<< HEAD
 		
 		if (null != me.getProdutoEdicao().getProduto().getDescontoLogistica()) {
 			item.setPercentualDesconto(me.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
 		}
 		
+=======
+		if (null != me.getProdutoEdicao().getProduto().getDescontoLogistica()) {
+			item.setPercentualDesconto(me.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
+		}
+>>>>>>> fase2
 		item.setSituacaoAcerto("SOLICITADO");
 		
 		input.getItems().add(item);
@@ -279,11 +347,20 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("JOIN lancamentoDiferenca.movimentoEstoque me ");
 		sql.append("JOIN FETCH me.tipoMovimento tm ");
 		sql.append("JOIN FETCH me.produtoEdicao pe ");
+<<<<<<< HEAD
 		sql.append("JOIN FETCH pe.produto pr ");		
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
 		sql.append("	and lancamentoDiferenca.status in (:statusLancamentoDiferenca) ");
+=======
+		sql.append("JOIN FETCH pe.produto pr ");
+		
+		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
+		sql.append("	and me.statusIntegracao = :statusIntegracao ");
+		sql.append("	and me.status = :status ");
+		sql.append("	and lancamentoDiferenca.status = :status ");
+>>>>>>> fase2
 		
 		Query query = getSession().createQuery(sql.toString());
 
@@ -292,13 +369,19 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				, GrupoMovimentoEstoque.SOBRA_DE
 				, GrupoMovimentoEstoque.FALTA_EM
 				, GrupoMovimentoEstoque.FALTA_DE
+<<<<<<< HEAD
 				, GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA
 				, GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA
+=======
+>>>>>>> fase2
 		}) );
 		
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
+<<<<<<< HEAD
 		query.setParameterList("statusLancamentoDiferenca", new StatusAprovacao[] {StatusAprovacao.APROVADO});
+=======
+>>>>>>> fase2
 		
 		return query;
 	}

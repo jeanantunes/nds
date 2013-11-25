@@ -30,4 +30,5 @@ public interface SegmentoNaoRecebidoRepository extends Repository<SegmentoNaoRec
 
 	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(Cota cota);
 
+	boolean isCotaJaInserida(Long tipoSegmentoProdutoId, Integer numeroCota);
 }

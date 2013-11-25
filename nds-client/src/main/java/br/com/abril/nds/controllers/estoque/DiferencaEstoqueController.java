@@ -308,7 +308,7 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			this.processarDiferencasLancamento(listaLancamentoDiferencas, filtro, qtdeTotalRegistros.intValue());
 			
-			this.httpSession.setAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE, listaLancamentoDiferencas);
+			this.httpSession.setAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE,listaLancamentoDiferencas);
 		}
 	}
 	
@@ -1325,8 +1325,15 @@ public class DiferencaEstoqueController extends BaseController {
 				(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
 		if(modoNovaDiferenca != null && modoNovaDiferenca ){
+<<<<<<< HEAD
 			listaNovasDiferencas = (Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		} else {
+=======
+			listaNovasDiferencas =
+					(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		}
+		else{
+>>>>>>> fase2
 			
 			listaNovasDiferencas = new HashSet<Diferenca>();
 

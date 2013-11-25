@@ -3,6 +3,8 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -37,4 +39,29 @@ public class TipoGeradorFluxoPDVRepositoryImpl extends AbstractRepositoryModel<T
 		
 		return criteria.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from TipoGeradorFluxoPDV order by descricao");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoOrdenado() {
+		
+		Criteria criteria = super.getSession().createCriteria(TipoGeradorFluxoPDV.class);
+		
+		criteria.addOrder(Order.asc("descricao"));
+		
+		return criteria.list();
+	}
+
 }

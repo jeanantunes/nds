@@ -148,6 +148,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			 defaultZero:false
 		});
 		
+<<<<<<< HEAD
 		$("#valorNotaFiscal", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
@@ -160,6 +161,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#chaveAcessoNFE", ConferenciaEncalhe.workspace).numeric();
 
+=======
+		$("#qtdCE", ConferenciaEncalhe.workspace).numeric();
+		
+		
+>>>>>>> fase2
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
 		
 		$("#valorNotaFiscal", ConferenciaEncalhe.workspace).numeric();
@@ -183,6 +189,17 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		$("#qtdCE", ConferenciaEncalhe.workspace).keypress(function(e) {
+<<<<<<< HEAD
+=======
+			
+			if (e.keyCode == 13) {
+				
+				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
+			}
+		});
+	
+		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).keyup(function(e) {
+>>>>>>> fase2
 			
 			if (e.keyCode == 13) {
 				
@@ -649,6 +666,10 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalCE : function() {
+<<<<<<< HEAD
+=======
+		
+>>>>>>> fase2
 		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
 		            {name: "qtdCEInformado", value: $("#qtdCE", ConferenciaEncalhe.workspace).val()}];
 		
@@ -1458,6 +1479,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#precoCapa", ConferenciaEncalhe.workspace).text("");
 		$("#desconto", ConferenciaEncalhe.workspace).text("");
 		$("#valorTotal", ConferenciaEncalhe.workspace).text("");
+<<<<<<< HEAD
 		
 		if(keepQtdValorCE != true) {
 
@@ -1465,6 +1487,10 @@ var ConferenciaEncalhe = $.extend(true, {
 			$("#qtdCE", ConferenciaEncalhe.workspace).val("");
 			
 		}
+=======
+		$("#vlrCE", ConferenciaEncalhe.workspace).val("");
+		$("#qtdCE", ConferenciaEncalhe.workspace).val("");
+>>>>>>> fase2
 		
 		ConferenciaEncalhe.ultimoCodeBar = "";
 		ConferenciaEncalhe.ultimoSM = "";

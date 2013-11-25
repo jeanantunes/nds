@@ -57,7 +57,7 @@ public class Cheque implements Serializable {
 	@Column(name = "DV_CONTA", nullable=false)
 	private String dvConta;
 	
-	@Column(name="VALOR", nullable=false, precision=18, scale=4)
+	@Column(name="VALOR", nullable=false)
 	private BigDecimal valor;
 	
 	@Column(name="NUMERO_CHEQUE", nullable=false)

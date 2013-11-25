@@ -42,6 +42,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
+<<<<<<< HEAD
 	
 	@OneToOne(mappedBy="movimentoFinanceiroCota")
 	private ParcelaNegociacao parcelaNegociacao;
@@ -136,3 +137,99 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	}
 	
 }
+=======
+	
+	@OneToOne(mappedBy="movimentoFinanceiroCota")
+	private ParcelaNegociacao parcelaNegociacao;
+	
+	@ManyToMany(mappedBy="movimentos", fetch=FetchType.EAGER)
+	private List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota;
+	
+	@ManyToOne
+	private Fornecedor fornecedor;
+	
+	public Cota getCota() {
+		return cota;
+	}
+	
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+	
+	public List<MovimentoEstoqueCota> getMovimentos() {
+		return movimentos;
+	}
+	
+	public void setMovimentos(List<MovimentoEstoqueCota> movimentos) {
+		this.movimentos = movimentos;
+	}
+	
+	public String getObservacao() {
+		return observacao;
+	}
+	
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	
+	public boolean isLancamentoManual() {
+		return lancamentoManual;
+	}
+	
+	public void setLancamentoManual(boolean lancamentoManual) {
+		this.lancamentoManual = lancamentoManual;
+	}
+	
+	public List<HistoricoMovimentoFinanceiroCota> getHistoricos() {
+		return historicos;
+	}
+	
+	public void setHistoricos(List<HistoricoMovimentoFinanceiroCota> historicos) {
+		this.historicos = historicos;
+	}
+
+	/**
+	 * @return the parcelaNegociacao
+	 */
+	public ParcelaNegociacao getParcelaNegociacao() {
+		return parcelaNegociacao;
+	}
+
+	/**
+	 * @param parcelaNegociacao the parcelaNegociacao to set
+	 */
+	public void setParcelaNegociacao(ParcelaNegociacao parcelaNegociacao) {
+		this.parcelaNegociacao = parcelaNegociacao;
+	}
+
+	/**
+	 * @return the consolidadoFinanceiroCota
+	 */
+	public List<ConsolidadoFinanceiroCota> getConsolidadoFinanceiroCota() {
+		return consolidadoFinanceiroCota;
+	}
+
+	/**
+	 * @param consolidadoFinanceiroCota the consolidadoFinanceiroCota to set
+	 */
+	public void setConsolidadoFinanceiroCota(
+		List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota) {
+		this.consolidadoFinanceiroCota = consolidadoFinanceiroCota;
+	}
+
+	/**
+	 * @return the fornecedor
+	 */
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	
+}
+>>>>>>> fase2

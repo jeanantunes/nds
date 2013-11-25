@@ -16,6 +16,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
+import br.com.abril.nds.dto.ConsultaFollowupDistribuicaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
+import br.com.abril.nds.service.FollowupDistribuicaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
@@ -85,6 +87,9 @@ public class FollowupController extends BaseController {
 	
 	@Autowired
 	private FollowupCadastroParcialService followupCadastroParcialService;
+	
+	@Autowired
+	private FollowupDistribuicaoService followupDistribuicaoService;
 	
 	
 	@Autowired
@@ -220,6 +225,7 @@ public class FollowupController extends BaseController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reversão de pagamento da negociação efetuada com sucesso!"),
 								"result").recursive().serialize();
 	}	
+	
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();
@@ -296,6 +302,40 @@ public class FollowupController extends BaseController {
 		return tableModel;
 	}
 
+	@Path("/pesquisaDistribuicaoCotasAjustes")
+	public void pesquisaDistribuicaoCotasAjustes(String sortorder, String sortname, int page, int rp){
+		
+		ConsultaFollowupDistribuicaoDTO dto = new ConsultaFollowupDistribuicaoDTO();
+		
+		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>> tableModel = efetuarConsultaDistribuicao(dto);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>> efetuarConsultaDistribuicao (ConsultaFollowupDistribuicaoDTO dto) {
+		
+		List<ConsultaFollowupDistribuicaoDTO> consultaDistribuicao = this.followupDistribuicaoService.obterCotas(dto);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>>();
+		
+		Integer totalRegistros = consultaDistribuicao.size();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(consultaDistribuicao));
+		
+		tableModel.setPage(dto.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(15);
+		
+		return tableModel;
+	}
+	
 	@Path("/pesquisaDadosPendenciaNFEEncalhe")
 	public void pesquisaDadosPendenciaNFEEncalhe( String sortorder, String sortname, int page, int rp ) {
 		
@@ -436,6 +476,7 @@ public class FollowupController extends BaseController {
 	public void imprimirNegociacao(FileType fileType) throws IOException {
 		FiltroFollowupNegociacaoDTO filtroNegociacao = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
 		
+<<<<<<< HEAD
 		if (filtroNegociacao != null) {
 			removePaginacao(filtroNegociacao.getPaginacao());
 		} else {
@@ -552,6 +593,112 @@ public class FollowupController extends BaseController {
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao imprimir arquivo");
 		}
+=======
+		if(tipoExportacao.equals("negociacao")){
+			
+			FiltroFollowupNegociacaoDTO filtroNegociacao = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
+			
+			if (filtroNegociacao != null) {
+				
+				if (filtroNegociacao.getPaginacao() != null) {
+					
+					filtroNegociacao.getPaginacao().setPaginaAtual(null);
+					filtroNegociacao.getPaginacao().setQtdResultadosPorPagina(null);
+					filtroNegociacao.setOrdenacaoColuna(null);
+				}
+			}
+			
+			List<ConsultaFollowupNegociacaoDTO> lista = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
+			
+			this.formatarCamposNegociacao(lista);
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, null, 
+					lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
+			
+		}else if(tipoExportacao.equals("chamadao")){
+			FiltroFollowupChamadaoDTO filtro = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+			List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
+			
+			if(listadechamadao.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_Chamadao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listadechamadao, ConsultaFollowupChamadaoDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("pendenciaNFE")){
+			
+			FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
+			
+			List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
+			
+			if(listasdependencias.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("alteracao")){
+			
+			FiltroFollowupStatusCotaDTO filtro = (FiltroFollowupStatusCotaDTO) session.getAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE);
+			
+			
+			List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtro);
+			
+			for(ConsultaFollowupStatusCotaDTO dto: listacadastral){
+				String periodo = dto.getDataInicioPeriodo() + " até " + dto.getDataFimPeriodo();
+				dto.setPeriodoStatus(periodo);
+			}
+			
+			
+			if(listacadastral.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_Status_Cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listacadastral, ConsultaFollowupStatusCotaDTO.class, this.httpResponse);
+			
+		}else if(tipoExportacao.equals("atualizacao")){
+			
+			FiltroFollowupCadastroDTO filtro = (FiltroFollowupCadastroDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE);
+			
+			
+			List<ConsultaFollowupCadastroDTO> listasdependencias = this.followupcadastroService.obterCadastros(filtro);
+			
+			if(listasdependencias.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					listasdependencias, ConsultaFollowupCadastroDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("cadastroParcial")){
+			
+			FiltroFollowupCadastroParcialDTO filtro = (FiltroFollowupCadastroParcialDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE);
+			
+			
+			List<ConsultaFollowupCadastroParcialDTO> lista = this.followupCadastroParcialService.obterCadastrosParcial(filtro);
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+					lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("distribuicao")){
+			
+			List<ConsultaFollowupDistribuicaoDTO> lista = this.followupDistribuicaoService.obterCotas(null);
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					lista, ConsultaFollowupDistribuicaoDTO.class, this.httpResponse);
+		} 
+>>>>>>> fase2
 		
 		List<ConsultaFollowupCadastroDTO> listasdependencias = this.followupcadastroService.obterCadastros(filtro);
 		

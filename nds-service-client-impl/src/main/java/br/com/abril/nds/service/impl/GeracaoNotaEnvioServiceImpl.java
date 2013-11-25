@@ -463,6 +463,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return itemNotaEnvio;
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Obtem idRota do PDV principal da Cota e caso não encontre obtem do box da cota
 	 * @param pdvPrincipal
@@ -470,6 +471,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @return Long idRota
 	 */
 	private Long getIdRotaCota(PDV pdvPrincipal, Cota cota){
+=======
+	
+	@Override
+	@Transactional(readOnly = false)
+	public NotaEnvio visualizar(Integer numeroCota, Long idRota,
+			String chaveAcesso, Integer codigoNaturezaOperacao,
+			String descricaoNaturezaOperacao, Date dataEmissao,
+			Intervalo<Date> periodo, List<Long> listaIdFornecedores) {
+
+		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
+
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+>>>>>>> fase2
 
 		Long idRota = null;
 
@@ -1253,4 +1267,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.WARNING, cotasSemRoteirizacao);
 		}
 	}
+<<<<<<< HEAD
 }
+=======
+
+}
+>>>>>>> fase2

@@ -56,5 +56,11 @@ public interface ItemNotaEnvioRepository  extends Repository<ItemNotaEnvio, Item
 	 * @return List<DetalheItemNotaFiscalDTO>
 	 */
 	List<DetalheItemNotaFiscalDTO> obterItensNotaEnvioLancamentoProduto(Date dataLancamento, Integer numeroCota);
+
+	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerItemNotaEnvioPorEstudo(Long idEstudo);
 	
 }

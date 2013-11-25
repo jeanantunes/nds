@@ -1093,7 +1093,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			throw new ImportacaoException("Edição " + vendaInput.getNumeroEdicao()
 										+ " inexistente para produto : " + vendaInput.getCodigoProduto().toString());
 
-		Cota cota = cotaRepository.obterPorNumerDaCota(vendaInput.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(vendaInput.getNumeroCota());
 
 		if(cota == null)
 			throw new ImportacaoException("Cota " + vendaInput.getNumeroCota() + " inexistente.");

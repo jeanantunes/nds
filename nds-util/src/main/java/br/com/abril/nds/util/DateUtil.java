@@ -5,6 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+<<<<<<< HEAD
+=======
+import java.util.GregorianCalendar;
+import java.util.TreeSet;
+>>>>>>> fase2
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -261,7 +266,30 @@ public class DateUtil {
 	
 	public static int obterMes(Date data) {
 		
+<<<<<<< HEAD
 		Calendar calendar = toCalendar(data);
+=======
+		int semana = calendar.get(Calendar.WEEK_OF_YEAR);
+		
+		return Integer.parseInt(calendar.get(Calendar.YEAR) +""+ ((semana < 10)?"0"+semana:semana));
+	}
+	
+	/**
+	 * Obtém a número da semana no ano da data desejada.
+	 * 
+	 * Será utilizado o padrão de acordo com o Locale do sistema.
+	 *  
+	 * @param data - data
+	 * 
+	 * @return Número da semana no ano da data passada por parâmetro
+	 */
+	public static int obterNumeroSemanaNoAno(Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+>>>>>>> fase2
 		
 		return calendar.get(Calendar.MONTH);
 	}
@@ -275,7 +303,85 @@ public class DateUtil {
 		
 		Calendar calendar = toCalendar(data);
 		
+<<<<<<< HEAD
 		return obterAno(calendar);
+=======
+		calendar.setTime(data);
+		
+		int year = calendar.get(Calendar.YEAR);
+		
+		int month = calendar.get(Calendar.MONTH);
+		
+		if (month == Calendar.JANUARY) {
+			
+			if (numeroSemana > QTD_MAXIMA_SEMANAS_POR_MES) {
+				
+				year--;
+			}
+		}
+		
+		return year;
+	}
+
+	private static Calendar getCalendarioDistribuidor(Integer diaInicioSemana, Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		if (diaInicioSemana == null) {
+			
+			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setMinimalDaysInFirstWeek(7);
+		
+		calendar.setTime(data);
+		
+		if (diaInicioSemana != null) {
+		
+			calendar.setFirstDayOfWeek(diaInicioSemana);
+		}
+		
+		return calendar;
+	}
+	
+	
+	public static Date obterDtInicioSemanaPorNumeroSemanaAno(Integer inicioSemana,Integer numeroSemana, Integer ano){
+		GregorianCalendar dataInicio = new GregorianCalendar();
+		dataInicio.set(Calendar.YEAR, ano);  
+		dataInicio.setFirstDayOfWeek(inicioSemana);  
+		dataInicio.set(Calendar.WEEK_OF_YEAR, numeroSemana);  
+		
+	
+		Date retorno = dataInicio.getTime();
+		
+		return retorno;
+	}
+	
+	/**
+	 * Retorna o código do dia da semana de uma determinada data.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return Código do dia da semana (verificar constantes da classe java.util.Calendar)
+	 */
+	public static int obterDiaDaSemana(Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+		
+		return calendar.get(Calendar.DAY_OF_WEEK);
+>>>>>>> fase2
 	}
 	
 	/**
@@ -371,4 +477,9 @@ public class DateUtil {
 				return "Dezembro";
 		}
 	}
+	
+	
+	
+	
+	
 }

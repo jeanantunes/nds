@@ -98,7 +98,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Edi&ccedil;&atilde;o:</td>
+					<td>Edição:</td>
 					<td><input 
 						type="text" 
 						id="edicao" maxlength="20"
@@ -123,7 +123,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Pre&ccedil;o R$:</td>
+					<td>Preço R$:</td>
 					<td><input 	
 								disabled="disabled"
 								type="text" 
@@ -140,7 +140,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Pacote Padr&atilde;o:</td>
+					<td>Pacote Padrão:</td>
 					<td><input 	disabled="disabled"
 								type="text" 
 								id="pacotePadrao"
@@ -156,7 +156,7 @@
 				</tr>
 				<tr>
 					<td>
-						Lan&ccedil;amento: 
+						Lançamento: 
 					</td>				
 					<td>
 						<select name="tipoLancamento"
@@ -301,7 +301,7 @@
 							<td width="123"><input type="text" id=notaFiscal
 								style="width: 100px;" maxlength="9" />
 							</td>
-							<td width="33">S&eacute;rie:</td>
+							<td width="33">Série:</td>
 							<td width="43"><input id="serie" type="text"
 								style="width: 30px;" maxlength="3"/>
 							</td>
@@ -314,20 +314,24 @@
 						<tr>
 							<td colspan="7" height="26">
 
-								<label for="eNF">&Eacute; uma NF-e?</label>
+								<label for="eNF">É uma NF-e?</label>
 
-								<input type="checkbox" name="checkbox8" id="eNF" 
-								onchange="recebimentoFisicoController.mostrar_nfes();" 
-								style="float: left;  margin-left: 13px; margin-right: 10px;
-    							margin-top: 9px;" /> 
+								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left;  margin-left: 13px; margin-right: 10px;
+    margin-top: 9px;" /> 
 
 								<span id="nfes" class="nfes"> 
-									Chave de Acesso: 
-									<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
-								</span>
+
+								Chave de Acesso: 
+
+								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
+								
+							</span>
 
 							</td>
-							
+
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+							<td></span></td>
 						</tr>
 					</table>
 
@@ -336,6 +340,7 @@
 			</form>		
 
 			<div class="linha_separa_fields">&nbsp;</div>
+<<<<<<< HEAD
 			<div class="break_conteudo" style="position: relative !important; left: -10%;">
 				<fieldset class="fieldGrid" style="width: 1200px;">
 	
@@ -364,6 +369,19 @@
 							<label>Total: </label>
 							<label id="totalSemDescontoLbl"></label>
 						</span>
+=======
+
+			<fieldset class="fieldGrid">
+
+				<legend>Recebimentos Físico Cadastrados</legend>
+
+				<div class="grids" style="display: none;">
+
+					<div class="gridWrapper">
+
+						<table class="itemNotaGrid"></table>
+
+>>>>>>> fase2
 					</div>
 	
 				</fieldset>
@@ -376,7 +394,7 @@
 
 	<div id="div-wrapper-dialog-adicionar">
 
-		<div id="dialog-adicionar" title="Recebimento F&iacute;sico" style="display: none;" >
+		<div id="dialog-adicionar" title="Recebimento Físico" style="display: none;" >
 
 		    <jsp:include page="../messagesDialog.jsp" />
 
@@ -406,7 +424,7 @@
 			            <input maxlength="18" type="text" style="width:100px " id="novoNumeroNota" name="novoNumeroNota"  />
 			        </td>
 
-			        <td width="34">S&eacute;rie:</td>
+			        <td width="34">Série:</td>
 			        <td width="97">
 			            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
 			        </td>
@@ -416,6 +434,7 @@
 
 			    <tr style="width: 25%">
 
+<<<<<<< HEAD
 			       <td>Nota Envio:</td>
 				  
 				  <td colspan="1">
@@ -441,13 +460,24 @@
 							<input type="text" maxlength="44" style="width: 365px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
 						</span>
 					</td>
+=======
+			      <td>NF-e:</td>
+			      <td>
+			          <input type="checkbox" id="novoNfe" name="novoNfe" />
+			      </td>
+
+			      <td>Chave de Acesso:</td>
+			      <td colspan="5">
+			          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
+			      </td>
+>>>>>>> fase2
 
 			    </tr>
 
 
 			    <tr style="width: 25%">
 
-			      <td>Data Emiss&atilde;o:</td>
+			      <td>Data Emissão:</td>
 			      <td>
 			          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
 			      </td>

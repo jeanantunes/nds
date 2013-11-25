@@ -263,18 +263,30 @@ public class MapaAbastecimentoController extends BaseController {
 
 		if(filtro.getDataDate() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
+<<<<<<< HEAD
 
 		if(filtro.getDataLancamento() == null)
+=======
+		
+		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
+>>>>>>> fase2
 			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
 	}
 
 	@Post
+<<<<<<< HEAD
 	public void pesquisarDetalhes(Long idBox, Integer numeroCota, String data, String sortname, String sortorder) {
 
 		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);	
 		filtro.setDataLancamento(data);
 		filtro.setCodigoCota(numeroCota);
 
+=======
+	public void pesquisarDetalhes(Long idBox, String data, String sortname, String sortorder) {
+				
+		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);		
+		
+>>>>>>> fase2
 		filtro.setPaginacaoDetalhes(new PaginacaoVO(null, null, sortorder, sortname));
 
 		List<ProdutoAbastecimentoDTO> lista = mapaAbastecimentoService.obterDetlhesDadosAbastecimento(idBox, filtro);

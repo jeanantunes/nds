@@ -6,7 +6,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.server.model.OperacaoDistribuidor;
 import br.com.abril.nds.service.EstudoService;
 
 /**

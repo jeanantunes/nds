@@ -634,7 +634,23 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		if(cota == null) {
 			
+<<<<<<< HEAD
 			cota = this.cotaRepository.buscarPorId(c.getIdCota());
+=======
+			movimentoFinanceiroCotaDTO.setCota(cota);
+			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+			movimentoFinanceiroCotaDTO.setUsuario(usuario);
+			movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
+			movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+			movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setObservacao(null);
+			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
+			movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+>>>>>>> fase2
 			
 			if(cota == null) {
 				

@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.Intervalo;
@@ -210,11 +211,12 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - período de distribuição
 	 * @param fornecedores
 	 *            - fornecedores
+	 * @param list 
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
 	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, List<Long> produtoEdicaoIds);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
@@ -336,6 +338,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
+<<<<<<< HEAD
 	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
 
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
@@ -373,3 +376,13 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Date getMaiorDataLancamentoDistribuidor(Long idProdutoEdicao);
 	
 }
+=======
+	public List<Lancamento> obterPorEstudo(Estudo estudo);
+
+	Lancamento buscarPorIdSemEstudo(Long lancamentoId);
+
+	public abstract BigInteger obterUltimoRepartePorProduto(Long codigoProduto);
+
+	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento, Long produtoEdicaoId );
+}
+>>>>>>> fase2

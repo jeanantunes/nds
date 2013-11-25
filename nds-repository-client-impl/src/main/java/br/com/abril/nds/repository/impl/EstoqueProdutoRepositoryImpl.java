@@ -1,11 +1,16 @@
 package br.com.abril.nds.repository.impl;
 
+<<<<<<< HEAD
+=======
+import java.util.Date;
+>>>>>>> fase2
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+<<<<<<< HEAD
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -14,6 +19,15 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+=======
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+>>>>>>> fase2
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -52,6 +66,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (EstoqueProduto) query.uniqueResult();
 	}
+<<<<<<< HEAD
 	
 	@SuppressWarnings("unchecked")
 	public List<EstoqueProdutoDTO> buscarEstoquesProdutos() {
@@ -184,3 +199,50 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		query.setParameter("naoPostergado", false);
 	}
 }
+=======
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicaoSuplementarDTO> obterProdutosEdicaoSuplementarNaoDisponivel(
+			Long idCotaAusente, Date dataMovimento) {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" 	SELECT p.CODIGO AS codigoProduto, 						");
+		sql.append(" 		   p.NOME AS nomeProdutoEdicao, 					");
+		sql.append(" 		   pe.ID AS idProdutoEdicao, 						");
+		sql.append(" 		   pe.NUMERO_EDICAO AS numeroEdicao, 				");
+		sql.append(" 		   mec.QTDE AS reparte, 							");
+		sql.append(" 		   ep.QTDE_SUPLEMENTAR AS quantidadeDisponivel	 				");
+		sql.append(" 	FROM MOVIMENTO_ESTOQUE_COTA mec 						");
+		sql.append("	JOIN TIPO_MOVIMENTO tm ON tm.ID = mec.TIPO_MOVIMENTO_ID ");
+		sql.append("	JOIN PRODUTO_EDICAO pe ON pe.ID = mec.PRODUTO_EDICAO_ID ");
+		sql.append("	JOIN PRODUTO p ON p.ID = pe.PRODUTO_ID 					");
+		sql.append("	JOIN ESTOQUE_PRODUTO ep ON ep.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append("	JOIN COTA_AUSENTE ca ON ca.COTA_ID=mec.COTA_ID 			");
+		sql.append("	WHERE ca.ID = :idCotaAusente 							");
+		sql.append("	AND mec.DATA = :dataMovimento 							");
+		sql.append("	AND tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimento		");
+		sql.append("	AND mec.QTDE >= ep.QTDE_SUPLEMENTAR 								");
+
+		Query query = getSession().createSQLQuery(sql.toString())
+							.addScalar("codigoProduto", StandardBasicTypes.STRING)
+							.addScalar("nomeProdutoEdicao", StandardBasicTypes.STRING)
+							.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
+							.addScalar("numeroEdicao", StandardBasicTypes.LONG)
+							.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
+							.addScalar("quantidadeDisponivel", StandardBasicTypes.BIG_INTEGER);
+
+		query.setParameter("idCotaAusente", idCotaAusente);
+		query.setParameter("dataMovimento", dataMovimento);
+		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+
+		query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoSuplementarDTO.class));
+
+		return query.list();
+	}
+}
+>>>>>>> fase2

@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -114,6 +113,9 @@ public class ContasAPagarController extends BaseController {
 
 	@Path("/pesquisarPorProduto.json")
 	public void pesquisarPorProduto(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		validaSemanaCE(filtro.getCe());
+		
 		filtro.setIdsFornecedores(null);
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
@@ -155,6 +157,8 @@ public class ContasAPagarController extends BaseController {
 	@Path("/pesquisarPorFornecedor.json")
 	public void pesquisarPorFornecedor(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
+		validaSemanaCE(filtro.getCe());
+		
 		this.session.setAttribute(FILTRO_CONTAS_A_PAGAR, filtro);
 
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
@@ -176,6 +180,18 @@ public class ContasAPagarController extends BaseController {
 		}
 	}
 
+	private void validaSemanaCE(Integer ce) {
+		
+		if (ce != null) {
+			
+			String semanaCE = ce.toString();
+			
+			if (semanaCE.length() != 6) {
+				
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A semana deve ser preenchida com o ano + semana com 6 digitos ex: (AAAASS)"));
+			}
+		}
+	}
 
 	@Path("/pesquisarConsignado.json")
 	public void pesquisarConsignado(FiltroContasAPagarDTO filtro, String sortname, String sortorder, int rp, int page) {

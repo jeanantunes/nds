@@ -93,6 +93,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public ContagemDevolucaoAgregationValuesDTO obterQuantidadeContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
+	/**
+	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return Qtde - Integer
+	 */
+	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Obtém o valorTotalGeral da pesquisa de contagemDevolucao 
@@ -119,6 +127,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
 	/**
+<<<<<<< HEAD
 	 * Obtém o somatorio do campo qtde do Movimento de Estoque da cota pelo Tipo de Movimento.
 	 * 
 	 * @param periodo
@@ -141,6 +150,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
+=======
+>>>>>>> fase2
 	 * Obtém o valor total do encalhe para a cota (caso específicada)
 	 * e período de recolhimento.
 	 * 
@@ -441,6 +452,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
+<<<<<<< HEAD
 																			Long idCota, 
 																			List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 
@@ -467,6 +479,17 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
 			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
+=======
+			Long idCota, 
+			GrupoMovimentoEstoque grupoMovimentoEstoque);
+
+	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo);
+
+>>>>>>> fase2
 
 	/**
 	 * Obtém a data da última movimentação de reparte expedida.

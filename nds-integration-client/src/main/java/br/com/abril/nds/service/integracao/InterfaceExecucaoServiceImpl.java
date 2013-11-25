@@ -62,9 +62,12 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		
 		} catch (NoDocumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
+<<<<<<< HEAD
 		} catch(Exception e) {
 			LOGGER.error("Erro ao executar interface: "+ nome, e);
 			throw e;
+=======
+>>>>>>> fase2
 		}
 		
 	}

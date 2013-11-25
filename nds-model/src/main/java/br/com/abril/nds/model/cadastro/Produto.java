@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -28,8 +30,8 @@ import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.util.export.Exportable;
 
 
 /**
@@ -37,6 +39,7 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
  * @version 1.0
  * @created 14-fev-2012 11:35:32
  */
+@Exportable
 @Entity
 @Table(name = "PRODUTO")
 @SequenceGenerator(name="PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
@@ -163,7 +166,7 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto descontoProduto;
 
-	@Column(name="DESCONTO", precision=18, scale=4)
+	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
 	@Column(name="DESCRICAO_DESCONTO")
@@ -176,12 +179,17 @@ public class Produto implements Serializable {
 	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
 	
-	/**
-	 * Classificação do Produto
-	 */
-	@OneToOne(fetch=FetchType.EAGER, optional=true)
-	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
-	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
+	private Boolean isGeracaoAutomatica;
+	
+	//@JoinColumn(name = "EDITOR_ID")
+//	@OneToMany
+//	@JoinTable(name = "PRODUTO_EDICAO")
+	@OneToMany(mappedBy = "produto")
+	private List<ProdutoEdicao> produtoEdicao;
+	
+	@Column(name = "CODIGO_ICD", nullable = false)
+	private String codigoICD;
 	
 	public Long getId() {
 		return id;
@@ -635,15 +643,28 @@ public class Produto implements Serializable {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
-	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
-		return tipoClassificacaoProduto;
+	public List<ProdutoEdicao> getProdutoEdicao() {
+		return produtoEdicao;
 	}
 
-	public void setTipoClassificacaoProduto(
-			TipoClassificacaoProduto tipoClassificacaoProduto) {
-		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	public void setProdutoEdicao(List<ProdutoEdicao> produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
 	}
 	
-	
+	public Boolean getIsGeracaoAutomatica() {
+		return isGeracaoAutomatica;
+	}
 
+	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
+
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;			
+	}
+	
 }

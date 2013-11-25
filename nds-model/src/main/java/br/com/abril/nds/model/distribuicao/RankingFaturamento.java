@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 
@@ -26,12 +29,12 @@ public class RankingFaturamento {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@Column(precision=18, scale=4)
+	@Column
 	private BigDecimal faturamento;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "RANKING_FATURAMENTO_GERADOS_ID")
-	private RankingFaturamentoGerado rankingFaturamentoGerado;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_GERACAO_RANK")
+	private Date dataGeracaoRank;
 
 	public Long getId() {
 		return id;
@@ -57,14 +60,12 @@ public class RankingFaturamento {
 		this.faturamento = faturamento;
 	}
 
-	public RankingFaturamentoGerado getRankingFaturamentoGerado() {
-		return rankingFaturamentoGerado;
+	public Date getDataGeracaoRank() {
+		return dataGeracaoRank;
 	}
 
-	public void setRankingFaturamentoGerado(
-			RankingFaturamentoGerado rankingFaturamentoGerado) {
-		this.rankingFaturamentoGerado = rankingFaturamentoGerado;
+	public void setDataGeracaoRank(Date dataGeracaoRank) {
+		this.dataGeracaoRank = dataGeracaoRank;
 	}
-
 
 }
