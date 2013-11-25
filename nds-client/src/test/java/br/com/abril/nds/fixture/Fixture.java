@@ -3175,7 +3175,8 @@ public class Fixture {
 		
 		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
 		
-		parcial.setLancamento(lancamento);
+		//TODO Ajuste alterações PARCIAIS
+		//parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
 		

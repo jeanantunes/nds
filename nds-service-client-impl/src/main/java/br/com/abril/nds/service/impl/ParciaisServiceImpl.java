@@ -188,12 +188,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 				for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
 
-					if( Arrays.asList(StatusLancamento.PLANEJADO, 
+					//TODO Ajuste alterações PARCIAIS
+					/*if( Arrays.asList(StatusLancamento.PLANEJADO, 
 									  StatusLancamento.CONFIRMADO)
 									  .contains(item.getLancamento().getStatus())){
 						
 						periodoLancamentoParcialRepository.remover(item);
-					}
+					}*/
 				}
 				
 				return true;
@@ -216,7 +217,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 	private PeriodoLancamentoParcial gerarPeriodoParcial(Lancamento lancamento, LancamentoParcial lancamentoParcial) {
 		
 		PeriodoLancamentoParcial periodo = new PeriodoLancamentoParcial();
-		periodo.setLancamento(lancamento);
+		//TODO Ajuste alterações PARCIAIS
+		//periodo.setLancamento(lancamento);
 		periodo.setLancamentoParcial(lancamentoParcial);
 		periodo.setTipo(TipoLancamentoParcial.PARCIAL);
 		periodo.setStatus(StatusLancamentoParcial.PROJETADO);
