@@ -345,11 +345,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		for(CotaProdutoEmissaoCEDTO cpece : produtosSupRedist) {
 		
 			if(produtoEmissaoDTO.getIdProdutoEdicao().equals(cpece.getIdProdutoEdicao()) && cota.getIdCota().equals(cpece.getIdCota())) {
-				/*
-				if(cpece.getNumeroNotaEnvio() != null) {
-					produtoEmissaoDTO.setNumeroNotaEnvio(cpece.getNumeroNotaEnvio());
-				}
-				*/
 				
 				String descricaoQuebraRelatorioCE = cpece.getReparte() +" exes. ("+ DateUtil.formatarData(cpece.getDataMovimento(), Constantes.DAY_MONTH_PT_BR) +")"; //obterDescricaoQuebraRelatorioCE(notas);
 				

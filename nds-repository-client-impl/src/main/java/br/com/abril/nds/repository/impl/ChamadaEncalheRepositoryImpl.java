@@ -708,22 +708,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("join itensNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio ");
 		hql.append("where subChamadaEncalhe.produtoEdicao.id = produtoEdicao.id ");
 		hql.append("and subEstudoCotas.cota.id = cota.id) as numeroNotaEnvio ");
-		
-		/*
-		select 
-		select distinct min(nei.nota_envio_id) as notaEnvio
-		from chamada_encalhe ce  
-		inner join chamada_encalhe_cota cec on cec.CHAMADA_ENCALHE_ID = ce.ID  
-		inner join cota c on c.id = cec.COTA_ID  
-		inner join movimento_estoque_cota mec on mec.PRODUTO_EDICAO_ID = ce.PRODUTO_EDICAO_ID and mec.COTA_ID = cec.COTA_ID  
-		inner join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID  
-		inner join estudo e on e.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID  
-		inner join estudo_cota ec on ec.ESTUDO_ID = e.id and ec.COTA_ID = mec.COTA_ID
-		inner join nota_envio_item nei on nei.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID and nei.ESTUDO_COTA_ID = ec.id
-		where ce.DATA_RECOLHIMENTO = '2013-10-18'
-		group by mec.cota_id, mec.PRODUTO_EDICAO_ID
-		order by notaEnvio;
-		*/
 				
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
 		
