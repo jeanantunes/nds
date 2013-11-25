@@ -250,7 +250,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Lancamento lancamento = this.obterLancamento(input,lancamentoParcial.getProdutoEdicao());
 		lancamento.setRecebimentos(new HashSet(itens));
 		
-		pParcial.setLancamento(lancamento);
+		//TODO Ajuste alterações PARCIAIS
+		//pParcial.setLancamento(lancamento);
 		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
 		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
@@ -311,7 +312,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Obtém os lançamentos vinculados aos PeriodoLancamentoParcials gerados
 		List<Lancamento> lancamentosVinculados = new ArrayList<Lancamento>();
 		for (PeriodoLancamentoParcial periodoLancamentoParcial : lancamentoParcial.getPeriodos()) {
-			lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
+			//TODO Ajuste alterações PARCIAIS
+			//lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
 		}
 
 		
