@@ -86,6 +86,9 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 	
 
 	private String getSubqueryPeridoLancamento() {
+		
+		//TODO Ajuste alterações PARCIAIS
+		
 		StringBuilder hqlSub = new StringBuilder();
 		hqlSub.append( " from Lancamento as lanc ");
 		hqlSub.append( " join  lanc.periodoLancamentoParcial "); 

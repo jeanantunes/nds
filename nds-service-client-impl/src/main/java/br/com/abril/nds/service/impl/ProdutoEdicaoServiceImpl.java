@@ -529,7 +529,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data lançamento previsto deve ser maior que a data recolhimento previsto.");
 		}
 		
-		Lancamento lancamento = periodoLancamentoParcial.getLancamento();
+		//TODO Ajuste alterações PARCIAIS
+		
+		/*Lancamento lancamento = periodoLancamentoParcial.getLancamento();
 		
 		lancamento.setDataLancamentoDistribuidor(dto.getDataLancamentoPrevisto());
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
@@ -537,14 +539,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		lancamento.setUsuario(usuario);
 		
-		lancamentoRepository.merge(lancamento);
+		lancamentoRepository.merge(lancamento);*/
 	}
 
 	private void validarPeriodoLancamentoParcial(ProdutoEdicaoDTO dto,ProdutoEdicao produtoEdicao) {
 		
 		PeriodoLancamentoParcial periodoInicial = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
 		
-		if(periodoInicial!= null && periodoInicial.getLancamento()!= null){
+		//TODO Ajuste alterações PARCIAIS
+		
+		/*if(periodoInicial!= null && periodoInicial.getLancamento()!= null){
 			
 			if(periodoInicial.getLancamento().getDataLancamentoDistribuidor().compareTo(dto.getDataLancamentoPrevisto())<0){
 				throw new ValidacaoException(TipoMensagem.WARNING,"Data lançamento previsto deve ser menor que a data de lançamento real.");
@@ -558,7 +562,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			if(periodoInicial.getLancamento().getDataRecolhimentoDistribuidor().compareTo(dto.getDataRecolhimentoPrevisto())>0){
 				throw new ValidacaoException(TipoMensagem.WARNING,"Data recolhimento previsto deve ser menor que a data de recolhimento real.");
 			}
-		}
+		}*/
 	}
 
 	/**
@@ -1147,7 +1151,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 				PeriodoLancamentoParcial primeiroPeriodo = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
 				
-				if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
+				//TODO Ajuste alterações PARCIAIS
+				
+				/*if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
 					dto.setDataLancamento(primeiroPeriodo.getLancamento().getDataLancamentoDistribuidor());
 				}
 				else{
@@ -1160,7 +1166,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					dto.setDataRecolhimentoReal(ultimoPeriodo.getLancamento().getDataRecolhimentoDistribuidor());
 				}else{
 					dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
-				}
+				}*/
 				
 
 			}else{

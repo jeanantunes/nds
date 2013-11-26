@@ -121,7 +121,8 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL})
+	@ManyToOne(cascade = {CascadeType.ALL})
+	@JoinColumn(name = "PERIODO_LANCAMENTO_PARCIAL_ID")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	@OneToMany(mappedBy = "lancamento")
