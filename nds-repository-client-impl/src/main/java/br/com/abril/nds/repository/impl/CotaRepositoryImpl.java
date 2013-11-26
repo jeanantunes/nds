@@ -3277,14 +3277,20 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	}
 
 	@Override
-	public BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor) {
+	public BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor) {//TODO
 		
-		StringBuilder hql = new StringBuilder("SELECT SUM(COALESCE(D_.VALOR,0)) ");
+		StringBuilder hqlDividaAcumulada = new StringBuilder();
+		hqlDividaAcumulada.append(" (SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ")
+						  .append("	FROM DIVIDA D ")
+						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
+						  .append("	WHERE D.COTA_ID = COTA_.ID ")
+						  .append(" AND c.DT_PAGAMENTO is null ")
+						  .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+						  .append("	AND C.DT_VENCIMENTO < :dataOperacao) ");
+		
+		StringBuilder hql = new StringBuilder("SELECT SUM( ").append(hqlDividaAcumulada).append(" ) ");
 		
 		this.setFromWhereCotasSujeitasSuspensao(hql);
-		
-		hql.insert(hql.indexOf("WHERE"), 
-			" JOIN DIVIDA AS D_ ON (D_.COTA_ID = COTA_.ID AND D_.STATUS in (:statusDividaEmAbertoPendente) AND D_.DATA <= :dataOperacao) ");
 		
 		Query query = this.getSession().createSQLQuery(hql.toString());
 		

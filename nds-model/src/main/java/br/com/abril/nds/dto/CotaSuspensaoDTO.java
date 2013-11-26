@@ -20,7 +20,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	@Export(label = "Cota", alignment=Alignment.LEFT)
 	private Integer numCota;
 	
-	@Export(label = "Nome", alignment=Alignment.LEFT)
+	@Export(label = "Nome", alignment=Alignment.LEFT, widthPercent=30f)
 	private String nome;
 	
 	@Export(label = "Valor Consignado TotalR$", alignment=Alignment.RIGHT)
@@ -32,16 +32,16 @@ public class CotaSuspensaoDTO implements Serializable{
 	@Export(label = "Divida Acumulada R$", alignment=Alignment.RIGHT)
 	private String dividaAcumulada;
 	
+	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER, widthPercent=5f)
+	private Integer diasAberto;
+
 	@Export(label = "Faturamento R$", alignment=Alignment.RIGHT)
 	private String faturamento;
 	
-	@Export(label = "% Dívida", alignment=Alignment.RIGHT)
+	@Export(label = "% Dívida", alignment=Alignment.RIGHT, widthPercent=5f)
 	private String percDivida;
 		
 	private Double doubleDividaAcumulada;
-	
-	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER)
-	private Integer diasAberto;
 	
 	private Double doubleConsignado;
 		
