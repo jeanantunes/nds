@@ -82,21 +82,21 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		
 		sql.append(" inner join	NOTA_ENVIO notaEnvio on itemNota.NOTA_ENVIO_ID=notaEnvio.numero  ");
 		sql.append(" inner join	PRODUTO_EDICAO produtoEdicao on itemNota.PRODUTO_EDICAO_ID=produtoEdicao.ID  ");
-		sql.append(" inner join  ESTUDO_COTA ec ON  itemNota.ESTUDO_COTA_ID = ec.ID ");
-		sql.append(" inner join  COTA c ON EC.COTA_ID = c.ID AND notaEnvio.NUMERO_COTA = c.NUMERO_COTA ");
-		sql.append(" inner join  movimento_estoque_cota m on produtoEdicao.ID = m.PRODUTO_EDICAO_ID  ");
+		sql.append(" inner join ESTUDO_COTA ec ON  itemNota.ESTUDO_COTA_ID = ec.ID ");
+		sql.append(" inner join COTA c ON EC.COTA_ID = c.ID AND notaEnvio.NUMERO_COTA = c.NUMERO_COTA ");
+		sql.append(" inner join movimento_estoque_cota m on produtoEdicao.ID = m.PRODUTO_EDICAO_ID  ");
 		sql.append(" 									 and ec.ID = m.ESTUDO_COTA_ID ");
 		sql.append(" 									 AND m.COTA_ID = c.ID ");
-		sql.append(" inner join  lancamento l ON m.LANCAMENTO_ID = l.ID ");
+		sql.append(" inner join lancamento l ON m.LANCAMENTO_ID = l.ID ");
 		
-		if (idCota != null){
+		if (idCota != null) {
 		    
 			sql.append(" where c.ID=:idCota ");
 		}
 		
-		if (idsProdutoEdicao != null && idsProdutoEdicao.size() > 0){
+		if (idsProdutoEdicao != null && idsProdutoEdicao.size() > 0) {
 		    
-			sql.append(" and produtoEdicao.ID in (:idsProdutoEdicao)  ");
+			sql.append(" and produtoEdicao.ID in (:idsProdutoEdicao) ");
 		}
 		
 		if (dataRecolhimentoCE != null){
@@ -142,7 +142,7 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		}
 		
 		sql.append(" and v.TIPO_COMERCIALIZACAO_VENDA = :tipoComercializacao ");
-
+		
 		Query query = this.getSession().createSQLQuery(sql.toString())
 				.addScalar("numeroNotaEnvio", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("dataEmissao", StandardBasicTypes.DATE)
