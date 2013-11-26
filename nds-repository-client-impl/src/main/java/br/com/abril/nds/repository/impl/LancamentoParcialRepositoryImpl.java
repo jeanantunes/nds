@@ -102,8 +102,6 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 	private String getSqlFromEWhereLancamentosParciais(FiltroParciaisDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-	
-		//TODO Ajuste alterações PARCIAIS
 
 		hql.append(" from Lancamento lancamento ");
 		hql.append(" join lancamento.periodoLancamentoParcial periodo ");
