@@ -280,8 +280,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		StringBuilder sql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		sql.append(" SELECT plp.TIPO as tipoLancamento");
 		sql.append(" FROM LANCAMENTO lanc "); 
 		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
@@ -308,8 +306,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append(" select	");
@@ -520,8 +516,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
 		
 		hql.append(" CASE WHEN ");
-		
-		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");

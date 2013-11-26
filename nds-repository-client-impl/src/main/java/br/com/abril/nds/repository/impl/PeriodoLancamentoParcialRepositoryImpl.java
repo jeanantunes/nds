@@ -168,9 +168,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	private String getSqlFromEWherePeriodosParciais(FiltroParciaisDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-		
-		//TODO Ajuste alterações PARCIAIS
-		
+			
 		hql.append(" from PeriodoLancamentoParcial periodo ");
 		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
 		hql.append(" join periodo.lancamento lancamento ");
@@ -323,8 +321,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	
 	public PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento) {
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		Criteria criteria = super.getSession().createCriteria(PeriodoLancamentoParcial.class,"periodo");
 				
 		criteria.add(Restrictions.eq("periodo.lancamento.id", idLancamento));
@@ -339,8 +335,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			Date dataLancamento, Date dataRecolhimento) {
 		
 		StringBuilder hql = new StringBuilder();
-		
-		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" select count(periodo) ");
 		
@@ -426,8 +420,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 					
 		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
 		
 		criteria.createAlias("lancamento.produtoEdicao","produtoEdicao");
@@ -449,8 +441,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 					
 		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
 		
 		criteria.createAlias("lancamento.produtoEdicao","produtoEdicao");
@@ -471,8 +461,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
@@ -488,8 +476,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	public PeriodoLancamentoParcial obterUltimoLancamentoParcial(Long idProdutoEdicao){
 		
 		StringBuilder hql = new StringBuilder();
-		
-		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
@@ -508,8 +494,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		   
 		StringBuilder hql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select count( periodo.id ) from PeriodoLancamentoParcial periodo  ")
 
 		.append(" join periodo.lancamento lancamento ")

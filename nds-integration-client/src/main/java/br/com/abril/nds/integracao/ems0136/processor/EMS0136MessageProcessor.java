@@ -250,8 +250,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Lancamento lancamento = this.obterLancamento(input,lancamentoParcial.getProdutoEdicao());
 		lancamento.setRecebimentos(new HashSet(itens));
 		
-		//TODO Ajuste alterações PARCIAIS
-		//pParcial.setLancamento(lancamento);
+		pParcial.setLancamento(lancamento);
 		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
 		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
@@ -312,8 +311,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Obtém os lançamentos vinculados aos PeriodoLancamentoParcials gerados
 		List<Lancamento> lancamentosVinculados = new ArrayList<Lancamento>();
 		for (PeriodoLancamentoParcial periodoLancamentoParcial : lancamentoParcial.getPeriodos()) {
-			//TODO Ajuste alterações PARCIAIS
-			//lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
+			lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
 		}
 
 		
@@ -396,9 +394,6 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private List<ItemRecebimentoFisico> obtemItensRecebimentosFisicos(
 			LancamentoParcial lancamentoParcial, Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();
-		
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append("SELECT l.recebimentos ");
 		hql.append("	FROM  PeriodoLancamentoParcial p ");
 		hql.append("	JOIN  p.lancamento l ");
