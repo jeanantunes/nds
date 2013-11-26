@@ -241,8 +241,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 	private Lancamento gerarLancamento(ProdutoEdicao produtoEdicao, Date dtLancamento, Date dtRecolhimento, Usuario usuario) {
 		
+		//TODO Ajuste alterações PARCIAIS
+		
 		Lancamento lancamento = new Lancamento();
-		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		//lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataLancamentoPrevista(dtLancamento);
 		lancamento.setDataRecolhimentoPrevista(dtRecolhimento);

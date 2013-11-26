@@ -460,11 +460,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 			Usuario usuario = usuarioService.getUsuarioLogado();
 			
-			if(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento())) {							
+			//TODO Ajuste alterações PARCIAIS
+			
+			/*if(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento())) {							
 				this.salvarLancamentoParcial(dto, produtoEdicao,indNovoProdutoEdicao, usuario);
 			} else {
 				this.salvarLancamento(dto, produtoEdicao,indNovoProdutoEdicao, usuario);
-			}
+			}*/
 		}
 		
 		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
@@ -476,8 +478,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if(!indNovoProdutoEdicao) {
 			for(Lancamento lancamento : produtoEdicao.getLancamentos() ) {
-				if(!TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento()))
-					lancamentoRepository.remover(lancamento);
+				
+				//TODO Ajuste alterações PARCIAIS
+				
+				/*if(!TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento()))
+					lancamentoRepository.remover(lancamento);*/
 			}
 		}
 		
@@ -709,7 +714,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
 				
 			// Outros:
-			produtoEdicao.setParcial(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento()));	// Regime de Recolhimento;
+			
+			//TODO Ajuste alterações PARCIAIS
+		    
+			//produtoEdicao.setParcial(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento()));	// Regime de Recolhimento;
 				
 			// Característica Física:
 			produtoEdicao.setPeso(dto.getPeso());
@@ -1135,7 +1143,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			dto.setTipoLancamento(uLancamento.getTipoLancamento());
 			
-			if(TipoLancamento.PARCIAL.equals(uLancamento.getTipoLancamento())){
+			//TODO Ajuste alterações PARCIAIS
+			
+			/*if(TipoLancamento.PARCIAL.equals(uLancamento.getTipoLancamento())){
 				
 				LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicao.getId());
 				
@@ -1153,7 +1163,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 				//TODO Ajuste alterações PARCIAIS
 				
-				/*if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
+				if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
 					dto.setDataLancamento(primeiroPeriodo.getLancamento().getDataLancamentoDistribuidor());
 				}
 				else{
@@ -1166,7 +1176,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					dto.setDataRecolhimentoReal(ultimoPeriodo.getLancamento().getDataRecolhimentoDistribuidor());
 				}else{
 					dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
-				}*/
+				}
 				
 
 			}else{
@@ -1176,7 +1186,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
 				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
-			}
+			}*/
 			
 			dto.setRepartePrevisto(uLancamento.getReparte());
 			dto.setRepartePromocional(uLancamento.getRepartePromocional());

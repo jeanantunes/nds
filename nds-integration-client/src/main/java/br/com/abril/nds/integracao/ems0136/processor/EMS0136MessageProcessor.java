@@ -485,7 +485,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * Insere/Atualiza o restante dos dados do Lançamento vindo da 
 		 * Interface. 
 		 */
-		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		
+		//TODO Ajuste alterações PARCIAIS
+		
+		//lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		
 		if (lancamento.getId() == null) {
 			this.getSession().persist(lancamento);
 		} else {

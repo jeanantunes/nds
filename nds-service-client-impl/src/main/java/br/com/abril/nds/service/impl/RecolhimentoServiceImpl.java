@@ -407,9 +407,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				this.lancamentoRepository.merge(lancamento);
 				
-				if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
+				//TODO Ajuste alterações PARCIAIS
+				
+				/*if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
 					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento, usuario);
-				}
+				}*/
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
 												   		lancamento, novaData);
