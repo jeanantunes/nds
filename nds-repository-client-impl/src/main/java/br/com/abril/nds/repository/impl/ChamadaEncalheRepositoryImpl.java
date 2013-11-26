@@ -737,8 +737,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" from ChamadaEncalheCota chamEncCota 					")
 		   .append(" join chamEncCota.chamadaEncalhe chamadaEncalhe 		")
 		   .append(" join chamEncCota.cota cota 							")

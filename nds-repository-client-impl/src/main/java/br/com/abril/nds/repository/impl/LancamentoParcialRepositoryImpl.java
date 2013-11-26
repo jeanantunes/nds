@@ -102,7 +102,6 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		StringBuilder hql = new StringBuilder();
 	
-		//TODO Ajuste alterações PARCIAIS
 
 		hql.append(" from LancamentoParcial lancamentoParcial ");
 		hql.append(" join lancamentoParcial.produtoEdicao produtoEdicao ");
