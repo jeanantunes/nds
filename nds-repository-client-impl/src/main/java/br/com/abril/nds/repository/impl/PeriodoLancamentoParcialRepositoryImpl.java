@@ -173,7 +173,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append(" from PeriodoLancamentoParcial periodo ");
 		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
-		hql.append(" join periodo.lancamento lancamento ");
+		hql.append(" join periodo.lancamentos lancamento ");
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");
 		hql.append(" left join lancamento.estudo estudo ");

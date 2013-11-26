@@ -860,8 +860,6 @@ public class LancamentoRepositoryImpl extends
 	public List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
 		StringBuilder hql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select lancamento ")
 		   .append(" from PeriodoLancamentoParcial periodo ")
 		   .append(" join periodo.lancamento lancamento ")
@@ -990,8 +988,6 @@ public class LancamentoRepositoryImpl extends
 		StringBuffer hql = new StringBuffer();
 
 		hql.append(" from Lancamento lancamento ");
-		
-		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" inner join lancamento.produtoEdicao as produtoEdicao 	");
 		hql.append(" inner join produtoEdicao.produto as produto 			");
