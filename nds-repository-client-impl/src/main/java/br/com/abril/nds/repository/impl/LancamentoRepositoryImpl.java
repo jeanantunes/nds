@@ -599,6 +599,8 @@ public class LancamentoRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 
+		//TODO Ajuste alterações PARCIAIS
+		
 		sql.append(" select ");
 		sql.append(" fornecedor.ID as idFornecedor, ");
 		sql.append(" pessoaFornecedor.RAZAO_SOCIAL as nomeFornecedor, ");
@@ -858,6 +860,8 @@ public class LancamentoRepositoryImpl extends
 	public List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
 		StringBuilder hql = new StringBuilder();
 
+		//TODO Ajuste alterações PARCIAIS
+		
 		hql.append(" select lancamento ")
 		   .append(" from PeriodoLancamentoParcial periodo ")
 		   .append(" join periodo.lancamento lancamento ")
@@ -986,6 +990,8 @@ public class LancamentoRepositoryImpl extends
 		StringBuffer hql = new StringBuffer();
 
 		hql.append(" from Lancamento lancamento ");
+		
+		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" inner join lancamento.produtoEdicao as produtoEdicao 	");
 		hql.append(" inner join produtoEdicao.produto as produto 			");
@@ -1206,6 +1212,8 @@ public class LancamentoRepositoryImpl extends
 	private String montarClausulaFromConsultaBalanceamentoLancamento() {
 		
 		StringBuilder sql = new StringBuilder();
+		
+		//TODO Ajuste alterações PARCIAIS
 		
 		sql.append(" from ");
 		sql.append(" LANCAMENTO lancamento ");
@@ -1897,6 +1905,8 @@ public class LancamentoRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
+		//TODO Ajuste alterações PARCIAIS
+		
 		hql.append(" select lancamento.id as idLancamento, ");
 		hql.append(" cota.id as idCota, ");
 		hql.append(" produtoEdicao.peso as peso, ");

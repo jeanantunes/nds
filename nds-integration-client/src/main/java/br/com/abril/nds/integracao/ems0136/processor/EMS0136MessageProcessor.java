@@ -394,6 +394,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private List<ItemRecebimentoFisico> obtemItensRecebimentosFisicos(
 			LancamentoParcial lancamentoParcial, Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();
+		
+		//TODO Ajuste alterações PARCIAIS
+		
 		hql.append("SELECT l.recebimentos ");
 		hql.append("	FROM  PeriodoLancamentoParcial p ");
 		hql.append("	JOIN  p.lancamento l ");
