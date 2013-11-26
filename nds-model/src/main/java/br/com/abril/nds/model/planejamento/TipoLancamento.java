@@ -18,7 +18,8 @@ public enum TipoLancamento {
 	LANCAMENTO(9,"Lançamento"),
 	SUPLEMENTAR(10,"Suplementar"),
 	PARCIAL(11,"Parcial"),
-	REDISTRIBUICAO(12,"Redistribuição");
+	REDISTRIBUICAO(12,"Redistribuição"),
+	PARCIAL_REDISTRIBUICAO(13,"Redistribuição");
 
 	private Integer codigo;
 	
