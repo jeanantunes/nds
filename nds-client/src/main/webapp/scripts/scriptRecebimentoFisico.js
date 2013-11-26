@@ -1082,6 +1082,10 @@ var recebimentoFisicoController = $.extend(true, {
 		var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
 
 		var valorTotal = 0, valorTotalDesconto = 0;
+		
+		var qtdeProdutos = 0;
+		
+		var totalExemplares = 0;
 
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -1094,12 +1098,19 @@ var recebimentoFisicoController = $.extend(true, {
 			valorTotalDesconto += 
 				intValue(removeMascaraPriceFormat(
 					linha.find('[name="valorTotalDesconto"]').text()));
+			
+			qtdeProdutos++;
+			
+			totalExemplares+= intValue(linha.find('[name="repartePrevisto"]').text());
 		});
 		
         $("#totalSemDescontoLbl", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
         $("#totalComDescontoLbl", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
+        
+        $("#qtdeProdutos", recebimentoFisicoController.workspace).html(qtdeProdutos);
+        $("#totalExemplares", recebimentoFisicoController.workspace).html(totalExemplares);
 	},
-	
+		
 	alterarValorItem : function(idLinha) {
 		
 		var precoDesconto = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).text());
@@ -1175,8 +1186,18 @@ var recebimentoFisicoController = $.extend(true, {
 	getDataFromResultNota : function(data) {
 		
 		recebimentoFisicoController.linhasDestacadas = [];
+		
 		var totalDescontoGeral = 0, totalGeral = 0;
+		
+		var qtdeProdutos = 0;
+		
+		var totalExemplares = 0;
+		
 		$.each(data.rows, function(index, value) {
+			
+			qtdeProdutos++;
+			
+			totalExemplares+= intValue(value.cell.repartePrevisto);
 			
 			var edicaoItemRecFisicoPermitida 	= value.cell.edicaoItemRecFisicoPermitida;
 			
@@ -1209,7 +1230,7 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.diferenca = '<span style="color: black" id="diferenca_'+lineId+'">'+diferenca+'</span>';
 			}
 
-			value.cell.repartePrevisto = '<span id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
+			value.cell.repartePrevisto = '<span name="repartePrevisto" id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
 				value.cell.qtdPacote 	=  '<input isEdicao="true" name="qtdPacote" id="qtdPacote_'+ lineId +
@@ -1343,6 +1364,9 @@ var recebimentoFisicoController = $.extend(true, {
 			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
 		//}
 		
+		$("#totalExemplares", recebimentoFisicoController.workspace).text(totalExemplares);
+		$("#qtdeProdutos", recebimentoFisicoController.workspace).text(qtdeProdutos);
+			
 		return data;
 	},
 	
