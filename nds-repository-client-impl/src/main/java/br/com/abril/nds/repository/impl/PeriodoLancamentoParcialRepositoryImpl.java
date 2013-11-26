@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 
@@ -168,8 +169,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	private String getSqlFromEWherePeriodosParciais(FiltroParciaisDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-		
-		//TODO Ajuste alterações PARCIAIS
 		
 		hql.append(" from PeriodoLancamentoParcial periodo ");
 		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
@@ -323,11 +322,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	
 	public PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento) {
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		Criteria criteria = super.getSession().createCriteria(PeriodoLancamentoParcial.class,"periodo");
 				
-		criteria.add(Restrictions.eq("periodo.lancamento.id", idLancamento));
+		criteria.add(Restrictions.eq("periodo.lancamentos.id", idLancamento));
 				
 		criteria.setMaxResults(1);
 		
@@ -340,13 +337,11 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select count(periodo) ");
 		
 		hql.append(" from PeriodoLancamentoParcial periodo ");
 		
-		hql.append(" join periodo.lancamento lancamento ");
+		hql.append(" join periodo.lancamentos lancamento ");
 		
 		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
 		
@@ -355,6 +350,8 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" join periodos.lancamento lancamentoPeriodo ");
 		
 		hql.append(" where lancamentoPeriodo.id !=:idLancamento "); 
+		
+		hql.append(" and lancamento.tipoLancamento=:tipoLancamento ");
 		
 		hql.append(" and lancamento.id =:idLancamento ");
 		
@@ -372,6 +369,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		query.setParameter("idLancamento", idLancamento);
 		query.setParameter("dataLancamento", dataLancamento);
 		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
 		
 		Long count = (Long) query.uniqueResult();
 		
@@ -471,16 +469,16 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
-			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
+			.append(" join periodo.lancamentos lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
 			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
-			.append(" and produtoEdicao.id =:idProdutoEdicao ");
+			.append(" and produtoEdicao.id =:idProdutoEdicao ")
+			.append(" and lancamento.tipoLancamento=:tipoLancamento ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
 		
 		return (PeriodoLancamentoParcial) query.uniqueResult();
 	}
@@ -489,16 +487,16 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
 			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
-			.append(" and produtoEdicao.id =:idProdutoEdicao ");
+			.append(" and produtoEdicao.id =:idProdutoEdicao ")
+			.append(" and lancamento.tipoLancamento=:tipoLancamento");
 		
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
 		
 		return (PeriodoLancamentoParcial) query.uniqueResult();
 	
@@ -508,11 +506,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		   
 		StringBuilder hql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select count( periodo.id ) from PeriodoLancamentoParcial periodo  ")
 
-		.append(" join periodo.lancamento lancamento ")
+		.append(" join periodo.lancamentos lancamento ")
 
 		.append(" join periodo.lancamentoParcial lancamentoParcial ")
 
