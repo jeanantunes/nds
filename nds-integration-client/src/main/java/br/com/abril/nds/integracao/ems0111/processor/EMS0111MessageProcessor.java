@@ -40,14 +40,15 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 	// METODO PARA AJUSTAR A INTERFACE AO ENUM
 	public TipoLancamento parseTipo(String tipo) {
-		if (tipo.equalsIgnoreCase("LAN"))
+		// TODO Ajuste alterações PARCIAIS
+		/*if (tipo.equalsIgnoreCase("LAN"))
 			return TipoLancamento.LANCAMENTO;
 		if (tipo.equalsIgnoreCase("SUP"))
 			return TipoLancamento.SUPLEMENTAR;
 		if (tipo.equalsIgnoreCase("REL"))
 			return TipoLancamento.RELANCAMENTO;
 		if (tipo.equalsIgnoreCase("PAR"))
-			return TipoLancamento.PARCIAL;
+			return TipoLancamento.PARCIAL;*/
 		return null;
 	}
 
