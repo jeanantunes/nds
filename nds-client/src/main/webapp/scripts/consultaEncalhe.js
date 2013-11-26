@@ -71,9 +71,7 @@ var ConsultaEncalhe = $.extend(true, {
 			        {name:'dataRecolhimentoInicial', value: dataRecolhimentoInicial},
 			        {name:'dataRecolhimentoFinal', value: dataRecolhimentoFinal},
 			        {name:'idFornecedor', value: idFornecedor},
-			        {name:'numeroCota', value: numeroCota },
-			        {name:'page', value: 1},
-			        {name:'newp', value: 1}
+			        {name:'numeroCota', value: numeroCota }
 			];
 			
 			$("#gridConsultaEncalhe", ConsultaEncalhe.workspace).flexOptions({
@@ -82,7 +80,7 @@ var ConsultaEncalhe = $.extend(true, {
 			});
 			
 			$.each($("#gridConsultaEncalhe", ConsultaEncalhe.workspace), function(index, value) {
-				if(value.p) {
+				if(value && value.p) {
 					value.p.page = 1;
 					value.p.newp = 1;
 				}
