@@ -25,6 +25,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private String notaEnvio;
 	
+	private Long numeroNotaEnvio;
+	
 	private String descricaoNotaEnvio;
 	
 	private Long edicao;
@@ -299,6 +301,14 @@ public class ProdutoEmissaoDTO implements Serializable{
 
 	public void setNotaEnvio(String notaEnvio) {
 		this.notaEnvio = notaEnvio;
+	}
+
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
 
 	public boolean isApresentaQuantidadeEncalhe() {

@@ -300,7 +300,7 @@ var painelProcessamentoController = $.extend(true, {
 		return resultado;
 	},
 	executarPreInterfaceProcessamento : function(resultado) {
-
+		
 		if (resultado.mensagens) {
 			$("#dialog-novo", painelProcessamentoController.workspace).dialog("close");
 			exibirMensagem(
@@ -311,6 +311,9 @@ var painelProcessamentoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
+			
+			row.cell.mensagem = row.cell.mensagem || ""; 
+			
 			if(row.cell.numeroLinha ){ 
 				row.cell.numeroLinha = "Linha: " + row.cell.numeroLinha;
 			}
