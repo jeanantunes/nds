@@ -3277,7 +3277,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	}
 
 	@Override
-	public BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor) {//TODO
+	public BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor) {
 		
 		StringBuilder hqlDividaAcumulada = new StringBuilder();
 		hqlDividaAcumulada.append(" (SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ")
