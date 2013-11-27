@@ -574,7 +574,6 @@ function keyEventEnterAux(e){
 	return false;
 }
 
-<<<<<<< HEAD
 function visibleOverlay(){
 	return $("div.ui-widget-overlay").val()=="";
 }
@@ -722,19 +721,6 @@ function disableShortcutRefresh(e) {
     };
 }
 
-
-//simply visual, let's you know when the correct iframe is selected
-/*$(window).on("focus", function(e) {
- $("html, body").css({ background: "#FFF", color: "#000" })
- .find("h2").html("THIS BOX NOW HAS FOCUS<br />F5 should not work.");
-})
-.on("blur", function(e) {
- $("html, body").css({ background: "", color: "" })
- .find("h2").html("CLICK HERE TO GIVE THIS BOX FOCUS BEFORE PRESSING F5");
-});*/
-
-//@ sourceURL=util.js
-=======
 function addTabWithPost(tabs, label, postResponse, blankPath) {
 	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
 	tabs.tabs('addTab', label, blankPath);
@@ -770,6 +756,16 @@ function insertTelaAnalise(divToHide, divToShow, estudo){
 		});
 	
 }
-//@ sourceURL=utils.js
 
->>>>>>> fase2
+
+//simply visual, let's you know when the correct iframe is selected
+/*$(window).on("focus", function(e) {
+ $("html, body").css({ background: "#FFF", color: "#000" })
+ .find("h2").html("THIS BOX NOW HAS FOCUS<br />F5 should not work.");
+})
+.on("blur", function(e) {
+ $("html, body").css({ background: "", color: "" })
+ .find("h2").html("CLICK HERE TO GIVE THIS BOX FOCUS BEFORE PRESSING F5");
+});*/
+
+//@ sourceURL=util.js
