@@ -3301,8 +3301,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 						  .append(" AND c.DT_PAGAMENTO is null ")
 						  .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
 						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ) as valor ");
-		
-		
+				
 		this.setFromWhereCotasSujeitasSuspensao(hql);
 		
 		hql.append(") as total ");
