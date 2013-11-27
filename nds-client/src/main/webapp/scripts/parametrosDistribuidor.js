@@ -645,25 +645,13 @@ var parametrosDistribuidorController = $.extend(true, {
 
 		parametrosDistribuidorController.exibirContratoCota();
 		
-<<<<<<< HEAD
 		parametrosDistribuidorController.desabilitarItens();
 		
 		$("#numeroDDD", this.workspace).numeric();
 		$("#numeroTelefone", this.workspace).numeric();
 		
-	},
-	
-	desabilitarItens : function() {
-
-		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [6] );
-		$("#chamadaoDiasSuspensao", this.workspace).disable();
-		$("#chamadaoValorConsignado", this.workspace).disable();
-		$("#utilizaDesconto", this.workspace).disable();
-		$("#percentualDesconto", this.workspace).disable();
-		$("#parcelamentoDividas", this.workspace).disable();
-		$("#negociacaoAteParcelas", this.workspace).disable();
-=======
-		// Configs iniciais da aba Distribuição
+		
+		// Configs iniciais da aba Distribuição - F2
 		$('#listClassificacaoCota0\\.valorDe', this.workspace)
 		.add('#listClassificacaoCota0\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota1\\.valorDe', this.workspace)
@@ -676,57 +664,57 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
 		.on('blur', function() {
 			$(this).formatCurrency({
-	        	symbol: 'R$ ',
-	        	decimalSymbol: ',',
-	        	digitGroupSymbol: '.'
-	    	});
-
+				symbol: 'R$ ',
+				decimalSymbol: ',',
+				digitGroupSymbol: '.'
+			});
+			
 		})
 		.formatCurrency({
-        	symbol: 'R$ ',
-        	decimalSymbol: ',',
-        	digitGroupSymbol: '.'
-    	});
+			symbol: 'R$ ',
+			decimalSymbol: ',',
+			digitGroupSymbol: '.'
+		});
 		
 		if ($('#listClassificacaoCota4\\.valorDe', this.workspace).val() === '') {
 			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00').formatCurrency({
-	        	symbol: 'R$ ',
-	        	decimalSymbol: ',',
-	        	digitGroupSymbol: '.'
-        	});
+				symbol: 'R$ ',
+				decimalSymbol: ',',
+				digitGroupSymbol: '.'
+			});
 		}
 		
 		$('#listClassificacaoCota1\\.valorAte', this.workspace)
 		.on('blur', function(){
-		    if (this.value) {
-		        $('#listClassificacaoCota0\\.valorAte', this.workspace)
-		        .val(this.value)
-		        .formatCurrency({
-		        	symbol: 'R$ ',
-		        	decimalSymbol: ',',
-		        	digitGroupSymbol: '.'
-	        	});
-		    }
+			if (this.value) {
+				$('#listClassificacaoCota0\\.valorAte', this.workspace)
+				.val(this.value)
+				.formatCurrency({
+					symbol: 'R$ ',
+					decimalSymbol: ',',
+					digitGroupSymbol: '.'
+				});
+			}
 		});
 		
 		$('#listClassificacaoCota2\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
 		.on('blur', function(){
-		    if (this.value) {
-		        var intId = parseInt(this.id.match(/\d/), 10);
+			if (this.value) {
+				var intId = parseInt(this.id.match(/\d/), 10);
 				var intIdValorDe = intId - 1;
-		        var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
-		        var numValorAte = parseFloat(this.value.replace(/\D/g,'')) / 100;
-		        campoValorDe.val((numValorAte + 0.01).toFixed(2)).formatCurrency({
-		        	symbol: 'R$ ',
-		        	decimalSymbol: ',',
-		        	digitGroupSymbol: '.'
-	        	});
-		        if (intId === 2) {
-		        	$('#listClassificacaoCota0\\.valorDe').val(campoValorDe.val());
-		        }
-		    }
+				var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
+				var numValorAte = parseFloat(this.value.replace(/\D/g,'')) / 100;
+				campoValorDe.val((numValorAte + 0.01).toFixed(2)).formatCurrency({
+					symbol: 'R$ ',
+					decimalSymbol: ',',
+					digitGroupSymbol: '.'
+				});
+				if (intId === 2) {
+					$('#listClassificacaoCota0\\.valorDe').val(campoValorDe.val());
+				}
+			}
 		});
 		
 		$('#vendaMediaMais', this.workspace)
@@ -738,8 +726,20 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listPercentualExcedente2\\.venda', this.workspace)
 		.add('#listPercentualExcedente2\\.pdv', this.workspace)
 		.numeric();
->>>>>>> fase2
 		
+		// fim F2
+		
+	},
+	
+	desabilitarItens : function() {
+
+		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [6] );
+		$("#chamadaoDiasSuspensao", this.workspace).disable();
+		$("#chamadaoValorConsignado", this.workspace).disable();
+		$("#utilizaDesconto", this.workspace).disable();
+		$("#percentualDesconto", this.workspace).disable();
+		$("#parcelamentoDividas", this.workspace).disable();
+		$("#negociacaoAteParcelas", this.workspace).disable();
 	},
 	
 	dialogConfirmarGrupo: function() {

@@ -728,9 +728,6 @@ var PDV =  $.extend(true, {
                     modal: true,
                     buttons: {
                         "Confirmar": function() {
-<<<<<<< HEAD
-=======
-
 
                         	if($("#selectAreainfluencia option:selected").val()=="-1"){
 
@@ -739,7 +736,6 @@ var PDV =  $.extend(true, {
                         		return;
                         	}
                         	
->>>>>>> fase2
                             if ($("#ptoPrincipal", this.workspace).attr("checked")){
 
                             	if($("#txtGeradorFluxoPrincipal").val().trim()==""){

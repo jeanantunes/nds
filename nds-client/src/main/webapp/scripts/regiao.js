@@ -973,30 +973,6 @@ var regiaoController = $.extend(true, {
 	},
  	
 
-	// FUNCTIONS - COTA
-	
-	
-	// FUNCTION - ADD COTA
-
-//	addCota : function() {
-//
-//		$("#dialog-addCota").dialog({
-//					resizable : false,
-//					height : 'auto',
-//					width : 750,
-//					modal : true,
-//					buttons : {
-//						"Confirmar" : function() {
-//							$(this).dialog("close");
-//							},
-//						"Cancelar" : function() {
-//							$(this).dialog("close");
-//						}
-//					}
-//				});
-//	},	
-	
-	
 	// FUNCTIONS - CARREGAR SEGMENTOS
 	
 	carregarSegmento : function() {
