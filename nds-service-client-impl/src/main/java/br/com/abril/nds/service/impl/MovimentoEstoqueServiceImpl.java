@@ -399,7 +399,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao, boolean isImportacao) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, dataOperacao, isImportacao,false, true, null);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, null, dataOperacao, isImportacao, false, true, null);
 
 		return movimentoEstoque;
 	}
@@ -461,7 +461,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
 
 		movimentoEstoque.setData(dataOperacao);
-		movimentoEstoque.setDataCriacao(dataOperacao);
+		
+		if(tipoMovimentoEstoque != null 
+				&& tipoMovimentoEstoque.getGrupoMovimentoEstoque() != null 
+				&& tipoMovimentoEstoque.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.RECEBIMENTO_FISICO)) {
+			movimentoEstoque.setDataCriacao(new Date());
+		} else {
+			movimentoEstoque.setDataCriacao(dataOperacao);
+		}
 		movimentoEstoque.setUsuario(new Usuario(idUsuario));
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
