@@ -906,7 +906,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				usuarioLogado.getId(), 
 				recebimentoFisicoDTO.getRepartePrevisto(),
 				tipoMovimento,
-				new Date(), 
+				distribuidorService.obterDataOperacaoDistribuidor(), 
 				false);
 		
 		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
