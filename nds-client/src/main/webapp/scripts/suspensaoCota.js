@@ -22,7 +22,7 @@ var suspensaoCotaController = $.extend(true, {
 			colModel : [  {
 				display : 'Cota',
 				name : 'numCota',
-				width : 55,
+				width : 40,
 				sortable : true,
 				align : 'left'
 			},{
@@ -38,7 +38,7 @@ var suspensaoCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Valor Reparte do Dia R$',
+				display : 'Reparte do Dia R$(Capa)',
 				name : 'vlrReparte',
 				width : 125,
 				sortable : true,
