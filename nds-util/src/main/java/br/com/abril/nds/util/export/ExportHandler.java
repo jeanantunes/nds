@@ -3,6 +3,7 @@ package br.com.abril.nds.util.export;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,8 @@ public class ExportHandler {
 			List<ExportHeader> exportHeaders = new ArrayList<ExportHeader>();
 			
 			List<ExportRow> exportRows = new ArrayList<ExportRow>();
+
+			FooterHandler footerHandler = new FooterHandler(exportableList.size());
 			
 			for (T exportable : exportableList) {
 				
@@ -49,9 +52,13 @@ public class ExportHandler {
 				
 				exportRow.setColumns(exportColumns);
 				
+				footerHandler.process(exportColumns);
+				
 				exportRows.add(exportRow);
 			}
 			
+			exportFooters.addAll(footerHandler.get());
+
 			exportModel.setFilters(exportFilters);
 			
 			exportModel.setHeaders(exportHeaders);
@@ -267,7 +274,7 @@ public class ExportHandler {
 
 		if (footer == null) {
 
-			return null;
+			return new ArrayList<ExportFooter>();
 		}
 		
 		if (!footer.getClass().isAnnotationPresent(Exportable.class)) {
@@ -401,6 +408,7 @@ public class ExportHandler {
 																  		  NoSuchFieldException {
 		
 		Export exportAnnotation = method.getAnnotation(Export.class);
+		Footer footerAnnotation = method.getAnnotation(Footer.class);
 		
 		if (exportAnnotation != null) {
 			
@@ -408,9 +416,12 @@ public class ExportHandler {
 			
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
-			return new ExportColumn(
-				getExportValue(methodReturn, exportAnnotation.columnType()), 
-					exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),
+			return createExportColumn(
+					footerAnnotation, method.getName(),
+					getExportValue(methodReturn, exportAnnotation.columnType()), 
+					exportAnnotation.alignment(), 
+					exportAnnotation.label(), 
+					exportAnnotation.exhibitionOrder(),
 					getExportValueType(methodReturn, exportAnnotation.columnType()),
 					exportAnnotation.fontSize());
 		}
@@ -426,6 +437,7 @@ public class ExportHandler {
 																 					   	 NoSuchFieldException {
 		
 		Export exportAnnotation = field.getAnnotation(Export.class);
+		Footer footerAnnotation = field.getAnnotation(Footer.class);
 		
 		if (exportAnnotation != null) {
 			
@@ -435,9 +447,11 @@ public class ExportHandler {
 			
 			Object fieldValue = field.get(exportable);
 
-			return new ExportColumn(
-				getExportValue(fieldValue, exportAnnotation.columnType()), 
-					exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), 
+			return createExportColumn(
+					footerAnnotation, field.getName(),
+					getExportValue(fieldValue, exportAnnotation.columnType()), exportAnnotation.alignment(), 
+					exportAnnotation.label(),
+					exportAnnotation.exhibitionOrder(), 
 					getExportValueType(fieldValue, exportAnnotation.columnType()),
 					exportAnnotation.fontSize());
 		}
@@ -445,7 +459,32 @@ public class ExportHandler {
 		return null;
 	}
 	
-	private static String getExportValue(Object value, ColumType columnType) {
+	private static ExportColumn createExportColumn(Footer footerAnnotation, String footerName,
+			String value, Export.Alignment alignment, 
+			String label, Integer exhibitionOrder, ColumType columnType,
+			Float fontSize) {
+
+		if (footerAnnotation == null) {
+		
+			return new ExportColumn(value, alignment, exhibitionOrder, columnType, fontSize);
+		}
+		
+		ExportFooterColumn exportFooterColumn = new ExportFooterColumn(value, alignment, exhibitionOrder, footerAnnotation.columnType(), fontSize);
+
+		exportFooterColumn.setFooterType(footerAnnotation.type());
+		
+		exportFooterColumn.setName(footerName);
+		
+		exportFooterColumn.setVerticalPrinting(footerAnnotation.printVertical());
+		
+		exportFooterColumn.setHeaderToAlign(footerAnnotation.alignWithHeader().isEmpty() ? label : footerAnnotation.alignWithHeader());
+		
+		exportFooterColumn.setLabel(footerAnnotation.label());
+		
+		return exportFooterColumn;
+	}
+
+	public static String getExportValue(Object value, ColumType columnType) {
 		
 		String exportValue = "";
 		
@@ -455,10 +494,10 @@ public class ExportHandler {
 			
 			switch(columnType){
 				case MOEDA:
-					exportValue = FORMATO_MOEDA.format(value);
+					exportValue = FORMATO_MOEDA.format(value instanceof String ? new BigDecimal((String)value) : value);
 				break;
 				case MOEDA_QUATRO_CASAS:
-					exportValue = FORMATO_MOEDA_QUATRO_CASAS.format(value);
+					exportValue = FORMATO_MOEDA_QUATRO_CASAS.format(value instanceof String ? new BigDecimal((String)value) : value);
 				break;
 				case DECIMAL:
 				case INTEGER:
