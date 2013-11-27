@@ -63,6 +63,23 @@ public class PeriodoLancamentoParcial {
 	public PeriodoLancamentoParcial() {
 		
 	}
+	/**
+	 * Retorna o lançamento do periodo que não é redistribuição.
+	 * @return lancamento
+	 */
+	public Lancamento getLancamentoPeriodoParcial(){
+		
+		if(this.lancamentos == null ){
+			return null;
+		}
+		
+		for(Lancamento item : this.lancamentos){
+			if(TipoLancamento.LANCAMENTO.equals(item.getTipoLancamento())){
+				return item;
+			}
+		}
+		return null;
+	} 
 
 	/**
 	 * @return the id

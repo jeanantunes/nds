@@ -862,7 +862,7 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" select lancamento ")
 		   .append(" from PeriodoLancamentoParcial periodo ")
-		   .append(" join periodo.lancamento lancamento ")
+		   .append(" join periodo.lancamentos lancamento ")
 		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
 		   .append(" order by lancamento."+ sortname + " " + sortorder);
 		

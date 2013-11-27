@@ -58,6 +58,16 @@ public class LancamentoParcial {
 	@OneToMany(mappedBy = "lancamentoParcial", cascade={CascadeType.REMOVE})
 	private List<PeriodoLancamentoParcial> periodos = new ArrayList<PeriodoLancamentoParcial>();
 	
+	public PeriodoLancamentoParcial getPrimeiroPeriodoParcial(){
+		
+		for(PeriodoLancamentoParcial item : this.periodos ){
+			if(item.getNumeroPeriodo() == 1 && item.getLancamentoPeriodoParcial().getNumeroLancamento() == 1){
+				return item;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @return the id
 	 */

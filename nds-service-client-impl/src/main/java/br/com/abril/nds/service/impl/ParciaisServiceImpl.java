@@ -19,6 +19,7 @@ import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
@@ -89,6 +90,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 	
 	private Integer getPebProduto(ProdutoEdicao produtoEdicao, Integer qntPeriodos){
+		
+		//TODO Ajuste alterações PARCIAIS
+		//Adequar o calculo da PEB para obedecer a nova regra especificada pelo genesio
 		
 		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
 		
@@ -161,18 +165,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 				dtRecolhimento = lancamentoParcial.getRecolhimentoFinal();
 			}
 			
-			Lancamento novoLancamento =  gerarLancamento(produtoEdicao, dtLancamento, dtRecolhimento, usuario);
+			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(lancamentoParcial);
 			
-			HistoricoLancamento novoHistorico = gerarHistoricoLancamento(novoLancamento, usuario);
+			novoPeriodo = periodoLancamentoParcialRepository.merge(novoPeriodo);
 			
-			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(novoLancamento, lancamentoParcial);
+			Lancamento novoLancamento =  gerarLancamento(novoPeriodo,produtoEdicao, dtLancamento, dtRecolhimento, usuario);
 			
 			lancamentoRepository.adicionar(novoLancamento);
-			
-			//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
-			//historicoLancamentoRepository.adicionar(novoHistorico);
-			
-			periodoLancamentoParcialRepository.adicionar(novoPeriodo);
 			
 			ultimoLancamento = novoLancamento;
 		}
@@ -185,8 +184,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 			if (lancamentoParcial.getPeriodos() != null && lancamentoParcial.getPeriodos().size() > 0) {
 
 				for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
-
+					
 					//TODO Ajuste alterações PARCIAIS
+					
 					/*if( Arrays.asList(StatusLancamento.PLANEJADO, 
 									  StatusLancamento.CONFIRMADO)
 									  .contains(item.getLancamento().getStatus())){
@@ -212,11 +212,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "ProdutoEdicao não deve ser nulo.");
 	}
 
-	private PeriodoLancamentoParcial gerarPeriodoParcial(Lancamento lancamento, LancamentoParcial lancamentoParcial) {
+	private PeriodoLancamentoParcial gerarPeriodoParcial(LancamentoParcial lancamentoParcial) {
 		
 		PeriodoLancamentoParcial periodo = new PeriodoLancamentoParcial();
-		//TODO Ajuste alterações PARCIAIS
-		//periodo.setLancamento(lancamento);
 		periodo.setLancamentoParcial(lancamentoParcial);
 		periodo.setTipo(TipoLancamentoParcial.PARCIAL);
 		periodo.setStatus(StatusLancamentoParcial.PROJETADO);
@@ -237,12 +235,11 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return historico;		
 	}
 
-	private Lancamento gerarLancamento(ProdutoEdicao produtoEdicao, Date dtLancamento, Date dtRecolhimento, Usuario usuario) {
-		
-		//TODO Ajuste alterações PARCIAIS
+	private Lancamento gerarLancamento(PeriodoLancamentoParcial novoPeriodo,ProdutoEdicao produtoEdicao, Date dtLancamento, Date dtRecolhimento, Usuario usuario) {
 		
 		Lancamento lancamento = new Lancamento();
-		//lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
+		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
+		lancamento.setPeriodoLancamentoParcial(novoPeriodo);
 		lancamento.setProdutoEdicao(produtoEdicao);
 		lancamento.setDataLancamentoPrevista(dtLancamento);
 		lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
