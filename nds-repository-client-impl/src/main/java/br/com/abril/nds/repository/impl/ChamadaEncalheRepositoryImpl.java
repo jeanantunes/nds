@@ -749,7 +749,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
 		   .append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
 		   .append(" left join movimentoCota.tipoMovimento tipoMovimento         ")
-		   .append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
 		   .append(" left join movimentoCota.cota cotaMov ")
 		   .append(" where cota.id=:idCota 									")
 		   .append(" and produtoEdicao.id = produtoEdicao.id  	")
