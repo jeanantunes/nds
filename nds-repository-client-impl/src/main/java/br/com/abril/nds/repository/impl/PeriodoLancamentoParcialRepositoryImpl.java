@@ -424,8 +424,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 					
 		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
 		
 		criteria.createAlias("lancamento.produtoEdicao","produtoEdicao");
@@ -446,8 +444,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	public Lancamento obterLancamentoAnterior(Long idProdutoEdicao, Date dataLancamento) {
 					
 		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
-		
-		//TODO Ajuste alterações PARCIAIS
 		
 		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
 		

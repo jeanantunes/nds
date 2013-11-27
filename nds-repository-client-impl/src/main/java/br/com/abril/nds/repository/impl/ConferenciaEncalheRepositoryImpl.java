@@ -280,11 +280,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		StringBuilder sql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		sql.append(" SELECT plp.TIPO as tipoLancamento");
 		sql.append(" FROM LANCAMENTO lanc "); 
-		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		sql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		sql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		sql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -308,8 +306,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append(" select	");
@@ -327,7 +323,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" CASE WHEN ");
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -337,7 +333,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
 		hql.append(" CASE WHEN (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc "); 
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -521,11 +517,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CASE WHEN ");
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
@@ -536,7 +530,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CASE WHEN (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc "); 
-		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.ID = lanc.PERIODO_LANCAMENTO_PARCIAL_ID) ");
 		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
 		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
 		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");

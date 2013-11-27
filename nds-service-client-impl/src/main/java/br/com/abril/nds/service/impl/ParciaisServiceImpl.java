@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
