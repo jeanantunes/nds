@@ -145,7 +145,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
 		
-		for(int i=0; i<qtdePeriodos; i++) {
+		for(int numeroPeriodo=0, numeroLancametoPeriodo = 1; numeroPeriodo<qtdePeriodos; numeroPeriodo++ , numeroLancametoPeriodo++) {
 		
 			if(ultimoLancamento == null) {
 				dtLancamento = lancamentoParcial.getLancamentoInicial();			
@@ -162,11 +162,11 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
-				i = qtdePeriodos;	
+				numeroPeriodo = qtdePeriodos;	
 				dtRecolhimento = lancamentoParcial.getRecolhimentoFinal();
 			}
 			
-			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(lancamentoParcial);
+			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(lancamentoParcial,numeroLancametoPeriodo);
 			
 			novoPeriodo = periodoLancamentoParcialRepository.merge(novoPeriodo);
 			
@@ -215,13 +215,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING, "ProdutoEdicao não deve ser nulo.");
 	}
 
-	private PeriodoLancamentoParcial gerarPeriodoParcial(LancamentoParcial lancamentoParcial) {
+	private PeriodoLancamentoParcial gerarPeriodoParcial(LancamentoParcial lancamentoParcial,int numeroPeriodo) {
 		
 		PeriodoLancamentoParcial periodo = new PeriodoLancamentoParcial();
 		periodo.setLancamentoParcial(lancamentoParcial);
 		periodo.setTipo(TipoLancamentoParcial.PARCIAL);
 		periodo.setStatus(StatusLancamentoParcial.PROJETADO);
-		periodo.setNumeroPeriodo(lancamentoParcial.getPeriodos().size());
+		periodo.setNumeroPeriodo(numeroPeriodo);
 		
 		return periodo;
 	}
@@ -253,6 +253,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.PLANEJADO);
+		lancamento.setNumeroLancamento(BigInteger.ONE.intValue());
 		lancamento.setUsuario(usuario);
 		
 		return lancamento;		
