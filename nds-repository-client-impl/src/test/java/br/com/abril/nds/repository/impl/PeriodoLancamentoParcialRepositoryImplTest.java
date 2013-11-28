@@ -80,13 +80,13 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 				dtInicial, dtFinal, StatusLancamentoParcial.PROJETADO);
 		save(lancamentoParcial);
 
-		lancamento = Fixture.lancamento(TipoLancamento.PARCIAL,
+		lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, Fixture.criarData(1, 1, 2010),
 				Fixture.criarData(1, 2, 2010), new Date(), new Date(),
 				BigInteger.valueOf(100), StatusLancamento.CONFIRMADO, null, 1);
 		save(lancamento);
 
-		lancamento2 = Fixture.lancamento(TipoLancamento.PARCIAL,
+		lancamento2 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, Fixture.criarData(1, 3, 2010),
 				Fixture.criarData(1, 4, 2010), new Date(), new Date(),
 				BigInteger.valueOf(100), StatusLancamento.CONFIRMADO, null, 2);

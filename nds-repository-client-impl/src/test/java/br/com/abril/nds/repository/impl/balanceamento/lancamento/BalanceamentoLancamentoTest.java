@@ -245,7 +245,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		
 		
-		lancamentoVejaSuplementar = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
+		lancamentoVejaSuplementar = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja1,
 				dataLancamento,
 				new Date(),
 				new Date(),
