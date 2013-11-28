@@ -1894,8 +1894,6 @@ public class LancamentoRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select lancamento.id as idLancamento, ");
 		hql.append(" cota.id as idCota, ");
 		hql.append(" produtoEdicao.peso as peso, ");
