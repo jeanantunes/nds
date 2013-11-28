@@ -61,7 +61,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
+		hql.append(" select distinct lancamentoParcial.id as idLancamentoParcial, produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" 		lancamentoParcial.lancamentoInicial as dataLancamento, ");
 		hql.append(" 		lancamentoParcial.recolhimentoFinal as dataRecolhimento, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
@@ -232,7 +232,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(lancamentoParcial) ");
+		hql.append(" select count(distinct lancamentoParcial.id ) ");
 		
 		hql.append(getSqlFromEWhereLancamentosParciais(filtro));
 		

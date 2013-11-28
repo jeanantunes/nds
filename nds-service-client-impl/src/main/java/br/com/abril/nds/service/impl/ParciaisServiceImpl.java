@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -185,14 +186,16 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 				for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
 					
-					//TODO Ajuste alterações PARCIAIS
+					Lancamento lancamento = item.getLancamentoPeriodoParcial();
 					
-					/*if( Arrays.asList(StatusLancamento.PLANEJADO, 
+					
+					if(lancamento!= null && 
+							Arrays.asList(StatusLancamento.PLANEJADO, 
 									  StatusLancamento.CONFIRMADO)
-									  .contains(item.getLancamento().getStatus())){
+									  .contains(lancamento.getStatus())){
 						
 						periodoLancamentoParcialRepository.remover(item);
-					}*/
+					}
 				}
 				
 				return true;
@@ -301,13 +304,16 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(dataRecolhimento, periodo.getLancamentoParcial().getRecolhimentoFinal()))
 			throw new ValidacaoException(TipoMensagem.WARNING, "A data de Recolhimento ultrapassa  o recolhimento final da parcial.");
-				
-		Boolean idMudancaPeriodoValida = periodoLancamentoParcialRepository.
+		
+		//TODO Ajuste alterações PARCIAIS
+		// Adequar as novas regras de validação a ser definidas
+		
+		/*Boolean idMudancaPeriodoValida = periodoLancamentoParcialRepository.
 				verificarValidadeNovoPeriodoParcial(idLancamento, dataLancamento, dataRecolhimento);
 		
 		if(!idMudancaPeriodoValida)
 			throw new ValidacaoException(TipoMensagem.WARNING, "A nova data ultrapassa lançamentos e/ou recolhimentos de outro período.");
-		
+		*/
 		Long diferencaLancamento = DateUtil.obterDiferencaDias(lancamento.getDataLancamentoDistribuidor(), dataLancamento);
 		Long diferencaRecolhimento = DateUtil.obterDiferencaDias(dataRecolhimento, lancamento.getDataRecolhimentoDistribuidor());
 		
