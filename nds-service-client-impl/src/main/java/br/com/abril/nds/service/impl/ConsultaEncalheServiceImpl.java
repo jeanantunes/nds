@@ -124,8 +124,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCotaDTO>();
 		
-		List<Long> listaIdControleConfEncalheCota = 
-				controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
+		List<Long> listaIdControleConfEncalheCota = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
 		if(listaIdControleConfEncalheCota != null && !listaIdControleConfEncalheCota.isEmpty()) {
 

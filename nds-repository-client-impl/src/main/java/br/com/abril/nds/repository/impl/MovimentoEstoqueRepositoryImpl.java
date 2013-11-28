@@ -73,7 +73,7 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" order by ");
 		
-		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.data else m.dataCriacao end asc, "); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
+		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.data else m.dataAprovacao end asc, "); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
 		
 		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.tipoMovimento.operacaoEstoque end asc, " ); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
 		

@@ -465,7 +465,7 @@ public class XLSExporter implements Exporter {
 			
 			if (hasLabel) {
 				
-				Cell labelCell = row.createCell(cellNum++);
+				Cell labelCell = row.createCell(++cellNum);
 				
 				labelCell.setCellValue(exportFooter.getLabel());
 				

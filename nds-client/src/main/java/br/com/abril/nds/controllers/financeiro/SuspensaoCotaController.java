@@ -30,6 +30,7 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -51,6 +52,7 @@ public class SuspensaoCotaController extends BaseController {
 	protected static final String ERRO_CARREGAR_SUGESTAO_SUSPENSAO = "Erro inesperado ao carregar sugestão de suspensão de cotas.";
 	protected static final String ERRO_SUSPENDER_COTAS = "Erro inesperado ao suspender cotas.";
 	private static final String FORMATO_DATA = "dd/MM/yyyy";
+	private static final String PAGINACAO_SESSION_ATTRIBUTE = "paginacaoSuspensaoCotaSession";
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SuspensaoCotaController.class);
@@ -83,10 +85,12 @@ public class SuspensaoCotaController extends BaseController {
 	public void obterCotasSuspensaoJSON(Integer page, Integer rp, String sortname, 
 			String sortorder) {
 		
+		this.session.setAttribute(PAGINACAO_SESSION_ATTRIBUTE, new PaginacaoVO(sortname, sortorder));
+		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
 		List<String> mensagens = new ArrayList<String>();
-	
+		
 		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = null;
 		
 		try {
@@ -308,13 +312,20 @@ public class SuspensaoCotaController extends BaseController {
 	 */
 	@Get
 	public void exportar(FileType fileType) throws IOException {
+		
+		PaginacaoVO paginacao = (PaginacaoVO) this.session.getAttribute(PAGINACAO_SESSION_ATTRIBUTE);
+		
+		String sortOrder = null, sortColumn = null;
+
+		if (paginacao != null) {
+			
+			sortColumn = paginacao.getSortColumn();
+			sortOrder = paginacao.getSortOrder();
+		}
 				
-		List<CotaSuspensaoDTO> listaDividasGeradas = cotaService.obterDTOCotasSujeitasSuspensao(null,null,null,null);
+		List<CotaSuspensaoDTO> listaDividasGeradas = cotaService.obterDTOCotasSujeitasSuspensao(sortOrder, sortColumn, null, null);
 		
-		RodapeDTO rodape = new RodapeDTO(listaDividasGeradas.size(), 
-			CurrencyUtil.formatarValor(this.cotaService.obterTotalDividaCotasSujeitasSuspensao()));
-		
-		FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null, rodape, 
+		FileExporter.to("suspensao_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null,  
 				listaDividasGeradas, CotaSuspensaoDTO.class, this.httpResponse);
 		
 		result.nothing();

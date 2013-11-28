@@ -223,10 +223,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			String sortColumn, Integer inicio, Integer rp, Date dataOperacao) {
 
 		StringBuilder hqlConsignado = new StringBuilder();
+	
 		hqlConsignado.append(" SELECT SUM(")
 					 .append(" MOVIMENTOCOTA.PRECO_COM_DESCONTO ")
 					 .append(" *(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
 					 .append(" FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
+					 .append(" JOIN LANCAMENTO LCTO on (MOVIMENTOCOTA.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ")
 					 .append(" JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
 					 .append(" JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
 					 .append(" WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID  ")
@@ -254,20 +256,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("		(")
 		.append(hqlConsignado)
 		.append("		) AS vlrConsignado, ")
+		
 		//reparte
-		.append("		(SELECT SUM(")
-		.append(" 		MOVIMENTOCOTA.PRECO_COM_DESCONTO ")
-		.append("		*(CASE WHEN TIPOMOVIMENTO.OPERACAO_ESTOQUE='ENTRADA' THEN MOVIMENTOCOTA.QTDE ELSE MOVIMENTOCOTA.QTDE * -1 END)) ")
-		.append("		FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
-		.append("		JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
-		.append("		JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
-		.append("		WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID ")
-		.append("		AND MOVIMENTOCOTA.DATA = :dataOperacao ")
-		.append("		AND (MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO IS NULL ")
-		.append("			OR MOVIMENTOCOTA.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ")
-		.append("		AND TIPOMOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE != :tipoMovimentoEstorno ")
-		.append("		AND MOVIMENTOCOTA.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL ")
-		.append("		) AS vlrReparte, ")
+		.append("		SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) as vlrReparte, ")
+				
 		//divida acumulada
 		.append("		(")
 		.append(hqlDividaAcumulada)
@@ -292,14 +284,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("		(")
 		.append(hqlConsignado)
 		.append("		) * 100) as percDivida, ")
-		.append("		COALESCE(DATEDIFF(:dataOperacao, ")
-		.append("				(SELECT MIN(D.DATA) FROM DIVIDA D WHERE D.COTA_ID = COTA_.ID ")
+		.append("		COALESCE(DATEDIFF(DATE_ADD(:dataOperacao, INTERVAL -1 DAY), ")
+		.append("				(SELECT MIN(D.DATA) FROM DIVIDA D JOIN COBRANCA c on (c.DIVIDA_ID=D.ID) WHERE D.COTA_ID = COTA_.ID ")
 		.append("												  AND D.STATUS in (:statusDividaEmAbertoPendente) ")
-		.append("												  AND D.DATA <= :dataOperacao) ")
+		.append("												  AND D.DATA <= :dataOperacao AND c.DT_PAGAMENTO is null) ")
 		.append("		),0) AS diasAberto ");
 		
 		this.setFromWhereCotasSujeitasSuspensao(sql);
-		
+				
 		sql.append(obterOrderByCotasSujeitasSuspensao(sortOrder, sortColumn));
 
 		if (inicio != null && rp != null) {
@@ -318,7 +310,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
-		
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO.name());
+				
 		int intervalo = 35;
 		query.setParameter("intervalo", intervalo);
 		
@@ -344,6 +337,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
 		query.setParameterList("statusDividaEmAbertoPendente", new String[]{StatusDivida.EM_ABERTO.name(), StatusDivida.PENDENTE_INADIMPLENCIA.name(),StatusDivida.PENDENTE.name()});
+		
+		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
+		query.setParameterList("statusNaoEmitiveis", new String[]{StatusLancamento.PLANEJADO.name(), StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name()});
+		
 	}
 
 private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
@@ -351,8 +348,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		sql.append(" FROM COTA COTA_ ")
 		.append(" LEFT JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
 		.append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
-		.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
-		.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
+		.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ");
+		
+		
+		sql.append(" left join ESTUDO_COTA ec_ on (ec_.cota_ID=cota_.ID ) ")  
+		.append(" join ESTUDO e_ on ec_.ESTUDO_ID = e_.ID ")
+		.append(" join LANCAMENTO lancamento_ on (e_.PRODUTO_EDICAO_ID = lancamento_.PRODUTO_EDICAO_ID and e_.DATA_LANCAMENTO = lancamento_.DATA_LCTO_PREVISTA AND lancamento_.DATA_LCTO_DISTRIBUIDOR=:dataOperacao) ")
+		.append(" join PRODUTO_EDICAO pe_ on e_.PRODUTO_EDICAO_ID = pe_.ID ");
+		
+		
+		sql.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO!=false ")
 		
 		.append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
 		.append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
@@ -409,7 +414,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao )")
 		
 		.append("	   ) ")
-		.append(")");
+		.append(") ");
+				
+		sql.append(" AND (lancamento_.STATUS is null OR lancamento_.STATUS not in (:status))  ")
+		   .append(" AND lancamento_.STATUS not in (:statusNaoEmitiveis) ");
+		
+		sql.append("  group by cota_.ID ");
+		
 	}
 
 	private String obterOrderByCotasSujeitasSuspensao(String sortOrder,
@@ -520,10 +531,12 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	@Override
 	public Long obterTotalCotasSujeitasSuspensao(Date dataOperacao) {
 
-		StringBuilder sql = new StringBuilder("SELECT COUNT(COTA_.ID) ");
+		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM (SELECT cota_.ID ");
 		
 		this.setFromWhereCotasSujeitasSuspensao(sql);
 
+		sql.append(") as total ");
+		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		this.setParametrosCotasSujeitasSuspensao(query, dataOperacao);
@@ -2028,8 +2041,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
 		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
-		+ "	   	where 1=1 "
-		+ "		and pdv_.ponto_principal = :principal " 
+		+ "	   	where pdv_.ponto_principal = :principal " 
 		+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis) ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
@@ -2141,8 +2153,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "		left outer join NOTA_ENVIO_ITEM nei " 
 		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 				+ "	   	where "
-				+ "	        lancamento_.STATUS not in (:status)  "
-				+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis)  "
+				+ "	    lancamento_.STATUS not in (:statusNaoEmitiveis)  "
 				+ "    	and  nei.estudo_cota_id is null "
 				+ "		and pdv_.ponto_principal = :principal ");
 				
@@ -3279,12 +3290,19 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	@Override
 	public BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor) {
 		
-		StringBuilder hql = new StringBuilder("SELECT SUM(COALESCE(D_.VALOR,0)) ");
+		StringBuilder hql = new StringBuilder("SELECT SUM(COALESCE(total.valor,0)) FROM (SELECT  ");
 		
+		hql.append("( SELECT SUM(round(COALESCE(D.VALOR,0), 2)) ")
+						  .append("	FROM DIVIDA D ")
+						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
+						  .append("	WHERE D.COTA_ID = COTA_.ID ")
+						  .append(" AND c.DT_PAGAMENTO is null ")
+						  .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
+						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ) as valor ");
+				
 		this.setFromWhereCotasSujeitasSuspensao(hql);
 		
-		hql.insert(hql.indexOf("WHERE"), 
-			" JOIN DIVIDA AS D_ ON (D_.COTA_ID = COTA_.ID AND D_.STATUS in (:statusDividaEmAbertoPendente) AND D_.DATA <= :dataOperacao) ");
+		hql.append(") as total ");
 		
 		Query query = this.getSession().createSQLQuery(hql.toString());
 		
