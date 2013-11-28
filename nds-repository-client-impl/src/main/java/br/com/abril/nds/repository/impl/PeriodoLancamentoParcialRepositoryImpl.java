@@ -322,19 +322,21 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	
 	public PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento) {
 		
-		Criteria criteria = super.getSession().createCriteria(PeriodoLancamentoParcial.class,"periodo");
+		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
 				
-		criteria.add(Restrictions.eq("periodo.lancamentos.id", idLancamento));
-				
-		criteria.setMaxResults(1);
+		criteria.add(Restrictions.eq("lancamento.id", idLancamento));
 		
-		return (PeriodoLancamentoParcial) criteria.uniqueResult();
+		Lancamento lancamento = (Lancamento) criteria.uniqueResult();
+		
+		return (lancamento == null)? null : lancamento.getPeriodoLancamentoParcial();
 	}
 
 	@Override
 	public Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
 			Date dataLancamento, Date dataRecolhimento) {
 		
+		//TODO Ajuste alterações PARCIAIS
+		//Adequar as novas regras de validação, a ser definida 
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select count(periodo) ");
