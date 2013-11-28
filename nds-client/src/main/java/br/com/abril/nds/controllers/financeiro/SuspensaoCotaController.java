@@ -325,10 +325,7 @@ public class SuspensaoCotaController extends BaseController {
 				
 		List<CotaSuspensaoDTO> listaDividasGeradas = cotaService.obterDTOCotasSujeitasSuspensao(sortOrder, sortColumn, null, null);
 		
-		RodapeDTO rodape = new RodapeDTO(listaDividasGeradas.size(), 
-			CurrencyUtil.formatarValor(this.cotaService.obterTotalDividaCotasSujeitasSuspensao()));
-		
-		FileExporter.to("suspensao_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null, rodape, 
+		FileExporter.to("suspensao_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), null,  
 				listaDividasGeradas, CotaSuspensaoDTO.class, this.httpResponse);
 		
 		result.nothing();
