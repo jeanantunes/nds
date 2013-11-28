@@ -599,8 +599,6 @@ public class LancamentoRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		sql.append(" select ");
 		sql.append(" fornecedor.ID as idFornecedor, ");
 		sql.append(" pessoaFornecedor.RAZAO_SOCIAL as nomeFornecedor, ");
@@ -679,14 +677,11 @@ public class LancamentoRepositoryImpl extends
 		sql.append("     PESSOA pessoaEditor ");  
 		sql.append("         on editor.JURIDICA_ID = pessoaEditor.ID ");
 		sql.append(" left join ");
-		sql.append("     LANCAMENTO_PARCIAL lancamentoParcial ");
-		sql.append("         on lancamentoParcial.PRODUTO_EDICAO_ID=produtoEdicao.ID ");  
+		sql.append("     PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");
+		sql.append("         on periodoLancamentoParcial.ID = lancamento.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append(" left join ");
-		sql.append("     PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");   
-		sql.append("         on ( ");
-		sql.append("				periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID=lancamentoParcial.ID ");
-		sql.append("				and periodoLancamentoParcial.LANCAMENTO_ID = lancamento.ID ");
-		sql.append("			) ");
+		sql.append("     LANCAMENTO_PARCIAL lancamentoParcial ");
+		sql.append("         on periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID = lancamentoParcial.ID ");
 		sql.append(" inner join ");
 		sql.append(" 	  PESSOA pessoaFornecedor ");
 		sql.append(" 			on fornecedor.JURIDICA_ID = pessoaFornecedor.ID ");
@@ -1209,8 +1204,6 @@ public class LancamentoRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 		
-		//TODO Ajuste alterações PARCIAIS
-		
 		sql.append(" from ");
 		sql.append(" LANCAMENTO lancamento ");
 		sql.append(" inner join ");
@@ -1240,7 +1233,7 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" left join ");
 		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");
-		sql.append(" on periodoLancamentoParcial.LANCAMENTO_ID = lancamento.ID ");
+		sql.append(" on periodoLancamentoParcial.ID = lancamento.PERIODO_LANCAMENTO_PARCIAL_ID ");
 		sql.append(" left join ");
 		sql.append(" LANCAMENTO_PARCIAL lancamentoParcial ");
 		sql.append(" on lancamentoParcial.ID = periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID ");
@@ -1901,8 +1894,6 @@ public class LancamentoRepositoryImpl extends
 
 		StringBuilder hql = new StringBuilder();
 
-		//TODO Ajuste alterações PARCIAIS
-		
 		hql.append(" select lancamento.id as idLancamento, ");
 		hql.append(" cota.id as idCota, ");
 		hql.append(" produtoEdicao.peso as peso, ");
