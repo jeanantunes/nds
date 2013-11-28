@@ -2028,8 +2028,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
 		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
-		+ "	   	where 1=1 "
-		+ "		and pdv_.ponto_principal = :principal " 
+		+ "	   	where pdv_.ponto_principal = :principal " 
 		+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis) ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
@@ -2141,8 +2140,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "		left outer join NOTA_ENVIO_ITEM nei " 
 		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 				+ "	   	where "
-				+ "	        lancamento_.STATUS not in (:status)  "
-				+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis)  "
+				+ "	    lancamento_.STATUS not in (:statusNaoEmitiveis)  "
 				+ "    	and  nei.estudo_cota_id is null "
 				+ "		and pdv_.ponto_principal = :principal ");
 				
