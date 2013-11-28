@@ -645,6 +645,12 @@ var ParciaisController = $.extend(true, {
 
 		$(".periodosGrid", this.workspace).flexigrid({
 				colModel : [ {
+					display : 'Período',
+					name : 'numeroPeriodo',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				},{
 					display : 'Lcto',
 					name : 'dataLancamento',
 					width : 50,
@@ -741,7 +747,13 @@ var ParciaisController = $.extend(true, {
 			}); 
 
 		$(".parciaisPopGrid", this.workspace).flexigrid({
-				colModel : [ {
+				colModel : [{
+					display : 'Período',
+					name : 'numeroPeriodo',
+					width : 40,
+					sortable : true,
+					align : 'center'
+				}, {
 					display : 'Lcto',
 					name : 'dataLancamento',
 					width : 55,
