@@ -498,7 +498,8 @@ public class ExportHandler {
 		} else if (columnType.equals(ColumType.MOEDA)) {
 			
 			returnColumnType = ColumType.MOEDA;
-		} else if (value instanceof Number) {
+		
+		} else if (columnType.equals(ColumType.NUMBER) || value instanceof Number) {
 			
 			returnColumnType = ColumType.NUMBER;
 		}
