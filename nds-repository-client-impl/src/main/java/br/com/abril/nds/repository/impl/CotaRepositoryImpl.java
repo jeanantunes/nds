@@ -1706,6 +1706,44 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		return criteria.list();
 	}
 
+	/**
+	 * Obtem cotas por intervalo de numero de cotas
+	 * @param cotaDe
+	 * @param cotaAte
+	 * @param situacoesCadastro
+	 * @return List<Cota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasIntervaloNumeroCota(Integer cotaDe,
+			                                        Integer cotaAte,  
+			                                        List<SituacaoCadastro> situacoesCadastro) {
+		
+		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
+		criteria.setProjection(Projections.distinct(Projections.id()));
+		
+		if (cotaDe != null) {
+			
+			if (cotaAte != null) {
+				
+				criteria.add(Restrictions.between("numeroCota", cotaDe, cotaAte));
+			} else {
+				
+				criteria.add(Restrictions.eq("numeroCota", cotaDe));
+			}
+		}
+		
+		if(situacoesCadastro != null && !situacoesCadastro.isEmpty()){
+			
+			criteria.add(Restrictions.in("situacaoCadastro", situacoesCadastro));
+		}
+
+		criteria.addOrder(Order.asc("numeroCota"));
+		
+		return criteria.list();
+	}
+
 	@Override
 	public Integer obterDadosCotasComNotaEnvioEmitidasCount(FiltroConsultaNotaEnvioDTO filtro) {
 

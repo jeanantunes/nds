@@ -79,6 +79,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
@@ -156,6 +157,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Override
 	@Transactional
@@ -674,7 +678,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 			try {
 				
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+				boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
+
+				if (existeBoletoAntecipado){
+				
+				    this.gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
+				}
+				else{
+				
+				    this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+				}    
 			} 
 			catch (GerarCobrancaValidacaoException e) {
 				

@@ -20,7 +20,22 @@ import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 public interface MovimentoFinanceiroCotaService {
 	
+	/**
+	 * Gera Movimentos Financeiro para a Cota
+	 * @param movimentoFinanceiroCotaDTO
+	 * @param movimentosEstoqueCota
+	 * @return MovimentoFinanceiroCota
+	 */
 	List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO);
+	
+	/**
+	 * Gera Movimento Financeiro para a Cota
+	 * @param movimentoFinanceiroCotaDTO
+	 * @param movimentosEstoqueCota
+	 * @return MovimentoFinanceiroCota
+	 */
+	MovimentoFinanceiroCota gerarMovimentoFinanceiroCota(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO,
+			                                             List<MovimentoEstoqueCota> movimentosEstoqueCota);
 	
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);

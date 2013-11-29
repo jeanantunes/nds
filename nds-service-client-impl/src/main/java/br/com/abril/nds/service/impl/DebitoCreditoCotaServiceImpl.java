@@ -20,6 +20,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -44,6 +45,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
 	
 	@Override
 	@Transactional
@@ -207,4 +211,27 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		return dc;
 	}
 	
+	/**
+	 * Obtem valor total de Débitos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	@Override
+	@Transactional
+	public BigDecimal obterTotalDebitoCota(Integer numeroCota, Date dataOperacao){
+		
+		return this.movimentoFinanceiroCotaRepository.obterTotalDebitoCota(numeroCota, dataOperacao);
+	}
+	
+	/**
+	 * Obtem valor total de Créditos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	@Override
+	@Transactional
+	public BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao){
+		
+		return this.movimentoFinanceiroCotaRepository.obterTotalCreditoCota(numeroCota, dataOperacao);
+	}
 }
