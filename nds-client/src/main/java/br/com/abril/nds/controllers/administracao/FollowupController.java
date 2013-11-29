@@ -475,8 +475,7 @@ public class FollowupController extends BaseController {
 	@Get
 	public void imprimirNegociacao(FileType fileType) throws IOException {
 		FiltroFollowupNegociacaoDTO filtroNegociacao = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
-		
-<<<<<<< HEAD
+
 		if (filtroNegociacao != null) {
 			removePaginacao(filtroNegociacao.getPaginacao());
 		} else {
@@ -593,112 +592,6 @@ public class FollowupController extends BaseController {
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao imprimir arquivo");
 		}
-=======
-		if(tipoExportacao.equals("negociacao")){
-			
-			FiltroFollowupNegociacaoDTO filtroNegociacao = (FiltroFollowupNegociacaoDTO) session.getAttribute(FILTRO_FOLLOWUP_NEGOCIACAO_SESSION_ATTRIBUTE);
-			
-			if (filtroNegociacao != null) {
-				
-				if (filtroNegociacao.getPaginacao() != null) {
-					
-					filtroNegociacao.getPaginacao().setPaginaAtual(null);
-					filtroNegociacao.getPaginacao().setQtdResultadosPorPagina(null);
-					filtroNegociacao.setOrdenacaoColuna(null);
-				}
-			}
-			
-			List<ConsultaFollowupNegociacaoDTO> lista = this.followupnegociacaoService.obterNegociacoes(filtroNegociacao);
-			
-			this.formatarCamposNegociacao(lista);
-			
-			if(lista.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_dados_negociacao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroNegociacao, null, 
-					lista, ConsultaFollowupNegociacaoDTO.class, this.httpResponse);
-			
-		}else if(tipoExportacao.equals("chamadao")){
-			FiltroFollowupChamadaoDTO filtro = (FiltroFollowupChamadaoDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
-			List<ConsultaFollowupChamadaoDTO> listadechamadao = this.followupchamadaoService.obterConsignados(filtro);
-			
-			if(listadechamadao.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_Chamadao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listadechamadao, ConsultaFollowupChamadaoDTO.class, this.httpResponse);
-		}else if(tipoExportacao.equals("pendenciaNFE")){
-			
-			FiltroFollowupPendenciaNFeDTO filtro = (FiltroFollowupPendenciaNFeDTO) session.getAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE);
-			
-			List<ConsultaFollowupPendenciaNFeDTO> listasdependencias = this.followuppendencianfeService.obterPendencias(filtro);
-			
-			if(listasdependencias.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_pendencias_nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listasdependencias, ConsultaFollowupPendenciaNFeDTO.class, this.httpResponse);
-		}else if(tipoExportacao.equals("alteracao")){
-			
-			FiltroFollowupStatusCotaDTO filtro = (FiltroFollowupStatusCotaDTO) session.getAttribute(FILTRO_FOLLOWUP_STATUS_COTA_SESSION_ATTRIBUTE);
-			
-			
-			List<ConsultaFollowupStatusCotaDTO> listacadastral = this.followupstatuscotaService.obterStatusCota(filtro);
-			
-			for(ConsultaFollowupStatusCotaDTO dto: listacadastral){
-				String periodo = dto.getDataInicioPeriodo() + " até " + dto.getDataFimPeriodo();
-				dto.setPeriodoStatus(periodo);
-			}
-			
-			
-			if(listacadastral.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_Status_Cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listacadastral, ConsultaFollowupStatusCotaDTO.class, this.httpResponse);
-			
-		}else if(tipoExportacao.equals("atualizacao")){
-			
-			FiltroFollowupCadastroDTO filtro = (FiltroFollowupCadastroDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_SESSION_ATTRIBUTE);
-			
-			
-			List<ConsultaFollowupCadastroDTO> listasdependencias = this.followupcadastroService.obterCadastros(filtro);
-			
-			if(listasdependencias.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listasdependencias, ConsultaFollowupCadastroDTO.class, this.httpResponse);
-		}else if(tipoExportacao.equals("cadastroParcial")){
-			
-			FiltroFollowupCadastroParcialDTO filtro = (FiltroFollowupCadastroParcialDTO) session.getAttribute(FILTRO_FOLLOWUP_CADASTRO_PARCIAL_SESSION_ATTRIBUTE);
-			
-			
-			List<ConsultaFollowupCadastroParcialDTO> lista = this.followupCadastroParcialService.obterCadastrosParcial(filtro);
-			
-			if(lista.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
-		}else if(tipoExportacao.equals("distribuicao")){
-			
-			List<ConsultaFollowupDistribuicaoDTO> lista = this.followupDistribuicaoService.obterCotas(null);
-			
-			if(lista.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
-			}
-			
-			FileExporter.to("FollowUp_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
-					lista, ConsultaFollowupDistribuicaoDTO.class, this.httpResponse);
-		} 
->>>>>>> fase2
 		
 		List<ConsultaFollowupCadastroDTO> listasdependencias = this.followupcadastroService.obterCadastros(filtro);
 		
