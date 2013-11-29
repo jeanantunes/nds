@@ -250,7 +250,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		if(lancamento != null){
 			dto.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
 			dto.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoDistribuidor());
-			dto.setStatusSituacao(lancamento.getStatus());
+			dto.setStatusSituacao(lancamento.getStatus().getDescricao());
 		}else{
 			dto.setDataLancamentoFormatada("");
 			//dto.setDataRecolhimentoDistribuidorFormatada("");
