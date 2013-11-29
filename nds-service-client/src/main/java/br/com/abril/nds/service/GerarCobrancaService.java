@@ -34,11 +34,10 @@ public interface GerarCobrancaService {
 	 * 
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
-	 * @throws AutenticacaoEmailException
 	 */
 	void enviarDocumentosCobrancaEmail(Cota cota,
 									   Map<String, 
-									   Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException;
+									   Boolean> nossoNumeroEnvioEmail);
 	
 	/**
 	 * Gera cobranças para Cotas específicas
