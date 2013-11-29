@@ -703,18 +703,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						
 						validacaoEmails.getListaMensagens().add(
 								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
-					} else {
 					
+					} else if (this.gerarCobrancaService.aceitaEnvioEmail(cota, nossoNumero)) {
+							
 						try {
 							
 							this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
+
 						} catch (AutenticacaoEmailException e) {
 							
 							if (validacaoVO.getListaMensagens() == null){
 								
 								validacaoVO.setListaMensagens(new ArrayList<String>());
 							}
-							
+
 							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
 							// Não mostramos mais este erro na tela
 							validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 

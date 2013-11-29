@@ -14,7 +14,6 @@ import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -29,9 +28,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -56,12 +57,14 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
+import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -147,6 +150,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
+	
+	@Autowired
+	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
 	
 	/**
 	 * Obtém a situação da cota
@@ -925,6 +934,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 			cobranca.setDataVencimento(dataVencimento);
 			cobranca.setVias(0);
+			cobranca.setEnviarPorEmail(formaCobrancaPrincipal.isRecebeCobrancaEmail());
 			
 			String nossoNumero =
 				Util.gerarNossoNumero(
@@ -1201,18 +1211,85 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return MathUtil.defaultRound(
 			valor.add(movimentoFinanceiroCota.getValor().negate()));
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public boolean aceitaEnvioEmail(Cota cota, String nossoNumero) {
+
+		boolean distribuidorUtilizaSlip = this.parametrosDistribuidorEmissaoDocumentoRepository
+				.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+
+		boolean distribuidorUtilizaBoleto = this.parametrosDistribuidorEmissaoDocumentoRepository
+				.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
+
+		boolean distribuidorUtilizaRecibo = false;
+
+		if (!distribuidorUtilizaBoleto) {
+
+			distribuidorUtilizaRecibo = 
+					
+					this.parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(
+							TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
+		}
+		
+		if (((!distribuidorUtilizaBoleto || !distribuidorUtilizaRecibo) && !distribuidorUtilizaSlip)) {
+			
+			return false;
+		}
+		
+		Cobranca cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+		
+		if (!cobranca.isEnviarPorEmail()) {
+
+			return false;
+		}
+
+		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
+		
+		if (parametroDistribuicaoCota == null ||
+				(parametroDistribuicaoCota.getSlipImpresso() == null 				|| parametroDistribuicaoCota.getSlipImpresso() == false) &&
+				(parametroDistribuicaoCota.getSlipEmail() == null 				|| parametroDistribuicaoCota.getSlipEmail() == false) &&
+				(parametroDistribuicaoCota.getBoletoImpresso() == null 			|| parametroDistribuicaoCota.getBoletoImpresso() == false) &&
+				(parametroDistribuicaoCota.getBoletoEmail() == null 			|| parametroDistribuicaoCota.getBoletoEmail() == false) &&
+				(parametroDistribuicaoCota.getBoletoSlipImpresso() == null 		|| parametroDistribuicaoCota.getBoletoSlipImpresso() == false) &&
+				(parametroDistribuicaoCota.getBoletoSlipEmail() == null 		|| parametroDistribuicaoCota.getBoletoSlipEmail() == false) &&
+				(parametroDistribuicaoCota.getReciboImpresso() == null 			|| parametroDistribuicaoCota.getReciboImpresso() == false) &&
+				(parametroDistribuicaoCota.getReciboEmail() == null 			|| parametroDistribuicaoCota.getReciboEmail() == false) &&
+				(parametroDistribuicaoCota.getChamadaEncalheImpresso() == null 	|| parametroDistribuicaoCota.getChamadaEncalheImpresso() == false) &&
+				(parametroDistribuicaoCota.getChamadaEncalheEmail() == null 	|| parametroDistribuicaoCota.getChamadaEncalheEmail() == false) &&
+				(parametroDistribuicaoCota.getNotaEnvioImpresso() == null 		|| parametroDistribuicaoCota.getNotaEnvioImpresso() == false) &&
+				(parametroDistribuicaoCota.getNotaEnvioEmail() == null 			|| parametroDistribuicaoCota.getNotaEnvioEmail() == false)) {
+
+			return true;
+		}
+
+		boolean cotaUtilizaSlip = parametroDistribuicaoCota.getSlipEmail();
+
+		boolean cotaUtilizaBoleto = parametroDistribuicaoCota.getBoletoEmail();
+
+		boolean cotaUtilizaRecibo = parametroDistribuicaoCota.getReciboEmail();
+
+		if (((!cotaUtilizaBoleto || !cotaUtilizaRecibo) && !cotaUtilizaSlip)) {
+			
+			return false;
+		}
+		
+		return true;
+	}
+
 	@Override
 	@Transactional(noRollbackFor = AutenticacaoEmailException.class)
-	public void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException{
-			
+	public void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
+		
 		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
 		this.emailService.enviar("Cobrança", 
 								 "Segue documento de cobrança em anexo.", 
 								 new String[]{email}, 
-								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));
-		
+								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));		
 	}
 	
 	/**
@@ -1236,13 +1313,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (nossoNumeroEnvioEmail.get(nossoNumero)){
 
-				try {
-					
-					this.enviarDocumentosCobrancaEmail(nossoNumero, email);
-					
-				} catch (AutenticacaoEmailException e) {
-					
-					throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao Enviar Email de Cobrança para a [Cota:"+ cota.getNumeroCota() +"]: "+e.getMessage());
+				if (this.aceitaEnvioEmail(cota, nossoNumero)) {
+
+					try {
+
+						this.enviarDocumentosCobrancaEmail(nossoNumero, email);
+
+					} catch (AutenticacaoEmailException e) {
+						
+						throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao Enviar Email de Cobrança para a [Cota:"+ cota.getNumeroCota() +"]: "+e.getMessage());
+					}
 				}
 			}
 		}	
