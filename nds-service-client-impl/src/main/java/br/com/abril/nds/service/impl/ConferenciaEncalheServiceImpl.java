@@ -515,7 +515,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	}
 	
-	
+	@Transactional
 	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao){
 		
 		Set<Fornecedor> fornecedores = produtoEdicao.getProduto().getFornecedores();
@@ -545,7 +545,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
+	@Transactional(readOnly = true)
 	public boolean isLancamentoParcial(Long idProdutoEdicao) {
 		
 		return this.conferenciaEncalheRepository.isLancamentoParcial(idProdutoEdicao);
@@ -3167,6 +3167,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return gerarSlipTxtMatricial(slipDTO);
 	}
 	
+	@Transactional
 	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo) {
 
 		SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
@@ -3476,6 +3477,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return inputStream;
 	}
 	
+	@Transactional
 	public byte[] gerarSlipTxtMatricial(SlipDTO slipDTO){
 		
 		StringBuffer sb = new StringBuffer();
@@ -3693,6 +3695,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras) {
 
 		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
