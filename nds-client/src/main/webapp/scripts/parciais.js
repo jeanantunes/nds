@@ -648,85 +648,85 @@ var ParciaisController = $.extend(true, {
 					display : 'Período',
 					name : 'numeroPeriodo',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Lcto',
 					name : 'dataLancamento',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Rcto',
 					name : 'dataRecolhimento',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Reparte',
 					name : 'reparte',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
-					display : 'Suplementação',
+					display : 'Redistribuição',
 					name : 'suplementacao',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Encalhe',
 					name : 'encalhe',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda',
 					name : 'vendas',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda',
 					name : 'percVenda',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda CE',
 					name : 'vendaCE',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Reparte Acum.',
 					name : 'reparteAcum',
 					width : 75,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda Acum.',
 					name : 'vendaAcumulada',
 					width : 70,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda Acum.',
 					name : 'percVendaAcumulada',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Lct Prodin',
 					name : 'dataLancamentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Rct Prodin',
 					name : 'dataRecolhimentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Ação',
@@ -751,85 +751,85 @@ var ParciaisController = $.extend(true, {
 					display : 'Período',
 					name : 'numeroPeriodo',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Lcto',
 					name : 'dataLancamento',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Rcto',
 					name : 'dataRecolhimento',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Reparte',
 					name : 'reparte',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
-					display : 'Suplementação',
+					display : 'Redistribuição',
 					name : 'suplementacao',
 					width : 90,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Encalhe',
 					name : 'encalhe',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda',
 					name : 'vendas',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda',
 					name : 'percVenda',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda CE',
 					name : 'vendaCE',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Reparte Acum.',
 					name : 'reparteAcum',
 					width : 75,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda Acum.',
 					name : 'vendaAcumulada',
 					width : 70,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda Acum.',
 					name : 'percVendaAcumulada',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Lct Prodin',
 					name : 'dataLancamentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Rct Prodin',
 					name : 'dataRecolhimentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Ação',
