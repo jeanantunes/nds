@@ -213,7 +213,6 @@ public class ParciaisController extends BaseController {
 	 */	
 	private TableModel<CellModelKeyValue<ParcialDTO>> efetuarConsulta(FiltroParciaisDTO filtro) {
 		
-		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 						
 		Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
@@ -238,13 +237,6 @@ public class ParciaisController extends BaseController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-		
-		for(PeriodoParcialDTO periodo:listaPeriodo) {
-			if(periodo.getReparte()=="") {
-				periodo.setReparteAcum(null);
-				periodo.setPercVendaAcumulada(null);
-			}
-		}
 		
 		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 				
