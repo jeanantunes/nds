@@ -6,6 +6,9 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -511,18 +514,16 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param dataOperacao
 	 * @param qtdDiasEncalheAtrasadoAceitavel
 	 */
-	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario,
+	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd, Long numeroCota, Date dataVencimentoDebito, Usuario usuario,
 			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 
 		if (TipoVendaEncalhe.ENCALHE.equals(vnd.getTipoVendaEncalhe())) {
 
-			return criarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito,usuario,
-					dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+			return criarVendaEncalhe(vnd, numeroCota, dataVencimentoDebito,usuario, dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
 			
 		} else {
 
-			return criarVendaSuplementar(vnd, numeroCota, dataVencimentoDebito,usuario,
-					dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+			return criarVendaSuplementar(vnd, numeroCota, dataVencimentoDebito, usuario, dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
 		}
 	}
 
@@ -555,7 +556,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	}
 	
 	private VendaProduto criarVendaEncalheConsignado(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, 
-			 									 	 Usuario usuario,ProdutoEdicao produtoEdicao,
+			 									 	 Usuario usuario, ProdutoEdicao produtoEdicao,
 			 									 	 Date dataOperacao) {
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
@@ -563,8 +564,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigInteger qntProduto = vendaProduto.getQntProduto();
 
 		MovimentoEstoqueCota movimentoEstoqueCota =
-						 gerarMovimentoCompraConsignadoCota(produtoEdicao.getId(), vendaProduto.getCota().getId(), 
-															usuario.getId(), qntProduto,TipoVendaEncalhe.ENCALHE,
+						 gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
+															usuario.getId(), qntProduto, TipoVendaEncalhe.ENCALHE,
 															dataOperacao);
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
@@ -649,12 +650,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			
 		if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)) {
 
-			return criarVendaSuplementarConsignado(vnd, numeroCota,dataVencimentoDebito, usuario, produtoEdicao,
-					dataOperacao);
+			return criarVendaSuplementarConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
 		} else {
 
-			return criarVendaSuplementarContaFirme(vnd, numeroCota,dataVencimentoDebito, usuario, produtoEdicao);
+			return criarVendaSuplementarContaFirme(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao);
 		}
 	}
 
@@ -667,8 +667,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param usuario
 	 * @param produtoEdicao
 	 */
-	private VendaProduto criarVendaSuplementarContaFirme(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, 
-													 Usuario usuario,ProdutoEdicao produtoEdicao) {
+	private VendaProduto criarVendaSuplementarContaFirme(VendaEncalheDTO vnd, Long numeroCota, Date dataVencimentoDebito, 
+													 Usuario usuario, ProdutoEdicao produtoEdicao) {
 		
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
@@ -699,16 +699,16 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param usuario
 	 * @param produtoEdicao
 	 */
-	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, 
-														 Usuario usuario,ProdutoEdicao produtoEdicao, Date dataOperacao) {
+	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd, Long numeroCota, Date dataVencimentoDebito, 
+														 Usuario usuario, ProdutoEdicao produtoEdicao, Date dataOperacao) {
 		
-		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
+		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
 		
 		BigInteger qntProduto = vendaProduto.getQntProduto();
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = 
-				gerarMovimentoCompraConsignadoCota(produtoEdicao.getId(), vendaProduto.getCota().getId(), 
-										   		   usuario.getId(), qntProduto,TipoVendaEncalhe.SUPLEMENTAR,
+				gerarMovimentoCompraConsignadoCota(produtoEdicao, vendaProduto.getCota().getId(), 
+										   		   usuario.getId(), qntProduto, TipoVendaEncalhe.SUPLEMENTAR,
 										   		   dataOperacao);
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
@@ -718,7 +718,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(),
 																  usuario.getId(), qntProduto);
 
-		gerarMovimentoChamadaEncalheCota(produtoEdicao, vendaProduto.getCota(),qntProduto);
+		gerarMovimentoChamadaEncalheCota(produtoEdicao, vendaProduto.getCota(), qntProduto);
 
 		vendaProduto.setMovimentoEstoque(new HashSet<MovimentoEstoque>());
 		vendaProduto.getMovimentoEstoque().add(movimentoEstoque);
@@ -764,7 +764,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param idUsuario
 	 * @param qntProduto
 	 */
-	private MovimentoEstoque gerarMovimentoEstoqueVendaSuplementarDistribuidor(Long idProdutoEdicao, Long idCota, Long idUsuario,BigInteger qntProduto) {
+	private MovimentoEstoque gerarMovimentoEstoqueVendaSuplementarDistribuidor(Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger qntProduto) {
 
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR);
@@ -775,7 +775,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		}
 
 		MovimentoEstoque movimentoEstoque = 
-				movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao, idUsuario, qntProduto,tipoMovimento);
+				movimentoEstoqueService.gerarMovimentoEstoque(idProdutoEdicao, idUsuario, qntProduto, tipoMovimento);
 
 		return movimentoEstoque;
 	}
@@ -784,35 +784,59 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * Cria movimento de estoque da cota, com o tipo de movimento
 	 * COMPRA_SUPLEMENTAR
 	 * 
-	 * @param idProdutoEdicao
+	 * @param produtoEdicao
 	 * @param idCota
 	 * @param idUsuario
 	 * @param qntProduto
 	 */
-	private MovimentoEstoqueCota gerarMovimentoCompraConsignadoCota(Long idProdutoEdicao,Long idCota, Long idUsuario, 
+	private MovimentoEstoqueCota gerarMovimentoCompraConsignadoCota(ProdutoEdicao produtoEdicao, Long idCota, Long idUsuario, 
 			BigInteger qntProduto, TipoVendaEncalhe tipoVenda, Date dataOperacao) {
 
+		Date dataLancamento = null;
+		if(produtoEdicao != null) {
+			List<Lancamento> lancamentos = new ArrayList<Lancamento>();
+			for(Lancamento l : produtoEdicao.getLancamentos()) {
+				if(l.getDataLancamentoDistribuidor().before(dataOperacao) || l.getDataLancamentoDistribuidor().equals(dataOperacao)) {
+					lancamentos.add(l);
+				}
+			}
+			
+			Collections.sort(lancamentos, new Comparator<Lancamento>() {
+
+				@Override
+				public int compare(Lancamento o1, Lancamento o2) {
+					if(o1.getDataLancamentoDistribuidor().after(o2.getDataLancamentoDistribuidor())) {
+						return -1;
+					}
+					return 0;
+				}
+			});
+			
+			if(lancamentos.size() == 0) {
+				lancamentos = new ArrayList<Lancamento>(produtoEdicao.getLancamentos());
+				dataLancamento = lancamentos.get(0).getDataLancamentoDistribuidor();
+			} else {
+				dataLancamento = lancamentos.get(0).getDataLancamentoDistribuidor();
+			}
+		}
+		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = null;
 		
-		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVenda)){
+		if(TipoVendaEncalhe.SUPLEMENTAR.equals(tipoVenda)) {
 			
 			grupoMovimentoEstoque = GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR;
-		}
-		else{
+		} else {
 			
 			grupoMovimentoEstoque = GrupoMovimentoEstoque.COMPRA_ENCALHE;
 		}
 		
-		TipoMovimentoEstoque tipoMovimentoEstoqueCota = 
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+		TipoMovimentoEstoque tipoMovimentoEstoqueCota = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
 
 		if (tipoMovimentoEstoqueCota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Não foi encontrado tipo de movimento de estoque para compra de encalhe suplementar!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi encontrado tipo de movimento de estoque para compra de encalhe suplementar!");
 		}
 
-		return movimentoEstoqueService.gerarMovimentoCota(null, idProdutoEdicao,idCota, idUsuario, qntProduto, 
-				tipoMovimentoEstoqueCota, dataOperacao);
+		return movimentoEstoqueService.gerarMovimentoCota(dataLancamento, produtoEdicao.getId(), idCota, idUsuario, qntProduto, tipoMovimentoEstoqueCota, dataOperacao);
 	}
 
 	/**
@@ -900,7 +924,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			int qtdDiasEncalheAtrasadoAceitavel) {
 		
 		ChamadaEncalhe chamadaEncalhe = 
-				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao,TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+				chamadaEncalheRepository.obterPorNumeroEdicaoEMaiorDataRecolhimento(produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
 
 		if (chamadaEncalhe == null) {
 			return false;
@@ -1426,8 +1450,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)){
 				
 				formaComercializacao = FormaComercializacao.CONSIGNADO;
-			}
-			else{
+			} else {
 				
 				formaComercializacao = FormaComercializacao.CONTA_FIRME;
 			}
@@ -1455,11 +1478,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				chamadaEncalheRepository.obterChamadaEncalhePorProdutoEdicao(
 						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO) ;
 		
-		if(chamadas.isEmpty()){
+		if(chamadas.isEmpty()) {
 			return true;
 		}
 		
-		return isVendaConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
+		return false;
 	}
 	
 	private boolean isConsignadoVendaEncalhe(ProdutoEdicao produtoEdicao) {
