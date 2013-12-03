@@ -112,6 +112,6 @@ public interface PeriodoLancamentoParcialRepository extends
 	 */
 	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
 
-	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodoLancamentoParcial);
+	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo);
 
 }
