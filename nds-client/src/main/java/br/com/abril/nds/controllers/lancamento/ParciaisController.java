@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ParciaisService;
@@ -442,6 +443,13 @@ public class ParciaisController extends BaseController {
 				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
 
 		result.nothing();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void carregarRedistribuicao(){
+		
+		result.use(FlexiGridJson.class).from(null).total(0).page(1).serialize();
 	}
 		
 }

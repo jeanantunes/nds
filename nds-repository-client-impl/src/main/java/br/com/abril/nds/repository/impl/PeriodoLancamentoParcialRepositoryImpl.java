@@ -58,7 +58,8 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			.append("		lancamento.dataLancamentoPrevista as dataLancamentoPrevista, ")
 			.append(" 		lancamento.dataRecolhimentoPrevista as dataRecolhimentoPrevista, ")
 			.append("		produtoEdicao.origem as origem, ")
-			.append("  		lancamento.id as idLancamento, ");
+			.append("  		lancamento.id as idLancamento, ")
+			.append(" 		periodo.id as idPeriodo, ");
 		
 		hql.append(String.format(templateHqlReparte.toString(),"tipoLancamentos", "reparte"));
 		
