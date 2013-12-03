@@ -2,10 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.List;
 
-<<<<<<< HEAD
 import org.apache.commons.lang.StringUtils;
-=======
->>>>>>> fase2
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -136,7 +133,7 @@ public class BoxServiceImpl implements BoxService {
 	@Transactional(readOnly=true)
 	public Box obterBoxPorCota(Integer numeroCota) {
 		
-		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		if(cota == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não existe.");
