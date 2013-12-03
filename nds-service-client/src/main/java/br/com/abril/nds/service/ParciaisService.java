@@ -95,8 +95,8 @@ public interface ParciaisService {
 	
 	void incluirRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
 	
-	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	void salvarRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
 	
-	RedistribuicaoParcialDTO obterRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
 	
 }

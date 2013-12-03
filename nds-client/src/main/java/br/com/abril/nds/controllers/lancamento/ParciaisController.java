@@ -489,7 +489,7 @@ public class ParciaisController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void editarRedistribuicao(RedistribuicaoParcialDTO redistribuicaoDTO){
 		
-		parciaisService.incluirRedistribuicaoParcial(redistribuicaoDTO);
+		parciaisService.salvarRedistribuicaoParcial(redistribuicaoDTO);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
