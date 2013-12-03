@@ -444,7 +444,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append(" select ");
 		hql.append(" lancamento.id as idLancamentoRedistribuicao, ");
-		hql.append(" periodoLancamentoParcial.idPeriodo as idPeriodo, ");
+		hql.append(" periodoLancamentoParcial.id as idPeriodo, ");
 		hql.append(" periodoLancamentoParcial.numeroPeriodo as numeroPeriodo, ");
 		hql.append(" lancamento.numeroLancamento as numeroLancamento, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
