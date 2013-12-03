@@ -402,6 +402,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
 
 	@Override
+	@Transactional
 	public void processarRegistrohistoricoFinanceiro(
 			HistoricoFinanceiroInput valorInput, Date dataOperacao) {
 		
