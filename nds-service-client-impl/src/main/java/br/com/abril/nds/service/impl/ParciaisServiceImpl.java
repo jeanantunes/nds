@@ -31,6 +31,7 @@ import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ParciaisService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -57,6 +58,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Transactional
 	public void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Usuario usuario) {
@@ -438,6 +442,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 				"Período Lançamento Parcial não encontrado!");
 		}
 		
+		ProdutoEdicao produtoEdicao = periodoLancamentoParcial.getLancamentoParcial().getProdutoEdicao();
+		
 		Lancamento lancamento = new Lancamento();
 		
 		lancamento.setDataLancamentoDistribuidor(redistribuicaoParcialDTO.getDataLancamento());
@@ -446,6 +452,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataRecolhimentoPrevista(redistribuicaoParcialDTO.getDataRecolhimento());
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
+		lancamento.setStatus(StatusLancamento.CONFIRMADO);
+		lancamento.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
+		lancamento.setProdutoEdicao(produtoEdicao);
+		
+		lancamento.setNumeroLancamento(
+			this.produtoEdicaoService.obterNumeroLancamento(produtoEdicao.getId()));
 		
 		lancamento.setPeriodoLancamentoParcial(periodoLancamentoParcial);
 		

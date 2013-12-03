@@ -1084,7 +1084,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setRepartePromocional(null);
 			dto.setDataLancamento(null);
 			dto.setDataLancamentoPrevisto(null);
-			dto.setNumeroLancamento(this.obterNumeroLancamento(idProdutoEdicao));
+			dto.setNumeroLancamento(this.obterNumeroLancamento(Long.valueOf(idProdutoEdicao)));
 			dto.setModoTela(ModoTela.REDISTRIBUICAO);
 			
 		} else if (idProdutoEdicao != null) {
@@ -1094,21 +1094,21 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		} else {
 			
 			dto.setTipoLancamento(TipoLancamento.LANCAMENTO);
-			dto.setNumeroLancamento(this.obterNumeroLancamento(idProdutoEdicao));
+			dto.setNumeroLancamento(this.obterNumeroLancamento(Long.valueOf(idProdutoEdicao)));
 			dto.setModoTela(ModoTela.NOVO);
 		}
 				
 		return dto;
 	}
 
-	private Integer obterNumeroLancamento(String idProdutoEdicao) {
+	public Integer obterNumeroLancamento(Long idProdutoEdicao) {
 
 		Integer ultimoNumeroLancamento = null;
 		
 		if (idProdutoEdicao != null) {
 			
 			ultimoNumeroLancamento = 
-				lancamentoRepository.obterUltimoNumeroLancamento(Long.valueOf(idProdutoEdicao));
+				lancamentoRepository.obterUltimoNumeroLancamento(idProdutoEdicao);
 		}
 		
 		return (ultimoNumeroLancamento != null ? ultimoNumeroLancamento + 1 : 1);

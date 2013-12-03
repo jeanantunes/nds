@@ -123,7 +123,7 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 	
-		data.push({name: 'redistribuicaoDTO.idPeriodo',	value: idPeriodo});
+		data.push({name: 'idPeriodo',	value: idPeriodo});
 		
 		$(".parciaisRedistribuicaoGrid",this.workspace).flexOptions({	
 			onSuccess: function() {bloquearItensEdicao(this.workspace);},
