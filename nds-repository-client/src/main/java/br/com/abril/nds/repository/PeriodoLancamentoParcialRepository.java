@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -110,5 +111,7 @@ public interface PeriodoLancamentoParcialRepository extends
 	 * @return Long
 	 */
 	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
+
+	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodoLancamentoParcial);
 
 }

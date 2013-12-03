@@ -834,13 +834,15 @@ public class LancamentoRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
+		
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select lancamento ")
 		   .append(" from Lancamento lancamento ")
+		   .append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial ")
 		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
-		   .append(" order by " + sortname + " " + sortorder);
+		   .append(" order by periodoLancamentoParcial.numeroPeriodo, lancamento.numeroLancamento ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -849,26 +851,6 @@ public class LancamentoRepositoryImpl extends
 		return (List<Lancamento>) query.list();		
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select lancamento ")
-		   .append(" from PeriodoLancamentoParcial periodo ")
-		   .append(" join periodo.lancamentos lancamento ")
-		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
-		   .append(" order by lancamento."+ sortname + " " + sortorder);
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
-		
-		return (List<Lancamento>) query.list();		
-	}
-
-
 	/**
 	 * {@inheritDoc}
 	 */

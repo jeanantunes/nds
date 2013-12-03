@@ -3,7 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class RedisrtibuicaoParcialDTO implements Serializable {
+public class RedistribuicaoParcialDTO implements Serializable {
 	
 	/**
 	 * 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -414,5 +415,11 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return periodoLancamentoParcialRepository.obterDetalhesVenda(dataLancamento, dataRecolhimento, idProdutoEdicao);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais() {
+		
+		return this.periodoLancamentoParcialRepository.obterRedistribuicoesParciais(null);
+	}
 	
 }
