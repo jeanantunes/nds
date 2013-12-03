@@ -60,6 +60,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/historicoVenda")
+@Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 public class HistoricoVendaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroHistoricoVendaDTO";
@@ -103,7 +104,6 @@ public class HistoricoVendaController extends BaseController {
 	private HttpServletResponse httpResponse;
 	
 	@Path("/index")
-	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 	public void historicoVenda(){
 		result.include("componenteList", ComponentesPDV.values());
 		this.carregarComboClassificacao();

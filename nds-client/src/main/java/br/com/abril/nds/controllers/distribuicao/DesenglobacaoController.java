@@ -35,6 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/desenglobacao")
+@Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
 public class DesenglobacaoController extends BaseController {
 
     @Autowired
@@ -52,7 +53,6 @@ public class DesenglobacaoController extends BaseController {
     @Autowired
     private CotaService cotaService;
 
-    @Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
     @Path("/index")
     public void desenglobacao(){
 

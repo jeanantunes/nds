@@ -54,6 +54,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/regiao")
+@Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO)
 public class RegiaoController extends BaseController {
 	private Result result;
 
@@ -84,7 +85,6 @@ public class RegiaoController extends BaseController {
 	}
 
 	@Path("/")
-	@Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO)
 	public void index(){
 		this.carregarComboRegiao();
 		this.carregarComboSegmento();
