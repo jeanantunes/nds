@@ -32,6 +32,12 @@ fieldset {
     margin-right:0px!important;
 }
 .ldPesq{float:left; width:210px;}
+
+.gridLinhaDestacada {
+  background:#888; 
+  font-weight:bold; 
+  color:#fff;
+}
 </style>
 </head>
 
@@ -159,8 +165,8 @@ fieldset {
 								<tr>
 									<td>Tipo de Lan&ccedil;amento:</td>
 									<td colspan="3">
-										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
-											<option value="">Selecione...</option>
+										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento"
+												style="width:160px;" readonly="true" >
 											<option value="LANCAMENTO">Lan&ccedil;amento</option>
 											<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
 										</select>

@@ -25,9 +25,13 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	
 	private String status;
 
+	private Integer numeroPeriodo;
+	
 	private Integer numeroLancamento;
 	
 	private BigInteger reparte;
+	
+	private boolean destacarLinha;
 	
 	
 	public Date getDataLancamentoDistribuidor() {
@@ -71,6 +75,20 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	}
 
 	/**
+	 * @return the numeroPeriodo
+	 */
+	public Integer getNumeroPeriodo() {
+		return numeroPeriodo;
+	}
+
+	/**
+	 * @param numeroPeriodo the numeroPeriodo to set
+	 */
+	public void setNumeroPeriodo(Integer numeroPeriodo) {
+		this.numeroPeriodo = numeroPeriodo;
+	}
+
+	/**
 	 * @return the numeroLancamento
 	 */
 	public Integer getNumeroLancamento() {
@@ -96,6 +114,20 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	 */
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+	}
+
+	/**
+	 * @return the destacarLinha
+	 */
+	public boolean isDestacarLinha() {
+		return destacarLinha;
+	}
+
+	/**
+	 * @param destacarLinha the destacarLinha to set
+	 */
+	public void setDestacarLinha(boolean destacarLinha) {
+		this.destacarLinha = destacarLinha;
 	}
 	
 }

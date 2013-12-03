@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -434,4 +435,33 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return (Long) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodoLancamentoParcial) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		hql.append(" lancamento.id as idLancamentoRedistribuicao, ");
+		hql.append(" periodoLancamentoParcial.idPeriodo as idPeriodo, ");
+		hql.append(" periodoLancamentoParcial.numeroPeriodo as numeroPeriodo, ");
+		hql.append(" lancamento.numeroLancamento as numeroLancamento, ");
+		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento ");
+		
+		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+		hql.append(" where periodoLancamentoParcial.id = :idPeriodoLancamentoParcial ");
+		hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idPeriodoLancamentoParcial", idPeriodoLancamentoParcial);
+		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RedistribuicaoParcialDTO.class));
+		
+		return query.list();
+	}
+	
 }

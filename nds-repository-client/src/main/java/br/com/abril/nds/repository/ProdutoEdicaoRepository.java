@@ -343,13 +343,4 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
 	
-	/**
-	 * Verifica se uma edição é parcial
-	 * 
-	 * @param idProdutoEdicao
-	 * 
-	 * @return Boolean
-	 */
-	public Boolean isEdicaoParcial(Long idProdutoEdicao);
-	
 }

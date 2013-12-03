@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -90,4 +91,5 @@ public interface ParciaisService {
 	 */
 	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
+	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais();
 }

@@ -279,16 +279,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
 		
-		Boolean isEdicaoParcial = produtoEdicaoRepository.isEdicaoParcial(idProdutoEdicao);
-		
-		if(isEdicaoParcial){
-			
-			return lancamentoRepository.obterLancamentosParcialEdicao(idProdutoEdicao, sortorder, sortname);
-		}
-		
-		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
+		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao);
 	}
 
 	@Override

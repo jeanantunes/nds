@@ -325,7 +325,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeCobrancaParaLancamento(Long idLancamento);
 
-	List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+	List<Lancamento> obterLancamentosEdicao(Long idEdicao);
 
 	LancamentoDTO obterLancamentoPorID(Long idLancamento);
 
@@ -336,8 +336,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
-	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
-
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);

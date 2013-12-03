@@ -398,10 +398,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(pessoa.nome, pessoa.RAZAO_SOCIAL) as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
-		
 		.append("        l.status as statusSituacao , ") 
-
-		.append("        pe.possui_brinde as temBrinde ");
+		.append("        pe.possui_brinde as temBrinde, ")
+		.append("        pe.parcial as parcial ");
 		
 		// Corpo da consulta com os filtros:
 		SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
@@ -419,6 +418,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("statusLancamento", StandardBasicTypes.STRING);
 		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
 		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
+		query.addScalar("parcial", StandardBasicTypes.BOOLEAN);
 		
 		return query.list();
 	}
@@ -1524,19 +1524,4 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return (BigDecimal) query.uniqueResult();
 	}
 	
-	@Override
-	public Boolean isEdicaoParcial(Long idProdutoEdicao) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select pEdicao.parcial from ProdutoEdicao pEdicao ");
-		hql.append(" where pEdicao.id = :idPropdutoEdicao ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idPropdutoEdicao",idProdutoEdicao);
-		
-		return (Boolean) query.uniqueResult();
-		
-	}
 }

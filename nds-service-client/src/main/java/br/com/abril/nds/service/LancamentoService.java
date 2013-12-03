@@ -124,7 +124,7 @@ public interface LancamentoService {
 
 	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
 	
-	public List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+	public List<Lancamento> obterLancamentosEdicao(Long idEdicao);
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
 			Date data, Long idFornecedor, Boolean isSaldoInsuficiente);

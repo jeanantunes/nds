@@ -437,7 +437,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		// 01 ) Salvar/Atualizar o ProdutoEdicao:
 		produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
-			
+		
+		Lancamento lancamento = this.obterLancamento(dto, produtoEdicao);
+		
+		this.validarRegimeRecolhimento(dto, lancamento, produtoEdicao);
+		
 		// 02) Salvar imagem:
 		if (imgInputStream != null) {
 			
@@ -463,24 +467,58 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			} else {
 				
-				this.salvarLancamento(dto, produtoEdicao,indNovoProdutoEdicao, usuario);
+				this.salvarLancamento(lancamento, dto, produtoEdicao,indNovoProdutoEdicao, usuario);
 			}
 		}
 		
 		this.inserirDescontoProdutoEdicao(produtoEdicao, indNovoProdutoEdicao);
 		
 	}
+
+	private void validarRegimeRecolhimento(ProdutoEdicaoDTO dto, Lancamento lancamento, ProdutoEdicao produtoEdicao) {
+		
+		if (dto.isParcial() != produtoEdicao.isParcial()
+				&& this.isLancamentoBalanceadoRecolhimento(lancamento)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+				"Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
+		}
+		
+		if (ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())
+				&& dto.isParcial()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
+				"Para redistribuição não é possível escolher o regime de recolhimento parcial."));
+		}
+	}
+
+	private Lancamento obterLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
+		
+		Lancamento lancamento = null;
+		
+		if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
+			lancamento = new Lancamento();
+		} else {
+			for (Lancamento lancto: produtoEdicao.getLancamentos()) {
+				if (lancamento == null 
+						|| DateUtil.isDataInicialMaiorDataFinal(lancto.getDataLancamentoDistribuidor(), lancamento.getDataLancamentoDistribuidor())) {
+					lancamento = lancto;
+				}
+			}
+		}
+		
+		return lancamento;
+	}
+	
+	private boolean isLancamentoBalanceadoRecolhimento(Lancamento lancamento) {
+		
+		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(lancamento.getStatus())
+			|| StatusLancamento.EM_RECOLHIMENTO.equals(lancamento.getStatus())
+			|| StatusLancamento.RECOLHIDO.equals(lancamento.getStatus());
+	}
 	
 	private void salvarLancamentoParcial(ProdutoEdicaoDTO dto,
 			ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
-		
-		if(!indNovoProdutoEdicao) {
-			for(Lancamento lancamento : produtoEdicao.getLancamentos() ) {
-				
-				if(dto.isParcial())
-					lancamentoRepository.remover(lancamento);
-			}
-		}
 		
 		LancamentoParcial lancamentoParcial  = produtoEdicao.getLancamentoParcial();
 		
@@ -489,7 +527,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamentoParcial = new LancamentoParcial();
 			
 			lancamentoParcial.setProdutoEdicao(produtoEdicao);
-			lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);		
+			lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);
 		}
 		else{
 			
@@ -772,28 +810,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	/**
 	 * Salva um novo lançamento.
 	 * 
+	 * @param lancamento
 	 * @param dto
 	 * @param produtoEdicao
 	 * @param indNovoProdutoEdicao 
 	 * @param usuario 
 	 */
-	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
+	private void salvarLancamento(Lancamento lancamento, ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
 		
 		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
 			
 			lancamentoParcialRepository.remover(produtoEdicao.getLancamentoParcial());			
-		}
-		
-		Lancamento lancamento = null;
-		if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
-			lancamento = new Lancamento();
-		} else {
-			for (Lancamento lancto: produtoEdicao.getLancamentos()) {
-				if (lancamento == null 
-						|| DateUtil.isDataInicialMaiorDataFinal(lancto.getDataLancamentoDistribuidor(), lancamento.getDataLancamentoDistribuidor())) {
-					lancamento = lancto;
-				}
-			}
 		}
 		
 		lancamento.setNumeroLancamento(dto.getNumeroLancamento());
@@ -1038,6 +1065,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if (redistribuicao) {
 			
+			if (dto.isParcial()) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Regime de recolhimento parcial não permite cadastro de redistribuição!");
+			}
+			
 			if (!(dto.getStatusSituacao().equals(StatusLancamento.EM_BALANCEAMENTO.name())
 					|| dto.getStatusSituacao().equals(StatusLancamento.BALANCEADO.name())
 					|| dto.getStatusSituacao().equals(StatusLancamento.EXPEDIDO.name()))) {
@@ -1060,8 +1093,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 		} else {
 			
+			dto.setTipoLancamento(TipoLancamento.LANCAMENTO);
 			dto.setNumeroLancamento(this.obterNumeroLancamento(idProdutoEdicao));
-			
 			dto.setModoTela(ModoTela.NOVO);
 		}
 				

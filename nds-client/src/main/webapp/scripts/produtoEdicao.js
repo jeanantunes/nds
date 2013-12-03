@@ -1,6 +1,8 @@
 
 var produtoEdicaoController =$.extend(true,  {
 	
+	linhasDestacadas : [],
+	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 		
@@ -277,7 +279,6 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-numeroLancamento").numeric();
 		$("#produtoEdicaoController-peb").numeric();
 
-
 		$("#produtoEdicaoController-dataLancamentoPrevisto").mask("99/99/9999");
 		$("#produtoEdicaoController-dataRecolhimentoPrevisto").mask("99/99/9999");
 		$("#produtoEdicaoController-dataRecolhimentoReal").mask("99/99/9999");
@@ -366,9 +367,15 @@ var produtoEdicaoController =$.extend(true,  {
 			}, {
 				display : 'Fornecedor',
 				name : 'nomeFornecedor',
-				width : 200,
+				width : 145,
 				sortable : true,
 				align : 'left',
+			}, {
+				display : 'Parcial',
+				name : 'parcial',
+				width : 40,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Tipo de Lan&ccedil;amento',
 				name : 'statusLancamento',
@@ -441,52 +448,57 @@ var produtoEdicaoController =$.extend(true,  {
 		
 		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexigrid({
 			preProcess: produtoEdicaoController.executarPreProcessamentoLancamentosPeriodo,
+			onSuccess: produtoEdicaoController.onSuccessLancamentosPeriodo,
 			dataType : 'json',
 			colModel : [{
+				display : 'Periodo',
+				name : 'numeroPeriodo',
+				width : 55,
+				sortable : false,
+				align : 'center'
+			},{
 				display : 'Nº Lancto',
 				name : 'numeroLancamento',
 				width : 65,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{ 
 				display : 'Lancto Previsto',
 				name : 'dataLancamentoPrevista',
-				width : 110,
-				sortable : true,
+				width : 100,
+				sortable : false,
 				align : 'center'
 			},{ 
 				display : 'Lancto Real',
 				name : 'dataLancamentoDistribuidor',
-				width : 90,
-				sortable : true,
+				width : 80,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Recolhimento Previsto',
 				name : 'dataRecolhimentoPrevista',
 				width : 120,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Recolhimento Real',
 				name : 'dataRecolhimentoDistribuidor',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Status',
 				name : 'status',
-				width : 85,
-				sortable : true,
+				width : 70,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Reparte',
 				name : 'reparte',
-				width : 85,
-				sortable : true,
+				width : 55,
+				sortable : false,
 				align : 'right'
 			}  ],
-			sortname : "dataLancamentoPrevista",
-			sortorder : "asc",
 			usepager : false,
 			useRp : false,
 			showTableToggleBtn : false,
@@ -580,6 +592,11 @@ var produtoEdicaoController =$.extend(true,  {
 					row.cell.statusSituacao = '-';
 				}
 				
+				if(row.cell.parcial){
+					row.cell.parcial = 'Sim';
+				} else {
+					row.cell.parcial = 'Não';
+				}
 				
 				cProduto = row.cell.codigoProduto;
 			});
@@ -875,6 +892,8 @@ var produtoEdicaoController =$.extend(true,  {
 									result.origemInterface, result.numeroEdicao, false);	
 							}
 							
+							$("#produtoEdicaoController-tipoLancamento option").not(":selected").attr("disabled", true);
+							
 							if(result.id){
 								
 								produtoEdicaoController.carregarLancamentosPeriodo(result.id);
@@ -917,7 +936,6 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-chamadaCapa", bloquearRedistribuicao);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peso", bloquearRedistribuicao);
 		
-		$("#produtoEdicaoController-tipoLancamento option").not(":selected").attr("disabled", bloquear);
 		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
 		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
 		
@@ -950,14 +968,33 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	executarPreProcessamentoLancamentosPeriodo : function (result) {
 		
+		linhasDestacadas = [];
+		
 		$.each(result.rows, function(index, row) {
 			
-			if(!row.cell.numeroLancamento) {
+			if(row.cell.numeroLancamento == undefined) {
 				row.cell.numeroLancamento = "";
+			}
+			
+			if(row.cell.numeroPeriodo == undefined) {
+				row.cell.numeroPeriodo = "";
+			}
+			
+			if (row.cell.destacarLinha) {
+				linhasDestacadas.push(index + 1);
 			}
 		});
 		
 		return result;
+	},
+	
+	onSuccessLancamentosPeriodo : function() {
+		
+		$(linhasDestacadas).each(function(i, item){
+			 id = '#row' + item;			    	
+			 $(id, this.workspace).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id, this.workspace).children("td").removeClass("sorted");
+		});
 	},
 	
 	iniciaTab: function(){
