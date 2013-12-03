@@ -64,19 +64,6 @@
 
 		<legend>Nova Redistribuição</legend>
 		
-		<table width="400" border="0" cellpadding="2" cellspacing="1">
-			<tr>
-			  <td width="30"><strong>Código:</strong></td>
-			  <td width="50" id="codigoProdutoRed" ></td>
-			  <td width="30"><strong>Produto:</strong></td>
-			  <td width="194" id="nomeProdutoRed"></td>
-			  <td width="30"><strong>Edição:</strong></td>
-			  <td width="50" id="numEdicaoRed"></td>
-			</tr>
-		</table>
-		
-		<br />
-		
 		<table width="390" border="0" cellpadding="2" cellspacing="1">
 			<tr>
 			  <td width="40"><strong>Lançamento:</strong></td>
@@ -93,4 +80,10 @@
 
 	</div>
 	
+</form>
+
+<form id="idRedistribuicaoExcluir">
+	<div id="dialog-excluir-redistribuicao" title="Excluir Lançamento">
+	  <p>Confirma a exclusão deste Lançamento?</p>
+	</div>
 </form>
