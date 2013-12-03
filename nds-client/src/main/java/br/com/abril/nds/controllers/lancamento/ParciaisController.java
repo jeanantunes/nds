@@ -33,11 +33,13 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -450,20 +452,8 @@ public class ParciaisController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void pesquisarRedistribuicao(Long idPeriodo){
 		
-		//TODO realizar pesquisa de redistribuições
-		
 		List<RedistribuicaoParcialDTO> list = parciaisService.obterRedistribuicoesParciais(idPeriodo);
-		/*
-		RedistribuicaoParcialDTO item = new RedistribuicaoParcialDTO();
-		item.setDataLancamento(new Date());
-		item.setDataRecolhimento(DateUtil.adicionarDias(new Date(), 10));
-		item.setNumeroLancamento(1);
-		item.setNumeroPeriodo(1);
-		item.setIdLancamentoRedistribuicao(1L);
-		item.setIdPeriodo(1L);
 		
-		list.add(item);
-		*/
 		result.use(FlexiGridJson.class).from(list).total(list.size()).page(1).serialize();
 	}
 	
@@ -473,7 +463,8 @@ public class ParciaisController extends BaseController {
 		
 		parciaisService.incluirRedistribuicaoParcial(redistribuicaoDTO);
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();		
 	}
 	
 	@Post
@@ -482,7 +473,8 @@ public class ParciaisController extends BaseController {
 		
 		parciaisService.excluirRedistribuicaoParcial(idLancamentoRedistribuicao);
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();		
 	}
 	
 	@Post
@@ -491,7 +483,8 @@ public class ParciaisController extends BaseController {
 		
 		parciaisService.salvarRedistribuicaoParcial(redistribuicaoDTO);
 		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 		
 }
