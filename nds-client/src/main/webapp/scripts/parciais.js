@@ -219,13 +219,11 @@ var ParciaisController = $.extend(true, {
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 		
+		var indexUtimoRegistro = result.rows.length -1 ;
+		
 		$.each(result.rows, function(index,row){
 			
-			var isExcluir = true;
-			
-			if(index == 1 || index < result.length){
-				isExcluir = false
-			}
+			var isExcluir = (index != indexUtimoRegistro);
 			
 			ParciaisController.gerarAcaoRedistribuicao(index,row,isExcluir);
 		} );
@@ -1142,14 +1140,10 @@ var ParciaisController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "numeroLancamento",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
+			
 			showTableToggleBtn : true,
 			width : 500,
-			height : 200
+			height : 230
 		});
 	}
 
@@ -1161,4 +1155,6 @@ $(function() {
 	bloquearItensEdicao(ParciaisController.workspace);				
 });
 
+
 //@ sourceURL=parciais.js
+

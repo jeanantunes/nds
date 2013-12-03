@@ -79,8 +79,8 @@
 	
 </form>
 
-<form id="idRedistribuicaoExcluir" style="display:none">
-	<div id="dialog-excluir-redistribuicao" title="Excluir Lançamento">
+<form id="idRedistribuicaoExcluir">
+	<div id="dialog-excluir-redistribuicao" title="Excluir Lançamento" style="display:none">
 	  <p>Confirma a exclusão deste Lançamento?</p>
 	</div>
 </form>
