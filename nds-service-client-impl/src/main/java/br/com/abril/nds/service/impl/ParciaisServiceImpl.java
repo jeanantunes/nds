@@ -227,6 +227,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return periodo;
 	}
 
+	@SuppressWarnings("unused")
 	private HistoricoLancamento gerarHistoricoLancamento(Lancamento lancamento, Usuario usuario) {
 
 		HistoricoLancamento historico = new HistoricoLancamento();
@@ -417,9 +418,58 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais() {
+	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo) {
 		
-		return this.periodoLancamentoParcialRepository.obterRedistribuicoesParciais(null);
+		return this.periodoLancamentoParcialRepository.obterRedistribuicoesParciais(idPeriodo);
+	}
+	
+	@Override
+	@Transactional
+	public void incluirRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO) {
+		
+		Long idPeriodo = redistribuicaoParcialDTO.getIdPeriodo();
+		
+		PeriodoLancamentoParcial periodoLancamentoParcial =
+			this.periodoLancamentoParcialRepository.buscarPorId(idPeriodo);
+		
+		if (periodoLancamentoParcial == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Período Lançamento Parcial não encontrado!");
+		}
+		
+		Lancamento lancamento = new Lancamento();
+		
+		lancamento.setDataLancamentoDistribuidor(redistribuicaoParcialDTO.getDataLancamento());
+		lancamento.setDataLancamentoPrevista(redistribuicaoParcialDTO.getDataLancamento());
+		lancamento.setDataRecolhimentoDistribuidor(redistribuicaoParcialDTO.getDataRecolhimento());
+		lancamento.setDataRecolhimentoPrevista(redistribuicaoParcialDTO.getDataRecolhimento());
+		
+		lancamento.setPeriodoLancamentoParcial(periodoLancamentoParcial);
+		
+		this.lancamentoRepository.adicionar(lancamento);
+	}
+	
+	@Override
+	@Transactional
+	public void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao) {
+		
+		this.lancamentoRepository.removerPorId(idLancamentoRedistribuicao);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public RedistribuicaoParcialDTO obterRedistribuicaoParcial(Long idLancamentoRedistribuicao) {
+		
+		Lancamento lancamento =
+			this.lancamentoRepository.buscarPorId(idLancamentoRedistribuicao);
+		
+		RedistribuicaoParcialDTO redistribuicaoParcialDTO = new RedistribuicaoParcialDTO();
+		
+		redistribuicaoParcialDTO.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
+		redistribuicaoParcialDTO.setDataRecolhimento(lancamento.getDataRecolhimentoDistribuidor());
+		
+		return redistribuicaoParcialDTO;
 	}
 	
 }

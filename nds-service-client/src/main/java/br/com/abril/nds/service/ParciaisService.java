@@ -91,5 +91,12 @@ public interface ParciaisService {
 	 */
 	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
-	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais();
+	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo);
+	
+	void incluirRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
+	
+	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	
+	RedistribuicaoParcialDTO obterRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	
 }

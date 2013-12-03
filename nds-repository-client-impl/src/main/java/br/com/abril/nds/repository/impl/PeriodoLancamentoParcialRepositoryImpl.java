@@ -211,6 +211,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return query;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Integer totalObterPeriodosParciais(FiltroParciaisDTO filtro) {
 		
@@ -437,7 +438,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodoLancamentoParcial) {
+	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -451,12 +452,13 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
 		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
-		hql.append(" where periodoLancamentoParcial.id = :idPeriodoLancamentoParcial ");
+		hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
 		hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
+		hql.append(" order by lancamento.numeroLancamento ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("idPeriodoLancamentoParcial", idPeriodoLancamentoParcial);
+		query.setParameter("idPeriodo", idPeriodo);
 		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RedistribuicaoParcialDTO.class));
