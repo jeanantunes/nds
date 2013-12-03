@@ -76,12 +76,8 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 	
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
-<<<<<<< HEAD
-	
+
 	BigDecimal obterDescontoLogistica(Long idProduto);
-	
-}
-=======
 
 	List<String> verificarProdutoExiste(String... codigoProduto);
 
@@ -91,4 +87,3 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 
     Produto obterProdutoPorCodigoProdinLike(String codigoProduto);
 }
->>>>>>> fase2
