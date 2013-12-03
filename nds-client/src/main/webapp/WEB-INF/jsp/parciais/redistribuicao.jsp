@@ -6,7 +6,7 @@
 
 <div id="dialog-redistribuicao" title="Parcial" style="display:none">
 
-	<fieldset style="width:550px;">
+	<fieldset style="width:500px;">
 
 		<legend>Dados do Período</legend>
 		
@@ -16,35 +16,37 @@
 			  <td width="50" id="codigoProdutoRed" ></td>
 			  <td width="30"><strong>Produto:</strong></td>
 			  <td width="194" id="nomeProdutoRed"></td>
+			</tr>
+			<tr>	
 			  <td width="30"><strong>Edição:</strong></td>
 			  <td width="50" id="numEdicaoRed"></td>
-			</tr>
-		</table>
-		<table width="390" border="0" cellpadding="2" cellspacing="1">
-			<tr>
 			  <td width="20"><strong>Período:</strong></td>
 			  <td width="55"id="numeroPeriodoRed"></td>
+			</tr>
+			<tr>
 			  <td width="40"><strong>Lançamento:</strong></td>
 			  <td width="30"id="dataLancamentoRed"></td>
 			  <td width="40"><strong>Recolhimento:</strong></td>
 			  <td width="30"id="dataRecolhimentoRed"></td>
 			</tr>
-	    </table>
-
+		</table>
+		
 	</fieldset>
 	
 	<br />
 	<br clear="all" />
 	<br />
 	
-	<fieldset style="width:550px;">
+	<fieldset style="width:500px;">
 
 		<legend>Manutenção de Redistribuição</legend>
 		
 		<table class="parciaisRedistribuicaoGrid"></table>
 		
 	</fieldset>
-	
+	<br />
+	<br clear="all" />
+	<br />
 	 <span id="btnIncluirRedistribuicao" class="bt_novos">
 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupNovaRedistribuicao(true);" rel="tipsy" title="Incluir Nova Redistribuição ">
 			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Redistribuição" />
@@ -60,19 +62,14 @@
 	
 	<div id="dialog-nova-redistribuicao" title="Parcial" style="display:none">
 		
-		<fieldset style="width:400px;">
+		<fieldset style="width:260px;">
 
 		<legend>Nova Redistribuição</legend>
 		
-		<table width="390" border="0" cellpadding="2" cellspacing="1">
+		<table width="200" border="0" cellpadding="2" cellspacing="1">
 			<tr>
 			  <td width="40"><strong>Lançamento:</strong></td>
 			  <td><input  id="lancamentoNovaRed" type="text" name="lancamentoNovaRed" style="width:80px;"/></td>
-			</tr>
-			
-			<tr>
-			  <td width="40"><strong>Recolhimento:</strong></td>
-			  <td><input  id="recolhimentoNovaRed" type="text" name="recolhimentoNovaRed" style="width:80px;"/></td>
 			</tr>
 	    </table>
 
