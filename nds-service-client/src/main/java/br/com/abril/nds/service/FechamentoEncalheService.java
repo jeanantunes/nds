@@ -90,7 +90,7 @@ public interface FechamentoEncalheService {
 	void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
 							  Usuario usuario, 
 							  CotaAusenteEncalheDTO c, Cota cotaAusente, 
-							  ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails);
+							  ValidacaoVO validacaoVO);
 	
 	Boolean validarEncerramentoOperacaoEncalhe(Date data);
 	

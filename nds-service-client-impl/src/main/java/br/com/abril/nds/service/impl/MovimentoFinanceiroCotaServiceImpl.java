@@ -768,7 +768,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     	
     	for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
     		
-    		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorMovimentoEstoqueCota(mec.getId());
+    		Fornecedor fornecedor = mec.getProdutoEdicao().getProduto().getFornecedor();
     		
     		if (fornecedor==null){
     			

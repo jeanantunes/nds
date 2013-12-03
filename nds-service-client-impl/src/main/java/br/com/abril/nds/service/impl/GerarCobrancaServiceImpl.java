@@ -14,7 +14,6 @@ import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -204,7 +203,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	            
 	                    this.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
 	            
-	                } catch (AutenticacaoEmailException e) {
+	                } catch (ValidacaoException e) {
 	  
 	                    e.printStackTrace();
 	                }
@@ -1219,11 +1218,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * Envia Cobranças para email da Cota
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
-	 * @throws AutenticacaoEmailException
 	 */
 	@Override
 	@Transactional
-	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException{
+	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) {
 		
         String email = cota.getPessoa().getEmail();
 		
