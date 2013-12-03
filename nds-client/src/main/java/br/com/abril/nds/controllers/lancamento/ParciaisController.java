@@ -16,7 +16,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
-import br.com.abril.nds.dto.RedisrtibuicaoParcialDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -452,9 +452,9 @@ public class ParciaisController extends BaseController {
 		
 		//TODO realizar pesquisa de redistribuições
 		
-		List<RedisrtibuicaoParcialDTO> list = new ArrayList<>();
+		List<RedistribuicaoParcialDTO> list = new ArrayList<>();
 		
-		RedisrtibuicaoParcialDTO item = new RedisrtibuicaoParcialDTO();
+		RedistribuicaoParcialDTO item = new RedistribuicaoParcialDTO();
 		item.setDataLancamento(new Date());
 		item.setDataRecolhimento(DateUtil.adicionarDias(new Date(), 10));
 		item.setNumeroLancamento(1);
