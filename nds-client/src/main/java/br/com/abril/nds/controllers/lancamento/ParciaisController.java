@@ -452,8 +452,8 @@ public class ParciaisController extends BaseController {
 		
 		//TODO realizar pesquisa de redistribuições
 		
-		List<RedistribuicaoParcialDTO> list = new ArrayList<>();
-		
+		List<RedistribuicaoParcialDTO> list = parciaisService.obterRedistribuicoesParciais(idPeriodo);
+		/*
 		RedistribuicaoParcialDTO item = new RedistribuicaoParcialDTO();
 		item.setDataLancamento(new Date());
 		item.setDataRecolhimento(DateUtil.adicionarDias(new Date(), 10));
@@ -463,39 +463,33 @@ public class ParciaisController extends BaseController {
 		item.setIdPeriodo(1L);
 		
 		list.add(item);
-		
-		result.use(FlexiGridJson.class).from(list).total(1).page(1).serialize();
+		*/
+		result.use(FlexiGridJson.class).from(list).total(list.size()).page(1).serialize();
 	}
 	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
-	public void incluirRedistribuicao(Date dataLancamento, Date dataRecolhimento, Long idPeriodo){
+	public void incluirRedistribuicao(RedistribuicaoParcialDTO redistribuicaoDTO){
 		
-		//TODO efetuar validaçoes 
-		
-		//TODO incluir nova redistribuição
+		parciaisService.incluirRedistribuicaoParcial(redistribuicaoDTO);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
-	public void excluirRedistribuicao(Long idPeriodo,Long idLancamentoRedistribuicao){
+	public void excluirRedistribuicao(Long idLancamentoRedistribuicao){
 		
-		//TODO efetuar validaçoes 
-		
-		//TODO excluir  redistribuição
+		parciaisService.excluirRedistribuicaoParcial(idLancamentoRedistribuicao);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
-	public void editarRedistribuicao(Date dataLancamento, Date dataRecolhimento, Long idPeriodo,Long idLancamentoRedistribuicao){
+	public void editarRedistribuicao(RedistribuicaoParcialDTO redistribuicaoDTO){
 		
-		//TODO efetuar validaçoes 
-		
-		//TODO excluir  redistribuição
+		parciaisService.incluirRedistribuicaoParcial(redistribuicaoDTO);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}

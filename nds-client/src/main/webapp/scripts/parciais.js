@@ -123,7 +123,7 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 	
-		data.push({name: 'idPeriodo',	value: idPeriodo});
+		data.push({name: 'redistribuicaoDTO.idPeriodo',	value: idPeriodo});
 		
 		$(".parciaisRedistribuicaoGrid",this.workspace).flexOptions({	
 			onSuccess: function() {bloquearItensEdicao(this.workspace);},
@@ -215,13 +215,17 @@ var ParciaisController = $.extend(true, {
 	},
 	
 	processaRetornoRedistribuicaoPeriodo:function(result){
-		//LUPE
+		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
-			
+		
 		$.each(result.rows, function(index,row){
 			
-			var isExcluir = false;
+			var isExcluir = true;
+			
+			if(index == 1 || index < result.length){
+				isExcluir = false
+			}
 			
 			ParciaisController.gerarAcaoRedistribuicao(index,row,isExcluir);
 		} );
@@ -286,9 +290,8 @@ var ParciaisController = $.extend(true, {
 	
 		var data = [];
 		
-		data.push({name:'dataLancamento',		value: this.get('lancamentoNovaRed')});
-		data.push({name:'dataRecolhimento',		value: this.get('recolhimentoNovaRed')});
-		data.push({name:'idPeriodo',			value: this.idPeriodo});	
+		data.push({name:'redistribuicaoDTO.dataLancamento',		value: this.get('lancamentoNovaRed')});
+		data.push({name:'redistribuicaoDTO.idPeriodo',			value: this.idPeriodo});	
 		
 		return data;
 	},
@@ -429,7 +432,6 @@ var ParciaisController = $.extend(true, {
 		
 		this.idLancamentoRedistribuicao = idLancamentoRedistribuicao;
 		this.set("lancamentoNovaRed",dataLancamento);
-		this.set("recolhimentoNovaRed",dataRecolhimento);
 		
 		this.popupNovaRedistribuicao(false);
 	},
@@ -768,6 +770,10 @@ var ParciaisController = $.extend(true, {
 		},
 	
 		popupNovaRedistribuicao:function(isNovoItem){
+			
+			if(isNovoItem){
+				this.set("lancamentoNovaRed","");
+			}
 			
 			$( "#dialog-nova-redistribuicao", this.workspace).dialog({
 				resizable: false,
