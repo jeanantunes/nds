@@ -33,6 +33,17 @@ var ParciaisController = $.extend(true, {
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$( "#lancamentoNovaRed", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#recolhimentoNovaRed", this.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
 
 		$("#nomeProduto", this.workspace).autocomplete({source: ""});
 		$("#edicaoProduto", this.workspace).autocomplete({source: ""});
@@ -156,7 +167,9 @@ var ParciaisController = $.extend(true, {
 			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		
-		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoDetalhes(index,row);} );
+		$.each(result.rows, function(index,row){
+			ParciaisController.gerarAcaoDetalhes(index,row);
+		} );
 				
 		return result;
 	},
@@ -285,10 +298,35 @@ var ParciaisController = $.extend(true, {
 					row.cell.dataRecolhimento +
 			        ' \')"')+
 			        
-			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:10px;" /></a>' +
+			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:5px;" /></a>' +
 			'<a href="javascript:;" isEdicao="true" '+
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
-			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" /></a>';
+			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" style="margin-right:5px;" /></a>' +
+			'<a href="javascript:;" onclick="ParciaisController.carregarRedistribuicao(\''+
+				row.cell.idPeriodo +'\',\''+
+				row.cell.numeroPeriodo +'\',\''+
+				row.cell.dataLancamento +'\',\''+
+				row.cell.dataRecolhimento +'\');\"'+
+			'><img src="'+contextPath+'/images/bt_lancamento.png" border="0" hspace="5"/></a>';
+	},
+	carregarRedistribuicao:function(idPeriodo,numeroPeriodo,dataLancamento, dataRecolhimento){
+		
+		$('#codigoProdutoRed',this.workspace).text(this.codigoProduto);
+		$('#nomeProdutoRed',this.workspace).text(this.nomeProduto);
+		$('#numEdicaoRed',this.workspace).text(this.numEdicao);
+		$('#dataLancamentoRed',this.workspace).text(dataLancamento);
+		$('#dataRecolhimentoRed',this.workspace).text(dataRecolhimento);
+		$('#numeroPeriodoRed',this.workspace).text(numeroPeriodo);
+		
+		$(".parciaisRedistribuicaoGrid",this.workspace).flexOptions({			
+			url : contextPath + "/parciais/carregarRedistribuicao",
+			dataType : 'json',
+			params: null
+		});
+
+		$(".parciaisRedistribuicaoGrid",this.workspace).flexReload();
+
+		this.popup_redistribuicao();
 	},
 	
 	carregarDetalhes : function(idProdutoEdicao , dataLancamento, dataRecolhimento, codigoProduto, 
@@ -556,6 +594,22 @@ var ParciaisController = $.extend(true, {
 			});
 		},
 		
+		popup_redistribuicao : function() {
+		
+			$( "#dialog-redistribuicao", this.workspace).dialog({
+				resizable: false,
+				height:510,
+				width:600,
+				modal: true,
+				buttons: {
+					"Fechar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-redistribuicao", this.workspace).parents("form")
+			});
+		},
+		
 		popup_edit_produto : function() {
 		
 			$( "#dialog-edit-produto", this.workspace).dialog({
@@ -574,6 +628,32 @@ var ParciaisController = $.extend(true, {
 					}
 				},
 				form: $("#dialog-edit-produto", this.workspace).parents("form")
+			});
+		},
+		
+		incluirNovaDistribuicao:function(){
+			alert("Nova Distribuição");
+		},
+		
+		popupNovaRedistribuicao:function(){
+			
+	
+			$( "#dialog-nova-redistribuicao", this.workspace).dialog({
+				resizable: false,
+				height:230,
+				width:450,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						
+						ParciaisController.incluirNovaDistribuicao();
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-nova-redistribuicao", this.workspace).parents("form")
 			});
 		},
 		
@@ -645,87 +725,93 @@ var ParciaisController = $.extend(true, {
 
 		$(".periodosGrid", this.workspace).flexigrid({
 				colModel : [ {
+					display : 'Período',
+					name : 'numeroPeriodo',
+					width : 40,
+					sortable : false,
+					align : 'center'
+				},{
 					display : 'Lcto',
 					name : 'dataLancamento',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Rcto',
 					name : 'dataRecolhimento',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Reparte',
 					name : 'reparte',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
-					display : 'Suplementação',
+					display : 'Redistribuição',
 					name : 'suplementacao',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Encalhe',
 					name : 'encalhe',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda',
 					name : 'vendas',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda',
 					name : 'percVenda',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda CE',
 					name : 'vendaCE',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Reparte Acum.',
 					name : 'reparteAcum',
 					width : 75,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda Acum.',
 					name : 'vendaAcumulada',
 					width : 70,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda Acum.',
 					name : 'percVendaAcumulada',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Lct Prodin',
 					name : 'dataLancamentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Rct Prodin',
 					name : 'dataRecolhimentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 45,
+					width : 55,
 					sortable : false,
 					align : 'center'
 				}],
@@ -741,88 +827,94 @@ var ParciaisController = $.extend(true, {
 			}); 
 
 		$(".parciaisPopGrid", this.workspace).flexigrid({
-				colModel : [ {
+				colModel : [{
+					display : 'Período',
+					name : 'numeroPeriodo',
+					width : 40,
+					sortable : false,
+					align : 'center'
+				}, {
 					display : 'Lcto',
 					name : 'dataLancamento',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Rcto',
 					name : 'dataRecolhimento',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Reparte',
 					name : 'reparte',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
-					display : 'Suplementação',
+					display : 'Redistribuição',
 					name : 'suplementacao',
 					width : 90,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Encalhe',
 					name : 'encalhe',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda',
 					name : 'vendas',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda',
 					name : 'percVenda',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda CE',
 					name : 'vendaCE',
 					width : 50,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Reparte Acum.',
 					name : 'reparteAcum',
 					width : 75,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Venda Acum.',
 					name : 'vendaAcumulada',
 					width : 70,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : '% Venda Acum.',
 					name : 'percVendaAcumulada',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				},{
 					display : 'Lct Prodin',
 					name : 'dataLancamentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Rct Prodin',
 					name : 'dataRecolhimentoPrevista',
 					width : 55,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 45,
+					width : 55,
 					sortable : false,
 					align : 'center'
 				}],
@@ -879,9 +971,45 @@ var ParciaisController = $.extend(true, {
 			width : 595,
 			height : 200
 		});
+		
+		$(".parciaisRedistribuicaoGrid", this.workspace).flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'N. Lcto',
+				name : 'numeroLancamento',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Lançamento',
+				name : 'nomeCota',
+				width : 200,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Recolhimento',
+				name : 'reparte',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 55,
+				sortable : false,
+				align : 'center'
+			}],
+			sortname : "numeroLancamento",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 550,
+			height : 200
+		});
 	}
-	
-	
+
 }, BaseController);
 
 $(function() {

@@ -1,0 +1,96 @@
+<form id="idRedistribuicaoParciais">
+
+	<jsp:include page="../messagesDialog.jsp">
+			<jsp:param value="dialog-redistribuicao" name="messageDialog"/>
+	</jsp:include>
+
+<div id="dialog-redistribuicao" title="Parcial" style="display:none">
+
+	<fieldset style="width:550px;">
+
+		<legend>Dados do Período</legend>
+		
+		<table width="500" border="0" cellpadding="2" cellspacing="1">
+			<tr>
+			  <td width="30"><strong>Código:</strong></td>
+			  <td width="50" id="codigoProdutoRed" ></td>
+			  <td width="30"><strong>Produto:</strong></td>
+			  <td width="194" id="nomeProdutoRed"></td>
+			  <td width="30"><strong>Edição:</strong></td>
+			  <td width="50" id="numEdicaoRed"></td>
+			</tr>
+		</table>
+		<table width="390" border="0" cellpadding="2" cellspacing="1">
+			<tr>
+			  <td width="20"><strong>Período:</strong></td>
+			  <td width="55"id="numeroPeriodoRed"></td>
+			  <td width="40"><strong>Lançamento:</strong></td>
+			  <td width="30"id="dataLancamentoRed"></td>
+			  <td width="40"><strong>Recolhimento:</strong></td>
+			  <td width="30"id="dataRecolhimentoRed"></td>
+			</tr>
+	    </table>
+
+	</fieldset>
+	
+	<br />
+	<br clear="all" />
+	<br />
+	
+	<fieldset style="width:550px;">
+
+		<legend>Manutenção de Redistribuição</legend>
+		
+		<table class="parciaisRedistribuicaoGrid"></table>
+		
+	</fieldset>
+	
+	 <span id="btnIncluirRedistribuicao" class="bt_novos">
+		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupNovaRedistribuicao(true);" rel="tipsy" title="Incluir Nova Redistribuição ">
+			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Redistribuição" />
+		</a>
+	</span>
+	
+	
+</div>
+
+</form>
+
+<form id="idNovaRedistribuicaoParciais">
+	
+	<div id="dialog-nova-redistribuicao" title="Parcial" style="display:none">
+		
+		<fieldset style="width:400px;">
+
+		<legend>Nova Redistribuição</legend>
+		
+		<table width="400" border="0" cellpadding="2" cellspacing="1">
+			<tr>
+			  <td width="30"><strong>Código:</strong></td>
+			  <td width="50" id="codigoProdutoRed" ></td>
+			  <td width="30"><strong>Produto:</strong></td>
+			  <td width="194" id="nomeProdutoRed"></td>
+			  <td width="30"><strong>Edição:</strong></td>
+			  <td width="50" id="numEdicaoRed"></td>
+			</tr>
+		</table>
+		
+		<br />
+		
+		<table width="390" border="0" cellpadding="2" cellspacing="1">
+			<tr>
+			  <td width="40"><strong>Lançamento:</strong></td>
+			  <td><input  id="lancamentoNovaRed" type="text" name="lancamentoNovaRed" style="width:80px;"/></td>
+			</tr>
+			
+			<tr>
+			  <td width="40"><strong>Recolhimento:</strong></td>
+			  <td><input  id="recolhimentoNovaRed" type="text" name="recolhimentoNovaRed" style="width:80px;"/></td>
+			</tr>
+	    </table>
+
+	</fieldset>
+
+	</div>
+	
+</form>

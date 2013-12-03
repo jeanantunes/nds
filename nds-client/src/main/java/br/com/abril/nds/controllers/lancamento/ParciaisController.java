@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ParciaisService;
@@ -213,7 +214,6 @@ public class ParciaisController extends BaseController {
 	 */	
 	private TableModel<CellModelKeyValue<ParcialDTO>> efetuarConsulta(FiltroParciaisDTO filtro) {
 		
-		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 						
 		Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
@@ -238,13 +238,6 @@ public class ParciaisController extends BaseController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-		
-		for(PeriodoParcialDTO periodo:listaPeriodo) {
-			if(periodo.getReparte()=="") {
-				periodo.setReparteAcum(null);
-				periodo.setPercVendaAcumulada(null);
-			}
-		}
 		
 		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 				
@@ -450,6 +443,13 @@ public class ParciaisController extends BaseController {
 				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
 
 		result.nothing();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void carregarRedistribuicao(){
+		
+		result.use(FlexiGridJson.class).from(null).total(0).page(1).serialize();
 	}
 		
 }

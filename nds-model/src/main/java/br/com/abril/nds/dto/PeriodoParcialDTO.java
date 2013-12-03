@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.Origem;
@@ -16,6 +18,9 @@ public class PeriodoParcialDTO implements Serializable {
 	private static final long serialVersionUID = 7240165519168307608L;
 	
 	private Long idProdutoEdicao;
+	
+	@Export(label="Período",alignment=Alignment.CENTER,widthPercent=5)
+	private Integer numeroPeriodo;
 		
 	@Export(label = "Data Lancamento", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataLancamento;
@@ -24,31 +29,31 @@ public class PeriodoParcialDTO implements Serializable {
 	private String dataRecolhimento;
 	
 	@Export(label = "Reparte", alignment=Alignment.CENTER)
-	private String reparte;
+	private BigInteger reparte = BigInteger.ZERO;
 	
 	@Export(label = "Encalhe", alignment=Alignment.CENTER)
-	private String encalhe;
+	private BigInteger encalhe = BigInteger.ZERO;
 	
 	@Export(label = "Vendas", alignment=Alignment.CENTER)
-	private String vendas;
+	private BigInteger vendas = BigInteger.ZERO;
 	
 	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER)
-	private String vendaAcumulada;
+	private BigInteger vendaAcumulada = BigInteger.ZERO;
 	
 	@Export(label = "% Venda", alignment=Alignment.CENTER)
-	private String percVenda;
+	private BigDecimal percVenda = BigDecimal.ZERO;
 	
 	@Export(label = "Suplementação", alignment=Alignment.CENTER)
-	private String suplementacao;
+	private BigInteger suplementacao = BigInteger.ZERO;
 	
 	@Export(label = "Venda CE", alignment=Alignment.CENTER)
-	private String vendaCE;
+	private Long vendaCE =0L;
 	
 	@Export(label = "Venda Acum.", alignment=Alignment.CENTER)
-	private String reparteAcum;
+	private BigInteger reparteAcum =BigInteger.ZERO;
 	
 	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
-	private String percVendaAcumulada;
+	private BigDecimal percVendaAcumulada = BigDecimal.ZERO;
 	
 	@Export(label = "Data Lancamento Prevista", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataLancamentoPrevista;
@@ -57,6 +62,8 @@ public class PeriodoParcialDTO implements Serializable {
 	private String dataRecolhimentoPrevista;
 	
 	private Long idLancamento;
+	
+	private Long idPeriodo;
 	
 	private boolean geradoPorInterface;
 	
@@ -86,149 +93,88 @@ public class PeriodoParcialDTO implements Serializable {
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);;
 	}
-	public String getReparte() {
-		return reparte;
-	}
-	public void setReparte(Number reparte) {
-		if(reparte==null)
-			this.reparte = "";
-		else
-			this.reparte = reparte.toString();
-	}
-	public String getEncalhe() {
-		return encalhe;
-	}
-	public void setEncalhe(Number encalhe) {
-		if(encalhe==null)
-			this.encalhe = "";
-		else
-			this.encalhe = encalhe.toString();
-	}
-	public String getVendas() {
-		return vendas;
-	}
-	public void setVendas(Number vendas) {
-		if(vendas==null)
-			this.vendas = "";
-		else
-			this.vendas = vendas.toString();
-	}
-	public String getVendaAcumulada() {
-		return vendaAcumulada;
-	}
-	public void setVendaAcumulada(Number vendaAcumulada) {
-		if(vendaAcumulada==null || vendas==null || vendas.isEmpty())
-			this.vendaAcumulada = "";
-		else 
-			this.vendaAcumulada = vendaAcumulada.toString();
-	}
-	public String getPercVenda() {
-		return percVenda;
-	}
-	public void setPercVenda(Number percVenda) {
-		if(percVenda==null)
-			this.percVenda = "";
-		else
-			this.percVenda = percVenda.toString() + "%";
-	}
-	/**
-	 * @return the idLancamento
-	 */
-	public Long getIdLancamento() {
-		return idLancamento;
-	}
-	/**
-	 * @param idLancamento the idLancamento to set
-	 */
-	public void setIdLancamento(Long idLancamento) {
-		this.idLancamento = idLancamento;
-	}
-	/**
-	 * @return the idProdutoEdicao
-	 */
+
 	public Long getIdProdutoEdicao() {
 		return idProdutoEdicao;
 	}
-	/**
-	 * @param idProdutoEdicao the idProdutoEdicao to set
-	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
-	/**
-	 * @return the suplementacao
-	 */
-	public String getSuplementacao() {
+	public BigInteger getReparte() {
+		return reparte;
+	}
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+	public BigInteger getEncalhe() {
+		return encalhe;
+	}
+	public void setEncalhe(BigInteger encalhe) {
+		this.encalhe = encalhe;
+	}
+	public BigInteger getVendas() {
+		return vendas;
+	}
+	public void setVendas(BigInteger vendas) {
+		this.vendas = vendas;
+	}
+	public BigInteger getVendaAcumulada() {
+		return vendaAcumulada;
+	}
+	public void setVendaAcumulada(BigInteger vendaAcumulada) {
+		this.vendaAcumulada = vendaAcumulada;
+	}
+	public BigDecimal getPercVenda() {
+		return percVenda;
+	}
+	public void setPercVenda(BigDecimal percVenda) {
+		this.percVenda = percVenda;
+	}
+	public BigInteger getSuplementacao() {
 		return suplementacao;
 	}
-	/**
-	 * @param suplementacao the suplementacao to set
-	 */
-	public void setSuplementacao(Number suplementacao) {
-		if(suplementacao==null)
-			this.suplementacao = "";
-		else
-			this.suplementacao = suplementacao.toString();
+	public void setSuplementacao(BigInteger suplementacao) {
+		this.suplementacao = suplementacao;
 	}
-	/**
-	 * @return the vendaCE
-	 */
-	public String getVendaCE() {
+	public Long getVendaCE() {
 		return vendaCE;
 	}
-	/**
-	 * @param vendaCE the vendaCE to set
-	 */
-	public void setVendaCE(Number vendaCE) {
-		if(vendaCE==null)
-			this.vendaCE = "";
-		else
-		this.vendaCE = vendaCE.toString();
+	public void setVendaCE(Long vendaCE) {
+		this.vendaCE = vendaCE;
 	}
-	/**
-	 * @return the percVendaAcumulada
-	 */
-	public String getPercVendaAcumulada() {
-		return percVendaAcumulada;
-	}
-	/**
-	 * @param percVendaAcumulada the percVendaAcumulada to set
-	 */
-	public void setPercVendaAcumulada(Number percVendaAcumulada) {
-		if(percVendaAcumulada==null)
-			this.percVendaAcumulada = "";
-		else
-		this.percVendaAcumulada = percVendaAcumulada.toString() + "%";
-	}
-	/**
-	 * @return the reparteAcum
-	 */
-	public String getReparteAcum() {
+	public BigInteger getReparteAcum() {
 		return reparteAcum;
 	}
-	/**
-	 * @param reparteAcum the reparteAcum to set
-	 */
-	public void setReparteAcum(Number reparteAcum) {
-		if(reparteAcum==null)
-			this.reparteAcum = "";
-		else
-			this.reparteAcum = reparteAcum.toString();
+	public void setReparteAcum(BigInteger reparteAcum) {
+		this.reparteAcum = reparteAcum;
 	}
-	/**
-	 * @return the geradoPorInterface
-	 */
+	public BigDecimal getPercVendaAcumulada() {
+		return percVendaAcumulada;
+	}
+	public void setPercVendaAcumulada(BigDecimal percVendaAcumulada) {
+		this.percVendaAcumulada = percVendaAcumulada;
+	}
+	public Long getIdLancamento() {
+		return idLancamento;
+	}
+	public void setIdLancamento(Long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+	
+	
+	
+	public Long getIdPeriodo() {
+		return idPeriodo;
+	}
+	public void setIdPeriodo(Long idPeriodo) {
+		this.idPeriodo = idPeriodo;
+	}
 	public boolean isGeradoPorInterface() {
 		return geradoPorInterface;
 	}
-	/**
-	 * @param geradoPorInterface the geradoPorInterface to set
-	 */
 	public void setGeradoPorInterface(boolean geradoPorInterface) {
 		this.geradoPorInterface = geradoPorInterface;
 	}
-	
-	
 	/**
 	 * @return the origem
 	 */
@@ -251,4 +197,12 @@ public class PeriodoParcialDTO implements Serializable {
 		}
 		
 	}
+	public Integer getNumeroPeriodo() {
+		return numeroPeriodo;
+	}
+	public void setNumeroPeriodo(Integer numeroPeriodo) {
+		this.numeroPeriodo = numeroPeriodo;
+	}
+	
+	
 }
