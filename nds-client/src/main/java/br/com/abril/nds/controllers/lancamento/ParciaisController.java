@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
+import br.com.abril.nds.dto.RedisrtibuicaoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -447,9 +448,56 @@ public class ParciaisController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
-	public void carregarRedistribuicao(){
+	public void pesquisarRedistribuicao(Long idPeriodo){
 		
-		result.use(FlexiGridJson.class).from(null).total(0).page(1).serialize();
+		//TODO realizar pesquisa de redistribuições
+		
+		List<RedisrtibuicaoParcialDTO> list = new ArrayList<>();
+		
+		RedisrtibuicaoParcialDTO item = new RedisrtibuicaoParcialDTO();
+		item.setDataLancamento(new Date());
+		item.setDataRecolhimento(DateUtil.adicionarDias(new Date(), 10));
+		item.setNumeroLancamento(1);
+		item.setNumeroPeriodo(1);
+		item.setIdLancamentoRedistribuicao(1L);
+		item.setIdPeriodo(1L);
+		
+		list.add(item);
+		
+		result.use(FlexiGridJson.class).from(list).total(1).page(1).serialize();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void incluirRedistribuicao(Date dataLancamento, Date dataRecolhimento, Long idPeriodo){
+		
+		//TODO efetuar validaçoes 
+		
+		//TODO incluir nova redistribuição
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void excluirRedistribuicao(Long idPeriodo,Long idLancamentoRedistribuicao){
+		
+		//TODO efetuar validaçoes 
+		
+		//TODO excluir  redistribuição
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void editarRedistribuicao(Date dataLancamento, Date dataRecolhimento, Long idPeriodo,Long idLancamentoRedistribuicao){
+		
+		//TODO efetuar validaçoes 
+		
+		//TODO excluir  redistribuição
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 		
 }
