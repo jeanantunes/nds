@@ -32,6 +32,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -61,6 +62,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Transactional
 	public void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Usuario usuario) {
@@ -455,6 +459,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		lancamento.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
 		lancamento.setProdutoEdicao(produtoEdicao);
+		lancamento.setUsuario(this.usuarioService.getUsuarioLogado());
 		
 		lancamento.setNumeroLancamento(
 			this.produtoEdicaoService.obterNumeroLancamento(produtoEdicao.getId()));
@@ -466,24 +471,44 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	@Override
 	@Transactional
-	public void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao) {
+	public void salvarRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO) {
 		
-		this.lancamentoRepository.removerPorId(idLancamentoRedistribuicao);
+		Long idLancamento = redistribuicaoParcialDTO.getIdLancamentoRedistribuicao();
+		
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+		
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Lançamento não encontrado!");
+		}
+		
+		lancamento.setDataLancamentoDistribuidor(redistribuicaoParcialDTO.getDataLancamento());
+		lancamento.setDataLancamentoPrevista(redistribuicaoParcialDTO.getDataLancamento());
+		lancamento.setUsuario(this.usuarioService.getUsuarioLogado());
+		
+		this.lancamentoRepository.alterar(lancamento);
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
-	public RedistribuicaoParcialDTO obterRedistribuicaoParcial(Long idLancamentoRedistribuicao) {
+	@Transactional
+	public void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao) {
 		
-		Lancamento lancamento =
-			this.lancamentoRepository.buscarPorId(idLancamentoRedistribuicao);
+		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamentoRedistribuicao);
 		
-		RedistribuicaoParcialDTO redistribuicaoParcialDTO = new RedistribuicaoParcialDTO();
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Lançamento não encontrado!");
+		}
 		
-		redistribuicaoParcialDTO.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
-		redistribuicaoParcialDTO.setDataRecolhimento(lancamento.getDataRecolhimentoDistribuidor());
+		List<HistoricoLancamento> historicoLancamentos = lancamento.getHistoricos();
 		
-		return redistribuicaoParcialDTO;
+		for (HistoricoLancamento historicoLancamento : historicoLancamentos) {
+			this.historicoLancamentoRepository.remover(historicoLancamento);
+		}
+		
+		this.lancamentoRepository.remover(lancamento);
 	}
 	
 }

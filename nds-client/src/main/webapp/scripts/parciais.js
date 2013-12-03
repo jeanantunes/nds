@@ -550,7 +550,7 @@ var ParciaisController = $.extend(true, {
 	editarRedistribuicao:function(){
 		
 		var data  = this.getDadosNovaRedistribuicao();
-		data.push({name:'idLancamentoRedistribuicao',value: this.idLancamentoRedistribuicao});
+		data.push({name:'redistribuicaoDTO.idLancamentoRedistribuicao',value: this.idLancamentoRedistribuicao});
 		
 		$.postJSON(contextPath + "/parciais/editarRedistribuicao",
 			data,
@@ -1160,3 +1160,5 @@ $(function() {
 	ParciaisController.init();
 	bloquearItensEdicao(ParciaisController.workspace);				
 });
+
+//@ sourceURL=parciais.js
