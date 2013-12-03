@@ -328,3 +328,5 @@
 </fieldset>
 
 <jsp:include page="parciaisDeVenda.jsp" />
+
+<jsp:include page="redistribuicao.jsp" />

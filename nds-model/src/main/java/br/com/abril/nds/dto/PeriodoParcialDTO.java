@@ -63,6 +63,8 @@ public class PeriodoParcialDTO implements Serializable {
 	
 	private Long idLancamento;
 	
+	private Long idPeriodo;
+	
 	private boolean geradoPorInterface;
 	
 	private Origem origem;
@@ -160,6 +162,13 @@ public class PeriodoParcialDTO implements Serializable {
 	}
 	
 	
+	
+	public Long getIdPeriodo() {
+		return idPeriodo;
+	}
+	public void setIdPeriodo(Long idPeriodo) {
+		this.idPeriodo = idPeriodo;
+	}
 	public boolean isGeradoPorInterface() {
 		return geradoPorInterface;
 	}
