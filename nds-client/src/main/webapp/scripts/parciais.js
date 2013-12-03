@@ -291,6 +291,7 @@ var ParciaisController = $.extend(true, {
 		var data = [];
 		
 		data.push({name:'redistribuicaoDTO.dataLancamento',		value: this.get('lancamentoNovaRed')});
+		data.push({name:'redistribuicaoDTO.dataRecolhimento',	value: $("#dataRecolhimentoRed",this.workspace).text()});
 		data.push({name:'redistribuicaoDTO.idPeriodo',			value: this.idPeriodo});	
 		
 		return data;
@@ -736,8 +737,8 @@ var ParciaisController = $.extend(true, {
 		
 			$( "#dialog-redistribuicao", this.workspace).dialog({
 				resizable: false,
-				height:510,
-				width:600,
+				height:550,
+				width:550,
 				modal: true,
 				buttons: {
 					"Fechar": function() {
@@ -777,8 +778,8 @@ var ParciaisController = $.extend(true, {
 			
 			$( "#dialog-nova-redistribuicao", this.workspace).dialog({
 				resizable: false,
-				height:230,
-				width:450,
+				height:150,
+				width:300,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {

@@ -445,6 +445,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataRecolhimentoDistribuidor(redistribuicaoParcialDTO.getDataRecolhimento());
 		lancamento.setDataRecolhimentoPrevista(redistribuicaoParcialDTO.getDataRecolhimento());
 		lancamento.setDataCriacao(new Date());
+		lancamento.setDataStatus(new Date());
 		
 		lancamento.setPeriodoLancamentoParcial(periodoLancamentoParcial);
 		
