@@ -966,8 +966,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return null;
 	}
 	
-
-	private Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
+   /**
+    * Obtem Data de Vencimento onforme Parametros 
+    * @param dataConsolidado
+    * @param fatorVencimento
+    * @return Date
+    */
+	@Override
+	@Transactional
+	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
 		
 		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		

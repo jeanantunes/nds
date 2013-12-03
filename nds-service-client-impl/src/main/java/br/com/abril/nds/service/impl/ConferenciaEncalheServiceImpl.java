@@ -120,6 +120,7 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.CotaService;
@@ -259,6 +260,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
+
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -1597,7 +1602,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 
-	
 	/**
 	 * Gera o movimento financeiro referente a operação de conferência de encalhe e
 	 * em seguida dispara componentes responsáveis pela geração da cobrança.
@@ -1629,9 +1633,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																			 controleConferenciaEncalheCota.getUsuario(),
 																			 controleConferenciaEncalheCota.getId());
 		
-			gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
-											   controleConferenciaEncalheCota.getUsuario().getId(), 
-											   nossoNumeroCollection);
+			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
+					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
+			
+			if (existeBoletoAntecipado){
+				
+				gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
+												           controleConferenciaEncalheCota.getUsuario().getId());
+			}
+			else{
+			
+				gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
+												   controleConferenciaEncalheCota.getUsuario().getId(), 
+												   nossoNumeroCollection);
+			}
 	    }
 		else if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)){
 			

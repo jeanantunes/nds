@@ -83,4 +83,12 @@ public interface GerarCobrancaService {
 	 */
 	void gerarDividaPostergada(Long idCota, 
 			                   Long idUsuario) throws GerarCobrancaValidacaoException;
+
+	/**
+    * Obtem Data de Vencimento onforme Parametros 
+    * @param dataConsolidado
+    * @param fatorVencimento
+    * @return Date
+    */
+	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento);
 }

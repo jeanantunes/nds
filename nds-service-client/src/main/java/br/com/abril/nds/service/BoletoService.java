@@ -9,6 +9,7 @@ import javax.xml.bind.ValidationException;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
@@ -175,4 +176,32 @@ public interface BoletoService {
 	 * @param usuario
 	 */
 	void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento);
+
+	/**
+	 * Gera Impressão de Boletos em Branco apenas para a impressão -  Sem Cobrança e Sem Financeiro Cadastrado
+	 * @param boletosEmBrancoDTO
+	 * @return byte[]
+	 * @throws ValidationException 
+	 */
+	byte[] geraImpressaoBoletosEmBranco(List<BoletoEmBrancoDTO> boletosEmBrancoDTO) throws ValidationException;
+
+	/**
+	 * Salva Boleto Antecipado - Em Branco
+	 * @param bbDTO
+	 */
+	void salvaBoletoAntecipado(BoletoEmBrancoDTO bbDTO);
+
+	/**
+     * Salva Boletos Antecipados - Em Branco
+     * @param listaBbDTO
+     */
+	void salvaBoletosAntecipado(List<BoletoEmBrancoDTO> listaBbDTO);
+
+	/**
+	 * Verifica se existe boleto antecipado para a cota na data de recolhimento
+	 * @param idCota
+	 * @param dataRecolhimento
+	 * @return boolean
+	 */
+	boolean existeBoletoAntecipadoCotaDataRecolhimento(Long idCota,Date dataRecolhimento);
 }
