@@ -340,7 +340,6 @@
 			</form>		
 
 			<div class="linha_separa_fields">&nbsp;</div>
-<<<<<<< HEAD
 			<div class="break_conteudo" style="position: relative !important; left: -10%;">
 				<fieldset class="fieldGrid" style="width: 1200px;">
 	
@@ -369,19 +368,6 @@
 							<label>Total: </label>
 							<label id="totalSemDescontoLbl"></label>
 						</span>
-=======
-
-			<fieldset class="fieldGrid">
-
-				<legend>Recebimentos Físico Cadastrados</legend>
-
-				<div class="grids" style="display: none;">
-
-					<div class="gridWrapper">
-
-						<table class="itemNotaGrid"></table>
-
->>>>>>> fase2
 					</div>
 	
 				</fieldset>
@@ -434,7 +420,6 @@
 
 			    <tr style="width: 25%">
 
-<<<<<<< HEAD
 			       <td>Nota Envio:</td>
 				  
 				  <td colspan="1">
@@ -460,18 +445,6 @@
 							<input type="text" maxlength="44" style="width: 365px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
 						</span>
 					</td>
-=======
-			      <td>NF-e:</td>
-			      <td>
-			          <input type="checkbox" id="novoNfe" name="novoNfe" />
-			      </td>
-
-			      <td>Chave de Acesso:</td>
-			      <td colspan="5">
-			          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
-			      </td>
->>>>>>> fase2
-
 			    </tr>
 
 
