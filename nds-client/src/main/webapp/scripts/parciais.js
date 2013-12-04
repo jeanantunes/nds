@@ -222,10 +222,13 @@ var ParciaisController = $.extend(true, {
 		var indexUtimoRegistro = result.rows.length -1 ;
 		
 		$.each(result.rows, function(index,row){
+		
+			row.cell.acao="";
 			
-			var isExcluir = (index != indexUtimoRegistro);
-			
-			ParciaisController.gerarAcaoRedistribuicao(index,row,isExcluir);
+			if(index > 0){	
+				var isExcluir = (index != indexUtimoRegistro);
+				ParciaisController.gerarAcaoRedistribuicao(index,row,isExcluir);
+			}
 		} );
 				
 		return result;
@@ -345,7 +348,7 @@ var ParciaisController = $.extend(true, {
 			        
 			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:5px;" /></a>' +
 			'<a href="javascript:;" isEdicao="true" '+
-			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
+			' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" '+
 			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" style="margin-right:5px;" /></a>' +
 			'<a href="javascript:;" onclick="ParciaisController.carregarRedistribuicao(\''+
 				row.cell.idPeriodo +'\',\''+
@@ -1155,6 +1158,4 @@ $(function() {
 	bloquearItensEdicao(ParciaisController.workspace);				
 });
 
-
-//@ sourceURL=parciais.js
-
+//@ sourceURL=parcial.js
