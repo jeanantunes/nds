@@ -453,13 +453,11 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
 		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
 		hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
-		hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
 		hql.append(" order by lancamento.numeroLancamento ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idPeriodo", idPeriodo);
-		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RedistribuicaoParcialDTO.class));
 		
