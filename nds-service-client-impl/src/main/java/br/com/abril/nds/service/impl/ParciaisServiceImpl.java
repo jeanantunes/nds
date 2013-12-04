@@ -508,7 +508,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			this.historicoLancamentoRepository.remover(historicoLancamento);
 		}
 		
-		this.lancamentoRepository.remover(lancamento);
+		this.lancamentoRepository.removerPorId(idLancamentoRedistribuicao);
 	}
 	
 }
