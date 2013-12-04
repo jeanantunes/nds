@@ -136,5 +136,6 @@ public interface LancamentoService {
 	Date getMaiorDataLancamento(Long idProdutoEdicao);
 	
 	Lancamento obterLancamentoNaMesmaSessao(Long id);
+	
 }
  
