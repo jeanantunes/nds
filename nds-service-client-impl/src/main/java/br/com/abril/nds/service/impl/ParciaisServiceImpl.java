@@ -197,13 +197,14 @@ public class ParciaisServiceImpl implements ParciaisService{
 					
 					Lancamento lancamento = item.getLancamentoPeriodoParcial();
 					
-					
 					if(lancamento!= null && 
 							Arrays.asList(StatusLancamento.PLANEJADO, 
 									  StatusLancamento.CONFIRMADO)
 									  .contains(lancamento.getStatus())){
 						
 						periodoLancamentoParcialRepository.remover(item);
+						// TODO Ajsute Parcial 
+						//remover as redistribuição
 					}
 				}
 				
