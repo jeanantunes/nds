@@ -48,7 +48,7 @@ public class CouchDBRepositoryImpl {
 		);
 	}
 	
-	@PostConstruct
+	//@PostConstruct
 	public void initCouchDbClient() throws MalformedURLException {
 		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
                 .url(
