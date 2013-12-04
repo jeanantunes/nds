@@ -164,7 +164,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param dto
 	 * @return
 	 */
-	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
@@ -325,16 +325,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de,Integer ate, String[] edicoes);
 
-	
-	/**
-	 * 
-	 * @param idEstudoBase
-	 * @param produtoEdicao
-	 * @return
-	 */
-<<<<<<< HEAD
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao);
-	
 	/**
 	 * Retorna o percentual de desconto logistica de um produto edição
 	 * 
@@ -354,7 +344,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Boolean isEdicaoParcial(Long idProdutoEdicao);
 	
-=======
 	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto);
 	
 	ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto);
@@ -375,6 +364,4 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
     public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto);
     
     public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD);
-    
->>>>>>> fase2
 }
