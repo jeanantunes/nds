@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.lancamento;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,9 +44,11 @@ import br.com.abril.nds.service.RelatorioVendasService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -179,6 +182,7 @@ public class RelatorioVendasController extends BaseController {
 		} else {
 			
 			lista = relatorioVendasService.obterCurvaABCProduto(filtroSessao);
+		
 		}
 		
 		List<RegistroCurvaABCExportacaoDistribuidorVO> exportacao = new ArrayList<RegistroCurvaABCExportacaoDistribuidorVO>();

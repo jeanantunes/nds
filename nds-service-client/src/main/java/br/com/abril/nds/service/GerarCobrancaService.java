@@ -34,11 +34,10 @@ public interface GerarCobrancaService {
 	 * 
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
-	 * @throws AutenticacaoEmailException
 	 */
 	void enviarDocumentosCobrancaEmail(Cota cota,
 									   Map<String, 
-									   Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException;
+									   Boolean> nossoNumeroEnvioEmail);
 	
 	/**
 	 * Gera cobranças para Cotas específicas
@@ -93,4 +92,12 @@ public interface GerarCobrancaService {
 	 * @return boolean
 	 */
 	boolean aceitaEnvioEmail(Cota cota, String nossoNumero);
+
+	/**
+    * Obtem Data de Vencimento onforme Parametros 
+    * @param dataConsolidado
+    * @param fatorVencimento
+    * @return Date
+    */
+	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento);
 }

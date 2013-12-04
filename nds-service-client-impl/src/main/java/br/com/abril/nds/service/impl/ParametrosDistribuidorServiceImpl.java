@@ -1067,13 +1067,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		InputStream inputStream = null;
 		
 		try {
-			
+			/*
 			inputStream = couchDbClient.find(
 					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
 					+ "/" + ATTACHMENT_LOGOTIPO);
+			*/
+			
+			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
+			
+			File noImage = new File(url.getPath());
+			
+			inputStream = new FileInputStream(noImage);
 		
 		} catch (NoDocumentException e) {
-			
+			/*
 			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
 			
 			File noImage = new File(url.getPath());
@@ -1083,10 +1090,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				inputStream = new FileInputStream(noImage);
 			
 			} catch (FileNotFoundException e1) {
-				
+			*/	
 				return null;
-			}
+			//}
 			
+		} catch (FileNotFoundException e) {
+			return null;
 		}
 		
 		return inputStream;

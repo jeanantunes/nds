@@ -213,7 +213,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	            
 	                    this.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
 	            
-	                } catch (AutenticacaoEmailException e) {
+	                } catch (ValidacaoException e) {
 	  
 	                    e.printStackTrace();
 	                }
@@ -977,8 +977,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return null;
 	}
 	
-
-	private Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
+   /**
+    * Obtem Data de Vencimento onforme Parametros 
+    * @param dataConsolidado
+    * @param fatorVencimento
+    * @return Date
+    */
+	@Override
+	@Transactional
+	public Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
 		
 		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
@@ -1296,11 +1303,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * Envia Cobranças para email da Cota
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
-	 * @throws AutenticacaoEmailException
 	 */
 	@Override
 	@Transactional
-	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException{
+	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) {
 		
         String email = cota.getPessoa().getEmail();
 		
