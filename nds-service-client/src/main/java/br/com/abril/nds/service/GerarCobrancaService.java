@@ -83,6 +83,15 @@ public interface GerarCobrancaService {
 	 */
 	void gerarDividaPostergada(Long idCota, 
 			                   Long idUsuario) throws GerarCobrancaValidacaoException;
+	
+	/**
+	 * Realiza todas as validações necessárias para certificar que é possível realizar o envio dos documentos por email.
+	 * 
+	 * @param nossoNumero
+	 * @param idCota
+	 * @return boolean
+	 */
+	boolean aceitaEnvioEmail(Cota cota, String nossoNumero);
 
 	/**
     * Obtem Data de Vencimento onforme Parametros 
