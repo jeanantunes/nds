@@ -1325,15 +1325,8 @@ public class DiferencaEstoqueController extends BaseController {
 				(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
 		if(modoNovaDiferenca != null && modoNovaDiferenca ){
-<<<<<<< HEAD
 			listaNovasDiferencas = (Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		} else {
-=======
-			listaNovasDiferencas =
-					(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-		}
-		else{
->>>>>>> fase2
 			
 			listaNovasDiferencas = new HashSet<Diferenca>();
 

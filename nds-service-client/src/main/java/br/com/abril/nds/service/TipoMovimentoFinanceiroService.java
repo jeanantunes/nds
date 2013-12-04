@@ -2,11 +2,8 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
-<<<<<<< HEAD
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
-=======
->>>>>>> fase2
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public interface TipoMovimentoFinanceiroService {

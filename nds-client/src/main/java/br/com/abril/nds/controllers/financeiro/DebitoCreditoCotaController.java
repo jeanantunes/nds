@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Arrays;
-=======
-import java.util.Collections;
->>>>>>> fase2
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +12,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -562,13 +557,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
 		
-<<<<<<< HEAD
 		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-=======
-		validarMovimentosDuplicados(listaNovosDebitoCredito);
-		
-		existeMovimentoFinanceiroCota(listaNovosDebitoCredito, idTipoMovimento);
->>>>>>> fase2
 		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
 
@@ -683,48 +672,6 @@ public class DebitoCreditoCotaController extends BaseController{
 		this.result.use(Results.json()).from(debitoCredito, "result").recursive().serialize();
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void validarMovimentosDuplicados(List<DebitoCreditoDTO> listaNovosDebitoCredito) {
-
-		Collections.sort(listaNovosDebitoCredito, new BeanComparator("numeroCota"));
-		
-		List<Long> linhasComErro = new ArrayList<Long>();
-		
-		DebitoCreditoDTO ultimoDebitoCreditoDTO = null;
-		
-		for (DebitoCreditoDTO debitoCreditoDTO : listaNovosDebitoCredito) {
-			
-			Integer numeroCota = debitoCreditoDTO.getNumeroCota();
-			String dataVencimento = debitoCreditoDTO.getDataVencimento();
-			
-			if (numeroCota == null || dataVencimento == null) {
-				
-				continue;
-			}
-			
-			if (ultimoDebitoCreditoDTO != null) {
-				
-				if (numeroCota.equals(ultimoDebitoCreditoDTO.getNumeroCota()) 
-						&& dataVencimento.equals(ultimoDebitoCreditoDTO.getDataVencimento())) {
-					
-					linhasComErro.add(ultimoDebitoCreditoDTO.getId());
-					linhasComErro.add(debitoCreditoDTO.getId());
-				}
-			}
-			
-			ultimoDebitoCreditoDTO = debitoCreditoDTO;
-		}
-
-		if (!linhasComErro.isEmpty()) {
-			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Existem movimentos duplicados!");
-			
-			validacao.setDados(linhasComErro);
-		
-			throw new ValidacaoException(validacao);
-		}
-	}
-
 	private TableModel<CellModel> getTableModel(List<MovimentoFinanceiroCota> listaDebitoCredito) {
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();
@@ -1009,39 +956,6 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 		if (this.movimentoFinanceiroCotaService.existeOutrosMovimentosFinanceiroCota(filtroDebitoCredito, id)) {
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Já existe um movimento para esta cota, nesta data.");
-			throw new ValidacaoException(validacao);
-		}
-	}
-	
-	private void existeMovimentoFinanceiroCota(
-			List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
-		
-		List<Long> linhasComErro = new ArrayList<Long>();
-		
-		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
-			
-			FiltroDebitoCreditoDTO filtroDebitoCredito = new FiltroDebitoCreditoDTO();
-			
-			filtroDebitoCredito.setDataVencimentoInicio(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
-			filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
-			filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
-			filtroDebitoCredito.setIdTipoMovimento(idTipoMovimento);
-			filtroDebitoCredito.setGrupoMovimentosFinanceirosDebitosCreditos(this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos());
-			
-			Integer contagem = this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
-			
-			if (contagem > 0) {
-				
-				linhasComErro.add(debitoCredito.getId());
-			}	
-		}
-		
-		if (!linhasComErro.isEmpty()) {
-			
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Já existe um movimento para esta cota, nesta data.");
-			
-			validacao.setDados(linhasComErro);
-			
 			throw new ValidacaoException(validacao);
 		}
 	}

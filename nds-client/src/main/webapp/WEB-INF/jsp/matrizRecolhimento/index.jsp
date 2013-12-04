@@ -72,8 +72,6 @@
 					<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 				</a>
 			</span>
-<<<<<<< HEAD
-			
 			<span class="bt_arq" >
   					<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -88,11 +86,6 @@
 			
 			
 		</div>
-=======
-				
-				
-			</div>
->>>>>>> fase2
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
 		

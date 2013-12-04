@@ -162,11 +162,6 @@ var analiseEstudoController = $.extend(true, {
             matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
             matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
             matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
-//          matriz.push({name: "selecionado.lncto",          value: response.lancto});
-//          matriz.push({name: "selecionado.repDistrib",     value: response.reparte});
-//          matriz.push({name: "selecionado.sobra",          value: 0);
-//          matriz.push({name: "selecionado.tipoSegmentoProduto",  value: response.);
-//          matriz.push({name: "selecionado.periodicidadeProduto", value: response.periodo});
 
             // CARREGAR TELA EMS 2022
             $.get(contextPath + '/distribuicao/histogramaPosEstudo/index', //url
