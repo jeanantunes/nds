@@ -11,7 +11,7 @@ public class AjusteReparteJob implements Job {
 
 	private AjusteReparteRepository ajusteRepository;
 	
-public AjusteReparteJob() {
+	public AjusteReparteJob() {
 		
 		ClassPathXmlApplicationContext applicationContext = 
 			new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -25,4 +25,5 @@ public AjusteReparteJob() {
 		
 		ajusteRepository.execucaoQuartz();		
 	}
+	
 }

@@ -67,16 +67,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-<<<<<<< HEAD
-=======
-
-		this.agendarIntegracaoOperacionalDistribuidor();
-		this.agendaExclusaoAjusteReparte();
-		this.agendarExclusaoDeEstudos();
-		this.agendarGeracaoRankings();
-		this.agendaExclusaoFixacaoReparte();
-		this.agendaExclusaoRegiao();
->>>>>>> fase2
 		
 		try {
 			
@@ -93,6 +83,8 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendaExeclusaoAjusteReparte(scheduler);
 //			this.agendarExclusaoDeEstudos(scheduler);
 //			this.agendarGeracaoRankings(scheduler);
+//			this.agendaExclusaoFixacaoReparte();
+//			this.agendaExclusaoRegiao();
 			
 			scheduler.start();
 			
@@ -227,11 +219,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
 	 * 
 	 */
-<<<<<<< HEAD
 	private void agendaExeclusaoAjusteReparte(Scheduler scheduler) {
-=======
-	private void agendaExclusaoAjusteReparte() {
->>>>>>> fase2
 
 		try {
 
@@ -269,21 +257,19 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de fixacao por reparte.
 	 * 
 	 */
-	private void agendaExclusaoFixacaoReparte() {
+	private void agendaExclusaoFixacaoReparte(Scheduler scheduler) {
 
 		try {
 
 			String groupName = "integracaoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil(
 					"integracao-distribuidor.properties");
 
 			String intervaloExecucao = propertiesUtil
 					.getPropertyValue("intervalo.execucao.fixacao.reparte");
-
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail job = newJob(FixacaoReparteJob.class)
 					.withIdentity(FixacaoReparteJob.class.getName(), groupName)
@@ -311,21 +297,19 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de Regiões.
 	 * 
 	 */
-	private void agendaExclusaoRegiao() {
+	private void agendaExclusaoRegiao(Scheduler scheduler) {
 
 		try {
 
 			String groupName = "integracaoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil(
 					"integracao-distribuidor.properties");
 
 			String intervaloExecucao = propertiesUtil
 					.getPropertyValue("intervalo.execucao.regiao");
-
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail job = newJob(RegiaoJob.class)
 					.withIdentity(RegiaoJob.class.getName(), groupName)
@@ -348,4 +332,5 @@ public class ApplicationContextListener implements ServletContextListener {
 			throw new RuntimeException(se);
 		}
 	}
+	
 }
