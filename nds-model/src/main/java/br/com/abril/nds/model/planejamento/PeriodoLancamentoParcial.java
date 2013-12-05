@@ -79,8 +79,74 @@ public class PeriodoLancamentoParcial {
 			}
 		}
 		return null;
-	} 
-
+	}
+	
+	public Lancamento getUltimoLancamento() {
+		
+		if(this.lancamentos == null || this.lancamentos.isEmpty()) {
+			return null;
+		}
+		
+		Lancamento maiorLancamento = null;
+		
+		Integer maiorNumeroLancamento = null;
+		
+		for (Lancamento item : this.lancamentos) {
+			
+			if (maiorNumeroLancamento == null
+					|| maiorNumeroLancamento < item.getNumeroLancamento()) {
+				
+				maiorNumeroLancamento = item.getNumeroLancamento();
+				
+				maiorLancamento = item;
+			}
+		}
+		
+		return maiorLancamento;
+	}
+	
+	public Lancamento getLancamentoAnterior(Integer numeroLancamento) {
+		
+		if(this.lancamentos == null || this.lancamentos.isEmpty()) {
+			return null;
+		}
+		
+		if (numeroLancamento == 1) {
+			return null;
+		}
+		
+		Integer numeroLancamentoAnterior = numeroLancamento - 1;
+		
+		for (Lancamento lancamento : this.lancamentos) {
+			
+			if (lancamento.getNumeroLancamento().equals(numeroLancamentoAnterior)) {
+				
+				return lancamento;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Lancamento getLancamentoPosterior(Integer numeroLancamento) {
+		
+		if(this.lancamentos == null || this.lancamentos.isEmpty()) {
+			return null;
+		}
+		
+		Integer numeroLancamentoPosterior = numeroLancamento + 1;
+		
+		for (Lancamento lancamento : this.lancamentos) {
+			
+			if (lancamento.getNumeroLancamento().equals(numeroLancamentoPosterior)) {
+				
+				return lancamento;
+			}
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * @return the id
 	 */

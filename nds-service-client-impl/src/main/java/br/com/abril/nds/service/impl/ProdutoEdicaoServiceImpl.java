@@ -995,9 +995,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao, boolean redistribuicao, String situacaoProdutoEdicao) {
+	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicaoString, boolean redistribuicao, String situacaoProdutoEdicao) {
+		
+		Long idProdutoEdicao = (idProdutoEdicaoString != null) ? Long.valueOf(idProdutoEdicaoString) : null;
+		
 		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
-
+		
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 		
 		dto.setNomeProduto(produto.getNome());
@@ -1014,12 +1017,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		dto.setNomeFornecedor(nomeFornecedor);
 		
-		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
+		if (idProdutoEdicao != null) {
 
-			Long id = Long.valueOf(idProdutoEdicao);
-			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(id, false);
+			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(idProdutoEdicao, false);
 			
-			dto.setId(id);
+			dto.setId(idProdutoEdicao);
 			dto.setNomeComercialProduto(produtoEdicao.getNomeComercial());
 			dto.setCaracteristicaProduto(produtoEdicao.getCaracteristicaProduto());
 			dto.setGrupoProduto(produtoEdicao.getGrupoProduto()!=null?produtoEdicao.getGrupoProduto():produto.getTipoProduto()!=null?produto.getTipoProduto().getGrupoProduto():null);
@@ -1084,7 +1086,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setRepartePromocional(null);
 			dto.setDataLancamento(null);
 			dto.setDataLancamentoPrevisto(null);
-			dto.setNumeroLancamento(this.obterNumeroLancamento(Long.valueOf(idProdutoEdicao)));
+			dto.setNumeroLancamento(this.obterNumeroLancamento(idProdutoEdicao));
 			dto.setModoTela(ModoTela.REDISTRIBUICAO);
 			
 		} else if (idProdutoEdicao != null) {
@@ -1094,7 +1096,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		} else {
 			
 			dto.setTipoLancamento(TipoLancamento.LANCAMENTO);
-			dto.setNumeroLancamento(this.obterNumeroLancamento(Long.valueOf(idProdutoEdicao)));
+			dto.setNumeroLancamento(this.obterNumeroLancamento(idProdutoEdicao));
 			dto.setModoTela(ModoTela.NOVO);
 		}
 				
