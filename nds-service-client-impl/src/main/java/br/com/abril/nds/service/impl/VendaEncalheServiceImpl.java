@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -240,7 +239,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			slipVendaEncalhe.setDescricaoBox("");
 		}
 		
-		slipVendaEncalhe.setData(DateUtil.formatarDataPTBR(itemVE.getDataVenda()));
+		slipVendaEncalhe.setData(DateUtil.formatarDataPTBR(itemVE.getDataOperacao()));
 		slipVendaEncalhe.setHora(DateUtil.formatarData(itemVE.getHorarioVenda(), "HH:mm"));
 		slipVendaEncalhe.setUsuario(itemVE.getUsuario().getNome());
 
@@ -648,7 +647,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		ProdutoEdicao produtoEdicao = 
 				produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vnd.getCodigoProduto(), vnd.getNumeroEdicao());
 			
-		if (isVendaSuplementarConsignadoCota(produtoEdicao, dataOperacao, qtdDiasEncalheAtrasadoAceitavel)) {
+		if (FormaComercializacao.CONSIGNADO.equals(vnd.getFormaVenda())) {
 
 			return criarVendaSuplementarConsignado(vnd, numeroCota, dataVencimentoDebito, usuario, produtoEdicao, dataOperacao);
 			
