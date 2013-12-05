@@ -80,7 +80,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			this.validarCotaAusenteNaData(numCota, data);
 			
-<<<<<<< HEAD
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
 			
 			List<GrupoMovimentoEstoque> gruposMovimentoEstoqueCota = 
@@ -92,10 +91,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					GrupoMovimentoEstoque.FALTA_EM_COTA
 				); 
 			
-=======
-			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
-
->>>>>>> fase2
 			List<MovimentoEstoqueCota> movimentosCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
 					data, cota.getId(), gruposMovimentoEstoqueCota);
@@ -138,13 +133,8 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		
 		for (Integer numCota : numCotas) {
 				
-<<<<<<< HEAD
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
 
-=======
-			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
-					
->>>>>>> fase2
 			List<MovimentoEstoqueCota> movimentosCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
 					data, cota.getId(), Arrays.asList(GrupoMovimentoEstoque.values()));
@@ -450,7 +440,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			total += rateioDTO.getQtde();
 			
-			Cota cota = this.cotaRepository.obterPorNumeroDaCota(rateioDTO.getNumCota());
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioDTO.getNumCota());
 			
 			BigInteger qtdeRateio = BigInteger.valueOf(rateioDTO.getQtde());
 			
@@ -502,7 +492,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 	@Transactional(readOnly = true)
 	public void verificarExistenciaReparteCota(Date data, Integer numeroCota) {
 		
-		Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		Validate.notNull(cota, "Cota inexistente");
 		
