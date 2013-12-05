@@ -23,12 +23,8 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4573189935810707316L;
 	
-<<<<<<< HEAD
-	private Date data;
-=======
 	@Export(label="Data", exhibitionOrder = 0)
-	private String data;
->>>>>>> fase2
+	private Date data;
 
 	@Export(label="Status Anterior", exhibitionOrder = 1)
 	private String statusAnterior;
