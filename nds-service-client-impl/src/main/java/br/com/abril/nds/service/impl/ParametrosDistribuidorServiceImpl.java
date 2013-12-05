@@ -132,16 +132,22 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@Autowired
 	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
 	
-	
-	
 	@PostConstruct
 	public void initCouchDbClient() {
-		this.couchDbClient = new CouchDbClient(DB_NAME, true,
-				couchDbProperties.getProtocol(), 
-				couchDbProperties.getHost(),
-				couchDbProperties.getPort(), 
-				couchDbProperties.getUsername(),
-				couchDbProperties.getPassword());
+		
+		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
+			.setDbName(DB_NAME)
+			.setCreateDbIfNotExist(true)
+			.setProtocol(couchDbProperties.getProtocol())
+			.setHost(couchDbProperties.getHost())
+			.setPort(couchDbProperties.getPort())
+			.setUsername(couchDbProperties.getUsername())
+			.setPassword(couchDbProperties.getPassword())
+			.setMaxConnections(100)
+			.setConnectionTimeout(500);
+	
+		this.couchDbClient = new CouchDbClient(properties);
+
 	}
 
 	/* (non-Javadoc)
@@ -1067,20 +1073,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		InputStream inputStream = null;
 		
 		try {
-			/*
+			
 			inputStream = couchDbClient.find(
 					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
 					+ "/" + ATTACHMENT_LOGOTIPO);
-			*/
-			
-			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
-			
-			File noImage = new File(url.getPath());
-			
-			inputStream = new FileInputStream(noImage);
 		
 		} catch (NoDocumentException e) {
-			/*
+			
 			URL url = Thread.currentThread().getContextClassLoader().getResource("/no_image.jpeg");
 			
 			File noImage = new File(url.getPath());
@@ -1090,12 +1089,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				inputStream = new FileInputStream(noImage);
 			
 			} catch (FileNotFoundException e1) {
-			*/	
+				
 				return null;
-			//}
+			}
 			
-		} catch (FileNotFoundException e) {
-			return null;
 		}
 		
 		return inputStream;

@@ -133,13 +133,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	private void geraArquivoPicking1(Message message, String nomeArquivoPickingInterfaceLED) {
 
-		List<PDV> pdvs = findListPDV(message);
-		
 		try {
 
 			PrintWriter print = new PrintWriter(
 					new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivoPickingInterfaceLED));
-
+			
+			List<PDV> pdvs = findListPDV(message);
+			
+			
 			for (PDV pdv : pdvs) {
 
 				int numeroCota = pdv.getCota().getNumeroCota();
