@@ -1,9 +1,11 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -24,6 +28,8 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -56,6 +62,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	@Autowired
 	private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
+
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private EstudoRepository estudoRepository;
 	
 	@Autowired
 	private CalendarioService calendarioService;
@@ -441,11 +453,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 		PeriodoLancamentoParcial periodoLancamentoParcial =
 			this.periodoLancamentoParcialRepository.buscarPorId(idPeriodo);
 		
-		if (periodoLancamentoParcial == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Período Lançamento Parcial não encontrado!");
-		}
+		this.validarInclusaoRedistribuicaoParcial(
+			redistribuicaoParcialDTO, periodoLancamentoParcial);
 		
 		ProdutoEdicao produtoEdicao = periodoLancamentoParcial.getLancamentoParcial().getProdutoEdicao();
 		
@@ -478,11 +487,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 		
-		if (lancamento == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Lançamento não encontrado!");
-		}
+		this.validarAlteracaoRedistribuicaoParcial(
+			lancamento, redistribuicaoParcialDTO.getDataLancamento());
 		
 		lancamento.setDataLancamentoDistribuidor(redistribuicaoParcialDTO.getDataLancamento());
 		lancamento.setDataLancamentoPrevista(redistribuicaoParcialDTO.getDataLancamento());
@@ -497,11 +503,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamentoRedistribuicao);
 		
-		if (lancamento == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Lançamento não encontrado!");
-		}
+		this.validarExclusaoRedistribuicaoParcial(lancamento);
 		
 		List<HistoricoLancamento> historicoLancamentos = lancamento.getHistoricos();
 		
@@ -509,7 +511,142 @@ public class ParciaisServiceImpl implements ParciaisService{
 			this.historicoLancamentoRepository.remover(historicoLancamento);
 		}
 		
+		this.excluirEstudoCotaEstudo(lancamento);
+		
 		this.lancamentoRepository.removerPorId(idLancamentoRedistribuicao);
 	}
+
+	private void excluirEstudoCotaEstudo(Lancamento lancamento) {
+		
+		Estudo estudo = lancamento.getEstudo();
+		
+		if (estudo != null) {
+			
+			Set<EstudoCota> estudoCotas = estudo.getEstudoCotas();
+			
+			if (estudoCotas != null) {
+				
+				for (EstudoCota estudoCota : estudoCotas) {
+					this.estudoCotaRepository.remover(estudoCota);
+				}
+			}
+			
+			this.estudoRepository.remover(estudo);
+		}
+	}
+
+	private void validarInclusaoRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO,
+		  											  PeriodoLancamentoParcial periodoLancamentoParcial) {
+		
+		if (periodoLancamentoParcial == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Período Lançamento Parcial não encontrado!");
+		}
+		
+		Lancamento ultimoLancamento = periodoLancamentoParcial.getUltimoLancamento();
+		
+		if (ultimoLancamento.getDataLancamentoDistribuidor()
+				.compareTo(redistribuicaoParcialDTO.getDataLancamento()) >= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data do lançamento deve ser maior do que a data de lançamento anterior!");
+		}
+		
+		if (ultimoLancamento.getDataRecolhimentoDistribuidor()
+				.compareTo(redistribuicaoParcialDTO.getDataLancamento()) <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data do lançamento deve ser menor do que a data de recolhimento do período!");
+		}
+		
+		Lancamento lancamentoPeriodo = periodoLancamentoParcial.getLancamentoPeriodoParcial();
+		
+		List<StatusLancamento> statusLancamentoPreRecolhimento = 
+			this.getStatusLancamentoPreRecolhimento();
+		
+		if (!(statusLancamentoPreRecolhimento.contains(lancamentoPeriodo.getStatus()))) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Não é possível incluir uma redistribuição para esse lançamento. O lançamento já se encontra em recolhimento!");
+		}
+	}
 	
+	private void validarAlteracaoRedistribuicaoParcial(Lancamento lancamento, Date dataLancamentoRedistribuicao) {
+		
+		this.validarRedistribuicaoExpedida(lancamento);
+		
+		Integer numeroLancamento = lancamento.getNumeroLancamento();
+		
+		PeriodoLancamentoParcial periodoLancamentoParcial = lancamento.getPeriodoLancamentoParcial();
+		
+		Lancamento lancamentoAnterior =
+			periodoLancamentoParcial.getLancamentoAnterior(numeroLancamento);
+		
+		Lancamento lancamentoPosterior =
+			periodoLancamentoParcial.getLancamentoPosterior(numeroLancamento);
+		
+		if (lancamentoAnterior != null
+				&& lancamentoAnterior.getDataLancamentoDistribuidor().compareTo(dataLancamentoRedistribuicao) >= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de lançamento deve ser maior que a data do lançamento anterior!");
+		}
+		
+		if (lancamentoPosterior != null
+				&& lancamentoPosterior.getDataLancamentoDistribuidor().compareTo(dataLancamentoRedistribuicao) <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data de lançamento deve ser menor que a data do lançamento posterior!");
+		}
+	}
+	
+	private void validarExclusaoRedistribuicaoParcial(Lancamento lancamento) {
+		
+		this.validarRedistribuicaoExpedida(lancamento);
+	}
+
+	private void validarRedistribuicaoExpedida(Lancamento lancamento) {
+		
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Lançamento não encontrado!");
+		}
+		
+		List<StatusLancamento> statusLancamentoPreExpedicao = 
+			this.getStatusLancamentoPreExpedicao();
+		
+		if (!(statusLancamentoPreExpedicao.contains(lancamento.getStatus()))) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Não é possível excluir essa redistribuição, pois já foi realizada a expedição!");
+		}
+	}
+	
+	private List<StatusLancamento> getStatusLancamentoPreRecolhimento() {
+		
+		List<StatusLancamento> statusLancamentos = new ArrayList<>();
+		
+		statusLancamentos.add(StatusLancamento.CONFIRMADO);
+		statusLancamentos.add(StatusLancamento.PLANEJADO);
+		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO);
+		statusLancamentos.add(StatusLancamento.BALANCEADO);
+		statusLancamentos.add(StatusLancamento.EXPEDIDO);
+		
+		return statusLancamentos;
+	}
+	
+	private List<StatusLancamento> getStatusLancamentoPreExpedicao() {
+		
+		List<StatusLancamento> statusLancamentos = new ArrayList<>();
+		
+		statusLancamentos.add(StatusLancamento.CONFIRMADO);
+		statusLancamentos.add(StatusLancamento.PLANEJADO);
+		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO);
+		statusLancamentos.add(StatusLancamento.BALANCEADO);
+		
+		return statusLancamentos;
+	}
+
 }
