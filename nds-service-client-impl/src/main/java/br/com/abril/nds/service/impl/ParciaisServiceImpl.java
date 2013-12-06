@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -199,6 +198,48 @@ public class ParciaisServiceImpl implements ParciaisService{
 			lancamentoRepository.adicionar(novoLancamento);
 			
 			ultimoLancamento = novoLancamento;
+		}
+	}
+	
+	private Date obterDataRecolhimentoIdeal(Date dataRecolhimento) {
+		
+		boolean diaUtil = this.calendarioService.isDiaUtil(dataRecolhimento);
+		
+		if (diaUtil) {
+			
+			return dataRecolhimento;
+		}
+		
+		Date dataRecolhimentoPosterior = this.obterProximaData(dataRecolhimento, 1);
+		
+		long difDiasPosterior = DateUtil.obterDiferencaDias(dataRecolhimento, dataRecolhimentoPosterior);
+		
+		if (difDiasPosterior == 1) {
+			
+			return dataRecolhimentoPosterior;
+		}
+		
+		Date dataRecolhimentoAntecipada = this.obterProximaData(dataRecolhimento, -1);
+		
+		long difDiasAntecipada = DateUtil.obterDiferencaDias(dataRecolhimento, dataRecolhimentoAntecipada);
+		
+		return (difDiasAntecipada < difDiasPosterior)
+					? dataRecolhimentoAntecipada : dataRecolhimentoPosterior;
+	}
+
+	private Date obterProximaData(Date dataRecolhimento, int numDias) {
+		
+		Date proximaData = DateUtil.adicionarDias(dataRecolhimento, numDias);
+		
+		boolean diaUtil = this.calendarioService.isDiaUtil(proximaData);
+		
+		if (diaUtil) {
+			
+			return proximaData;
+			
+		} else {
+			
+			return this.obterProximaData(proximaData, numDias);
 		}
 	}
 	
