@@ -21,13 +21,13 @@ public interface ResumoSuplementarFecharDiaService {
 
 	BigDecimal obterValorFisico(Date dataOperacao);
 
-	List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date date);
+	List<VendaFechamentoDiaDTO> obterVendasSuplementar(Date date,PaginacaoVO paginacao);
 	
 	ResumoSuplementarFecharDiaDTO obterResumoGeralSuplementar(Date dataOperacional);
 
 	List<SuplementarFecharDiaDTO> obterDadosGridSuplementar(Date data, PaginacaoVO paginacao);
 	
-	Long contarProdutoEdicaoSuplementar();
+	Long contarProdutoEdicaoSuplementar(Date dataFechamento);
 	
     Long contarVendasSuplementar(Date data);
 

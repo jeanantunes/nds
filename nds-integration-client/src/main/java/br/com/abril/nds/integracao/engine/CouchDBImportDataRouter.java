@@ -1,17 +1,8 @@
 package br.com.abril.nds.integracao.engine;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
@@ -46,12 +37,6 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
-
-	private Long codDistribuidor = null;
-	
-	private void setCodDistribuidor(Long codDistribuidor) {
-		this.codDistribuidor = codDistribuidor;
-	}
 	
 	@Override
 	public <T extends RouteTemplate> void routeData(T inputModel) {
@@ -64,12 +49,12 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			classByTipoInterfaceEnum = ((CouchDBImportRouteTemplate) inputModel).getInterfaceEnum().getClasseMaster();
 		}
 		
-		this.consultaCodigoDistribuidor();
-		CouchDbClient couchDbClient = this.getCouchDBClient();
-			
-		View view = couchDbClient.view("importacao/porTipoDocumento");
+		String codigoDistribuidor =
+			((CouchDBImportRouteTemplate) inputModel).getCodigoDistribuidor();
 		
-		//verifyViewUpdate();
+		CouchDbClient couchDbClient = this.getCouchDBClient(codigoDistribuidor);
+		
+		View view = couchDbClient.view("importacao/porTipoDocumento");
 		
 		view.key(inputModel.getRouteInterface().getName());
 		view.limit(couchDbProperties.getBachSize());
@@ -101,7 +86,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 				message.getHeader().put(MessageHeaderProperties.FILE_CREATION_DATE.getValue(), doc.getDataHoraExtracao());
 				message.getHeader().put(MessageHeaderProperties.LINE_NUMBER.getValue(), doc.getLinhaArquivo());
 				message.getHeader().put(MessageHeaderProperties.USER_NAME.getValue(), inputModel.getUserName());
-				message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), this.codDistribuidor);
+				message.getHeader().put(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue(), codigoDistribuidor);
 				message.setTempVar(tempVar);
 				
 				message.setBody(doc);
@@ -155,80 +140,4 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		couchDbClient.shutdown();
 	}
 	
-	private void verifyViewUpdate() {
-		
-		String couchURL = String.format("%s://%s:%d",
-				couchDbProperties.getProtocol(),				
-				couchDbProperties.getHost(), 
-				couchDbProperties.getPort());
-
-		URL url = null;
-		HttpURLConnection conn = null;
-		BufferedReader reader = null;
-		String line;
-		try {
-			url = new URL(couchURL + "/_active_tasks");
-			conn = (HttpURLConnection) url.openConnection();
-			conn.setDoOutput(true);
-			conn.setUseCaches(false);
-			conn.setRequestMethod("GET");
-			reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
-			}
- 
-			reader.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
-	/**
-	 * Retorna o client para o CouchDB na database correspondente ao distribuidor.
-	 * 
-	 * @return client
-	 */
-	private CouchDbClient getCouchDBClient() {
-		
-		return new CouchDbClient(
-				"db_" + StringUtils.leftPad(this.codDistribuidor.toString(), 8, "0"),
-				true,
-				couchDbProperties.getProtocol(),
-				couchDbProperties.getHost(),
-				couchDbProperties.getPort(),
-				couchDbProperties.getUsername(),
-				couchDbProperties.getPassword()
-		);
-	}
-	
-	/**
-	 * Busca o código deste distribuidor e seta no atributo da classe.
-	 */
-	private void consultaCodigoDistribuidor() {
-		
-		TransactionTemplate template = new TransactionTemplate(transactionManager);
-		
-		template.execute(new TransactionCallback<Void>() {
-			@Override
-			public Void doInTransaction(TransactionStatus status) {
-
-				String hql = "SELECT dist.codigoDistribuidorDinap from Distribuidor dist";
-				
-				Query query = getSession().createQuery(hql);				
-			
-				setCodDistribuidor(Long.parseLong( query.uniqueResult().toString() ));
-				
-				return null;
-			}
-		});
-	}
 }

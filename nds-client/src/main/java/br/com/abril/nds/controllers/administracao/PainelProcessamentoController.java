@@ -27,6 +27,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
@@ -68,6 +69,9 @@ public class PainelProcessamentoController extends BaseController {
 	
 	@Autowired
 	private InterfaceExecucaoService interfaceExecucaoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -475,8 +479,21 @@ public class PainelProcessamentoController extends BaseController {
 	 * Executa uma interface
 	 * @param classeInterface
 	 */
-	public void executarInterface(String classeInterface) throws Exception {
-		interfaceExecucaoService.executarInterface(classeInterface, getUsuarioLogado());
+	public void executarInterface(String idInterface) throws Exception {
+		
+		if (this.interfaceExecucaoService.isInterfaceProdin(idInterface)) {
+			
+			interfaceExecucaoService.executarInterface(
+				idInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
+			
+			interfaceExecucaoService.executarInterface(
+				idInterface, getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+			
+		} else {
+			
+			interfaceExecucaoService.executarInterface(idInterface, getUsuarioLogado(), null);
+		}
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
 	
@@ -485,7 +502,15 @@ public class PainelProcessamentoController extends BaseController {
 	 * @param classeInterface
 	 */
 	public void executarTodasInterfacesEmOrdem() throws Exception {
-		interfaceExecucaoService.executarTodasInterfacesEmOrdem(getUsuarioLogado());
+		
+		interfaceExecucaoService.executarTodasInterfacesProdinEmOrdem(
+			getUsuarioLogado(), this.distribuidorService.codigoDistribuidorFC());
+		
+		interfaceExecucaoService.executarTodasInterfacesProdinEmOrdem(
+			getUsuarioLogado(), this.distribuidorService.codigoDistribuidorDinap());
+		
+		interfaceExecucaoService.executarTodasInterfacesMDCEmOrdem(getUsuarioLogado());
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
 	

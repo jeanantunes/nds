@@ -147,20 +147,40 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT SUM( COALESCE( ");
 		
-		if (REPARTE_COM_DESCONTO.equals(valor)){
+		StringBuilder sqlValor = new StringBuilder();
+		
+        if (REPARTE_COM_DESCONTO.equals(valor)){
 			
-			sql.append("MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+        	sqlValor.append("               MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else if (DESCONTO.equals(valor)){
 			
-			sql.append("MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO, 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append("               MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO, 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else {
 			
-			sql.append("MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sqlValor.append("               MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		}
 		
-		sql.append(" ) ");
+		
+		sql.append(" SELECT ");
+		
+		sql.append(" SUM( ");
+		
+		sql.append("     ( ");
+		
+		sql.append("      CASE WHEN COTA.TIPO_COTA = 'A_VISTA' THEN CASE WHEN COTA.ALTERACAO_TIPO_COTA >= MEC.DATA THEN ");
+		
+        sql.append("         ( COALESCE( " +sqlValor+ " ) ");
+		
+		sql.append("      ELSE 0 END ELSE ");
+		
+		sql.append("         ( COALESCE( " +sqlValor+ " ) ");
+		
+		sql.append("      END ");
+		
+		sql.append("     ) ");
+		
+		sql.append("    ) ");
 		
 		sql.append("    FROM    ");
 		
@@ -200,7 +220,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		if(postergado!=null) {
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
-		
+
 		return sql.toString();
 	}
 
@@ -701,18 +721,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(
-			Long chamadaEncalheID, Long cotaID) {
+	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(Long cotaID, Date dataRecolhimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cec from ChamadaEncalheCota cec ");
-		hql.append(" where cec.chamadaEncalhe.id = :chamadaEncalheID ");
-		hql.append(" and cec.cota.id = :cotaID ");
+		hql.append(" inner join cec.chamadaEncalhe ce ");
+		hql.append(" where cec.cota.id = :cotaID ");
+		hql.append(" and ce.dataRecolhimento = :dataRecolhimento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("chamadaEncalheID", chamadaEncalheID);
+		
 		query.setParameter("cotaID", cotaID);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
 		
 		return query.list();
 	}
@@ -809,4 +830,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
+	
+	public void fecharChamadasEncalheDaCota(Long idCota, Date data) {
+		
+		
+	}
+	
 }

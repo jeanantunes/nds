@@ -59,12 +59,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public boolean isDistribuidor(Integer codigo) {
 		
-		if (this.codigoDistribuidorDinap().equals(codigo.toString())){
-			
-			return true;
-		}
-		
-		return false;
+		return 
+			this.codigoDistribuidorDinap().equals(codigo.toString())
+				|| this.codigoDistribuidorFC().equals(codigo.toString());
 	}
 
 	@Override
@@ -83,7 +80,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public DistribuidorDTO obterDadosEmissao() {
 		
-		Distribuidor distribuidor = obter();
+		Distribuidor distribuidor = this.obter();
 		
 		DistribuidorDTO dto = new DistribuidorDTO();
 		

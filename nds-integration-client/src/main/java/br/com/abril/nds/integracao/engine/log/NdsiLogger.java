@@ -38,13 +38,11 @@ public class NdsiLogger extends AbstractRepository {
 	private Logger LOGGER = Logger.getLogger(NdsiLogger.class);
 	private StatusExecucaoEnum statusProcesso = StatusExecucaoEnum.SUCESSO;
 	private LogExecucao logExecucao = null;
-	private LogExecucaoMensagem logExecucaoMensagem = null;
 	
 	/**
 	 * Insere o log de início do processamento da interface
 	 * @param route rota sendo processada
 	 */
-	
 	public void logBeginning(RouteTemplate route) {
 		
 		if (logExecucao != null) {
@@ -55,6 +53,8 @@ public class NdsiLogger extends AbstractRepository {
 		interfaceExecucao.setId(route.getRouteInterface().getId().longValue());
 		
 		logExecucao = new LogExecucao();
+		
+		logExecucao.setCodigoDistribuidor(route.getCodigoDistribuidor());
 		logExecucao.setDataInicio(new Date());
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(route.getUserName());
@@ -146,7 +146,8 @@ public class NdsiLogger extends AbstractRepository {
 		
 		logExecucao.setStatus(this.statusProcesso);
 		
-		logExecucaoMensagem = new LogExecucaoMensagem();
+		final LogExecucaoMensagem logExecucaoMensagem = new LogExecucaoMensagem();
+		
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
 		

@@ -85,8 +85,12 @@ public class FileExporter {
 			throw new RuntimeException("Tipo de arquivo não suportado para exportação");
 		}
 	}
-	
+
 	/**
+	 * @deprecated - Método depreciado, devido a refactor na utilização do footer na exportação.
+	 * 				 Utilizar o método {@link FileExporter#inHTTPResponse(NDSFileHeader, Object, List, Class, HttpServletResponse)}
+	 * 				 e a anotação {@link Footer} para geração de rodapé.
+	 * 
 	 * Realiza a exportação na resposta HTTP.
 	 * 
 	 * @param ndsFileHeader
@@ -107,6 +111,16 @@ public class FileExporter {
 		this.configureHTTPReponse(httpServletResponse);
 		
 		this.inOutputStream(ndsFileHeader, filter, footer, dataList, listClass, httpServletResponse.getOutputStream());
+	}
+	
+	public <T, F, FT> void inHTTPResponse(NDSFileHeader ndsFileHeader,
+										  F filter, List<T> dataList, Class<T> listClass,
+										  HttpServletResponse httpServletResponse) throws IOException {
+
+		this.configureHTTPReponse(httpServletResponse);
+
+		this.inOutputStream(ndsFileHeader, filter, null, dataList, listClass,
+				httpServletResponse.getOutputStream());
 	}
 	
 	/*

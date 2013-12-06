@@ -364,6 +364,17 @@
 							<label>Total: </label>
 							<label id="totalSemDescontoLbl"></label>
 						</span>
+						
+						<span style="float:right; margin-right:40px;">
+							<label>Total de Exemplares: </label>
+							<label id="totalExemplares"></label>
+						</span>
+						
+						<span style="float:right; margin-right:40px;">
+							<label>Total de Produtos: </label>
+							<label id="qtdeProdutos"></label>
+						</span>
+						
 					</div>
 	
 				</fieldset>

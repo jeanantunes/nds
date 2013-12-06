@@ -121,7 +121,6 @@ var fornecedorController = $.extend(true,{
 		
 		bloquearCamposEdicaoFornecedor : function(indBloqueiaCampo){
 			
-			$("#fornecedorController-idFornecedor", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-codigoInterface", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-razaoSocial", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-nomeFantasia", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
@@ -130,7 +129,6 @@ var fornecedorController = $.extend(true,{
 			$("#fornecedorController-responsavel", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-email", 				fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-tipoFornecedor", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
-			$("#fornecedorController-banco", 				fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-validadeContrato", 	fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-emailNfe", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-possuiContrato", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
@@ -197,13 +195,13 @@ var fornecedorController = $.extend(true,{
 				
 				} else {
 					
-					fornecedorController.showPopupFornecedor(indBloqueiaCamposEdicaoFornecedor);
+					fornecedorController.showPopupFornecedor();
 				}
 
 				$( "#fornecedorController-tabFornecedores", fornecedorController.workspace ).tabs( "select" , 0 );
 			},
 
-			showPopupFornecedor: function (indEdicaoBloqueada) {
+			showPopupFornecedor: function () {
 				
 				fecharModalCadastroFornecedor = false;
 				
@@ -215,9 +213,6 @@ var fornecedorController = $.extend(true,{
 						form: $("#fornecedorController-dialogNovoFornecedor", this.workspace).parents("form"),
 						buttons : {},
 						beforeClose: function(event, ui) {
-							
-							if(indEdicaoBloqueada==true)
-								return true;
 							
 							if (!fecharModalCadastroFornecedor){
 								
@@ -231,31 +226,18 @@ var fornecedorController = $.extend(true,{
 						
 				};
 				
-				if(indEdicaoBloqueada) {
 
-					dialog_novo_fornecedor.buttons = {
-							
-							"Cancelar": function() {
-								$( this ).dialog( "close" );
-							}
-							
-					};
-					
-				} else {
-
-					dialog_novo_fornecedor.buttons = {
-							
-							"Confirmar": function() {
-								fecharModalCadastroFornecedor = true;
-								fornecedorController.cadastrarFornecedor();
-							},
-							"Cancelar": function() {
-								$( this ).dialog( "close" );
-							}
-							
-					};
-					
-				}
+				dialog_novo_fornecedor.buttons = {
+						
+						"Confirmar": function() {
+							fecharModalCadastroFornecedor = true;
+							fornecedorController.cadastrarFornecedor();
+						},
+						"Cancelar": function() {
+							$( this ).dialog( "close" );
+						}
+						
+				};
 				
 				
 				$( "#fornecedorController-dialogNovoFornecedor", fornecedorController.workspace ).dialog(dialog_novo_fornecedor);
@@ -263,6 +245,7 @@ var fornecedorController = $.extend(true,{
 			
 			limparCamposModal:	function () {
 				$("#fornecedorController-idFornecedor", fornecedorController.workspace).val("");
+				$("#fornecedorController-origem", fornecedorController.workspace).val("");
 				$("#fornecedorController-codigoInterface", fornecedorController.workspace).val("");
 				$("#fornecedorController-razaoSocial", fornecedorController.workspace).val("");
 				$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val("");
@@ -418,7 +401,9 @@ var fornecedorController = $.extend(true,{
 					function(result) {
 						
 						$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.inicioAtividade);
+						
 						$("#fornecedorController-idFornecedor", fornecedorController.workspace).val(result.idFornecedor);
+						$("#fornecedorController-origem", fornecedorController.workspace).val(result.origem);
 						$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.codigoInterface);
 						$("#fornecedorController-razaoSocial", fornecedorController.workspace).val(result.razaoSocial);
 						$("#fornecedorController-nomeFantasia", fornecedorController.workspace).val(result.nomeFantasia);

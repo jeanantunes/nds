@@ -51,6 +51,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("nomeArquivo", StandardBasicTypes.STRING)
 				.addScalar("extensaoArquivo", StandardBasicTypes.STRING)
 				.addScalar("dataInicio", StandardBasicTypes.TIMESTAMP)
+				.addScalar("idInterface", StandardBasicTypes.LONG)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
 		if(filtro.getPaginacao()!=null) {
@@ -91,7 +92,8 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append("case when descricao like 'Prodin > NDS%' then 0 ");
 		sql.append("when descricao like 'MDC > NDS%' then 1 ");
 		sql.append("when descricao like 'NDS > MDC%' then 2 ");
-		sql.append("else 3 end as ordenacao ");
+		sql.append("else 3 end as ordenacao, ");
+		sql.append(" ie.id as idInterface ");
 		sql.append(" from interface_execucao ie ");
 		sql.append(" left join log_execucao le on le.id = (select MAX(lei.id) as id from log_execucao lei where lei.interface_execucao_id = ie.id) ");
 		sql.append(" left join log_execucao_mensagem lem on le.id = lem.log_execucao_id ");

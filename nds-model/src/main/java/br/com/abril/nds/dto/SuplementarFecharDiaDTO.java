@@ -25,38 +25,44 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	@Export(label = "Edição", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
-	
-	private BigDecimal precoVenda;
-	
+    @Export(label = "Preço Capa", alignment=Alignment.RIGHT, exhibitionOrder = 4)
+    private String precoVendaFormatado;
+
 	/**
 	 * Quantidade(atual) de exemplares do estoque suplementar 
 	 */
 	@Export(label = "Qtde", alignment=Alignment.RIGHT, exhibitionOrder = 5)
 	private BigInteger quantidadeContabil;
+
+	/**
+	 * Quantidade de exemplares entrada transferência
+	 */
+	@Export(label = "Entrada Suplementar", alignment=Alignment.RIGHT, exhibitionOrder = 6)
+	private BigInteger quantidadeTransferenciaEntrada;
+
+	/**
+     * Quantidade de exemplares saida transferência
+     */
+	@Export(label = "Saída Suplementar", alignment=Alignment.RIGHT, exhibitionOrder = 7)
+    private BigInteger quantidadeTransferenciaSaida;
+    
+	/**
+	 *Quantidade de exemplares vendidos do estoque suplementar;
+	 */
+	@Export(label = "Qtde Venda", alignment=Alignment.RIGHT, exhibitionOrder = 8)
+	private BigInteger quantidadeVenda;
+
+
+	@Export(label = "Saldo", alignment=Alignment.RIGHT, exhibitionOrder = 9)
+    private BigInteger saldo;
+	
+	private BigDecimal precoVenda;
 	
 	/**
 	 * Quantidade(anterior) de exemplares do estoque suplementar;
 	 */
 	private BigInteger quantidadeLogico;
-	
-	/**
-	 *Quantidade de exemplares vendidos do estoque suplementar;
-	 */
-	private BigInteger quantidadeVenda;
-	
-	/**
-	 * Quantidade de exemplares entrada transferência
-	 */
-	private BigInteger quantidadeTransferenciaEntrada;
-	
-	/**
-     * Quantidade de exemplares saida transferência
-     */
-    private BigInteger quantidadeTransferenciaSaida;
-
-    @Export(label = "Preço Capa", alignment=Alignment.RIGHT, exhibitionOrder = 4)
-    private String precoVendaFormatado;
-	
+    
 	public String getCodigo() {
 		return codigo;
 	}
@@ -124,6 +130,7 @@ public class SuplementarFecharDiaDTO implements Serializable {
     }
     
     public BigInteger getQuantidadeTransferenciaEntrada() {
+    	
         return quantidadeTransferenciaEntrada;
     }
     
@@ -162,4 +169,15 @@ public class SuplementarFecharDiaDTO implements Serializable {
 	public void setPrecoVendaFormatado(String precoVendaFormatado) {
 		this.precoVendaFormatado = precoVendaFormatado;
 	}
+
+	public BigInteger getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigInteger saldo) {
+		this.saldo = saldo;
+	}
+	
+	
+	
 }

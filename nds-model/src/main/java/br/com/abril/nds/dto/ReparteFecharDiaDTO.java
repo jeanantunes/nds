@@ -104,7 +104,6 @@ public class ReparteFecharDiaDTO implements Serializable {
         
     }
     
-    
     public String getValorPrecoCapaFormatado(){
 		return valorPrecoCapaFormatado;
 	}
@@ -223,6 +222,8 @@ public class ReparteFecharDiaDTO implements Serializable {
      */
     public void setPrecoVenda(BigDecimal precoVenda) {
         this.precoVenda = precoVenda;
+        
+        this.valorPrecoCapaFormatado = (precoVenda == null) ? CurrencyUtil.formatarValor(BigDecimal.ZERO) :  CurrencyUtil.formatarValor(precoVenda);
     }
 
     /**
@@ -349,6 +350,66 @@ public class ReparteFecharDiaDTO implements Serializable {
 
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public void setQtdeReparte(BigInteger qtdeReparte) {
+		this.qtdeReparte = qtdeReparte;
+	}
+
+	public void setQtdeSobra(BigInteger qtdeSobra) {
+		this.qtdeSobra = qtdeSobra;
+	}
+
+	public void setQtdeFalta(BigInteger qtdeFalta) {
+		this.qtdeFalta = qtdeFalta;
+	}
+
+	public void setQtdeSobraDe(BigInteger qtdeSobraDe) {
+		this.qtdeSobraDe = qtdeSobraDe;
+	}
+
+	public void setQtdeSobraEm(BigInteger qtdeSobraEm) {
+		this.qtdeSobraEm = qtdeSobraEm;
+	}
+
+	public void setQtdeFaltaDe(BigInteger qtdeFaltaDe) {
+		this.qtdeFaltaDe = qtdeFaltaDe;
+	}
+
+	public void setQtdeFaltaEm(BigInteger qtdeFaltaEm) {
+		this.qtdeFaltaEm = qtdeFaltaEm;
+	}
+
+	public void setQtdeTransferencia(BigInteger qtdeTransferencia) {
+		this.qtdeTransferencia = qtdeTransferencia;
+	}
+
+	public void setQtdeDistribuir(BigInteger qtdeDistribuir) {
+		this.qtdeDistribuir = qtdeDistribuir;
+	}
+
+	public void setQtdeDistribuido(BigInteger qtdeDistribuido) {
+		this.qtdeDistribuido = qtdeDistribuido;
+	}
+
+	public void setQtdeSobraDistribuicao(BigInteger qtdeSobraDistribuicao) {
+		this.qtdeSobraDistribuicao = qtdeSobraDistribuicao;
+	}
+
+	public void setQtdeDiferenca(BigInteger qtdeDiferenca) {
+		this.qtdeDiferenca = qtdeDiferenca;
+	}
+
+	public void setQtdeDiferencaLogicoFisico(BigInteger qtdeDiferencaLogicoFisico) {
+		this.qtdeDiferencaLogicoFisico = qtdeDiferencaLogicoFisico;
+	}
+
+	public void setFaltas(BigDecimal faltas) {
+		this.faltas = faltas;
+	}
+
+	public void setDistribuidos(BigDecimal distribuidos) {
+		this.distribuidos = distribuidos;
 	}
     
     

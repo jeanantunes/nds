@@ -203,13 +203,16 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 
         BigInteger qtdeARestaurarCotaAusente = BigInteger.ZERO;
 		
+      //Se quantidade em estoque da distribuidora for maior que a qtd a retornar p/ cota ausente, retorna apenas a qtd inicial da cota ausente
 		if (qtdeExistenteSuplementar.compareTo(movimento.getQtde()) > 0) {
 			
 			qtdeARestaurarCotaAusente = movimento.getQtde();
 			
 			quantidadeEstoqueSuplementarEdicao.put(movimento.getProdutoEdicao().getId(), (qtdeExistenteSuplementar.subtract(qtdeARestaurarCotaAusente)));
+			
 		} else {
 			
+			//Retona apenas a quantidade disponível em estoque
 			qtdeARestaurarCotaAusente = qtdeExistenteSuplementar;
 			
 			quantidadeEstoqueSuplementarEdicao.put(movimento.getProdutoEdicao().getId(), BigInteger.ZERO);
@@ -323,35 +326,30 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				BigInteger qtdeExistenteSuplementar =  this.obterQuantidadeExistenteSuplementarEdicao(movimento, 
 						                                                                              quantidadeEstoqueSuplementarEdicao);
 
-				BigInteger qtdeARestaurarCotaAusente = this.obterQuantidadeRestaurarCotaAusente(movimento, 
+				BigInteger qtdeARestaurarCotaAusenteSuplementar = this.obterQuantidadeRestaurarCotaAusente(movimento, 
 						                                                                        qtdeExistenteSuplementar,
 						                                                                        quantidadeEstoqueSuplementarEdicao);
 
-				BigInteger qtdeARetirarEstoqueDistribuidor = this.obterQuantidadeARetirarEstoqueDistribuidor(movimento,
-																	                                         qtdeARestaurarCotaAusente,
-																	                                         edicaoXRateio);
+				if (qtdeARestaurarCotaAusenteSuplementar.compareTo(BigInteger.ZERO) > 0){
 
-				if (qtdeARetirarEstoqueDistribuidor.compareTo(BigInteger.ZERO) > 0){
+					//Retira do estoque da distribuidora a quantidade diponível a ser enviada de volta p/ cota ausente
 					
 					//Lança movimento para restituir o saldo do distribuidor
 					this.movimentoEstoqueService.gerarMovimentoEstoque(cotaAusente.getData(), 
 							                                           movimento.getProdutoEdicao().getId(), 
 																	   idUsuario, 
-																	   qtdeARetirarEstoqueDistribuidor, 
+																	   qtdeARestaurarCotaAusenteSuplementar, 
 																	   tipoMovimento);
-				}	
-
-				if (qtdeARestaurarCotaAusente.compareTo(BigInteger.ZERO) > 0){
 					
 					//Lança movimento para restituir o saldo da cota ausente
 					this.movimentoEstoqueService.gerarMovimentoCota(cotaAusente.getData(), 
 							                                        movimento.getProdutoEdicao().getId(),
 															        cotaAusente.getCota().getId(), 
 															        idUsuario, 
-															        qtdeARestaurarCotaAusente, 
+															        qtdeARestaurarCotaAusenteSuplementar, 
 															        tipoMovimentoCota,
 																	dataOperacaoDistribuidor);
-				}
+				}	
 			}	
 		}
 	}

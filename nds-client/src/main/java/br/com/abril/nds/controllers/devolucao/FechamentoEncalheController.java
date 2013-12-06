@@ -470,34 +470,36 @@ public class FechamentoEncalheController extends BaseController {
 	private void realizarCobrancaCotasEspecificas(List<Long> idsCotas, Date dataOperacao) throws GerarCobrancaValidacaoException {
 		
 		GerarCobrancaValidacaoException ex = null;
-		
+
 		int statusCobrancaCota = 0;
 		int totalCotas = idsCotas.size();
-		
-		for (Long idCota : idsCotas) {
 
-			try {
-				
+		int maxInactiveIntervalSession = session.getMaxInactiveInterval();
+		try {
+			for (Long idCota : idsCotas) {
+
+				session.setMaxInactiveInterval(-1);
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
-			
+
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
-			
-			} catch (GerarCobrancaValidacaoException e) {
-				
-				ex = e;
-				
-			} catch (Exception e) {
-				
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
-				
-				throw e;
-			}
-		}	
-		
-		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+
+			}	
+		} catch (GerarCobrancaValidacaoException e) {
+
+			ex = e;
+
+		} catch (Exception e) {
+
+			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+
+			throw e;
+		} finally {
+			session.setMaxInactiveInterval(maxInactiveIntervalSession);
+			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+		}
 
 		if (ex != null){
-			
+
 			throw ex;
 		}
 	}
@@ -507,36 +509,34 @@ public class FechamentoEncalheController extends BaseController {
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 		validacaoVO.setListaMensagens(new ArrayList<String>());
 
-		ValidacaoVO validacaoEmails = new ValidacaoVO();
-		validacaoEmails.setListaMensagens(new ArrayList<String>());
-
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
+
 		int statusCobrancaCota = 0;
 		int totalCotas = listaCotasAusentes.size();
 
-		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
-			
-			try {
-			
+		int maxInactiveIntervalSession = session.getMaxInactiveInterval();
+		try {
+			for (CotaAusenteEncalheDTO c : listaCotasAusentes){
+
+				session.setMaxInactiveInterval(-1);
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
-	
+
 				this.fechamentoEncalheService.realizarCobrancaCota(
 						dataOperacao, dataOperacaoDistribuidor, 
 						getUsuarioLogado(), c, null, 
-						validacaoVO, validacaoEmails);
-			
-			} catch (Exception e) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
-			} finally {
-				
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+						validacaoVO);
+
 			}
+		} catch (Exception e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		} finally {
+			session.setMaxInactiveInterval(maxInactiveIntervalSession);
+			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
 		}
-		
+
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
-			
+
 			throw new ValidacaoException(validacaoVO);
 		}
 	}
@@ -757,7 +757,6 @@ public class FechamentoEncalheController extends BaseController {
 		} catch(ValidacaoException ve){
 			throw ve;
 		} catch (Exception e) {
-			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
 		}
 		

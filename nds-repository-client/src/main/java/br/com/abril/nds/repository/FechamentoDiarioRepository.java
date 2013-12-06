@@ -13,4 +13,10 @@ public interface FechamentoDiarioRepository extends Repository<FechamentoDiario,
 	 * @return
 	 */
 	Date obterDataUltimoFechamento(Date dataFechamento);
+	
+	/**
+	 * Retorna a ultima data que teve fechamento diario
+	 * @return
+	 */
+	Date obterDataUltimoFechamento();
 }

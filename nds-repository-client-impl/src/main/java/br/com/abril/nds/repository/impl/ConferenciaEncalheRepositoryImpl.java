@@ -452,7 +452,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		}
 		
 		return query.list();
-		
 	}
 
 	@SuppressWarnings("unchecked")

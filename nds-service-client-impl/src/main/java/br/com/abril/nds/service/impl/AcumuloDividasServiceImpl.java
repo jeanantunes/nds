@@ -1,18 +1,18 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
-import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AcumuloDividasRepository;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
 
@@ -31,6 +31,9 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	@Autowired
 	private DividaRepository dividaRepository;
 	
+	@Autowired
+	private CobrancaRepository cobrancaRepository;
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -38,16 +41,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	public AcumuloDivida obterAcumuloDividaPorMovimentoPendente(Long idMovimentoPendente) {
 
 		return this.acumuloDividasRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(idMovimentoPendente);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida) {
-		
-		return this.acumuloDividasRepository.obterAcumuloDividaPorDivida(idDivida);
 	}
 
 	/**
@@ -87,41 +80,32 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 */
 	@Override
 	@Transactional
-	public void quitarDividasAcumuladas(Divida dividaAtual) {
+	public void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual) {
 		
-		if (dividaAtual == null) {
-			
+		if (dividaAtual == null) 			
 			return;
-		}
+		
 
-		AcumuloDivida acumuloDivida = this.acumuloDividasRepository.obterAcumuloDividaPorDivida(dividaAtual.getId());
+		List<AcumuloDivida> acumuloDividas =
+			this.acumuloDividasRepository.obterAcumuloDividaPorDivida(dividaAtual.getId());
 		
-		if (acumuloDivida == null) {
-			
+		if (acumuloDividas.isEmpty()) 			
 			return;
-		}
-		
-		acumuloDivida.setStatus(StatusInadimplencia.QUITADA);
-		
-		this.acumuloDividasRepository.alterar(acumuloDivida);
-		
-		dividaAtual.setStatus(StatusDivida.QUITADA);
-		
-		dividaAtual.getCobranca().setStatusCobranca(StatusCobranca.PAGO);
-		
-		this.dividaRepository.alterar(dividaAtual);
-		
-		for (MovimentoFinanceiroCota movimento : dividaAtual.getConsolidado().getMovimentos()) {
-			
-			AcumuloDivida acumuloDividaAnterior = this.acumuloDividasRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(movimento.getId());
-			
-			if (acumuloDividaAnterior != null) {
 				
-				quitarDividasAcumuladas(acumuloDividaAnterior.getDividaAnterior());
-				
-				break;
-			}
-		}
+		for (AcumuloDivida acumuloDivida : acumuloDividas) {
+			
+			acumuloDivida.setStatus(StatusInadimplencia.QUITADA);
+			
+			this.acumuloDividasRepository.alterar(acumuloDivida);
+			
+			dividaAtual = acumuloDivida.getDividaAnterior();
+					
+			dividaAtual.getCobranca().setDataPagamento(dataPagamento);
+			
+			this.cobrancaRepository.alterar(dividaAtual.getCobranca());
+			
+			this.quitarDividasAcumuladas(dataPagamento, dividaAtual);
+		}		
 	}
 	
 	/**

@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
+
 @Entity
 @Table(name = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA")
 @SequenceGenerator(name = "FECHAMENTO_DIARIO_CONSOLIDADO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
@@ -33,7 +35,7 @@ public class FechamentoDiarioConsolidadoDivida implements Serializable{
 	
 	@Column(name="TIPO_DIVIDA")
 	@Enumerated(EnumType.STRING)
-	private TipoDividaFechamentoDia tipoDivida;
+	private TipoDivida tipoDivida;
 	
 	@OneToMany(mappedBy = "fechamentoDiarioConsolidadoDivida")
 	private List<FechamentoDiarioDivida> historicoDividas;
@@ -79,11 +81,11 @@ public class FechamentoDiarioConsolidadoDivida implements Serializable{
 		this.resumoConsolidadoDividas = resumoConsolidadoDividas;
 	}
 
-	public TipoDividaFechamentoDia getTipoDivida() {
+	public TipoDivida getTipoDivida() {
 		return tipoDivida;
 	}
 
-	public void setTipoDivida(TipoDividaFechamentoDia tipoDivida) {
+	public void setTipoDivida(TipoDivida tipoDivida) {
 		this.tipoDivida = tipoDivida;
 	}
 	

@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.integracao;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
@@ -42,69 +43,93 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	@Value("${interfacesMDCEntrada:}")
 	private String interfacesMDC;
 	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, br.com.abril.nds.model.seguranca.Usuario, java.lang.String)
 	 */
 	@Override
-	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
+	public void executarInterface(String idInterface, Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException {
 
+		String nome = getClasseExecucao(idInterface).get();
+		
 		// Inclui o pacote na classe
-		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao + ROUTE;
+		String classe = PACOTE_PRIMEIRA_PARTE + nome.toLowerCase() + PACOTE_SEGUNDA_PARTE + nome + ROUTE;
 		
 		try {
 		
 			RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classe));
-			route.execute(usuario.getNome());
+			route.execute(usuario.getNome(), codigoDistribuidor);
 		
 		} catch (NoDocumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
 		} catch(Exception e) {
-			LOGGER.error("Erro ao executar interface: "+ classeExecucao, e);
+			LOGGER.error("Erro ao executar interface: "+ nome, e);
 			throw e;
 		}
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarTodasInterfacesEmOrdem(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarTodasInterfacesEmOrdem(br.com.abril.nds.model.seguranca.Usuario, java.lang.String)
 	 */
 	@Override
-	public void executarTodasInterfacesEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException {
+	public void executarTodasInterfacesProdinEmOrdem(Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException {
 		
 		String[] interfacesProdinReprocessar = interfacesProdin.split(",");
 		
+		for (String interfaceProdin : interfacesProdinReprocessar) {
+			
+			try {
+				this.executarInterface(interfaceProdin, usuario, codigoDistribuidor);
+			} catch (ValidacaoException ve) {
+				LOGGER.error("Erro ao executar interface: "+ interfaceProdin, ve);
+			} catch(Exception e) {
+				LOGGER.error("Erro ao executar interface: "+ interfaceProdin, e);
+			}
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarTodasInterfacesFCEmOrdem(br.com.abril.nds.model.seguranca.Usuario)
+	 */
+	@Override
+	public void executarTodasInterfacesMDCEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException {
+		
 		String[] interfacesMDCReprocessar = interfacesMDC.split(",");
 		
-		for(String interfaceProdin : interfacesProdinReprocessar) {
-			
-			WeakReference<String> classeExecucao = new WeakReference<String>(
-					new StringBuilder("EMS")
-					.append(StringUtils.leftPad(interfaceProdin.trim(), 4, '0')).toString());
+		for (String interfaceMDC : interfacesMDCReprocessar) {
 			
 			try {
-				this.executarInterface(classeExecucao.get(), usuario);
+				this.executarInterface(interfaceMDC, usuario, null);
 			} catch (ValidacaoException ve) {
-				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), ve);
+				LOGGER.error("Erro ao executar interface: "+ interfaceMDC, ve);
 			} catch(Exception e) {
-				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), e);
+				LOGGER.error("Erro ao executar interface: "+ interfaceMDC, e);
 			}
 		}
+	}
+	
+	private WeakReference<String> getClasseExecucao(String interfaceExecucao) {
 		
-		for(String interfaceMDC : interfacesMDCReprocessar) {
-			
-			WeakReference<String> classeExecucao = new WeakReference<String>(
-					new StringBuilder("EMS")
-					.append(StringUtils.leftPad(interfaceMDC, 4, '0')).toString());
-			
-			try {
-				this.executarInterface(classeExecucao.get(), usuario);
-			} catch (ValidacaoException ve) {
-				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), ve);
-			} catch(Exception e) {
-				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), e);
-			}
-		}
-				
+		return new WeakReference<String>(
+				new StringBuilder("EMS")
+				.append(StringUtils.leftPad(interfaceExecucao.trim(), 4, '0')).toString());
+	}
+	
+	public boolean isInterfaceProdin(String idInterface) {
+		
+		String[] interfacesProdinReprocessar = interfacesProdin.split(",");
+		
+		return Arrays.asList(interfacesProdinReprocessar).contains(idInterface);
+	}
+	
+	public boolean isInterfaceMDC(String idInterface) {
+		
+		String[] interfacesMDCReprocessar = interfacesMDC.split(",");
+		
+		return Arrays.asList(interfacesMDCReprocessar).contains(idInterface);
 	}
 
 }

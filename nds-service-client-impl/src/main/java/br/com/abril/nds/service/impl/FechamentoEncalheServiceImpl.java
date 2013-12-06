@@ -40,6 +40,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -78,6 +79,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
@@ -155,6 +157,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Override
 	@Transactional
@@ -589,9 +594,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 
-		ValidacaoVO validacaoEmails = new ValidacaoVO();
-		validacaoEmails.setListaMensagens(new ArrayList<String>());
-
 		if (cotaAusente != null){
 			
 			listaCotasAusentes = new ArrayList<>();
@@ -604,7 +606,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		for (CotaAusenteEncalheDTO c : listaCotasAusentes) {
 
-			this.realizarCobrancaCota(dataOperacao, dataOperacaoDistribuidor, usuario, c, cotaAusente, validacaoVO, validacaoEmails);
+			this.realizarCobrancaCota(dataOperacao, dataOperacaoDistribuidor, usuario, c, cotaAusente, validacaoVO);
 		}
 
 		// Se um dia precisar tratar as mensagens de erro de e-mail, elas estão nesta lista
@@ -626,19 +628,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
 									 Usuario usuario,
 									 CotaAusenteEncalheDTO c, Cota cotaAusente, 
-									 ValidacaoVO validacaoVO, 
-									 ValidacaoVO validacaoEmails) {
+									 ValidacaoVO validacaoVO) {
 
-		Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
+		Cota cota = this.cotaRepository.buscarPorId(c.getIdCota());
 		
-		if(cota == null) {
-			
-			cota = this.cotaRepository.buscarPorId(c.getIdCota());
-			
-			if(cota == null) {
+		if (cota == null) {
 				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
-			}
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
 		}
 		
 		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
@@ -667,18 +663,22 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
 		
 			Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
-			
-			@SuppressWarnings("unused")
-			GerarCobrancaValidacaoException ex = null;
 
 			try {
 				
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+				boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
+
+				if (existeBoletoAntecipado){
+				
+				    this.gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
+				}
+				else{
+				
+				    this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+				}    
 			} 
 			catch (GerarCobrancaValidacaoException e) {
-				
-				ex = e;
-				
+
 				if (validacaoVO.getListaMensagens() == null){
 					
 					validacaoVO.setListaMensagens(new ArrayList<String>());
@@ -687,84 +687,25 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
 			}
 			
-			for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+			try {
 				
-				if (nossoNumeroEnvioEmail.get(nossoNumero)){
-					
-					String email = cota.getPessoa().getEmail();
-					
-					if (email == null || email.trim().isEmpty()){
-						
-						if (validacaoVO.getListaMensagens() == null){
-							
-							validacaoVO.setListaMensagens(new ArrayList<String>());
-						}
-						
-						validacaoEmails.getListaMensagens().add(
-								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
-					} else {
-					
-						try {
-							
-							this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
-						} catch (AutenticacaoEmailException e) {
-							
-							if (validacaoVO.getListaMensagens() == null){
-								
-								validacaoVO.setListaMensagens(new ArrayList<String>());
-							}
-							
-							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
-							// Não mostramos mais este erro na tela
-							validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
-									cota.getNumeroCota() + ", " +
-									e.getMessage());
-						}
-					}
-				}
+				this.gerarCobrancaService.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
+				
+			} catch (ValidacaoException e) {
+				
+				e.printStackTrace();
 			}
 		}
+			
+		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+			this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(
+				cota.getId(), dataOperacao);
 		
-		List<ChamadaEncalhe> listaChamadaEncalhe = 
-			this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
-
-//      TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
-
-//		TipoMovimentoEstoque tipoMovimentoEstoque =
-//			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
-//		
-//		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
-//			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
-		
-		for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
+		for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
 			
-			chamadaEncalhe.setDataRecolhimento(dataOperacaoDistribuidor);
+			chamadaEncalheCota.setFechado(true);
 			
-			List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-					this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(chamadaEncalhe.getId(), cota.getId());
-			
-			for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
-				
-				chamadaEncalheCota.setFechado(true);
-			}
-
-//			if (ex == null){
-//				
-//				this.movimentoEstoqueService.gerarMovimentoEstoque(
-//					chamadaEncalhe.getProdutoEdicao().getId(), 
-//						usuario.getId(), BigInteger.ZERO, tipoMovimentoEstoque);
-//				
-//				this.movimentoEstoqueService.gerarMovimentoCota(
-//						null, 
-//						chamadaEncalhe.getProdutoEdicao().getId(), 
-//						cota.getId(), 
-//						usuario.getId(), 
-//						BigInteger.ZERO, 
-//						tipoMovimentoEstoqueCota,
-//						dataOperacao);
-//			}
-
-			this.chamadaEncalheRepository.merge(chamadaEncalhe);
+			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		}
 	}
 
@@ -850,6 +791,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			for(FechamentoFisicoLogicoDTO itemFechamento : listaEncalhe) {
 				if(itemSessao.getCodigo().equals(itemFechamento.getCodigo())
 						&& itemSessao.getEdicao().equals(itemFechamento.getEdicao())) {
+					
+					if(itemSessao.getFisico()==null)
+						itemSessao.setFisico(itemFechamento.getExemplaresDevolucao().longValue());
+						
 					itemFechamento.setFisico(itemSessao.getFisico());
 					itemFechamento.setDiferenca(itemSessao.getFisico().longValue() - itemFechamento.getExemplaresDevolucao().longValue());
 				}
@@ -867,19 +812,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario, this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
-		this.gerarNotaFiscal(dataEncalhe);
-	}
-	
-	/**
-	 * Ajusta o estoque distribuidor de um produto 
-	 * edicao parcial não juramentado.
-	 * 
-	 * @param idProdutoEdicao
-	 */
-	private void ajustarEstoqueProdutoParaParcialNaoJuramentado(Long idProdutoEdicao) {
-		
-		//TODO: se o produto for parcial e nao juramentado 
-		//mover o a qtdeEstoqueEncalhe de para qtde (do estoque do distribuidor)
+		if(ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
+				|| ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
+			this.gerarNotaFiscal(dataEncalhe);
+		}
 		
 	}
 
@@ -1289,15 +1225,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly = true)
 	public Boolean validarEncerramentoOperacaoEncalhe(Date data) {
 		
-		boolean possuiControleConferenciaEncalhe =
-			this.fechamentoEncalheRepository.buscaControleConferenciaEncalhe(data);
-		
-		if (possuiControleConferenciaEncalhe) {
-			
-			return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
-		}
-		
-		return true;
+		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
 	}
 
 	@Override

@@ -15,6 +15,6 @@ public abstract class RouteTestTemplate extends TestTemplate {
 	@Test
 	//@Rollback(false)
 	public void test() {
-		getRoute().execute("test");
+		getRoute().execute("test", "6248116");
 	}
 }

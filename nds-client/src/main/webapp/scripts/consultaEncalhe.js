@@ -55,6 +55,8 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$('.datePicker', ConsultaEncalhe.workspace).mask("99/99/9999");
 			
+			
+			
 		},
 		
 		pesquisar: function() {
@@ -77,8 +79,14 @@ var ConsultaEncalhe = $.extend(true, {
 				params: formData
 			});
 			
+			$.each($("#gridConsultaEncalhe", ConsultaEncalhe.workspace), function(index, value) {
+				if(value && value.p) {
+					value.p.page = 1;
+					value.p.newp = 1;
+				}
+			});
 			$("#gridConsultaEncalhe", ConsultaEncalhe.workspace).flexReload();
-
+			
 		},
 	
 		gerarSlip: function() {
@@ -153,18 +161,18 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$(".grids", ConsultaEncalhe.workspace).show();
 			
-			$("#valorVendaDia",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorVendaDia).toFixed(2));
-			$("#totalOutrosValores",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorDebitoCredito).toFixed(2));
-			$("#valorAPagar",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorPagar).toFixed(2));
+			$("#valorVendaDia",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorVendaDia).toFixed(2)));
+			$("#totalOutrosValores",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorDebitoCredito).toFixed(2)));
+			$("#valorAPagar",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorPagar).toFixed(2)));
 			
 			if (resultado.valorReparte) {
 			
-				$("#totalReparte",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorReparte).toFixed(2));
+				$("#totalReparte",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorReparte).toFixed(2)));
 			}
 			
 			if (resultado.valorEncalhe) {
 
-				$("#totalEncalhe",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorEncalhe).toFixed(2));
+				$("#totalEncalhe",ConsultaEncalhe.workspace).text(floatToPrice(parseFloat(resultado.valorEncalhe).toFixed(2)));
 			}
 
 			return resultado.tableModel;

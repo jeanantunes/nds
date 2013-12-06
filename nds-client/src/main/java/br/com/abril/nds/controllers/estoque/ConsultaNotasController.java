@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -132,11 +131,10 @@ public class ConsultaNotasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
-				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
+		List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais = notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
 					
-		this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais)
-		.total(quantidadeRegistros.intValue()).page(page).serialize();
+		this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais).total(quantidadeRegistros.intValue()).page(page).serialize();
+		
 	}
 
 	public void pesquisarDetalhesNotaFiscal(Long idNota, int page, int rp, String sortname, String sortorder) {

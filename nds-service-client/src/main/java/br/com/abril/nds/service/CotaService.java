@@ -395,4 +395,15 @@ public interface CotaService {
      */
 	boolean isCotaAlteradaNaData(Cota cota, Date data);
 
+	/**
+	 * Obtem cotas por intervalo de numero de cotas
+	 * @param cotaDe
+	 * @param cotaAte
+	 * @param situacoesCadastro
+	 * @return List<Cota>
+	 */
+	List<Cota> obterCotasEntre(Integer cotaDe,
+			                   Integer cotaAte,
+			                   List<SituacaoCadastro> situacoesCadastro);
+
 }

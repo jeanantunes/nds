@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
@@ -97,7 +98,9 @@ public class DistribuidorRepositoryImpl extends
 	 */
 	@Override
 	public EnderecoDistribuidor obterEnderecoPrincipal(){
-		Criteria criteria=  getSession().createCriteria(EnderecoDistribuidor.class);
+		Criteria criteria = getSession().createCriteria(EnderecoDistribuidor.class);
+		criteria.setCacheable(true);
+		criteria.setCacheMode(CacheMode.NORMAL);
 		criteria.add(Restrictions.eq("principal", true) );
 		criteria.setMaxResults(1);
 
@@ -110,7 +113,8 @@ public class DistribuidorRepositoryImpl extends
 	 */
 	@Override
 	public TelefoneDistribuidor obterTelefonePrincipal(){
-		Criteria criteria=  getSession().createCriteria(TelefoneDistribuidor.class);
+		Criteria criteria = getSession().createCriteria(TelefoneDistribuidor.class);
+		criteria.setCacheable(true);
 		criteria.add(Restrictions.eq("principal", true) );
 		criteria.setMaxResults(1);
 
@@ -189,7 +193,7 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public Date obterDataOperacaoDistribuidor() {
 		
-		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").uniqueResult();
+		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").setCacheable(true).uniqueResult();
 	}
 	
 	@Override
@@ -552,7 +556,7 @@ public class DistribuidorRepositoryImpl extends
 	public PessoaJuridica juridica(){
 		
 		return (PessoaJuridica)
-				this.getSession().createQuery("select juridica from Distribuidor").uniqueResult();
+				this.getSession().createQuery("select juridica from Distribuidor").setCacheable(true).uniqueResult();
 	}
 
 	@Override
@@ -587,10 +591,11 @@ public class DistribuidorRepositoryImpl extends
 	public boolean naoAcumulaDividas() {
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" d.pararAcumuloDividas ")
-		   .append(" from Distribuidor d ");
+		hql.append(" p.acumulaDivida ")
+		   .append(" from PoliticaCobranca p ")
+		   .append(" where p.principal = true ");
 		
-		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+		return !(boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
 	}
 	
 	/**

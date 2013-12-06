@@ -132,16 +132,22 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@Autowired
 	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
 	
-	
-	
 	@PostConstruct
 	public void initCouchDbClient() {
-		this.couchDbClient = new CouchDbClient(DB_NAME, true,
-				couchDbProperties.getProtocol(), 
-				couchDbProperties.getHost(),
-				couchDbProperties.getPort(), 
-				couchDbProperties.getUsername(),
-				couchDbProperties.getPassword());
+		
+		org.lightcouch.CouchDbProperties properties = new org.lightcouch.CouchDbProperties()
+			.setDbName(DB_NAME)
+			.setCreateDbIfNotExist(true)
+			.setProtocol(couchDbProperties.getProtocol())
+			.setHost(couchDbProperties.getHost())
+			.setPort(couchDbProperties.getPort())
+			.setUsername(couchDbProperties.getUsername())
+			.setPassword(couchDbProperties.getPassword())
+			.setMaxConnections(100)
+			.setConnectionTimeout(500);
+	
+		this.couchDbClient = new CouchDbClient(properties);
+
 	}
 
 	/* (non-Javadoc)

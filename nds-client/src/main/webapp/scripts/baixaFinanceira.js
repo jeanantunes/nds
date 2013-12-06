@@ -17,9 +17,14 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 
 		$("#dataBaixa", baixaFinanceiraController.workspace).change(function(){
+			
 			$('#resultadoIntegracao', baixaFinanceiraController.workspace).hide();
+			
+			$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+			
 		});
-
+		
+		
 		$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
@@ -1861,8 +1866,15 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		);
 	},
 	
-	
-
+    limparValorInformadoBaixaAutomatica : function(elm) {
+    	
+    	var dif = (elm.defaultValue != elm.value);
+    	
+    	if (dif == true){ 
+		
+    	    $("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+    	}
+	}
 },
 BaseController);
 

@@ -1,4 +1,5 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -15,6 +16,8 @@ $(function(){
 </head>
 
 <body>
+
+
 	<form id="formEdicoesFechadas">
 		<div id="dialogEdicoesFechadas" title="Edi&ccedil;&otilde;es Fechadas com Saldo"
 		style="display: none;">
@@ -28,9 +31,31 @@ $(function(){
 					Todos</label></span>
 
 		</fieldset>
-	</div></form>
+		</div>
+	</form>
 
-	<fieldset class="classFieldset">
+	<div class="areaBts">
+		<div class="area">
+
+			<span class="bt_arq" title="Gerar Arquivo">
+			<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png"
+				hspace="5" border="0" />
+			</a> 
+			</span> 
+
+			<span class="bt_arq" title="Imprimir"> 
+			<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+				hspace="5" border="0" /> 
+			</a>
+			</span>
+		</div>
+	</div>
+
+	<div class="linha_separa_fields">&nbsp;</div>
+
+	<fieldset class="fieldFiltro">
 		
 		  <legend> Pesquisar Fornecedor</legend>
 		  
@@ -88,13 +113,6 @@ $(function(){
 				<tr>
 					<td width="51%">
 						
-							<span class="bt_novos" title="Gerar Arquivo">
-							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=XLS">
-								<img src="${pageContext.request.contextPath}/images/ico_excel.png"
-								hspace="5" border="0" /> Arquivo 
-							</a> 
-							</span> 
-							
 							<span id="btnSalvar" class="bt_novos" title="Salvar"> 
 							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.salvar();"> 
 							<img border="0" hspace="5" alt="Salvar"
@@ -151,13 +169,6 @@ $(function(){
 							</a>
 							</span>
 								
-							<span class="bt_novos" title="Imprimir"> 
-							<a href="${pageContext.request.contextPath}/devolucao/digitacao/contagem/exportar?fileType=PDF">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
-								hspace="5" border="0" /> 
-								Imprimir 
-							</a>
-							</span>
 						</td>
 					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">

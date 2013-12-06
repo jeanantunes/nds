@@ -578,16 +578,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
+			
 			return;
 		}
-
 		
 		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
-		
+		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
 		
 		this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
 	}

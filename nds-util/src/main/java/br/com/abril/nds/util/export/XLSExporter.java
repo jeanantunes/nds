@@ -34,6 +34,7 @@ import org.apache.poi.util.IOUtils;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ImageUtil;
 import br.com.abril.nds.util.ImageUtil.FormatoImagem;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 /**
@@ -299,6 +300,7 @@ public class XLSExporter implements Exporter {
 		if (rows == null || rows.isEmpty()) {
 					
 			return lastRowNum;
+			
 		}
 		
 		int startRowNum = lastRowNum + 1;
@@ -309,6 +311,8 @@ public class XLSExporter implements Exporter {
 			
 			Row row = sheet.createRow(startRowNum++);
 			
+			int columnsSize = exportRow.getColumns().size();
+			
 			int cellNum = 0;
 			
 			for (ExportColumn exportColumn : exportRow.getColumns()) {
@@ -317,62 +321,17 @@ public class XLSExporter implements Exporter {
 				
 				Cell cell = row.createCell(cellNum++);
 				
-				
-				
-				if(	ColumType.NUMBER.equals(exportColumn.getColumnType())  || 
-					ColumType.INTEGER.equals(exportColumn.getColumnType()) || 
-					ColumType.DECIMAL.equals(exportColumn.getColumnType()) || 
-					ColumType.MOEDA.equals(exportColumn.getColumnType()) ) {
-					
-					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-					
-					try {
-						
-						if(columnString.contains(",")) {
-							columnString = columnString.replace(".", "").replace(",",".");
-							cell.setCellValue(Double.valueOf(columnString));
-						} else {
-							
-							cell.setCellValue(columnString);
-						}
-					} catch(Exception e) {
-						
-						cell.setCellValue(columnString);
-						
-					}
-					
-					
-				} else {
-				
-					cell.setCellValue(columnString);
-				
-				}
-								
 				CellStyle cellStyle = this.getRowColumnCellStyle(
-					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),
+						sheet, ((rowNum % 2) != 0), (columnsSize == cellNum),
 						exportColumn.getAlignment());
 				
-				if(brazilianCurrencyDF == null) {
-					brazilianCurrencyDF = sheet.getWorkbook().createDataFormat();
-				}
-				
-				if(decimalValueDF == null) {
-					decimalValueDF = sheet.getWorkbook().createDataFormat();
-				}
-				
-				if (ColumType.DECIMAL.equals(exportColumn.getColumnType())) {
-					
-					cellStyle.setDataFormat(decimalValueDF.getFormat(decimalValueMask));
-					
-				} else if(ColumType.MOEDA.equals(exportColumn.getColumnType())) {
-					
-					cellStyle.setDataFormat(brazilianCurrencyDF.getFormat(brazilianCurrencyMask));
-					
-				}
-				
+				carregarValorDaCelulaEFormatacao(
+						sheet,
+						cell, 
+						exportColumn.getColumnType(), 
+						columnString,
+						cellStyle);
 			
-				
-				cell.setCellStyle(cellStyle);
 			}
 			
 			rowNum++;
@@ -382,6 +341,76 @@ public class XLSExporter implements Exporter {
 	}
 	
 	
+	private void carregarValorDaCelulaEFormatacao(
+			Sheet sheet, 
+			Cell cell, 
+			ColumType columType, 
+			String columnString, 
+			CellStyle cellStyle) {
+	
+		if(	ColumType.NUMBER.equals(columType)  || 
+			ColumType.INTEGER.equals(columType) || 
+			ColumType.DECIMAL.equals(columType) || 
+			ColumType.MOEDA.equals(columType) ) {
+				
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+				
+				try {
+					
+					if(columnString.contains(",")) {
+						columnString = columnString.replace(".", "").replace(",",".");
+						cell.setCellValue(Double.valueOf(columnString));
+					} else {
+						
+						if(Util.isLong(columnString)) {
+							cell.setCellValue(Long.parseLong(columnString));
+						} else {
+							cell.setCellValue(columnString);
+						}
+					}
+					
+				} catch(Exception e) {
+					
+					cell.setCellValue(columnString);
+					
+				}
+				
+				
+			} else {
+				
+				cell.setCellValue(columnString);
+				
+			}
+							
+			
+			if(brazilianCurrencyDF == null) {
+				brazilianCurrencyDF = sheet.getWorkbook().createDataFormat();
+			}
+			
+			if(decimalValueDF == null) {
+				decimalValueDF = sheet.getWorkbook().createDataFormat();
+			}
+			
+			if (ColumType.DECIMAL.equals(columType)) {
+				
+				CellStyle style = sheet.getWorkbook().createCellStyle();
+				style.cloneStyleFrom(cellStyle);
+				style.setDataFormat(decimalValueDF.getFormat(decimalValueMask));
+				cellStyle = style;
+				
+			} else if(ColumType.MOEDA.equals(columType)) {
+
+				CellStyle style = sheet.getWorkbook().createCellStyle();
+				style.cloneStyleFrom(cellStyle);
+				style.setDataFormat(brazilianCurrencyDF.getFormat(brazilianCurrencyMask));
+				cellStyle = style;
+				
+			}
+			
+			cell.setCellStyle(cellStyle);
+		
+		
+	}
 	
 	private void createSheetFooter(Sheet sheet,
 								   List<ExportFooter> footers,
@@ -436,7 +465,7 @@ public class XLSExporter implements Exporter {
 			
 			if (hasLabel) {
 				
-				Cell labelCell = row.createCell(cellNum++);
+				Cell labelCell = row.createCell(++cellNum);
 				
 				labelCell.setCellValue(exportFooter.getLabel());
 				
@@ -447,11 +476,14 @@ public class XLSExporter implements Exporter {
 			
 			Cell cell = row.createCell(cellNum);
 			
-			cell.setCellValue(exportFooter.getValue());
-			
 			CellStyle cellStyle = this.getFooterCellStyle(sheet, false, exportFooter.getAlignment());
-			
-			cell.setCellStyle(cellStyle);
+
+			carregarValorDaCelulaEFormatacao(
+					sheet, 
+					cell, 
+					exportFooter.getColumnType(), 
+					exportFooter.getValue(), 
+					cellStyle);
 			
 			cellNum++;
 			

@@ -138,9 +138,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
-		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
-
 		
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(dataOperacao);
@@ -164,7 +162,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
-					lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
+				lancamento.getIdProduto(), lancamento.getIdProdutoEdicao(), idLancamento, idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
 		
 				
 		

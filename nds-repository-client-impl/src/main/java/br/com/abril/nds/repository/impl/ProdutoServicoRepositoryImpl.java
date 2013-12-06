@@ -31,8 +31,7 @@ public class ProdutoServicoRepositoryImpl extends AbstractRepositoryModel<Produt
 		
 			for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 				
-				List<MovimentoEstoqueCota> movimentoEstoqueCotaProdutoServico = 
-						produtoServico.getListaMovimentoEstoqueCota();
+				List<MovimentoEstoqueCota> movimentoEstoqueCotaProdutoServico = produtoServico.getListaMovimentoEstoqueCota();
 				
 				if (movimentoEstoqueCotaProdutoServico == null)
 					movimentoEstoqueCotaProdutoServico = new ArrayList<MovimentoEstoqueCota>();

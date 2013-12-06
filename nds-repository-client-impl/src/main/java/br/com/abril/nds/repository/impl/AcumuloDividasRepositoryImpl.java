@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
@@ -41,14 +42,23 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida) {
+	public List<AcumuloDivida> obterAcumuloDividaPorDivida(Long idDivida) {
 		
-		return (AcumuloDivida) getSession()
-				.createSQLQuery(" SELECT * FROM acumulo_divida WHERE DIVIDA_ID = :idDivida ")
+		return getSession()
+				.createSQLQuery(" select ad.* " 
+								+ " from acumulo_divida ad "
+								+ " join movimento_financeiro_cota mfc on mfc.ID = ad.MOV_PENDENTE_ID "
+								+ " join CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc on mfc.ID = cmfc.MVTO_FINANCEIRO_COTA_ID "
+								+ " join consolidado_financeiro_cota cfc on cmfc.CONSOLIDADO_FINANCEIRO_ID = cfc.ID "
+								+ " join divida d on d.CONSOLIDADO_ID = cfc.id "
+								+ " join cobranca c on c.DIVIDA_ID = d.ID "
+								+ " where d.ID=:idDivida ")
+		
 				.addEntity(AcumuloDivida.class)
 				.setParameter("idDivida", idDivida)
-				.uniqueResult();
+				.list();
 	}
 
 	/**
@@ -81,6 +91,8 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 		Query query = this.getSession().createQuery(jpql.toString());
 
 		query.setParameter("idConsolidadoFinanceiroCota", idConsolidadoFinanceiroCota);
+		
+		query.setMaxResults(1);
 		
 		return (BigInteger) query.uniqueResult();
 	}

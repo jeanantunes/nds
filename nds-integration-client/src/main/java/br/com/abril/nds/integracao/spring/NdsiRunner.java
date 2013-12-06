@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.repository.DistribuidorRepository;
 
 
 public abstract class NdsiRunner {
@@ -26,6 +27,7 @@ public abstract class NdsiRunner {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
 		if (args.length == 0) {
 			throw new RuntimeException("Informe o nome da rota a ser executada.");
 		}
@@ -36,7 +38,21 @@ public abstract class NdsiRunner {
 			username = args[1];
 		}
 
-		getRouteTemplate(args[0]).execute(username);
+		DistribuidorRepository distribuidorRepository = getDistribuidorRepository();
+		
+		String codigoDistribuidorDinap = distribuidorRepository.codigoDistribuidorDinap();
+		
+		if (codigoDistribuidorDinap != null) {
+
+			getRouteTemplate(args[0]).execute(username, codigoDistribuidorDinap);
+		}
+		
+		String codigoDistribuidorFC = distribuidorRepository.codigoDistribuidorFC();
+		
+		if (codigoDistribuidorFC != null) {
+		
+			getRouteTemplate(args[0]).execute(username, codigoDistribuidorFC);
+		}
 	}
 	
 	private static RouteTemplate getRouteTemplate(String className) {
@@ -46,4 +62,14 @@ public abstract class NdsiRunner {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	private static DistribuidorRepository getDistribuidorRepository() {
+		
+		try {
+			return (DistribuidorRepository) applicationContext.getBean(DistribuidorRepository.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }

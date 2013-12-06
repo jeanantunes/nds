@@ -28,7 +28,8 @@ public class SumarizacaoDividasDTO implements Serializable {
     private BigDecimal valorPago = BigDecimal.ZERO;
     
     private BigDecimal inadimplencia = BigDecimal.ZERO;
-
+    
+    public SumarizacaoDividasDTO(){}
     
     public SumarizacaoDividasDTO(Date data, TipoDivida tipoSumarizacao, TipoCobranca tipoCobranca) {
         this.data = data;

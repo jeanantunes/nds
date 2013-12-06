@@ -191,7 +191,7 @@ public abstract class Util {
 			Date dtGeracao, 
 			String numeroBanco, 
 			Long idFornecedor, 
-			Long idMovimentoFinanceiro,
+			Long idDivida,
 			Long agencia,
 			Long contaCorrente,
 			Integer carteira){
@@ -204,30 +204,30 @@ public abstract class Util {
 		
 		if (nomeBanco == null){
 			
-			return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+			return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 		}
 		
 		switch (nomeBanco) {
 			case BANCO_ABN_AMRO_REAL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_BRADESCO:
-				return padLeft(codSacado + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor), "0", 11);
+				return Util.padLeft(idDivida.toString(), "0", 11);
 			
 			case BANCO_DO_BRASIL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 			
 			case BANCO_DO_ESTADO_DO_RIO_GRANDE_DO_SUL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_DO_NORDESTE_DO_BRASIL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_INTEMEDIUM:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_ITAU:
 				
@@ -269,46 +269,40 @@ public abstract class Util {
 				
 //				A composição do nosso número com os cálculos acima estavam ultrapassando a quantidade de caracteres [8] para o banco Itau.
 				
-				return Util.padLeft(idMovimentoFinanceiro.toString(), "0", 8);
+				return Util.padLeft(idDivida.toString(), "0", 8);
 				
 			case BANCO_RURAL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_SAFRA:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_SANTANDER:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_SICREDI:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCOOB:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case CAIXA_ECONOMICA_FEDERAL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case HSBC:
-				
-				// return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
-				
-				// Foi alterada a forma para composição do nosso número conforme foi pedido.
-				// De [número cota + dd/MM/yyyy + id movimento financeiro] para [número cota + id movimento financeiro].
-				// A forma antiga estava estourando o limite máximo de 13 caracteres.
-				return Util.padLeft(codSacado + idMovimentoFinanceiro, "0", 13);
+				return Util.padLeft(idDivida.toString(), "0", 13);
 				
 			case MERCANTIL_DO_BRASIL:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case NOSSA_CAIXA:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case UNIBANCO:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 	
 			default:
-				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idDivida + (idFornecedor == null ? "0" : idFornecedor);
 		}
 	}
 	

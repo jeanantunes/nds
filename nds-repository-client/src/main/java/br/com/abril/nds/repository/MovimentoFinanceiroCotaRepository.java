@@ -199,4 +199,18 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return List<MovimentoFinanceiroCota>
 	 */
     List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao);
+
+    /**
+	 * Obtem valor total de Débitos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	BigDecimal obterTotalDebitoCota(Integer numeroCota, Date dataOperacao);
+
+	/**
+	 * Obtem valor total de Créditos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
 }

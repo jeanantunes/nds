@@ -19,9 +19,7 @@
 	            <td width="100">
 	            	<input type="text" name="pCodigoProduto" id="pCodigoProduto" maxlength="255" 
 						   style="width:100px; float:left; margin-right:5px;"
-						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', true,
-								   undefined,
-								   undefined);"/>
+						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#pCodigoProduto', '#pNomeProduto', true, undefined, undefined);"/>
 	            </td>
 	          </tr>
 	          <tr>
@@ -105,7 +103,5 @@
 				</fieldset>
 			</div>  
 
-			<strong>Este desconto predomina sobre os demais (geral / Específico)?</strong>
-			<input type="checkbox" name="descontoPredominante" id="descontoPredominante" />
-  </div>
- </form>
+	</div>
+</form>

@@ -661,7 +661,10 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {	
-		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false);
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false, dataOperacao);
 	}
 
 	@Override
@@ -2053,6 +2056,24 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		return listaCotas;
+	}
+	
+	/**
+	 * Obtem cotas por intervalo de numero de cotas
+	 * @param cotaDe
+	 * @param cotaAte
+	 * @param situacoesCadastro
+	 * @return List<Cota>
+	 */
+	@Override
+	@Transactional
+	public List<Cota> obterCotasEntre(Integer cotaDe, 
+			                          Integer cotaAte, 
+			                          List<SituacaoCadastro> situacoesCadastro) {
+		
+		List<Cota> cotas = this.cotaRepository.obterCotasIntervaloNumeroCota(cotaDe, cotaAte, situacoesCadastro);
+
+		return cotas;
 	}
 	
 	/**

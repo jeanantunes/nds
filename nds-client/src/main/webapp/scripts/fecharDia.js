@@ -7,6 +7,12 @@ var fecharDiaController =  $.extend(true, {
 	
 	init : function() {
 		
+		$("#totalFaltas", fecharDiaController.workspace).attr("title","Faltas pendentes de aprovação do GFS");
+		$("#totalFaltas", fecharDiaController.workspace).tooltip();
+					
+		$("#totalSobras", fecharDiaController.workspace).attr("title","Sobras pendentes de aprovação do GFS");
+		$("#totalSobras", fecharDiaController.workspace).tooltip();
+				
 		$(".recebeFisicoGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoRecebimentoFisicoNaoConfirmado,
 			dataType : 'json',
@@ -472,7 +478,7 @@ var fecharDiaController =  $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Qtde',
-				name : 'quantidadeLogico',
+				name : 'quantidadeContabil',
 				width : 90,
 				align : 'center'
 			}, {
@@ -647,11 +653,10 @@ var fecharDiaController =  $.extend(true, {
 			var entrada = row.cell.quantidadeTransferenciaEntrada ? parseInt(row.cell.quantidadeTransferenciaEntrada) : 0;
 			var saida = row.cell.quantidadeTransferenciaSaida ? parseInt(row.cell.quantidadeTransferenciaSaida) : 0;
 			var venda = row.cell.quantidadeVenda ? parseInt(row.cell.quantidadeVenda) : 0;
-			var logico = row.cell.quantidadeLogico ? parseInt(row.cell.quantidadeLogico) : 0;
+			var logico = row.cell.quantidadeContabil ? parseInt(row.cell.quantidadeContabil) : 0;
 			
 			row.cell.quantidadeTransferenciaEntrada = entrada;
 			row.cell.quantidadeTransferenciaSaida = saida;
-			row.cell.saldo = logico + entrada - saida - venda;
 		});
 		
 		$("#dialog-suplementares", fecharDiaController.workspace).show();
@@ -931,27 +936,6 @@ var fecharDiaController =  $.extend(true, {
 	
 	popup_processos : function() {
 		fecharDiaController.iniciarValidacoes();
-		$( "#dialog-processos", fecharDiaController.workspace ).dialog({
-			resizable: false,
-			height:'auto',
-			width:300,
-			modal: false,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					$(".grids", fecharDiaController.workspace).show();
-					fecharDiaController.limparTabela();
-					fecharDiaController.iniciarResumoReparte();
-					fecharDiaController.iniciarResumoEncalhe();
-					fecharDiaController.iniciarResumoSuplementar();
-					fecharDiaController.iniciarResumoDividas();
-					fecharDiaController.iniciarResumoCotas();
-					fecharDiaController.iniciarResumoEstoque();
-					fecharDiaController.iniciarResumoConsignado();
-				}
-			},
-			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
-		});		 
 	},
 	
 	limparTabela : function(){
@@ -969,6 +953,42 @@ var fecharDiaController =  $.extend(true, {
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes",
 			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
 			function(result){	
+				
+				if (!result.fechamentoRealizadoNaData){
+						$( "#dialog-processos", fecharDiaController.workspace ).dialog({
+							resizable: false,
+							height:'auto',
+							width:300,
+							modal: false,
+							buttons: {
+								"Fechar": function() {
+									$( this ).dialog( "close" );
+									$(".grids", fecharDiaController.workspace).show();
+									fecharDiaController.limparTabela();
+									fecharDiaController.iniciarResumoReparte();
+									fecharDiaController.iniciarResumoEncalhe();
+									fecharDiaController.iniciarResumoSuplementar();
+									fecharDiaController.iniciarResumoDividas();
+									fecharDiaController.iniciarResumoCotas();
+									fecharDiaController.iniciarResumoEstoque();
+									fecharDiaController.iniciarResumoConsignado();
+								}
+							},
+							form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
+						});		 
+				}else{
+					
+					$(".grids", fecharDiaController.workspace).show();
+					fecharDiaController.limparTabela();
+					fecharDiaController.iniciarResumoReparte();
+					fecharDiaController.iniciarResumoEncalhe();
+					fecharDiaController.iniciarResumoSuplementar();
+					fecharDiaController.iniciarResumoDividas();
+					fecharDiaController.iniciarResumoCotas();
+					fecharDiaController.iniciarResumoEstoque();
+					fecharDiaController.iniciarResumoConsignado();
+				}
+				
 				$('#tabela-validacao', fecharDiaController.workspace).clear();
 				fecharDiaController.validacaoBaixaBancaria(result);
 				fecharDiaController.validacaoRecebimentoFisico(result);
@@ -1178,7 +1198,7 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-
+	
 					$("#totalReparte", fecharDiaController.workspace).html(result.totalReparteFormatado);
 					$("#totalSobras", fecharDiaController.workspace).html(result.totalSobrasFormatado);
 					$("#totalFaltas", fecharDiaController.workspace).html(result.totalFaltasFormatado);
@@ -1187,6 +1207,25 @@ var fecharDiaController =  $.extend(true, {
 					$("#totalDistribuido", fecharDiaController.workspace).html(result.totalDistribuidoFormatado);
 					$("#totalSobraDistribuido", fecharDiaController.workspace).html(result.totalSobraDistribuicaoFormatado);
 					$("#totalDiferenca", fecharDiaController.workspace).html(result.totalDiferencaFormatado);
+			
+					if( result.totalFaltas && result.totalFaltas > 0){
+						$("#totalFaltas", fecharDiaController.workspace).tooltip().onShow = function() { this.show();};
+						$("#totalFaltas", fecharDiaController.workspace).css( "color", "red" );
+					}
+					else{
+						$("#totalFaltas", fecharDiaController.workspace).tooltip().onShow = function() { this.hide();};
+						$("#totalFaltas", fecharDiaController.workspace).css( "color", "#222222" );
+					}
+					
+					if(result.totalSobras && result.totalSobras > 0){
+						$("#totalSobras", fecharDiaController.workspace).tooltip().onShow = function() { this.show();};
+						$("#totalSobras", fecharDiaController.workspace).css( "color", "red" );
+					}
+					else{
+						$("#totalSobras", fecharDiaController.workspace).tooltip().onShow = function() { this.hide();};
+						$("#totalSobras", fecharDiaController.workspace).css( "color", "#222222" );
+					}
+					
 				}
 			);
 	},
@@ -1505,6 +1544,27 @@ var fecharDiaController =  $.extend(true, {
 		
 	},
 	
+	tratarExibicaoPesquisa:function(){
+		
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/isDataOperacaoDistribuidor",
+			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
+			function(result) {
+				
+				if(result.isDataOperacaoDistribuidor){
+					$("#idBotaoFechamentoDiario").text("Pesquisar");
+					$("#idTituloBoataoFechamentoDiario").attr("title","Pesquisar Fechamento do Dia");
+					$("#idImgBotaoFecamentoDiario").attr("src",contextPath+'/images/ico_pesquisar.png');
+				}
+				else{
+					$("#idBotaoFechamentoDiario").text("Iniciar Fechamento do Dia");
+					$("#idImgBotaoFecamentoDiario").attr("src",contextPath+'/images/bt_devolucao.png');
+					$("#idTituloBoataoFechamentoDiario").attr("title","Iniciar Fechamento do Dia");
+				}
+			}
+		);
+	},
+	
 	transferirDiferencasParaEstoqueDePerdaGanho : function() {
 		
 		$.postJSON(
@@ -1520,6 +1580,6 @@ var fecharDiaController =  $.extend(true, {
 			}
 		);
 	}
-
+	
 }, BaseController);
 //@ sourceURL=fecharDia.js

@@ -674,47 +674,90 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   .append("	coalesce(0,0) as diferenca, ")
 		   
-		   .append("	'Reparte à Vista' as motivoTexto, ")
+		   .append("	'' as motivoTexto, ")
 
 		   .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
+		   
+		   
+		   .append("	( ")
+		   
+		   .append("      case when cota1_.alteracao_tipo_cota is not null then ")
+		   
+		   .append("          case when movimentos4_.data <= cota1_.alteracao_tipo_cota then ")
+		   
+		   .append("          coalesce( ")
+		   
+		   .append("                      ( ")
+		   
+		   .append("                           select ce.sequencia ")
+		   
+		   .append("                           from chamada_encalhe ce, chamada_encalhe_cota cec ")
+		   
+		   .append("	                       where cec.cota_id = cota1_.ID ")
+		   
+		   .append("                           and cec.chamada_encalhe_id = ce.id ")
+		   
+		   .append("                           and ce.produto_edicao_id = produtoedi8_.ID ")
+		   
+		   .append("                       ), ")
+		   
+		   .append("                       'Postergado' ")
+		   
+		   .append("                  ) ")
+		   
+		   .append("          else 'À Vista' end ")
+		   
+		   .append("      else 'À Vista' end ")
+		   
+		   .append("    ) as sequencia ")
+		   
 
-		   .append("	'À Vista' as sequencia ")
-
-		   .append("from ")
-		   .append("	CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
+		   .append("from CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
+		   
 		   .append("inner join ")
 		   .append("	COTA cota1_  ")
 		   .append("		on consolidad0_.COTA_ID=cota1_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos2_  ")
 		   .append("		on consolidad0_.ID=movimentos2_.CONSOLIDADO_FINANCEIRO_ID  ")
+		   
 		   .append("inner join ")
 		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof3_  ")
 		   .append("		on movimentos2_.MVTO_FINANCEIRO_COTA_ID=movimentof3_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	MOVIMENTO_ESTOQUE_COTA movimentos4_  ")
 		   .append("		on movimentof3_.ID=movimentos4_.MOVIMENTO_FINANCEIRO_COTA_ID  ")
+		   
 		   .append("inner join ")
 		   .append("	ESTOQUE_PRODUTO_COTA estoquepro6_  ")
 		   .append("		on movimentos4_.ESTOQUE_PROD_COTA_ID=estoquepro6_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PRODUTO_EDICAO produtoedi8_  ")
 		   .append("		on estoquepro6_.PRODUTO_EDICAO_ID=produtoedi8_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PRODUTO produto11_  ")
 		   .append("		on produtoedi8_.PRODUTO_ID=produto11_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PRODUTO_FORNECEDOR fornecedor12_  ")
 		   .append("		on produto11_.ID=fornecedor12_.PRODUTO_ID  ")
+		   
 		   .append("inner join ")
 		   .append("	FORNECEDOR fornecedor13_  ")
 		   .append("		on fornecedor12_.fornecedores_ID=fornecedor13_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PESSOA pessoajuri14_  ")
 		   .append("		on fornecedor13_.JURIDICA_ID=pessoajuri14_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	TIPO_MOVIMENTO tipomovime5_  ")
 		   .append("		on movimentof3_.TIPO_MOVIMENTO_ID=tipomovime5_.ID  ")
+		   
 		   .append("where ")
 		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
 		   .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
@@ -726,7 +769,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	produtoedi8_.PRECO_VENDA , ")
 		   .append("	pessoajuri14_.RAZAO_SOCIAL ")
 		   
-		   .append("union all ")
+		   
+		   .append(" UNION ALL ")
+		   
 		   
 		   .append("select ")
 		   
@@ -750,41 +795,82 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   .append("	coalesce(0,0) as diferenca, ")
 		   
-		   .append("	'Reparte à Vista' as motivoTexto, ")
+		   .append("	'' as motivoTexto, ")
 		   
 		   .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total, ")
 		   
-		   .append("	'À Vista' as sequencia ")
 		   
-		   .append("from ")
-		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
+		   .append("	( ")
+		   
+		   .append("      case when cota1_.alteracao_tipo_cota is not null then ")
+		   
+		   .append("          case when movimentos2_.data <= cota1_.alteracao_tipo_cota then ")
+		   
+		   .append("          coalesce( ")
+		   
+		   .append("                      ( ")
+		   
+		   .append("                           select ce.sequencia ")
+		   
+		   .append("                           from chamada_encalhe ce, chamada_encalhe_cota cec ")
+		   
+		   .append("	                       where cec.cota_id = cota1_.ID ")
+		   
+		   .append("                           and cec.chamada_encalhe_id = ce.id ")
+		   
+		   .append("                           and ce.produto_edicao_id = produtoedi6_.ID ")
+		   
+		   .append("                       ), ")
+		   
+		   .append("                       'Postergado' ")
+		   
+		   .append("                  ) ")
+		   
+		   .append("          else 'À Vista' end ")
+		   
+		   .append("      else 'À Vista' end ")
+		   
+		   .append("    ) as sequencia ")
+		   
+		   
+		   .append("from MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
+		   
 		   .append("inner join ")
 		   .append("	COTA cota1_  ")
 		   .append("		on movimentof0_.COTA_ID=cota1_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	MOVIMENTO_ESTOQUE_COTA movimentos2_  ")
 		   .append("		on movimentof0_.ID=movimentos2_.MOVIMENTO_FINANCEIRO_COTA_ID  ")
+		   
 		   .append("inner join ")
 		   .append("	ESTOQUE_PRODUTO_COTA estoquepro4_  ")
 		   .append("		on movimentos2_.ESTOQUE_PROD_COTA_ID=estoquepro4_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PRODUTO_EDICAO produtoedi6_  ")
 		   .append("		on estoquepro4_.PRODUTO_EDICAO_ID=produtoedi6_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PRODUTO produto9_  ")
 		   .append("		on produtoedi6_.PRODUTO_ID=produto9_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PRODUTO_FORNECEDOR fornecedor10_  ")
 		   .append("		on produto9_.ID=fornecedor10_.PRODUTO_ID  ")
+		   
 		   .append("inner join ")
 		   .append("	FORNECEDOR fornecedor11_  ")
 		   .append("		on fornecedor10_.fornecedores_ID=fornecedor11_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	PESSOA pessoajuri12_  ")
 		   .append("		on fornecedor11_.JURIDICA_ID=pessoajuri12_.ID  ")
+		   
 		   .append("inner join ")
 		   .append("	TIPO_MOVIMENTO tipomovime3_  ")
 		   .append("		on movimentof0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID  ")
+		   
 		   .append("where ")
 		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
 		   .append("	and movimentof0_.DATA = :dataConsolidado ")
@@ -1146,7 +1232,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		sql.append(" cfc.ID as id, ")
 		   .append(" cfc.COTA_ID as cotaId, ")
 		   .append(" COTA.NUMERO_COTA as numeroCota, ")
-		   .append(" concat(box.codigo, ' - ', box.nome) as nomeBox, ")
 		   .append(" cfc.CONSIGNADO as consignado, ")
 		   
 		   .append(" cfc.DT_CONSOLIDADO as dataConsolidado, ")
@@ -1224,7 +1309,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
 		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
-		   .append(" inner join BOX box on cota.BOX_ID = box.ID ")
 		   .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
 		   .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
 		   .append(" where cota.NUMERO_COTA = :numeroCota ");
@@ -1242,7 +1326,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" null as id, ")
 		   .append(" mfc.COTA_ID as cotaId, ")
 		   .append(" null as numeroCota, ")
-		   .append(" concat(box.codigo, ' - ', box.nome) as nomeBox, ")
 		   
 		   //consignado
 		   .append("coalesce((select sum(m.VALOR) ")
@@ -1565,7 +1648,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
 		   .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
-		   .append(" inner join BOX box on cota.BOX_ID = box.ID ")
 		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
 		   .append(" and mfc.ID not in (")
 		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
@@ -1598,7 +1680,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("id", StandardBasicTypes.LONG);
 		query.addScalar("cotaId", StandardBasicTypes.LONG);
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
-		query.addScalar("nomeBox", StandardBasicTypes.STRING);
 		query.addScalar("consignado", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("dataConsolidado", StandardBasicTypes.DATE);
 		query.addScalar("debitoCredito", StandardBasicTypes.BIG_DECIMAL);

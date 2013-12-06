@@ -47,6 +47,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
@@ -59,6 +60,7 @@ import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
@@ -93,6 +95,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 	@Autowired
 	protected AcumuloDividasService acumuloDividasService;
+	
+	@Autowired
+	private DividaRepository dividaRepository;
 	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -617,6 +622,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	itemCobranca.setBanco( (pagamento.getBanco()==null)?itemCobranca.getBanco() :  pagamento.getBanco() );
 		    	
+		    	this.dividaRepository.merge(itemCobranca.getDivida());
+		    	
 		    	cobrancaTotal = this.cobrancaRepository.merge(itemCobranca);
 		    	
 		    	baixaManualTotal = this.criarRegistroBaixaManual(
@@ -629,7 +636,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	
 				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorCobrancaCorrigida);
 				
-				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDivida());
+				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDataPagamento(), itemCobranca.getDivida());
 		    
 			} else {
 		    	cobrancaParcial = itemCobranca;
@@ -918,10 +925,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 		Date dataVencimento = obterProximaDataVencimentoParaCota(cobrancaTotal.getCota().getId());
 		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(pagamento.getDataPagamento());
+		
+		String observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+		
+		if (!StringUtil.isEmpty(pagamento.getObservacoes())) {
+			
+			observacao += " - " + pagamento.getObservacoes();
+		}
+		
 		gerarMovimentoFinanceiroCota(
 				baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorExcedentePagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN), 
 				pagamento.getDataPagamento(), dataVencimento,
-				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
+				observacao, GrupoMovimentoFinaceiro.CREDITO,
 				cobrancaTotal.getFornecedor()
 		);
 
@@ -983,10 +999,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		valorEmDebito = valorEmDebito.setScale(2, RoundingMode.HALF_EVEN);
 		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(pagamento.getDataPagamento());
+		
+		String observacao = "Diferença de Pagamento a Menor (" + dataPagamentoFormatada + ")";
+		
+		if (!StringUtil.isEmpty(pagamento.getObservacoes())) {
+			
+			observacao += " - " + pagamento.getObservacoes();
+		}
+		
 		gerarMovimentoFinanceiroCota(
 			baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valorEmDebito, 
 			cobrancaParcial.getDataVencimento(), dataVencimento, 
-			pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
+			observacao, GrupoMovimentoFinaceiro.DEBITO,
 			cobrancaParcial.getFornecedor()
 		);
 	}
@@ -1074,10 +1099,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		TipoMovimentoFinanceiro tipoMovimento = 
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
-		
-		
-		
-		
+
 		MovimentoFinanceiroCotaDTO movimento = new MovimentoFinanceiroCotaDTO();
 		movimento.setCota(cota);
 		movimento.setTipoMovimentoFinanceiro(tipoMovimento);

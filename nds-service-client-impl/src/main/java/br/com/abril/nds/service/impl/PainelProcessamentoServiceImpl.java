@@ -123,6 +123,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		
 		for (ConsultaInterfacesDTO logExecucao : listaLogExecucao) {
 			interfaceDTO = new InterfaceDTO();
+			
+			interfaceDTO.setIdInterface(logExecucao.getIdInterface().toString());
 			interfaceDTO.setIdLogProcessamento(logExecucao.getId().toString());
 			interfaceDTO.setIdLogExecucao(logExecucao.getIdLogExecucao());
 			
@@ -135,8 +137,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 			}
 
 			if(logExecucao != null && logExecucao.getNomeArquivo() != null) {
-				interfaceDTO.setNomeArquivo(logExecucao.getNomeArquivo().split(DELIMITADOR_PONTO)[0]); // logExecucao.getNome());
-				interfaceDTO.setStatus(logExecucao.getStatus().toString());
+				interfaceDTO.setNomeArquivo(logExecucao.getNomeArquivo().split(DELIMITADOR_PONTO)[0]);
 			} else {
 				interfaceDTO.setNomeArquivo("");
 			}

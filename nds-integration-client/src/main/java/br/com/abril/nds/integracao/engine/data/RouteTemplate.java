@@ -27,6 +27,8 @@ public abstract class RouteTemplate extends AbstractRepository {
 	
 	private Map<String, Object> parameters = new HashMap<String, Object>();
 	
+	private String codigoDistribuidor;
+	
 	/**
 	 * Metodo para configurar a rota da mensagem
 	 * 
@@ -88,8 +90,10 @@ public abstract class RouteTemplate extends AbstractRepository {
 		
 	}
 	
-	public void execute(String userName) {
+	public void execute(String userName, String codigoDistribuidor) {
+		
 		this.userName = userName;
+		this.codigoDistribuidor = codigoDistribuidor;
 		
 		dynamicRouter.route(this);
 	}
@@ -102,5 +106,12 @@ public abstract class RouteTemplate extends AbstractRepository {
 	public abstract MessageProcessor getMessageProcessor();
 	
 	public abstract RouteInterface getRouteInterface();
+
+	/**
+	 * @return the codigoDistribuidor
+	 */
+	public String getCodigoDistribuidor() {
+		return codigoDistribuidor;
+	}
 	
 }

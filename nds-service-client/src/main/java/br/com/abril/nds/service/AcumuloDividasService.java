@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.Divida;
@@ -37,15 +38,6 @@ public interface AcumuloDividasService {
 	 * @return {@link AcumuloDivida}
 	 */
 	AcumuloDivida obterAcumuloDividaPorMovimentoPendente(Long idMovimentoFinanceiro);
-	
-	/**
-	 * Obtém uma acumulo através do ID de um {@link br.com.abril.nds.model.financeiro.Divida} 
-	 * 
-	 * @param idDivida
-	 * 
-	 * @return {@link AcumuloDivida}
-	 */
-	AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida);
 
 	/**
 	 * Obtém o número máximo de acúmulos já atingido por determinada Cota.
@@ -65,5 +57,5 @@ public interface AcumuloDividasService {
 	 */
 	BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota);
 
-	void quitarDividasAcumuladas(Divida dividaAtual);
+	void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual);
 }

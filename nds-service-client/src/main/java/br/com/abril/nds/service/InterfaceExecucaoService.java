@@ -12,19 +12,33 @@ public interface InterfaceExecucaoService {
 
 	/**
 	 * Executa Interfaces
-	 * @param classeExecucao
+	 * @param idInterface
 	 * @param usuario
+	 * @param codigoDistribuidor
 	 * @throws ClassNotFoundException 
 	 * @throws BeansException 
 	 */
-	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException;
+	void executarInterface(String idInterface, Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException;
 	
 	/**
-	 * Executa as Interfaces em Ordem de Prioridade 
+	 * Executa as Interfaces PRODIN em Ordem de Prioridade 
+	 * @param usuario
+	 * @param codigoDistribuidor
+	 * @throws BeansException
+	 * @throws ClassNotFoundException
+	 */
+	void executarTodasInterfacesProdinEmOrdem(Usuario usuario, String codigoDistribuidor) throws BeansException, ClassNotFoundException;
+	
+	/**
+	 * Executa as Interfaces MDC em Ordem de Prioridade 
 	 * @param usuario
 	 * @throws BeansException
 	 * @throws ClassNotFoundException
 	 */
-	public void executarTodasInterfacesEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException;
+	void executarTodasInterfacesMDCEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException;
+	
+	boolean isInterfaceProdin(String idInterface);
+	
+	boolean isInterfaceMDC(String idInterface);
 	
 }

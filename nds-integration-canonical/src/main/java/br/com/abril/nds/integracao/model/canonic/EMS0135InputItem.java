@@ -21,7 +21,7 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 	private Double preco;
 	private Double desconto;
 	private String codigoBarras;
-	private Integer codigoSiscorp;
+	private Long codigoSiscorp;
 	
 
 	
@@ -97,10 +97,10 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 	}
 	
 	@Field(offset = 111, length = 10)
-	public Integer getCodigoSiscorp() {
+	public Long getCodigoSiscorp() {
 		return codigoSiscorp;
 	}
-	public void setCodigoSiscorp(Integer codigoSiscorp) {
+	public void setCodigoSiscorp(Long codigoSiscorp) {
 		this.codigoSiscorp = codigoSiscorp;
 	}
 		

@@ -249,7 +249,7 @@ var painelProcessamentoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 
-			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
+			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.idInterface + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 
 			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.idLogExecucao != "" && row.cell.status != 'S' && row.cell.status != 'V'){
@@ -300,7 +300,7 @@ var painelProcessamentoController = $.extend(true, {
 		return resultado;
 	},
 	executarPreInterfaceProcessamento : function(resultado) {
-
+		
 		if (resultado.mensagens) {
 			$("#dialog-novo", painelProcessamentoController.workspace).dialog("close");
 			exibirMensagem(
@@ -311,6 +311,9 @@ var painelProcessamentoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
+			
+			row.cell.mensagem = row.cell.mensagem || ""; 
+			
 			if(row.cell.numeroLinha ){ 
 				row.cell.numeroLinha = "Linha: " + row.cell.numeroLinha;
 			}
@@ -388,7 +391,7 @@ var painelProcessamentoController = $.extend(true, {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=PDF&tipoRelatorio=2";
 		});
 	},
-	reprocessarInterface : function(classeInterface) {
+	reprocessarInterface : function(idInterface) {
 		
 		$( "#dialog-excutarInterface" ).dialog({
 			resizable: false,
@@ -399,7 +402,7 @@ var painelProcessamentoController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 					
-					var data = [{name: 'classeInterface', value: classeInterface}];
+					var data = [{name: 'idInterface', value: idInterface}];
 					$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
 							   data,
 							   function (resultado) {
