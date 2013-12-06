@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jrimum.utilix.text.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -24,7 +25,9 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ParciaisService;
@@ -45,6 +48,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -91,6 +95,9 @@ public class ParciaisController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 		
 	public ParciaisController(Result result){
 		this.result = result;
@@ -346,15 +353,20 @@ public class ParciaisController extends BaseController {
 		if( lancamento == null )
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lancaçmento não válida.");
 		
+		validarDatasPeriodoLancamento(lancamento, recolhimento);
+				
+		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento, getUsuarioLogado());
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+	}
+
+	private void validarDatasPeriodoLancamento(Date lancamento,
+			Date recolhimento) {
 		if( recolhimento == null )
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Recolhimento não válida.");
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(lancamento, recolhimento))
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lançamento é inferior a de Recolhimento");
-				
-		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento, getUsuarioLogado());
-		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 		
 	/**
@@ -485,6 +497,30 @@ public class ParciaisController extends BaseController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void validarDiaUtil(Date dataLancamento, Date dataRecolhimento){
+		
+		validarDatasPeriodoLancamento(dataLancamento, dataRecolhimento);
+		
+		String mensagemAlerta ="";
+		
+		if (!calendarioService.isDiaUtil(dataLancamento)){
+			mensagemAlerta = "Data de lançamento não é um dia util deseja prosseguir ? ";
+		}
+		
+		if (!calendarioService.isDiaUtil(dataRecolhimento)){
+			
+			if(mensagemAlerta.trim().isEmpty() ){
+				mensagemAlerta = "Data de recolhimento não é um dia util deseja prosseguir ? ";
+			}else{
+				mensagemAlerta = "Data de lançamento e data de recolhimento não são dias uteis deseja prosseguir ? ";
+			}
+		}
+		
+		result.use(Results.json()).from(mensagemAlerta, "result").recursive().serialize();
 	}
 		
 }
