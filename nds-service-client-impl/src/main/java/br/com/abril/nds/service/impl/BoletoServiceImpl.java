@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
+import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDTO;
@@ -82,15 +83,19 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.MathUtil;
@@ -175,6 +180,15 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected FormaCobrancaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private ParametroCobrancaCotaService paramtroCobrancaCotaService;
 	
 	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
@@ -1978,6 +1992,76 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 
 		return fornecedor;
+	}
+	
+	/**
+	 * Obtem dados de boleto em Branco utilizando dados de CE e periodo de recolhimento do filtro
+	 * @param ceDTO
+	 * @param dataRecolhimentoCEDe
+	 * @param dataRecolhimentoCEAte
+	 * @return BoletoEmBrancoDTO
+	 */
+	@Transactional
+	@Override
+	public BoletoEmBrancoDTO obterDadosBoletoEmBrancoPorCE(CotaEmissaoDTO ceDTO, 
+			                                               Date dataRecolhimentoCEDe, 
+			                                               Date dataRecolhimentoCEAte){
+		
+		Date dataEmissao = DateUtil.parseDataPTBR(ceDTO.getDataEmissao());
+		
+		Date dataRecolhimento = DateUtil.parseDataPTBR(ceDTO.getDataRecolhimento());
+		
+		BigDecimal valorReparteLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrReparteLiquido());
+		
+		BigDecimal valorEncalheCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrEncalhe());
+		
+		BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido());
+		
+		BigDecimal valorDebitos =  this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
+		
+		BigDecimal valorCreditos =  this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
+		
+		valorDebitos = valorDebitos!=null?valorDebitos:BigDecimal.ZERO;
+		
+		valorCreditos = valorCreditos!=null?valorCreditos:BigDecimal.ZERO;
+		
+		BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos));
+		
+		Fornecedor fornecedor = this.paramtroCobrancaCotaService.obterFornecedorPadraoCota(ceDTO.getIdCota());
+		
+		if (fornecedor == null){
+			
+			return null;
+		}
+		
+		FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), fornecedor.getId(), dataEmissao, valorTotalBoletoEmBranco);
+		
+		if (fc == null || !fc.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO)){
+			
+			return null;
+		}
+		
+		Date dataVencimento = this.gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento());
+		
+		BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
+				                                        fornecedor.getId(),
+				                                        fc.getBanco()!=null?fc.getBanco().getNumeroBanco():null,
+				                                        fc.getBanco()!=null?fc.getBanco().getAgencia():null,
+				                                        fc.getBanco()!=null?fc.getBanco().getConta():null,
+				                                        fc.getBanco()!=null?fc.getBanco().getDvConta():null,
+				                                        ceDTO.getNumCota(),
+				                                        valorReparteLiquidoCE,
+				                                        valorEncalheCE,
+										                valorTotalLiquidoCE, 				               
+										                valorDebitos, 
+										                valorCreditos, 
+										                dataEmissao, 
+										                dataRecolhimento,
+										                dataVencimento,
+										                dataRecolhimentoCEDe,
+										                dataRecolhimentoCEAte);
+
+		return bbDTO;
 	}
 	
 	/**

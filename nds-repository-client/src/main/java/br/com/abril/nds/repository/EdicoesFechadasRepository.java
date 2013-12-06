@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 
 
@@ -19,13 +21,23 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	 * @param dataDe
 	 * @param dateAte
 	 * @param idFornecedor
-	 * @param sortorder 
-	 * @param sortname 
-	 * @param firstResult 
-	 * @param maxResults 
-	 * @return
+	 * @param sortorder
+	 * @param sortname
+	 * @param firstResult
+	 * @param maxResults
+	 * @param gruposExcluidos
+	 * @param statusAprovacao
+	 * @return List<RegistroEdicoesFechadasVO>
 	 */
-	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor, String sortorder, String sortname, Integer firstResult, Integer maxResults);
+	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, 
+			                                                             Date dateAte, 
+			                                                             Long idFornecedor, 
+			                                                             String sortorder, 
+			                                                             String sortname, 
+			                                                             Integer firstResult, 
+			                                                             Integer maxResults,
+			    				                                         List<GrupoMovimentoEstoque> gruposExcluidos,
+			    				                                         StatusAprovacao statusAprovacao);
 
 	
 
@@ -34,13 +46,30 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	 * @param dataDe
 	 * @param dateAte
 	 * @param idFornecedor
-	 * @return
+	 * @param gruposExcluidos
+	 * @param statusAprovacao
+	 * @return BigInteger
 	 */
-	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
+	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, 
+			                                             Date dateAte, 
+			                                             Long idFornecedor,
+				                                         List<GrupoMovimentoEstoque> gruposExcluidos,
+				                                         StatusAprovacao statusAprovacao);
 
 
-	public Long countResultadoEdicoesFechadas(Date parse, Date parse2,
-			Long idFornecedor);
-
+	/**
+	 * Retorna quantidade de edições fechadas filtrada pelo código do fornecedor em um período de datas
+	 * @param parse
+	 * @param parse2
+	 * @param idFornecedor
+	 * @param gruposExcluidos
+	 * @param statusAprovacao
+	 * @return Long
+	 */
+	public Long countResultadoEdicoesFechadas(Date parse, 
+			                                  Date parse2,
+			                                  Long idFornecedor,
+		                                      List<GrupoMovimentoEstoque> gruposExcluidos,
+		                                      StatusAprovacao statusAprovacao);
 
 }
