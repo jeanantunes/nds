@@ -37,20 +37,6 @@ public interface PeriodoLancamentoParcialRepository extends
 	PeriodoLancamentoParcial obterPeriodoPorIdLancamento(Long idLancamento);
 
 	/**
-	 * Retorna se novo periodo é válido para o Lancamento
-	 * 
-	 * @param idLancamento
-	 *            - Id do lançamento a ser alterado
-	 * @param dataLancamento
-	 *            - Nova data de Lancamento
-	 * @param dataRecolhimento
-	 *            - Nova data de Recolhimento
-	 * @return
-	 */
-	Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
-			Date dataLancamento, Date dataRecolhimento);
-
-	/**
 	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e
 	 * Recolhimento
 	 * 
@@ -113,5 +99,13 @@ public interface PeriodoLancamentoParcialRepository extends
 	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
 
 	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo);
-
+	
+	PeriodoLancamentoParcial obterPeriodoPorNumero(Integer numeroPeriodo,Long idLancamentoParcial);
+	
+	List<Lancamento> obterRedistribuicoesPosterioresAoLancamento(Long idPeriodo,Date dataLancamento);
+	
+	List<Lancamento> obterRedistribuicoesAnterioresAoLancamento(Long idPeriodo,Date dataLancamento);
+	
+	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
 }
+
