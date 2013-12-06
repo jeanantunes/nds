@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="892" pageHeight="595" whenNoDataType="AllSectionsNoDetail" columnWidth="862" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="danfe" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="14" rightMargin="16" topMargin="14" bottomMargin="14" whenResourceMissingType="Empty" uuid="0404b838-d169-4c04-8804-076599fbf541">
 	<property name="ireport.zoom" value="1.156629868288595"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="104"/>
+	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true">
 		<conditionalStyle>
 			<style/>
@@ -909,9 +909,7 @@ $F{emissorTelefone}.substring(2,6) + "-" + $F{emissorTelefone}.substring(6,10)]]
 				</textField>
 				<textField pattern="(##) ####-####">
 					<reportElement style="dados" x="213" y="65" width="104" height="16" uuid="df24c5f6-4627-4bee-9613-d7de231c1a0d"/>
-					<textFieldExpression><![CDATA[$F{destinatarioTelefone}.length() == 8 ? $F{destinatarioTelefone}.substring(0,4) +
-"-" + $F{destinatarioTelefone}.substring(4,8) : "(" + $F{destinatarioTelefone}.substring(0,2) + ") " +
-$F{destinatarioTelefone}.substring(2,6) + "-" + $F{destinatarioTelefone}.substring(6,10)]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{destinatarioTelefone}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy">
 					<reportElement style="dados" x="500" y="16" width="64" height="16" uuid="cbe29ee8-676a-463f-975a-d057d7001bc4"/>
@@ -919,7 +917,7 @@ $F{destinatarioTelefone}.substring(2,6) + "-" + $F{destinatarioTelefone}.substri
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="dados" x="2" y="40" width="274" height="16" uuid="58685264-efbd-474b-a350-b9ed52f9e39a"/>
-					<textFieldExpression><![CDATA[$F{destinatarioLogradouro} != null ? $F{destinatarioLogradouro} : "" + ", " + $F{destinatarioNumero} != null ? $F{destinatarioNumero} : ""  + " " + $F{destinatarioComplemento} != null ? $F{destinatarioComplemento} : "" ]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{destinatarioLogradouro} != null ? $F{destinatarioLogradouro} : "" + ", " + $F{destinatarioNumero} != null ? $F{destinatarioNumero} : ""  + " " + $F{destinatarioComplemento} != null ? $F{destinatarioComplemento} : ""]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="dados" x="2" y="16" width="343" height="16" uuid="f35321ed-1502-4bd5-aa82-4ae96dd4e51a"/>
@@ -1318,7 +1316,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 	<detail>
 		<band height="27">
 			<subreport>
-				<reportElement uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c" stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="27"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="27" uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
