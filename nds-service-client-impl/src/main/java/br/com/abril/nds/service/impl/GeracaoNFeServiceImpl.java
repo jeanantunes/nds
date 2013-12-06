@@ -94,8 +94,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
 		dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
 		
-		Map<Cota, QuantidadePrecoItemNotaDTO> cotasTotalItens = 
-				this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
+		Map<Cota, QuantidadePrecoItemNotaDTO> cotasTotalItens = this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
 		
 		Set<Cota> cotas = cotasTotalItens.keySet();
 		
@@ -130,7 +129,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, List<Long> listIdProduto,
 			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
-		List<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null, null, null, null, null);
+		List<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, null, null, null, null, null, null, null);
 		
 		List<TipoNotaFiscal> tiposNotaFiscal = new ArrayList<TipoNotaFiscal>();
 		

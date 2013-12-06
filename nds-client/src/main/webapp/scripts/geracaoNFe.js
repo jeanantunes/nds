@@ -178,7 +178,7 @@ GeracaoNFeController.prototype.getParams = function() {
 	var params = {
 		"intervaloBoxDe" : $("#inputIntervaloBoxDe", this.workspace).val(),
 		"intervaloBoxAte" : $("#inputIntervaloBoxAte", this.workspace).val(),
-		"intervalorCotaDe" : $("#inputIntervaloCotaDe", this.workspace).val(),
+		"intervaloCotaDe" : $("#inputIntervaloCotaDe", this.workspace).val(),
 		"intervaloCotaAte" : $("#inputIntervaloCotaAte", this.workspace).val(),
 		"intervaloDateMovimentoDe" : $("#datepickerIntervaloMovimentoDe", this.workspace)
 				.val(),
