@@ -185,9 +185,11 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodos',this.workspace).show();
 			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
-		
+		var indexUtimoRegistro = result.rows.length -1 ;
+		var isExcluir = false;
 		$.each(result.rows, function(index,row){
-			ParciaisController.gerarAcaoDetalhes(index,row);
+			var isExcluir = (index != indexUtimoRegistro);
+			ParciaisController.gerarAcaoDetalhes(index,row,isExcluir);
 		} );
 				
 		return result;
@@ -209,7 +211,12 @@ var ParciaisController = $.extend(true, {
 		else
 			$("#btnIncluirPeriodosModal",this.workspace).show();		
 		
-		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoDetalhes(index,row);} );
+		var indexUtimoRegistro = result.rows.length -1 ;
+		var isExcluir = false;
+		$.each(result.rows, function(index,row){
+			var isExcluir = (index != indexUtimoRegistro);
+			ParciaisController.gerarAcaoDetalhes(index,row,isExcluir);
+		} );
 				
 		return result;
 	},
@@ -221,12 +228,14 @@ var ParciaisController = $.extend(true, {
 		
 		var indexUtimoRegistro = result.rows.length -1 ;
 		
+		var isExcluir = false;
+		
 		$.each(result.rows, function(index,row){
 		
 			row.cell.acao="";
 			
 			if(index > 0){	
-				var isExcluir = (index != indexUtimoRegistro);
+				isExcluir = (index != indexUtimoRegistro);
 				ParciaisController.gerarAcaoRedistribuicao(index,row,isExcluir);
 			}
 		} );
@@ -327,7 +336,7 @@ var ParciaisController = $.extend(true, {
 				'<img src="'+contextPath+'/images/ico_detalhes.png" border="0" /></a>';
 	},
 	
-	gerarAcaoDetalhes : function(index, row) {
+	gerarAcaoDetalhes : function(index, row,isExcluir) {
 		
 		if(row.cell.vendas > 0){
 			
@@ -340,16 +349,17 @@ var ParciaisController = $.extend(true, {
 	
 		row.cell.acao = 
 			'<a href="javascript:;" isEdicao="true" ' +
-			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':'onclick="ParciaisController.carregarEdicaoDetalhes(\''+ 
+			'onclick="ParciaisController.carregarEdicaoDetalhes(\''+ 
 					row.cell.idLancamento +'\', \''+
 					row.cell.dataLancamento +'\', \''+
 					row.cell.dataRecolhimento +
-			        ' \')"')+
-			        
+			        ' \')"'+
 			' ><img src="'+contextPath+'/images/ico_editar.gif" border="0"  style="margin-right:5px;" /></a>' +
+			
 			'<a href="javascript:;" isEdicao="true" '+
-			' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" '+
+			(isExcluir==true?'style="opacity: 0.5;"':' onclick="ParciaisController.carregarExclusaoPeriodo(\'' + row.cell.idLancamento+ '\');" ')+
 			'><img src="'+contextPath+'/images/ico_excluir.gif" hspace="5" border="0" style="margin-right:5px;" /></a>' +
+			
 			'<a href="javascript:;" onclick="ParciaisController.carregarRedistribuicao(\''+
 				row.cell.idPeriodo +'\',\''+
 				row.cell.numeroPeriodo +'\',\''+

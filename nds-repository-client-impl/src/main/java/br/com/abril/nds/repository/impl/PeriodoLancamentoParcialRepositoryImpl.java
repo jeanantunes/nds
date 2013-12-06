@@ -243,53 +243,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return (lancamento == null)? null : lancamento.getPeriodoLancamentoParcial();
 	}
 
-	@Override
-	public Boolean verificarValidadeNovoPeriodoParcial(Long idLancamento,
-			Date dataLancamento, Date dataRecolhimento) {
-		
-		//TODO Ajuste alterações PARCIAIS
-		//Adequar as novas regras de validação, a ser definida 
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select count(periodo) ");
-		
-		hql.append(" from PeriodoLancamentoParcial periodo ");
-		
-		hql.append(" join periodo.lancamentos lancamento ");
-		
-		hql.append(" join periodo.lancamentoParcial lancamentoParcial ");
-		
-		hql.append(" join lancamentoParcial.periodos periodos ");
-		
-		hql.append(" join periodos.lancamento lancamentoPeriodo ");
-		
-		hql.append(" where lancamentoPeriodo.id !=:idLancamento "); 
-		
-		hql.append(" and lancamento.tipoLancamento=:tipoLancamento ");
-		
-		hql.append(" and lancamento.id =:idLancamento ");
-		
-		hql.append(" and ( (periodos.lancamento.dataLancamentoDistribuidor>=:dataLancamento ");
-		
-		hql.append(" 	and periodos.lancamento.dataLancamentoDistribuidor<=:dataRecolhimento) ");
-		
-		hql.append(" 	or (periodos.lancamento.dataRecolhimentoDistribuidor>=:dataLancamento ");
-		
-		hql.append(" 	and periodos.lancamento.dataRecolhimentoDistribuidor<=:dataRecolhimento) )");
-		
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		query.setParameter("idLancamento", idLancamento);
-		query.setParameter("dataLancamento", dataLancamento);
-		query.setParameter("dataRecolhimento", dataRecolhimento);
-		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
-		
-		Long count = (Long) query.uniqueResult();
-		
-		return (count == null || count == 0) ? true : false;
-	}
-	
 	/**
 	 * Obtem detalhes das vendas do produtoEdição nas datas de Lancamento e Recolhimento
 	 * @param dataLancamento
@@ -430,8 +383,10 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 
 		query.setParameter("idLancamentoParcial", idLancamentoParcial);
 
-		query.setParameterList("satatusLancamento", new StatusLancamento[] {
-				StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO });
+		query.setParameterList("satatusLancamento", Arrays.asList(StatusLancamento.CONFIRMADO,
+																  StatusLancamento.PLANEJADO,
+																  StatusLancamento.EM_BALANCEAMENTO,
+																  StatusLancamento.BALANCEADO));
 
 		return (Long) query.uniqueResult();
 	}
@@ -460,6 +415,90 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		query.setParameter("idPeriodo", idPeriodo);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RedistribuicaoParcialDTO.class));
+		
+		return query.list();
+	}
+	
+	public PeriodoLancamentoParcial obterPeriodoPorNumero(Integer numeroPeriodo, Long idLancamentoParcial){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select periodoLancamentoParcial from PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" where periodoLancamentoParcial.numeroPeriodo = :numeroPeriodo ");
+		hql.append(" and periodoLancamentoParcial.lancamentoParcial.id = :idLancamentoParcial ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroPeriodo", numeroPeriodo);
+		query.setParameter("idLancamentoParcial", idLancamentoParcial);
+		query.setMaxResults(1);
+		
+		return (PeriodoLancamentoParcial) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRedistribuicoesAnterioresAoLancamento(Long idPeriodo,Date dataRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento  ");
+		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+		hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
+		hql.append(" and lancamento.dataLancamentoDistribuidor > :dataRecolhimento ");
+		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
+		hql.append(" order by lancamento.numeroLancamento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idPeriodo", idPeriodo);
+		query.setParameter("dataLancamento", dataRecolhimento);
+		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRedistribuicoesPosterioresAoLancamento(Long idPeriodo,Date dataLancamento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento  ");
+		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+		hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
+		hql.append(" and lancamento.dataLancamentoDistribuidor >= :dataLancamento ");
+		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
+		hql.append(" order by lancamento.numeroLancamento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idPeriodo", idPeriodo);
+		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRedistribuicoes(Long idPeriodo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento  ");
+		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+		hql.append(" where periodoLancamentoParcial.id = :idPeriodo ");
+		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
+		hql.append(" order by lancamento.numeroLancamento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idPeriodo", idPeriodo);
+		query.setParameter("tipoLancamento", TipoLancamento.REDISTRIBUICAO);
 		
 		return query.list();
 	}
