@@ -31,18 +31,11 @@ public class ParametrosDistribuidorVO {
     private ObrigacaoFiscal obrigacaoFiscal;
     private boolean regimeEspecial;
     
-<<<<<<< HEAD
-    private EnderecoVO endereco = new EnderecoVO();
-    
     private String numeroTelefone;
     
     private String numeroDDD;
     
-    // Aba Operação
-    
-=======
     // -= Aba Operação =-
->>>>>>> fase2
     // Frame Parciais / Matriz de Lançamento
     private int relancamentoParciaisEmDias;
     // Frame Recolhimento
@@ -85,16 +78,13 @@ public class ParametrosDistribuidorVO {
     // Frame Impressão Interface LED
     // MODELO_1 ou MODELO_2 ou MODELO_3
     private String impressaoInterfaceLED;
-<<<<<<< HEAD
-    
+
     private String nomeArquivoInterfaceLED1;
     
     private String nomeArquivoInterfaceLED2;
     
     private String nomeArquivoInterfaceLED3;
 
-=======
->>>>>>> fase2
     // Frame Impressão NECA / DANFE
     // MODELO_1, MODELO_2 ou DANFE
     private String impressaoNECADANFE;
@@ -170,12 +160,9 @@ public class ParametrosDistribuidorVO {
     private boolean postergacaoCobranca;
     private boolean devolucaoFornecedor;
     private boolean faltasSobras;
-<<<<<<< HEAD
-    
+
     private boolean consolidadoCota;
     
-=======
->>>>>>> fase2
     private String aprovacaoFaltaDe;
     private String aprovacaoSobraDe;
     private String aprovacaoFaltaEm;
@@ -1258,7 +1245,6 @@ public class ParametrosDistribuidorVO {
 		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
 	}
 
-<<<<<<< HEAD
 	public String getNumeroTelefone() {
 		return numeroTelefone;
 	}
@@ -1274,7 +1260,7 @@ public class ParametrosDistribuidorVO {
 	public void setNumeroDDD(String numeroDDD) {
 		this.numeroDDD = numeroDDD;
 	}
-=======
+
 	public boolean isGeracaoAutomaticaEstudo() {
 		return geracaoAutomaticaEstudo;
 	}
@@ -1331,7 +1317,5 @@ public class ParametrosDistribuidorVO {
 	public void setListPercentualExcedente(
 			List<DistribuidorPercentualExcedenteVO> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
-	}
-    
->>>>>>> fase2
+	}    
 }

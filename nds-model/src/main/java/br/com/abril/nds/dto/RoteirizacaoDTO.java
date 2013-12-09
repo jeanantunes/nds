@@ -18,10 +18,7 @@ import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
-<<<<<<< HEAD
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-=======
->>>>>>> fase2
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
@@ -337,10 +334,7 @@ public class RoteirizacaoDTO implements Serializable{
                 for(RotaPDV rotaPdv : rota.getRotaPDVs()){
                     PDV pdv = rotaPdv.getPdv();
                     Cota cota = rotaPdv.getPdv().getCota();
-<<<<<<< HEAD
 
-=======
->>>>>>> fase2
                     String nomeCota = cota.getPessoa().getNome();
                     OrigemEndereco origemEndereco = null;
 
