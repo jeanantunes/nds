@@ -980,6 +980,10 @@ var produtoEdicaoController =$.extend(true,  {
 				row.cell.numeroPeriodo = "";
 			}
 			
+			if(row.cell.reparte == undefined) {
+				row.cell.reparte = "";
+			}
+			
 			if (row.cell.destacarLinha) {
 				linhasDestacadas.push(index + 1);
 			}

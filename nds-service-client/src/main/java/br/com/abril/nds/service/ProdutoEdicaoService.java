@@ -207,6 +207,6 @@ public interface ProdutoEdicaoService {
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
 	
-	Integer obterNumeroLancamento(Long idProdutoEdicao);
+	Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
 	
 }

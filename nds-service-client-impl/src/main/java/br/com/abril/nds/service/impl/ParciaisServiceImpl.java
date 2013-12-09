@@ -562,6 +562,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataLancamentoPrevista(redistribuicaoParcialDTO.getDataLancamento());
 		lancamento.setDataRecolhimentoDistribuidor(redistribuicaoParcialDTO.getDataRecolhimento());
 		lancamento.setDataRecolhimentoPrevista(redistribuicaoParcialDTO.getDataRecolhimento());
+		lancamento.setReparte(BigInteger.ZERO);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
@@ -570,7 +571,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setUsuario(this.usuarioService.getUsuarioLogado());
 		
 		lancamento.setNumeroLancamento(
-			this.produtoEdicaoService.obterNumeroLancamento(produtoEdicao.getId()));
+			this.produtoEdicaoService.obterNumeroLancamento(produtoEdicao.getId(), idPeriodo));
 		
 		lancamento.setPeriodoLancamentoParcial(periodoLancamentoParcial);
 		
