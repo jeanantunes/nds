@@ -2024,17 +2024,26 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
-	public Integer obterUltimoNumeroLancamento(Long idProdutoEdicao) {
+	public Integer obterUltimoNumeroLancamento(Long idProdutoEdicao, Long idPeriodo) {
 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select max(lancamento.numeroLancamento) ");
 		hql.append(" from Lancamento lancamento ");
+		hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial ");
 		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
 
+		if (idPeriodo != null) {
+			hql.append(" and periodoLancamentoParcial.id = :idPeriodo ");
+		}
+		
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		if (idPeriodo != null) {
+			query.setParameter("idPeriodo", idPeriodo);
+		}
 		
 		return (Integer) query.uniqueResult();
 	}

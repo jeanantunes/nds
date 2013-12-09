@@ -364,7 +364,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 
-	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao);
+	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
 	
 	Date getMaiorDataLancamentoPrevisto(Long idProdutoEdicao);
 	
