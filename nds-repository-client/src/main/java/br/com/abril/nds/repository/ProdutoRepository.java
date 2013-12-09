@@ -70,4 +70,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	
 	BigDecimal obterDescontoLogistica(Long idProduto);
 	
+	String obterUltimoCodigoProdutoRegional();
+	
+	boolean existeProdutoRegional(String codigo);
 }

@@ -554,6 +554,18 @@ public class ProdutoController extends BaseController {
 				
 			} else {
 				
+				boolean produtoTreelog = false;
+				
+				if (codigoFornecedor != null && (codigoFornecedor == 1 || codigoFornecedor == 2)){
+					
+					produtoTreelog = true;
+				}
+				
+				if (!produtoTreelog && (!produto.getCodigo().startsWith("10") || produto.getCodigo().length() != 10)){
+					
+					listaMensagens.add("Os produtos que não são da Treelog devem ter códigos iniciados por '10' com 10 digitos.");
+				}
+				
 				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
 				
 				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
@@ -618,15 +630,6 @@ public class ProdutoController extends BaseController {
 			if (produto.getTributacaoFiscal() == null) {
 				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
 			}
-
-			if (produto.getGrupoEditorial() != null && !produto.getGrupoEditorial().trim().isEmpty()) {
-				produto.setGrupoEditorial(produto.getGrupoEditorial().trim());
-			}
-			
-			if (produto.getSubGrupoEditorial() != null && !produto.getSubGrupoEditorial().trim().isEmpty()) {
-				produto.setSubGrupoEditorial(produto.getSubGrupoEditorial().trim());
-			}
-	
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
@@ -744,5 +747,15 @@ public class ProdutoController extends BaseController {
 				listaProdutos, ConsultaProdutoDTO.class, this.response);
 		
 		result.nothing();
+	}
+	
+	@Post
+	public String obterCodigoDisponivel(){
+		
+		String codigo = this.produtoService.obterCodigoDisponivel();
+		
+		result.use(Results.json()).from(codigo, "result").serialize();
+		
+		return codigo;
 	}
 }

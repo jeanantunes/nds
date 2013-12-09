@@ -49,14 +49,17 @@
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>
+					<td width="260">
+						<input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="8"/>
+					</td>
 					<td width="142"><strong>Produto:</strong></td>
 					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
 				</tr>
 				<tr>
 					<td><strong>Fornecedor:</strong></td>
 					<td>
-						<select class="habilitarCampoInterface" name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;" >
+						<select class="habilitarCampoInterface" name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;"
+							onchange="produtoController.proximoCodigoDisponivel(this);">
 						</select>
 					</td>	
 					<td><strong>Editor:</strong></td>
@@ -112,7 +115,7 @@
 		
 		
 		<table width="800" border="0" cellspacing="0" cellpadding="0">
-			<tr>
+			<tr style="vertical-align: top;">
 				<td>
 					<table width="400" border="0" cellspacing="0" cellpadding="0">
 						<tr>
@@ -134,25 +137,6 @@
 													<option value="ANUAL" >Anual</option>
 												</select>
 											</td>
-										</tr>
-									</table>
-								</fieldset>
-							</td>
-						</tr>
-						
-						<tr>
-							<td valign="top">
-			   
-								<fieldset style="width:380px!important; float:left; margin-bottom:10px; margin-right:0px!important;">
-									<legend>Editorial</legend>
-									<table width="380" border="0" cellspacing="1" cellpadding="1">
-										<tr>
-											<td width="100">Grupo Editorial:</td>
-											<td ><input class="habilitarCampoInterface" type="text" name="grupoEditorial" id="grupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
-										</tr>
-										<tr>
-											<td width="120" >SubGrupo Editorial:</td>
-											<td><input class="habilitarCampoInterface" type="text" name="subGrupoEditorial" id="subGrupoEditorial" maxlength="25" value="" style="width:200px;" ></td>
 										</tr>
 									</table>
 								</fieldset>

@@ -5,7 +5,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -99,5 +98,7 @@ public interface ProdutoService {
 	List<Produto> obterProdutos();
 	
 	List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento);
+
+	String obterCodigoDisponivel();
 	
 }
