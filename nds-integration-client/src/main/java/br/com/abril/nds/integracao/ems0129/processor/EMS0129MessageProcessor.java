@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0129.processor;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -78,16 +79,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		this.setMensagemValidacao(null);
 		
 		Distribuidor distribuidor = distribuidorRepository.obter();
-
-		String nomeArquivoPickingInterfaceLED = this.obterNomeArquivoPickingInterfaceLED(distribuidor);
 		
 		if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_1)) {
-
-			geraArquivoPicking1(message, nomeArquivoPickingInterfaceLED);
-
+			
+			processarArquivoPickingModelo1(message, distribuidor);
+			
 		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
-
-			geraArquivoPicking2(message, nomeArquivoPickingInterfaceLED);
+			
+			processarArquivoPickingModelo2(message, distribuidor);
 
 		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_3)) {
 
@@ -106,37 +105,62 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
-	private String obterNomeArquivoPickingInterfaceLED(Distribuidor distribuidor) {
-		
-		String nomeArquivoPickingInterfaceLED = null;
-		
-		if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_1)) {
-			
-			nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking1();
-			
-		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
-			
-			nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking2();
-			
-		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
-			
-			nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking3();
-		}
+	
+	/**
+	 * Processa geração do arquivo de Picking do Modelo1
+	 * 
+	 * @param message
+	 * @param distribuidor
+	 */
+	private void processarArquivoPickingModelo2(Message message,
+			Distribuidor distribuidor) {
+		String nomeArquivoPickingInterfaceLED;
+		nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking2();
 		
 		if (nomeArquivoPickingInterfaceLED == null) {
 			
 			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
 		}
 		
-		return nomeArquivoPickingInterfaceLED;
+		geraArquivoPicking2(message, nomeArquivoPickingInterfaceLED);
 	}
 
+	
+	/**
+	 * Processa geração do arquivo de Picking do Modelo1
+	 * 
+	 * @param message
+	 * @param distribuidor
+	 */
+	private void processarArquivoPickingModelo1(Message message,
+			Distribuidor distribuidor) {
+		
+		String nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking1();
+		
+		if (nomeArquivoPickingInterfaceLED == null) {
+			
+			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+		}
+		
+		geraArquivoPicking1(message, nomeArquivoPickingInterfaceLED);
+	}
+
+	
+	/**
+	 * Gera o arquivo de acordo com o modelo de pickin 1
+	 * 
+	 * @param message
+	 * @param nomeArquivoPickingInterfaceLED
+	 */
 	private void geraArquivoPicking1(Message message, String nomeArquivoPickingInterfaceLED) {
 
 		try {
 
 			PrintWriter print = new PrintWriter(
-					new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivoPickingInterfaceLED));
+					new FileWriter(
+							message.getHeader().get(
+									MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) 
+									+ File.pathSeparator + nomeArquivoPickingInterfaceLED));
 			
 			List<PDV> pdvs = findListPDV(message);
 			
@@ -165,6 +189,13 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	
+	/**
+	 * Gera o arquivo de acordo com o modelo de picking 2
+	 * 
+	 * @param message
+	 * @param nomeArquivoPickingInterfaceLED
+	 */
 	private void geraArquivoPicking2(Message message, String nomeArquivoPickingInterfaceLED) {
 
 		List<PDV> pdvs = findListPDV(message);
@@ -175,7 +206,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 		try {
 
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())	+ "/" + nomeArquivoPickingInterfaceLED));
+			PrintWriter print = new PrintWriter(
+					new FileWriter(message.getHeader().get(
+							MessageHeaderProperties.OUTBOUND_FOLDER.getValue())	+ 
+							File.pathSeparator  + nomeArquivoPickingInterfaceLED));
 
 			for (PDV pdv : pdvs) {
 				
@@ -188,7 +222,6 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 				somaRegistros = criarDetalhes(print, numeroCota, pdv.getCota().getMovimentoEstoqueCotas(), somaRegistros);
 				
 				criaTrailer(print, numeroCota, somaRegistros.getValorTotalBruto(), somaRegistros.getValorTotalDesconto());
-			
 			}
 
 			print.flush();
@@ -203,6 +236,13 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	
+	/**
+	 * Obtém a data de Lançamento do Distribuidor
+	 * 
+	 * @param message
+	 * @return
+	 */
 	private Date getDataLancDistrib(Message message) {
 		
 		Date data = (Date) message.getHeader().get("DATA_LCTO_DISTRIB");
@@ -218,6 +258,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	
+	/**
+	 * Obtém listas de PDVs principais com base na data de lançamento.
+	 * 
+	 * @param message
+	 * @return
+	 */
 	private List<PDV> findListPDV(Message message) {
 		
 		Date data = getDataLancDistrib(message);
@@ -250,6 +296,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		return pdvs;
 	}
 
+	
+	/**
+	 * Cria o Header para o arquivo a ser gerado
+	 * 
+	 * @param print
+	 * @param numeroCota
+	 * @param nome
+	 */
 	private void criaHeader(PrintWriter print, Integer numeroCota, String nome) {
 
 		EMS0129Picking1Header outheader = new EMS0129Picking1Header();
@@ -261,6 +315,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	
+	/**
+	 * Cria o Header para o arquivo a ser gerado
+	 * 
+	 * @param print
+	 * @param pdv
+	 * @param data
+	 */
 	private void criaHeader(PrintWriter print, PDV pdv, Date data) {
 
 		EMS0129Picking2Header outheader = new EMS0129Picking2Header();
@@ -290,6 +352,13 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	
+	/**
+	 * Cria trailer do arquivo a ser gerado
+	 * @param print
+	 * @param numeroCota
+	 * @param quantidadeRegistros
+	 */
 	private void criaTrailer(PrintWriter print, Integer numeroCota,
 			int quantidadeRegistros) {
 
@@ -302,6 +371,15 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	
+	/**
+	 * Cria Trailer do arquivo a ser gerado
+	 * 
+	 * @param print
+	 * @param numeroCota
+	 * @param valorTotalBruto
+	 * @param valorTotalDesconto
+	 */
 	private void criaTrailer(PrintWriter print, Integer numeroCota,	BigDecimal valorTotalBruto, BigDecimal valorTotalDesconto) {
 
 		EMS0129Picking2Trailer outtrailer = new EMS0129Picking2Trailer();
@@ -314,6 +392,15 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	
+	/**
+	 * Cria os detalhes do arquivo a ser gerado
+	 * 
+	 * @param print
+	 * @param numeroCota
+	 * @param movimentoEstoqueCotas
+	 * @return
+	 */
 	private int criarDetalhes(PrintWriter print, Integer numeroCota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
 
 		EMS0129Picking1Detalhe outdetalhe = new EMS0129Picking1Detalhe();
@@ -358,6 +445,16 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		return qtdeRegistros;
 	}
 
+	
+	/**
+	 * Cria os detalhes do arquivo a ser gerado
+	 * 
+	 * @param print
+	 * @param numeroCota
+	 * @param movimentoEstoqueCotas
+	 * @param somaRegistros
+	 * @return
+	 */
 	private SomaRegistro criarDetalhes(PrintWriter print,Integer numeroCota, 
 					Set<MovimentoEstoqueCota> movimentoEstoqueCotas, SomaRegistro somaRegistros) {
 
@@ -416,7 +513,15 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
-	private void lancarMensagemValidacao(String mensagemValidacao, Message message) {
+
+	/**
+	 * Lança Exceção com Mensagem de Validação
+	 * 
+	 * @param mensagemValidacao
+	 * @param message
+	 * @throws ValidacaoException
+	 */
+	private void lancarMensagemValidacao(String mensagemValidacao, Message message) throws ValidacaoException {
 		
 		this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.GERACAO_DE_ARQUIVO, mensagemValidacao);

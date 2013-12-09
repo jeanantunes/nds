@@ -22,9 +22,10 @@ public class EMS0129Test extends RouteTestTemplate {
 	public void test() {
 		
 		Calendar calendar = Calendar.getInstance();
-//		calendar.set(2012, Calendar.JUNE, 15);
 		
-		route.execute("Erick", calendar.getTime(), "6248116");
+		route.execute("TestUnitarioUser", calendar.getTime(), "6248116");
 
 	}
+	
+	
 }
