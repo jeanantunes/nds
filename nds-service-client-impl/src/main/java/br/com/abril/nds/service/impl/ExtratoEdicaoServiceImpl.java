@@ -391,7 +391,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		return itensExtratoEdicaoDoGrupo;
 	}
 	
-	private List<GrupoMovimentoEstoque> obterGruposMovimentoEstoqueExtratoEdicao() {
+	@Override
+	public List<GrupoMovimentoEstoque> obterGruposMovimentoEstoqueExtratoEdicao() {
 		
 		List<GrupoMovimentoEstoque> grupos = new ArrayList<GrupoMovimentoEstoque>();
 
