@@ -120,7 +120,7 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@ManyToOne(cascade = {CascadeType.ALL})
+	@ManyToOne
 	@JoinColumn(name = "PERIODO_LANCAMENTO_PARCIAL_ID")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
