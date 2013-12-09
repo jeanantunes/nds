@@ -37,10 +37,6 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String periodicidade;
 	
-	private String grupoEditorial;
-	
-	private String subGrupoEditorial;
-	
 	private String tributacaoFiscal;
 	
 	private String classeSocial;
@@ -74,7 +70,6 @@ public class ProdutoCadastroVO implements Serializable {
 			Long codigoFornecedor, Long codigoEditor, String slogan,
 			Long codigoTipoProduto, String formaComercializacao, Integer peb,
 			Integer pacotePadrao, Long tipoDesconto, String periodicidade,
-			String grupoEditorial, String subGrupoEditorial,
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
 			String tipoLancamento, String temaPrincipal, 
@@ -91,8 +86,6 @@ public class ProdutoCadastroVO implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 		this.tipoDesconto = tipoDesconto;
 		this.periodicidade = periodicidade;
-		this.grupoEditorial = grupoEditorial;
-		this.subGrupoEditorial = subGrupoEditorial;
 		this.tributacaoFiscal = tributacaoFiscal;
 		this.classeSocial = classeSocial;
 		this.sexo = sexo;
@@ -274,34 +267,6 @@ public class ProdutoCadastroVO implements Serializable {
 	}
 
 	/**
-	 * @return the grupoEditorial
-	 */
-	public String getGrupoEditorial() {
-		return grupoEditorial;
-	}
-
-	/**
-	 * @param grupoEditorial the grupoEditorial to set
-	 */
-	public void setGrupoEditorial(String grupoEditorial) {
-		this.grupoEditorial = grupoEditorial;
-	}
-
-	/**
-	 * @return the subGrupoEditorial
-	 */
-	public String getSubGrupoEditorial() {
-		return subGrupoEditorial;
-	}
-
-	/**
-	 * @param subGrupoEditorial the subGrupoEditorial to set
-	 */
-	public void setSubGrupoEditorial(String subGrupoEditorial) {
-		this.subGrupoEditorial = subGrupoEditorial;
-	}
-
-	/**
 	 * @return the tributacaoFiscal
 	 */
 	public String getTributacaoFiscal() {
@@ -454,7 +419,7 @@ public class ProdutoCadastroVO implements Serializable {
 			formaComercializacao != null ? formaComercializacao.name() : "", 
 			produto.getPeb(), 
 			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
-			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
+			tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getClasseSocial()!=null?produto.getSegmentacao().getClasseSocial().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getSexo()!=null?produto.getSegmentacao().getSexo().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFaixaEtaria()!=null?produto.getSegmentacao().getFaixaEtaria().name():""):"",
