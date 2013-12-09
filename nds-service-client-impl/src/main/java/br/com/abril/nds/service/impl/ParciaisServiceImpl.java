@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -179,6 +176,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
 			
+			dtRecolhimento = this.obterDataRecolhimentoIdeal(dtRecolhimento);
+			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
 				numeroPeriodo = qtdePeriodos;	
@@ -255,15 +254,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 					
 					if(lancamento!= null && getStatusLancamentoPreExpedicao().contains(lancamento.getStatus())){
 						
-						periodoLancamentoParcialRepository.removerPorId(item.getId());
-						
-						List<Lancamento> redistribuicoes = periodoLancamentoParcialRepository.obterRedistribuicoes(item.getId());
-						
-						if(!redistribuicoes.isEmpty()){
-							for(Lancamento lan: redistribuicoes){
-								excluirRedistribuicaoParcial(lan.getId());
-							}
-						}
+						periodoLancamentoParcialRepository.remover(item);
 					}
 				}
 				
@@ -612,34 +603,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		this.validarExclusaoRedistribuicaoParcial(lancamento);
 		
-		List<HistoricoLancamento> historicoLancamentos = lancamento.getHistoricos();
-		
-		for (HistoricoLancamento historicoLancamento : historicoLancamentos) {
-			this.historicoLancamentoRepository.remover(historicoLancamento);
-		}
-		
-		this.excluirEstudoCotaEstudo(lancamento);
-		
-		this.lancamentoRepository.removerPorId(idLancamentoRedistribuicao);
-	}
-
-	private void excluirEstudoCotaEstudo(Lancamento lancamento) {
-		
-		Estudo estudo = lancamento.getEstudo();
-		
-		if (estudo != null) {
-			
-			Set<EstudoCota> estudoCotas = estudo.getEstudoCotas();
-			
-			if (estudoCotas != null) {
-				
-				for (EstudoCota estudoCota : estudoCotas) {
-					this.estudoCotaRepository.remover(estudoCota);
-				}
-			}
-			
-			this.estudoRepository.remover(estudo);
-		}
+		this.lancamentoRepository.remover(lancamento);
 	}
 
 	private void validarInclusaoRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO,
