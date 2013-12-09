@@ -36,7 +36,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, ")
+		sql.append("select distinct new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, ")
 		   .append(" nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), ")
 		   .append(" SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
 		
@@ -174,11 +174,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 		if(filtro.getIdCotaInicial() != null || filtro.getIdCotaFinal() != null) {
 			if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() == null) {
-				sql.append("and cota.id >= :idCotaInicial ");
+				sql.append("and cota.numeroCota >= :idCotaInicial ");
 			} else if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
-				sql.append("and cota.id between :idCotaInicial and :idCotaFinal ");
+				sql.append("and cota.numeroCota between :idCotaInicial and :idCotaFinal ");
 			} else {
-				sql.append("and cota.id <= :idCotaFinal ");
+				sql.append("and cota.numeroCota <= :idCotaFinal ");
 			}
 		}
 		
@@ -266,12 +266,12 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		if(filtro.getIdCotaInicial() != null || filtro.getIdCotaFinal() != null) {
 			if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() == null) {
-				q.setParameter("idCotaInicial", filtro.getIdCotaInicial());
+				q.setParameter("idCotaInicial", Integer.parseInt(filtro.getIdCotaInicial().toString()));
 			} else if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
-				q.setParameter("idCotaInicial", filtro.getIdCotaInicial());
-				q.setParameter("idCotaFinal", filtro.getIdCotaFinal());
+				q.setParameter("idCotaInicial", Integer.parseInt(filtro.getIdCotaInicial().toString()));
+				q.setParameter("idCotaFinal", Integer.parseInt(filtro.getIdCotaFinal().toString()));
 			} else {
-				q.setParameter("idCotaFinal", filtro.getIdCotaFinal());
+				q.setParameter("idCotaFinal", Integer.parseInt(filtro.getIdCotaFinal().toString()));
 			}
 		}
 		

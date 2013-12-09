@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -107,6 +108,8 @@ public class VendaEncalheController extends BaseController {
 	@Autowired 
 	private GerarCobrancaService cobrancaService;
 	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Path("/")
 	public void index() {}
@@ -158,12 +161,12 @@ public class VendaEncalheController extends BaseController {
 		
 		byte[] comprovanteVenda = null;
 		
-		if(novaVenda){
+		if(novaVenda) {
 
-			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuarioLogado());
-		}
-		else{
-			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuarioLogado());
+			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas, numeroCota, dataDebito, getUsuarioLogado());
+		} else {
+			
+			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0), dataDebito, getUsuarioLogado());
 		}
 		
 		session.setAttribute("COMPROVANTE_VENDA",comprovanteVenda);
@@ -220,9 +223,9 @@ public class VendaEncalheController extends BaseController {
 		
 		Integer qntDias = this.distribuidorService.qntDiasVencinemtoVendaEncalhe();
 		
-		qntDias = (qntDias == null) ? 0 : qntDias;
+		qntDias = (qntDias == null) ? 1 : qntDias;
 		
-		Date dataVencimentoDebito = DateUtil.adicionarDias(dataOperacao, qntDias);
+		Date dataVencimentoDebito = this.calendarioService.adicionarDiasUteis(dataOperacao, qntDias);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		
@@ -516,7 +519,7 @@ public class VendaEncalheController extends BaseController {
 		}
 		else{
 			
-			if(DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataDebito)){
+			if(this.distribuidorService.obterDataOperacaoDistribuidor().compareTo(dataDebito) >= 0){
 				mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data de operação do sistema!");
 			}
 			
@@ -538,16 +541,7 @@ public class VendaEncalheController extends BaseController {
 			
 			if (cobrancaService.verificarCobrancasGeradasNaDataVencimentoDebito(dataDebito, cota.getId())){
 				
-				if(!isNovaVenda){
-					
-					mensagensValidacao.add("Venda não pode ser editada!");
-					mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
-				}
-				else{
-					
-					mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
-					mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data informada!");
-				}
+				mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
 			}	
 		}
 	}
@@ -691,6 +685,8 @@ public class VendaEncalheController extends BaseController {
 		
 		FileExporter.to("venda-encalhes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,resultadoVendaEncalheVO, 
 				listaExibicaoGrid, VendaEncalheVO.class, this.httpServletResponse);
+		
+		result.nothing();
 	}
 	
 	private FiltroVendaEncalheDTO obterFiltroExportacao() {
@@ -726,7 +722,7 @@ public class VendaEncalheController extends BaseController {
 	
 	@Get("/reimprimirComprovanteVenda/{idVenda}")
 	public Download reimprimirComprovanteVenda(Long idVenda){		
-		byte[] relatorio =  vendaEncalheService.geraImpressaoComprovanteVenda(idVenda);		
+		byte[] relatorio =  vendaEncalheService.geraImpressaoComprovanteVenda(idVenda);
 		return new ByteArrayDownload(relatorio,"application/pdf", "comprovanteVenda.pdf",true);
 	}
 }

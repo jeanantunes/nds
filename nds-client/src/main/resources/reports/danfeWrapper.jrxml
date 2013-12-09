@@ -7,7 +7,7 @@
 		<defaultValueExpression><![CDATA["C:\\Users\\michel.jader\\Desktop\\relatorios\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
-	<field name="nfesImpressao" class="java.util.List"/>
+	<field name="danfes" class="java.util.List"/>
 	<detail>
 		<band height="842" splitType="Stretch">
 			<subreport>
@@ -49,7 +49,7 @@
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="FAT_NUMERO1"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{nfesImpressao})]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{danfes})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "danfe.jasper"]]></subreportExpression>
 			</subreport>
 		</band>

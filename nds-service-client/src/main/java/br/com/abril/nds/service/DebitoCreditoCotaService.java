@@ -44,4 +44,18 @@ public interface DebitoCreditoCotaService {
 	 * @return DebitoCreditoDTO
 	 */
 	DebitoCreditoDTO obterDadosLancamentoPorCota(Integer numeroCota,BigDecimal percentual,BaseCalculo baseCalculo,Date dataPeriodoInicial,Date dataPeriodoFinal,Long index);
+
+	/**
+	 * Obtem valor total de Débitos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	BigDecimal obterTotalDebitoCota(Integer numeroCota, Date dataOperacao);
+
+	/**
+	 * Obtem valor total de Créditos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
 }

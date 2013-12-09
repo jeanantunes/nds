@@ -675,8 +675,12 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			item.setValorICMSProduto(valorICMSProduto);
 			item.setAliquotaIPIProduto(aliquotaIPIProduto);
 			item.setValorIPIProduto(valorIPIProduto);
-			item.setInfoComplementar(
-				produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
+			if(produtoServico.getProdutoServicoPK() != null
+					&& produtoServico.getProdutoServicoPK().getNotaFiscal() != null
+					&& produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional() != null) {
+				
+				item.setInfoComplementar(produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
+			}
 			
 			listaItemDanfe.add(item);
 			
@@ -717,7 +721,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 		
-		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
 }

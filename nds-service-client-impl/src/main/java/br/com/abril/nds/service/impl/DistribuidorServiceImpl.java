@@ -80,7 +80,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional
 	public DistribuidorDTO obterDadosEmissao() {
 		
-		Distribuidor distribuidor = obter();
+		Distribuidor distribuidor = this.obter();
 		
 		DistribuidorDTO dto = new DistribuidorDTO();
 		

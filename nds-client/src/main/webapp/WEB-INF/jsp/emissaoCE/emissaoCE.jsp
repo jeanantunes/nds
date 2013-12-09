@@ -40,18 +40,25 @@
 		
 		<div class="areaBts">
 			<div class="area">
+			
 				<span class="bt_novos">
 					<!-- IMPRESSAO CE -->
 					<a href="#" id="imprimirCE" rel="tipsy" title="Imprimir CE">
 					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
 				</span>
+				
 				<span class="bt_arq">
 					<!-- ARQUIVO EXCEL -->
 					<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
 				</span>
 				
-			
+				<span class="bt_arq">
+					<!-- IMPRESSAO BOLETOS EM BRANCO -->
+					<a href="#" id="imprimirBoletosEmBranco" rel="tipsy" title="Imprimir Boletos em Branco">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
+				</span>
+				
 				<span class="bt_arq">
 					<!-- ARQUIVO PDF -->
 					<a href="${pageContext.request.contextPath}/emissaoCE/exportar?fileType=PDF" rel="tipsy" title="Imprimir Arquivo">
