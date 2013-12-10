@@ -185,7 +185,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
 		if(filtro.getNumeroCota() != null) {
-			Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
 			filtro.setIdCota(cota.getId());
 		}
 		
@@ -464,13 +464,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
 			MovimentoEstoque movimentoEstoque = null;
-<<<<<<< HEAD
-			
+
 			boolean validarTransfEstoqueDiferenca = TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque());
 			
-=======
-				
->>>>>>> fase2
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
 				
 				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
@@ -511,20 +507,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					diferenca.setQtde(qntTotalRateio);
 				}
-<<<<<<< HEAD
 			} else {
 				
 				movimentoEstoque = 
 					this.gerarMovimentoEstoque(diferenca, usuario.getId(),
 						isMovimentoDiferencaAutomatico, validarTransfEstoqueDiferenca,
 							ultimoLancamento.getDataLancamentoDistribuidor(), origem);
-						
-=======
-				
-			}else{
-				
-				movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(),diferenca.isAutomatica());
->>>>>>> fase2
 			}
 
 			if (statusAprovacao == null) {
@@ -840,14 +828,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			if(rateioDiferenca == null){
 				
 				rateioDiferenca = new RateioDiferenca();
-				
-<<<<<<< HEAD
-=======
-				Cota cota = this.cotaRepository.obterPorNumeroDaCota(rateioCotaVO.getNumeroCota());
-				
-				rateioDiferenca.setCota(cota);
-				
->>>>>>> fase2
+
 				EstudoCota estudoCota = 
 						this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(
 								this.distribuidorService.obterDataOperacaoDistribuidor(),

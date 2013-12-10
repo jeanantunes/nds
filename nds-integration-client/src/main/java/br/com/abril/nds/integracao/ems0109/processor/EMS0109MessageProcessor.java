@@ -23,10 +23,7 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
-<<<<<<< HEAD
 import br.com.abril.nds.service.EmailService;
-=======
->>>>>>> fase2
 
 @Component
 public class EMS0109MessageProcessor extends AbstractRepository implements
@@ -35,13 +32,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
-<<<<<<< HEAD
 	@Autowired
 	private EmailService emailService;
 
 	
-=======
->>>>>>> fase2
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
@@ -75,28 +69,17 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Distribuidor nao encontrato.");
 
-<<<<<<< HEAD
 //			throw new RuntimeException("Distribuidor incorreto.");
-=======
-			throw new RuntimeException("Distribuidor incorreto.");
->>>>>>> fase2
 		}
 	}
 
 	private boolean verificarDistribuidor(Message message) {
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
-<<<<<<< HEAD
 		String codigoDistribuidorSistema = 
 			message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
 		String codigoDistribuidorArquivo = input.getCodigoDistribuidor();
-=======
-		Long codigoDistribuidorSistema = (Long) message.getHeader().get(
-				MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue());
-		Long codigoDistribuidorArquivo = Long.parseLong(input
-				.getCodigoDistribuidor());
->>>>>>> fase2
 
 		if (codigoDistribuidorSistema != null
 				&& codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
@@ -142,19 +125,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-<<<<<<< HEAD
 					"Editor " + input.getCodigoEditor() + " nao encontrado, publicação: "+input.getCodigoPublicacao());
 
 //			throw new RuntimeException("Editor " + input.getCodigoEditor() + " nao encontrado.");
 		}
 		
 		return editor;
-=======
-					"Editor " + input.getCodigoEditor() + " nao encontrado.");
-
-			throw new RuntimeException("Editor " + input.getCodigoEditor() + " nao encontrado.");
-		}
->>>>>>> fase2
 	}
 
 	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
@@ -200,14 +176,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Produto REVISTA nao encontrado.");
 
-<<<<<<< HEAD
+
 //			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
 		return tipoProduto;
-=======
-			throw new RuntimeException("Tipo Produto nao encontrado.");
-		}
->>>>>>> fase2
 	}
 
 	private Fornecedor findFornecedor(Integer codigoInterface) {
@@ -230,19 +202,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		Produto produto = new Produto();
 
-<<<<<<< HEAD
 		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
 		
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
 		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto( tipoDescontoInt );
-=======
-		Fornecedor fornecedor = this
-				.findFornecedor(input.getCodigoFornecedor());
-		DescontoLogistica descontoLogistica = this
-				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
->>>>>>> fase2
 
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
@@ -294,18 +259,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			produto.setDescontoLogistica(descontoLogistica);
 
-<<<<<<< HEAD
 		}else{
 			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
-=======
->>>>>>> fase2
 		}
 
 		this.getSession().persist(produto);
 
 	}
-<<<<<<< HEAD
- 
+
 	private void validarDescontoLogistico(Message message, String codigoPublicacao, int tipoDescontoInt) {
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
 		String msg = "TipoDesconto: "+tipoDescontoInt+" não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;
@@ -333,9 +294,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
 	
 	
-=======
-
->>>>>>> fase2
 	private void atualizaProdutoConformeInput(Produto produto, Editor editor,
 			TipoProduto tipoProduto, Message message) {
 
@@ -344,16 +302,11 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
-<<<<<<< HEAD
 		
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
 		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(tipoDescontoInt);
-=======
-		DescontoLogistica descontoLogistica = this
-				.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()) );
->>>>>>> fase2
 		
 		produto.setOrigem(Origem.INTERFACE);
 		
@@ -487,7 +440,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			}
 		}
 
-<<<<<<< HEAD
 		if (descontoLogistica == null) {
 			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
 		}
@@ -500,20 +452,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 				this.ndsiLoggerFactory.getLogger().logInfo(message,EventoExecucaoEnum.INF_DADO_ALTERADO,"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
 				
-=======
-		if (null != produto.getDescontoLogistica() && null != descontoLogistica) {
-
-			if (!produto.getDescontoLogistica().equals(descontoLogistica)) {
-
-				produto.setDescontoLogistica(descontoLogistica);
-
-				this.ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Tipo Desconto para: "
-								+ descontoLogistica.getTipoDesconto());
-
->>>>>>> fase2
 			}
 		}
 
