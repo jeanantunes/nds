@@ -165,4 +165,7 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return List<Box>
 	 */
 	List<Box> buscarBoxPorRoteiro(Long roteiroId);
+
+
+	public String obterDescricaoBoxPorCota(Integer numeroCota);
 }

@@ -190,4 +190,16 @@ public class BoxServiceImpl implements BoxService {
 
 		return boxRepository.buscarBoxPorRoteiro(roteiroId);
 	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public String obterDescricaoBoxPorCota(Integer numeroCota) {
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número de cota é obrigatório.");
+		}
+		
+		return this.boxRepository.obterDescricaoBoxPorCota(numeroCota);
+	}
 }
