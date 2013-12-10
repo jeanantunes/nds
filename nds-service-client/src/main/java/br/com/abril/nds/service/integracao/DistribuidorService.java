@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package br.com.abril.nds.service.integracao;
 
 import java.util.Date;
