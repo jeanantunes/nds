@@ -42,8 +42,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
-<<<<<<< HEAD
-	
+
 	@OneToOne(mappedBy="movimentoFinanceiroCota")
 	private ParcelaNegociacao parcelaNegociacao;
 	

@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
+import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -73,7 +74,6 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.ListUtils;
 
 @Service
 public class PdvServiceImpl implements PdvService {

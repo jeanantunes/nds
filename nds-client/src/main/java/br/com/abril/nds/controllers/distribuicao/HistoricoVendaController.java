@@ -161,7 +161,7 @@ public class HistoricoVendaController extends BaseController {
 		// valida se o campo percentual venda está preenchido
 		filtroValidate(filtro.validarPorQtdVenda(), filtro);
 		
-		List<CotaDTO> cotas = cotaService.buscarCotasQueInquadramNoRangeVenda(filtro.getQtdVendaInicial(), filtro.getQtdVendaFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		List<CotaDTO> cotas = cotaService.buscarCotasQueEnquadramNoRangeVenda(filtro.getQtdVendaInicial(), filtro.getQtdVendaFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
 		

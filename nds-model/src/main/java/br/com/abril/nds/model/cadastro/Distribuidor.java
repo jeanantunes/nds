@@ -29,7 +29,6 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.LeiautePicking;
 
 /**
  * Cadastro do Distribuidor
@@ -203,11 +202,7 @@ public class Distribuidor {
 	 */
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "LEIAUTE_PICKING", length = 20, nullable = true)
-	private LeiautePicking leiautePicking;
-	
+
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
@@ -698,20 +693,6 @@ public class Distribuidor {
     public void setPoliticaChamadao(PoliticaChamadao politicaChamadao) {
         this.politicaChamadao = politicaChamadao;
     }
-    
-    /**
- 	 * @return the leiautePicking
- 	 */
- 	public LeiautePicking getLeiautePicking() {
- 		return leiautePicking;
- 	}
-
- 	/**
- 	 * @param leiautePicking the leiautePicking to set
- 	 */
- 	public void setLeiautePicking(LeiautePicking leiautePicking) {
- 		this.leiautePicking = leiautePicking;
- 	}
     
 	public BigDecimal getValorConsignadoSuspensaoCotas() {
 		return valorConsignadoSuspensaoCotas;

@@ -516,7 +516,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		for(CotaEmissaoDTO dto:lista) {
 			
-			cota = cotaRepository.obterPorNumerDaCota( dto.getNumCota());
+			cota = cotaRepository.obterPorNumeroDaCota( dto.getNumCota());
 
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 

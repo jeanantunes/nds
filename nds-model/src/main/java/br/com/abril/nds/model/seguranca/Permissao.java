@@ -95,6 +95,7 @@ public enum Permissao {
 	
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO_ALTERACAO("Área de influência / Gerador de Fluxo", 		Permissao.ROLE_DISTRIBUICAO, true),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   	Permissao.ROLE_DISTRIBUICAO, ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO_ALTERACAO, true),
+	ROLE_DISTRIBUICAO_CARACTERISTICA_DISTRIBUICAO("Características de Distribuição",                        Permissao.ROLE_DISTRIBUICAO, true),
 
 	ROLE_DISTRIBUICAO_REGIAO_ALTERACAO("Região", 				  											Permissao.ROLE_DISTRIBUICAO, true),
 	ROLE_DISTRIBUICAO_REGIAO("Região", 				  													   	Permissao.ROLE_DISTRIBUICAO, ROLE_DISTRIBUICAO_REGIAO_ALTERACAO, true),

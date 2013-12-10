@@ -113,7 +113,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		super(Cota.class);
 	}
 
-	public Cota obterPorNumerDaCota(Integer numeroCota) {
+	public Cota obterPorNumeroDaCota(Integer numeroCota) {
 		
 		Query query = 
 				this.getSession().createQuery(

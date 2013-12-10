@@ -292,7 +292,7 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCota(Integer numeroCota) {
-		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		return this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 	}
 	
 	@Transactional(readOnly = true)
@@ -1017,7 +1017,7 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
 		}
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(dto.getNumCota());		
+		Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());		
 		
 		if( cota == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
@@ -1878,7 +1878,7 @@ public class CotaServiceImpl implements CotaService {
 		Cota cota = null;
 		
 		if(numeroCota != null){
-			cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+			cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		}
 		
 		ReferenciaCota referenciaCota = new ReferenciaCota();
@@ -1976,7 +1976,7 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private void processarNovoNumeroCota(Integer numeroCota, Long idCota){
 		
-		Cota cota  = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota  = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		if(cota!= null){
 			
@@ -2041,7 +2041,7 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private Integer getNovoNumeroCota(Integer numeroCota, Integer novoNumeroCota ,Integer numero){
 		
-		Cota cota  = cotaRepository.obterPorNumerDaCota( (novoNumeroCota == null) ?numeroCota :novoNumeroCota);
+		Cota cota  = cotaRepository.obterPorNumeroDaCota( (novoNumeroCota == null) ?numeroCota :novoNumeroCota);
 		
 		if(cota != null){
 			novoNumeroCota = numero * 10000 + numeroCota;
@@ -2257,7 +2257,7 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public byte[] getDocumentoProcuracao(Integer numeroCota) throws Exception {
 
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		ProcuracaoImpressaoDTO dto = new ProcuracaoImpressaoDTO();
 		
@@ -2346,7 +2346,7 @@ public class CotaServiceImpl implements CotaService {
 		TermoAdesaoDTO dto = new TermoAdesaoDTO();
 		dto.setNumeroCota(numeroCota);
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		dto.setNomeCota(cota.getPessoa().getNome());
 		dto.setNomeDistribuidor(this.distribuidorRepository.obterRazaoSocialDistribuidor());
@@ -2416,7 +2416,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		DistribuicaoDTO dto = new DistribuicaoDTO();
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numCota);
 		
 		if (cota == null) {
 			
@@ -2605,7 +2605,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
+	public List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
 		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
 	}
 	
@@ -2644,7 +2644,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+	public List<CotaDTO> buscarCotasQueEnquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		return cotaRepository.buscarCotasQuePossuemRangeVenda(qtdVendaInicial, qtdVendaFinal, listProdutoEdicaoDto, cotasAtivas);
 	}
 
