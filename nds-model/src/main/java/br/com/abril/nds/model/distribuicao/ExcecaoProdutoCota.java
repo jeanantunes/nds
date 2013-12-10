@@ -126,6 +126,4 @@ public class ExcecaoProdutoCota implements Serializable {
 		this.codigoICD = codigoICD;
 	}
 
-	
-	
 }

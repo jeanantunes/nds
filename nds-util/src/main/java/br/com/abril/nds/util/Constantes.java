@@ -1,10 +1,7 @@
 package br.com.abril.nds.util;
 
-<<<<<<< HEAD
 import java.util.Locale;
 
-=======
->>>>>>> fase2
 /**
  * Classe utilitária para constantes comuns no sistema.
  * 
@@ -13,7 +10,6 @@ import java.util.Locale;
  */
 public abstract class Constantes {
 	
-<<<<<<< HEAD
 	public static final Locale LOCALE_EN_US = new Locale("en", "US");
 	
 	public static final Locale LOCALE_PT_BR = new Locale("pr", "BR");
@@ -22,10 +18,6 @@ public abstract class Constantes {
 	
 	public static final String DAY_MONTH_PT_BR = "dd/MM";
 	
-=======
-	public static final String DATE_PATTERN_PT_BR = "dd/MM/yyyy";
-	
->>>>>>> fase2
 	public static final String FORMATO_DATA_ARQUIVO_CNAB = "ddMMyy";
 	
 	public static final String DATE_TIME_PATTERN_PT_BR = "dd/MM/yyyy HH:mm:ss";
@@ -48,17 +40,11 @@ public abstract class Constantes {
 	
 	public static final String CNPJ = "cnpj";
 	
-<<<<<<< HEAD
-=======
-	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 3;
-	
->>>>>>> fase2
 	public static final String DATA_FMT_PESQUISA_MYSQL = "YYYY-MM-DD";
 	
 	public static final Integer MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL = 9999;
 	
 	public static final Integer QTD_MAX_REGISTROS_AUTO_COMPLETE = 20;
-<<<<<<< HEAD
 	
 	public static final String NOME_PROPERTIES_NDS_CLIENT = "nds-client.properties";
 	
@@ -70,8 +56,6 @@ public abstract class Constantes {
 	
 	public static final String[] MAILS_RECEBIMENTO_INTERFACE = new String[]{"novodistrib@dgb.com.br"};
 	
-=======
->>>>>>> fase2
 }
 
 

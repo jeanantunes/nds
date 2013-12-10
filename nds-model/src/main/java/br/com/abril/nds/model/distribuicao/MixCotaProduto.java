@@ -164,6 +164,4 @@ public class MixCotaProduto {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 	
-	
-	
 }

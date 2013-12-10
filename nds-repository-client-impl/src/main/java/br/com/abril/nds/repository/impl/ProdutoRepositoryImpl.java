@@ -145,18 +145,6 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql.append(" coalesce(descontoLogistica.percentualDesconto, produto.desconto, 0) as percentualDesconto, ");
 		hql.append(" produto.periodicidade as periodicidade 	");
 		
-<<<<<<< HEAD
-		Query query = this.getQueryBuscaProdutos(
-				hql, codigo, produto, fornecedor, 
-				editor, codigoTipoProduto, sortname, sortorder, false);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaProdutoDTO.class));
-		
-		query.setMaxResults(rp);
-		query.setFirstResult(page);
-		
-		return query.list();
-=======
 		try {
 			
 			Query query = 
@@ -176,7 +164,6 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
->>>>>>> fase2
 	}
 
 	@Override
@@ -374,7 +361,6 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-<<<<<<< HEAD
 	
 	@Override
 	public BigDecimal obterDescontoLogistica(Long idProduto) {
@@ -393,7 +379,6 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 }
-=======
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -439,4 +424,3 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
     }
 
 }
->>>>>>> fase2

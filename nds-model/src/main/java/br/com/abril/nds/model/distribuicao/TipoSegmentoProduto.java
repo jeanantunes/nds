@@ -98,7 +98,4 @@ public class TipoSegmentoProduto implements Serializable {
 		this.produtos = produtos;
 	}
 	
-	
-	
-	
 }

@@ -150,8 +150,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
-=======
->>>>>>> fase2
 	 * Obtém o valor total do encalhe para a cota (caso específicada)
 	 * e período de recolhimento.
 	 * 
@@ -452,7 +450,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
-<<<<<<< HEAD
 																			Long idCota, 
 																			List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 
@@ -479,17 +476,12 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
 			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
-=======
-			Long idCota, 
-			GrupoMovimentoEstoque grupoMovimentoEstoque);
 
 	/**
 	 * 
 	 * @param idEstudo
 	 */
 	public abstract void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo);
-
->>>>>>> fase2
 
 	/**
 	 * Obtém a data da última movimentação de reparte expedida.

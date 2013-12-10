@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package br.com.abril.nds.model.integracao;
 
 
@@ -40,15 +39,3 @@ public enum StatusIntegracao {
 		return this.descricao;
 	}
 }
-=======
-package br.com.abril.nds.model.integracao;
-
-public enum StatusIntegracao {
-	LIBERADO,
-	EM_PROCESSO,
-	SOLICITADO,
-	REJEITADO,
-	DESPREZADO,
-	NAO_INTEGRADO
-}
->>>>>>> fase2
