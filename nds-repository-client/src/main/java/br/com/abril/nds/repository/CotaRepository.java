@@ -57,7 +57,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * 
      * @return {@link Cota}
      */
-    Cota obterPorNumerDaCota(Integer numeroCota);
+    Cota obterPorNumeroDaCota(Integer numeroCota);
 
     /**
      * Obtém uma lista de cotas através da comparação por nome.

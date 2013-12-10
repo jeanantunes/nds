@@ -141,15 +141,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 													            GrupoMovimentoEstoque... gruposMovimentoEstoque);
 		
 	/**
-	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
-	 * 
-	 * @param filtro
-	 * 
-	 * @return Qtde - Integer
-	 */
-	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
-	
-	/**
 	 * Obtém o valor total do encalhe para a cota (caso específicada)
 	 * e período de recolhimento.
 	 * 

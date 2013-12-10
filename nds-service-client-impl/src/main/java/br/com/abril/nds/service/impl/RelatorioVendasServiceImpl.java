@@ -133,7 +133,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		if(!lista.isEmpty()){
 			
 			Produto produto =
-					this.produtoRepository.obterProdutoPorCodigo(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
+					this.produtoRepository.obterProdutoPorCodigoProdinLike(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
 			
 			Map<Long, Long> mapRankingProdutoPorProduto =
 					this.rankingRepository.obterRankingProdutoPorProduto();
@@ -173,7 +173,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		if(!lista.isEmpty()) {
 			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
 			
 			Map<Long, Long> mapRanking = this.rankingRepository.obterRankingProdutoPorCota(cota.getId());
 			
