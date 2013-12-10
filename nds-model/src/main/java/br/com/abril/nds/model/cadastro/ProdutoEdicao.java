@@ -644,7 +644,6 @@ public class ProdutoEdicao implements Serializable {
 		this.estoqueProduto = estoqueProduto;
 	}
 	
-<<<<<<< HEAD
 	public Set<HistoricoEstoqueProduto> getHistoricoEstoqueProduto() {
 		return historicoEstoqueProduto;
 	}
@@ -653,7 +652,7 @@ public class ProdutoEdicao implements Serializable {
 			Set<HistoricoEstoqueProduto> historicoEstoqueProduto) {
 		this.historicoEstoqueProduto = historicoEstoqueProduto;
 	}
-=======
+
 	public TipoSegmentoProduto getTipoSegmentoProduto() {
 		return tipoSegmentoProduto;
 	}
@@ -669,7 +668,6 @@ public class ProdutoEdicao implements Serializable {
     public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
         this.tipoClassificacaoProduto = tipoClassificacaoProduto;
     }
->>>>>>> fase2
 
 	@Override
 	public int hashCode() {

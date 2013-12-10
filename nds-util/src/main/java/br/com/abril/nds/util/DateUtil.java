@@ -5,11 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-<<<<<<< HEAD
-=======
 import java.util.GregorianCalendar;
-import java.util.TreeSet;
->>>>>>> fase2
 
 import org.apache.commons.lang.time.DateUtils;
 

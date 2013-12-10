@@ -41,14 +41,11 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-<<<<<<< HEAD
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.repository.DistribuidorRepository;
-=======
->>>>>>> fase2
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
@@ -993,10 +990,6 @@ public class NFeServiceImpl implements NFeService {
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
-<<<<<<< HEAD
-=======
-//		Integer sequencia			= 0;
->>>>>>> fase2
 		Long produtoEdicao 			= null;
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;

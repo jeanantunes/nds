@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package br.com.abril.nds.repository;
 
 import java.util.Date;
@@ -31,28 +30,3 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 
 	Set<String> obterMunicipiosCotasGrupo(Long idGrupo);
 }
-=======
-package br.com.abril.nds.repository;
-
-import java.util.List;
-
-import br.com.abril.nds.model.cadastro.GrupoCota;
-
-/**
- * Interface que define as regras de acesso a dados referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.GrupoCota }  
- * 
- * @author Discover Technology
- */
-public interface GrupoRepository extends Repository<GrupoCota,Long> {
-	
-	/**
-	 * Obtém todos os Grupos
-	 * @return List<GrupoCota> grupos
-	 */
-	List<GrupoCota> obterTodosGrupos() ;
-
-	Integer countTodosGrupos();
-
-}
->>>>>>> fase2

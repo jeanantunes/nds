@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
@@ -187,4 +186,3 @@ public class FixacaoReparte {
         this.classificacaoProdutoEdicao = classificacaoProdutoEdicao;
     }
 }
-

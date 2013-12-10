@@ -198,13 +198,8 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
 		hql.append(" WHERE  ( cota.parametroDistribuicao.utilizaTermoAdesao = true and cota.parametroDistribuicao.termoAdesaoRecebido= false )    ");
 		hql.append("  or  ( cota.parametroDistribuicao.utilizaProcuracao = true and cota.parametroDistribuicao.procuracaoRecebida = false )    ");
-<<<<<<< HEAD
-
-=======
-		
 		hql.append(" order by cota.numeroCota");
-		
->>>>>>> fase2
+
 		Query query =  getSession().createQuery(hql.toString());		
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
@@ -242,11 +237,8 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		
 		hql.append(" WHERE    fornecedores.possuiContrato = true   and   datediff( fornecedores.validadeContrato, sysdate()) < distribuidor.prazoFollowUp ");
 		
-<<<<<<< HEAD
-=======
 		hql.append(" order by cota.numeroCota");
 		
->>>>>>> fase2
 		Query query =  getSession().createQuery(hql.toString());		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(

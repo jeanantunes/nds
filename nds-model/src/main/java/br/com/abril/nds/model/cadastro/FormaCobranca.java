@@ -61,14 +61,10 @@ public class FormaCobranca implements Serializable {
 	@Column(name = "TAXA_MULTA")
 	private BigDecimal taxaMulta;
 	
-<<<<<<< HEAD
 	@Column(name = "VALOR_MULTA", precision=18, scale=4)
 	private BigDecimal valorMulta;
 	
 	@Column(name = "TAXA_JUROS_MENSAL", precision=18, scale=4)
-=======
-	@Column(name = "TAXA_JUROS_MENSAL")
->>>>>>> fase2
 	private BigDecimal taxaJurosMensal;
 	
 	@Column(name = "VENCIMENTO_DIA_UTIL", nullable = false)

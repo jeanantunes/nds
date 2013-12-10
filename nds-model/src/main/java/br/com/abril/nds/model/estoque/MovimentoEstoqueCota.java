@@ -236,7 +236,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 			MovimentoFinanceiroCota movimentoFinanceiroCota) {
 		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
-<<<<<<< HEAD
 
 	public ItemNotaEnvio getItemNotaEnvio() {
 		return itemNotaEnvio;
@@ -247,6 +246,3 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	}
 	
 }
-=======
-}
->>>>>>> fase2

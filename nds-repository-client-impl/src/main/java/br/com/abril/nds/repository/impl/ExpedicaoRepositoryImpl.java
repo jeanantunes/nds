@@ -149,11 +149,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-<<<<<<< HEAD
 		hql.append(getHqlResumoLancamento(false, true, filtro));
-=======
-		hql.append(gerarQueryResumoExpedicaoProdutosDoBox());
->>>>>>> fase2
 					
 		hql.append(getOrderBy(filtro));
 		
@@ -189,11 +185,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	@SuppressWarnings("unchecked")
 	public Long obterQuantidadeResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
 		
-<<<<<<< HEAD
 		Query query = getSession().createSQLQuery(getHqlResumoLancamento(false, true, filtro));
-=======
-		Query query = getSession().createSQLQuery(gerarQueryResumoExpedicaoProdutosDoBox());
->>>>>>> fase2
 		
 		this.setParametersQueryResumoExpedicaoProdutosDoBox(filtro, query);
 		
@@ -206,11 +198,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-<<<<<<< HEAD
 		String hqlResumoExpedicaoProdutoDoBox = getHqlResumoLancamento(false, true, filtro);
-=======
-		String hqlResumoExpedicaoProdutoDoBox = gerarQueryResumoExpedicaoProdutosDoBox();
->>>>>>> fase2
 		
 		String from =
 			hqlResumoExpedicaoProdutoDoBox.substring(hqlResumoExpedicaoProdutoDoBox.indexOf("FROM"));
@@ -255,7 +243,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-<<<<<<< HEAD
+
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 											 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -264,15 +252,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 											 StatusLancamento.RECOLHIDO.name(),
 											 StatusLancamento.FECHADO.name()));
 
-=======
-		query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
->>>>>>> fase2
 	}
 	
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-<<<<<<< HEAD
 		query.setParameterList("statusAposExpedido", 
 				   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 								 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -285,101 +269,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			query.setParameter("codigoBox", filtro.getCodigoBox());
 	}
 
-=======
-		query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
-		query.setParameter("codigoBox", filtro.getCodigoBox());
-	}
-	
-	/**
-	 * Retorna o sql referente a consulta de Reusumo de produtos expedidos
-	 * @return String
-	 */
-	private String gerarQueryResumoExpedicaoProdutosDoBox(){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" produto.CODIGO as codigoProduto, ");
-		hql.append(" produto.NOME as nomeProduto, ");
-		hql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-		hql.append(" produtoEdicao.PRECO_VENDA as precoCapa, ");
-		hql.append(this.getHQLDesconto() + " as desconto, ");
-		hql.append(" sum(estudoCota.QTDE_EFETIVA) as qntReparte, ");
-		hql.append(" sum(case ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_DE' then -diferenca.QTDE ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_DE' then diferenca.QTDE ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_EM' then -diferenca.QTDE ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_EM' then diferenca.QTDE ");
-		hql.append(" else 0 ");
-		hql.append(" end) as qntDiferenca, ");
-		hql.append(" sum(estudoCota.QTDE_EFETIVA)*produtoEdicao.PRECO_VENDA as valorFaturado, ");
-		hql.append(" pessoa.RAZAO_SOCIAL as razaoSocial ");
-		
-		hql.append(" from ");
-		hql.append(" EXPEDICAO expedicao ");
-		hql.append(" inner join " );
-		hql.append(" LANCAMENTO lancamento ");
-		hql.append(" on expedicao.ID=lancamento.EXPEDICAO_ID ");
-		hql.append(" inner join ");
-		hql.append(" ESTUDO estudo ");
-		hql.append(" on lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID ");
-		hql.append(" and lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO ");
-		hql.append(" inner join ");
-		hql.append(" EXPEDICAO espedicao on espedicao.ID = lancamento.EXPEDICAO_ID ");
-		hql.append(" inner join ");
-		hql.append(" PRODUTO_EDICAO produtoEdicao ");
-		hql.append(" on estudo.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
-		hql.append(" inner join ");
-		hql.append(" PRODUTO produto ");
-		hql.append(" on produtoEdicao.PRODUTO_ID=produto.ID ");
-		hql.append(" inner join ");
-		hql.append(" PRODUTO_FORNECEDOR produtoFornecedor ");
-		hql.append(" on produto.ID=produtoFornecedor.PRODUTO_ID ");
-		hql.append(" inner join ");
-		hql.append(" FORNECEDOR fornecedor ");
-		hql.append(" on produtoFornecedor.fornecedores_ID=fornecedor.ID ");
-		hql.append(" inner join ");
-		hql.append(" PESSOA pessoa ");
-		hql.append(" on fornecedor.JURIDICA_ID=pessoa.ID ");
-		hql.append(" inner join ");
-		hql.append(" ESTUDO_COTA estudoCota ");
-		hql.append(" on estudo.ID=estudoCota.ESTUDO_ID ");
-		hql.append(" inner join ");
-		hql.append(" COTA cota ");
-		hql.append(" on estudoCota.COTA_ID=cota.ID ");
-		hql.append(" inner join ");
-		hql.append(" BOX box ");
-		hql.append(" on cota.BOX_ID=box.ID ");
-		hql.append(" left outer join ");
-		hql.append(" RATEIO_DIFERENCA rateioDiferenca ");
-		hql.append(" on estudoCota.ID=rateioDiferenca.ESTUDO_COTA_ID ");
-		hql.append(" left outer join ");
-		hql.append(" DIFERENCA diferenca ");
-		hql.append(" on rateioDiferenca.DIFERENCA_ID=diferenca.id ");
-		
-		hql.append(" where ");
-		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
-		hql.append(" and box.TIPO_BOX in (:tiposBox) ");
-		hql.append(" and box.CODIGO = :codigoBox ");
-		
-		hql.append(" group by ");
-		hql.append(" produtoEdicao.ID ");
-
-		return hql.toString();
-	}
-	
-	private String getHQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.DESCONTO");
-		hql.append(" from VIEW_DESCONTO view ")
-		   .append(" where view.COTA_ID = cota.ID ")
-		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
-		   .append(" and view.FORNECEDOR_ID = fornecedor.ID), 0) ");
-		
-		return hql.toString();
-	}
-	
->>>>>>> fase2
 	/**
 	 * Retorna uma string com o conteudo da ordenação da consulta
 	 * @param filtro
@@ -427,79 +316,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		return hql.toString();
 	}
-<<<<<<< HEAD
-=======
-	
-	/**
-	 * Retorna o Hql da consulta de lançamentos agrupadas por BOX
-	 * @return String
-	 */
-	private String getHqlResumoLancamentoPorBox(){
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
-		hql.append(" box.ID as idBox, ");
-		hql.append(" concat(box.CODIGO, ");
-		hql.append(" '-', ");
-		hql.append(" box.NOME) as codigoBox, ");
-		hql.append(" box.NOME as nomeBox, ");
-		hql.append(" produtoEdicao.PRECO_VENDA as precoCapa, ");
-		hql.append(" sum(estudoCota.QTDE_EFETIVA) as qntReparte, ");
-		hql.append(" sum(case ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_DE' then -diferenca.QTDE ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_DE' then diferenca.QTDE ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_EM' then -diferenca.QTDE ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_EM' then diferenca.QTDE ");
-		hql.append(" else 0 ");
-		hql.append(" end) as qntDiferenca, ");
-		hql.append(" sum(estudoCota.QTDE_EFETIVA)*produtoEdicao.PRECO_VENDA as valorFaturado, ");
-		hql.append(" produto.CODIGO as codigoProduto, ");
-		hql.append(" produto.NOME as nomeProduto, ");
-		hql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-		hql.append(" count(produtoEdicao.ID) as qntProduto ");
-		
-		hql.append(" from ");
-		hql.append(" EXPEDICAO expedicao ");
-		hql.append(" inner join ");
-		hql.append(" LANCAMENTO lancamento ");
-		hql.append(" on expedicao.ID=lancamento.EXPEDICAO_ID ");
-		hql.append(" inner join ");
-		hql.append(" ESTUDO estudo ");
-		hql.append(" on lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID ");
-		hql.append(" and lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO ");
-		hql.append(" inner join ");
-		hql.append(" EXPEDICAO espedicao on espedicao.ID = lancamento.EXPEDICAO_ID ");
-		hql.append(" inner join ");
-		hql.append(" PRODUTO_EDICAO produtoEdicao ");
-		hql.append(" on estudo.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
-		hql.append(" inner join ");
-		hql.append(" PRODUTO produto ");
-		hql.append(" on produtoEdicao.PRODUTO_ID=produto.ID ");
-		hql.append(" inner join ");
-		hql.append(" ESTUDO_COTA estudoCota ");
-		hql.append(" on estudo.ID=estudoCota.ESTUDO_ID ");
-		hql.append(" inner join ");
-		hql.append(" COTA cota ");
-		hql.append(" on estudoCota.COTA_ID=cota.ID ");
-		hql.append(" inner join ");
-		hql.append(" BOX box ");
-		hql.append(" on cota.BOX_ID=box.ID ");
-		hql.append(" left outer join ");
-		hql.append(" RATEIO_DIFERENCA rateiosDiferenca ");
-		hql.append(" on estudoCota.ID=rateiosDiferenca.ESTUDO_COTA_ID ");
-		hql.append(" left outer join ");
-		hql.append(" DIFERENCA diferenca ");
-		hql.append(" on rateiosDiferenca.DIFERENCA_ID=diferenca.id ");
-		
-		hql.append(" where ");
-		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
-		hql.append(" and box.TIPO_BOX in (:tiposBox) ");
-		
-		return hql.toString();
-	}
->>>>>>> fase2
 
 	@Override
 	public Date obterUltimaExpedicaoDia(Date dataOperacao) {
