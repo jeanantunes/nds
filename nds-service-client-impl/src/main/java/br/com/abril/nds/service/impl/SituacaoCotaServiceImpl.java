@@ -13,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.service.SituacaoCotaService;
@@ -132,5 +135,16 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 
 		QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(idCota.toString());
 	}
-
+	
+	@Override
+	@Transactional(readOnly=true)
+	public SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota){
+		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número de cota é obrigatório.");
+		}
+		
+		return this.cotaRepository.obterSituacaoCadastroCota(numeroCota);
+	}
 }

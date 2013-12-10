@@ -405,5 +405,6 @@ public interface CotaService {
 	List<Cota> obterCotasEntre(Integer cotaDe,
 			                   Integer cotaAte,
 			                   List<SituacaoCadastro> situacoesCadastro);
-
+	
+	Long obterIdPorNumeroCota(Integer numeroCota);
 }

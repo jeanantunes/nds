@@ -216,7 +216,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
      */
 	@Override
     public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
-            Cota cota, ProdutoEdicao produtoEdicao) {
+            Long idCota, ProdutoEdicao produtoEdicao) {
         
 		//TODO: Implementar a prioridade de desconto predominante 
 		Query query = null;
@@ -224,18 +224,18 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		Desconto desconto = null;
 		
 		//Obtem o desconto do ProdutoEdicao baseado em lancamento futuro
-		descontoId = obterDescontoCotaProdutoEdicaoLancamentosFuturos(cota, lancamento);
+		descontoId = obterDescontoCotaProdutoEdicaoLancamentosFuturos(idCota, lancamento);
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto do ProdutoEdicao baseado em excessoes 
-		query = obterDescontoCotaProdutoEdicaoExcessoes(cota, produtoEdicao);
+		query = obterDescontoCotaProdutoEdicaoExcessoes(idCota, produtoEdicao);
 		descontoId = (BigInteger) query.uniqueResult();
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 				
 		//Obtem o desconto do Produto baseado em excessoes 
-		query = obterDescontoCotaProdutoExcessoes(cota, produtoEdicao);
+		query = obterDescontoCotaProdutoExcessoes(idCota, produtoEdicao);
 		descontoId = (BigInteger) query.uniqueResult();
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
@@ -253,7 +253,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
 		
 		//Obtem o desconto da Cota-Fornecedor 
-		query = obterDescontoEspecifico(cota, produtoEdicao);
+		query = obterDescontoEspecifico(idCota, produtoEdicao);
 		descontoId = (BigInteger) query.uniqueResult();
 		
 		if(descontoId != null) return descontoRepository.buscarPorId(descontoId.longValue());
@@ -269,9 +269,9 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
         
     }
 
-	private BigInteger obterDescontoCotaProdutoEdicaoLancamentosFuturos(Cota cota, Lancamento lancamento) {
+	private BigInteger obterDescontoCotaProdutoEdicaoLancamentosFuturos(Long idCota, Lancamento lancamento) {
 		
-		if(lancamento == null || cota == null ) {
+		if(lancamento == null || idCota == null ) {
 			return null;
 		}
 		
@@ -287,7 +287,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 			for(Cota c : descontoProximosLancamentos.getCotas()) {
 				
-				if(c.getId() == cota.getId()) {
+				if(c.getId().equals(idCota)) {
 					
 					Integer quantidade = descontoProximosLancamentos.getQuantidadeProximosLancamaentos();
 
@@ -306,14 +306,14 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return null;
 	}
 
-	private Query obterDescontoCotaProdutoEdicaoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
+	private Query obterDescontoCotaProdutoEdicaoExcessoes(Long idCota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("SELECT ")
 			.append(" vdcfpe.desconto_id AS idDesconto ")
 		    .append("FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES AS vdcfpe ")
 		    .append("WHERE 1 = 1 ");
 		
-		if (cota != null) {
+		if (idCota != null) {
 		
 			hql.append(" AND vdcfpe.cota_id = :idCota ");
 		
@@ -328,9 +328,9 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 		Query query = getSession().createSQLQuery(hql.toString());
 		
-		if (cota != null) {
+		if (idCota != null) {
 			
-			query.setParameter("idCota", cota.getId());
+			query.setParameter("idCota", idCota);
 		}
 		
 		if (produtoEdicao != null) {
@@ -343,14 +343,14 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return query;
 	}
 	
-	private Query obterDescontoCotaProdutoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
+	private Query obterDescontoCotaProdutoExcessoes(Long idCota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("SELECT ")
 			.append(" vdcfpe.desconto_id AS idDesconto ")
 		    .append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES AS vdcfpe ") 
 		    .append(" WHERE vdcfpe.produto_edicao_id IS NULL ");
 		
-		if (cota != null) {
+		if (idCota != null) {
 			
 			hql.append(" AND vdcfpe.cota_id = :idCota ");
 		}
@@ -363,9 +363,9 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 
-		if (cota != null) {
+		if (idCota != null) {
 			
-			query.setParameter("idCota", cota.getId());
+			query.setParameter("idCota", idCota);
 		}
 		
 		if (produtoEdicao != null) {
@@ -377,7 +377,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		return query;
 	}
 	
-	private Query obterDescontoEspecifico(Cota cota, ProdutoEdicao produtoEdicao) {
+	private Query obterDescontoEspecifico(Long idCota, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder("SELECT ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
@@ -385,7 +385,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 			.append(" WHERE vdcfpe.produto_id IS NULL ")
 			.append(" AND vdcfpe.produto_edicao_id IS NULL ");
 		
-		if (cota != null) {
+		if (idCota != null) {
 			
 			hql.append(" AND vdcfpe.cota_id = :idCota ");
 		}
@@ -397,9 +397,9 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 		Query query = getSession().createSQLQuery(hql.toString());
 		
-		if (cota != null) {
+		if (idCota != null) {
 			
-			query.setParameter("idCota", cota.getId());
+			query.setParameter("idCota", idCota);
 		}
 
 		if (produtoEdicao != null) {

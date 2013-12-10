@@ -331,7 +331,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			outdetalhe.setPrecoVenda(precoVenda);
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota(), produtoEdicao);
+			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota().getId(), produtoEdicao);
 			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			outdetalhe.setDesconto(valorDesconto);
 
@@ -376,7 +376,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             outdetalhe.setPrecoVenda(precoVenda);
             
-            BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota(), produtoEdicao);
+            BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota().getId(), produtoEdicao);
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			outdetalhe.setDesconto(valorDesconto);
 			
