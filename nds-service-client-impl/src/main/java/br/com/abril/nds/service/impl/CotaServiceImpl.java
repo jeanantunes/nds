@@ -2750,4 +2750,11 @@ public class CotaServiceImpl implements CotaService {
       
       return isAlteracaoTipoCotaNaDataAtual;
   }
+  
+	@Override
+	@Transactional(readOnly=true)
+	public Long obterIdPorNumeroCota(Integer numeroCota) {
+		
+		return this.cotaRepository.obterIdPorNumeroCota(numeroCota);
+	}
 }

@@ -126,7 +126,7 @@ public interface DescontoService {
 	 * 
 	 * @return percentual de desconto a ser utilizado
 	 */
-	BigDecimal obterValorDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
+	BigDecimal obterValorDescontoPorCotaProdutoEdicao(Lancamento lancamento, Long idCota, ProdutoEdicao produtoEdicao);
 	
 	/**
 	 * Recupera o Desconto a ser aplicado para o produto edição de acordo com o tipo de produto
@@ -136,7 +136,7 @@ public interface DescontoService {
 	 * @param produtoEdicao
 	 * @return
 	 */
-	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
+	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Long idCota, ProdutoEdicao produtoEdicao);
 
 	BigDecimal obterComissaoCota(Integer numeroCota);
 
