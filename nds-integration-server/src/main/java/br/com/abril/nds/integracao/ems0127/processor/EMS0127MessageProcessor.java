@@ -65,7 +65,6 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 
-<<<<<<< HEAD
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-cli.xml");
 
 		DataSource ds = (DataSource) applicationContext.getBean("dataSourceIcd");
@@ -83,8 +82,6 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		}
 		
 		
-=======
->>>>>>> fase2
 		CouchDbClient cdbc = null;
 
 		List<String> distribuidores = obterDistribuidores();
@@ -94,7 +91,6 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			List<IcdChamadaEncalhe> chamadasEncalhe = obterChamadasEncalhe(distribuidor);
 
 			for(IcdChamadaEncalhe ce : chamadasEncalhe) {
-<<<<<<< HEAD
 				
 				ce.setValorTotalMargemApurado(null);
 				ce.setValorTotalMargemInformado(null);
@@ -119,11 +115,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 					ce.setTipoDocumento("EMS0127");
 					ce.setBaseDeDados(database);
 					ce.setUsuarioBaseDeDados(username);
-=======
 
-				try {
-					ce.setTipoDocumento("EMS0137");
->>>>>>> fase2
 					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 					cdbc.save(ce);
 				} catch(Exception e) {
@@ -167,15 +159,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		hql.append(" select ce ")
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
 			.append("where ce.tipoStatus in (:status) ")
-<<<<<<< HEAD
 			.append("and ce.codigoDistribuidor = :distribuidor ")
 			.append("and ce.indiceCEProvisoria = :nao ")
 			.append("and ce.dataAnoReferencia > 2012");
 		
-=======
-			.append("and ce.codigoDistribuidor = :distribuidor ");
-
->>>>>>> fase2
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 
 		query.setParameterList("status", new String[]{"A"}); //FIXME: Sérgio: deve buscar status 'A'
