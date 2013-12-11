@@ -127,9 +127,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return ((produtoEdicao.getPeb() - (fatorRelancamentoParcial*(qntPeriodos-1))) / qntPeriodos);
 	}
 
-	@Override
-	@Transactional
-	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
+	private void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
 		
 		validarProdutoEdicao(produtoEdicao);
 		

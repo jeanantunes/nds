@@ -35,8 +35,6 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
@@ -598,34 +596,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			lancamento.setUsuario(usuarioLogado);
 			
 			lancamentoRepository.alterar(lancamento);
-		
-		} else if(lancamento==null && produtoEdicao.isParcial()) {
-			
-			LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(recebimentoFisicoDTO.getIdProdutoEdicao());
-			
-			if ( lancamentoParcial == null ) {
-				lancamentoParcial = new LancamentoParcial();
-				lancamentoParcial.setProdutoEdicao(new ProdutoEdicao(recebimentoFisicoDTO.getIdProdutoEdicao()));
-				lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);		
-			}
-			
-			lancamentoParcial.setLancamentoInicial(dataLancamento);
-			lancamentoParcial.setRecolhimentoFinal(recebimentoFisicoDTO.getDataRecolhimento());
-			
-			lancamentoParcialRepository.merge(lancamentoParcial);
-			
-			Usuario usuario = usuarioService.getUsuarioLogado();
-						
-			if(lancamentoParcial.getPeriodos().isEmpty())
-				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario);
-			
-			Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
-			
-			periodo.setReparte(recebimentoFisicoDTO.getRepartePrevisto());
-			periodo.setRepartePromocional(BigInteger.ZERO);
-			periodo.setUsuario(usuario);
-			
-			lancamentoRepository.merge(periodo);
 			
 		} else {
 
