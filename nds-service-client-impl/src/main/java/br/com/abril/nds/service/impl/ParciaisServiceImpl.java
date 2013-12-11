@@ -384,8 +384,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		this.reajustarRedistribuicoes(periodo,dataLancamento,dataRecolhimento);
 	}
-
-	private void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento) {
+    
+	@Transactional
+	public void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento) {
 		
 		List<Lancamento> redistribuicoesAnteriores = 
 				periodoLancamentoParcialRepository.obterRedistribuicoesPosterioresAoLancamento(periodo.getId(), dataRecolhimento);
@@ -540,6 +541,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo) {
 		
 		return this.periodoLancamentoParcialRepository.obterRedistribuicoesParciais(idPeriodo);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Lancamento> obterRedistribuicoes(Long idPeriodo) {
+		
+		return this.periodoLancamentoParcialRepository.obterRedistribuicoes(idPeriodo);
 	}
 	
 	@Override

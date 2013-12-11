@@ -322,37 +322,6 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 	}
 
 	@Test
-	public void verificarValidadeNovoPeriodoParcialValido() {
-
-		Date novaDataLancamento = Fixture.criarData(1, 3, 2011);
-		Date novaDataRecolhimento = Fixture.criarData(1, 4, 2011);
-
-		boolean possivel = periodoLancamentoParcialRepository
-				.verificarValidadeNovoPeriodoParcial(lancamento.getId(),
-						novaDataLancamento, novaDataRecolhimento);
-
-		Assert.assertTrue(possivel);
-
-		novaDataLancamento = Fixture.criarData(1, 1, 2010);
-		novaDataRecolhimento = Fixture.criarData(1, 2, 2010);
-
-		possivel = periodoLancamentoParcialRepository
-				.verificarValidadeNovoPeriodoParcial(lancamento.getId(),
-						novaDataLancamento, novaDataRecolhimento);
-
-		Assert.assertTrue(possivel);
-
-		novaDataLancamento = Fixture.criarData(1, 1, 2010);
-		novaDataRecolhimento = Fixture.criarData(1, 1, 2011);
-
-		possivel = periodoLancamentoParcialRepository
-				.verificarValidadeNovoPeriodoParcial(lancamento.getId(),
-						novaDataLancamento, novaDataRecolhimento);
-
-		Assert.assertFalse(possivel);
-	}
-
-	@Test
 	public void obterDetalhesVenda() {
 		Date dataLancamento = Fixture.criarData(1, 3, 2011);
 		Date dataRecolhimento = Fixture.criarData(1, 4, 2011);
