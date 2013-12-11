@@ -34,6 +34,6 @@ public interface RecebimentoFisicoService {
 
 	RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo, String edicao);
 
-	void excluirNota(String chave);
+	void excluirNota(Long id);
 	 
 }

@@ -30,4 +30,6 @@ public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrad
 
 	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
 			Long idPessoaJuridica, Date dataEmissao);
+
+	boolean notaPossuiItemExpedido(Long idNota);
 }

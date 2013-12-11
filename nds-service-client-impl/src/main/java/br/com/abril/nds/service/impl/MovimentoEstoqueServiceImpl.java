@@ -1359,4 +1359,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return movimentoEstoqueCota;
 	}
 
+	@Override
+	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao) {
+		
+		return movimentoEstoqueRepository.obterUltimoMovimentoRecebimentoFisico(idProdutoEdicao, tipoMovimento, dataOperacao);
+	}
+
 }
