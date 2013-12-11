@@ -283,8 +283,6 @@ var produtoController = $.extend(true, {
 						$("#peb", produtoController.workspace).val(result.peb);
 						$("#pacotePadrao", produtoController.workspace).val(result.pacotePadrao);
 						$("#comboPeriodicidade", produtoController.workspace).val(result.periodicidade);
-						$("#grupoEditorial", produtoController.workspace).val(result.grupoEditorial);
-						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
 
@@ -474,8 +472,6 @@ var produtoController = $.extend(true, {
 		$("#radioTributacaoOutros", this.workspace).attr('checked', false);
 		
 		$("#percentualDesconto", this.workspace).val("");
-		$("#grupoEditorial", this.workspace).val("");
-		$("#subGrupoEditorial", this.workspace).val("");
 		
 		$("#segmentacaoClasseSocial", this.workspace).val("");
 		$("#segmentacaoSexo", this.workspace).val("");
@@ -497,8 +493,6 @@ var produtoController = $.extend(true, {
         			   {name:"produto.periodicidade",value:$("#comboPeriodicidade", produtoController.workspace).val()},
         			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao', produtoController.workspace)},
         			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal', produtoController.workspace)},
-        			   {name:"produto.grupoEditorial",value:$("#grupoEditorial", produtoController.workspace).val()},
-        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial", produtoController.workspace).val()},	
         			   {name:"produto.segmentacao.classeSocial",value:$("#segmentacaoClasseSocial", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
@@ -583,6 +577,36 @@ var produtoController = $.extend(true, {
 			callback();
 		}
 	},
+	
+	proximoCodigoDisponivel : function(comboFornecedor){
+		
+		if (comboFornecedor.value == '1' || comboFornecedor.value == '2'){
+			
+			$("#codigoProdutoCadastro").val("");
+			$("#codigoProdutoCadastro").attr("maxlength", "8");
+		} else {
+			
+			$("#codigoProdutoCadastro").attr("maxlength", "10");
+			
+			$.postJSON(contextPath + "/produto/obterCodigoDisponivel",  
+			   	null,
+			   	function (result) {
+	
+					var tipoMensagem = result.tipoMensagem;
+					
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						
+						exibirMensagem(tipoMensagem, listaMensagens);
+						return;
+					} 
+	
+					$("#codigoProdutoCadastro").val(result);
+				}
+			);
+		}
+	}
 
 }, BaseController);
 

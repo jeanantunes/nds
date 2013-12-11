@@ -2059,6 +2059,24 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	/**
+	 * Obtem cotas por intervalo de numero de cotas
+	 * @param cotaDe
+	 * @param cotaAte
+	 * @param situacoesCadastro
+	 * @return List<Cota>
+	 */
+	@Override
+	@Transactional
+	public List<Cota> obterCotasEntre(Integer cotaDe, 
+			                          Integer cotaAte, 
+			                          List<SituacaoCadastro> situacoesCadastro) {
+		
+		List<Cota> cotas = this.cotaRepository.obterCotasIntervaloNumeroCota(cotaDe, cotaAte, situacoesCadastro);
+
+		return cotas;
+	}
+	
+	/**
 	 * Descarta Enderecos, Telefones, Garantias e Sócios da Cota na Troca de Titularidade
 	 * @param cota
 	 */
@@ -2732,4 +2750,11 @@ public class CotaServiceImpl implements CotaService {
       
       return isAlteracaoTipoCotaNaDataAtual;
   }
+  
+	@Override
+	@Transactional(readOnly=true)
+	public Long obterIdPorNumeroCota(Integer numeroCota) {
+		
+		return this.cotaRepository.obterIdPorNumeroCota(numeroCota);
+	}
 }

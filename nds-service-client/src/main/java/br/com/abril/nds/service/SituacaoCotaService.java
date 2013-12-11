@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
  * Interface que define serviços referentes a situação de cota.
@@ -48,4 +49,5 @@ public interface SituacaoCotaService {
 	 */
 	void removerAgendamentosAlteracaoSituacaoCota(Long idCota);
 
+	SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota);
 }

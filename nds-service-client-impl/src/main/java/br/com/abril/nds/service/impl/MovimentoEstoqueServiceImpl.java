@@ -916,7 +916,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 
-				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
 				
 				BigDecimal precoComDesconto = 
 						produtoEdicao.getPrecoVenda().subtract(

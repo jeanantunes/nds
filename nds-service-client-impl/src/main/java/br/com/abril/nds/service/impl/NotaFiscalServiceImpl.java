@@ -197,19 +197,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public Map<Cota, QuantidadePrecoItemNotaDTO> obterTotalItensNotaFiscalPorCotaEmLote(
 			ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal) {
 
-		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal
-				.getPeriodoMovimento();
+		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal.getPeriodoMovimento();
 
-		Set<TipoNotaFiscal> tiposNotaFiscal = dadosConsultaLoteNotaFiscal
-				.getTipoNotaFiscal();
+		Set<TipoNotaFiscal> tiposNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal();
 
-		List<Long> listaIdFornecedores = dadosConsultaLoteNotaFiscal
-				.getListaIdFornecedores();
+		List<Long> listaIdFornecedores = dadosConsultaLoteNotaFiscal.getListaIdFornecedores();
 
 		Map<Cota, QuantidadePrecoItemNotaDTO> idCotaTotalItensNota = new HashMap<Cota, QuantidadePrecoItemNotaDTO>();
 		
-		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
-				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
 		TipoAtividade tipoAtividade = this.distribuidorRepository.tipoAtividade();
 		
@@ -217,25 +213,21 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
 			
-			for (TipoNotaFiscal tipoNotaFiscal : tiposNotaFiscal){
+			for (TipoNotaFiscal tipoNotaFiscal : tiposNotaFiscal) {
 				
 				if (tipoNotaFiscal.getTipoAtividade().equals(tipoAtividade)) {
 	
 					if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
 	
-						if (cota.getParametrosCotaNotaFiscalEletronica()
-								.getEmiteNotaFiscalEletronica() == tipoNotaFiscal
-								.isContribuinte()) {
+						if (cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() == tipoNotaFiscal.isContribuinte()) {
 	
 							List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
 									parametrosRecolhimentoDistribuidor, 
 									cota, periodo,
 									listaIdFornecedores, null, tipoNotaFiscal);
 	
-							if (itensNotaFiscal != null
-									&& !itensNotaFiscal.isEmpty()) {
-								idCotaTotalItensNota.put(cota, this
-										.sumarizarTotalItensNota(itensNotaFiscal));
+							if (itensNotaFiscal != null && !itensNotaFiscal.isEmpty()) {
+								idCotaTotalItensNota.put(cota, this.sumarizarTotalItensNota(itensNotaFiscal));
 							}
 						}
 					}
@@ -271,46 +263,32 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
 
-				NotaFiscal notaFiscal = this.notaFiscalRepository
-						.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
 				if (notaFiscal != null) {
 
-					IdentificacaoEmitente emitente = notaFiscal
-							.getIdentificacaoEmitente();
+					IdentificacaoEmitente emitente = notaFiscal.getIdentificacaoEmitente();
 
 					String cpfCnpjEmitente = emitente.getDocumento();
 
-					InformacaoEletronica informacaoEletronica = notaFiscal
-							.getInformacaoEletronica();
+					InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
 
 					if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
 
-						if (StatusProcessamentoInterno.ENVIADA
-								.equals(notaFiscal
-										.getStatusProcessamentoInterno())) {
+						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
 
-							if (Status.AUTORIZADO.equals(dadosRetornoNFE
-									.getStatus())
-									|| Status.USO_DENEGADO
-									.equals(dadosRetornoNFE.getStatus())) {
+							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus())
+									|| Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
 
-								listaDadosRetornoNFEProcessados
-								.add(dadosRetornoNFE);
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 
-						} else if (StatusProcessamentoInterno.RETORNADA
-								.equals(notaFiscal
-										.getStatusProcessamentoInterno())) {
+						} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
 
-							if (Status.AUTORIZADO.equals(informacaoEletronica
-									.getRetornoComunicacaoEletronica()
-									.getStatus())
-									&& Status.CANCELAMENTO_HOMOLOGADO
-									.equals(dadosRetornoNFE.getStatus())) {
+							if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus())
+									&& Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 
-								listaDadosRetornoNFEProcessados
-								.add(dadosRetornoNFE);
+								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 						}
 					}
@@ -398,7 +376,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public void denegarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 		atualizaRetornoNFe(dadosRetornoNFE);
-		// TODO Auto-generated method stub
 
 	}
 
@@ -422,11 +399,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
 
-		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE
-				.getIdNotaFiscal());
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
-		InformacaoEletronica informacaoEletronica = notaFiscal
-				.getInformacaoEletronica();
+		InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
 
 		if (informacaoEletronica == null) {
 			notaFiscal.setInformacaoEletronica(new InformacaoEletronica());
@@ -436,19 +411,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
 
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
-		retornoComunicacaoEletronica.setDataRecebimento(dadosRetornoNFE
-				.getDataRecebimento());
+		retornoComunicacaoEletronica.setDataRecebimento(dadosRetornoNFE.getDataRecebimento());
 		retornoComunicacaoEletronica.setMotivo(dadosRetornoNFE.getMotivo());
-		retornoComunicacaoEletronica.setProtocolo(dadosRetornoNFE
-				.getProtocolo());
+		retornoComunicacaoEletronica.setProtocolo(dadosRetornoNFE.getProtocolo());
 		retornoComunicacaoEletronica.setStatus(dadosRetornoNFE.getStatus());
 
-		informacaoEletronica
-		.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
+		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 
 		notaFiscal.setInformacaoEletronica(informacaoEletronica);
-		notaFiscal
-		.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
+		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
 		this.notaFiscalRepository.merge(notaFiscal);	
 
@@ -951,20 +922,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					+ " não encontrada!");
 		}
 
-		notaFiscal.setIdentificacao(carregaIdentificacao(tipoNotaFiscal,
-				dataEmissao, listNotaFiscalReferenciada));
+		notaFiscal.setIdentificacao(carregaIdentificacao(tipoNotaFiscal, dataEmissao, listNotaFiscalReferenciada));
 		notaFiscal.setIdentificacaoDestinatario(carregaDestinatario(fornecedor));
 		notaFiscal.setIdentificacaoEmitente(carregaEmitente());
 
-		String raizCNPJ = notaFiscal.getIdentificacaoEmitente().getDocumento()
-				.substring(0, 7);
-		String ufOrigem = notaFiscal.getIdentificacaoEmitente().getEndereco()
-				.getUf();
-		String ufDestino = notaFiscal.getIdentificacaoDestinatario()
-				.getEndereco().getUf();
+		String raizCNPJ = notaFiscal.getIdentificacaoEmitente().getDocumento().substring(0, 7);
+		String ufOrigem = notaFiscal.getIdentificacaoEmitente().getEndereco().getUf();
+		String ufDestino = notaFiscal.getIdentificacaoDestinatario().getEndereco().getUf();
 
-		notaFiscal.setProdutosServicos(new ArrayList<ProdutoServico>(
-				listItemNotaFiscal.size()));
+		notaFiscal.setProdutosServicos(new ArrayList<ProdutoServico>(listItemNotaFiscal.size()));
 		int cfop;
 
 		if (ufOrigem.equals(ufDestino)) {
@@ -1547,24 +1513,35 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		BigInteger quantidade = BigInteger.ZERO;
 		BigDecimal preco = BigDecimal.ZERO;
 		BigDecimal precoComDesconto = BigDecimal.ZERO;
+		
+		// Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(null, null);
 
 		for (ItemNotaFiscalSaida item : listaItemNotaFiscal) {
 			quantidade = quantidade.add(item.getQuantidade());
 			preco = preco.add(item.getValorUnitario().multiply(
 					new BigDecimal(quantidade)));
+/*
+			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(item.getIdProdutoEdicao());
+			DescontoDTO descontoDTO = null;
+			try {
+				descontoDTO = descontoService.obterDescontoPor(descontos
+							, item.getListaMovimentoEstoqueCota().get(0).getCota().getId()
+							, produtoEdicao.getProduto().getFornecedor().getId()
+							, produtoEdicao.getProduto().getId()
+							, produtoEdicao.getId());
+			} catch (Exception e) {
 
-			BigDecimal desconto = this.descontoService
-					.obterValorDescontoPorCotaProdutoEdicao(null,
-							item
-									.getListaMovimentoEstoqueCota().get(0).getCota(), this.produtoEdicaoRepository.buscarPorId(item
-									.getIdProdutoEdicao()));
-
-			precoComDesconto = precoComDesconto.add(
+			}
+			
+			BigDecimal desconto = (descontoDTO != null ? descontoDTO.getValor() : BigDecimal.ZERO);
+			*/
+			precoComDesconto = precoComDesconto.add(item.getValorUnitario().multiply(new BigDecimal(item.getQuantidade())));
+					/*precoComDesconto.add(
 					item.getValorUnitario()
 					.subtract(desconto, new MathContext(3))
 					.multiply(item.getValorUnitario())
 					.divide(new BigDecimal(100))).multiply(
-							new BigDecimal(item.getQuantidade()));
+							new BigDecimal(item.getQuantidade()));*/
 		}
 
 		dto.setQuantidade(quantidade);

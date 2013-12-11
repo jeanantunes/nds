@@ -509,9 +509,6 @@ public class FechamentoEncalheController extends BaseController {
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 		validacaoVO.setListaMensagens(new ArrayList<String>());
 
-		ValidacaoVO validacaoEmails = new ValidacaoVO();
-		validacaoEmails.setListaMensagens(new ArrayList<String>());
-
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 
 		int statusCobrancaCota = 0;
@@ -527,7 +524,7 @@ public class FechamentoEncalheController extends BaseController {
 				this.fechamentoEncalheService.realizarCobrancaCota(
 						dataOperacao, dataOperacaoDistribuidor, 
 						getUsuarioLogado(), c, null, 
-						validacaoVO, validacaoEmails);
+						validacaoVO);
 
 			}
 		} catch (Exception e) {

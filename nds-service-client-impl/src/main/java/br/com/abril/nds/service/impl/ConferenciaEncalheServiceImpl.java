@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -120,21 +121,26 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.AnexoEmail;
+import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.Constantes;
@@ -259,6 +265,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
+	@Autowired
+	private EmailService emailService;
+	
+
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -947,7 +960,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		Cota cota = cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
+		Long idCota = cotaRepository.obterIdPorNumeroCota(numeroCota);
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
@@ -955,7 +968,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
         conferenciaEncalheDTO.setPrecoCapa(precoVenda);
 		
-		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, idCota, produtoEdicao);
 
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 
@@ -1483,8 +1496,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		} catch(GerarCobrancaValidacaoException e) {
 			
-			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());
-			
+			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());			
 		}
 		
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
@@ -1529,10 +1541,48 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero,
 						nossoNumeroCollection.get(nossoNumero));
 				
+				this.enviarEmailDocumentosCobranca(controleConfEncalheCota, nossoNumero);
 			}
 		}
 		
 		return documentoConferenciaEncalhe;
+	}
+	
+	private void enviarEmailDocumentosCobranca(ControleConferenciaEncalheCota controle, String nossoNumero) {
+		
+		String email = controle.getCota().getPessoa().getEmail();
+		
+		if (email == null || email.trim().isEmpty()){
+
+			throw new ValidacaoException(TipoMensagem.ERROR,"A [cota: "+ controle.getCota().getNumeroCota() +"] não possui email cadastrado");
+		}
+		
+		if (this.gerarCobrancaService.aceitaEnvioEmail(controle.getCota(), nossoNumero)) {
+			
+			try {
+				
+				byte[] documentoCobranca = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+				
+				byte[] slip = this.gerarSlip(controle.getId(), true, TipoArquivo.PDF);
+
+				this.emailService.enviar(
+						"Cobrança", 
+						"Segue documento de cobrança em anexo.", 
+						new String[]{email}, 
+						Arrays.asList(
+								new AnexoEmail("Cobranca", documentoCobranca, TipoAnexo.PDF),
+								new AnexoEmail("Slip", slip, TipoAnexo.PDF)));
+				
+			} catch (AutenticacaoEmailException e) {
+
+				throw new ValidacaoException(
+						TipoMensagem.ERROR,
+						"Erro ao Enviar Email de Cobrança para a [Cota:"
+								+ controle.getCota().getNumeroCota() 
+								+"]: "
+								+e.getMessage());
+			}
+		}
 	}
 	
 	private boolean getDocumentoImpressao(Boolean documentoImpressaoCota,
@@ -1597,7 +1647,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 
-	
 	/**
 	 * Gera o movimento financeiro referente a operação de conferência de encalhe e
 	 * em seguida dispara componentes responsáveis pela geração da cobrança.
@@ -1629,9 +1678,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																			 controleConferenciaEncalheCota.getUsuario(),
 																			 controleConferenciaEncalheCota.getId());
 		
-			gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
-											   controleConferenciaEncalheCota.getUsuario().getId(), 
-											   nossoNumeroCollection);
+			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
+					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
+			
+			if (existeBoletoAntecipado){
+				
+				gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
+												           controleConferenciaEncalheCota.getUsuario().getId());
+			}
+			else{
+			
+				gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
+												   controleConferenciaEncalheCota.getUsuario().getId(), 
+												   nossoNumeroCollection);
+			}
 	    }
 		else if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)){
 			

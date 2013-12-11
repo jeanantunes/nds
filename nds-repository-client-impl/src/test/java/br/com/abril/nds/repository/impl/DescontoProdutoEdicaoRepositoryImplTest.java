@@ -280,7 +280,7 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void obterDescontoPorCotaProdutoEdicaoIdCota() {
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicaoVeja1);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, cota.getId(), produtoEdicaoVeja1);
 				
 	}
 	

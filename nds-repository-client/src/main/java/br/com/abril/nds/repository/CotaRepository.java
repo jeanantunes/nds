@@ -401,4 +401,19 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Long countCotasComInicioAtividadeEm(Date dataInicioAtividade); 
 	
 	Long countCotas(SituacaoCadastro situacaoCadastro);
+
+	/**
+	 * Obtem cotas por intervalo de numero de cotas
+	 * @param cotaDe
+	 * @param cotaAte
+	 * @param situacoesCadastro
+	 * @return List<Cota>
+	 */
+	List<Cota> obterCotasIntervaloNumeroCota(Integer cotaDe, 
+			                                 Integer cotaAte,
+			                                 List<SituacaoCadastro> situacoesCadastro);
+
+	SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota);
+	
+	Long obterIdPorNumeroCota(Integer numeroCota);
 }

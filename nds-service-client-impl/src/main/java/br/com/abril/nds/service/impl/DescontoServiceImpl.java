@@ -983,17 +983,17 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly = true)
     public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
-            										  Cota cota, 
+            										  Long idCota, 
             										  ProdutoEdicao produtoEdicao) {
 		
-        Validate.notNull(cota, "Cota não deve ser nula!");
+        Validate.notNull(idCota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         
         Desconto desconto = null;
         
         //if (produtoEdicao.getProduto().isPublicacao()) {
 
-            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
 
             if (desconto == null) {
             
@@ -1034,15 +1034,15 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	@Override
 	@Transactional
-	public BigDecimal obterValorDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao) {
-		Validate.notNull(cota, "Cota não deve ser nula!");
+	public BigDecimal obterValorDescontoPorCotaProdutoEdicao(Lancamento lancamento, Long idCota, ProdutoEdicao produtoEdicao) {
+		Validate.notNull(idCota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         Desconto desconto = null;
         if (produtoEdicao.getProduto().isPublicacao()) {
         	
             //Neste caso, o produto possui apenas um fornecedor
             //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
-            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+            desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
             
         } else {
         	

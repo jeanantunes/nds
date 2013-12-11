@@ -133,7 +133,7 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
      * 
      * @return peercentual de desconto a ser utilizado
      */
-	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
+	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Long idCota, ProdutoEdicao produtoEdicao);
 	
 	/**
 	 * Salva uma lista de descontosProdutoEdicao

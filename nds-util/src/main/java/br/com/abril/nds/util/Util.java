@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
+import org.hibernate.Query;
 
 public abstract class Util {
 	
@@ -659,5 +661,5 @@ public abstract class Util {
 		System.out.println(v1.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		
 		System.out.println(isDiferencaMenorMeioCentavo(v1, v2));
-	}
+	} 
 }
