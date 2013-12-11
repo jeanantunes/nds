@@ -63,11 +63,6 @@ var produtoController = $.extend(true, {
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 
 	},
-	
-	pesquisarProdutosErrorCallBack: function() {
-			
-		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
-	},
 
 	getCodigoProdutoPesquisa: function () {
 		return  {codigoProduto:$("#codigoProduto", this.workspace).val()};
@@ -604,12 +599,12 @@ var produtoController = $.extend(true, {
 					
 					if (result[0]){
 						
-						$("#codigoProdutoCadastro", _this.workspace).mask("?99999999");
 						$("#codigoProdutoCadastro", _this.workspace).val("");
+						$("#codigoProdutoCadastro", _this.workspace).mask("?99999999");
 					} else {
 						
-						$("#codigoProdutoCadastro", _this.workspace).mask("?9999999999");
 						$("#codigoProdutoCadastro", _this.workspace).val(result[1]);
+						$("#codigoProdutoCadastro", _this.workspace).mask("?9999999999");
 					}
 				}
 			);
