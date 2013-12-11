@@ -128,26 +128,19 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@Override
 	@SuppressWarnings("unchecked")
-<<<<<<< HEAD
 	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> idCotas, 
 														  Intervalo<Date> periodo, 
 														  List<Long> listaIdsFornecedores) {
-=======
-    public List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, Intervalo<Date> periodo, List<Long> listaIdsFornecedores) {
->>>>>>> fase2
 		
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");	
 		sql.append(" FROM EstudoCota estudoCota ");
-<<<<<<< HEAD
 		sql.append(" JOIN estudoCota.cota cota ");
-=======
->>>>>>> fase2
 		sql.append(" JOIN estudoCota.estudo estudo ");
 		sql.append(" JOIN estudo.lancamentos lancamento ");
 		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
 		sql.append(" JOIN produtoEdicao.produto produto ");
 		sql.append(" JOIN produto.fornecedores fornecedor ");
-<<<<<<< HEAD
+
 		sql.append(" WHERE cota.id IN (:idCotas) ");
 		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
 		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");
@@ -167,20 +160,6 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		query.setParameterList("idCotas", idCotas);
 
 		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO, StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.CANCELADO});
-=======
-		sql.append(" WHERE cota.id = :idCota ");
-		sql.append(" AND lancamento.status IN (:listaStatusLancamento) ");
-		
-		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
-			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
-		}	
-		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
-			sql.append(" AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
-		}		
-		
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("idCota", idCota);
->>>>>>> fase2
 	
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			query.setParameterList("listaFornecedores", listaIdsFornecedores);
@@ -195,17 +174,15 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	return query.list();
     }
 
-<<<<<<< HEAD
-=======
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<EstudoCota> obterEstudosCota(Long idEstudo) {
 	String hql = " from EstudoCota estudoCota where estudoCota.estudo = :estudo";
 
 	Query query = super.getSession().createQuery(hql);
 	query.setParameter("estudo", idEstudo);
 		
->>>>>>> fase2
-		return query.list();
+	return query.list();
 	}
 	
 	

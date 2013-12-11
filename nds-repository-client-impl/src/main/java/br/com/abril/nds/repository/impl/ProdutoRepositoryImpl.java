@@ -378,7 +378,6 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	
 	}
 	
-}
 
 	@SuppressWarnings("unchecked")
 	@Override

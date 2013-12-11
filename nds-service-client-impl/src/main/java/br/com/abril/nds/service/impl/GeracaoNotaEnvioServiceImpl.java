@@ -30,7 +30,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -282,6 +281,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 	}
 
+	/*
 	private BigDecimal obterValorDesconto(Cota cota, MovimentoEstoqueCota mec,
 			ProdutoEdicao produtoEdicao, BigDecimal valorDesconto) {
 		
@@ -301,6 +301,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		return valorDesconto;
 	}
+	*/
 
 	/**
 	 * Método que verifica se ja existe um itemNotaEnvio para um determinado produto.
