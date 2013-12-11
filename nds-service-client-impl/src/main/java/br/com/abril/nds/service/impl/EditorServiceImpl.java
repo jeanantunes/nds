@@ -24,12 +24,6 @@ public class EditorServiceImpl implements EditorService {
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<Editor> obterEditores() {
-		return editorRepository.obterEditores();
-	}
-	
-	@Override
-	@Transactional(readOnly=true)
 	public Editor obterEditorPorId(Long idEditor) {
 		return editorRepository.buscarPorId(idEditor);
 	}
@@ -40,4 +34,10 @@ public class EditorServiceImpl implements EditorService {
 		return editorRepository.obterHistoricoEditor(filtro);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public List<Editor> obterEditoresDesc() {
+		
+		return this.editorRepository.obterEditoresDesc();
+	}
 }

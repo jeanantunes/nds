@@ -39,7 +39,8 @@ var produtoController = $.extend(true, {
 		    }
 		);
 		
-		$("#percentualDesconto", produtoController.workspace).mask("999,99"); 
+		$("#percentualDesconto", produtoController.workspace).mask("999,99");
+		$("#codigoProdutoCadastro", produtoController.workspace).mask("?99999999");
 	},
 
 	buscarValueRadio:function(radioName) {
@@ -234,7 +235,8 @@ var produtoController = $.extend(true, {
 				produtoController.limparModalCadastro();
 				produtoController.carregarProdutoEditado(id);		
 				
-
+				produtoController.trocarOrdemCampos(true);
+				
 				$("#dialog-novo", this.workspace).dialog({
 					resizable: false,
 					height:550,
@@ -437,20 +439,22 @@ var produtoController = $.extend(true, {
 	carregarNovoProduto : function(callback) {
 
 		$.postJSON(contextPath + "/produto/carregarDadosProduto",
-					null,
-					function (result) {
+			null,
+			function (result) {
 
-						produtoController.popularCombo(result[0], $("#comboTipoProdutoCadastro", this.workspace));
-						produtoController.popularCombo(result[1], $("#comboFornecedoresCadastro", this.workspace));
-						produtoController.popularCombo(result[2], $("#comboEditor", this.workspace));
-					
-						if (callback) {
-							callback();
-						}
-					},
-				  	null,
-				   	true
-			);
+				produtoController.popularCombo(result[0], $("#comboTipoProdutoCadastro", this.workspace));
+				produtoController.popularCombo(result[1], $("#comboFornecedoresCadastro", this.workspace));
+				produtoController.popularCombo(result[2], $("#comboEditor", this.workspace));
+				
+				produtoController.trocarOrdemCampos(false);
+				
+				if (callback) {
+					callback();
+				}
+			},
+		  	null,
+		   	true
+		);
 	},
 
 	limparModalCadastro : function() {
@@ -580,16 +584,12 @@ var produtoController = $.extend(true, {
 	
 	proximoCodigoDisponivel : function(comboFornecedor){
 		
-		if (comboFornecedor.value == '1' || comboFornecedor.value == '2'){
+		if (comboFornecedor.value && comboFornecedor.value != '0'){
 			
-			$("#codigoProdutoCadastro").val("");
-			$("#codigoProdutoCadastro").attr("maxlength", "8");
-		} else {
-			
-			$("#codigoProdutoCadastro").attr("maxlength", "10");
+			var _this = this;
 			
 			$.postJSON(contextPath + "/produto/obterCodigoDisponivel",  
-			   	null,
+			   	[{name:"idFornecedor", value:comboFornecedor.value}],
 			   	function (result) {
 	
 					var tipoMensagem = result.tipoMensagem;
@@ -600,11 +600,57 @@ var produtoController = $.extend(true, {
 						
 						exibirMensagem(tipoMensagem, listaMensagens);
 						return;
-					} 
-	
-					$("#codigoProdutoCadastro").val(result);
+					}
+					
+					if (result[0]){
+						
+						$("#codigoProdutoCadastro", _this.workspace).mask("?99999999");
+						$("#codigoProdutoCadastro", _this.workspace).val("");
+					} else {
+						
+						$("#codigoProdutoCadastro", _this.workspace).mask("?9999999999");
+						$("#codigoProdutoCadastro", _this.workspace).val(result[1]);
+					}
 				}
 			);
+		} else {
+			
+			$("#codigoProdutoCadastro", this.workspace).mask("?99999999");
+			$("#codigoProdutoCadastro", this.workspace).val("");
+		}
+	},
+	
+	validarCodigoProduto : function(){
+		
+		var idForn = $("#comboFornecedoresCadastro", this.workspace).val();
+		var inpCodigo = $("#codigoProdutoCadastro", this.workspace).val();
+		
+		if (idForn && idForn != "0" && inpCodigo){
+			
+			var _this = this;
+			
+			$.postJSON(contextPath + "/produto/validarCodigoProdutoInput",  
+				[{name:"codigoFornecedor", value:idForn}, {name:"codigoProduto", value:inpCodigo}],
+			   	null,
+				function (result){
+					$("#codigoProdutoCadastro", _this.workspace).focus();
+				}
+			);
+		}
+	},
+	
+	trocarOrdemCampos : function(p){
+		
+		if (p){
+			
+			var trForn = $("#trForn", this.workspace);
+			$("#trForn", this.workspace).remove();
+			$("#trCodigo", this.workspace).after(trForn);
+		} else {
+			
+			var trCodigo = $("#trCodigo", this.workspace);
+			$("#trCodigo", this.workspace).remove();
+			$("#trForn", this.workspace).after(trCodigo);
 		}
 	}
 
