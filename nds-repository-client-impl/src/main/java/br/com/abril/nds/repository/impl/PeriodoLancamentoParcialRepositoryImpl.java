@@ -503,4 +503,27 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PeriodoLancamentoParcial> obterProximosPeriodos(Integer numeroPeriodo,Long idLancamentoParcial) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select periodoLancamentoParcial  ");
+		hql.append(" from PeriodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join periodoLancamentoParcial.lancamentos lancamento ");
+		hql.append(" join periodoLancamentoParcial.lancamentoParcial lancamentoParcial ");
+		hql.append(" where lancamentoParcial.id = :idLancamentoParcial ");
+		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
+		hql.append(" and periodoLancamentoParcial.numeroPeriodo > :numeroPeriodo");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idLancamentoParcial", idLancamentoParcial);
+		query.setParameter("numeroPeriodo", numeroPeriodo);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
+		
+		return query.list();
+	}
+	
 }

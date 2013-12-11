@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -98,5 +99,9 @@ public interface ParciaisService {
 	void salvarRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
 	
 	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	
+	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
+	
+	void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento);
 	
 }
