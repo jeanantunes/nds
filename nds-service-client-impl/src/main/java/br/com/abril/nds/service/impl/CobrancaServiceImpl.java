@@ -254,7 +254,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		List<CobrancaVO> listaCobrancaVO = null;
 		
-	    Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+	    Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 	    
 	    if (cota!=null){
 	    	
