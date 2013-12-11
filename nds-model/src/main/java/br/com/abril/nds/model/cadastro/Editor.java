@@ -66,6 +66,14 @@ public class Editor implements Serializable {
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "JURIDICA_ID")
 	private PessoaJuridica pessoaJuridica;
+	
+	public Editor(){}
+	
+	public Editor(Long id, String razaoSocial){
+		this.id = id;
+		this.pessoaJuridica = new PessoaJuridica();
+		this.pessoaJuridica.setRazaoSocial(razaoSocial);
+	}
 
 	public Long getId() {
 		return id;
