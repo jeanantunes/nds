@@ -149,4 +149,8 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	Fornecedor obterFornecedorPorMovimentoEstoqueCota(Long movimentoEstoqueCotaId);
 	
 	List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, Origem origem);
+
+	Origem obterOrigemCadastroFornecedor(Long idFornecedor);
+
+	List<Fornecedor> obterFornecedoresDesc();
 }

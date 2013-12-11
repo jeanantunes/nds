@@ -114,6 +114,14 @@ public class Fornecedor implements Serializable {
 	@Column(name="MARGEM_DISTRIBUIDOR", precision=18, scale=4)
 	private BigDecimal margemDistribuidor;
 	
+	public Fornecedor(){}
+	
+	public Fornecedor(Long id, String nomeFantasia){
+		this.id = id;
+		this.juridica = new PessoaJuridica();
+		this.juridica.setNomeFantasia(nomeFantasia);
+	}
+	
 	public BigDecimal getMargemDistribuidor() {
 		return margemDistribuidor;
 	}

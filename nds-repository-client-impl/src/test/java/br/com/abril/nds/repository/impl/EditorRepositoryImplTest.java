@@ -18,11 +18,11 @@ public class EditorRepositoryImplTest extends AbstractRepositoryImplTest {
 	private EditorRepositoryImpl editorRepositoryImpl;
 
 	@Test
-	public void testarObterEditores() {
+	public void testarObterEditoresDesc() {
 
 		List<Editor> editores;
 
-		editores = editorRepositoryImpl.obterEditores();
+		editores = editorRepositoryImpl.obterEditoresDesc();
 
 		Assert.assertNotNull(editores);
 

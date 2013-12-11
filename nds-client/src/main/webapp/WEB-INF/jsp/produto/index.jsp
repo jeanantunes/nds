@@ -48,25 +48,26 @@
      		<legend>Dados Basicos</legend>
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
 				<tr>
-					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260">
-						<input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="8"/>
-					</td>
-					<td width="142"><strong>Produto:</strong></td>
-					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
-				</tr>
-				<tr>
 					<td><strong>Fornecedor:</strong></td>
 					<td>
 						<select class="habilitarCampoInterface" name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;"
 							onchange="produtoController.proximoCodigoDisponivel(this);">
 						</select>
-					</td>	
+					</td>
 					<td><strong>Editor:</strong></td>
 					<td>
 						<select class="habilitarCampoInterface" name="comboEditor" id="comboEditor" style="width:210px;" >
 						</select>
 					</td>
+				</tr>
+				<tr>
+					<td width="135"><strong>C&oacute;digo:</strong></td>
+					<td width="260">
+						<input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="8"
+							onchange="produtoController.validarCodigoProduto();"/>
+					</td>
+					<td width="142"><strong>Produto:</strong></td>
+					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:244px;" maxlength="60" /></td>
 				</tr>
 				<tr>
 					<td><strong> Slogan do Produto:</strong></td>
