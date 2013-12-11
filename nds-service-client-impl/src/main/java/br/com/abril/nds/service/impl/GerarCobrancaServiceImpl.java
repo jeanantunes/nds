@@ -1287,9 +1287,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return true;
 	}
 
-	@Override
-	@Transactional(noRollbackFor = AutenticacaoEmailException.class)
-	public void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
+	private void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
 		
 		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
@@ -1312,7 +1310,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (email == null || email.trim().isEmpty()){
 
-			throw new ValidacaoException(TipoMensagem.ERROR,"A [cota: "+ cota.getNumeroCota() +"] não possui email cadastrado");
+			return;
 		}
 		
         for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
@@ -1320,15 +1318,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (nossoNumeroEnvioEmail.get(nossoNumero)){
 
 				if (this.aceitaEnvioEmail(cota, nossoNumero)) {
-
+					
 					try {
-
+			            
 						this.enviarDocumentosCobrancaEmail(nossoNumero, email);
-
-					} catch (AutenticacaoEmailException e) {
-						
-						throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao Enviar Email de Cobrança para a [Cota:"+ cota.getNumeroCota() +"]: "+e.getMessage());
-					}
+	            
+	                } catch (AutenticacaoEmailException e) {
+	  
+	                    e.printStackTrace();
+	                }
 				}
 			}
 		}	

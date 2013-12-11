@@ -11,11 +11,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
 import javax.xml.bind.ValidationException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
@@ -43,6 +46,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
@@ -350,6 +354,11 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 	}
+	
+	private boolean isCotaInativa(Cota cota){
+		
+		return cota.getSituacaoCadastro()!=null?cota.getSituacaoCadastro().equals(SituacaoCadastro.INATIVO):false;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -400,6 +409,11 @@ public class BoletoServiceImpl implements BoletoService {
 			this.calendarioService.adicionarDiasRetornarDiaUtil(dataPagamento, 1);
 		
 		for (Cobranca boleto : boletosNaoPagos) {
+			
+			if (this.isCotaInativa(boleto.getCota())){
+				
+				continue;
+			}
 			
 			LOG.info("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
 			
@@ -1284,19 +1298,20 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		}
 		
-		return geraCorpoBoleto(
-				nossoNumero, 
-				digitoNossoNumero, 
-				valor, 
-				banco, 
-				dataEmissao, 
-				dataVencimento, 
-				pessoaCedente, 
-				pessoaSacado, 
-				endereco, 
-				boleto.getTipoCobranca(),
-				boleto.getCota().getNumeroCota(),
-				aceitaPagamentoVencido);
+		return geraCorpoBoleto(nossoNumero, 
+				               digitoNossoNumero, 
+				               valor, 
+				               null,
+				               null, 
+				               banco, 
+				               dataEmissao, 
+				               dataVencimento, 
+				               pessoaCedente, 
+				               pessoaSacado, 
+				               endereco, 
+				               boleto.getTipoCobranca(),
+				               boleto.getCota().getNumeroCota(),
+				               aceitaPagamentoVencido);
 		
 	}
 	
@@ -1324,20 +1339,20 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		}
 		
-		return geraCorpoBoleto(
-				nossoNumero, 
-				digitoNossoNumero, 
-				valor, 
-				banco, 
-				dataEmissao, 
-				dataVencimento, 
-				pessoaCedente, 
-				pessoaSacado,
-				endereco,
-				boleto.getTipoCobranca(),
-				null,
-				aceitaPagamentoVencido
-				);
+		return geraCorpoBoleto(nossoNumero, 
+				               digitoNossoNumero, 
+				               valor, 
+				               null,
+				               null,
+				               banco, 
+				               dataEmissao, 
+				               dataVencimento, 
+				               pessoaCedente, 
+				               pessoaSacado,
+				               endereco,
+				               boleto.getTipoCobranca(),
+				               null,
+				               aceitaPagamentoVencido);
 	}
 
 	/**
@@ -1371,15 +1386,15 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boletoAntecipado.getBanco();
 		
 		Fornecedor fornecedor = boletoAntecipado.getFornecedor();
-		
-		BigDecimal valor = bbDTO.getValorTotalLiquido().add(bbDTO.getValorTotalDebitos().subtract(bbDTO.getValorTotalCreditos()));
 
 		CorpoBoleto corpoBoleto = this.geraCorpoBoletoEmBranco(cota, 
 											                   fornecedor, 
 											                   bbDTO.getData(), 
 											                   bbDTO.getDataVencimento(),
 											                   banco, 
-											                   valor,
+											                   bbDTO.getValorTotalLiquido(),
+											                   bbDTO.getValorTotalDebitos(),
+											                   bbDTO.getValorTotalCreditos(),
 											                   bbDTO.getNossoNumero(),
 											                   bbDTO.getDigitoNossoNumero());
 		
@@ -1393,7 +1408,9 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param dataEmissao
 	 * @param dataVencimento
 	 * @param banco
-	 * @param valor
+	 * @param valorLiquido
+	 * @param valorDebitos
+	 * @param valorCreditos
 	 * @param nossoNumero
 	 * @param digitoNossoNumero
 	 * @return CorpoBoleto
@@ -1403,7 +1420,9 @@ public class BoletoServiceImpl implements BoletoService {
 			                                    Date dataEmissao,
 			                                    Date  dataVencimento,
 			                                    Banco banco,
-			                                    BigDecimal valor,
+			                                    BigDecimal valorLiquido,
+			                                    BigDecimal valorDebitos,
+			                                    BigDecimal valorCreditos,
 			                                    String nossoNumero,
 			                                    String digitoNossoNumero){
 
@@ -1425,13 +1444,15 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 		
-		TipoCobranca tipoCobranca = TipoCobranca.BOLETO_EM_BRANCO;
+		TipoCobranca tipoCobranca = TipoCobranca.BOLETO;
 
 		boolean aceitaPagamentoVencido = true;
 
 		CorpoBoleto corpoBoleto = this.geraCorpoBoleto(nossoNumero, 
 				                                       digitoNossoNumero, 
-				                                       valor, 
+				                                       valorLiquido, 
+				                                       valorCreditos,
+				                                       valorDebitos,
 				                                       banco, 
 				                                       dataEmissao, 
 				                                       dataVencimento, 
@@ -1449,7 +1470,9 @@ public class BoletoServiceImpl implements BoletoService {
 	 * Método responsável por gerar corpo do boleto com os atributos definidos
 	 * @param nossoNumero
 	 * @param digitoNossoNumero
-	 * @param valor
+	 * @param valorDocumento
+	 * @param valorAcrescimo
+	 * @param valorDesconto
 	 * @param banco
 	 * @param dataEmissao
 	 * @param dataVencimento
@@ -1463,7 +1486,9 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	private CorpoBoleto geraCorpoBoleto(String nossoNumero,
 										String digitoNossoNumero,
-										BigDecimal valor,
+										BigDecimal valorDocumento,
+										BigDecimal valorAcrescimo,
+										BigDecimal valorDesconto,
 										Banco banco,
 										Date dataEmissao,
 										Date dataVencimento,
@@ -1476,7 +1501,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			){
 
-		valor = (valor == null) ? BigDecimal.ZERO : valor.abs();
+		valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
 		
 		CorpoBoleto corpoBoleto = new CorpoBoleto();
 		
@@ -1595,7 +1620,7 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setTituloAceite("A");
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
-        corpoBoleto.setTituloValor(valor.setScale(2, RoundingMode.HALF_EVEN));   
+        corpoBoleto.setTituloValor(valorDocumento.setScale(2, RoundingMode.HALF_EVEN));   
         corpoBoleto.setTituloDataDoDocumento(dataEmissao);   
         corpoBoleto.setTituloDataDoVencimento(dataVencimento);  
         
@@ -1604,12 +1629,16 @@ public class BoletoServiceImpl implements BoletoService {
         if (!aceitaPagamentoVencido) {
         	
         	valorParaPagamentosVencidos = BigDecimal.ZERO;
+        	
+        	valorDesconto = BigDecimal.ZERO;
+        	
+        	valorAcrescimo = BigDecimal.ZERO;
         } 
         
-        corpoBoleto.setTituloDesconto(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloDesconto(valorDesconto);
         corpoBoleto.setTituloDeducao(valorParaPagamentosVencidos);
         corpoBoleto.setTituloMora(valorParaPagamentosVencidos);
-        corpoBoleto.setTituloAcrecimo(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloAcrecimo(valorAcrescimo);
         corpoBoleto.setTituloValorCobrado(valorParaPagamentosVencidos);
         
 
