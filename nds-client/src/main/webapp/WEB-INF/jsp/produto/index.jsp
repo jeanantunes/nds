@@ -47,7 +47,7 @@
      	<fieldset style="margin-bottom: 10px;">
      		<legend>Dados Basicos</legend>
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
-				<tr>
+				<tr id="trForn">
 					<td><strong>Fornecedor:</strong></td>
 					<td>
 						<select class="habilitarCampoInterface" name="comboFornecedoresCadastro" id="comboFornecedoresCadastro" style="width:200px;"
@@ -60,7 +60,7 @@
 						</select>
 					</td>
 				</tr>
-				<tr>
+				<tr id="trCodigo">
 					<td width="135"><strong>C&oacute;digo:</strong></td>
 					<td width="260">
 						<input type="text" name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="8"
