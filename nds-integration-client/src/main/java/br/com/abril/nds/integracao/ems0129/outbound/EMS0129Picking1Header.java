@@ -14,6 +14,8 @@ public class EMS0129Picking1Header implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long idCota;
+	
 	private String tipoRegistro;
 	
 	private Integer codigoCota;
@@ -46,5 +48,13 @@ public class EMS0129Picking1Header implements Serializable {
 	
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
 	}	
 }

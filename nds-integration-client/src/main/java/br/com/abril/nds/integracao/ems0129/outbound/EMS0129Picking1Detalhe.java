@@ -8,7 +8,7 @@ import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
-public class EMS0129Picking1Detalhe {
+public class EMS0129Picking1Detalhe implements ModeloPickingDetalheInterface {
 	
 	private String tipoRegistro;
 	
