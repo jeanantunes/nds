@@ -30,6 +30,7 @@ import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Trailer;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Detalhe;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Header;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Trailer;
+import br.com.abril.nds.integracao.ems0129.outbound.ModeloPickingDetalheInterface;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
@@ -174,22 +175,22 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			
 			List<EMS0129Picking1Header> listHeaders = criarHeaderModelo1(data);
 			
-			for (EMS0129Picking1Header header : listHeaders) {
-				
-				print.println(fixedFormatManager.export(header));
+			if (listHeaders.isEmpty()) {
 
-				List<InterfacePickingDTO> listDataPickingDTO = getDetalhesPicking(header.getIdCota(), data);
+				String mensagemValidacao = "Nenhum registro encontrado!";
 				
-				if (listDataPickingDTO.isEmpty()) {
+				this.lancarMensagemValidacao(mensagemValidacao, message);
+			}
+			
+			for (EMS0129Picking1Header outheader : listHeaders) {
+				
+				print.println(fixedFormatManager.export(outheader));
 
-					String mensagemValidacao = "Nenhum registro encontrado!";
-					
-					this.lancarMensagemValidacao(mensagemValidacao, message);
-				}
+				List<InterfacePickingDTO> listDataPickingDTO = getDetalhesPicking(outheader.getIdCota(), data);
 				
 				int qtdeRegistros = criarDetalhesModelo1(print, listDataPickingDTO);
 				
-				EMS0129Picking1Trailer outtrailer = criaTrailer(print, header.getCodigoCota(), qtdeRegistros);
+				EMS0129Picking1Trailer outtrailer = criaTrailer(print, outheader.getCodigoCota(), qtdeRegistros);
 				
 				print.println(fixedFormatManager.export(outtrailer));
 			}
@@ -221,24 +222,29 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 					new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
 							File.separator  + nomeArquivoPickingInterfaceLED));
 			
-		//	List<InterfacePickingDTO> listMovimentoEstoqueCota = getDetalhesPicking(message);
-
 			Date data = getDataLancDistrib(message);
 			
-			SomaRegistro somaRegistros = null;
+			List<EMS0129Picking2Header> listHeaders = criarHeaderModelo2(data);
 			
-//			for (MovimentoEstoqueCota mec : listMovimentoEstoqueCota) {
-//				
-//				somaRegistros = new SomaRegistro();
-//				
-//				int numeroCota = mec.getCota().getNumeroCota();
-//				
-//				criaHeader(print, mec.getCota().getPDVPrincipal(), data);
-//				
-//				somaRegistros = criarDetalhesModelo2(print, numeroCota, mec.getCota().getMovimentoEstoqueCotas(), somaRegistros);
-//				
-//				criaTrailer(print, numeroCota, somaRegistros.getValorTotalBruto(), somaRegistros.getValorTotalDesconto());
-//			}
+			if (listHeaders.isEmpty()) {
+
+				String mensagemValidacao = "Nenhum registro encontrado!";
+				
+				this.lancarMensagemValidacao(mensagemValidacao, message);
+			}	
+	
+			for (EMS0129Picking2Header outheader : listHeaders) {
+				
+				print.println(fixedFormatManager.export(outheader));
+				
+				int numeroCota = outheader.getCodigoCota();
+				
+				List<InterfacePickingDTO> listDataPickingDTO = getDetalhesPicking(outheader.getIdCota(), data);
+				
+				SomaRegistro somaRegistros = criarDetalhesModelo2(print, listDataPickingDTO);
+				
+				criaTrailer(print, numeroCota, somaRegistros.getValorTotalBruto(), somaRegistros.getValorTotalDesconto());
+			}
 
 			print.flush();
 			print.close();
@@ -386,34 +392,48 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param print
 	 * @param pdv
 	 * @param data
+	 * @return 
 	 */
-	private void criaHeader(PrintWriter print, PDV pdv, Date data) {
+	@SuppressWarnings("unchecked")
+	public List<EMS0129Picking2Header> criarHeaderModelo2(Date data) {
 
-		EMS0129Picking2Header outheader = new EMS0129Picking2Header();
-
-		Pessoa pessoa = pdv.getCota().getPessoa();
-
-		String nomeFantasia = pessoa.getNome();
-		String cpfCnpj = null;
-
-		if (pessoa instanceof PessoaFisica) {
-
-			cpfCnpj = ((PessoaFisica) pessoa).getCpf();
-
-		} else if (pessoa instanceof PessoaJuridica) {
-
-			cpfCnpj = ((PessoaJuridica) pessoa).getCnpj();
-		}
-
-		String nomeCotaComCnpj = pdv.getNome() + "||" + cpfCnpj;
-	
-		outheader.setCodigoCota(pdv.getCota().getNumeroCota());
-		outheader.setNomeCotaComCpfCnpj(nomeCotaComCnpj);
-		outheader.setData(data);
-		outheader.setNomeFantasia(nomeFantasia);
-
-		print.println(fixedFormatManager.export(outheader));
-
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select distinct(c.id) as idCota");
+		sql.append(" ,c.numero_cota as codigoCota ");
+		sql.append(" ,concat(pdv.NOME,'||',case when p.CPF then p.cpf else p.cnpj end) as nomeCotaComCpfCnpj");
+		sql.append(" ,pdv.NOME as nomeFantasia ");
+		sql.append(" ,mec.data as data");
+		sql.append(" from cota c ");
+		sql.append(" join pdv pdv on pdv.cota_id = c.id  ");
+		sql.append(" join pessoa p on p.id = c.pessoa_id ");
+		sql.append(" join movimento_estoque_cota mec on mec.cota_id = c.ID ");
+		sql.append(" join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ");
+		sql.append(" where mec.DATA = :data ");
+		sql.append(" and pdv.PONTO_PRINCIPAL = true ");
+		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameterList("grupos", 
+				Arrays.asList( 
+						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
+						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
+						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
+						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
+				));
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("codigoCota", StandardBasicTypes.INTEGER );
+		query.addScalar("nomeCotaComCpfCnpj", StandardBasicTypes.STRING );
+		query.addScalar("nomeFantasia", StandardBasicTypes.STRING);
+		query.addScalar("data", StandardBasicTypes.DATE);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EMS0129Picking2Header.class));
+		
+		return (List<EMS0129Picking2Header>) query.list();
 	}
 
 	
@@ -452,7 +472,6 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		outtrailer.setValorTotalDesconto(valorTotalDesconto);
 
 		print.println(fixedFormatManager.export(outtrailer));
-
 	}
 
 	
@@ -465,41 +484,23 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	private int criarDetalhesModelo1(PrintWriter print, List<InterfacePickingDTO> listPickingDTO) {
-
-		EMS0129Picking1Detalhe outdetalhe = new EMS0129Picking1Detalhe();
+		
+		EMS0129Picking1Detalhe outdetalhe;
 		
 		int qtdeRegistros = 0;
 
 		for (InterfacePickingDTO pickingDTO : listPickingDTO) {
 
-			outdetalhe.setCodigoCota(pickingDTO.getNumeroCota());
-
-			outdetalhe.setQuantidade(pickingDTO.getQtdeMEC().longValue());
-            
-			outdetalhe.setCodigoProduto(pickingDTO.getCodigoProduto());
-			
-			outdetalhe.setEdicao(pickingDTO.getCodigoEdicao());
-			
-			outdetalhe.setNomePublicacao(pickingDTO.getNomeProduto());
-			
-			outdetalhe.setPrecoCusto(pickingDTO.getPrecoCustoProdutoEdicao());
-			
-			outdetalhe.setPrecoVenda(pickingDTO.getPrecoVendaProdutoEdicao());
-			
-			outdetalhe.setDesconto(pickingDTO.getValorDescontoMEC());
-			
-			outdetalhe.setSequenciaNotaEnvio(pickingDTO.getSequenciaMatriz());
+			outdetalhe = (EMS0129Picking1Detalhe) getBaseModeloFromDTO(pickingDTO, new EMS0129Picking1Detalhe());
 			
 			print.println(fixedFormatManager.export(outdetalhe));
 
 			qtdeRegistros++;
-
 		}
 
 		return qtdeRegistros;
 	}
 
-	
 	/**
 	 * Cria os detalhes do arquivo a ser gerado
 	 * 
@@ -509,53 +510,28 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param somaRegistros
 	 * @return
 	 */
-	private SomaRegistro criarDetalhesModelo2(PrintWriter print,Integer numeroCota, 
-					Set<MovimentoEstoqueCota> movimentoEstoqueCotas, SomaRegistro somaRegistros) {
+	private SomaRegistro criarDetalhesModelo2(PrintWriter print, 
+			List<InterfacePickingDTO> listPickingDTO) {
 
-		EMS0129Picking2Detalhe outdetalhe = new EMS0129Picking2Detalhe();
+		EMS0129Picking2Detalhe outdetalhe;
+		
 		int qtdeRegistros = 0;
-
-		for (MovimentoEstoqueCota moviEstCota : movimentoEstoqueCotas) {
+		
+		SomaRegistro somaRegistros = new SomaRegistro();
+		
+		for (InterfacePickingDTO pickingDTO : listPickingDTO) {
 			
-			outdetalhe.setCodigoCota(numeroCota);
-			outdetalhe.setQuantidade(Long.valueOf(moviEstCota.getQtde().toString()));
-			ProdutoEdicao produtoEdicao = moviEstCota.getProdutoEdicao();
-            outdetalhe.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			outdetalhe.setEdicao(produtoEdicao.getNumeroEdicao());
-			outdetalhe.setNomePublicacao(produtoEdicao.getProduto().getNome());
-			outdetalhe.setPrecoCusto(produtoEdicao.getPrecoCusto());
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-            outdetalhe.setPrecoVenda(precoVenda);
-            
-            BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota().getId(), produtoEdicao);
-            BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			outdetalhe.setDesconto(valorDesconto);
+			outdetalhe = (EMS0129Picking2Detalhe) getBaseModeloFromDTO(pickingDTO, new EMS0129Picking2Detalhe());
 			
-			if (!produtoEdicao.getLancamentos().isEmpty()) {
-
-				for (Lancamento lanc : produtoEdicao.getLancamentos()) {
-
-					outdetalhe.setSequenciaNotaEnvio(lanc.getSequenciaMatriz());
-
-					print.println(fixedFormatManager.export(outdetalhe));
-
-					qtdeRegistros++;
-					
-				}
-
-			} else {
-
-				print.println(fixedFormatManager.export(outdetalhe));
-
-				qtdeRegistros++;
-
-			}
+			print.println(fixedFormatManager.export(outdetalhe));
 			
 			BigDecimal valorTotalBruto =
-				produtoEdicao.getPrecoVenda().multiply(new BigDecimal(moviEstCota.getQtde()));
+				pickingDTO.getPrecoVendaProdutoEdicao().multiply(
+						new BigDecimal(pickingDTO.getQtdeMEC()));
 			
 			BigDecimal valorTotalVenda =
-				produtoEdicao.getPrecoCusto().multiply(new BigDecimal(moviEstCota.getQtde()));
+				pickingDTO.getPrecoCustoProdutoEdicao().multiply(
+						new BigDecimal(pickingDTO.getQtdeMEC()));
 			
 			somaRegistros.addValorTotalBruto(valorTotalBruto);
 			somaRegistros.addValorTotalDesconto(valorTotalVenda);
@@ -566,7 +542,37 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		return somaRegistros;
 
 	}
+	
+	
+	/**
+	 * Gera o modelo base dos detalhes
+	 * 
+	 * @param pickingDTO
+	 * @param modelo
+	 * @return
+	 */
+	private ModeloPickingDetalheInterface getBaseModeloFromDTO(InterfacePickingDTO pickingDTO, ModeloPickingDetalheInterface modelo) {
+		
+		modelo.setCodigoCota(pickingDTO.getNumeroCota());
 
+		modelo.setQuantidade(pickingDTO.getQtdeMEC().longValue());
+        
+		modelo.setCodigoProduto(pickingDTO.getCodigoProduto());
+		
+		modelo.setEdicao(pickingDTO.getCodigoEdicao());
+		
+		modelo.setNomePublicacao(pickingDTO.getNomeProduto());
+		
+		modelo.setPrecoCusto(pickingDTO.getPrecoCustoProdutoEdicao());
+		
+		modelo.setPrecoVenda(pickingDTO.getPrecoVendaProdutoEdicao());
+		
+		modelo.setDesconto(pickingDTO.getValorDescontoMEC());
+		
+		modelo.setSequenciaNotaEnvio(pickingDTO.getSequenciaMatriz());
+		
+		return modelo;
+	}
 
 	/**
 	 * Lança Exceção com Mensagem de Validação

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.InterfacePickingDTO;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Header;
+import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Header;
 import br.com.abril.nds.integracao.ems0129.processor.EMS0129MessageProcessor;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
@@ -32,17 +33,20 @@ public class EMS0129Test extends RouteTestTemplate {
 
 	@Override
 	public void test() {
-		
 		Calendar calendar = new GregorianCalendar(2013, 9, 9);
-		
 		route.execute("TestUnitarioUser", calendar.getTime(), "6248116");
-
 	}
 	
 	@Test
 	public void testCreateHeaderModelo01() {
 		List<EMS0129Picking1Header> headers = this.messageProcessor.criarHeaderModelo1(new GregorianCalendar(2013, 9, 9).getTime());
 		
+		Assert.assertNotNull(headers);
+	}
+	
+	@Test
+	public void testCreateHeaderModelo02() {
+		List<EMS0129Picking2Header> headers = this.messageProcessor.criarHeaderModelo2(new GregorianCalendar(2013, 9, 9).getTime());
 		Assert.assertNotNull(headers);
 	}
 	
@@ -61,4 +65,5 @@ public class EMS0129Test extends RouteTestTemplate {
 	
 		Assert.assertNotNull(detalhes);
 	}
+	
 }
