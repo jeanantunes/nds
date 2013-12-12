@@ -37,9 +37,9 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 @Component
 public class EMS0111MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
-	
-	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 

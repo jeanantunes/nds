@@ -5,7 +5,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -29,21 +28,6 @@ public interface ParciaisService {
 	 *            - Usuário
 	 */
 	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos,Usuario usuario);
-
-	/**
-	 * Cria novos período parcial para determinada edição de um produto
-	 * 
-	 * @param produtoEdicao
-	 *            - Produto edição
-	 * @param qtdePeriodos
-	 *            - Quantidade de períodos
-	 * @param usuario
-	 *            - Usuário
-	 *            
-	 * @param distribuidor
-	 *            - Distribuídor
-	 */
-	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,Integer qtdePeriodos, Usuario usuario);
 
 	/**
 	 * Altera data de Período de Lancamento Parcial
@@ -99,6 +83,8 @@ public interface ParciaisService {
 	void salvarRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
 	
 	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	
+	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
 	
 	void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento);
 	

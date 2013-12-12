@@ -127,9 +127,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return ((produtoEdicao.getPeb() - (fatorRelancamentoParcial*(qntPeriodos-1))) / qntPeriodos);
 	}
 
-	@Override
-	@Transactional
-	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
+	private void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
 		
 		validarProdutoEdicao(produtoEdicao);
 		
@@ -542,6 +540,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 	public List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo) {
 		
 		return this.periodoLancamentoParcialRepository.obterRedistribuicoesParciais(idPeriodo);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Lancamento> obterRedistribuicoes(Long idPeriodo) {
+		
+		return this.periodoLancamentoParcialRepository.obterRedistribuicoes(idPeriodo);
 	}
 	
 	@Override

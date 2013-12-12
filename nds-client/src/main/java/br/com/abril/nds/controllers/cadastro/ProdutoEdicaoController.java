@@ -392,10 +392,10 @@ public class ProdutoEdicaoController extends BaseController {
 				listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
 			}
 			
-			if (dto.getRepartePrevisto() == null) {
+			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
 			}
-			if (dto.getRepartePromocional() == null) {
+			if (!dto.isParcial() && dto.getRepartePromocional() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Promocional'!");
 			}
 			if (dto.getDescricaoDesconto() == null || dto.getDescricaoDesconto().trim().isEmpty()){
