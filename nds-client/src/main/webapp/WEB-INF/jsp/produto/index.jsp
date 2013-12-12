@@ -388,8 +388,6 @@
 		</fieldset>
 	</div>
 </body>
-
-<<<<<<< HEAD
 	<form action="/produto" id="incluir_form">
 	<div id="dialog-novo" title="Incluir Novo Produto">
      
@@ -731,5 +729,3 @@
 		</fieldset>
 	</div>
 </body>
-=======
->>>>>>> fase2
