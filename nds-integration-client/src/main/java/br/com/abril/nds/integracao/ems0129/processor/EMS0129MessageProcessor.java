@@ -5,19 +5,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.dto.InterfacePickingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.ems0129.data.SomaRegistro;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Detalhe;
@@ -36,12 +40,14 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.MathUtil;
 
@@ -62,6 +68,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
 	private DescontoService descontoService;
@@ -112,26 +121,6 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param message
 	 * @param distribuidor
 	 */
-	private void processarArquivoPickingModelo2(Message message,
-			Distribuidor distribuidor) {
-		String nomeArquivoPickingInterfaceLED;
-		nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking2();
-		
-		if (nomeArquivoPickingInterfaceLED == null) {
-			
-			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
-		}
-		
-		geraArquivoPicking2(message, nomeArquivoPickingInterfaceLED);
-	}
-
-	
-	/**
-	 * Processa geração do arquivo de Picking do Modelo1
-	 * 
-	 * @param message
-	 * @param distribuidor
-	 */
 	private void processarArquivoPickingModelo1(Message message,
 			Distribuidor distribuidor) {
 		
@@ -142,7 +131,27 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
 		}
 		
-		geraArquivoPicking1(message, nomeArquivoPickingInterfaceLED);
+		gerarArquivoPickingModelo1(message, nomeArquivoPickingInterfaceLED);
+	}
+
+	
+	/**
+	 * Processa geração do arquivo de Picking do Modelo1
+	 * 
+	 * @param message
+	 * @param distribuidor
+	 */
+	private void processarArquivoPickingModelo2(Message message,
+			Distribuidor distribuidor) {
+		
+		String nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking2();
+		
+		if (nomeArquivoPickingInterfaceLED == null) {
+			
+			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+		}
+		
+		gerarArquivoPickingModelo2(message, nomeArquivoPickingInterfaceLED);
 	}
 
 	
@@ -152,29 +161,37 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param message
 	 * @param nomeArquivoPickingInterfaceLED
 	 */
-	private void geraArquivoPicking1(Message message, String nomeArquivoPickingInterfaceLED) {
+	private void gerarArquivoPickingModelo1(Message message, String nomeArquivoPickingInterfaceLED) {
 
 		try {
 
 			PrintWriter print = new PrintWriter(
 					new FileWriter(
-							message.getHeader().get(
-									MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) 
-									+ File.pathSeparator + nomeArquivoPickingInterfaceLED));
+							message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name()) 
+									+ File.separator + nomeArquivoPickingInterfaceLED)); 
 			
-			List<PDV> pdvs = findListPDV(message);
+			Date data = getDataLancDistrib(message);
 			
+			List<EMS0129Picking1Header> listHeaders = criarHeaderModelo1(data);
 			
-			for (PDV pdv : pdvs) {
+			for (EMS0129Picking1Header header : listHeaders) {
+				
+				print.println(fixedFormatManager.export(header));
 
-				int numeroCota = pdv.getCota().getNumeroCota();
+				List<InterfacePickingDTO> listDataPickingDTO = getDetalhesPicking(header.getIdCota(), data);
+				
+				if (listDataPickingDTO.isEmpty()) {
 
-				criaHeader(print, numeroCota, pdv.getNome());
-
-				int qtdeRegistros = criarDetalhes(print, numeroCota, pdv.getCota().getMovimentoEstoqueCotas());
-
-				criaTrailer(print, numeroCota, qtdeRegistros);
-
+					String mensagemValidacao = "Nenhum registro encontrado!";
+					
+					this.lancarMensagemValidacao(mensagemValidacao, message);
+				}
+				
+				int qtdeRegistros = criarDetalhesModelo1(print, listDataPickingDTO);
+				
+				EMS0129Picking1Trailer outtrailer = criaTrailer(print, header.getCodigoCota(), qtdeRegistros);
+				
+				print.println(fixedFormatManager.export(outtrailer));
 			}
 
 			print.flush();
@@ -196,33 +213,32 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param message
 	 * @param nomeArquivoPickingInterfaceLED
 	 */
-	private void geraArquivoPicking2(Message message, String nomeArquivoPickingInterfaceLED) {
-
-		List<PDV> pdvs = findListPDV(message);
-
-		Date data = getDataLancDistrib(message);
-		
-		SomaRegistro somaRegistros = null;
+	private void gerarArquivoPickingModelo2(Message message, String nomeArquivoPickingInterfaceLED) {
 
 		try {
 
 			PrintWriter print = new PrintWriter(
-					new FileWriter(message.getHeader().get(
-							MessageHeaderProperties.OUTBOUND_FOLDER.getValue())	+ 
-							File.pathSeparator  + nomeArquivoPickingInterfaceLED));
+					new FileWriter(message.getHeader().get(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO.name())	+ 
+							File.separator  + nomeArquivoPickingInterfaceLED));
+			
+		//	List<InterfacePickingDTO> listMovimentoEstoqueCota = getDetalhesPicking(message);
 
-			for (PDV pdv : pdvs) {
-				
-				somaRegistros = new SomaRegistro();
-				
-				int numeroCota = pdv.getCota().getNumeroCota();
-				
-				criaHeader(print, pdv, data);
-				
-				somaRegistros = criarDetalhes(print, numeroCota, pdv.getCota().getMovimentoEstoqueCotas(), somaRegistros);
-				
-				criaTrailer(print, numeroCota, somaRegistros.getValorTotalBruto(), somaRegistros.getValorTotalDesconto());
-			}
+			Date data = getDataLancDistrib(message);
+			
+			SomaRegistro somaRegistros = null;
+			
+//			for (MovimentoEstoqueCota mec : listMovimentoEstoqueCota) {
+//				
+//				somaRegistros = new SomaRegistro();
+//				
+//				int numeroCota = mec.getCota().getNumeroCota();
+//				
+//				criaHeader(print, mec.getCota().getPDVPrincipal(), data);
+//				
+//				somaRegistros = criarDetalhesModelo2(print, numeroCota, mec.getCota().getMovimentoEstoqueCotas(), somaRegistros);
+//				
+//				criaTrailer(print, numeroCota, somaRegistros.getValorTotalBruto(), somaRegistros.getValorTotalDesconto());
+//			}
 
 			print.flush();
 			print.close();
@@ -259,60 +275,108 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	/**
-	 * Obtém listas de PDVs principais com base na data de lançamento.
+	 * Obtém os dados de detalhes para geração do arquivo 
 	 * 
 	 * @param message
 	 * @return
 	 */
-	private List<PDV> findListPDV(Message message) {
-		
-		Date data = getDataLancDistrib(message);
+	@SuppressWarnings("unchecked")
+	public List<InterfacePickingDTO> getDetalhesPicking(Long idCota, Date data) {
 		
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select pdv from PDV pdv ");
-		sql.append(" join fetch pdv.cota co ");
-		sql.append(" join fetch co.pessoa p ");
-		sql.append(" left join fetch co.movimentoEstoqueCotas mov ");
-		sql.append(" left join fetch mov.produtoEdicao pe ");
-		sql.append(" left join fetch pe.lancamentos lan ");
-		sql.append(" left join fetch pe.produto pd ");
-		sql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-		sql.append(" and lan.dataLancamentoDistribuidor = :dataLancDistrib ");
+		sql.append(" select c.id as idCota ");
+		sql.append(" ,c.numero_cota as numeroCota ");
+		sql.append(" ,mec.qtde as qtdeMEC ");
+		sql.append(" ,p.codigo as codigoProduto ");
+		sql.append(" ,p.nome as nomeProduto ");
+		sql.append(" ,l.sequencia_matriz as sequenciaMatriz ");
+		sql.append(" ,pe.numero_edicao as codigoEdicao ");
+		sql.append(" ,pe.preco_custo as precoCustoProdutoEdicao ");
+		sql.append(" ,pe.preco_venda as precoVendaProdutoEdicao ");
+		sql.append(" ,mec.valor_desconto as valorDescontoMEC ");
+		sql.append(" from movimento_estoque_cota mec ");
+		sql.append(" join lancamento l on l.id = mec.lancamento_id ");
+		sql.append(" join cota c on mec.COTA_ID = c.ID  ");
+		sql.append(" join produto_edicao pe on pe.id = mec.produto_edicao_id ");
+		sql.append(" join produto p on p.id = pe.produto_id ");
+		sql.append(" join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ");
+		sql.append(" where mec.data = :data ");
+		sql.append(" and c.id = :idCota ");
+		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("idCota", idCota);
+		query.setParameterList("grupos", 
+				Arrays.asList( 
+						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
+						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
+						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
+						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
+				));
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		query.addScalar("qtdeMEC", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("codigoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("sequenciaMatriz", StandardBasicTypes.INTEGER);
+		query.addScalar("precoCustoProdutoEdicao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("precoVendaProdutoEdicao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorDescontoMEC", StandardBasicTypes.BIG_DECIMAL);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InterfacePickingDTO.class));
 
-		Query query = this.getSession().createQuery(sql.toString());
-		query.setParameter("dataLancDistrib", data);
-
-		@SuppressWarnings("unchecked")
-		List<PDV> pdvs = (List<PDV>) query.list();
-
-		if (pdvs.isEmpty()) {
-
-			String mensagemValidacao = "Nenhum registro encontrado!";
-			
-			this.lancarMensagemValidacao(mensagemValidacao, message);
-		}
-
-		return pdvs;
+		return (List<InterfacePickingDTO>) query.list();
 	}
-
+	
 	
 	/**
-	 * Cria o Header para o arquivo a ser gerado
+	 * Cria os Headers para o arquivo a ser gerado
 	 * 
 	 * @param print
 	 * @param numeroCota
 	 * @param nome
 	 */
-	private void criaHeader(PrintWriter print, Integer numeroCota, String nome) {
+	@SuppressWarnings("unchecked")
+	public List<EMS0129Picking1Header> criarHeaderModelo1(Date data) {
 
-		EMS0129Picking1Header outheader = new EMS0129Picking1Header();
-
-		outheader.setCodigoCota(numeroCota);
-		outheader.setNomeCota(nome);
-
-		print.println(fixedFormatManager.export(outheader));
-
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select distinct(c.id) as idCota, c.numero_cota as codigoCota, pdv.NOME as nomeCota "); 
+		sql.append(" from cota c ");
+		sql.append(" join pdv pdv on pdv.cota_id = c.id  ");
+		sql.append(" join movimento_estoque_cota mec on mec.cota_id = c.ID ");
+		sql.append(" join tipo_movimento tm on tm.id = mec.TIPO_MOVIMENTO_ID ");
+		sql.append(" where mec.DATA = :data ");
+		sql.append(" and pdv.PONTO_PRINCIPAL = true ");
+		sql.append(" and tm.GRUPO_MOVIMENTO_ESTOQUE in (:grupos) ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameterList("grupos", 
+				Arrays.asList( 
+						GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO.name(),
+						GrupoMovimentoEstoque.SOBRA_DE_COTA.name(), 
+						GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+						GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name(), 
+						GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+						GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE.name()
+				));
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("codigoCota", StandardBasicTypes.INTEGER );
+		query.addScalar("nomeCota", StandardBasicTypes.STRING );
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EMS0129Picking1Header.class));
+		
+		return (List<EMS0129Picking1Header>) query.list();
 	}
 
 	
@@ -359,16 +423,15 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param numeroCota
 	 * @param quantidadeRegistros
 	 */
-	private void criaTrailer(PrintWriter print, Integer numeroCota,
+	private EMS0129Picking1Trailer criaTrailer(PrintWriter print, Integer numeroCota,
 			int quantidadeRegistros) {
 
 		EMS0129Picking1Trailer outtrailer = new EMS0129Picking1Trailer();
 
 		outtrailer.setCodigoCota(numeroCota);
 		outtrailer.setQuantidadeRegistros(quantidadeRegistros);
-
-		print.println(fixedFormatManager.export(outtrailer));
-
+		
+		return outtrailer;
 	}
 
 	
@@ -401,44 +464,35 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param movimentoEstoqueCotas
 	 * @return
 	 */
-	private int criarDetalhes(PrintWriter print, Integer numeroCota, Set<MovimentoEstoqueCota> movimentoEstoqueCotas) {
+	private int criarDetalhesModelo1(PrintWriter print, List<InterfacePickingDTO> listPickingDTO) {
 
 		EMS0129Picking1Detalhe outdetalhe = new EMS0129Picking1Detalhe();
+		
 		int qtdeRegistros = 0;
 
-		for (MovimentoEstoqueCota moviEstCota : movimentoEstoqueCotas) {
+		for (InterfacePickingDTO pickingDTO : listPickingDTO) {
 
-			outdetalhe.setCodigoCota(numeroCota);
-			outdetalhe.setQuantidade(moviEstCota.getQtde().longValue());
-			ProdutoEdicao produtoEdicao = moviEstCota.getProdutoEdicao();
-            outdetalhe.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			outdetalhe.setEdicao(produtoEdicao.getNumeroEdicao());
-			outdetalhe.setNomePublicacao(produtoEdicao.getProduto().getNome());
-			outdetalhe.setPrecoCusto(produtoEdicao.getPrecoCusto());
+			outdetalhe.setCodigoCota(pickingDTO.getNumeroCota());
 			
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			outdetalhe.setPrecoVenda(precoVenda);
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota(), produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			outdetalhe.setDesconto(valorDesconto);
+			outdetalhe.setQuantidade(pickingDTO.getQtdeMEC().longValue());
+            
+			outdetalhe.setCodigoProduto(pickingDTO.getCodigoProduto());
+			
+			outdetalhe.setEdicao(pickingDTO.getCodigoEdicao());
+			
+			outdetalhe.setNomePublicacao(pickingDTO.getNomeProduto());
+			
+			outdetalhe.setPrecoCusto(pickingDTO.getPrecoCustoProdutoEdicao());
+			
+			outdetalhe.setPrecoVenda(pickingDTO.getPrecoVendaProdutoEdicao());
+			
+			outdetalhe.setDesconto(pickingDTO.getValorDescontoMEC());
+			
+			outdetalhe.setSequenciaNotaEnvio(pickingDTO.getSequenciaMatriz());
+			
+			print.println(fixedFormatManager.export(outdetalhe));
 
-			if (!produtoEdicao.getLancamentos().isEmpty()) {
-
-				for (Lancamento lanc : produtoEdicao.getLancamentos()) {
-
-					outdetalhe.setSequenciaNotaEnvio(lanc.getSequenciaMatriz());
-
-					print.println(fixedFormatManager.export(outdetalhe));
-
-					qtdeRegistros++;
-				}
-
-			} else {
-
-				print.println(fixedFormatManager.export(outdetalhe));
-
-				qtdeRegistros++;
-			}
+			qtdeRegistros++;
 
 		}
 
@@ -455,7 +509,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	 * @param somaRegistros
 	 * @return
 	 */
-	private SomaRegistro criarDetalhes(PrintWriter print,Integer numeroCota, 
+	private SomaRegistro criarDetalhesModelo2(PrintWriter print,Integer numeroCota, 
 					Set<MovimentoEstoqueCota> movimentoEstoqueCotas, SomaRegistro somaRegistros) {
 
 		EMS0129Picking2Detalhe outdetalhe = new EMS0129Picking2Detalhe();
