@@ -635,14 +635,16 @@ public class ProdutoController extends BaseController {
 	
 	private String validarCodigoProduto(Long codigoFornecedor, String codigoProduto){
 		
-		if (codigoProduto == null){
+		if (codigoProduto == null || codigoFornecedor == null){
 			
 			return null;
 		}
 		
 		boolean produtoTreelog = false;
 		
-		if (codigoFornecedor != null && (codigoFornecedor == 1 || codigoFornecedor == 2)){
+		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(codigoFornecedor);
+		
+		if (Origem.INTERFACE.equals(origem)){
 			
 			produtoTreelog = true;
 		}
