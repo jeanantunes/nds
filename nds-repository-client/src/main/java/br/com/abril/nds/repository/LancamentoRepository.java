@@ -338,7 +338,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
-<<<<<<< HEAD
 	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
 
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
@@ -375,8 +374,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	Date getMaiorDataLancamentoDistribuidor(Long idProdutoEdicao);
 	
-}
-=======
 	public List<Lancamento> obterPorEstudo(Estudo estudo);
 
 	Lancamento buscarPorIdSemEstudo(Long lancamentoId);
@@ -385,4 +382,3 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento, Long produtoEdicaoId );
 }
->>>>>>> fase2
