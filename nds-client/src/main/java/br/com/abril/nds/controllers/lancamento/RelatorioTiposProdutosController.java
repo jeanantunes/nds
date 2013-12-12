@@ -55,7 +55,7 @@ public class RelatorioTiposProdutosController extends BaseController {
 	@Path("/")
 	public void index()
 	{
-		List<TipoProduto> listTipoProduto = tipoProdutoService.obterTodosTiposProduto();
+		List<TipoProduto> listTipoProduto = tipoProdutoService.obterTiposProdutoDesc();
 		result.include("listTipoProduto", listTipoProduto);
 	}
 	

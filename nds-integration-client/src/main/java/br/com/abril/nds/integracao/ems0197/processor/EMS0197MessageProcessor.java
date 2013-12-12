@@ -79,7 +79,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				for(MovimentoEstoqueCota movimentoEstoqueCota : jornaleiro.getCota().getMovimentoEstoqueCotas()){
 					
 					EMS0197Detalhe outDetalhe = createDetalhes(jornaleiro, movimentoEstoqueCota.getProdutoEdicao(), movimentoEstoqueCota.getQtde());
-					
+
 					print.println(fixedFormatManager.export(outDetalhe));
 				}
 					
@@ -137,7 +137,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		outDetalhe.setPrecoVendaPE(produtoEdicao.getPrecoVenda().toString());												
 		
 		outDetalhe.setDescontoPE(
-				descontoService.obterValorDescontoPorCotaProdutoEdicao(null, jornaleiro.getCota(), produtoEdicao).toString());		
+				descontoService.obterValorDescontoPorCotaProdutoEdicao(null, jornaleiro.getCota().getId(), produtoEdicao).toString());		
 		
 		outDetalhe.setQtdeMEC(qtd.toString());
 		

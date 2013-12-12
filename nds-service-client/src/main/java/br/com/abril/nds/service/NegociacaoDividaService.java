@@ -36,4 +36,11 @@ public interface NegociacaoDividaService {
 	public abstract List<CalculaParcelasVO> calcularParcelas(FiltroCalculaParcelas filtro);
 
 	public abstract List<CalculaParcelasVO> recalcularParcelas(FiltroCalculaParcelas filtro, List<CalculaParcelasVO> parcelas);
+
+	/**
+	 * Obtem quantidade de parcelas para que o valor das parcelas esteja de acordo com o valor mínimo dos parametros de cobrança
+	 * @param filtro
+	 * @return Integer
+	 */
+	Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro);
 }

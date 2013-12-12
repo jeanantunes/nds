@@ -412,4 +412,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<Cota> obterCotasIntervaloNumeroCota(Integer cotaDe, 
 			                                 Integer cotaAte,
 			                                 List<SituacaoCadastro> situacoesCadastro);
+
+	SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota);
+	
+	Long obterIdPorNumeroCota(Integer numeroCota);
 }

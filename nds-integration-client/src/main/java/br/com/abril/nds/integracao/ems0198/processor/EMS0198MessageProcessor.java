@@ -207,7 +207,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		outdetalhe.setCodigoDeBarras(cec.getChamadaEncalhe().getProdutoEdicao().getCodigoDeBarras());
 		outdetalhe.setPrecoCusto((cec.getChamadaEncalhe().getProdutoEdicao().getPrecoCusto() != null ? cec.getChamadaEncalhe().getProdutoEdicao().getPrecoCusto().toString():""));
 		outdetalhe.setPrecoVenda((cec.getChamadaEncalhe().getProdutoEdicao().getPrecoVenda() != null ? cec.getChamadaEncalhe().getProdutoEdicao().getPrecoVenda().toString():""));			
-		outdetalhe.setDesconto(descontoService.obterDescontoPorCotaProdutoEdicao(null, cec.getCota(), cec.getChamadaEncalhe().getProdutoEdicao()).toString());												
+		outdetalhe.setDesconto(descontoService.obterDescontoPorCotaProdutoEdicao(null, cec.getCota().getId(), cec.getChamadaEncalhe().getProdutoEdicao()).toString());												
 		outdetalhe.setQuantidade(cec.getQtdePrevista().toString());
 					
 		outdetalhe.setDataEncalhe(sdf.format(cec.getChamadaEncalhe().getDataRecolhimento()));

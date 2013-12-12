@@ -123,4 +123,6 @@ public interface BoxService {
 	 * @return List<Box>
 	 */
 	List<Box> buscarBoxPorRoteiro(Long roteiroId);
+
+	String obterDescricaoBoxPorCota(Integer numeroCota);
 }

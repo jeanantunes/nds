@@ -732,6 +732,23 @@ public class FornecedorServiceImpl implements FornecedorService {
 		
 		return this.fornecedorRepository.obterFornecedoresPorSituacaoEOrigem(situacaoCadastro, origem);
 	}
-	
-}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Origem obterOrigemCadastroFornecedor(Long idFornecedor) {
+		
+		if (idFornecedor == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Id Fornecedor é obrigatório.");
+		}
+		
+		return this.fornecedorRepository.obterOrigemCadastroFornecedor(idFornecedor);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Fornecedor> obterFornecedoresDesc() {
+		
+		return this.fornecedorRepository.obterFornecedoresDesc();
+	}
+}

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -246,8 +247,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setPeb(produto.getPeb());
 				produtoExistente.setFormaComercializacao(produto.getFormaComercializacao());
 				produtoExistente.setPeriodicidade(produto.getPeriodicidade());
-				produtoExistente.setGrupoEditorial(produto.getGrupoEditorial());
-				produtoExistente.setSubGrupoEditorial(produto.getSubGrupoEditorial());
 				produtoExistente.setTributacaoFiscal(produto.getTributacaoFiscal());
 				produtoExistente.setPacotePadrao(produto.getPacotePadrao());
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
@@ -341,6 +340,30 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return produtoRepository.buscarProdutosBalanceadosOrdenadosNome(dataLancamento);
 	}
-	
-	
+
+	@Override
+	public String obterCodigoDisponivel() {
+		
+		String ultimoCodigoRegional = this.produtoRepository.obterUltimoCodigoProdutoRegional();
+		
+		//primeiro produto regional a ser cadastrado
+		if (ultimoCodigoRegional == null){
+			
+			return "1000000000";
+		}
+		
+		if (!NumberUtils.isDigits(ultimoCodigoRegional)){
+			
+			ultimoCodigoRegional = ultimoCodigoRegional.replaceAll("[^\\d]", "0");
+		}
+		
+		ultimoCodigoRegional = new Long(Long.valueOf(ultimoCodigoRegional) + 1).toString();
+		
+		while (this.produtoRepository.existeProdutoRegional(ultimoCodigoRegional)){
+			
+			ultimoCodigoRegional = new Long(Long.valueOf(ultimoCodigoRegional) + 1).toString();
+		}
+		
+		return ultimoCodigoRegional;
+	}
 }

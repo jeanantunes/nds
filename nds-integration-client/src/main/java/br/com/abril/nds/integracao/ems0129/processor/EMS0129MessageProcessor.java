@@ -473,7 +473,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		for (InterfacePickingDTO pickingDTO : listPickingDTO) {
 
 			outdetalhe.setCodigoCota(pickingDTO.getNumeroCota());
-			
+
 			outdetalhe.setQuantidade(pickingDTO.getQtdeMEC().longValue());
             
 			outdetalhe.setCodigoProduto(pickingDTO.getCodigoProduto());
@@ -527,7 +527,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             outdetalhe.setPrecoVenda(precoVenda);
             
-            BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota(), produtoEdicao);
+            BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, moviEstCota.getCota().getId(), produtoEdicao);
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			outdetalhe.setDesconto(valorDesconto);
 			
