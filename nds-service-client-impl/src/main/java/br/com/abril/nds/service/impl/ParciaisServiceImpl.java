@@ -382,7 +382,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		this.reajustarRedistribuicoes(periodo,dataLancamento,dataRecolhimento);
 	}
-    
+
+	@Override
 	@Transactional
 	public void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento) {
 		
