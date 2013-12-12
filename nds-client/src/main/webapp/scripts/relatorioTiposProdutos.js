@@ -151,105 +151,6 @@
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "edicao",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 255
-		});
-<<<<<<< HEAD
-		
-		$(".tiposProdutosGrid", this.workspace).flexReload();
-	},
-	
-	processarRetornoPesquisa : function(result) {
-		
-		if (result.mensagens) {
-
-			exibirMensagem(
-					result.mensagens.tipoMensagem, 
-					result.mensagens.listaMensagens
-			);
-			
-			$(".grids", relatorioTiposProdutosController.workspace).hide();
-
-			return result;
-		}
-		
-		$.each(result.rows, function(index, row) {
-	
-			if(!row.cell.nomeCota){
-				row.cell.nomeCota = "";
-			}
-			
-			if(!row.cell.precoCapa){
-				row.cell.precoCapa = "0,00";
-			}
-			
-		});
-		
-		$(".grids", relatorioTiposProdutosController.workspace).show();
-
-		return result;
-	},
-	
-	
-	initGrid : function() {
-		
-		$(".tiposProdutosGrid", this.workspace).flexigrid({
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'produto',
-				width : 220,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'edicao',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Preço Capa R$',
-				name : 'precoCapa',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Faturamento R$',
-				name : 'faturamento',
-				width : 100,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Tipo de Produto',
-				name : 'tipoProduto',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Lcto',
-				name : 'lancamento',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Rclt',
-				name : 'recolhimento',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}],
 			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
@@ -259,16 +160,10 @@
 			width : 960,
 			height : 255
 		});
+
 	}
 	
 	
 }, BaseController);
 
-=======
-	}
-	
-	
-}, BaseController);
-
->>>>>>> fase2
 //@ sourceURL=relatorioTiposProdutos.js
