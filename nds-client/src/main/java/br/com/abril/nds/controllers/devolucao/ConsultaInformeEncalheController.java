@@ -30,12 +30,9 @@ import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-<<<<<<< HEAD
 import br.com.abril.nds.util.SemanaUtil;
-=======
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
->>>>>>> fase2
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -138,9 +135,12 @@ public class ConsultaInformeEncalheController extends BaseController {
 		
 		Integer semana = Integer.parseInt(anoSemana.substring(4));
 		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		
 		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
+				SemanaUtil.obterDataDaSemanaNoAno(
+					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), cal.get(Calendar.YEAR));
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -216,13 +216,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 		this.result.include("diaSemanaInicioRecolhimento", SemanaUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
 		this.result.include("diaMesFimRecolhimento", maxDiaSemanaRecolhimento);
-<<<<<<< HEAD
-		this.result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataImpressãoFimRecolhimento.getTime()));
-		this.result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataImpressãoFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
-=======
 		this.result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataFimRecolhimento.getTime()));
-		this.result.include("diaSemanaFimRecolhimento", DateUtil.obterDiaSemana(dataFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
->>>>>>> fase2
+		this.result.include("diaSemanaFimRecolhimento", SemanaUtil.obterDiaSemana(dataFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
 		List<ColunaRelatorioInformeEncalhe> colunas = new ArrayList<ColunaRelatorioInformeEncalhe>();
 		
