@@ -26,9 +26,6 @@ public interface GerarCobrancaService {
 	
 	boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota );
 
-	void enviarDocumentosCobrancaEmail(String nossoNumero, String email)
-			throws AutenticacaoEmailException;
-
 	/**
 	 * Envia Cobranças para email da Cota
 	 * 

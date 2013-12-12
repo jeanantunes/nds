@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -125,7 +126,7 @@ public class ProdutoController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
+		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTiposProdutoDesc();
 		
 		carregarDadosSegmentacao();
 		
@@ -355,11 +356,11 @@ public class ProdutoController extends BaseController {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
 
-		listaCombos.add(parseComboTipoProduto(this.tipoProdutoService.obterTodosTiposProduto()));
+		listaCombos.add(parseComboTipoProduto(this.tipoProdutoService.obterTiposProdutoDesc()));
 
-		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedores()));
+		listaCombos.add(parseComboFornecedor(this.fornecedorService.obterFornecedoresDesc()));
 
-		listaCombos.add(parseComboEditor(this.editorService.obterEditores()));
+		listaCombos.add(parseComboEditor(this.editorService.obterEditoresDesc()));
 	
 		this.result.use(Results.json()).from(listaCombos, "result").recursive().serialize();
 	}
@@ -554,6 +555,13 @@ public class ProdutoController extends BaseController {
 				
 			} else {
 				
+				String msgCodigoTreelog = this.validarCodigoProduto(codigoFornecedor, produto.getCodigo());
+				
+				if (msgCodigoTreelog != null){
+					
+					listaMensagens.add(msgCodigoTreelog);
+				}
+				
 				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
 				
 				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
@@ -618,20 +626,46 @@ public class ProdutoController extends BaseController {
 			if (produto.getTributacaoFiscal() == null) {
 				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
 			}
-
-			if (produto.getGrupoEditorial() != null && !produto.getGrupoEditorial().trim().isEmpty()) {
-				produto.setGrupoEditorial(produto.getGrupoEditorial().trim());
-			}
-			
-			if (produto.getSubGrupoEditorial() != null && !produto.getSubGrupoEditorial().trim().isEmpty()) {
-				produto.setSubGrupoEditorial(produto.getSubGrupoEditorial().trim());
-			}
-	
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
 		}
+	}
+	
+	private String validarCodigoProduto(Long codigoFornecedor, String codigoProduto){
+		
+		if (codigoProduto == null){
+			
+			return null;
+		}
+		
+		boolean produtoTreelog = false;
+		
+		if (codigoFornecedor != null && (codigoFornecedor == 1 || codigoFornecedor == 2)){
+			
+			produtoTreelog = true;
+		}
+		
+		if (!produtoTreelog && (!codigoProduto.startsWith("10") || codigoProduto.length() != 10)){
+			
+			return "Os produtos de Fornecedores Terceiros devem ter códigos iniciados por '10' com 10 dígitos.";
+		}
+		
+		return null;
+	}
+	
+	@Post
+	public void validarCodigoProdutoInput(Long codigoFornecedor, String codigoProduto){
+		
+		String retorno = this.validarCodigoProduto(codigoFornecedor, codigoProduto);
+		
+		if (retorno != null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, retorno);
+		}
+		
+		result.nothing();
 	}
 	
 	/**
@@ -744,5 +778,28 @@ public class ProdutoController extends BaseController {
 				listaProdutos, ConsultaProdutoDTO.class, this.response);
 		
 		result.nothing();
+	}
+	
+	@Post
+	public void obterCodigoDisponivel(Long idFornecedor){
+		
+		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(idFornecedor);
+		
+		Object[] dados = new Object[2];
+		
+		if (Origem.INTERFACE.equals(origem)){
+			
+			dados[0] = true;
+			dados[1] = "";
+			
+			result.use(Results.json()).from(dados, "result").serialize();
+			
+			return;
+		}
+		
+		dados[0] = false;
+		dados[1] = this.produtoService.obterCodigoDisponivel();
+		
+		result.use(Results.json()).from(dados, "result").serialize();
 	}
 }

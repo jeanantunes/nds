@@ -254,7 +254,7 @@ public class ChamadaoController extends BaseController {
 	 */
 	private List<ItemDTO<Long, String>> carregarComboEditores() {
 
-		List<Editor> editores = editorService.obterEditores();
+		List<Editor> editores = editorService.obterEditoresDesc();
 		
 		List<ItemDTO<Long, String>> listaEditoresCombo = new ArrayList<ItemDTO<Long, String>>();
 		

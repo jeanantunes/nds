@@ -1,8 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
-
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,26 +24,19 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheService;
-import br.com.abril.nds.service.DebitoCreditoCotaService;
-import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -80,22 +71,10 @@ public class EmissaoCEController extends BaseController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
-	private GerarCobrancaService gerarCobrancaService;
-	
-	@Autowired
 	private BoletoService boletoService;
 	
 	@Autowired
 	private ChamadaEncalheService chamadaEncalheService;
-	
-	@Autowired
-	private DebitoCreditoCotaService debitoCreditoCotaService;
-	
-	@Autowired
-	private ParametroCobrancaCotaService paramtroCobrancaCotaService;
-	
-	@Autowired
-	private FormaCobrancaService formaCobrancaService;
 		
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -392,74 +371,6 @@ public class EmissaoCEController extends BaseController {
 		
 		result.include("personalizada", filtro.getPersonalizada());		
 	}
-
-	/**
-	 * Obtem dados de boleto em Branco utilizando dados de CE e periodo de recolhimento do filtro
-	 * @param ceDTO
-	 * @param dataRecolhimentoCEDe
-	 * @param dataRecolhimentoCEAte
-	 * @return BoletoEmBrancoDTO
-	 */
-	private BoletoEmBrancoDTO obterDadosBoletoEmBrancoPorCE(CotaEmissaoDTO ceDTO, 
-			                                                Date dataRecolhimentoCEDe, 
-			                                                Date dataRecolhimentoCEAte){
-		
-		Date dataEmissao = DateUtil.parseDataPTBR(ceDTO.getDataEmissao());
-		
-		Date dataRecolhimento = DateUtil.parseDataPTBR(ceDTO.getDataRecolhimento());
-		
-		BigDecimal valorReparteLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrReparteLiquido());
-		
-		BigDecimal valorEncalheCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrEncalhe());
-		
-		BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido());
-		
-		BigDecimal valorDebitos =  this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
-		
-		BigDecimal valorCreditos =  this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
-		
-		valorDebitos = valorDebitos!=null?valorDebitos:BigDecimal.ZERO;
-		
-		valorCreditos = valorCreditos!=null?valorCreditos:BigDecimal.ZERO;
-		
-		BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos));
-		
-		Fornecedor fornecedor = this.paramtroCobrancaCotaService.obterFornecedorPadraoCota(ceDTO.getIdCota());
-		
-		if (fornecedor == null){
-			
-			return null;
-		}
-		
-		FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaCota(ceDTO.getIdCota(), fornecedor.getId(), dataEmissao, valorTotalBoletoEmBranco);
-		
-		if (fc == null || !fc.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO)){
-			
-			return null;
-		}
-		
-		Date dataVencimento = this.gerarCobrancaService.obterDataVencimentoCobrancaCota(dataEmissao, fc.getParametroCobrancaCota().getFatorVencimento());
-		
-		BoletoEmBrancoDTO bbDTO = new BoletoEmBrancoDTO(ceDTO.getIdChamEncCota(),
-				                                        fornecedor.getId(),
-				                                        fc.getBanco()!=null?fc.getBanco().getNumeroBanco():null,
-				                                        fc.getBanco()!=null?fc.getBanco().getAgencia():null,
-				                                        fc.getBanco()!=null?fc.getBanco().getConta():null,
-				                                        fc.getBanco()!=null?fc.getBanco().getDvConta():null,
-				                                        ceDTO.getNumCota(),
-				                                        valorReparteLiquidoCE,
-				                                        valorEncalheCE,
-										                valorTotalLiquidoCE, 				               
-										                valorDebitos, 
-										                valorCreditos, 
-										                dataEmissao, 
-										                dataRecolhimento,
-										                dataVencimento,
-										                dataRecolhimentoCEDe,
-										                dataRecolhimentoCEAte);
-
-		return bbDTO;
-	}
 	
 	/**
 	 * Obtem Map com Cota e Valor Total Liquido da C.E.
@@ -474,9 +385,7 @@ public class EmissaoCEController extends BaseController {
 		
 		for (CotaEmissaoDTO ceDTO : listaCE){
 
-			BoletoEmBrancoDTO bbDTO = this.obterDadosBoletoEmBrancoPorCE(ceDTO, 
-					                                                     filtro.getDtRecolhimentoDe(),
-					                                                     filtro.getDtRecolhimentoAte());
+			BoletoEmBrancoDTO bbDTO = this.boletoService.obterDadosBoletoEmBrancoPorCE(ceDTO,filtro.getDtRecolhimentoDe(),filtro.getDtRecolhimentoAte());
 			
 			if (bbDTO!=null){
 			    

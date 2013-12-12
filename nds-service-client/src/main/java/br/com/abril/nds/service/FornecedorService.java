@@ -180,4 +180,8 @@ public interface FornecedorService {
 	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
 	
 	List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, Origem origem);
+
+	Origem obterOrigemCadastroFornecedor(Long idFornecedor);
+
+	List<Fornecedor> obterFornecedoresDesc();
 }

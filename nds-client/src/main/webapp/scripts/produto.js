@@ -39,7 +39,8 @@ var produtoController = $.extend(true, {
 		    }
 		);
 		
-		$("#percentualDesconto", produtoController.workspace).mask("999,99"); 
+		$("#percentualDesconto", produtoController.workspace).mask("999,99");
+		$("#codigoProdutoCadastro", produtoController.workspace).mask("?99999999");
 	},
 
 	buscarValueRadio:function(radioName) {
@@ -61,11 +62,6 @@ var produtoController = $.extend(true, {
 		
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 
-	},
-	
-	pesquisarProdutosErrorCallBack: function() {
-			
-		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 	},
 
 	getCodigoProdutoPesquisa: function () {
@@ -234,7 +230,8 @@ var produtoController = $.extend(true, {
 				produtoController.limparModalCadastro();
 				produtoController.carregarProdutoEditado(id);		
 				
-
+				produtoController.trocarOrdemCampos(true);
+				
 				$("#dialog-novo", this.workspace).dialog({
 					resizable: false,
 					height:550,
@@ -283,8 +280,6 @@ var produtoController = $.extend(true, {
 						$("#peb", produtoController.workspace).val(result.peb);
 						$("#pacotePadrao", produtoController.workspace).val(result.pacotePadrao);
 						$("#comboPeriodicidade", produtoController.workspace).val(result.periodicidade);
-						$("#grupoEditorial", produtoController.workspace).val(result.grupoEditorial);
-						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
 
@@ -439,20 +434,22 @@ var produtoController = $.extend(true, {
 	carregarNovoProduto : function(callback) {
 
 		$.postJSON(contextPath + "/produto/carregarDadosProduto",
-					null,
-					function (result) {
+			null,
+			function (result) {
 
-						produtoController.popularCombo(result[0], $("#comboTipoProdutoCadastro", this.workspace));
-						produtoController.popularCombo(result[1], $("#comboFornecedoresCadastro", this.workspace));
-						produtoController.popularCombo(result[2], $("#comboEditor", this.workspace));
-					
-						if (callback) {
-							callback();
-						}
-					},
-				  	null,
-				   	true
-			);
+				produtoController.popularCombo(result[0], $("#comboTipoProdutoCadastro", this.workspace));
+				produtoController.popularCombo(result[1], $("#comboFornecedoresCadastro", this.workspace));
+				produtoController.popularCombo(result[2], $("#comboEditor", this.workspace));
+				
+				produtoController.trocarOrdemCampos(false);
+				
+				if (callback) {
+					callback();
+				}
+			},
+		  	null,
+		   	true
+		);
 	},
 
 	limparModalCadastro : function() {
@@ -474,8 +471,6 @@ var produtoController = $.extend(true, {
 		$("#radioTributacaoOutros", this.workspace).attr('checked', false);
 		
 		$("#percentualDesconto", this.workspace).val("");
-		$("#grupoEditorial", this.workspace).val("");
-		$("#subGrupoEditorial", this.workspace).val("");
 		
 		$("#segmentacaoClasseSocial", this.workspace).val("");
 		$("#segmentacaoSexo", this.workspace).val("");
@@ -497,8 +492,6 @@ var produtoController = $.extend(true, {
         			   {name:"produto.periodicidade",value:$("#comboPeriodicidade", produtoController.workspace).val()},
         			   {name:"produto.formaComercializacao",value:this.buscarValueRadio('formaComercializacao', produtoController.workspace)},
         			   {name:"produto.tributacaoFiscal",value:this.buscarValueRadio('radioTributacaoFiscal', produtoController.workspace)},
-        			   {name:"produto.grupoEditorial",value:$("#grupoEditorial", produtoController.workspace).val()},
-        			   {name:"produto.subGrupoEditorial",value:$("#subGrupoEditorial", produtoController.workspace).val()},	
         			   {name:"produto.segmentacao.classeSocial",value:$("#segmentacaoClasseSocial", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
@@ -583,6 +576,78 @@ var produtoController = $.extend(true, {
 			callback();
 		}
 	},
+	
+	proximoCodigoDisponivel : function(comboFornecedor){
+		
+		if (comboFornecedor.value && comboFornecedor.value != '0'){
+			
+			var _this = this;
+			
+			$.postJSON(contextPath + "/produto/obterCodigoDisponivel",  
+			   	[{name:"idFornecedor", value:comboFornecedor.value}],
+			   	function (result) {
+	
+					var tipoMensagem = result.tipoMensagem;
+					
+					var listaMensagens = result.listaMensagens;
+					
+					if (tipoMensagem && listaMensagens) {
+						
+						exibirMensagem(tipoMensagem, listaMensagens);
+						return;
+					}
+					
+					if (result[0]){
+						
+						$("#codigoProdutoCadastro", _this.workspace).val("");
+						$("#codigoProdutoCadastro", _this.workspace).mask("?99999999");
+					} else {
+						
+						$("#codigoProdutoCadastro", _this.workspace).val(result[1]);
+						$("#codigoProdutoCadastro", _this.workspace).mask("?9999999999");
+					}
+				}
+			);
+		} else {
+			
+			$("#codigoProdutoCadastro", this.workspace).mask("?99999999");
+			$("#codigoProdutoCadastro", this.workspace).val("");
+		}
+	},
+	
+	validarCodigoProduto : function(){
+		
+		var idForn = $("#comboFornecedoresCadastro", this.workspace).val();
+		var inpCodigo = $("#codigoProdutoCadastro", this.workspace).val();
+		
+		if (idForn && idForn != "0" && inpCodigo){
+			
+			var _this = this;
+			
+			$.postJSON(contextPath + "/produto/validarCodigoProdutoInput",  
+				[{name:"codigoFornecedor", value:idForn}, {name:"codigoProduto", value:inpCodigo}],
+			   	null,
+				function (result){
+					$("#codigoProdutoCadastro", _this.workspace).focus();
+				}
+			);
+		}
+	},
+	
+	trocarOrdemCampos : function(p){
+		
+		if (p){
+			
+			var trForn = $("#trForn", this.workspace);
+			$("#trForn", this.workspace).remove();
+			$("#trCodigo", this.workspace).after(trForn);
+		} else {
+			
+			var trCodigo = $("#trCodigo", this.workspace);
+			$("#trCodigo", this.workspace).remove();
+			$("#trForn", this.workspace).after(trCodigo);
+		}
+	}
 
 }, BaseController);
 
