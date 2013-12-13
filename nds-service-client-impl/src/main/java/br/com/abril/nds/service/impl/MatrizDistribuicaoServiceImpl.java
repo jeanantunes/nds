@@ -586,7 +586,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    cota.setReparte(null);
 		    continue;
 		}
-		cotas.add(cota);
+            if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaNaoRecebeDesseFornecedor)) {
+                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getCodigo());
+                cota.setReparte(null);
+                continue;
+            }
+            cotas.add(cota);
 	    }
 	}
 	// separando as cotas que passaram na validacao acima das cotas que por algum motivo nao entraram no estudo

@@ -171,7 +171,6 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 	private Estudo criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, Estudo estudo) {
 		
 		Estudo estudoCopia = obterCopiaDeEstudo(estudo);
-		
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
 		
@@ -180,7 +179,6 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		}
 		
 		Map<String, BigInteger> mapReparte =  obterMapClassifiqReparte(cotas);
-		
 		BigInteger totalFixacao = BigInteger.ZERO;
 		BigInteger repCalculado = BigInteger.ZERO;
 		BigInteger repartDistrib = BigInteger.ZERO;
@@ -191,58 +189,37 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		EstudoCota cota = null;
 		
 		for (EstudoCota estudoCota:cotas) {
-			
 			cota = (EstudoCota)SerializationUtils.clone(estudoCota);
-			
 			repartDistrib = vo.getReparteDistribuido();
 			pactPadrao = vo.getPacotePadrao();
-			
 			repCalculado = cota.getReparte();
-			
 			if (vo.isFixacao()) {
-				
 				totalFixacao = mapReparte.get("FX").add(mapReparte.get("MM"));
-				
 				if (totalFixacao.compareTo(repartDistrib) > 0) {
-					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Fixação é maior que o reparte");
 				}
-				
 				repartDistrib = repartDistrib.subtract(totalFixacao);
-				
 				repFinal = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
-				
 				indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
-				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 				
 			} else {
-				
 				repFinal = obterSomaReparteFinal(mapReparte);
-				
 				indiceRepProporcional = repartDistrib.divide(repFinal);
-				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
-			
 			cota.setReparte(repCalculado);
-			
 			cota.setId(null);
 			cota.setEstudo(estudoCopia);
 			estudoCotaRepository.adicionar(cota);
 		}
-		
 		BigInteger totalSoma = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
-		
-		if (repartDistrib.compareTo(totalSoma) > 0) { 
-			
-			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), 1);	
+		if (repartDistrib.compareTo(totalSoma) > 0) {
+			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), 1);
 		}
 		else {
-			
 			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), -1);
 		}
-		
 		return estudoCopia;
 	}
 	
@@ -253,7 +230,6 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 
 			@Override
 			public int compare(EstudoCota ec1, EstudoCota ec2) {
-				
 				return (ec1.getReparte().compareTo(ec2.getReparte()));
 			}
 			
@@ -303,34 +279,23 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 	private BigInteger obterSomaReparteFinal(Map<String, BigInteger> mapReparte, boolean comparaIgual, TipoClassificacaoEstudoCota... tipoClassificacao) {
 		
 		BigInteger repFinal = BigInteger.ZERO;
-		
 		Iterator<String> classifiqIterator = mapReparte.keySet().iterator();
 		
 		while (classifiqIterator.hasNext()) {
 			String key = classifiqIterator.next();
-			
 			if(mapReparte.containsKey(key)) {
-				
 				if (tipoClassificacao == null || tipoClassificacao.length == 0) {
-					
 					repFinal = repFinal.add(mapReparte.get(key));
 				}
-				
 				else {
-					
 					for (TipoClassificacaoEstudoCota tp:tipoClassificacao) {
-						
 						if(comparaIgual) {
-							
 							if (key.equals(tp.name())) {
-								
 								repFinal = repFinal.add(mapReparte.get(key));
 							}
 						} 
 						else {
-							
 							if (!key.equals(tp.name())) {
-								
 								repFinal = repFinal.add(mapReparte.get(key));
 							}
 						}
@@ -338,15 +303,11 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 				}
 			}
 		}
-		
 		return repFinal;
 	}
 	
 	@SuppressWarnings(value = { "all" })
 	private BigInteger obterSomaReparteFinal(Map<String, BigInteger> mapReparte) {
-		
 		return obterSomaReparteFinal(mapReparte, false, null);
 	}
-	
-	
 }

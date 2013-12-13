@@ -3,12 +3,7 @@ package br.com.abril.nds.dao;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -236,7 +231,10 @@ public class CotaDAO {
 		    if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
 			cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
 		    }
-		}
+            if (rs.getBoolean("COTA_NAO_RECEBE_FORNECEDOR")) {
+                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor);
+            }
+        }
 		return cota;
 	    }
 	});
