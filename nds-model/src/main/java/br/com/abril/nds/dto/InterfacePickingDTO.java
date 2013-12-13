@@ -17,6 +17,8 @@ public class InterfacePickingDTO {
 	
 	private String nomeProduto;
 	
+	private String codigoDeBarrasProdutoEdicao;
+	
 	private BigDecimal precoCustoProdutoEdicao;
 	
 	private BigDecimal precoVendaProdutoEdicao;
@@ -104,5 +106,12 @@ public class InterfacePickingDTO {
 	public void setSequenciaMatriz(Integer sequenciaMatriz) {
 		this.sequenciaMatriz = sequenciaMatriz;
 	}
-	
+
+	public String getCodigoDeBarrasProdutoEdicao() {
+		return codigoDeBarrasProdutoEdicao;
+	}
+
+	public void setCodigoDeBarrasProdutoEdicao(String codigoDeBarrasProdutoEdicao) {
+		this.codigoDeBarrasProdutoEdicao = codigoDeBarrasProdutoEdicao;
+	}
 }
