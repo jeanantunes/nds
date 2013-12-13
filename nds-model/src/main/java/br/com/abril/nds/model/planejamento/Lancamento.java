@@ -101,7 +101,7 @@ public class Lancamento implements Serializable {
 	@Column(name = "REPARTE_PROMOCIONAL", nullable = true)
 	private BigInteger repartePromocional;
 	
-	@OneToMany
+	@OneToMany(orphanRemoval=true)
 	private Set<ItemRecebimentoFisico> recebimentos = new HashSet<ItemRecebimentoFisico>();
 	
 	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)

@@ -42,9 +42,8 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 	
 	public EstoqueProduto buscarEstoqueProdutoPorProdutoEdicao(Long idProdutoEdicao) {
 		StringBuilder hql = new StringBuilder("select estoqueProduto ");
-		hql.append(" from EstoqueProduto estoqueProduto, ProdutoEdicao produtoEdicao ")
-		   .append(" where estoqueProduto.produtoEdicao.id = produtoEdicao.id ")
-		   .append(" and produtoEdicao.id = :idProdutoEdicao");
+		hql.append(" from EstoqueProduto estoqueProduto join estoqueProduto.produtoEdicao produtoEdicao ")
+		   .append(" where produtoEdicao.id = :idProdutoEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);

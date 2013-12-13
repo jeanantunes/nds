@@ -486,6 +486,7 @@ var produtoController = $.extend(true, {
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
+        			   {name:"produto.nomeComercial",value:$("#nomeProduto", produtoController.workspace).val()},
         			   {name:"produto.peb",value:$("#peb", produtoController.workspace).val()},
         			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", produtoController.workspace).val()},
         			   {name:"produto.slogan",value:$("#sloganProduto", produtoController.workspace).val()},
