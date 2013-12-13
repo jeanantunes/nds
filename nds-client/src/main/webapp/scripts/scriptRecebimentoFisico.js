@@ -6,6 +6,8 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	linhasDestacadas : [],
 	
+	id: null,
+	
 	init: function() {
 		var _this = this;
 
@@ -222,6 +224,8 @@ var recebimentoFisicoController = $.extend(true, {
 	confirmaNotaFiscalEncontrada : function(result) {
 		
 		var validacao = result.validacao;
+		
+		recebimentoFisicoController.id = result.id;
 		
 		recebimentoFisicoController.indNotaFiscalInterface = result.indNotaInterface;
 		
@@ -830,6 +834,33 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 		
 		return valido;
+	},
+	
+	exibirConfirmacaoExclusaoNota : function() {
+		
+		$("#dialog-verificacao-exclusao", this.workspace).dialog({
+			
+			resizable : false,
+			height : 'auto',
+			width : 450,
+			modal : true,
+			buttons : {
+				
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					recebimentoFisicoController.excluirNotaRecebimentoFisico();
+					return true;
+				},
+
+				"Cancelar" : function() {
+					$(this).dialog("close");
+					return false;
+				}
+			},
+			
+			form: $("#dialog-verificacao-quantidades", this.workspace).parents("form")
+		});	
+		
 	},
 	
 	exibirConfirmacaoQuantidadeDigitadas : function() {
@@ -2484,6 +2515,35 @@ var recebimentoFisicoController = $.extend(true, {
 		if($("#selTodos").is(":checked")) {
 			$("#selTodos").attr("checked", false);
 		}
+	},
+	
+	/**
+     * FAZ A EXCLUSÃO DE UMA NOTA FISCAL
+     */
+	excluirNotaRecebimentoFisico : function() {
+    	
+		var dadosPesquisa = [{name: "id", value: recebimentoFisicoController.id}];
+		
+		
+		$.postJSON(this.path + 'excluirNotaRecebimentoFisico', dadosPesquisa, 
+
+		function(result) {
+			
+	    	if(result.tipoMensagem == "SUCCESS") {
+				
+	    		$(".grids", recebimentoFisicoController.workspace).hide();
+	    		
+	    		recebimentoFisicoController.ocultarBtns();
+	    		
+	    		recebimentoFisicoController.limparCamposPesquisa();
+	        	
+	    		recebimentoFisicoController.limparCamposNovoItem();
+	        	
+	    		recebimentoFisicoController.limparCampos();
+	        	
+	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			}
+		});
 	}
 }, BaseController);
 
