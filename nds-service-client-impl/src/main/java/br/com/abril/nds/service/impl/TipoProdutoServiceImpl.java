@@ -133,16 +133,6 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 		
 		return tipoProduto;
 	}
-
-	/**
-	 * @see br.com.abril.nds.service.TipoProdutoService#obterTodosTiposProduto()
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public List<TipoProduto> obterTodosTiposProduto() {
-		
-		return this.tipoProdutoRepository.buscarTodos();
-	}
 	
 	/**
 	 * Valida se um tipo de produto pode ser editado.
@@ -257,5 +247,12 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	public Long obterQunatidade(FiltroRelatorioTiposProdutos filtro) {
 
 		return this.tipoProdutoRepository.obterQunatidade(filtro);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<TipoProduto> obterTiposProdutoDesc() {
+		
+		return this.tipoProdutoRepository.obterTiposProdutoDesc();
 	}
 }
