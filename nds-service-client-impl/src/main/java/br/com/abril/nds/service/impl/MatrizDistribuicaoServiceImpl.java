@@ -633,7 +633,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	BigDecimal totalReparteNaoFixado = new BigDecimal(totalReparte.subtract(totalReparteFixado));
 	BigDecimal indiceProporcional = BigDecimal.ZERO;
 	if (totalReparteNaoFixado.compareTo(BigDecimal.ZERO) > 0) {
-	    indiceProporcional = new BigDecimal(reparteDistribuir).divide(totalReparteNaoFixado, 3, BigDecimal.ROUND_HALF_UP);
+	    indiceProporcional = new BigDecimal(reparteDistribuir).divide(totalReparteNaoFixado, 3, BigDecimal.ROUND_HALF_UP).divide(BigDecimal.valueOf(2), 3, BigDecimal.ROUND_HALF_UP);
 	}
 	// distribuicao para as outras cotas
 	if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0) {

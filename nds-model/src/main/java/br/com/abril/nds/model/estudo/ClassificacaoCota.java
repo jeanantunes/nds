@@ -79,6 +79,10 @@ public enum ClassificacaoCota {
 	 * TR
 	 */
 	BonificacaoParaCotas("TR", "Cota com bonificação"),
+    /**
+     * FN
+     */
+    CotaNaoRecebeDesseFornecedor("FN", "Cota não recebe o Fornecedor"),
 	/**
 	 * ZZ
 	 */

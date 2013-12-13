@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
  * Processo Anterior: N/A Próximo Processo: {@link SomarFixacoes}
  * </p>
  */
+@SuppressWarnings("JavadocReference")
 @Component
 public class DefinicaoBases extends ProcessoAbstrato {
 
@@ -44,17 +46,28 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
 
 	    if (!edicoesBase.isEmpty()) {
+            edicoesBase = filtrarClassificacao(edicoesBase, estudo);
+            edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
+            validaApenasUmaEdicaoFechada(edicoesBase);
+            excluiEdicoesComMaisDeDoisAnos(edicoesBase);
+            excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
 
-		edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
-		validaApenasUmaEdicaoFechada(edicoesBase);
-		excluiEdicoesComMaisDeDoisAnos(edicoesBase);
-		excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
+            estudo.setEdicoesBase(edicoesBase);
 
-		estudo.setEdicoesBase(edicoesBase);
+            baseParaVeraneio.executar(estudo);
+        }
+    }
+    }
 
-		baseParaVeraneio.executar(estudo);
-	    }
-	}
+    private LinkedList<ProdutoEdicaoEstudo> filtrarClassificacao(LinkedList<ProdutoEdicaoEstudo> edicoesBase, EstudoTransient estudo) {
+        LinkedList<ProdutoEdicaoEstudo> listaFiltrada = new LinkedList<>();
+        final TipoClassificacaoProduto tipoClassificacaoProdutoEstudo = estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto();
+        for (ProdutoEdicaoEstudo edicaoBaseEstudo : edicoesBase) {
+            if (edicaoBaseEstudo.getTipoClassificacaoProduto().equals(tipoClassificacaoProdutoEstudo)) {
+                listaFiltrada.add(edicaoBaseEstudo);
+            }
+        }
+        return listaFiltrada;
     }
 
     private LinkedList<ProdutoEdicaoEstudo> limitarEdicoesApenasSeis(List<ProdutoEdicaoEstudo> edicoesBase, EstudoTransient estudo) {
