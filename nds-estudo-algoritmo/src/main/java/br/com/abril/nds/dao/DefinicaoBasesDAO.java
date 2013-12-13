@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,9 +94,16 @@ public class DefinicaoBasesDAO {
 		produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
 		produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
 		produtoEdicao.getProduto().setCodigoICD(rs.getString("CODIGO_ICD"));
+        produtoEdicao.setTipoClassificacaoProduto(getTipoClassificacaoProduto(rs.getLong("TIPO_CLASSIFICACAO_PRODUTO_ID")));
 
 		return produtoEdicao;
 	}
+
+    private TipoClassificacaoProduto getTipoClassificacaoProduto(long tipo_classificacao_produto_id) {
+        TipoClassificacaoProduto classificacaoProduto = new TipoClassificacaoProduto();
+        classificacaoProduto.setId(tipo_classificacao_produto_id);
+        return classificacaoProduto;
+    }
 
 	private boolean traduzColecionavel(String grupoProduto) {
 		if (grupoProduto != null && grupoProduto.equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {

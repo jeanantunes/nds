@@ -63,7 +63,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
         LinkedList<ProdutoEdicaoEstudo> listaFiltrada = new LinkedList<>();
         final TipoClassificacaoProduto tipoClassificacaoProdutoEstudo = estudo.getProdutoEdicaoEstudo().getTipoClassificacaoProduto();
         for (ProdutoEdicaoEstudo edicaoBaseEstudo : edicoesBase) {
-            if (edicaoBaseEstudo.getTipoClassificacaoProduto().equals(tipoClassificacaoProdutoEstudo)) {
+            if (tipoClassificacaoProdutoEstudo.equals(edicaoBaseEstudo.getTipoClassificacaoProduto())) {
                 listaFiltrada.add(edicaoBaseEstudo);
             }
         }

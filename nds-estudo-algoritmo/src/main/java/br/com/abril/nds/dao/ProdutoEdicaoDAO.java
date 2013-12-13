@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,14 @@ public class ProdutoEdicaoDAO {
                         produtoEdicaoBase.setColecao(true);
                     }
                     produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
+                    produtoEdicaoBase.setTipoClassificacaoProduto(getTipoClassificacaoProduto(rs.getLong("TIPO_CLASSIFICACAO_PRODUTO_ID")));
                     return produtoEdicaoBase;
+                }
+
+                private TipoClassificacaoProduto getTipoClassificacaoProduto(long tipo_classificacao_produto_id) {
+                    TipoClassificacaoProduto classificacaoProduto = new TipoClassificacaoProduto();
+                    classificacaoProduto.setId(tipo_classificacao_produto_id);
+                    return classificacaoProduto;
                 }
 
                 private TipoSegmentoProduto getTipoSegmentoProduto(long idTipoSegmentoProduto) {
