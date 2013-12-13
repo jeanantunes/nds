@@ -1012,6 +1012,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Esta nota não possui recebimento físico confirmado.");
 		}
 		
+		verificarFaltasESobras(nota);
+		
 		desfazerMovimentosEstoque(nota.getItens());
 		
 		if(nota.getOrigem().equals(Origem.INTERFACE)) {
@@ -1021,6 +1023,23 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		} else {
 			
 			limparNotaFiscalEntrada(nota, false);
+		}
+	}
+
+	private void verificarFaltasESobras(NotaFiscalEntrada nota) {
+		
+		List<ItemNotaFiscalEntrada> itens = nota.getItens();
+		
+		for(ItemNotaFiscalEntrada itemOriginal : itens) {
+		
+			ItemRecebimentoFisico itemRecebimento = itemOriginal.getRecebimentoFisico();
+			
+			Diferenca diferenca = itemRecebimento.getDiferenca();
+						
+			if (diferenca!=null && diferenca.getStatusConfirmacao().equals(StatusConfirmacao.CONFIRMADO))
+					throw new ValidacaoException(TipoMensagem.ERROR, "Há diferença(s) gerada(s) e confirmada(s) para essa nota. Não é possível excluí-la.");
+				
+			
 		}
 	}
 
@@ -1081,11 +1100,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			ItemRecebimentoFisico itemRecebimento = itemOriginal.getRecebimentoFisico();
 			
 			Diferenca diferenca = itemRecebimento.getDiferenca();
-			
-			if (diferenca!=null) {
+									
+			if (diferenca!=null)
 				diferencaEstoqueService.excluirLancamentoDiferenca(diferenca.getId());
-			}
-												
+															
 			Lancamento lancamento = lancamentoRepository.obterLancamentoPorItemRecebimento(itemRecebimento.getId());
 			
 			lancamento.getRecebimentos().remove(itemOriginal.getRecebimentoFisico());
