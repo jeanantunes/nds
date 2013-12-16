@@ -1017,7 +1017,7 @@ var analiseParcialController = $.extend(true, {
                 value.cell.quantidade = '';
             }
 
-            var isReadOnly = value.cell.motivo === 'CL' ? 'readonly' : '';
+            var isReadOnly = (value.cell.motivo === 'CL' || value.cell.motivo === 'FN') ? 'readonly' : '';
 
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" style="width: 50px;" value="'+
             value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +

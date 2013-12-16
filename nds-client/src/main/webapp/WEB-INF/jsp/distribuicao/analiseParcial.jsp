@@ -413,7 +413,7 @@ table.dadosTab { margin-left: 370px;}
                             <c:forEach items="${classificacaoCotaList}" var="classificacaoCota">
                                 <c:if test="${classificacaoCota.codigo eq 'SM' || classificacaoCota.codigo eq 'VZ' || classificacaoCota.codigo eq 'FR'
                                 || classificacaoCota.codigo eq 'CL' || classificacaoCota.codigo eq 'GN' || classificacaoCota.codigo eq 'SH'
-                                || classificacaoCota.codigo eq 'SS'}">
+                                || classificacaoCota.codigo eq 'SS' || classificacaoCota.codigo eq 'FN'}">
                                     <option value="<c:out value="${classificacaoCota.codigo}"/>"><c:out value="${classificacaoCota.texto}"/></option>
                                 </c:if>
                             </c:forEach>
