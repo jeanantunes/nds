@@ -6,13 +6,12 @@ var emissaoBandeiraController = $.extend(true, {
 		$("#semanaPesquisa", this.workspace).numeric();
 		$("#numeroPallets", this.workspace).numeric();
 		
-		$(".areaBts",this.workspace).hide();
+		$(".bt_arq",this.workspace).hide();
 				
 	},
 	
 	initBandeiraManual : function() {
-		$("#semanaBandeiraManual").numeric();
-				
+		$("#dataEnvio", emissaoBandeiraController.workspace).mask("99/99/9999");
 	},
 	
 	
@@ -61,19 +60,18 @@ var emissaoBandeiraController = $.extend(true, {
 	
 	pesquisar : function() {
 		
-		emissaoBandeiraController.anoSemanaPesquisa = $("#semanaPesquisa", this.workspace).val;
+		emissaoBandeiraController.anoSemanaPesquisa = $("#semanaPesquisa", this.workspace).val();
+		emissaoBandeiraController.fornecedor = $("#fornecedor", this.workspace).val();
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: [{name:'anoSemana', value:emissaoBandeiraController.anoSemanaPesquisa}] 
+			params: [{name:'anoSemana', value:emissaoBandeiraController.anoSemanaPesquisa},
+			         {name:'fornecedor', value:emissaoBandeiraController.fornecedor}] 
 		   ,
 			newp: 1
 		});
-	
 		
 		$(".bandeirasRcltoGrid", this.workspace).flexReload();
-				
-		$(".areaBts",this.workspace).show();
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -85,8 +83,11 @@ var emissaoBandeiraController = $.extend(true, {
 		}	
         if (tipoMensagem && listaMensagens) {
               exibirMensagem(tipoMensagem, listaMensagens);
+              $(".grids", emissaoBandeiraController.workspace).hide();
+              $(".bt_arq", emissaoBandeiraController.workspace).hide();
          } else { 
         	 $(".grids", emissaoBandeiraController.workspace).show();
+        	 $(".bt_arq", emissaoBandeiraController.workspace).show();
          } 	 
 		
 		return resultado;
@@ -96,6 +97,7 @@ var emissaoBandeiraController = $.extend(true, {
 		
 		window.location = contextPath + "/devolucao/emissaoBandeira/imprimirArquivo?"
 			+ "anoSemana=" + emissaoBandeiraController.anoSemanaPesquisa
+			+ "&fornecedor=" + emissaoBandeiraController.fornecedor
 			+ "&sortname=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).getSortOrder()
 			+ "&rp=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetRowsPerPage()
@@ -115,7 +117,10 @@ var emissaoBandeiraController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + emissaoBandeiraController.anoSemanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?anoSemana=" + 
+					emissaoBandeiraController.anoSemanaPesquisa+ 
+					"&fornecedor=" + emissaoBandeiraController.fornecedor+
+					"&numeroPallets=" + $.trim( $("#numeroPallets").val());
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -146,15 +151,13 @@ var emissaoBandeiraController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeiraManual?"+
-					"anoSemana=" + $.trim( $("#semanaBandeiraManual").val())
-					+ "&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
-					+"&nome="+$.trim( $("#tipoOperacaoBandeiraManual").val())
-					+"&codigoPracaNoProdin="+$.trim( $("#codigoPracaProconBandeiraManual").val())
-					+"&praca="+$.trim( $("#pracaBandeiraManual").val())
-					+"&destino="+$.trim( $("#destinoBandeiraManual").val())
-					+"&canal="+$.trim( $("#canalBandeiraManual").val());
-
-					
+					"anoSemana=" + $.trim( $("#semana").val())
+					+"&numeroPallets=" + $.trim( $("#numeroPalletsBandeiraManual").val())
+					+"&titulo="+$.trim( $("#titulo").val())
+					+"&praca="+$.trim( $("#praca").val())
+					+"&dataEnvio="+$.trim($("#dataEnvio").val())
+					+"&fornecedor="+$.trim($("#inputfornecedor").val())
+					+"&canal="+$.trim($("#canal").val());
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );

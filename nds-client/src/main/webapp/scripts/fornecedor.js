@@ -181,7 +181,7 @@ var fornecedorController = $.extend(true,{
 						null,
 						function(result) {
 							$("#fornecedorController-inicioAtividade", fornecedorController.workspace).html(result.data);
-							$("#fornecedorController-codigoInterface").mask("9999");
+							$("#fornecedorController-codigoInterface").numeric();
 							$("#fornecedorController-codigoInterface", fornecedorController.workspace).val(result.nextCodigo);
 							
 							fornecedorController.showPopupFornecedor();
@@ -414,6 +414,7 @@ var fornecedorController = $.extend(true,{
 						$("#fornecedorController-emailNfe", fornecedorController.workspace).val(result.emailNfe);
 						$("#fornecedorController-tipoFornecedor", fornecedorController.workspace).val(result.tipoFornecedor);
 						$("#fornecedorController-banco", fornecedorController.workspace).val(result.idBanco);
+						$("#fornecedorController-canalDistribuicao", fornecedorController.workspace).val(result.canalDistribuicao);
 						
 						if (result.possuiContrato) {
 
