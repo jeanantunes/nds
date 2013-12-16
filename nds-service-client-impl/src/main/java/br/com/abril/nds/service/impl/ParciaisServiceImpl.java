@@ -82,23 +82,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 		gerarPeriodosParcias(produtoEdicao, qtdePeriodos, usuario);
 	}
 	
-	@Override
-	public void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento, Usuario usuario) {
-		
-		Lancamento proximoLancamento = 
-				periodoLancamentoParcialRepository.obterLancamentoPosterior(lancamento.getProdutoEdicao().getId(), 
-																			lancamento.getDataRecolhimentoDistribuidor());
-		
-		if(proximoLancamento!= null){
-			
-			proximoLancamento.setReparte(lancamento.getReparte());
-			
-			proximoLancamento.setUsuario(usuario);
-			
-			lancamentoRepository.alterar(proximoLancamento);
-		}
-	}
-	
 	@Transactional(readOnly=true)
 	public Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos){
 		

@@ -60,13 +60,6 @@ public interface ParciaisService {
 			Date dataRecolhimento, Long idProdutoEdicao);
 	
 	/**
-	 * Atualiza a quantidade de reparte do próximo lançamento parcial
-	 * 
-	 * @param lancamento
-	 */
-	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento, Usuario usuario);
-	
-	/**
 	 * Retorna a peb calculada de uma parcial referente a um produto edição
 	 * 
 	 * @param codigoProduto

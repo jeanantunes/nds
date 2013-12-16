@@ -114,20 +114,34 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,
-			 												  TipoChamadaEncalhe tipoChamadaEncalhe) {
-
+	public List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao,
+				 									 TipoChamadaEncalhe tipoChamadaEncalhe,
+				 									 Date dataRecolhimento) {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ")
-		.append(" where  ")
-		.append(" chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
-		.append(" and chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ");
+		hql.append(" where chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		
+		if (tipoChamadaEncalhe != null ) {
+			hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
+		}
+		
+		if (dataRecolhimento != null ) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		query.setParameter("produtoEdicao", produtoEdicao);
+		
+		if (tipoChamadaEncalhe != null) {
+			query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
+		}
+		
+		if (dataRecolhimento != null ) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
 		
 		return  query.list();
 	}
