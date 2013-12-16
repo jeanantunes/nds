@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.client.vo.ImpressaoBandeiraVO;
-import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.EmissaoBandeiraService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
@@ -37,12 +37,12 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 	@Override
 	public byte[] imprimirBandeira(Integer semana, Integer numeroPallets) throws Exception {
 		
-		List<FornecedoresBandeiraDTO> lista = chamadaEncalheService.obterDadosFornecedoresParaImpressaoBandeira(semana);
+		List<FornecedorDTO> lista = chamadaEncalheService.obterDadosFornecedoresParaImpressaoBandeira(semana);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
 		
-		for (FornecedoresBandeiraDTO bandeiraDTO : lista){
+		for (FornecedorDTO bandeiraDTO : lista){
 			for (int i=1; i<=numeroPallets;i++ ){
-				listaRelatorio.add(new ImpressaoBandeiraVO(bandeiraDTO,i+"/"+numeroPallets));
+				listaRelatorio.add(new ImpressaoBandeiraVO(bandeiraDTO,i+"/"+numeroPallets, semana));
 			}
 		}
 	    
@@ -50,14 +50,15 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 	}
 
 	@Override
-	public byte[] imprimirBandeiraManual(Integer semana, Integer numeroPallets,
-			String nome, String codigoPracaNoProdin, String praca,
-			String destino, String canal) throws Exception {
+	public byte[] imprimirBandeiraManual(String semana, Integer numeroPallets,
+			String fornecedor, String praca,
+			String canal, String dataEnvio, String titulo) throws Exception {
 		
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
 		
 		for (int i=1; i<=numeroPallets;i++ ){
-			listaRelatorio.add(new ImpressaoBandeiraVO(nome, semana, codigoPracaNoProdin, praca, destino, canal,i+"/"+numeroPallets));
+			listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, semana, praca, canal,
+					i+"/"+numeroPallets, dataEnvio, titulo));
 		}
 				
 		return this.gerarRelatorio(listaRelatorio);
