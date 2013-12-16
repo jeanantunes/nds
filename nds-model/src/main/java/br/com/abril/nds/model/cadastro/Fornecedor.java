@@ -114,6 +114,10 @@ public class Fornecedor implements Serializable {
 	@Column(name="MARGEM_DISTRIBUIDOR", precision=18, scale=4)
 	private BigDecimal margemDistribuidor;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name="CANAL_DISTRIBUICAO")
+	private CanalDistribuicao canalDistribuicao;
+	
 	public Fornecedor(){}
 	
 	public Fornecedor(Long id, String nomeFantasia){
@@ -310,6 +314,14 @@ public class Fornecedor implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public CanalDistribuicao getCanalDistribuicao() {
+		return canalDistribuicao;
+	}
+
+	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
+		this.canalDistribuicao = canalDistribuicao;
 	}
 
 }
