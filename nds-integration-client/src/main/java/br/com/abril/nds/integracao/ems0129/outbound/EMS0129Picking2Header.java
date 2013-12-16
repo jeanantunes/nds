@@ -20,7 +20,7 @@ public class EMS0129Picking2Header implements Serializable {
 	
 	private String tipoRegistro;
 	
-	private Integer codigoCota;
+	private String codigoCota;
 	
 	private String nomeCotaComCpfCnpj;
 	
@@ -78,7 +78,7 @@ public class EMS0129Picking2Header implements Serializable {
 	}
 	
 	@Field(offset = 3, length = 4, align = Align.RIGHT)
-	public Integer getCodigoCota() {
+	public String getCodigoCota() {
 		return codigoCota;
 	}
 	
@@ -169,7 +169,7 @@ public class EMS0129Picking2Header implements Serializable {
 		return separador10;
 	}
 
-	public void setCodigoCota(Integer codigoCota) {
+	public void setCodigoCota(String codigoCota) {
 		this.codigoCota = codigoCota;
 	}
 
