@@ -796,10 +796,27 @@ var analiseParcialController = $.extend(true, {
 
         $('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
+        $("#cotasQueNaoEntraramNoEstudo_cota").change(function(){
+            var numeroCota = this.value;
+            if (numeroCota != '') {
+                $.ajax({
+                    url: analiseParcialController.path + '/cadastro/cota/pesquisarPorNumero',
+                    data: [{name: 'numeroCota', value: numeroCota}],
+                    type: 'POST',
+                    success: function(result) {
+                        if (result.mensagens) {
+                            analiseParcialController.exibirMsg(result.mensagens);
+                        } else {
+                            $('#cotasQueNaoEntraramNoEstudo_nome').val(result.result.nome);
+                        }
+                    }});
+            }
+        });
+
         $('#cotasQueNaoEntraramNoEstudo_nome').autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: 'cadastro/cota/autoCompletarPorNome',
+                    url: analiseParcialController.path + '/cadastro/cota/autoCompletarPorNome',
                     data: [{name: 'nomeCota', value: request.term}],
                     type: 'POST',
                     global: false,
@@ -809,6 +826,7 @@ var analiseParcialController = $.extend(true, {
             },
             minLength: 3,
             select: function( event, ui ) {
+                $("#cotasQueNaoEntraramNoEstudo_cota").val(ui.item.chave.numero);
 //                event.preventDefault();
 //                event.stopPropagation();
             }
