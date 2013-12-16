@@ -76,10 +76,10 @@
 
 </fieldset>
 </div>
-<div class="corpo">
+<div class="container">
 
    
-    <div class="container">
+    
     
      <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
@@ -87,11 +87,25 @@
 	</div>
     	
       <fieldset class="classFieldset">
-   	    <legend> Consulta  Bandeira</legend>
+   	    <legend> Consulta Bandeira</legend>
    	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
   <tr>
     <td width="52">Semana:</td>
-    <td width="778"><input type="text" id="semanaPesquisa" style="width:100px;" /></td>
+    <td width="178">
+    	<select id="semanaPesquisa" style="width:100px;">
+    		<c:forEach items="${semanas}" var="semana">
+    			<option value="${semana.key}">${semana.value}</option>
+    		</c:forEach>
+    	</select>
+    </td>
+    <td width="52">Fornecedor:</td>
+    <td width="200">
+    	<select id="fornecedor" style="width:100px;">
+    		<c:forEach items="${fornecedores}" var="fornecedor">
+    			<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
+    		</c:forEach>
+    	</select>
+    </td>
     <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="emissaoBandeiraController.pesquisar();">Pesquisar</a></span></td>
     </tr>
   </table>
@@ -111,7 +125,7 @@
         
 
     
-    </div>
+   
 </div>
 </body>
 	

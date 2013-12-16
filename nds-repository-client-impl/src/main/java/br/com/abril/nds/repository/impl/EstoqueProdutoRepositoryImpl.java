@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -14,6 +15,7 @@ import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -181,5 +183,26 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		query.setParameter("dataRecolhimento", filtro.getDataRecolhimento());
 		query.setParameter("naoPostergado", false);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Date> obterDatasRecProdutosFechados() {
+		
+		StringBuilder hql = new StringBuilder("select distinct ");
+		hql.append(" lan.dataRecolhimentoPrevista ")
+		   .append(" from EstoqueProduto ep ")
+		   .append(" join ep.produtoEdicao pre ")
+		   .append(" join pre.lancamentos lan ")
+		   .append(" where lan.status = :statusFechado ")
+		   .append(" group by ep.id ")
+		   .append(" having (sum(coalesce(ep.qtde,0)) + sum(coalesce(ep.qtdeSuplementar,0)) ")
+		   .append(" + sum(coalesce(ep.qtdeDevolucaoEncalhe,0))) != 0 ")
+		   .append(" order by lan.dataRecolhimentoPrevista ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("statusFechado", StatusLancamento.FECHADO);
+		
+		return query.list();
 	}
 }
