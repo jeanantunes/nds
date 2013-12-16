@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
@@ -78,7 +79,7 @@ public class ConferenciaEncalheServiceImplTest {
 		
 		when(this.conferenciaEncalheServiceImpl.obterValorTotalDebitoCreditoCota(123, dataOperacao)).thenReturn(BigDecimal.TEN);
 		
-		when(this.conferenciaEncalheServiceImpl.gerarSlip(1L, false)).thenCallRealMethod();
+		when(this.conferenciaEncalheServiceImpl.gerarSlip(1L, false, TipoArquivo.PDF)).thenCallRealMethod();
 		
 		when(this.conferenciaEncalheServiceImpl.obterSlipReportPath())
 		.thenReturn(Thread.currentThread().getContextClassLoader().getResource("reports/slip.jasper").toURI().getPath());
@@ -170,7 +171,7 @@ public class ConferenciaEncalheServiceImplTest {
 	@Test
 	public void test() throws IOException {
 		
-		byte[] relatorioBytes = this.conferenciaEncalheServiceImpl.gerarSlip(1L, false);
+		byte[] relatorioBytes = this.conferenciaEncalheServiceImpl.gerarSlip(1L, false, TipoArquivo.PDF);
 		
 		//File relatorioSlip = new File(ondeGerarSlip + "relatorioSlip.pdf");
 		File relatorioSlip = new File(ondeGerarSlip + "relatorioSlip.txt");

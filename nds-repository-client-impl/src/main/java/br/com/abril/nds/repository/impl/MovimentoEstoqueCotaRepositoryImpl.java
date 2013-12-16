@@ -3394,4 +3394,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		});
 
 	}
+	
+	public void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" update MovimentoEstoqueCota movEst set movEst.estudoCota = null");
+		hql.append(" where movEst.estudoCota.id in (");
+		hql.append(" select id from EstudoCota");
+		hql.append(" where estudo.id = :idEstudo)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idEstudo", idEstudo);
+		
+		
+	}
 }
