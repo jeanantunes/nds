@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
-import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.fixture.Fixture;
@@ -61,6 +61,8 @@ public class ChamadaEncalheRepositoryImplTest extends
 	private ChamadaEncalhe chamadaEncalheQuatroRodas;
 
 	private ProdutoEdicao veja1;
+	
+	Fornecedor fornecedorDinap = null;;
 
 	@Before
 	public void setUpGeral() {
@@ -486,7 +488,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
 		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, null);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), null);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -497,7 +499,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, new PaginacaoVO());
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), new PaginacaoVO());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -512,7 +514,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		paginacaoVO.setQtdResultadosPorPagina(15);
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), paginacaoVO);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -529,7 +531,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		paginacaoVO.setSortColumn("codProduto");
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), paginacaoVO);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -546,7 +548,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		paginacaoVO.setSortColumn("nomeProduto");
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), paginacaoVO);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -563,7 +565,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		paginacaoVO.setSortColumn("edProduto");
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), paginacaoVO);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -580,7 +582,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		paginacaoVO.setSortColumn("pctPadrao");
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), paginacaoVO);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -597,7 +599,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		paginacaoVO.setSortColumn("codProduto");
 
 		List<BandeirasDTO> lista = chamadaEncalheRepository
-				.obterBandeirasNoIntervalo(intervalo, paginacaoVO);
+				.obterBandeirasNoIntervalo(intervalo, fornecedorDinap.getId(), paginacaoVO);
 		Assert.assertNotNull(lista);
 	}
 	
@@ -618,7 +620,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		intervalo.setDe(Fixture.criarData(01, Calendar.SEPTEMBER, 2012));
 		intervalo.setAte(Fixture.criarData(01, Calendar.OCTOBER, 2012));
 
-		List<FornecedoresBandeiraDTO> lista = chamadaEncalheRepository
+		List<FornecedorDTO> lista = chamadaEncalheRepository
 				.obterDadosFornecedoresParaImpressaoBandeira(intervalo);
 		Assert.assertNotNull(lista);
 	}
