@@ -357,13 +357,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return edicoes;
 	}
 
+	//Parse por conta do merge.
 	@Override
 	@Transactional(readOnly = true)
 	public Long countPesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
         Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-        return this.produtoEdicaoRepository.countPesquisarEdicoes(produto.getCodigoICD(), nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+        Integer count = this.produtoEdicaoRepository.countPesquisarEdicoes(produto.getCodigoICD(), nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+        return Long.valueOf(count);
     }
 
 	/**

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:jsp="http://java.sun.com/xml/ns/javaee/jsp" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    	 xmlns="http://java.sun.com/xml/ns/javaee"
+    	 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+     	 xmlns:jsp="http://java.sun.com/xml/ns/javaee/jsp"  
+		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+		 version="2.5">
+    	 
   <display-name>NDS - Novo Distrib</display-name>
   <context-param>
     <param-name>br.com.caelum.vraptor.encoding</param-name>
@@ -46,6 +52,9 @@
   </listener>
   <listener>
     <listener-class>br.com.abril.nds.client.listener.ApplicationContextListener</listener-class>
+  </listener>
+  <listener>
+     <listener-class>br.com.abril.nds.client.listener.ControleSessionListener</listener-class>
   </listener>
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
