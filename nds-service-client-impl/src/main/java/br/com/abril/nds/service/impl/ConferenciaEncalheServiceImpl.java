@@ -116,6 +116,7 @@ import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
+import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -273,6 +274,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Autowired
 	private BoletoService boletoService;
 	
+	@Autowired
+	private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
+	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
 
@@ -424,8 +428,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		ChamadaEncalheCota chamadaEncalheCota = null;
 		
-		if(produtoEdicao.isParcial()) {
-
+		if(produtoEdicao.isParcial()
+				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), dataOperacao)) {
+			
 			chamadaEncalheCota = 
 					chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(),postergado,dataOperacao);
 			
@@ -457,12 +462,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId());
 			
 			}
-			
-			
-			
 		}
 		
 		return chamadaEncalheCota;
+	}
+	
+	/**
+	 * Verifica se o periodo do lançamento do produto edição em recolhimento é FINAL 
+	 * 
+	 * @param idProdutoEdicao - identificador do produto edição
+	 * @param idCota - identificador da cota
+	 * @param dataRecolhimento - data de recolhimento do produto
+	 * @return boolean
+	 */
+	private boolean isPeriodoLancamentoRecolhimentoFinal(Long idProdutoEdicao, Long idCota, Date dataRecolhimento){
+		
+		return periodoLancamentoParcialRepository.isLancamentoConferenciaEncalheCotaPeriodoFinal(idProdutoEdicao, idCota, dataRecolhimento);
 	}
 	
 	/**

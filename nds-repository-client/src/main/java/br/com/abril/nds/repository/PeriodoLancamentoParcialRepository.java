@@ -109,5 +109,7 @@ public interface PeriodoLancamentoParcialRepository extends
 	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
 	
 	List<PeriodoLancamentoParcial> obterProximosPeriodos(Integer numeroPeriodo,Long idLancamentoParcial) ;
+	
+	boolean isLancamentoConferenciaEncalheCotaPeriodoFinal(Long idProdutoEdicao,Long idCota,Date dataRecolhimento);
 }
 
