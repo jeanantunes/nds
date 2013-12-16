@@ -287,27 +287,6 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		return query.list();
 	}
-
-	@Override
-	public Lancamento obterLancamentoPosterior(Long idProdutoEdicao, Date dataRecolhimento) {
-					
-		Criteria criteria = super.getSession().createCriteria(Lancamento.class,"lancamento");
-		
-		criteria.createAlias("lancamento.periodoLancamentoParcial","periodo");
-		
-		criteria.createAlias("lancamento.produtoEdicao","produtoEdicao");
-		
-		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
-		
-		criteria.add(Restrictions.gt("lancamento.dataLancamentoDistribuidor", dataRecolhimento));
-		
-		criteria.addOrder(Order.asc("lancamento.dataLancamentoDistribuidor"));  
-		
-		criteria.setMaxResults(1);
-		
-		return (Lancamento) criteria.uniqueResult();
-	
-	}
 	
 	@Override
 	public Lancamento obterLancamentoAnterior(Long idProdutoEdicao, Date dataLancamento) {

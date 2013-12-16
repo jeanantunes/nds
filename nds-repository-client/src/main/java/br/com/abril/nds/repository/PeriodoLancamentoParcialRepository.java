@@ -49,17 +49,6 @@ public interface PeriodoLancamentoParcialRepository extends
 			Date dataRecolhimento, Long idProdutoEdicao);
 
 	/**
-	 * Obtém lançamento de periodo parcial posterior.
-	 * 
-	 * @param dataRecolhimento
-	 * 
-	 * @param idLancamento
-	 * @return
-	 */
-	Lancamento obterLancamentoPosterior(Long idProdutoEdicao,
-			Date dataRecolhimento);
-
-	/**
 	 * Obtém lançamento de periodo parcial anterior.
 	 * 
 	 * @param dataRecolhimento

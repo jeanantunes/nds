@@ -332,22 +332,6 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 	}
 	
 	@Test
-	public void obterLancamentoPosterior(){
-		Date dataRecolhimento = Fixture.criarData(1, 4, 2011);
-		
-		Lancamento lancamento = periodoLancamentoParcialRepository.obterLancamentoPosterior(1L, dataRecolhimento);
-		
-	}
-	
-	@Test
-	public void obterLancamentoAnterior(){
-		Date dataRecolhimento = Fixture.criarData(1, 4, 2011);
-		
-		Lancamento lancamento = periodoLancamentoParcialRepository.obterLancamentoPosterior(1L, dataRecolhimento);
-		
-	}
-	
-	@Test
 	public void totalBuscaLancamentosParciais() {
 				
 		FiltroParciaisDTO filtro = new FiltroParciaisDTO();

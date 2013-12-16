@@ -1474,8 +1474,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel){
 		
 		List<ChamadaEncalhe> chamadas = 
-				chamadaEncalheRepository.obterChamadaEncalhePorProdutoEdicao(
-						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO) ;
+				chamadaEncalheRepository.obterChamadasEncalhe(
+						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, null) ;
 		
 		if(chamadas.isEmpty()) {
 			return true;
