@@ -41,11 +41,12 @@ var ParciaisController = $.extend(true, {
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#recolhimentoNovaRed", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
+		
+		$('#dataLancamentoEd', this.workspace).mask("99/99/9999");
+		$('#dataRecolhimentoEd', this.workspace).mask("99/99/9999");
+		$('#dataInicial', this.workspace).mask("99/99/9999");
+		$('#dataFinal', this.workspace).mask("99/99/9999");
+		$('#lancamentoNovaRed', this.workspace).mask("99/99/9999");
 
 		$("#nomeProduto", this.workspace).autocomplete({source: ""});
 		$("#edicaoProduto", this.workspace).autocomplete({source: ""});

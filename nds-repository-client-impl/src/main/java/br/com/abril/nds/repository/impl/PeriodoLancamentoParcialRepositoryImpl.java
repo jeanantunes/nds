@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 
@@ -526,4 +528,41 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return query.list();
 	}
 	
+	@Override
+	public boolean isLancamentoConferenciaEncalheCotaPeriodoFinal(Long idProdutoEdicao, Long idCota, Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(distinct periodoLancamento.ID) ")
+			.append("from ")
+			.append("chamada_encalhe chamadaEncalhe ")
+			.append("join ")
+			.append("chamada_encalhe_cota chamadaEncalheCota ON chamadaEncalhe.ID = chamadaEncalheCota.CHAMADA_ENCALHE_ID ")
+			.append("join ")
+			.append("chamada_encalhe_lancamento chamadaEncalheLancamento ON chamadaEncalheLancamento.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID ")
+			.append("join ")
+			.append("lancamento lancamento ON lancamento.ID = chamadaEncalheLancamento.LANCAMENTO_ID ")
+			.append("join ")
+			.append("produto_edicao produtoEdicao ON produtoEdicao.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
+			.append("join ")
+			.append("periodo_lancamento_parcial periodoLancamento ON periodoLancamento.ID = lancamento.PERIODO_LANCAMENTO_PARCIAL_ID ")
+			.append("where produtoEdicao.ID = :idProdutoEdicao ")
+			.append("and lancamento.TIPO_LANCAMENTO = :tipoLancamento ")
+			.append("and chamadaEncalhe.DATA_RECOLHIMENTO = :dataRecolhimento ")
+			.append("and lancamento.DATA_REC_DISTRIB = :dataRecolhimento ")
+			.append("and periodoLancamento.TIPO = :tipoLancamentoParcial ")
+			.append("and chamadaEncalheCota.COTA_ID = :idCota ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("idCota", idCota);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("tipoLancamentoParcial", TipoLancamentoParcial.FINAL);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
+		
+		BigInteger retorno = (BigInteger) query.uniqueResult() ; 
+		
+		return ( retorno != null && retorno.intValue() > 0);
+	}
 }
