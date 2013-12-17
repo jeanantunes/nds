@@ -21,7 +21,7 @@ import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 
 public interface MovimentoEstoqueService {
 
-	void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto,Long idProdutoEdicao, Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
+	void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto,Long idProdutoEdicao, Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
 	
 	MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao,Long idUsuario,BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 	

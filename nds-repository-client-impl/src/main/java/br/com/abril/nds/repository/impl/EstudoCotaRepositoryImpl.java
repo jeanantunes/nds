@@ -76,7 +76,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 			
 		String hql = " select estudoCota.id as id, " 
 				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
-				   + " cota.id as idCota "
+				   + " cota.id as idCota, "
+				   + " estudoCota.tipoEstudo as tipoEstudo "  
 				   + " from EstudoCota estudoCota "
 				   + " join estudoCota.estudo estudo "
 				   + " join estudoCota.cota cota "

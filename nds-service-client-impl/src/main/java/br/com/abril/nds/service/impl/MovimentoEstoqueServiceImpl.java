@@ -43,6 +43,7 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCota.TipoEstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -176,11 +177,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Override
 	@Transactional
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto, Long idProdutoEdicao,
-			Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+			Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado) {
 		
 		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
-		BigInteger total = BigInteger.ZERO;		
+		BigInteger total = BigInteger.ZERO;
+		
+		BigInteger totalParcialJuramentado = BigInteger.ZERO;
 
 		Map<String, DescontoDTO> descontos = descontoService.obterDescontosMapPorLancamentoProdutoEdicao(idLancamento, idProdutoEdicao);
 		
@@ -196,18 +199,31 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
 		
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
-
+			
 			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
 						dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
 			
-			total = total.add(estudoCota.getQtdeEfetiva());
+			if(TipoEstudoCota.NORMAL.equals(estudoCota.getTipoEstudo())){
+				
+				total = total.add(estudoCota.getQtdeEfetiva());
+			}
+			else{
+				
+				totalParcialJuramentado = totalParcialJuramentado.add(estudoCota.getQtdeEfetiva()); 
+			}
 			
 			movimentosEstoqueCota.add(mec);
 		}
-
-		gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
+		
+		if(total.compareTo(BigInteger.ZERO) > 0){
+			gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
+		}
+		
+		if(totalParcialJuramentado.compareTo(BigInteger.ZERO) > 0){
+			gerarMovimentoEstoque(idProdutoEdicao, idUsuario, totalParcialJuramentado, tipoMovimentoJuramentado, dataDistribuidor, false);
+		}
 		
 		movimentoEstoqueCotaRepository.adicionarEmLoteDTO(movimentosEstoqueCota);
 		
