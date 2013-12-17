@@ -24,21 +24,21 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	
 	private String dataEnvio;
 	
-	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana) {
+	public ImpressaoBandeiraVO(FornecedorDTO fornecedor, String volumes, Integer semana,
+			Date dataEnvio) {
 		
-		this();
-		this.titulo = "DEVOLUCAO TREELOG";
+		this.titulo = "DEVOLUÇÃO TREELOG";
 		this.forncedor = fornecedor.getRazaoSocial();
-		this.semana = semana.toString();
+		this.semana = "SEMANA " + (semana.toString().length() > 4 ? semana.toString().substring(4) : semana.toString());
 		this.praca = fornecedor.getPraca();
 		this.canal = fornecedor.getCanalDistribuicao().getDescricao();
 		this.volumes = volumes;
+		this.dataEnvio = DateUtil.formatarDataPTBR(dataEnvio);
 	}
 
 	public ImpressaoBandeiraVO(String forncedor, String semana,
 			String praca, String canal, String volumes, String dataEnvio, String titulo) {
 		
-		this();
 		this.forncedor = forncedor == null? "" : forncedor;
 		this.semana = semana == null? "" : semana;
 		this.praca = praca == null? "" : praca;
@@ -48,9 +48,7 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.titulo = titulo;
 	}
 	
-	public ImpressaoBandeiraVO(){
-		this.dataEnvio = DateUtil.formatarDataPTBR(new Date());
-	}
+	public ImpressaoBandeiraVO(){}
 	
 	public String getFornecedor() {
 		return forncedor;
