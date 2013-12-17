@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
@@ -27,4 +29,6 @@ public interface EstoqueProdutoService {
 
 	List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(
 			FiltroEstoqueProdutosRecolhimento filtro);
+
+	Set<ItemDTO<Integer, Integer>> obterSemanasProdutosFechados();
 }

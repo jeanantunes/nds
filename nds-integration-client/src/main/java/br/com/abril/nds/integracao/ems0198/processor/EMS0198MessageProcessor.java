@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0198.processor;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +13,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Detalhe;
 import br.com.abril.nds.integracao.ems0198.outbound.EMS0198Header;
@@ -30,6 +32,10 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 @Component
 public class EMS0198MessageProcessor extends AbstractRepository implements MessageProcessor {
 
+	private static final String ENCALHE_FOLDER = "encalhe";
+
+	private static final String ENCALHE_EXT = ".enc";
+
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
 	
@@ -46,37 +52,50 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 	
-	/** Quantidade de arquivos processados. */
 	private int quantidadeArquivosGerados = 0;
 	
 	@Override
 	public void processMessage(Message message) {
 		
-		// Reinicia a contagem dos arquivos gerados:
 		this.quantidadeArquivosGerados = 0;
 		
 		List<ChamadaEncalheCota> cecs = findListPDV(message);
+		
 		Integer numerCota =  0;
+		
 		int qtdeRegistros = 0;
+		
 		PrintWriter print =  null;
+		
 		for (ChamadaEncalheCota cec: cecs) {
 			
 			if (numerCota == cec.getCota().getNumeroCota()) {
+		
 				qtdeRegistros++;
+			
 			} else {
+			
 				if (!numerCota.equals(0)) {
+		
 					criaTrailer(print, numerCota, qtdeRegistros);
+					
 					print.flush();
 					print.close();					
 				}
+				
 				numerCota = cec.getCota().getNumeroCota();
+				
 				qtdeRegistros = 0;
+				
 				print = geraArquivo(message, this.dataLctoDistrib, cec.getCota().getPessoa().getNome(), numerCota);
 			}			
+			
 			criaDetalhes(print, cec);
 		}
 		if (!numerCota.equals(0)) {
+		
 			criaTrailer(print, numerCota, qtdeRegistros);
+			
 			print.flush();
 			print.close();					
 		}
@@ -131,7 +150,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 			String nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib));
 
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
-					MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivo + ".enc"));
+					TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER + File.separator + nomeArquivo + ENCALHE_EXT));
 			
 			criaHeader(print, numeroCota, nome, data);
 			

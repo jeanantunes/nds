@@ -622,7 +622,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		if(filtro.getIdCota()!=null) {
 			parameters.put("idCota", filtro.getIdCota());
 		} else {
-			parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+			parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
@@ -901,14 +901,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" order by dataDoRecolhimentoDistribuidor ");
 		}
 		
-
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
 		if(filtro.getIdCota() != null) {
 			parameters.put("idCota", filtro.getIdCota());
 		} else {
-			parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+			parameters.put("grupoMovimentoEstoqueConsignado", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
@@ -934,7 +933,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		RowMapper cotaRowMapper = new RowMapper() {
 
 			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
-
+				
 				ConsultaEncalheDTO dto = new ConsultaEncalheDTO();
 				dto.setDataDoRecolhimentoDistribuidor(rs.getDate("dataDoRecolhimentoDistribuidor"));
 				dto.setCodigoProduto(rs.getString("codigoProduto"));
@@ -957,6 +956,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		};
 
 		return (List<ConsultaEncalheDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+		
 	}
 
 	private StringBuffer obterQueryListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
@@ -968,13 +968,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		subSqlVendaProduto.append(" and vp.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
 		
-		if (filtro.getIdCota() != null){
+		if (filtro.getIdCota() != null) {
 			
 			subSqlVendaProduto.append(" and vp.ID_COTA = :idCota ");
 		}
 		
         StringBuilder subSqlReparte = new StringBuilder();
         if (filtro.getIdCota() != null) {
+        	
         	subSqlReparte.append(" select sum( COALESCE(CHAMADA_ENCALHE_COTA_.QTDE_PREVISTA, 0) ) ");
 	        subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_ ");
 	        subSqlReparte.append(" join CHAMADA_ENCALHE CHAMADA_ENCALHE_ on (CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID) ");
@@ -983,12 +984,23 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         	subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
             subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE_.DATA_RECOLHIMENTO ");
             subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = :idCota ");
+            
         } else {
-        	subSqlReparte.append(" SELECT SUM( COALESCE(me.qtde, 0) ) ");
-        	subSqlReparte.append(" FROM movimento_estoque me ");
-        	subSqlReparte.append(" INNER JOIN tipo_movimento tm ON tm.id = me.tipo_movimento_id ");
+        	
+        	subSqlReparte.append(" SELECT SUM( COALESCE(mec.qtde, 0) ) ");
+        	subSqlReparte.append(" FROM movimento_estoque_cota mec "); 
+        	subSqlReparte.append(" INNER JOIN tipo_movimento tm ON tm.id = mec.tipo_movimento_id ");
+        	subSqlReparte.append(" INNER JOIN lancamento l on l.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ");  
+        	subSqlReparte.append(" LEFT OUTER JOIN chamada_encalhe ce ON ce.PRODUTO_EDICAO_ID = mec.PRODUTO_EDICAO_ID ");
+        	subSqlReparte.append(" INNER JOIN chamada_encalhe_cota cec ON cec.COTA_ID = mec.COTA_ID AND cec.CHAMADA_ENCALHE_ID = ce.ID ");
+        	subSqlReparte.append(" INNER JOIN cota c ON c.id = mec.COTA_ID ");
+        	subSqlReparte.append(" INNER JOIN produto_edicao pe ON pe.id = ce.PRODUTO_EDICAO_ID "); 
+        	subSqlReparte.append(" INNER JOIN produto p ON p.id = pe.PRODUTO_ID ");
         	subSqlReparte.append(" WHERE tm.grupo_movimento_estoque = :grupoMovimentoEstoqueConsignado ");
-        	subSqlReparte.append(" AND me.produto_edicao_id = PRODUTO_EDICAO.ID ");
+        	subSqlReparte.append(" AND mec.produto_edicao_id = produto_edicao.id ");
+        	subSqlReparte.append(" AND ce.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");  
+        	subSqlReparte.append(" GROUP BY ce.DATA_RECOLHIMENTO ");
+        	
         }
 
         StringBuilder subSqlEncalhe = new StringBuilder();

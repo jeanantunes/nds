@@ -4,17 +4,34 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
+@Exportable
 public class BandeirasDTO  implements Serializable{
 
 	private static final long serialVersionUID = -7847418746083619011L;
 	
+	@Export(label="Cód. Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=2)
 	private String codProduto;
+	
+	@Export(label="Produto", alignment=Export.Alignment.LEFT, exhibitionOrder=4)
 	private String nomeProduto;
+	
+	@Export(label="Edição", alignment=Export.Alignment.LEFT, exhibitionOrder=3)
 	private Long edProduto;
 	private Integer pctPadrao;
+	
+	@Export(label="Destino", alignment=Export.Alignment.LEFT, exhibitionOrder=5)
 	private String destino;
+	
+	@Export(label="Prioridade", alignment=Export.Alignment.CENTER, exhibitionOrder=6)
 	private Integer prioridade;
+	
+	@Export(label="Qtde. Solicitada", alignment=Export.Alignment.CENTER, exhibitionOrder=7)
 	private BigInteger qtde;
+	
+	@Export(label="Data", alignment=Export.Alignment.LEFT, exhibitionOrder=1)
 	private Date data;
 	
 	public BandeirasDTO() {

@@ -27,7 +27,7 @@ import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
-import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
@@ -807,7 +807,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervalo, PaginacaoVO paginacaoVO) {
+			Intervalo<Date> intervalo, Long fornecedor, PaginacaoVO paginacaoVO) {
 	
 		StringBuilder hql = new StringBuilder();
 		
@@ -825,8 +825,14 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			.append(" join produto.fornecedores fornecedores ")
 			.append(" join fornecedores.juridica pessoaFornecedor ")
 			.append(" where chamadaEncalhe.dataRecolhimento >= :dataDe ")
-			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ")
-			.append(" group by chamadaEncalhe.id ");
+			.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
+		
+		if (fornecedor != null){
+			
+			hql.append(" and fornecedores.id = :fornecedor ");
+		}
+		
+		hql.append(" group by chamadaEncalhe.id ");
 		
 		if (paginacaoVO != null)		
 			hql.append(getOrderByobterBandeirasNoIntervalo(paginacaoVO)); 
@@ -835,6 +841,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
+		
+		if (fornecedor != null){
+			
+			query.setParameter("fornecedor", fornecedor);
+		}
 		
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
 			
@@ -897,15 +908,17 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
+	public List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(
 			Intervalo<Date> intervalo) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select pessoaFornecedor.razaoSocial as nome, ")
-			.append(" fornecedores.codigoInterface as codigoInterface ")
+		hql.append(" select pessoaFornecedor.razaoSocial as razaoSocial, ")
+			.append(" fornecedores.codigoInterface as codigoInterface, ")
+			.append(" fornecedores.canalDistribuicao as canalDistribuicao, ")
+			.append(" d.enderecoDistribuidor.endereco.cidade as praca ")
 			
-			.append(" from ChamadaEncalhe chamadaEncalhe ")
+			.append(" from ChamadaEncalhe chamadaEncalhe, Distribuidor d ")
 			.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 			.append(" join produtoEdicao.produto produto ")
 			.append(" join produto.fornecedores fornecedores ")
@@ -919,7 +932,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		query.setParameter("dataDe", intervalo.getDe());
 		query.setParameter("dataAte", intervalo.getAte());
 		
-		query.setResultTransformer(Transformers.aliasToBean(FornecedoresBandeiraDTO.class));
+		query.setResultTransformer(Transformers.aliasToBean(FornecedorDTO.class));
 		
 		return query.list();
 	}

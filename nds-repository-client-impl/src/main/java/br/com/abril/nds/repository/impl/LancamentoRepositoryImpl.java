@@ -2088,5 +2088,22 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Date) query.uniqueResult();
 	}
+
+	@Override
+	public Lancamento obterLancamentoPorItemRecebimento(Long idItem) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.recebimentos item ");
+		hql.append(" where item.id = :idItem");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idItem", idItem);
+		
+		return (Lancamento) query.uniqueResult();		
+	}
 	
 }

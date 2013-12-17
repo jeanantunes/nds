@@ -8,7 +8,7 @@ import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
-public class EMS0129Picking2Detalhe {
+public class EMS0129Picking2Detalhe implements ModeloPickingDetalheInterface {
 
 	private String tipoRegistro;
 	
@@ -188,5 +188,6 @@ public class EMS0129Picking2Detalhe {
 
 	public void setQuantidade(Long quantidade) {
 		this.quantidade = quantidade;
-	}	
+	}
+
 }

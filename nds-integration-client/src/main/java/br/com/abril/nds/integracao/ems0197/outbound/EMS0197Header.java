@@ -1,6 +1,8 @@
 package br.com.abril.nds.integracao.ems0197.outbound;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -13,10 +15,11 @@ public class EMS0197Header implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String tipoRegistro;
+	private Long idCota;
 	private String numeroCota;
 	private String nomePDV;
-	private String dataLctoDistrib;
-	
+	private Date dataLctoDistrib;
+	private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 	
 	/**
 	 * 
@@ -32,18 +35,19 @@ public class EMS0197Header implements Serializable {
 		this.tipoRegistro = "1" 
 				+ "|" + this.numeroCota 
 				+ "|" + this.nomePDV
-				+ "|" + this.dataLctoDistrib;
+				+ "|" + this.getFormatedDate();
 
 		return tipoRegistro;
 	}
 	public void setTipoRegistro(String tipoRegistro) {
 		this.tipoRegistro = tipoRegistro;
 	}
-	public String getCodigoCota() {
+	
+	public String getNumeroCota() {
 		return numeroCota;
 	}
-	public void setCodigoCota(String codigoCota) {
-		this.numeroCota = codigoCota;
+	public void setNumeroCota(String numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	public String getNomePDV() {
 		return nomePDV;
@@ -51,10 +55,22 @@ public class EMS0197Header implements Serializable {
 	public void setNomePDV(String nomePDV) {
 		this.nomePDV = nomePDV;
 	}
-	public String getDataLctoDistrib() {
+	
+	public Long getIdCota() {
+		return idCota;
+	}
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+	public Date getDataLctoDistrib() {
 		return dataLctoDistrib;
 	}
-	public void setDataLctoDistrib(String dataLctoDistrib) {
+	public void setDataLctoDistrib(Date dataLctoDistrib) {
 		this.dataLctoDistrib = dataLctoDistrib;
 	}
+	
+	public String getFormatedDate() {
+		return sdf.format(this.dataLctoDistrib);
+	}
+	
 }
