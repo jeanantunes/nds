@@ -45,6 +45,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FuroProdutoRepository;
@@ -2106,4 +2107,27 @@ public class LancamentoRepositoryImpl extends
 		return (Lancamento) query.uniqueResult();		
 	}
 	
+	public Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe){
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ");
+		hql.append(" from ChamdaEncalhe chamdaEncalhe ");
+		hql.append(" join chamdaEncalhe.lancamentos lancamento ");
+		hql.append(" join lancamento.periodoLancamentoParcial periodoLancamento ");
+		hql.append(" where chamdaEncalhe.id =:idChamdaEncalhe " );
+		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
+		hql.append(" and periodoLancamentoParcial.tipo =:tipo ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
+		query.setParameter("tipo", TipoLancamentoParcial.PARCIAL);
+		query.setParameter("idChamdaEncalhe",idChamdaEncalhe);
+		
+		query.setMaxResults(1);
+		
+		return (Lancamento) query.uniqueResult();
+		
+	}
 }

@@ -372,4 +372,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterLancamentoPorItemRecebimento(Long idItem);
 	
+	Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe);
+	
 }

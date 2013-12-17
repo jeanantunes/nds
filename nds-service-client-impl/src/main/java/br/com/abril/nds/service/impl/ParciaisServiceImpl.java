@@ -727,7 +727,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 	
-	private Lancamento getProximoLancamentoPeriodo(Lancamento lancamento) {
+	public Lancamento getProximoLancamentoPeriodo(Lancamento lancamento) {
 		
 		PeriodoLancamentoParcial periodoLancamentoParcial =
 			lancamento.getPeriodoLancamentoParcial();
