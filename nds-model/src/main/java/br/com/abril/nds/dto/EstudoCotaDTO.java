@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.planejamento.EstudoCota.TipoEstudoCota;
+
 public class EstudoCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1031571090326764200L;
@@ -12,6 +14,8 @@ public class EstudoCotaDTO implements Serializable {
 	private BigInteger qtdeEfetiva;
 
 	private Long idCota;
+	
+	private TipoEstudoCota tipoEstudo;
 
 	public Long getId() {
 		return id;
@@ -40,6 +44,16 @@ public class EstudoCotaDTO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public TipoEstudoCota getTipoEstudo() {
+		return tipoEstudo;
+	}
+
+	public void setTipoEstudo(TipoEstudoCota tipoEstudo) {
+		this.tipoEstudo = tipoEstudo;
+	}
+	
+	
 	
 	
 }

@@ -39,7 +39,7 @@ public interface LancamentoService {
 	 * @param dataOperacao 
 	 * @return boolean
 	 */
-	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
+	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
 	
 	Lancamento obterPorId(Long idLancamento);
 	
