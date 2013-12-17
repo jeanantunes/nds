@@ -1,18 +1,24 @@
 package br.com.abril.nfe.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-public class ItemNotaFiscal {
-	/**
-	 * ID
-	 */
+@Entity
+@Table(name="NOTA_FISCAL_ITEM")
+public class NotaFiscalItem implements Serializable {
+
+	private static final long serialVersionUID = -6124932093852972727L;
+
 	@Id
-	@GeneratedValue(generator = "ITEM_NOTA_FISCAL_SEQ")
+	@GeneratedValue()
+	@Column(name="ID")
 	private Long id;
 	
 	@Column(name="CODIGO_ITEM")
@@ -23,9 +29,6 @@ public class ItemNotaFiscal {
 	
 	@Column(name="NCM")
 	private String NCM;
-	
-	@Column(name="CFOP")
-	private String CFOP;
 	
 	@Column(name="CST")
 	private String CST;
@@ -75,14 +78,6 @@ public class ItemNotaFiscal {
 
 	public void setNCM(String nCM) {
 		NCM = nCM;
-	}
-
-	public String getCFOP() {
-		return CFOP;
-	}
-
-	public void setCFOP(String cFOP) {
-		CFOP = cFOP;
 	}
 
 	public String getCST() {
@@ -135,12 +130,11 @@ public class ItemNotaFiscal {
 
 	@Override
 	public String toString() {
-		return "ItemNotaFiscal [id=" + id + ", codigoItem=" + codigoItem
-				+ ", descricao=" + descricao + ", NCM=" + NCM + ", CFOP="
-				+ CFOP + ", CST=" + CST + ", unidade=" + unidade
-				+ ", valorTotal=" + valorTotal + ", quantidade=" + quantidade
-				+ ", valorUnitario=" + valorUnitario + ", valorProduto="
-				+ valorProduto + "]";
+		return "NotaFiscalItem [id=" + id + ", codigoItem=" + codigoItem
+				+ ", descricao=" + descricao + ", NCM=" + NCM + ", CST=" + CST
+				+ ", unidade=" + unidade + ", valorTotal=" + valorTotal
+				+ ", quantidade=" + quantidade + ", valorUnitario="
+				+ valorUnitario + ", valorProduto=" + valorProduto + "]";
 	}
 
 }

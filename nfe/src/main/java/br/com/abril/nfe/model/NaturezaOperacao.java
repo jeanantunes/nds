@@ -4,32 +4,29 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 
 @Entity
 @Table(name = "NATUREZA_OPERACAO")
-@SequenceGenerator(name = "NATUREZA_OPERACAO_SEQ", initialValue = 1, allocationSize = 1)
 public class NaturezaOperacao {
-
-	/**
-	 * ID
-	 */
+	
 	@Id
-	@GeneratedValue(generator = "NATUREZA_OPERACAO_SEQ")
+	@GeneratedValue()
 	private Long id;
 
 	@Column(name = "NATUREZA_OPERACAO")
 	private	String descricao;
 
+	@Column(name="CODIGO_CFOP")
+	private String codigoCfop;
+
+	@Column(name="CFOP")
+	private String cfop;
+	
 	public Long getId() {
 		return id;
 	}
 	
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -37,9 +34,30 @@ public class NaturezaOperacao {
 	public String getDescricao() {
 		return descricao;
 	}
-
-
+	
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public String getCodigoCfop() {
+		return codigoCfop;
+	}
+
+	public void setCodigoCfop(String codigoCfop) {
+		this.codigoCfop = codigoCfop;
+	}
+
+	public String getCfop() {
+		return cfop;
+	}
+
+	public void setCfop(String cfop) {
+		this.cfop = cfop;
+	}
+
+	@Override
+	public String toString() {
+		return "NaturezaOperacao [id=" + id + ", descricao=" + descricao
+				+ ", codigoCfop=" + codigoCfop + ", cfop=" + cfop + "]";
 	}
 }
