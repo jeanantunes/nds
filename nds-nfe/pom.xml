@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>nds-repository-client</artifactId>
+			<artifactId>nds-service-client-impl</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
