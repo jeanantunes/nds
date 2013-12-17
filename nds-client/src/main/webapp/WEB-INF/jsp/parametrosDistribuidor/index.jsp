@@ -91,16 +91,17 @@
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
 			<ul>
-				<li><a href="#tabCadastroFiscal">Cadastro / Fiscal</a></li>
+				<li><a href="#tabCadastro">Cadastro / Fiscal</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
 				<li><a href="#tabContratos">Contratos e Garantias</a></li>
 			    <li><a href="#tabNegociacao">Negociação</a></li>
-			     <li><a href="#tabAprovacao">Aprovação</a></li>
+			    <li><a href="#tabAprovacao">Aprovação</a></li>
+			    <li><a href="#tabFiscal">Fiscal</a></li>
 			</ul>
 			
-            <jsp:include page="tabCadastroFiscal.jsp"/>
+            <jsp:include page="tabCadastro.jsp"/>
 			
             <jsp:include page="tabOperacao.jsp"/>
 			
@@ -111,6 +112,8 @@
 			<jsp:include page="tabNegociacao.jsp" />
 			
             <jsp:include page="tabContratosGarantias.jsp"/>
+            
+            <jsp:include page="tabFiscal.jsp"/>
             
             <jsp:include page="tabAprovacao.jsp" />
             			

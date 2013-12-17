@@ -71,6 +71,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.BoletoAntecipadoRepository;
+import br.com.abril.nds.repository.BoletoEmailRepository;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
@@ -87,7 +88,6 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.ControleBaixaBancariaService;
-import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -189,7 +189,7 @@ public class BoletoServiceImpl implements BoletoService {
 	private GerarCobrancaService gerarCobrancaService;
 	
 	@Autowired
-	private DebitoCreditoCotaService debitoCreditoCotaService;
+	protected BoletoEmailRepository boletoEmailRepository;
 	
 	@Autowired
 	private ParametroCobrancaCotaService paramtroCobrancaCotaService;
@@ -1451,8 +1451,8 @@ public class BoletoServiceImpl implements BoletoService {
 		CorpoBoleto corpoBoleto = this.geraCorpoBoleto(nossoNumero, 
 				                                       digitoNossoNumero, 
 				                                       valorLiquido, 
-				                                       valorCreditos,
 				                                       valorDebitos,
+				                                       valorCreditos,			                                       
 				                                       banco, 
 				                                       dataEmissao, 
 				                                       dataVencimento, 
@@ -2040,21 +2040,21 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataRecolhimento = DateUtil.parseDataPTBR(ceDTO.getDataRecolhimento());
 		
-		BigDecimal valorReparteLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrReparteLiquido());
+		BigDecimal valorReparteLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrReparteLiquido()).setScale(2, RoundingMode.HALF_UP);
 		
-		BigDecimal valorEncalheCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrEncalhe());
+		BigDecimal valorEncalheCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrEncalhe()).setScale(2, RoundingMode.HALF_UP);
 		
-		BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido());
+		BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido()).setScale(2, RoundingMode.HALF_UP);
 		
-		BigDecimal valorDebitos =  this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
+		BigDecimal valorDebitos =  null;//this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
 		
-		BigDecimal valorCreditos =  this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
+		BigDecimal valorCreditos =  null;//this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
 		
-		valorDebitos = valorDebitos!=null?valorDebitos:BigDecimal.ZERO;
+		valorDebitos = (valorDebitos!=null?valorDebitos:BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
 		
-		valorCreditos = valorCreditos!=null?valorCreditos:BigDecimal.ZERO;
+		valorCreditos = (valorCreditos!=null?valorCreditos:BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
 		
-		BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos));
+		BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos)).setScale(2, RoundingMode.HALF_UP);
 		
 		Fornecedor fornecedor = this.paramtroCobrancaCotaService.obterFornecedorPadraoCota(ceDTO.getIdCota());
 		

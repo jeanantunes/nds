@@ -5,13 +5,13 @@
 
 
 <style type="text/css">
-  #dialog-pesq-fornecedor fieldset, #dialog-pesq-editor fieldset {width:450px!important;}
+  #dialog-pesq-fornecedor fieldset, {width:450px!important;}
   .box_field{width:200px;}
   fieldset label {width: auto; margin-bottom: 0px!important;
 }
 	.forncedoresSel{display:none;}
 	.editorSel{display:none;}
-	#dialog-pesq-fornecedor, #dialog-pesq-editor, #dialog-pallets{display:none;}
+	#dialog-pesq-fornecedor, #dialog-pallets{display:none;}
 .selFornecedores ul, .selEditores ul{ margin:0px; padding:0px;}
 .selFornecedores li, .selEditores li{display:inline; list-style:none;}
   </style>
@@ -45,26 +45,28 @@
     <br/>
 
 <form id="form-dialog-pallets">
-	<div id="dialog-pallets" title="Pallets">
+	<div id="dialog-pallets" title="Pallets e Data de Envio">
 	<fieldset>
-		<legend>Informe a quantidade de pallets</legend>
-	    N&uacute;mero de Pallets: <input id="numeroPallets" type="text" style="width:40px; margin-left:10px; text-align:center;" />
-	
+		<legend>Informe a qtd. de pallets e data de envio</legend>
+	    <table>
+	    	<tr>
+	    		<td>N&uacute;mero de Pallets:</td>
+	    		<td>
+	    			<input id="numeroPallets" type="text" style="width:40px; margin-left:10px; text-align:center;" />
+	    		</td>
+	    	</tr>
+	    	
+	    	<tr>
+	    		<td>Data de Envio:</td>
+	    		<td>
+	    			<input id="dataEnvio" type="text" style="width:70px; margin-left:10px;" />
+	    		</td>
+	    	</tr>
+	    </table>
 	</fieldset>
 	</div>
 </form>
 
-
-<div id="dialog-pesq-editor" title="Selecionar Editor">
-<fieldset>
-	<legend>Selecione um ou mais Editores</legend>
-    <select name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
-      <option>Abril</option>
-      <option>Globo</option>
-    </select>
-
-</fieldset>
-</div>
 <div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
 <fieldset>
 	<legend>Selecione um ou mais Fornecedores</legend>
