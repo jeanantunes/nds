@@ -79,6 +79,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
@@ -160,6 +161,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	protected BoletoEmailService boletoEmailService;
 	
 	@Override
 	@Transactional
@@ -584,14 +588,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		this.realizarCobrancaCotas(dataOperacao, usuario, null, cota);
 	}
 	
-	
-
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
 		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
-	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
+	public Map<String, Boolean> realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
 
+		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+		
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 
 		if (cotaAusente != null){
@@ -602,11 +606,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			listaCotasAusentes.add(cotaAusenteEncalheDTO);
 		}
 		
-		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
-		for (CotaAusenteEncalheDTO c : listaCotasAusentes) {
+		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes) {
 
-			this.realizarCobrancaCota(dataOperacao, dataOperacaoDistribuidor, usuario, c, cotaAusente, validacaoVO);
+			nossoNumeroEnvioEmail = this.realizarCobrancaCota(dataOperacao,
+															  usuario, 
+															  cotaAusenteEncalheDTO.getIdCota(),
+															  validacaoVO);
 		}
 
 		// Se um dia precisar tratar as mensagens de erro de e-mail, elas estão nesta lista
@@ -617,6 +622,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			throw new GerarCobrancaValidacaoException(validacaoVO);
 		}
+		
+		return nossoNumeroEnvioEmail;
 	}
 
 	/**
@@ -625,12 +632,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
 				   noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
-	public void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
-									 Usuario usuario,
-									 CotaAusenteEncalheDTO c, Cota cotaAusente, 
-									 ValidacaoVO validacaoVO) {
-
-		Cota cota = this.cotaRepository.buscarPorId(c.getIdCota());
+	public Map<String, Boolean> realizarCobrancaCota(Date dataOperacao,
+									                 Usuario usuario,
+									                 Long idCota,
+									                 ValidacaoVO validacaoVO) { 
+		
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+		
+		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
 		if (cota == null) {
 				
@@ -661,8 +672,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 																	null);
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
-		
-			Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 
 			try {
 				
@@ -686,15 +695,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
 			}
-			
-			try {
-				
-				this.gerarCobrancaService.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
-				
-			} catch (ValidacaoException e) {
-				
-				e.printStackTrace();
-			}
 		}
 			
 		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
@@ -707,6 +707,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		}
+		
+		return nossoNumeroEnvioEmail;
 	}
 
 	@Override
@@ -925,6 +927,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return tipoNotaFiscal;
 	}
 
+	@SuppressWarnings("unused")
 	@Transactional
 	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
 		
