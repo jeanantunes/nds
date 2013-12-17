@@ -574,11 +574,11 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [6] );
 		$("#chamadaoDiasSuspensao", this.workspace).disable();
 		$("#chamadaoValorConsignado", this.workspace).disable();
-		$("#utilizaDesconto", this.workspace).disable();
-		$("#percentualDesconto", this.workspace).disable();
-		$("#parcelamentoDividas", this.workspace).disable();
-		$("#negociacaoAteParcelas", this.workspace).disable();
 		
+		//$("#utilizaDesconto", this.workspace).disable();
+		//$("#percentualDesconto", this.workspace).disable();
+		//$("#parcelamentoDividas", this.workspace).disable();
+		//$("#negociacaoAteParcelas", this.workspace).disable();
 	},
 	
 	dialogConfirmarGrupo: function() {

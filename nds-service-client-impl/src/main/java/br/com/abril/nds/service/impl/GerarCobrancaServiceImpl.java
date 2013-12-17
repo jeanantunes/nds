@@ -57,7 +57,6 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
@@ -153,10 +152,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
-	
-	@Autowired
-	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
-	
+
 	/**
 	 * Obtém a situação da cota
 	 * @param idCota
@@ -1332,7 +1328,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}	
 	}
 	
-	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
+    private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
 		
 		if (formaCobranca==null){
 			

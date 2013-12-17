@@ -3,7 +3,7 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class InterfacePickingDTO {
+public class DetalhesPickingDTO {
 	
 	private Long idCota;
 	

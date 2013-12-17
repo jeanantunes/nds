@@ -479,12 +479,11 @@ var fechamentoEncalheController = $.extend(true, {
 				} else {
 					
 					fechamentoEncalheController.isFechamento = true;
-					fechamentoEncalheController.popup_encerrarEncalhe(true);
 					
+					fechamentoEncalheController.popup_encerrarEncalhe(true);
 				}	
 				
 				fechamentoEncalheController.fechamentosManuais = [];
-				
 			},
 		  	null,
 		   	false
@@ -516,6 +515,7 @@ var fechamentoEncalheController = $.extend(true, {
 						function (result) {
 
 							var tipoMensagem = result.tipoMensagem;
+							
 							var listaMensagens = result.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
@@ -524,8 +524,9 @@ var fechamentoEncalheController = $.extend(true, {
 								
 								_this.dialog("close");
 								
+								fechamentoEncalheController.emitirBoletosFechamentoEncalhe();
+
 								return;
-								
 							}
 
 							if (result.isNenhumaCotaAusente == 'true') {
@@ -535,10 +536,10 @@ var fechamentoEncalheController = $.extend(true, {
 							} else {
 								
 								fechamentoEncalheController.isFechamento = true;
-								fechamentoEncalheController.popup_encerrarEncalhe(true);
 								
+								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							}
-							
+	
 							fechamentoEncalheController.pesquisar();
 							
 							_this.dialog("close");
@@ -939,6 +940,7 @@ var fechamentoEncalheController = $.extend(true, {
 							"Confirmar" : function() {
 								
 								fechamentoEncalheController.cobrarCotas();
+
 								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
 							},
 							"Cancelar" : function(){
@@ -1234,6 +1236,47 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 			}
 		);	
+	}, 
+
+	obterStatusEmissaoBoletosFechamentoEncalhe : function() {
+		
+		$.postJSON(contextPath + "/financeiro/boletoEmail/obterStatusEmissaoBoletosFechamentoEncalhe", 
+			null,
+			function(result) {
+			
+				if(!result || result == '' || result == 'FINALIZADO' || result.tipoMensagem) {
+					
+					$('#mensagemLoading').text('Aguarde, carregando ...');
+					
+					if (result && result.tipoMensagem){
+						
+						exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					}
+					
+				} else {
+					
+					$('#mensagemLoading').text(result);
+					
+					setTimeout(fechamentoEncalheController.obterStatusEmissaoBoletosFechamentoEncalhe,5000);
+				}
+			}
+		);	
+	}, 
+	
+    emitirBoletosFechamentoEncalhe : function() {
+		
+		$.postJSON(contextPath + "/financeiro/boletoEmail/emitirBoletosFechamentoEncalhe", 
+			null,
+			function(result) {
+					
+				if (result && result.tipoMensagem){
+						
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+				}
+			}
+		);	
+		
+		setTimeout(fechamentoEncalheController.obterStatusEmissaoBoletosFechamentoEncalhe,5000);
 	} 
 	
 }, BaseController);

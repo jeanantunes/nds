@@ -129,7 +129,9 @@ public class BoletoAntecipadoRepositoryImpl extends AbstractRepositoryModel<Bole
 		
 		hql.append(" Select ba from BoletoAntecipado ba ");
 		
-		hql.append(" where ba.chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		hql.append(" where ba.emissaoBoletoAntecipado.dataRecolhimentoCEDe <= :dataRecolhimento ");
+		
+		hql.append(" and ba.emissaoBoletoAntecipado.dataRecolhimentoCEAte >= :dataRecolhimento ");
 		
 		hql.append(" and ba.chamadaEncalheCota.cota.id = :idCota ");
 		
