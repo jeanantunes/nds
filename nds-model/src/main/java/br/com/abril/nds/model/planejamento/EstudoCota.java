@@ -4,8 +4,11 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -51,6 +55,10 @@ public class EstudoCota implements Serializable {
 	@Column(name = "REPARTE")
 	private BigInteger reparte;
 	
+	@Column(name="TIPO_ESTUDO",columnDefinition="VARCHAR(20) default 'NORMAL'")
+	@Enumerated(EnumType.STRING)
+	private TipoEstudoCota tipoEstudo;
+	
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
@@ -59,6 +67,10 @@ public class EstudoCota implements Serializable {
 	
 	@OneToMany(mappedBy = "estudoCota")
 	private List<ItemNotaEnvio> itemNotaEnvios;
+	
+	public enum TipoEstudoCota{
+		NORMAL,JURAMENTADO
+	}
 	
 	public EstudoCota() {
 		
@@ -153,5 +165,15 @@ public class EstudoCota implements Serializable {
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
+
+	public TipoEstudoCota getTipoEstudo() {
+		return tipoEstudo;
+	}
+
+	public void setTipoEstudo(TipoEstudoCota tipoEstudo) {
+		this.tipoEstudo = tipoEstudo;
+	}
+	
+	
 	
 }

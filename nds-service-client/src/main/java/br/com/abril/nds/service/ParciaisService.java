@@ -84,4 +84,6 @@ public interface ParciaisService {
 	
 	void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte);
 	
+	Lancamento getProximoLancamentoPeriodo(Lancamento lancamento);
+	
 }
