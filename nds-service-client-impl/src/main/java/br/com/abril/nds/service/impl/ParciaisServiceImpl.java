@@ -710,5 +710,40 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		return statusLancamentos;
 	}
+	
+	@Override
+	public void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte) {
+		
+		Lancamento proximoLancamento =
+			this.getProximoLancamentoPeriodo(lancamento);
+
+		if (proximoLancamento != null) {
+
+			proximoLancamento.setReparte(reparte);
+
+			proximoLancamento.setUsuario(usuario);
+
+			this.lancamentoRepository.alterar(proximoLancamento);
+		}
+	}
+	
+	private Lancamento getProximoLancamentoPeriodo(Lancamento lancamento) {
+		
+		PeriodoLancamentoParcial periodoLancamentoParcial =
+			lancamento.getPeriodoLancamentoParcial();
+		
+		Integer proximoNumeroPeriodo = periodoLancamentoParcial.getNumeroPeriodo() + 1;
+		
+		PeriodoLancamentoParcial proximoPeriodoLancamentoParcial =
+			this.periodoLancamentoParcialRepository.obterPeriodoPorNumero(
+				proximoNumeroPeriodo, periodoLancamentoParcial.getLancamentoParcial().getId());
+		
+		if (proximoPeriodoLancamentoParcial == null) {
+		
+			return null;
+		}
+		
+		return proximoPeriodoLancamentoParcial.getLancamentoPeriodoParcial();
+	}
 
 }
