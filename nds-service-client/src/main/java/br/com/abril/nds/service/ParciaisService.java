@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -80,5 +81,7 @@ public interface ParciaisService {
 	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
 	
 	void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento);
+	
+	void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte);
 	
 }
