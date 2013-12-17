@@ -10,7 +10,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.dto.InterfacePickingDTO;
+import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
 import br.com.abril.nds.integracao.ems0197.processor.EMS0197MessageProcessor;
 import br.com.abril.nds.integracao.ems0197.route.EMS0197Route;
@@ -54,7 +54,7 @@ public class EMS0197Test extends RouteTestTemplate {
 		
 		EMS0197Header header = headers.get(0);
 		
-		List<InterfacePickingDTO> detalhes = this.messageProcessor.getDetalhesPicking(header.getIdCota(), data);
+		List<DetalhesPickingDTO> detalhes = this.messageProcessor.getDetalhesPicking(header.getIdCota(), data);
 		
 		Assert.assertNotNull(detalhes);
 		
