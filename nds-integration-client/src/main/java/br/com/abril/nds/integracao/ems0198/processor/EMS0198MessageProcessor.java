@@ -147,7 +147,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		try {
 			
-			String nomeArquivo = String.format("%1$04d%2$s", numeroCota, sdf.format(dataLctoDistrib));
+			String nomeArquivo = String.format("%1$05d%2$s", numeroCota, sdf.format(dataLctoDistrib));
 
 			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(
 					TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO.name()) + File.separator + ENCALHE_FOLDER + File.separator + nomeArquivo + ENCALHE_EXT));
