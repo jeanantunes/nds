@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +36,16 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 	protected ParametrosDistribuidorService parametrosDistribuidorService;
 
 	@Override
-	public byte[] imprimirBandeira(Integer semana, Integer numeroPallets) throws Exception {
+	public byte[] imprimirBandeira(Integer semana, Integer numeroPallets,
+			Date dataEnvio) throws Exception {
 		
 		List<FornecedorDTO> lista = chamadaEncalheService.obterDadosFornecedoresParaImpressaoBandeira(semana);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
 		
 		for (FornecedorDTO bandeiraDTO : lista){
 			for (int i=1; i<=numeroPallets;i++ ){
-				listaRelatorio.add(new ImpressaoBandeiraVO(bandeiraDTO,i+"/"+numeroPallets, semana));
+				listaRelatorio.add(new ImpressaoBandeiraVO(bandeiraDTO,i+" / "+numeroPallets, semana,
+						dataEnvio));
 			}
 		}
 	    
@@ -58,7 +61,7 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 		
 		for (int i=1; i<=numeroPallets;i++ ){
 			listaRelatorio.add(new ImpressaoBandeiraVO(fornecedor, semana, praca, canal,
-					i+"/"+numeroPallets, dataEnvio, titulo));
+					i+" / "+numeroPallets, dataEnvio, titulo));
 		}
 				
 		return this.gerarRelatorio(listaRelatorio);
