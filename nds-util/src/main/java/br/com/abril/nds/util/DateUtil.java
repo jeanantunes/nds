@@ -385,6 +385,17 @@ public class DateUtil {
 				return "Dezembro";
 		}
 	}
+
+	public static Date obterDataDaSemanaNoAno(int numeroSemana,
+			int codigoDiaSemana, Date dataAtual) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static int obterNumeroSemanaNoAno(Date dataAtual, int codigoDiaSemana) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 	
