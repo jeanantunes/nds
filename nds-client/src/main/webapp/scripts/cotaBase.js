@@ -266,6 +266,15 @@ var cotaBaseController = $.extend(true, {
 	},
 	
 	executarPreProcessamentoDetalhesGrid : function(resultado){
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+		}
+
 		if(resultado.rows.length == 0){
 			$("#botoesImprimirDoPopUpDetalhe").hide();
 		}else{
