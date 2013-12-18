@@ -2112,12 +2112,12 @@ public class LancamentoRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select lancamento ");
-		hql.append(" from ChamdaEncalhe chamdaEncalhe ");
+		hql.append(" from ChamadaEncalhe chamdaEncalhe ");
 		hql.append(" join chamdaEncalhe.lancamentos lancamento ");
 		hql.append(" join lancamento.periodoLancamentoParcial periodoLancamento ");
 		hql.append(" where chamdaEncalhe.id =:idChamdaEncalhe " );
 		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
-		hql.append(" and periodoLancamentoParcial.tipo =:tipo ");
+		hql.append(" and periodoLancamento.tipo =:tipo ");
 
 		Query query = getSession().createQuery(hql.toString());
 
