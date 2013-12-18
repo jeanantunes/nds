@@ -1,7 +1,6 @@
 package br.com.abril.nfe.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,14 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nfe.enums.TipoNotaFiscal;
+import br.com.abril.nfe.enums.NotaFiscalTipoOperacao;
 
 @Entity
 @Table(name = "NOTA_FISCAL")
-@SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
 public class NotaFiscal implements Serializable {
 
 	private static final long serialVersionUID = 2732018921335153522L;
@@ -30,9 +27,6 @@ public class NotaFiscal implements Serializable {
 	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
 	@Column(name="ID")
 	private Long id;
-	
-	@Column(name = "FORMA_PAGAMENTO")
-	private	String formaPagamento;
 	
 	@Column(name = "AMBIENTE")
 	private	String ambiente;
@@ -43,23 +37,8 @@ public class NotaFiscal implements Serializable {
 	@Column(name = "VERSAO")
 	private	String versao;
 	
-	@Column(name = "EMISSOR_INSCRICAO_ESTADUAL_SUBSTITUTO")
-	private	String emissorInscricaoEstadualSubstituto;
-	
-	@Column(name = "EMISSOR_INSCRICAO_MUNICIPAL")
-	private	String emissorInscricaoMunicipal;
-	
-	@Column(name = "INFORMACOES_COMPLEMENTARES")
-	private	String informacoesComplementares;
-	
-	@Column(name = "NUMERO_FATURA")
-	private	String numeroFatura;
-	
-	@Column(name = "VALOR_FATURA")
-	private	BigDecimal valorFatura;
-	
 	@Column(name = "NUMERO")
-	protected Long numeroNotaFiscal;
+	protected Long numero;
 	
 	@Column(name = "SERIE")
 	protected String serie;
@@ -67,96 +46,41 @@ public class NotaFiscal implements Serializable {
 	@Column(name = "CHAVE_ACESSO")
 	protected String chaveAcesso;
 	
-	@Column(name = "VALOR_BRUTO", nullable = false, precision=18, scale=4)
-	protected BigDecimal valorBruto;
-	
-	@Column(name = "VALOR_LIQUIDO", nullable = false, precision=18, scale=4)
-	protected BigDecimal valorLiquido;
-	
-	@Column(name = "VALOR_INFORMADO", nullable = true, precision=18, scale=4)
-	protected BigDecimal valorInformado;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_NotaFiscal")
-	private TipoNotaFiscal tipoNotaFiscal;	
+	@ManyToOne
+	@JoinColumn(name = "NOTA_FISCAL_EMISSOR_PESSOA_ID")
+	private NotaFiscalPessoaJuridica emissor;
 	
 	@OneToOne(mappedBy="emitenteDestinario")
-	@JoinColumn(name="EMITENTE_DESTINARIO_ID", unique=true)
-	private EmitenteDestinario emitenteDestinario;
+	@JoinColumn(name="EMITENTE_DESTINARIO_PESSOA_ID", unique=true)
+	private NotaFiscalPessoa emitenteDestinario;
 	
-	@OneToOne(mappedBy="notaFiscalFatura")
-	@JoinColumn(name="NOTA_FISCAL_FATURA_ID", unique=true)
-	private NotaFiscalFatura notaFiscalFatura;
+	@Column(name = "INFORMACOES_COMPLEMENTARES")
+	private	String informacoesComplementares;
 	
-	@OneToOne(mappedBy="notaFiscalTransportador")
-	@JoinColumn(name="NOTA_FISCAL_TRANSPORTADOR_ID", unique=true)
-	private NotaFiscalTransportador notaFiscalTransportador;
-
-	@OneToOne(mappedBy="notaFiscalValorCalculado")
-	@JoinColumn(name="VALOR_CALCULADOS_ID", unique=true)
-	private NotaFiscalValorCalculado notaFiscalValorCalculado;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "NOTA_FISCAL_TIPO_OPERACAO")
+	private NotaFiscalTipoOperacao notaFiscalTipoOperacao;	
 	
 	@ManyToOne
-	@JoinColumn(name = "PESSOA_ID")
-	private NotaFiscalPessoa pessoa;
+	private List<NotaFiscalFatura> notaFiscalFatura;
+	
+	@OneToOne(mappedBy="notaFiscalTransportador")
+	@JoinColumn(name="NOTA_FISCAL_TRANSPORTADOR_PESSOA_ID", unique=true)
+	private NotaFiscalPessoa notaFiscalTransportador;
+
+	@OneToOne(mappedBy="notaFiscalValorCalculado")
+	@JoinColumn(name="VALORES_CALCULADOS_ID", unique=true)
+	private NotaFiscalValorCalculado notaFiscalValoresCalculados;
 	
 	@OneToMany()
 	private List<NotaFiscalItem> notaFiscalitens;
-	
+
 	public Long getId() {
 		return id;
-	}	
-	
+	}
+
 	public void setId(Long id) {
 		this.id = id;
-	}
-	
-	public Long getNumeroNotaFiscal() {
-		return numeroNotaFiscal;
-	}
-
-	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
-		this.numeroNotaFiscal = numeroNotaFiscal;
-	}
-	
-	public String getSerie() {
-		return serie;
-	}
-	
-	public void setSerie(String serie) {
-		this.serie = serie;
-	}
-	
-	public String getChaveAcesso() {
-		return chaveAcesso;
-	}
-	
-	public void setChaveAcesso(String chaveAcesso) {
-		this.chaveAcesso = chaveAcesso;
-	}
-	
-	public BigDecimal getValorBruto() {
-		return valorBruto;
-	}
-
-	public void setValorBruto(BigDecimal valorBruto) {
-		this.valorBruto = valorBruto;
-	}
-
-	public BigDecimal getValorLiquido() {
-		return valorLiquido;
-	}
-
-	public void setValorLiquido(BigDecimal valorLiquido) {
-		this.valorLiquido = valorLiquido;
-	}
-	
-	public String getFormaPagamento() {
-		return formaPagamento;
-	}
-	
-	public void setFormaPagamento(String formaPagamento) {
-		this.formaPagamento = formaPagamento;
 	}
 
 	public String getAmbiente() {
@@ -183,23 +107,46 @@ public class NotaFiscal implements Serializable {
 		this.versao = versao;
 	}
 
-	public String getEmissorInscricaoEstadualSubstituto() {
-		return emissorInscricaoEstadualSubstituto;
+	public Long getNumero() {
+		return numero;
 	}
 
-	public void setEmissorInscricaoEstadualSubstituto(
-			String emissorInscricaoEstadualSubstituto) {
-		this.emissorInscricaoEstadualSubstituto = emissorInscricaoEstadualSubstituto;
+	public void setNumero(Long numero) {
+		this.numero = numero;
 	}
 
-	public String getEmissorInscricaoMunicipal() {
-		return emissorInscricaoMunicipal;
+	public String getSerie() {
+		return serie;
 	}
 
-	public void setEmissorInscricaoMunicipal(String emissorInscricaoMunicipal) {
-		this.emissorInscricaoMunicipal = emissorInscricaoMunicipal;
+	public void setSerie(String serie) {
+		this.serie = serie;
 	}
-	
+
+	public String getChaveAcesso() {
+		return chaveAcesso;
+	}
+
+	public void setChaveAcesso(String chaveAcesso) {
+		this.chaveAcesso = chaveAcesso;
+	}
+
+	public NotaFiscalPessoaJuridica getEmissor() {
+		return emissor;
+	}
+
+	public void setEmissor(NotaFiscalPessoaJuridica emissor) {
+		this.emissor = emissor;
+	}
+
+	public NotaFiscalPessoa getEmitenteDestinario() {
+		return emitenteDestinario;
+	}
+
+	public void setEmitenteDestinario(NotaFiscalPessoa emitenteDestinario) {
+		this.emitenteDestinario = emitenteDestinario;
+	}
+
 	public String getInformacoesComplementares() {
 		return informacoesComplementares;
 	}
@@ -208,96 +155,46 @@ public class NotaFiscal implements Serializable {
 		this.informacoesComplementares = informacoesComplementares;
 	}
 
-	public String getNumeroFatura() {
-		return numeroFatura;
+	public NotaFiscalTipoOperacao getNotaFiscalTipoOperacao() {
+		return notaFiscalTipoOperacao;
 	}
 
-	public void setNumeroFatura(String numeroFatura) {
-		this.numeroFatura = numeroFatura;
+	public void setNotaFiscalTipoOperacao(
+			NotaFiscalTipoOperacao notaFiscalTipoOperacao) {
+		this.notaFiscalTipoOperacao = notaFiscalTipoOperacao;
 	}
 
-	public BigDecimal getValorFatura() {
-		return valorFatura;
-	}
-
-	public void setValorFatura(BigDecimal valorFatura) {
-		this.valorFatura = valorFatura;
-	}
-	
-	public BigDecimal getValorInformado() {
-		return valorInformado;
-	}
-
-	public void setValorInformado(BigDecimal valorInformado) {
-		this.valorInformado = valorInformado;
-	}
-
-
-	public TipoNotaFiscal getTipoNotaFiscal() {
-		return tipoNotaFiscal;
-	}
-
-
-	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
-	}
-
-
-	public EmitenteDestinario getEmitenteDestinario() {
-		return emitenteDestinario;
-	}
-
-
-	public void setEmitenteDestinario(EmitenteDestinario emitenteDestinario) {
-		this.emitenteDestinario = emitenteDestinario;
-	}
-
-
-	public NotaFiscalFatura getNotaFiscalFatura() {
+	public List<NotaFiscalFatura> getNotaFiscalFatura() {
 		return notaFiscalFatura;
 	}
 
-
-	public void setNotaFiscalFatura(NotaFiscalFatura notaFiscalFatura) {
+	public void setNotaFiscalFatura(List<NotaFiscalFatura> notaFiscalFatura) {
 		this.notaFiscalFatura = notaFiscalFatura;
 	}
-	
-	public NotaFiscalValorCalculado getNotaFiscalValorCalculado() {
-		return notaFiscalValorCalculado;
-	}
 
-	public void setNotaFiscalValorCalculado(
-			NotaFiscalValorCalculado notaFiscalValorCalculado) {
-		this.notaFiscalValorCalculado = notaFiscalValorCalculado;
-	}
-
-	public NotaFiscalTransportador getNotaFiscalTransportador() {
+	public NotaFiscalPessoa getNotaFiscalTransportador() {
 		return notaFiscalTransportador;
 	}
 
-
-	public void setNotaFiscalTransportador(
-			NotaFiscalTransportador notaFiscalTransportador) {
+	public void setNotaFiscalTransportador(NotaFiscalPessoa notaFiscalTransportador) {
 		this.notaFiscalTransportador = notaFiscalTransportador;
 	}
 
-
-	public NotaFiscalPessoa getPessoa() {
-		return pessoa;
+	public NotaFiscalValorCalculado getNotaFiscalValoresCalculados() {
+		return notaFiscalValoresCalculados;
 	}
 
-
-	public void setPessoa(NotaFiscalPessoa pessoa) {
-		this.pessoa = pessoa;
+	public void setNotaFiscalValoresCalculados(
+			NotaFiscalValorCalculado notaFiscalValoresCalculados) {
+		this.notaFiscalValoresCalculados = notaFiscalValoresCalculados;
 	}
-
 
 	public List<NotaFiscalItem> getNotaFiscalitens() {
 		return notaFiscalitens;
 	}
 
-
 	public void setNotaFiscalitens(List<NotaFiscalItem> notaFiscalitens) {
 		this.notaFiscalitens = notaFiscalitens;
 	}
+	
 }

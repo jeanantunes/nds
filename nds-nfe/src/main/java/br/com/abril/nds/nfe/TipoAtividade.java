@@ -1,4 +1,4 @@
-package br.com.abril.nfe.enums;
+package br.com.abril.nds.nfe;
 
 public enum TipoAtividade {
 	
