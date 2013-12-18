@@ -974,11 +974,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 											MovimentoEstoqueCota movimentoEstoqueCota) {
 
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
-
+			
+			//TODO refector estoque juramentado
+			
+			/*
 			if (tipoMovimentoEstoque.isIncideJuramentado()) {
 
 				this.atualizarEstoqueProdutoCotaJuramentado(movimentoEstoqueCota, tipoMovimentoEstoque);
-			}
+			}*/
 
 			Long idCota = movimentoEstoqueCota.getCota().getId();
 			Long idProdutoEd = movimentoEstoqueCota.getProdutoEdicao().getId();
