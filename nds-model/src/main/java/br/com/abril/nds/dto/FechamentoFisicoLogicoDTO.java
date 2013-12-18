@@ -76,7 +76,9 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private BigDecimal desconto;
 	
-	private boolean chamadao; 
+	private boolean chamadao;
+	
+	private boolean parcial;
 	
 	public String getReplicar() {
 		return replicar;
@@ -354,4 +356,19 @@ public class FechamentoFisicoLogicoDTO {
 	public void setChamadao(boolean chamadao) {
 		this.chamadao = chamadao;
 	}
+
+	/**
+	 * @return the parcial
+	 */
+	public boolean isParcial() {
+		return parcial;
+	}
+
+	/**
+	 * @param parcial the parcial to set
+	 */
+	public void setParcial(boolean parcial) {
+		this.parcial = parcial;
+	}
+	
 }
