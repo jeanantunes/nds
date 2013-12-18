@@ -30,4 +30,5 @@ public interface AnaliseParcialRepository {
     public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
     AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Integer numeroCota);
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
+    void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal);
 }
