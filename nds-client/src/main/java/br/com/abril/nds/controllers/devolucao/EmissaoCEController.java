@@ -1,6 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
-
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
 import br.com.abril.nds.dto.DistribuidorDTO;
@@ -30,9 +31,9 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheService;
-import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -44,6 +45,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/emissaoCE")
@@ -52,11 +54,12 @@ public class EmissaoCEController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroEmissaoCE";
 	
-	@Autowired
-	private FornecedorService fornecedorService;
+	private static final String BOLETOS_EM_BRANCO = "boletosEmBranco";
+	
+	private static final String DADOS_IMPRESSAO_CHAMADA_ENCALHE = "dadosImpressaoChamadaEncalhe";
 	
 	@Autowired
-	private CotaService cotaService;
+	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -66,6 +69,9 @@ public class EmissaoCEController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Autowired
 	private ChamadaEncalheService chamadaEncalheService;
@@ -105,6 +111,7 @@ public class EmissaoCEController extends BaseController {
 	public void pesquisar(FiltroEmissaoCE filtro, String sortname, String sortorder) {
 		
 		filtro.setOrdenacao(sortorder);
+		
 		filtro.setColunaOrdenacao(sortname);
 		
 		this.setFiltroSessao(filtro);
@@ -117,7 +124,6 @@ public class EmissaoCEController extends BaseController {
 		}
 		
 		result.use(FlexiGridJson.class).from(lista).page(1).total(lista.size()).serialize();
-		
 	}
 		
 	private void validarCamposPesquisa(FiltroEmissaoCE filtro) {
@@ -222,7 +228,65 @@ public class EmissaoCEController extends BaseController {
 		
 		return listaRoteiros;
 	}
+
+	private void obterDadosImpressaoCE(FiltroEmissaoCE filtro){
 	
+        session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
+		
+		session.setAttribute(BOLETOS_EM_BRANCO, null);
+		
+		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
+		
+		filtro.setTipoImpressao(tipoImpressao);
+		
+		if(TipoImpressaoCE.MODELO_1.equals(tipoImpressao)) {
+			
+			filtro.setQtdProdutosPorPagina(20);
+			filtro.setQtdCapasPorPagina(81);
+			filtro.setQtdMaximaProdutosComTotalizacao(19);
+		} else {
+			
+			filtro.setQtdProdutosPorPagina(25);
+			filtro.setQtdCapasPorPagina(49);
+			filtro.setQtdMaximaProdutosComTotalizacao(20);
+		}
+		
+		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
+
+		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
+	}
+	
+	@Post
+	@Path("/obterDadosImpressaoBoletosEmBranco")
+	public void obterDadosImpressaoBoletosEmBranco() {
+		
+		FiltroEmissaoCE filtro = getFiltroSessao();
+		
+		this.obterDadosImpressaoCE(filtro);
+		
+		boolean existemBoletosEmBranco = false;
+		
+		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
+		
+		if (dados==null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+		}
+		
+		List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
+
+		if (boletosEmBranco!=null && boletosEmBranco.size() > 0){
+			
+			this.boletoService.salvaBoletosAntecipado(boletosEmBranco);
+			
+			session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
+			
+			existemBoletosEmBranco = true;
+		}
+		
+		result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+	}
+
 	public void imprimirCE() {
 						
 		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
@@ -230,17 +294,24 @@ public class EmissaoCEController extends BaseController {
 		if(tipoImpressao != null){
 			
 			switch (tipoImpressao) {
+			
 				case MODELO_1:
+					
 					result.forwardTo(EmissaoCEController.class).modelo1();
+					
 					break;
 				case MODELO_2:
+					
 					result.forwardTo(EmissaoCEController.class).modelo2();
+					
 					break;
 	
 				default:
+					
 					break;
 			}
 		} else{
+			
 			result.nothing();
 		}
 	}
@@ -248,31 +319,30 @@ public class EmissaoCEController extends BaseController {
 	public void modelo1() {
 				
 		setDados(TipoImpressaoCE.MODELO_1);		
-				
+	}
+	
+    public void modelo2() {
+		
+		setDados(TipoImpressaoCE.MODELO_2);
 	}
 	
 	public void setDados(TipoImpressaoCE tipoImpressao) {
-		
+
 		FiltroEmissaoCE filtro = getFiltroSessao();
 		
-		filtro.setTipoImpressao(tipoImpressao);
-		
-		if(TipoImpressaoCE.MODELO_1.equals(tipoImpressao)) {
-			filtro.setQtdProdutosPorPagina(20);
-			filtro.setQtdCapasPorPagina(81);
-			filtro.setQtdMaximaProdutosComTotalizacao(19);
-		} else {
-			filtro.setQtdProdutosPorPagina(25);
-			filtro.setQtdCapasPorPagina(49);
-			filtro.setQtdMaximaProdutosComTotalizacao(20);
-		}
-		
+        this.obterDadosImpressaoCE(filtro);
+
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
-		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
-				
+		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
+		
+		if (dados == null){
+		    
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível Emitir a CE !");
+		}
+		
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
 		if(apresentaCapas && !apresentaCapasPersonalizadas) {
@@ -299,16 +369,33 @@ public class EmissaoCEController extends BaseController {
 		
 		result.include("withCapa", filtro.getCapa());
 		
-		result.include("personalizada", filtro.getPersonalizada());
-				
+		result.include("personalizada", filtro.getPersonalizada());		
 	}
 	
-	public void modelo2() {
+	/**
+	 * Obtem Map com Cota e Valor Total Liquido da C.E.
+	 * @param listaCE
+	 * @param filtro
+	 * @return List<BoletoEmBrancoDTO>
+	 */
+	private List<BoletoEmBrancoDTO> obterDadosBoletosEmBrancoPorListaCE(List<CotaEmissaoDTO> listaCE, 
+			                                                            FiltroEmissaoCE filtro){
 		
-		setDados(TipoImpressaoCE.MODELO_2);
+		List<BoletoEmBrancoDTO> boletosEmBranco = new ArrayList<BoletoEmBrancoDTO>();
+		
+		for (CotaEmissaoDTO ceDTO : listaCE){
+
+			BoletoEmBrancoDTO bbDTO = this.boletoService.obterDadosBoletoEmBrancoPorCE(ceDTO,filtro.getDtRecolhimentoDe(),filtro.getDtRecolhimentoAte());
+			
+			if (bbDTO!=null){
+			    
+				boletosEmBranco.add(bbDTO);
+			}
+		}
+		
+		return boletosEmBranco;
 	}
 
-	
 	/**
 	 * Exporta os dados da pesquisa.
 	 * 
@@ -322,8 +409,9 @@ public class EmissaoCEController extends BaseController {
 		FiltroEmissaoCE filtro = getFiltroSessao();
 
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
-	
+		
 		if(lista.isEmpty()) {
+			
 			lista = new ArrayList<CotaEmissaoDTO>();
 		}
 		
@@ -332,7 +420,36 @@ public class EmissaoCEController extends BaseController {
 		
 		result.nothing();
 	}
-	
+
+	/**
+	 * Exibe o(s) boleto(s) em branco em formato PDF.
+	 * @throws Exception
+	 */
+	@Get
+	@Path("/imprimeBoletoEmBranco")
+	public void imprimeBoletoEmBranco() throws Exception{
+
+		@SuppressWarnings("unchecked")
+		List<BoletoEmBrancoDTO> boletosEmBranco = (List<BoletoEmBrancoDTO>) session.getAttribute(BOLETOS_EM_BRANCO);
+		
+        if (boletosEmBranco == null || boletosEmBranco.size() <= 0){
+		    
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível Emitir os Boletos Em Branco !");
+		}
+		
+		byte[] b = boletoService.geraImpressaoBoletosEmBranco(boletosEmBranco);
+
+		this.httpResponse.setContentType("application/pdf");
+		
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=boleto_em_branco.pdf");
+
+		OutputStream output = this.httpResponse.getOutputStream();
+		
+		output.write(b);
+		
+		httpResponse.flushBuffer();
+	}
+
 	private void setFiltroSessao(FiltroEmissaoCE filtro) {
 		
 		validarCamposPesquisa(filtro);
@@ -341,9 +458,11 @@ public class EmissaoCEController extends BaseController {
 	}
 	
 	private FiltroEmissaoCE getFiltroSessao() {
+		
 		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtro == null) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario realizar a pesquisa primeiro !");
 		}
 		

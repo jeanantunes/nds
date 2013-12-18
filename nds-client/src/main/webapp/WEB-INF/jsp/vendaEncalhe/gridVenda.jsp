@@ -22,9 +22,9 @@
     		<input type="hidden" name="descricaoCotaVenda" id="descricaoCotaVenda"/>
 			<span class="dadosFiltro" id="span_nome_cota_venda" style="display: inline;"></span>  
     </td>
-    <td width="283">&nbsp;</td>
+    <td width="10">&nbsp;</td>
     <td width="35">Box:</td>
-    <td width="80"><span class="dadosFiltro" id="span_nome_box_venda" style="display: inline; width:80px"></span></td>
+    <td width="120"><span class="dadosFiltro" id="span_nome_box_venda" style="display: inline; width:80px"></span></td>
   </tr>
 </table>
 <br />

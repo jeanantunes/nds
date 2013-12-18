@@ -86,4 +86,8 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
     Produto obterProdutoPorCodigoICDLike(String codigoProduto);
 
     Produto obterProdutoPorCodigoProdinLike(String codigoProduto);
+	
+	String obterUltimoCodigoProdutoRegional();
+	
+	boolean existeProdutoRegional(String codigo);
 }

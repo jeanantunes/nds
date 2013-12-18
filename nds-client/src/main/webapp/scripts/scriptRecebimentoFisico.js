@@ -6,6 +6,8 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	linhasDestacadas : [],
 	
+	id: null,
+	
 	init: function() {
 		var _this = this;
 
@@ -222,6 +224,8 @@ var recebimentoFisicoController = $.extend(true, {
 	confirmaNotaFiscalEncontrada : function(result) {
 		
 		var validacao = result.validacao;
+		
+		recebimentoFisicoController.id = result.id;
 		
 		recebimentoFisicoController.indNotaFiscalInterface = result.indNotaInterface;
 		
@@ -832,6 +836,33 @@ var recebimentoFisicoController = $.extend(true, {
 		return valido;
 	},
 	
+	exibirConfirmacaoExclusaoNota : function() {
+		
+		$("#dialog-verificacao-exclusao", this.workspace).dialog({
+			
+			resizable : false,
+			height : 'auto',
+			width : 450,
+			modal : true,
+			buttons : {
+				
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					recebimentoFisicoController.excluirNotaRecebimentoFisico();
+					return true;
+				},
+
+				"Cancelar" : function() {
+					$(this).dialog("close");
+					return false;
+				}
+			},
+			
+			form: $("#dialog-verificacao-quantidades", this.workspace).parents("form")
+		});	
+		
+	},
+	
 	exibirConfirmacaoQuantidadeDigitadas : function() {
 			
 		$("#dialog-verificacao-quantidades", this.workspace).dialog({
@@ -1082,6 +1113,10 @@ var recebimentoFisicoController = $.extend(true, {
 		var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
 
 		var valorTotal = 0, valorTotalDesconto = 0;
+		
+		var qtdeProdutos = 0;
+		
+		var totalExemplares = 0;
 
 		$.each(linhasDaGrid, function(index, value) {
 
@@ -1094,12 +1129,19 @@ var recebimentoFisicoController = $.extend(true, {
 			valorTotalDesconto += 
 				intValue(removeMascaraPriceFormat(
 					linha.find('[name="valorTotalDesconto"]').text()));
+			
+			qtdeProdutos++;
+			
+			totalExemplares+= intValue(linha.find('[name="repartePrevisto"]').text());
 		});
 		
         $("#totalSemDescontoLbl", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
         $("#totalComDescontoLbl", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
+        
+        $("#qtdeProdutos", recebimentoFisicoController.workspace).html(qtdeProdutos);
+        $("#totalExemplares", recebimentoFisicoController.workspace).html(totalExemplares);
 	},
-	
+		
 	alterarValorItem : function(idLinha) {
 		
 		var precoDesconto = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).text());
@@ -1175,8 +1217,18 @@ var recebimentoFisicoController = $.extend(true, {
 	getDataFromResultNota : function(data) {
 		
 		recebimentoFisicoController.linhasDestacadas = [];
+		
 		var totalDescontoGeral = 0, totalGeral = 0;
+		
+		var qtdeProdutos = 0;
+		
+		var totalExemplares = 0;
+		
 		$.each(data.rows, function(index, value) {
+			
+			qtdeProdutos++;
+			
+			totalExemplares+= intValue(value.cell.repartePrevisto);
 			
 			var edicaoItemRecFisicoPermitida 	= value.cell.edicaoItemRecFisicoPermitida;
 			
@@ -1209,7 +1261,7 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.diferenca = '<span style="color: black" id="diferenca_'+lineId+'">'+diferenca+'</span>';
 			}
 
-			value.cell.repartePrevisto = '<span id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
+			value.cell.repartePrevisto = '<span name="repartePrevisto" id="repartePrevisto_'+lineId+'">'+repartePrevisto+'</span>'; 
 			
 			if(edicaoItemRecFisicoPermitida == "S") {
 				value.cell.qtdPacote 	=  '<input isEdicao="true" name="qtdPacote" id="qtdPacote_'+ lineId +
@@ -1343,6 +1395,9 @@ var recebimentoFisicoController = $.extend(true, {
 			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
 		//}
 		
+		$("#totalExemplares", recebimentoFisicoController.workspace).text(totalExemplares);
+		$("#qtdeProdutos", recebimentoFisicoController.workspace).text(qtdeProdutos);
+			
 		return data;
 	},
 	
@@ -2460,6 +2515,35 @@ var recebimentoFisicoController = $.extend(true, {
 		if($("#selTodos").is(":checked")) {
 			$("#selTodos").attr("checked", false);
 		}
+	},
+	
+	/**
+     * FAZ A EXCLUSÃO DE UMA NOTA FISCAL
+     */
+	excluirNotaRecebimentoFisico : function() {
+    	
+		var dadosPesquisa = [{name: "id", value: recebimentoFisicoController.id}];
+		
+		
+		$.postJSON(this.path + 'excluirNotaRecebimentoFisico', dadosPesquisa, 
+
+		function(result) {
+			
+	    	if(result.tipoMensagem == "SUCCESS") {
+				
+	    		$(".grids", recebimentoFisicoController.workspace).hide();
+	    		
+	    		recebimentoFisicoController.ocultarBtns();
+	    		
+	    		recebimentoFisicoController.limparCamposPesquisa();
+	        	
+	    		recebimentoFisicoController.limparCamposNovoItem();
+	        	
+	    		recebimentoFisicoController.limparCampos();
+	        	
+	        	exibirMensagem(result.tipoMensagem, result.listaMensagens);
+			}
+		});
 	}
 }, BaseController);
 

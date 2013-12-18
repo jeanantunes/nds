@@ -65,4 +65,6 @@ public interface TipoProdutoRepository extends Repository<TipoProduto, Long> {
 	List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro);
 	
 	Long obterQunatidade(FiltroRelatorioTiposProdutos filtro);
+
+	public abstract List<TipoProduto> obterTiposProdutoDesc();
 }

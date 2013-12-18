@@ -146,7 +146,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		hql.append("   			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
 		hql.append(" 			ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
 		hql.append(" 		END ");
-		hql.append("   ) * produtoEdicao.PRECO_VENDA)) * 100 ");
+		hql.append("   ) * produtoEdicao.PRECO_VENDA)) ");
 		
 		
 		hql.append(" AS porcentagemMargemDistribuidor ");

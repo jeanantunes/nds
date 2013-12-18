@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.EdicoesFechadasRepository;
 import br.com.abril.nds.service.EdicoesFechadasService;
+import br.com.abril.nds.service.ExtratoEdicaoService;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -22,6 +25,9 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	@Autowired
 	private EdicoesFechadasRepository edicoesFechadasRepository;
 	
+	@Autowired
+	private ExtratoEdicaoService extratoEdicaoService;
+	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.EdicoesFechadasService#obterResultadoEdicoesFechadas(java.util.Date, java.util.Date, java.lang.String)
 	 */
@@ -29,7 +35,17 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	@Transactional(readOnly = true)
 	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor) {	
 		
-		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, dateAte, idFornecedor, null, null, null, null);
+		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
+		
+		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, 
+				                                                       dateAte, 
+				                                                       idFornecedor, 
+				                                                       null, 
+				                                                       null, 
+				                                                       null, 
+				                                                       null,
+				                                                       movimentosExcluidos,
+				                                                       StatusAprovacao.APROVADO);
 		
 	}
 	
@@ -42,10 +58,15 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	public BigInteger obterTotalResultadoEdicoesFechadas(
 			Date dataDe, Date dateAte, Long idFornecedor) {
 		
-		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte, idFornecedor);
+		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
+		
+		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, 
+				                                                            dateAte, 
+				                                                            idFornecedor,
+						                                                    movimentosExcluidos,
+						                                                    StatusAprovacao.APROVADO);
 		
 	}
-
 
 
 	/**
@@ -65,16 +86,31 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 			Date dataDe, Date dateAte, Long idFornecedor,
 			String sortorder, String sortname, Integer firstResult,
 			Integer maxResults) {
+		
+		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
+		
 		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe,
-				dateAte, idFornecedor, sortorder, sortname, firstResult,
-				maxResults);
+				                                                       dateAte, 
+				                                                       idFornecedor, 
+				                                                       sortorder, 
+				                                                       sortname, 
+				                                                       firstResult,
+				                                                       maxResults,
+				                                                       movimentosExcluidos,
+					                                                   StatusAprovacao.APROVADO);
 	}
-
 
 	@Override
 	@Transactional(readOnly=true)
 	public Long countResultadoEdicoesFechadas(	Date dataDe, Date dateAte, Long idFornecedor) {
-		return edicoesFechadasRepository.countResultadoEdicoesFechadas(dataDe,dateAte, idFornecedor);
+		
+		List<GrupoMovimentoEstoque> movimentosExcluidos = this.extratoEdicaoService.obterGruposMovimentoEstoqueExtratoEdicao();
+		
+		return edicoesFechadasRepository.countResultadoEdicoesFechadas(dataDe,
+				                                                       dateAte, 
+				                                                       idFornecedor,
+				                                                       movimentosExcluidos,
+					                                                   StatusAprovacao.APROVADO);
 	}
 	
 	

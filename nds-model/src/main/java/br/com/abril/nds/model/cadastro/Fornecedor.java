@@ -114,6 +114,18 @@ public class Fornecedor implements Serializable {
 	@Column(name="MARGEM_DISTRIBUIDOR")
 	private BigDecimal margemDistribuidor;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name="CANAL_DISTRIBUICAO")
+	private CanalDistribuicao canalDistribuicao;
+	
+	public Fornecedor(){}
+	
+	public Fornecedor(Long id, String nomeFantasia){
+		this.id = id;
+		this.juridica = new PessoaJuridica();
+		this.juridica.setNomeFantasia(nomeFantasia);
+	}
+	
 	public BigDecimal getMargemDistribuidor() {
 		return margemDistribuidor;
 	}
@@ -302,6 +314,14 @@ public class Fornecedor implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public CanalDistribuicao getCanalDistribuicao() {
+		return canalDistribuicao;
+	}
+
+	public void setCanalDistribuicao(CanalDistribuicao canalDistribuicao) {
+		this.canalDistribuicao = canalDistribuicao;
 	}
 
 }

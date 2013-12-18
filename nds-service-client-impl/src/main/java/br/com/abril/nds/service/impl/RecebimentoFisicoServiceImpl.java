@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -55,6 +56,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 
 @Service
@@ -906,7 +908,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				usuarioLogado.getId(), 
 				recebimentoFisicoDTO.getRepartePrevisto(),
 				tipoMovimento,
-				new Date(), 
+				distribuidorService.obterDataOperacaoDistribuidor(), 
 				false);
 		
 		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
@@ -980,5 +982,160 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 		
 		return recebimentoFisicoDTO;
+	}
+
+	@Override
+	@Transactional
+	public void excluirNota(Long id) {
+		
+		if(id == null) 
+			throw new ValidacaoException(TipoMensagem.ERROR, "Chave inválida.");	
+		
+		NotaFiscalEntrada nota = notaFiscalRepository.buscarPorId((id));
+		
+		if(nota == null) 
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nota não encontrada.");	
+						
+		if(notaFiscalRepository.notaPossuiItemExpedido(nota.getId()))
+			throw new ValidacaoException(TipoMensagem.ERROR, "A nota possui produto(s) expedido(s).");	
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(nota.getDataRecebimento()!= null && DateUtil.obterDiferencaDias(nota.getDataRecebimento(), dataOperacao) != 0)
+				throw new ValidacaoException(TipoMensagem.ERROR, "A data de recebimento é diferente da data de operação atual.");
+		
+		if( !nota.getItens().isEmpty() && nota.getItens().get(0).getRecebimentoFisico() != null ) {
+			RecebimentoFisico recebimento = nota.getItens().get(0).getRecebimentoFisico().getRecebimentoFisico();
+			recebimento.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
+			recebimentoFisicoRepository.alterar(recebimento);
+		} else {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Esta nota não possui recebimento físico confirmado.");
+		}
+		
+		verificarFaltasESobras(nota);
+		
+		desfazerMovimentosEstoque(nota.getItens());
+		
+		if(nota.getOrigem().equals(Origem.INTERFACE)) {
+			
+			limparNotaFiscalEntrada(nota, true);
+						
+		} else {
+			
+			limparNotaFiscalEntrada(nota, false);
+		}
+	}
+
+	private void verificarFaltasESobras(NotaFiscalEntrada nota) {
+		
+		List<ItemNotaFiscalEntrada> itens = nota.getItens();
+		
+		for(ItemNotaFiscalEntrada itemOriginal : itens) {
+		
+			ItemRecebimentoFisico itemRecebimento = itemOriginal.getRecebimentoFisico();
+			
+			Diferenca diferenca = itemRecebimento.getDiferenca();
+						
+			if (diferenca!=null && diferenca.getStatusConfirmacao().equals(StatusConfirmacao.CONFIRMADO))
+					throw new ValidacaoException(TipoMensagem.ERROR, "Há diferença(s) gerada(s) e confirmada(s) para essa nota. Não é possível excluí-la.");
+				
+			
+		}
+	}
+
+	private void desfazerMovimentosEstoque(List<ItemNotaFiscalEntrada> itens) {
+		
+		TipoMovimentoEstoque tipoMovimento = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+
+		TipoMovimentoEstoque tipoMovimentoEstorno = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ESTORNO_RECEBIMENTO_FISICO);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for(ItemNotaFiscalEntrada item : itens) {
+		
+			MovimentoEstoque movimento = movimentoEstoqueService.obterUltimoMovimentoRecebimentoFisico(
+					item.getProdutoEdicao().getId(),
+					tipoMovimento,
+					dataOperacao);
+			
+			if(movimento==null)
+				continue;
+			
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					item.getProdutoEdicao().getId(), 
+					movimento.getUsuario().getId(), 
+					movimento.getQtde(),
+					tipoMovimentoEstorno,
+					dataOperacao, 
+					false);
+			
+			
+			
+		}
+	}
+
+	private void limparNotaFiscalEntrada(NotaFiscalEntrada nota, boolean isFromInterface) {
+						
+		List<ItemNotaFiscalEntrada> itens = nota.getItens();
+		
+		for(ItemNotaFiscalEntrada itemOriginal : itens) {
+			
+			itemOriginal.setNCMProduto(null);
+			itemOriginal.setCFOPProduto(null);
+			itemOriginal.setUnidadeProduto(null);
+			itemOriginal.setCSTProduto(null);
+			itemOriginal.setCSOSNProduto(null);
+			itemOriginal.setBaseCalculoProduto(null);
+			itemOriginal.setAliquotaICMSProduto(null);
+			itemOriginal.setValorICMSProduto(null);
+			itemOriginal.setAliquotaIPIProduto(null);
+			itemOriginal.setValorIPIProduto(null);	
+			itemOriginal.setUsuario(null);
+			itemOriginal.setOrigem(null);
+			
+			ItemRecebimentoFisico itemRecebimento = itemOriginal.getRecebimentoFisico();
+			
+			Diferenca diferenca = itemRecebimento.getDiferenca();
+									
+			if (diferenca!=null)
+				diferencaEstoqueService.excluirLancamentoDiferenca(diferenca.getId());
+															
+			Lancamento lancamento = lancamentoRepository.obterLancamentoPorItemRecebimento(itemRecebimento.getId());
+			
+			lancamento.getRecebimentos().remove(itemOriginal.getRecebimentoFisico());
+			
+			lancamentoRepository.alterar(lancamento);
+			
+			itemOriginal.setRecebimentoFisico(null);
+			
+			itemNotaFiscalRepository.alterar(itemOriginal);
+		
+			itemRecebimentoFisicoRepository.removerPorId(itemRecebimento.getId());
+			
+		}		
+		
+		if(isFromInterface) {
+			
+			nota.setOrigem(Origem.INTERFACE);
+			nota.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
+			nota.setEmitida(true);	
+			nota.setStatusRecebimento(null);
+			nota.setDataRecebimento(null);
+		
+			notaFiscalRepository.alterar(nota);
+		
+		} else {
+
+			RecebimentoFisico recebimento = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(nota.getId());
+			
+			recebimentoFisicoRepository.remover(recebimento);
+			
+			notaFiscalRepository.remover(nota);	
+		}
+		
 	}
 }

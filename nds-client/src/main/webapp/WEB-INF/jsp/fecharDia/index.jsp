@@ -367,11 +367,13 @@
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="104">Data da Operação:</td>
-              <td width="111"><input id="dataDaOperacao" type="text" value="${dataOperacao}" style="width: 70px;"/></td>
+              <td width="111"><input onchange="fecharDiaController.tratarExibicaoPesquisa();" id="dataDaOperacao" type="text" value="${dataOperacao}" style="width: 70px;"/></td>
               <td width="185">
-              	<span class="bt_novos" title="Iniciar Fechamento do Dia">
+              	<span class="bt_novos" title="Iniciar Fechamento do Dia" id="idTituloBoataoFechamentoDiario">
               		<a isEdicao="true" href="#" onclick="fecharDiaController.popup_processos();">
-              		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">Iniciar Fechamento do Dia</a>
+              			<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png" id="idImgBotaoFecamentoDiario">
+              			<span id="idBotaoFechamentoDiario">Iniciar Fechamento do Dia</span>
+              		</a>
               	</span>
               </td>
               <td width="529">

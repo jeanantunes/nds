@@ -116,6 +116,9 @@ public abstract class Cobranca {
 	@ManyToMany(mappedBy="cobrancasOriginarias")
 	private List<Negociacao> negociacao;
 	
+	@Column(name="ENVIAR_POR_EMAIL")
+	private boolean enviarPorEmail;
+	
 	public Long getId() {
 		return id;
 	}
@@ -293,5 +296,18 @@ public abstract class Cobranca {
 	public void setNegociacao(List<Negociacao> negociacao) {
 		this.negociacao = negociacao;
 	}
-	
+
+	/**
+	 * @return the enviarPorEmail
+	 */
+	public boolean isEnviarPorEmail() {
+		return enviarPorEmail;
+	}
+
+	/**
+	 * @param enviarPorEmail the enviarPorEmail to set
+	 */
+	public void setEnviarPorEmail(boolean enviarPorEmail) {
+		this.enviarPorEmail = enviarPorEmail;
+	}	
 }

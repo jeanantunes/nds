@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -38,19 +39,19 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	private BigDecimal faturamento;
 
-	@Export(label = "Reparte", exhibitionOrder = 5)
+	@Export(label = "Reparte", exhibitionOrder = 5, columnType = ColumType.NUMBER)
 	private String reparteFormatado;
 	
-	@Export(label = "Venda de Exemplares", exhibitionOrder = 6)
+	@Export(label = "Venda de Exemplares", exhibitionOrder = 6, columnType = ColumType.NUMBER)
 	private String vendaExemplaresFormatado;
 
-	@Export(label = "Venda %", exhibitionOrder = 7)
+	@Export(label = "Venda %", exhibitionOrder = 7, columnType = ColumType.DECIMAL)
 	private String porcentagemVendaFormatado;
 	
-	@Export(label = "Faturamento R$", exhibitionOrder = 8)
+	@Export(label = "Faturamento R$", exhibitionOrder = 8, columnType = ColumType.DECIMAL)
 	private String faturamentoFormatado;
 	
-	@Export(label = "Ranking", exhibitionOrder = 1)
+	@Export(label = "Ranking", exhibitionOrder = 1, columnType = ColumType.NUMBER)
 	private Long rkProduto;
 	
 	private Long idCota;
@@ -150,12 +151,12 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		this.codigoProduto = codigoProduto;
 	}
 	
-	@Export(label = "Participação", exhibitionOrder = 9)
+	@Export(label = "Participação", exhibitionOrder = 9, columnType = ColumType.DECIMAL)
 	public String getParticipacaoString() {
 		return getParticipacaoFormatado();
 	}
 
-	@Export(label = "Participação Acumulada", exhibitionOrder = 10)
+	@Export(label = "Participação Acumulada", exhibitionOrder = 10, columnType = ColumType.DECIMAL)
 	public String getParticipacaoAcumuladaString() {
 		return getParticipacaoAcumuladaFormatado();
 	}

@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ExpedicaoRepository;
@@ -377,8 +378,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		          .append(" produto.NOME AS nomeProduto,  ")
 		          .append(" produtoEdicao.NUMERO_EDICAO AS numeroEdicao, ")
 		          .append(" produtoEdicao.PRECO_VENDA AS precoCapa, ")
-		          .append(" estudoCota.QTDE_EFETIVA AS qntReparte, ")
-		          .append(" estudoCota.QTDE_EFETIVA * produtoEdicao.PRECO_VENDA AS valorFaturado, ")
+		          .append(" mec.QTDE AS qntReparte, ")
+		          .append(" mec.QTDE * produtoEdicao.PRECO_VENDA AS valorFaturado, ")
 		          .append(" produtoEdicao.ID AS produtoEdicaoId, ")
 		          .append(" CONCAT(COALESCE(box.CODIGO, ''), '-', COALESCE(box.NOME, '')) AS codigoBox, ")
 		          .append(" expedicao.data_expedicao AS dataExpedicao, ");
@@ -399,13 +400,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		innerQuery.append(" FROM EXPEDICAO expedicao ")
 				  .append(" INNER JOIN LANCAMENTO lancamento ON expedicao.ID=lancamento.EXPEDICAO_ID ")
-				  .append(" INNER JOIN ESTUDO estudo ON lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID ")
-				  .append(" 						  AND lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO ")
-				  .append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON estudo.PRODUTO_EDICAO_ID=produtoEdicao.ID ")
+				  .append(" INNER JOIN PRODUTO_EDICAO produtoEdicao ON lancamento.PRODUTO_EDICAO_ID=produtoEdicao.ID ")
 				  .append(" INNER JOIN PRODUTO produto ON produtoEdicao.PRODUTO_ID=produto.ID ");
-
+		
 		if (isDetalhesResumo) {
-
+			
 			innerQuery.append(" inner join PRODUTO_FORNECEDOR produtoFornecedor ")
 					  .append(" on produto.ID=produtoFornecedor.PRODUTO_ID ")
 					  .append(" inner join ")
@@ -416,10 +415,13 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					  .append(" on fornecedor.JURIDICA_ID=pessoa.ID ");
 		}
 
-		innerQuery.append(" INNER JOIN ESTUDO_COTA estudoCota ON estudo.ID=estudoCota.ESTUDO_ID ")
-				  .append(" INNER JOIN COTA cota ON estudoCota.COTA_ID=cota.ID ")
+		innerQuery.append(" INNER JOIN movimento_ESTOQUE me ON me.PRODUTO_EDICAO_ID=produtoEdicao.ID ")
+				  .append(" INNER JOIN tipo_movimento tp ON tp.ID = me.TIPO_MOVIMENTO_ID ")
+				  .append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+				  .append(" INNER JOIN COTA cota  ON mec.COTA_ID=cota.ID ")
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
+				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE IN ('"+ GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name() +"' )")
 				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ");
 		
 		return innerQuery;

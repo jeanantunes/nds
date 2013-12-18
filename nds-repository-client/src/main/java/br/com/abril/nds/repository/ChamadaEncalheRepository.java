@@ -7,7 +7,8 @@ import java.util.Set;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
-import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.CotaProdutoEmissaoCEDTO;
+import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -42,9 +43,9 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	Date obterProximaDataEncalhe(Date base);
 
 	List<BandeirasDTO> obterBandeirasNoIntervalo(
-			Intervalo<Date> intervaloRecolhimento, PaginacaoVO paginacaoVO);
+			Intervalo<Date> intervaloRecolhimento, Long fornecedor, PaginacaoVO paginacaoVO);
 
-	List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(
+	List<FornecedorDTO> obterDadosFornecedoresParaImpressaoBandeira(
 			Intervalo<Date> intervalo);
 
 	Long countObterBandeirasNoIntervalo(Intervalo<Date> intervalo);
@@ -54,5 +55,7 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	Integer obterMaiorSequenciaPorDia(Date dataRecolhimento);
 
 	Set<Lancamento> obterLancamentos(Long idChamadaEncalhe);
+
+	List<CotaProdutoEmissaoCEDTO> obterDecomposicaoReparteSuplementarRedistribuicao(FiltroEmissaoCE filtro);
 	
 }

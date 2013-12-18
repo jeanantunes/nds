@@ -753,11 +753,23 @@ var negociacaoDividaController = $.extend(true, {
 		negociacaoDividaController.esconderPagamentoParcelas();		
 	},
 	
+	obterParcelasValorMinimo : function() {
+		
+		$.postJSON(contextPath + '/financeiro/negociacaoDivida/obterQuantidadeParcelas.json',
+				negociacaoDividaController.getParamsCalcularParcelas(),
+				function(result) {
+			
+			        $('#selectParcelas', negociacaoDividaController.workspace).val(result.int);
+				}
+		);		
+	},
+	
 	mostraPgto : function() {
+		
+		negociacaoDividaController.obterParcelasValorMinimo();
 		
 		$('.comissaoAtual', negociacaoDividaController.workspace).hide();
 		$('.pgtos', negociacaoDividaController.workspace).show();
-	
 	},
 	
 	mostraSemanal : function(){

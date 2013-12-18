@@ -29,18 +29,6 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	}
 
 	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.EditorRepository#obterEditores()
-	 */
-	@Override
-	public List<Editor> obterEditores() {
-		String hql = "from Editor ed ORDER BY ed.pessoaJuridica.razaoSocial";
-		Query query = getSession().createQuery(hql);
-		@SuppressWarnings("unchecked")
-		List<Editor> editores = query.list();
-		return editores;
-	}
-
-	/* (non-Javadoc)
 	 * @see br.com.abril.nds.repository.EditorRepository#obterHistoricoEditor(br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO)
 	 */
 	@SuppressWarnings("unchecked")
@@ -148,5 +136,18 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		return (Editor) query.uniqueResult();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Editor> obterEditoresDesc() {
+		
+		StringBuilder hql = new StringBuilder("select new ");
+		hql.append(Editor.class.getCanonicalName())
+		   .append("(ed.id, p.razaoSocial) from Editor ed join ed.pessoaJuridica p ")
+		   .append(" ORDER BY p.razaoSocial ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		return query.list();
+	}
 }

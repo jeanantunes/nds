@@ -29,13 +29,17 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -107,6 +111,14 @@ public class VendaEncalheController extends BaseController {
 	@Autowired 
 	private GerarCobrancaService cobrancaService;
 	
+	@Autowired
+	private CalendarioService calendarioService;
+	
+	@Autowired
+	private SituacaoCotaService situacaoCotaService;
+	
+	@Autowired
+	private BoxService boxService;
 	
 	@Path("/")
 	public void index() {}
@@ -140,30 +152,30 @@ public class VendaEncalheController extends BaseController {
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
-	public void confirmaNovaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
+	public void confirmaNovaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.TRUE);
 	}
 	
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
-	public void confirmaEdicaoVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
+	public void confirmaEdicaoVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.FALSE);
 	}
 	
-	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito,boolean novaVenda){
+	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Integer numeroCota, Date dataDebito,boolean novaVenda){
 		
 		validarParametrosVenda(listaVendas,numeroCota, dataDebito,novaVenda);
 		
 		byte[] comprovanteVenda = null;
 		
-		if(novaVenda){
+		if(novaVenda) {
 
-			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas,numeroCota,dataDebito,getUsuarioLogado());
-		}
-		else{
-			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0),dataDebito,getUsuarioLogado());
+			comprovanteVenda = vendaEncalheService.efetivarVendaEncalhe(listaVendas, numeroCota, dataDebito, getUsuarioLogado());
+		} else {
+			
+			comprovanteVenda = vendaEncalheService.alterarVendaEncalhe(listaVendas.get(0), dataDebito, getUsuarioLogado());
 		}
 		
 		session.setAttribute("COMPROVANTE_VENDA",comprovanteVenda);
@@ -185,14 +197,14 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void obterBoxCota(Integer numeroCota){
 		
-		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		String msg = this.situacaoCotaPermiteVenda(numeroCota);
 		
-		String codBox ="";
-		
-		if(cota!= null && cota.getBox()!= null){
+		if (msg != null){
 			
-			codBox = cota.getBox().getCodigo() + " - " + cota.getBox().getNome(); 
+			throw new ValidacaoException(TipoMensagem.WARNING, msg);
 		}
+		
+		String codBox = this.boxService.obterDescricaoBoxPorCota(numeroCota);
 		
 		result.use(CustomJson.class).from(codBox).serialize();
 	}
@@ -220,9 +232,9 @@ public class VendaEncalheController extends BaseController {
 		
 		Integer qntDias = this.distribuidorService.qntDiasVencinemtoVendaEncalhe();
 		
-		qntDias = (qntDias == null) ? 0 : qntDias;
+		qntDias = (qntDias == null) ? 1 : qntDias;
 		
-		Date dataVencimentoDebito = DateUtil.adicionarDias(dataOperacao, qntDias);
+		Date dataVencimentoDebito = this.calendarioService.adicionarDiasUteis(dataOperacao, qntDias);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		
@@ -233,7 +245,7 @@ public class VendaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void obterDadosDoProduto(String codigoProduto, Long numeroEdicao, Long numeroCota){
+	public void obterDadosDoProduto(String codigoProduto, Long numeroEdicao, Integer numeroCota){
 		
 		if(numeroCota == null){
 			
@@ -354,16 +366,16 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void recalcularValorDescontoItensVenda(List<VendaProdutoVO> listaVendas, Integer numeroCota){
 		
-		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		Long idCota = cotaService.obterIdPorNumeroCota(numeroCota);
 		
-		if(cota != null){
+		if(idCota != null){
 			
 			for(VendaProdutoVO venda : listaVendas){
 				
 				ProdutoEdicao produtoEdicao = 
 						produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(venda.getCodigoProduto(),venda.getNumeroEdicao().toString());
 				
-				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, idCota, produtoEdicao);
 				
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 	    
@@ -494,7 +506,7 @@ public class VendaEncalheController extends BaseController {
 		return (valor == null)?"":valor.toString();
 	}
 	
-	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito, boolean isNovaVenda){
+	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Integer numeroCota, Date dataDebito, boolean isNovaVenda){
 	
 		validarFormatoData();
 		
@@ -502,6 +514,14 @@ public class VendaEncalheController extends BaseController {
 		
 		if(numeroCota == null){
 			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
+		} else {
+			
+			String msg = this.situacaoCotaPermiteVenda(numeroCota);
+			
+			if (msg != null){
+				
+				mensagensValidacao.add(msg);
+			}
 		}
 		
 		if(listaVendas == null || listaVendas.isEmpty()){
@@ -516,8 +536,12 @@ public class VendaEncalheController extends BaseController {
 		}
 		else{
 			
-			if(DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataDebito)){
+			if(this.distribuidorService.obterDataOperacaoDistribuidor().compareTo(dataDebito) >= 0){
+				
 				mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data de operação do sistema!");
+			} else if (!this.calendarioService.isDiaUtil(dataDebito)) {
+				
+				mensagensValidacao.add("O campo [Data Vencimento] deve ser um dia útil.");
 			}
 			
 			this.validarDataDebitoParaVendaContaFirme(listaVendas, numeroCota,dataDebito, mensagensValidacao,isNovaVenda);
@@ -528,26 +552,17 @@ public class VendaEncalheController extends BaseController {
 		}
 	}
 
-	private void validarDataDebitoParaVendaContaFirme(List<VendaEncalheDTO> listaVendas, Long numeroCota,
+	private void validarDataDebitoParaVendaContaFirme(List<VendaEncalheDTO> listaVendas, Integer numeroCota,
 													  Date dataDebito, List<String> mensagensValidacao, 
 													  boolean isNovaVenda) {
 		
 		if(containsVendaContaFirme(listaVendas)){
 			
-			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota.intValue());
+			Long idCota  = cotaService.obterIdPorNumeroCota(numeroCota);
 			
-			if (cobrancaService.verificarCobrancasGeradasNaDataVencimentoDebito(dataDebito, cota.getId())){
+			if (cobrancaService.verificarCobrancasGeradasNaDataVencimentoDebito(dataDebito, idCota)){
 				
-				if(!isNovaVenda){
-					
-					mensagensValidacao.add("Venda não pode ser editada!");
-					mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
-				}
-				else{
-					
-					mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
-					mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data informada!");
-				}
+				mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
 			}	
 		}
 	}
@@ -691,6 +706,8 @@ public class VendaEncalheController extends BaseController {
 		
 		FileExporter.to("venda-encalhes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,resultadoVendaEncalheVO, 
 				listaExibicaoGrid, VendaEncalheVO.class, this.httpServletResponse);
+		
+		result.nothing();
 	}
 	
 	private FiltroVendaEncalheDTO obterFiltroExportacao() {
@@ -726,8 +743,19 @@ public class VendaEncalheController extends BaseController {
 	
 	@Get("/reimprimirComprovanteVenda/{idVenda}")
 	public Download reimprimirComprovanteVenda(Long idVenda){		
-		byte[] relatorio =  vendaEncalheService.geraImpressaoComprovanteVenda(idVenda);		
+		byte[] relatorio =  vendaEncalheService.geraImpressaoComprovanteVenda(idVenda);
 		return new ByteArrayDownload(relatorio,"application/pdf", "comprovanteVenda.pdf",true);
 	}
-}
 	
+	private String situacaoCotaPermiteVenda(Integer numeroCota){
+		
+		SituacaoCadastro situacao = this.situacaoCotaService.obterSituacaoCadastroCota(numeroCota);
+		
+		if (situacao == null || situacao.equals(SituacaoCadastro.INATIVO)){
+			
+			return "Não são permitidas vendas para cotas inativas.";
+		}
+		
+		return null;
+	}
+}

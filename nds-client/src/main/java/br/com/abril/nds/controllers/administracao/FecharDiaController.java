@@ -707,5 +707,24 @@ public class FecharDiaController extends BaseController {
          */
         JQUERY_FILE_DOWNLOAD_PLUGIN
     }
+<<<<<<< HEAD
 }
 
+=======
+    
+    @Post
+    public void isDataOperacaoDistribuidor(Date data){
+    	
+    	boolean isDataOperacao = false;
+    	
+    	if (data!= null){
+    		
+    		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+    		
+    		isDataOperacao = (data.compareTo(dataOperacao)< 0);
+    	}
+    	
+    	result.use(CustomMapJson.class).put("isDataOperacaoDistribuidor", isDataOperacao).serialize();
+    }
+}
+>>>>>>> DGB/master

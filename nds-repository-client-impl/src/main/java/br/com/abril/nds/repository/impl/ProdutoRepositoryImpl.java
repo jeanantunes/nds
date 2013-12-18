@@ -377,8 +377,16 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return (BigDecimal) query.uniqueResult();
 	
 	}
-	
 
+	@Override
+	public String obterUltimoCodigoProdutoRegional() {
+		
+		Query query = 
+			this.getSession().createQuery("select max(codigo) from Produto where length(codigo) = 10 and codigo like '10%'");
+		
+		return (String)query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Produto> obterProdutoLikeCodigo(String codigo) {
@@ -422,4 +430,13 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
         return list.isEmpty() ? null : (Produto) list.get(0);
     }
 
+	@Override
+	public boolean existeProdutoRegional(String codigo) {
+		
+		Query query = this.getSession().createQuery("select count(codigo) from Produto where codigo = :codigo");
+		
+		query.setParameter("codigo", codigo);
+		
+		return ((Long)query.uniqueResult()) > 0;
+	}
 }

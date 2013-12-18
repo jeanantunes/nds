@@ -119,11 +119,9 @@ public class ContaCorrenteCotaController extends BaseController {
 			FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO,
 			String sortname, String sortorder, int rp, int page) {
 
-		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO
-				.getNumeroCota());
+		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO.getNumeroCota());
 
-		this.prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,
-				page, rp);
+		this.prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname, page, rp);
 
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroViewContaCorrenteCotaDTO);
 		
@@ -133,8 +131,7 @@ public class ContaCorrenteCotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 
-		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
-			consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
 		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
 	}
@@ -469,8 +466,7 @@ public class ContaCorrenteCotaController extends BaseController {
 		filtro.setOrdenacaoColuna(FiltroConsolidadoVendaCotaDTO.OrdenacaoColuna.valueOf(sortname));
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
 		
-		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
-				.obterMovimentoVendaEncalhe(filtro);
+		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService.obterMovimentoVendaEncalhe(filtro);
 		
 		for(ConsultaVendaEncalheDTO eDTO : encalheDTOs){
 			

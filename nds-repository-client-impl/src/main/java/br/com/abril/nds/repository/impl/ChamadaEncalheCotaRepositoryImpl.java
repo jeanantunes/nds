@@ -721,18 +721,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(
-			Long chamadaEncalheID, Long cotaID) {
+	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(Long cotaID, Date dataRecolhimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cec from ChamadaEncalheCota cec ");
-		hql.append(" where cec.chamadaEncalhe.id = :chamadaEncalheID ");
-		hql.append(" and cec.cota.id = :cotaID ");
+		hql.append(" inner join cec.chamadaEncalhe ce ");
+		hql.append(" where cec.cota.id = :cotaID ");
+		hql.append(" and ce.dataRecolhimento = :dataRecolhimento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("chamadaEncalheID", chamadaEncalheID);
+		
 		query.setParameter("cotaID", cotaID);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
 		
 		return query.list();
 	}
@@ -829,4 +830,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
+	
+	public void fecharChamadasEncalheDaCota(Long idCota, Date data) {
+		
+		
+	}
+	
 }

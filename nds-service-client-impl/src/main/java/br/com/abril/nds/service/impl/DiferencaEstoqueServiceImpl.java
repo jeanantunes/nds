@@ -306,8 +306,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (Diferenca diferenca : listaNovasDiferencas) {
 
-			Diferenca diferencaASalvar = 
-				(Diferenca) SerializationUtils.clone(diferenca);
+			Diferenca diferencaASalvar = (Diferenca) SerializationUtils.clone(diferenca);
 			
 			Long idDiferencaTemporario = diferencaASalvar.getId();
 			

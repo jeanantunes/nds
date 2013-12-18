@@ -65,6 +65,7 @@ implements ParametroSistemaRepository {
 		lst.add(TipoParametroSistema.PATH_INTERFACE_NFE_EXPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_IMPORTACAO);
 		lst.add(TipoParametroSistema.PATH_INTERFACE_PRODIN_EXPORTACAO);
+		lst.add(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO);
 		//lst.add(TipoParametroSistema.VERSAO_SISTEMA);
 
 		Query query = this.getSession().createQuery(hql);

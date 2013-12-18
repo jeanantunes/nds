@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
@@ -194,4 +195,11 @@ public interface ParametroCobrancaCotaService {
 	List<BigDecimal> comboValoresMinimos();
 	
 	void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca);
+
+	/**
+	 * Obtem o fornecedor padrão da cota informada
+	 * @param idCota
+	 * @return Fornecedor
+	 */
+	Fornecedor obterFornecedorPadraoCota(Long idCota);
 }

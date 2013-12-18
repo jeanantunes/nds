@@ -1637,4 +1637,117 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
         																				GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
         return query.list();
 	}
+
+	/**
+	 * Obtem valor total de Débitos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	@Override
+    public BigDecimal obterTotalDebitoCota(Integer numeroCota, Date dataOperacao){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  select sum(coalesce(mfc.valor,0)) ")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+        .append("  join mfc.cota c3 ")
+       
+        .append("  join mfc.tipoMovimento tm ")
+    	
+    	.append("  where tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
+    	    
+        .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+    
+        if (dataOperacao!=null){
+        	
+        	hql.append(" and mfc.data <= :data ");
+        }
+    
+        if (numeroCota != null){
+        	
+        	hql.append(" and c3.numeroCota = :numeroCota");
+        }
+
+        Query query = this.getSession().createQuery(hql.toString());
+ 	    
+ 	    if (numeroCota != null){
+ 	      
+ 	        query.setParameter("numeroCota", numeroCota);
+ 	    }
+ 	    
+ 	    if (dataOperacao!=null){
+ 	        
+ 	    	query.setParameter("data", dataOperacao);
+ 	    }
+
+	    query.setParameterList("gruposMovimentoFinanceiroDebito", Arrays.asList(GrupoMovimentoFinaceiro.DEBITO,
+																	            GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+																	            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
+																	            GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
+																	            GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR,
+																	            GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+																	            GrupoMovimentoFinaceiro.JUROS,
+																	            GrupoMovimentoFinaceiro.MULTA,
+																	            GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,                                                            				
+																	            GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,	                                                             				
+																	            GrupoMovimentoFinaceiro.VENDA_TOTAL,	                                                             				                                                          					                                                             				
+																	            GrupoMovimentoFinaceiro.PENDENTE));
+ 	    
+		return (BigDecimal) query.uniqueResult();
+	}
+    
+    /**
+	 * Obtem valor total de Créditos pendentes da Cota
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	@Override
+    public BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  select sum(coalesce(mfc.valor,0)) ")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+        .append("  join mfc.cota c3 ")
+       
+        .append("  join mfc.tipoMovimento tm ")
+    	
+    	.append("  where tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
+    	    
+        .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+    
+        if (dataOperacao!=null){
+        	
+        	hql.append(" and mfc.data <= :data ");
+        }
+    
+        if (numeroCota != null){
+        	
+        	hql.append(" and c3.numeroCota = :numeroCota");
+        }
+
+        Query query = this.getSession().createQuery(hql.toString());
+ 	    
+ 	    if (numeroCota != null){
+ 	      
+ 	        query.setParameter("numeroCota", numeroCota);
+ 	    }
+ 	    
+ 	    if (dataOperacao!=null){
+ 	        
+ 	    	query.setParameter("data", dataOperacao);
+ 	    }
+    	
+ 	   query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
+																                GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+																                GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+																                GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+																                GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
+
+		return (BigDecimal) query.uniqueResult();
+	}
 }

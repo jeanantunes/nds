@@ -1,8 +1,11 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 
 public interface ExtratoEdicaoService {
 	
@@ -29,5 +32,7 @@ public interface ExtratoEdicaoService {
 	 * @return String
 	 */
 	public String obterRazaoSocialFornecedorDeProduto(String codigoProduto);
+
+	List<GrupoMovimentoEstoque> obterGruposMovimentoEstoqueExtratoEdicao();
 	
 }
