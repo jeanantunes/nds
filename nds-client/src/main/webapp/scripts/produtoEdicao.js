@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 var produtoEdicaoController =$.extend(true,  {
 	
 	// Pesquisa por código de produto
@@ -1371,7 +1369,7 @@ var produtoEdicaoController =$.extend(true,  {
 	isEdicao : function(modoTela) {
 		
 		return modoTela == 'EDICAO';
-	}
+	},
 
 // FUNCTION - ADD EM LOTE
 	

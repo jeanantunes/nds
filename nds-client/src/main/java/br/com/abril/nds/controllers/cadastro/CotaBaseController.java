@@ -105,7 +105,7 @@ public class CotaBaseController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
 		}
 		
-		if(filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+		if(filtro.getTpDistribCota() != null && filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
 		}
 		
@@ -442,6 +442,11 @@ public class CotaBaseController extends BaseController {
 	private List<CotaBaseDTO> obterListaAuxiliar(CotaBaseDTO cotaBaseDTO) {
 		
 		List<CotaBaseDTO> listaDetalheCota = this.cotaBaseService.obterListaTelaDetalhe(this.cotaBaseService.obterCotaNova(cotaBaseDTO.getNumeroCota(), false));
+		
+		if (listaDetalheCota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum detalhe encontrado.");
+		}
 		
 		List<CotaBaseDTO> listaAuxiliar = new ArrayList<CotaBaseDTO>();
 		CotaBaseDTO dtoParaVisao = new CotaBaseDTO();

@@ -70,6 +70,12 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase) {
+		
+		if (cotaBase == null) {
+			
+			return null;
+		}
+		
 		return this.cotaBaseRepository.obterListaTelaDetalhe(cotaBase);
 	}
 
