@@ -280,8 +280,6 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			mapaSessionIDNomeUsuario.put(userSessionID, getIdentificacaoUsuarioLogado());
 			mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
-		
-		
 	}
 	
 	/**

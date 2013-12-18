@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
@@ -19,4 +20,6 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 
 	List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(
 			FiltroEstoqueProdutosRecolhimento filtro);
+
+	List<Date> obterDatasRecProdutosFechados();
 }

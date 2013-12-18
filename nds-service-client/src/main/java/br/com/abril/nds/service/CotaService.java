@@ -431,4 +431,16 @@ public interface CotaService {
 	
 	List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 
+	/**
+	 * Obtem cotas por intervalo de numero de cotas
+	 * @param cotaDe
+	 * @param cotaAte
+	 * @param situacoesCadastro
+	 * @return List<Cota>
+	 */
+	List<Cota> obterCotasEntre(Integer cotaDe,
+			                   Integer cotaAte,
+			                   List<SituacaoCadastro> situacoesCadastro);
+	
+	Long obterIdPorNumeroCota(Integer numeroCota);
 }

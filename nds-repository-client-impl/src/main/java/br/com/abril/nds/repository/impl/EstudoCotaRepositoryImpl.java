@@ -130,9 +130,15 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	@SuppressWarnings("unchecked")
 	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> idCotas, 
 														  Intervalo<Date> periodo, 
-														  List<Long> listaIdsFornecedores) {
+														  List<Long> listaIdsFornecedores,
+														  String exibirNotasEnvio) {
 		
+<<<<<<< HEAD
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");	
+=======
+		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");
+		
+>>>>>>> DGB/master
 		sql.append(" FROM EstudoCota estudoCota ");
 		sql.append(" JOIN estudoCota.cota cota ");
 		sql.append(" JOIN estudoCota.estudo estudo ");
@@ -140,10 +146,20 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
 		sql.append(" JOIN produtoEdicao.produto produto ");
 		sql.append(" JOIN produto.fornecedores fornecedor ");
+<<<<<<< HEAD
 
+=======
+		sql.append(" LEFT JOIN estudoCota.itemNotaEnvios itemNotaEnvios ");
+>>>>>>> DGB/master
 		sql.append(" WHERE cota.id IN (:idCotas) ");
 		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
 		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");
+		
+		if("EMITIDAS".equals(exibirNotasEnvio)) {
+			sql.append(" AND itemNotaEnvios is not null ");
+		} else if("AEMITIR".equals(exibirNotasEnvio)) {
+			sql.append(" AND itemNotaEnvios is null ");
+		}
 		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			

@@ -158,6 +158,11 @@ public class NegociacaoDividaController extends BaseController {
 		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
 	}
 	
+	@Path("/obterQuantidadeParcelas.json")
+	public void obterQuantidadeParcelas(FiltroCalculaParcelas filtro) {		
+		this.result.use(Results.json()).from(negociacaoDividaService.obterQuantidadeParcelasConformeValorMinimo(filtro), "result").recursive().serialize();
+	}
+	
 	@Path("/calcularParcelas.json")
 	public void calcularParcelas(FiltroCalculaParcelas filtro) {		
 		this.result.use(Results.json()).from(negociacaoDividaService.calcularParcelas(filtro), "result").recursive().serialize();

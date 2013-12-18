@@ -114,7 +114,7 @@ public class RelatorioVendasController extends BaseController {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);
 		result.include("fornecedores", fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO));
-		result.include("editores", editorService.obterEditores());
+		result.include("editores", editorService.obterEditoresDesc());
 		result.include("municipios", enderecoService.obterMunicipiosCotas());
 	}
 	
@@ -179,6 +179,7 @@ public class RelatorioVendasController extends BaseController {
 		} else {
 			
 			lista = relatorioVendasService.obterCurvaABCProduto(filtroSessao);
+		
 		}
 		
 		List<RegistroCurvaABCExportacaoDistribuidorVO> exportacao = new ArrayList<RegistroCurvaABCExportacaoDistribuidorVO>();

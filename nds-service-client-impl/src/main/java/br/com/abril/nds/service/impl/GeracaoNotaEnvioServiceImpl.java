@@ -280,6 +280,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 		
 	}
+<<<<<<< HEAD
 
 	/*
 	private BigDecimal obterValorDesconto(Cota cota, MovimentoEstoqueCota mec,
@@ -303,6 +304,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 	*/
 
+=======
+	
+>>>>>>> DGB/master
 	/**
 	 * Método que verifica se ja existe um itemNotaEnvio para um determinado produto.
 	 * caso não exista retorna uma nova instancia de ItemNotaEnvio.
@@ -529,7 +533,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
 		
 		List<EstudoCota> listaEstudosCotas = 
-				this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(listaIdCotas, filtro.getIntervaloMovimento(),filtro.getIdFornecedores());
+				this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(listaIdCotas, filtro.getIntervaloMovimento(),filtro.getIdFornecedores(), filtro.getExibirNotasEnvio());
 		
 		List<NotaEnvio> notasEnvio = new ArrayList<>();
 		
@@ -544,11 +548,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			this.gerarNotaEnvioParaVisualizacao(pessoaEmitente,
 				                                idCota,  
-				                                filtro.getIdRota(), 
-												notasEnvio, 
-												filtro.getDataEmissao(), 
-												filtro.getIntervaloMovimento(), 
-												filtro.getIdFornecedores(), 
+				                                filtro, 
+												notasEnvio,
 												null, null, null, 
 												mapEstudosCota.get(idCota),
 												descontos, enderecoDistribuidor, telefoneDistribuidor);
@@ -559,11 +560,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	private void gerarNotaEnvioParaVisualizacao(PessoaJuridica pessoaEmitente,
 											    Long idCota, 
-											    Long idRota, 
+											    FiltroConsultaNotaEnvioDTO filtro,
 											    List<NotaEnvio> notasEnvio, 
-											    Date dataEmissao, 
-											    Intervalo<Date> periodo,
-											    List<Long> listaIdFornecedores, 
 											    String chaveAcesso,
 											    Integer codigoNaturezaOperacao, 
 											    String descricaoNaturezaOperacao,
@@ -579,10 +577,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
 		}
 		
-		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota, periodo);
+		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, filtro.getIdRota(), filtro.getIntervaloMovimento());
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = 
-				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota, destinatarioAtualizado, descontos);
+				this.processarNotasDeEnvioGeradas(cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos);
 
 		NotaEnvio notaEnvio = null;
 		
@@ -590,7 +588,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			notaEnvio = criarNotaEnvio(destinatarioAtualizado,
 					                   chaveAcesso,
-					                   codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+					                   codigoNaturezaOperacao, descricaoNaturezaOperacao, filtro.getDataEmissao(),
 					                   pessoaEmitente, enderecoDistribuidor, telefoneDistribuidor);
 	
 			int sequencia = 0;
@@ -726,11 +724,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 */
 	private void getNotaEnvioCota(PessoaJuridica pessoaEmitente,
 		                          Long idCota, 
-			                      Long idRota, 
+		                          FiltroConsultaNotaEnvioDTO filtro, 
 			                      List<NotaEnvio> notasEnvio, 
-			                      Date dataEmissao, 
-			                      Intervalo<Date> periodo,
-                                  List<Long> listaIdFornecedores, 
                                   String chaveAcesso,
 			                      Integer codigoNaturezaOperacao, 
 			                      String descricaoNaturezaOperacao,
@@ -746,17 +741,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
 		}
 		
-		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota, periodo);
+		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, filtro.getIdRota(), filtro.getIntervaloMovimento());
 		if(destinatarioAtualizado == null)
 			return;// Caso retorne null pular próxima cota pois não encontrou endereço PDV p uma cota sem movimentoEstudo 
 		
-		List<ItemNotaEnvio> listaItemNotaEnvio = this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, 
-																					listaEstudosCota, destinatarioAtualizado, descontos);
+		List<ItemNotaEnvio> listaItemNotaEnvio =
+			this.processarNotasDeEnvioGeradas(
+				cota, filtro, notasEnvio, listaEstudosCota, destinatarioAtualizado, descontos);
 
 		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
 
 			NotaEnvio notaEnvio = criarNotaEnvio(destinatarioAtualizado, chaveAcesso, codigoNaturezaOperacao, 
-								                 descricaoNaturezaOperacao, dataEmissao, pessoaEmitente, enderecoDistribuidor, telefoneDistribuidor);
+								                 descricaoNaturezaOperacao, filtro.getDataEmissao(), pessoaEmitente, enderecoDistribuidor, telefoneDistribuidor);
 	
 			notaEnvioRepository.adicionar(notaEnvio);
 			
@@ -775,21 +771,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * Efetua o processamento das notas de envio já geradas
 	 */
 	private List<ItemNotaEnvio> processarNotasDeEnvioGeradas(Cota cota, 
-								Long idRota, 
+								FiltroConsultaNotaEnvioDTO filtro,
 								List<NotaEnvio> notasEnvio, 
-								Intervalo<Date> periodo,
-								List<Long> listaIdFornecedores, 
 								List<EstudoCota> listaEstudosCota,
 								IdentificacaoDestinatario destinatarioAtualizado,
 								Map<String, DescontoDTO> descontos) {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId()
-													, periodo
-													, listaIdFornecedores
-													, GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(
+					cota.getId(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores(),
+					GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
-		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota, periodo, descontos);
+		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota, filtro.getIntervaloMovimento(), descontos);
 
 		if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
 
@@ -885,19 +878,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	/**
 	 * Gera Notas de Envio para as Cotas
 	 * @param idCotas
-	 * @param idRota
+	 * @param filtro
 	 * @param chaveAcesso
 	 * @param codigoNaturezaOperacao
 	 * @param descricaoNaturezaOperacao
-	 * @param dataEmissao
-	 * @param periodo
-	 * @param listaIdFornecedores
-	 * @return List<NotaEnvio>
 	 */
-	private List<NotaEnvio> gerar(List<Long> idCotas, Long idRota, String chaveAcesso,
-								  Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
-			                      Date dataEmissao, Intervalo<Date> periodo,
-			                      List<Long> listaIdFornecedores) {
+	private List<NotaEnvio> gerar(List<Long> idCotas, FiltroConsultaNotaEnvioDTO filtro, String chaveAcesso,
+								  Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao) {
 		
 		if(idCotas == null || idCotas.size() == 0)
 			return null;
@@ -907,7 +894,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository.obterEnderecoPrincipal();
 		TelefoneDistribuidor telefoneDistribuidor = distribuidorRepository.obterTelefonePrincipal();
 		
-		List<EstudoCota> listaEstudosCotas = this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(idCotas, periodo, listaIdFornecedores);
+		List<EstudoCota> listaEstudosCotas = this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(idCotas, filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), filtro.getExibirNotasEnvio());
 		
 		List<NotaEnvio> notasEnvio = new ArrayList<>();
 		
@@ -919,11 +906,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			this.getNotaEnvioCota(pessoaEmitente,
                                   idCota,  
-								  idRota, 
+                                  filtro, 
 								  notasEnvio, 
-								  dataEmissao, 
-								  periodo, 
-								  listaIdFornecedores, 
 								  chaveAcesso, 
 								  codigoNaturezaOperacao, 
 								  descricaoNaturezaOperacao, 
@@ -1191,9 +1175,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 			validarRoteirizacaoCota(filtro, listaIdCotas);
 			
-			listaNotaEnvio = this.gerar(listaIdCotas, filtro.getIdRota(), null,
-					null, null, filtro.getDataEmissao(),
-					filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+			listaNotaEnvio = this.gerar(listaIdCotas, filtro, null,
+					null, null);
 		} catch (Exception e) {
 			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 			throw e;

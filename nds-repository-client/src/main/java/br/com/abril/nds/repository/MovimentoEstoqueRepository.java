@@ -12,6 +12,7 @@ import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 
 public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque, Long> {
 
@@ -37,4 +38,10 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	 * @return BigDecimal
 	 */
 	BigDecimal obterSaldoDistribuidorEntrada(Date data, FormaComercializacao formaComercializacao);
+<<<<<<< HEAD
 }
+=======
+
+	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico( Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao);
+}
+>>>>>>> DGB/master

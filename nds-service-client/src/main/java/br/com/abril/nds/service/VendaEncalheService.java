@@ -34,7 +34,7 @@ public interface VendaEncalheService {
 	 * @param dataVencimentoDebito - data de vencimento do débito
 	 * @param usuario - usúario que efetivou a venda
 	 */
-	  byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Long numeroCota,Date dataVencimentoDebito,Usuario usuario);
+	  byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO, Integer numeroCota,Date dataVencimentoDebito,Usuario usuario);
 	
 	/**
 	 * Exclui uma venda de encalhe efetivada
@@ -60,7 +60,7 @@ public interface VendaEncalheService {
 	 * 
 	 * @return VendaEncalheDTO
 	 */
-	VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Long numeroCota);
+	VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Integer numeroCota);
 	
 	List<VendaEncalheDTO> buscarVendasProduto(FiltroVendaEncalheDTO filtro);
 	

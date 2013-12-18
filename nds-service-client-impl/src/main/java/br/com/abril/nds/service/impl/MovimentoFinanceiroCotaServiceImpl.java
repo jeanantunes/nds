@@ -96,13 +96,19 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	/**
+	 * Gera Movimentos Financeiro para a Cota
+	 * @param movimentoFinanceiroCotaDTO
+	 * @param movimentosEstoqueCota
+	 * @return MovimentoFinanceiroCota
+	 */
 	@Override
 	@Transactional
 	public List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
 
 		Map<Long, List<MovimentoEstoqueCota>> mapaMovimentoEstoqueCotaPorFornecedor = 
-		
 				this.gerarMapaMovimentoEstoqueCotaPorFornecedor(movimentoFinanceiroCotaDTO.getMovimentos());
+		
 		List<MovimentoFinanceiroCota> movimentosFinanceirosCota = new ArrayList<MovimentoFinanceiroCota>();
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota;
@@ -127,11 +133,16 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		return movimentosFinanceirosCota;
 	}
 
-	/*
-	 * Gera o movimento financeiro da cota.
+	/**
+	 * Gera Movimento Financeiro para a Cota
+	 * @param movimentoFinanceiroCotaDTO
+	 * @param movimentosEstoqueCota
+	 * @return MovimentoFinanceiroCota
 	 */
-	private MovimentoFinanceiroCota gerarMovimentoFinanceiroCota(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO,
-										  					 	 List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+	@Override
+	@Transactional
+	public MovimentoFinanceiroCota gerarMovimentoFinanceiroCota(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO,
+										  					 	List<MovimentoEstoqueCota> movimentosEstoqueCota) {
 		
 		this.validarFornecedor(movimentoFinanceiroCotaDTO);
 		
@@ -402,6 +413,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
 
 	@Override
+	@Transactional
 	public void processarRegistrohistoricoFinanceiro(
 			HistoricoFinanceiroInput valorInput, Date dataOperacao) {
 		
@@ -767,7 +779,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     	
     	for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
     		
-    		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPorMovimentoEstoqueCota(mec.getId());
+    		Fornecedor fornecedor = mec.getProdutoEdicao().getProduto().getFornecedor();
     		
     		if (fornecedor==null){
     			

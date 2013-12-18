@@ -10,7 +10,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
-import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 
 public interface GerarCobrancaService {
 	
@@ -26,19 +25,15 @@ public interface GerarCobrancaService {
 	
 	boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota );
 
-	void enviarDocumentosCobrancaEmail(String nossoNumero, String email)
-			throws AutenticacaoEmailException;
-
 	/**
 	 * Envia Cobranças para email da Cota
 	 * 
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
-	 * @throws AutenticacaoEmailException
 	 */
 	void enviarDocumentosCobrancaEmail(Cota cota,
 									   Map<String, 
-									   Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException;
+									   Boolean> nossoNumeroEnvioEmail);
 	
 	/**
 	 * Gera cobranças para Cotas específicas
@@ -84,4 +79,21 @@ public interface GerarCobrancaService {
 	 */
 	void gerarDividaPostergada(Long idCota, 
 			                   Long idUsuario) throws GerarCobrancaValidacaoException;
+	
+	/**
+	 * Realiza todas as validações necessárias para certificar que é possível realizar o envio dos documentos por email.
+	 * 
+	 * @param nossoNumero
+	 * @param idCota
+	 * @return boolean
+	 */
+	boolean aceitaEnvioEmail(Cota cota, String nossoNumero);
+
+	/**
+    * Obtem Data de Vencimento onforme Parametros 
+    * @param dataConsolidado
+    * @param fatorVencimento
+    * @return Date
+    */
+	Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento);
 }

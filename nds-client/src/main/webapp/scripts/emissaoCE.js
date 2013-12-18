@@ -30,16 +30,45 @@ var EmissaoCEController = $.extend(true, {
 		$(".bt_novos", this.workspace).hide();
 		
 		$("#imprimirCE").click(function(){
+			
 			_this.imprimirCE();
+		});
+		
+        $("#imprimirBoletosEmBranco").click(function(){
+			
+			_this.obterDadosImpressaoBoletosEmBranco();
 		});
 		
 		this.inicializarGrids();
 	},
-	
+
+	obterDadosImpressaoBoletosEmBranco : function(){
+		
+		var _this = this;
+		
+		$.postJSON(
+				contextPath + "/emissaoCE/obterDadosImpressaoBoletosEmBranco", null,
+				function(result) { 
+
+                    if (result && result.boolean == true){
+					    
+						_this.imprimirBoletoEmBranco();
+					}
+				},
+				null
+		);
+	},
+
 	imprimirCE : function() {
+		
 		doGet("emissaoCE/imprimirCE", null, "_blank");
 	},
-	
+
+	imprimirBoletoEmBranco : function(){
+			
+		document.location.assign(contextPath + "/emissaoCE/imprimeBoletoEmBranco");
+	},
+
 	cliquePesquisar : function() {
 		
 		var data = this.getFiltro();

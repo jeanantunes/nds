@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -21,10 +22,10 @@ public class ResultadoCurvaABCDistribuidor implements Serializable {
 	
 	private BigDecimal totalFaturamento;
 
-	@Export(label = "Total", alignWithHeader="Venda de Exemplares")
+	@Export(label = "Total", alignWithHeader="Venda de Exemplares", columnType = ColumType.NUMBER)
 	private String totalVendaExemplaresFormatado;
 	
-	@Export(label = "", alignWithHeader="Faturamento da Capa")
+	@Export(label = "", alignWithHeader="Faturamento da Capa", columnType = ColumType.DECIMAL)
 	private String totalFaturamentoFormatado;
 
 	public TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> getTableModel() {

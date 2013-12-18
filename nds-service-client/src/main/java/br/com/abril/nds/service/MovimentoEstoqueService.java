@@ -103,5 +103,9 @@ public interface MovimentoEstoqueService {
 	MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico);
+
+	MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(Long id,TipoMovimentoEstoque tipoMovimento, Date dataOperacao);
+
+	
 	
 }

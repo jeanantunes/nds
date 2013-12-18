@@ -93,7 +93,7 @@ var edicoesFechadasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "codigoProduto",
+			sortname : "dataRecolhimento",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -221,7 +221,7 @@ var edicoesFechadasController = $.extend(true, {
 		$(".detalheEdicoesFechadasGrid", edicoesFechadasController.workspace).flexOptions({
 			url: contextPath + '/estoque/extratoEdicao/pesquisaExtratoEdicao',
 			params: [
-		         {name:'codigoProduto', value: codigoProduto},
+		         {name:'filtro.codigo', value: codigoProduto},
 		         {name:'numeroEdicao', value: edicaoProduto},
 		         {name:'nomeProduto', value: ""},
 		         {name:'precoCapa', value: ""},
@@ -247,7 +247,7 @@ var edicoesFechadasController = $.extend(true, {
 				name : 'dataAte',
 				value : dataAte
 			}, {
-				name : 'codigoFornecedor',
+				name : 'idFornecedor',
 				value : selectFornecedor
 			} ],
 			dataType : 'json'
@@ -269,3 +269,4 @@ var edicoesFechadasController = $.extend(true, {
 		});
 	}
 }, BaseController);
+//@ sourceURL=edicoesFechadas.js

@@ -17,9 +17,14 @@ var baixaFinanceiraController = $.extend(true, {
 		});
 
 		$("#dataBaixa", baixaFinanceiraController.workspace).change(function(){
+			
 			$('#resultadoIntegracao', baixaFinanceiraController.workspace).hide();
+			
+			$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+			
 		});
-
+		
+		
 		$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",

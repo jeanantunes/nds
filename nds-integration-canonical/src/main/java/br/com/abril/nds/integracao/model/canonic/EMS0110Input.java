@@ -60,7 +60,7 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	private String segmentacaoTemaPrincipal;
 	private String segmentacaoTemaSecundario;
 	private Long codCategoria;
-	private Integer contextoProdReferencia;
+	private String contextoProdReferencia;
 	private Long codFornecProdReferencia;	
 	private String codProdReferencia;
 	private String tipoDesconto;		
@@ -463,11 +463,11 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	}
 	
 	@Field(offset = 570, length = 1)
-	public Integer getContextoProdReferencia() {
+	public String getContextoProdReferencia() {
 		return contextoProdReferencia;
 	}
 	
-	public void setContextoProdReferencia(Integer contextoProdReferencia) {
+	public void setContextoProdReferencia(String contextoProdReferencia) {
 		this.contextoProdReferencia = contextoProdReferencia;
 	}
 	

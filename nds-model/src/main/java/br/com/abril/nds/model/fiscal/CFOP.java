@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.fiscal;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,14 +17,21 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CFOP")
 @SequenceGenerator(name="CFOP_SEQ", initialValue = 1, allocationSize = 1)
-public class CFOP {
+public class CFOP implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5050276020598505094L;
+	
 	@Id
 	@GeneratedValue(generator = "CFOP_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "CODIGO", unique = true, nullable = false)
 	private String codigo;
+	
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 	

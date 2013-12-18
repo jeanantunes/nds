@@ -67,6 +67,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.BoxRepository#obterBoxUsuario(java.lang.Long, br.com.abril.nds.model.cadastro.TipoBox)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Box> obterBoxUsuario(Long idUsuario, TipoBox tipoBox) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -86,8 +87,6 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		query.setParameter("tipoBox", tipoBox);
 		
 		return query.list();
-		
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -202,6 +201,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.BoxRepository#obtemCotaRotaRoteiro(long)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaRotaRoteiroDTO> obtemCotaRotaRoteiro(long idBox, String sortname, String sortorder){
 		
@@ -525,5 +525,19 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 	    query.setParameter("roteiroId", roteiroId);
 	
 	    return query.list();
+	}
+
+	@Override
+	public String obterDescricaoBoxPorCota(Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder("select concat(b.codigo, ' - ', b.nome) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.box b ")
+		   .append(" where c.numeroCota = :numeroCota");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (String) query.uniqueResult();
 	}
 }

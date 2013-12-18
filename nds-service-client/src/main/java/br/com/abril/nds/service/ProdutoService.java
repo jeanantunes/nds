@@ -118,5 +118,7 @@ public interface ProdutoService {
 	List<TipoClassificacaoProduto> carregarClassificacaoProduto();
 
     Produto obterProdutoPorProdin (String codigoProdin);
+
+    String obterCodigoDisponivel();
 	
 }

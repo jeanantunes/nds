@@ -866,6 +866,19 @@ public class RecebimentoFisicoController extends BaseController {
 	}
 	
 	/**
+	 * Faz a exclusão de uma nota fiscal .
+	 */
+	public void excluirNotaRecebimentoFisico(Long id) {
+	
+		recebimentoFisicoService.excluirNota(id);
+							
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Nota excluida com sucesso");
+		
+		result.use(Results.json()).from(validacao, "result").include("listaMensagens").serialize();	
+		
+	}
+	
+	/**
 	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
 	 * CNPJ, numero da nota, série e chave de acesso ou ainda por 
 	 * numero da nota de envio caso a mesma seja uma nota fiscal 
@@ -990,7 +1003,7 @@ public class RecebimentoFisicoController extends BaseController {
 				new ResultadoNotaFiscalExistente(
 					validacao, indNotaInterface, indRecebimentoFisicoConfirmado,
 					cnpj, notaFiscal.getNumero(), notaFiscal.getSerie(),
-					notaFiscal.getChaveAcesso()), "result")
+					notaFiscal.getChaveAcesso(), notaFiscal.getId()), "result")
 						.include("validacao")
 						.include("validacao.listaMensagens").serialize();
 		}
@@ -1004,6 +1017,7 @@ public class RecebimentoFisicoController extends BaseController {
         private boolean indRecebimentoFisicoConfirmado;
         private String cnpj, serieNotaFiscal, chaveAcesso;
         private Long numeroNotaFiscal;
+        private Long id;
 			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
 				boolean indNotaInterface,
@@ -1019,12 +1033,14 @@ public class RecebimentoFisicoController extends BaseController {
 				boolean indRecebimentoFisicoConfirmado,
 				String cnpj, Long numeroNotaFiscal,
 				String serieNotaFiscal,
-				String chaveAcesso) {
+				String chaveAcesso,
+				Long id) {
 			this(validacao, indNotaInterface, indRecebimentoFisicoConfirmado);
 			this.cnpj = Util.adicionarMascaraCNPJ(cnpj);
 			this.serieNotaFiscal = serieNotaFiscal;
 			this.numeroNotaFiscal = numeroNotaFiscal;
 			this.chaveAcesso = chaveAcesso;
+			this.id = id;
 		}
 		
 		public ValidacaoVO getValidacao() {
@@ -1080,6 +1096,16 @@ public class RecebimentoFisicoController extends BaseController {
 		public void setChaveAcesso(String chaveAcesso) {
 			this.chaveAcesso = chaveAcesso;
 		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+		
+		
 	}
 	
 	private void carregarValoresQtdPacoteQtdExemplar(RecebimentoFisicoDTO itemRecebimento) {

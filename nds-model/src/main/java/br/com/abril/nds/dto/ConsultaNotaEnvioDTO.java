@@ -38,6 +38,12 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	private StatusLancamento status;
 	
 	private SituacaoCadastro situacaoCadastro;
+	
+	private Integer ordemRoteiro;
+	
+	private Integer ordemRota;
+	
+	private Integer ordemRotaPdv;
 
 	public BigInteger getBox() {
 		return box;
@@ -169,6 +175,48 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 		if(status==null)
 			return;
 		this.status = StatusLancamento.valueOf(status);
+	}
+
+	/**
+	 * @return the ordemRoteiro
+	 */
+	public Integer getOrdemRoteiro() {
+		return ordemRoteiro;
+	}
+
+	/**
+	 * @param ordemRoteiro the ordemRoteiro to set
+	 */
+	public void setOrdemRoteiro(Integer ordemRoteiro) {
+		this.ordemRoteiro = ordemRoteiro;
+	}
+
+	/**
+	 * @return the ordemRota
+	 */
+	public Integer getOrdemRota() {
+		return ordemRota;
+	}
+
+	/**
+	 * @param ordemRota the ordemRota to set
+	 */
+	public void setOrdemRota(Integer ordemRota) {
+		this.ordemRota = ordemRota;
+	}
+
+	/**
+	 * @return the ordemRotaPdv
+	 */
+	public Integer getOrdemRotaPdv() {
+		return ordemRotaPdv;
+	}
+
+	/**
+	 * @param ordemRotaPdv the ordemRotaPdv to set
+	 */
+	public void setOrdemRotaPdv(Integer ordemRotaPdv) {
+		this.ordemRotaPdv = ordemRotaPdv;
 	}
 	
 }

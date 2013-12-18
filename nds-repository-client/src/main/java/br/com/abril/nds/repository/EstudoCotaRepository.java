@@ -38,6 +38,7 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	
 	List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> listaIdCotas, 
 												   Intervalo<Date> periodo, 
+<<<<<<< HEAD
 												   List<Long> listaIdsFornecedores);
 
 	/**
@@ -49,6 +50,10 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	List<EstudoCota> obterEstudosCota(Long idEstudo);
 	
 	public List<EstudoCota> obterEstudoCotaPorEstudo(Estudo estudo);
+=======
+												   List<Long> listaIdsFornecedores,
+												   String exibirNotasEnvio);
+>>>>>>> DGB/master
 	
 	void inserirProdutoBase(Estudo estudo);
 }

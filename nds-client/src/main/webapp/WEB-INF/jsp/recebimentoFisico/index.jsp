@@ -65,6 +65,10 @@
 		<div id="dialog-verificacao-quantidades" title="Verificação de Digitação" style="display: none;">
 			<p>Há itens que não possuem quantidade digitada ou estão com quantidade zerada. Deseja prosseguir mesmo assim?</p>
 		</div>
+		
+		<div id="dialog-verificacao-exclusao" title="Verificação de Exclusão" style="display: none;">
+			<p>Deseja exlcluir esta nota?</p>
+		</div>
 
 		<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 
@@ -214,7 +218,7 @@
 							</span>
 					</div>
 
-					<div id="botoesNormais" style="float:left; width:140px;">	
+					<div id="botoesNormais" style="float:left; width:160px;">	
 
 						<span class="bt_novos"> 
 							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()" rel="tipsy" title="Salvar">
@@ -224,7 +228,7 @@
 
 						<span class="bt_novos"> 
 							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()" rel="tipsy" title="Cancelar">
-								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
+								<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif"   border="0" />
 							</a> 
 						</span>
 
@@ -235,6 +239,12 @@
 								</a>
 							</span>
 						</c:if>
+						
+						<span class="bt_novos"> 
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.exibirConfirmacaoExclusaoNota()" rel="tipsy" title="Excluir">
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
+							</a> 
+						</span>
 						
 					</div>	
 
@@ -248,7 +258,7 @@
 
 						<span class="bt_novos"> 
 							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Cancelar"> 
-								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0" /> 
+								<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" border="0" /> 
 							</a> 
 						</span>
 
@@ -259,6 +269,12 @@
 								</a>
 							</span>				
 						</c:if>		
+						
+						<span class="bt_novos"> 
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.exibirConfirmacaoExclusaoNota()" rel="tipsy" title="Excluir">
+								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
+							</a> 
+						</span>
 
 					</div>
 		</div>
@@ -368,6 +384,17 @@
 							<label>Total: </label>
 							<label id="totalSemDescontoLbl"></label>
 						</span>
+						
+						<span style="float:right; margin-right:40px;">
+							<label>Total de Exemplares: </label>
+							<label id="totalExemplares"></label>
+						</span>
+						
+						<span style="float:right; margin-right:40px;">
+							<label>Total de Produtos: </label>
+							<label id="qtdeProdutos"></label>
+						</span>
+						
 					</div>
 	
 				</fieldset>

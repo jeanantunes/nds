@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 
@@ -73,7 +74,7 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" order by ");
 		
-		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.data else m.dataCriacao end asc, "); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
+		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.data else m.dataAprovacao end asc, "); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
 		
 		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.tipoMovimento.operacaoEstoque end asc, " ); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
 		
@@ -292,4 +293,32 @@ implements MovimentoEstoqueRepository {
 		query.setResultTransformer(Transformers.aliasToBean(MovimentoEstoque.class));
 		return query.list();
 	}
+
+
+	@Override
+	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(
+			Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento,
+			Date dataOperacao) {
+		
+		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
+			.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
+			.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
+			
+			.append(" where produtoEdicao.id = :idProdutoEdicao ")
+			.append(" and tipoMovimento.id = :idTipoMovimento ")
+			.append(" and movimentoEstoque.data =:dataOperacao ")
+			.append(" order by movimentoEstoque.data desc ");
+			
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setMaxResults(1);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("idTipoMovimento", tipoMovimento.getId());
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (MovimentoEstoque) query.uniqueResult();
+	}
+
 }

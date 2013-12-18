@@ -1099,10 +1099,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 		TipoMovimentoFinanceiro tipoMovimento = 
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
-		
-		
-		
-		
+
 		MovimentoFinanceiroCotaDTO movimento = new MovimentoFinanceiroCotaDTO();
 		movimento.setCota(cota);
 		movimento.setTipoMovimentoFinanceiro(tipoMovimento);

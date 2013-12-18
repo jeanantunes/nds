@@ -43,7 +43,6 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -64,9 +63,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	
 	@Autowired
 	private EmailService emailService;
-	
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;

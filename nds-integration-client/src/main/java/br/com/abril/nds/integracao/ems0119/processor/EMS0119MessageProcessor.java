@@ -94,10 +94,25 @@ public class EMS0119MessageProcessor extends AbstractRepository implements
 
 				}								
 			}
-			if (produto.getEditor().getCodigo() != input
+			
+			if(produto.getEditor() == null) {
+				
+				Editor ed = this.getEditor(input.getCodigoDoEditor());
+				
+				if(ed != null) {
+					produto.setEditor(ed);
+					ndsiLoggerFactory.getLogger().logInfo(
+							message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Atualizacao do Codigo do Editor para: "
+									+ input.getCodigoDoEditor());
+				}
+				
+			} else if (produto.getEditor().getCodigo() != input
 					.getCodigoDoEditor()) {
 				
-				Editor ed = this.getEditor(input.getCodigoDoEditor());			
+				Editor ed = this.getEditor(input.getCodigoDoEditor());
+						
 				if (null == ed) {
 					ndsiLoggerFactory.getLogger().logWarning(
 							message,

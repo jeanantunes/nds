@@ -7,6 +7,12 @@ var fecharDiaController =  $.extend(true, {
 	
 	init : function() {
 		
+		$("#totalFaltas", fecharDiaController.workspace).attr("title","Faltas pendentes de aprovação do GFS");
+		$("#totalFaltas", fecharDiaController.workspace).tooltip();
+					
+		$("#totalSobras", fecharDiaController.workspace).attr("title","Sobras pendentes de aprovação do GFS");
+		$("#totalSobras", fecharDiaController.workspace).tooltip();
+				
 		$(".recebeFisicoGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoRecebimentoFisicoNaoConfirmado,
 			dataType : 'json',
@@ -1192,7 +1198,7 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-
+	
 					$("#totalReparte", fecharDiaController.workspace).html(result.totalReparteFormatado);
 					$("#totalSobras", fecharDiaController.workspace).html(result.totalSobrasFormatado);
 					$("#totalFaltas", fecharDiaController.workspace).html(result.totalFaltasFormatado);
@@ -1201,6 +1207,25 @@ var fecharDiaController =  $.extend(true, {
 					$("#totalDistribuido", fecharDiaController.workspace).html(result.totalDistribuidoFormatado);
 					$("#totalSobraDistribuido", fecharDiaController.workspace).html(result.totalSobraDistribuicaoFormatado);
 					$("#totalDiferenca", fecharDiaController.workspace).html(result.totalDiferencaFormatado);
+			
+					if( result.totalFaltas && result.totalFaltas > 0){
+						$("#totalFaltas", fecharDiaController.workspace).tooltip().onShow = function() { this.show();};
+						$("#totalFaltas", fecharDiaController.workspace).css( "color", "red" );
+					}
+					else{
+						$("#totalFaltas", fecharDiaController.workspace).tooltip().onShow = function() { this.hide();};
+						$("#totalFaltas", fecharDiaController.workspace).css( "color", "#222222" );
+					}
+					
+					if(result.totalSobras && result.totalSobras > 0){
+						$("#totalSobras", fecharDiaController.workspace).tooltip().onShow = function() { this.show();};
+						$("#totalSobras", fecharDiaController.workspace).css( "color", "red" );
+					}
+					else{
+						$("#totalSobras", fecharDiaController.workspace).tooltip().onShow = function() { this.hide();};
+						$("#totalSobras", fecharDiaController.workspace).css( "color", "#222222" );
+					}
+					
 				}
 			);
 	},
@@ -1519,6 +1544,27 @@ var fecharDiaController =  $.extend(true, {
 		
 	},
 	
+	tratarExibicaoPesquisa:function(){
+		
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/isDataOperacaoDistribuidor",
+			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
+			function(result) {
+				
+				if(result.isDataOperacaoDistribuidor){
+					$("#idBotaoFechamentoDiario").text("Pesquisar");
+					$("#idTituloBoataoFechamentoDiario").attr("title","Pesquisar Fechamento do Dia");
+					$("#idImgBotaoFecamentoDiario").attr("src",contextPath+'/images/ico_pesquisar.png');
+				}
+				else{
+					$("#idBotaoFechamentoDiario").text("Iniciar Fechamento do Dia");
+					$("#idImgBotaoFecamentoDiario").attr("src",contextPath+'/images/bt_devolucao.png');
+					$("#idTituloBoataoFechamentoDiario").attr("title","Iniciar Fechamento do Dia");
+				}
+			}
+		);
+	},
+	
 	transferirDiferencasParaEstoqueDePerdaGanho : function() {
 		
 		$.postJSON(
@@ -1534,6 +1580,6 @@ var fecharDiaController =  $.extend(true, {
 			}
 		);
 	}
-
+	
 }, BaseController);
 //@ sourceURL=fecharDia.js
