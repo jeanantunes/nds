@@ -108,7 +108,8 @@ public class InformacoesProdutoController extends BaseController {
 	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro, String sortname) {
 		
 		Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodProduto());
-		filtro.setCodProduto(produto.getCodigoICD());
+		
+		filtro.setCodProduto(produto.getCodigoICD() == null ? produto.getCodigo() : produto.getCodigoICD());
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 
