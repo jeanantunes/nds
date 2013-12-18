@@ -24,7 +24,7 @@ public class NotaFiscal implements Serializable {
 	private static final long serialVersionUID = 2732018921335153522L;
 	
 	@Id
-	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
+	@GeneratedValue()
 	@Column(name="ID")
 	private Long id;
 	
