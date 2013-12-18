@@ -854,6 +854,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				gerarMovimentoFaltasSobras(item, usuario);
 				
+				this.tratarAtualizacaoProximoLancamentoParcial(item, usuario, item.getFisico());
 			}
 		}
 		
@@ -864,6 +865,25 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			this.gerarNotaFiscal(dataEncalhe);
 		}
 		
+	}
+
+	private void tratarAtualizacaoProximoLancamentoParcial(FechamentoFisicoLogicoDTO item,
+														   Usuario usuario,
+														   Long encalheFisico) {
+		
+		if (!item.isParcial()) {
+			
+			return;
+		}
+		
+		Lancamento lancamentoParcial =
+			lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getChamadaEncalheId());
+		
+		if (lancamentoParcial != null) {
+			
+			this.parciaisService.atualizarReparteDoProximoLancamentoPeriodo(
+				lancamentoParcial, usuario, BigInteger.valueOf(encalheFisico));
+		}
 	}
 
 	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {
