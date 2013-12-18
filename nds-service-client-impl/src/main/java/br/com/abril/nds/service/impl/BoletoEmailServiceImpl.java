@@ -30,7 +30,6 @@ import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 @Service
 public class BoletoEmailServiceImpl implements BoletoEmailService {
 	
-	
 	@Autowired
 	protected BoletoEmailRepository boletoEmailRepository;
 
@@ -140,13 +139,15 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 				this.enviarDocumentosCobrancaEmail(nossoNumero, email);
 				
 				this.boletoEmailRepository.remover(boletoEmail);
-	    
-	        } catch (AutenticacaoEmailException e) {
-  
-				throw new ValidacaoException(TipoMensagem.WARNING,
-						"Erro ao tentar enviar Boleto["
-								+ boletoEmail.getCobranca().getNossoNumero()
-								+ "] por email. " + e.getMessage());
+				
+			} 
+			catch(AutenticacaoEmailException e){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao conectar-se com o servidor de e-mail. Boleto["+nossoNumero+"]");
+	        }		
+	        catch (Exception e) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao enviar Boleto["+nossoNumero+"] por email. "+e.getMessage());
 	        }
 		}
 	}
