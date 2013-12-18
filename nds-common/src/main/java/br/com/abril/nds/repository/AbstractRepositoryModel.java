@@ -101,9 +101,4 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		
 		return sessionFactory.openSession();
 	}
-<<<<<<< HEAD
-
 }
-=======
-}
->>>>>>> DGB/master

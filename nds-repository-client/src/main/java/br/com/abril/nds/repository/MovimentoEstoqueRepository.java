@@ -38,10 +38,6 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	 * @return BigDecimal
 	 */
 	BigDecimal obterSaldoDistribuidorEntrada(Date data, FormaComercializacao formaComercializacao);
-<<<<<<< HEAD
-}
-=======
 
 	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico( Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao);
 }
->>>>>>> DGB/master

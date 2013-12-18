@@ -133,12 +133,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 														  List<Long> listaIdsFornecedores,
 														  String exibirNotasEnvio) {
 		
-<<<<<<< HEAD
-		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");	
-=======
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");
-		
->>>>>>> DGB/master
+
 		sql.append(" FROM EstudoCota estudoCota ");
 		sql.append(" JOIN estudoCota.cota cota ");
 		sql.append(" JOIN estudoCota.estudo estudo ");
@@ -146,11 +142,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
 		sql.append(" JOIN produtoEdicao.produto produto ");
 		sql.append(" JOIN produto.fornecedores fornecedor ");
-<<<<<<< HEAD
 
-=======
 		sql.append(" LEFT JOIN estudoCota.itemNotaEnvios itemNotaEnvios ");
->>>>>>> DGB/master
 		sql.append(" WHERE cota.id IN (:idCotas) ");
 		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
 		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");

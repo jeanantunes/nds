@@ -280,33 +280,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 		
 	}
-<<<<<<< HEAD
 
-	/*
-	private BigDecimal obterValorDesconto(Cota cota, MovimentoEstoqueCota mec,
-			ProdutoEdicao produtoEdicao, BigDecimal valorDesconto) {
-		
-		if(valorDesconto == null) {
-		
-			if(mec.getValoresAplicados() == null) {
-
-				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(mec.getLancamento(), cota, produtoEdicao);
-				
-				valorDesconto = (desconto != null && desconto.getValor() != null) ? desconto.getValor() : BigDecimal.ZERO;
-				
-			} else {
-				
-				valorDesconto = mec.getValoresAplicados().getValorDesconto();
-			}	
-		}
-		
-		return valorDesconto;
-	}
-	*/
-
-=======
-	
->>>>>>> DGB/master
 	/**
 	 * Método que verifica se ja existe um itemNotaEnvio para um determinado produto.
 	 * caso não exista retorna uma nova instancia de ItemNotaEnvio.
