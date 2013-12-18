@@ -24,6 +24,7 @@ import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -41,6 +42,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
@@ -104,15 +106,15 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
-				
+		
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
 		
 		removerAtributoAlteracaoSessao();
-		
+
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
-		
+			
 		BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
-				
+		        
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
 		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();

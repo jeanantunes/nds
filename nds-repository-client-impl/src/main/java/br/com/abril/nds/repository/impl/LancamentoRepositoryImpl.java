@@ -515,7 +515,7 @@ public class LancamentoRepositoryImpl extends
 
 		String sql = getConsultaBalanceamentoRecolhimentoAnalitico()
 				   + " group by lancamento.ID "
-				   + " order by dataRecolhimentoDistribuidor ";
+				   + " order by dataRecolhimentoDistribuidor,idFornecedor,peb ";
 
 		Query query = getQueryBalanceamentoRecolhimentoComParametros(periodoRecolhimento, fornecedores, grupoCromo, sql);
 
@@ -610,6 +610,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
+		sql.append(" produtoEdicao.PEB as peb, "); //TODO Se de editor for 0 ou null pegar o do produto
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
 		
 		sql.append("  sum( ");
@@ -762,6 +763,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("idEditor", StandardBasicTypes.LONG)
 													  .addScalar("idLancamento", StandardBasicTypes.LONG)
 													  .addScalar("numeroEdicao", StandardBasicTypes.LONG)
+													  .addScalar("peb", StandardBasicTypes.LONG)
 													  .addScalar("idFornecedor", StandardBasicTypes.LONG)
 													  .addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 													  .addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN)
