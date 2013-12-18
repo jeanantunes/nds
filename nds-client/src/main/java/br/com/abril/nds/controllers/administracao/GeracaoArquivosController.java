@@ -45,7 +45,7 @@ public class GeracaoArquivosController extends BaseController {
 	private EMS0198Route route198;		
 	
 	@Autowired
-	DistribuidorService distribuidorService;
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private Result result;

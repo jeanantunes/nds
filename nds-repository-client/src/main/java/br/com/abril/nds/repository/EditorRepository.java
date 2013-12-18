@@ -8,8 +8,6 @@ import br.com.abril.nds.model.cadastro.Editor;
 
 public interface EditorRepository extends Repository<Editor, Long> {
 
-	public List<Editor> obterEditores();
-	
 	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro);
 	
 	/**
@@ -18,5 +16,6 @@ public interface EditorRepository extends Repository<Editor, Long> {
 	 * @return Editor
 	 */
 	public Editor obterPorCodigo(Long codigo);
-	
+
+	public List<Editor> obterEditoresDesc();
 }

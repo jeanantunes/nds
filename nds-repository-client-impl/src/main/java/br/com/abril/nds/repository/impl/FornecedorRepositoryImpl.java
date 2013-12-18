@@ -549,5 +549,26 @@ public class FornecedorRepositoryImpl extends
 		
 		return (Fornecedor) query.uniqueResult();
 	}
-	
+
+	@Override
+	public Origem obterOrigemCadastroFornecedor(Long idFornecedor) {
+		
+		Query query = this.getSession().createQuery("select origem from Fornecedor where id = :idFornecedor");
+		query.setParameter("idFornecedor", idFornecedor);
+		
+		return (Origem) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> obterFornecedoresDesc() {
+		
+		StringBuilder hql = new StringBuilder("select new ");
+		hql.append(Fornecedor.class.getCanonicalName())
+		   .append("(f.id, j.nomeFantasia) from Fornecedor f join f.juridica j ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		return query.list();
+	}
 }

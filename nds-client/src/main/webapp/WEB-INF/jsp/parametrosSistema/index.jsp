@@ -123,6 +123,13 @@ $(function(){
 									</td>
 								</tr>
 								<tr>
+									<td>Interface Picking Exporta&ccedil;&atilde;o: </td>
+									<td>
+										<input disabled="disabled" type="text" name="dto.pathPickingExportacao" id="pathPickingExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathPickingExportacao}" />
+									</td>
+								</tr>
+								
+								<tr>
 									<td>Interface Contrato Importa&ccedil;&atilde;o: </td>
 									<td>
 										<input type="text" name="dto.pathContrato" id="pathContrato" style="width:220px;" value="${parametroSistemaGeralDTO.pathContrato}" />

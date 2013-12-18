@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -524,6 +525,27 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		query.setParameter("numeroNotaEnvio", numeroNotaEnvio);
 		query.setParameter("idPessoaJuridica", idPessoaJuridica);
 		query.setParameter("dataEmissao", dataEmissao);
+		
+		return (Long) query.uniqueResult() > 0;
+	}
+
+	@Override
+	public boolean notaPossuiItemExpedido(Long idNota) {
+		
+		StringBuilder hql = new StringBuilder("select count(lancamento.id) ");
+		hql.append(" from Lancamento lancamento ")
+		   .append(" join lancamento.recebimentos itensRecebimentos ")
+		   .append(" join itensRecebimentos.recebimentoFisico recebimento ")
+		   .append(" join recebimento.notaFiscal notaFiscal ")		   
+		   .append(" where notaFiscal.id = :idNota ")
+		   .append(" and lancamento.status not in (:status) ");
+
+		StatusLancamento[] status = new StatusLancamento[]{StatusLancamento.PLANEJADO,StatusLancamento.CONFIRMADO,
+				StatusLancamento.FURO,StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.BALANCEADO,StatusLancamento.ESTUDO_FECHADO};
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idNota", idNota);
+		query.setParameterList("status", status);
 		
 		return (Long) query.uniqueResult() > 0;
 	}

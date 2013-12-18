@@ -1,0 +1,34 @@
+package br.com.abril.nds.service;
+
+import java.util.List;
+
+import br.com.abril.nds.model.financeiro.BoletoEmail;
+
+
+
+/**
+ * Interface que define serviços referentes a entidade
+ * {@link br.com.abril.nds.model.financeiro.BoletoEmail}
+ * 
+ * @author Discover Technology
+ */
+public interface BoletoEmailService {
+
+	/**
+	 * Salva controle de emissao de boletos por email
+	 * @param listaNossoNumeroEnvioEmail
+	 */
+	void salvarBoletoEmail(List<String> listaNossoNumeroEnvioEmail);
+
+	/**
+	 * Obtem todos os boletos pendentes de envio por email
+	 * @return List<BoletoEmail>
+	 */
+	List<BoletoEmail> buscarTodos();
+
+	/**
+	 * Envia Cobrança por email - Controle de Envio de Boletos
+	 * @param boletoEmail
+	 */
+	void enviarBoletoEmail(BoletoEmail boletoEmail);
+}

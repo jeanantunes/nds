@@ -16,11 +16,10 @@ import br.com.abril.nds.model.cadastro.Editor;
  */
 @Service
 public interface EditorService {
-
-	public List<Editor> obterEditores();
 	
 	public Editor obterEditorPorId(Long idEditor);
 	
 	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro);
-	
+
+	public List<Editor> obterEditoresDesc();
 }

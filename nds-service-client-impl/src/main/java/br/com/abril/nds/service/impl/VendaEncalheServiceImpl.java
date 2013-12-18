@@ -258,7 +258,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigDecimal precoVenda = itemVE.getProdutoEdicao().getPrecoVenda();
 		
 		BigDecimal percentualDesconto = 
-				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,itemVE.getCota(), itemVE.getProdutoEdicao());
+				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,itemVE.getCota().getId(), itemVE.getProdutoEdicao());
 		
 		BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 
@@ -408,7 +408,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	@Override
 	@Transactional
-	public byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO,Long numeroCota, Date dataVencimentoDebito, Usuario usuario) {
+	public byte[] efetivarVendaEncalhe(List<VendaEncalheDTO> vendaEncalheDTO,Integer numeroCota, Date dataVencimentoDebito, Usuario usuario) {
 
 		List<VendaProduto> vendasEfetivadasEncalhe = new ArrayList<VendaProduto>();
 		List<VendaProduto> vendasEfetivadasSuplementar = new ArrayList<VendaProduto>();
@@ -513,7 +513,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param dataOperacao
 	 * @param qtdDiasEncalheAtrasadoAceitavel
 	 */
-	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd, Long numeroCota, Date dataVencimentoDebito, Usuario usuario,
+	private VendaProduto processarVendaEncalhe(VendaEncalheDTO vnd, Integer numeroCota, Date dataVencimentoDebito, Usuario usuario,
 			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 
 		if (TipoVendaEncalhe.ENCALHE.equals(vnd.getTipoVendaEncalhe())) {
@@ -536,7 +536,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param dataOperacao
 	 * @param qtdDiasEncalheAtrasadoAceitavel
 	 */
-	private VendaProduto criarVendaEncalhe(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, Usuario usuario,
+	private VendaProduto criarVendaEncalhe(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, Usuario usuario,
 			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 
 		ProdutoEdicao produtoEdicao =
@@ -554,7 +554,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 	}
 	
-	private VendaProduto criarVendaEncalheConsignado(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, 
+	private VendaProduto criarVendaEncalheConsignado(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, 
 			 									 	 Usuario usuario, ProdutoEdicao produtoEdicao,
 			 									 	 Date dataOperacao) {
 		
@@ -586,7 +586,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		
-		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null,cota, produtoEdicao);
+		BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null,cota.getId(), produtoEdicao);
 		
 		BigDecimal valorDoDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 		
@@ -599,7 +599,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return valoresAplicados;
 	}
 	
-	private VendaProduto criarVendaEncalheContaFirme(VendaEncalheDTO vnd,Long numeroCota, Date dataVencimentoDebito, 
+	private VendaProduto criarVendaEncalheContaFirme(VendaEncalheDTO vnd,Integer numeroCota, Date dataVencimentoDebito, 
 												 Usuario usuario,ProdutoEdicao produtoEdicao) {
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario,dataVencimentoDebito, produtoEdicao);
@@ -641,7 +641,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param dataVencimentoDebito
 	 * @param usuario
 	 */
-	private VendaProduto criarVendaSuplementar(VendaEncalheDTO vnd,Long numeroCota, 
+	private VendaProduto criarVendaSuplementar(VendaEncalheDTO vnd,Integer numeroCota, 
 			Date dataVencimentoDebito, Usuario usuario, Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel) {
 
 		ProdutoEdicao produtoEdicao = 
@@ -666,7 +666,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param usuario
 	 * @param produtoEdicao
 	 */
-	private VendaProduto criarVendaSuplementarContaFirme(VendaEncalheDTO vnd, Long numeroCota, Date dataVencimentoDebito, 
+	private VendaProduto criarVendaSuplementarContaFirme(VendaEncalheDTO vnd, Integer numeroCota, Date dataVencimentoDebito, 
 													 Usuario usuario, ProdutoEdicao produtoEdicao) {
 		
 		
@@ -698,7 +698,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	 * @param usuario
 	 * @param produtoEdicao
 	 */
-	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd, Long numeroCota, Date dataVencimentoDebito, 
+	private VendaProduto criarVendaSuplementarConsignado(VendaEncalheDTO vnd, Integer numeroCota, Date dataVencimentoDebito, 
 														 Usuario usuario, ProdutoEdicao produtoEdicao, Date dataOperacao) {
 		
 		VendaProduto vendaProduto = getVendaProduto(vnd, numeroCota, usuario, dataVencimentoDebito, produtoEdicao);
@@ -935,11 +935,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return (dataOperacao.compareTo(dataPermitidaParaConsignado) < 0);
 	}
 
-	private VendaProduto getVendaProduto(VendaEncalheDTO vendaDTO,Long numeroCota, 
+	private VendaProduto getVendaProduto(VendaEncalheDTO vendaDTO,Integer numeroCota, 
 										Usuario usuario, Date dataVencimentoDebito,
 										ProdutoEdicao produtoEdicao) {
 
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		ValoresAplicados valoresAplicados = this.obterValoresAplicados(cota, produtoEdicao);
 		
@@ -1156,7 +1156,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		
 		BigDecimal percentualDesconto = 
-				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,vendaProduto.getCota(), produtoEdicao);
+				descontoService.obterValorDescontoPorCotaProdutoEdicao(null,vendaProduto.getCota().getId(), produtoEdicao);
 		
 		BigDecimal valorDesconto = 
 				MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
@@ -1387,7 +1387,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Long numeroCota){
+	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Integer numeroCota){
 		
 		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 		
@@ -1416,9 +1416,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
 				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 				
-				Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+				Long idCota = cotaRepository.obterIdPorNumeroCota(numeroCota);
 				
-				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, idCota, produtoEdicao);
 		
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
         

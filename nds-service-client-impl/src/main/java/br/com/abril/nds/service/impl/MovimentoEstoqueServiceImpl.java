@@ -916,7 +916,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 
-				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
 				
 				BigDecimal precoComDesconto = 
 						produtoEdicao.getPrecoVenda().subtract(
@@ -1357,6 +1357,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 		
 		return movimentoEstoqueCota;
+	}
+
+	@Override
+	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao) {
+		
+		return movimentoEstoqueRepository.obterUltimoMovimentoRecebimentoFisico(idProdutoEdicao, tipoMovimento, dataOperacao);
 	}
 
 }

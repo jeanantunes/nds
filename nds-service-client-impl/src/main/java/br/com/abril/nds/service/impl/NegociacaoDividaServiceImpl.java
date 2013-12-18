@@ -870,6 +870,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		return this.cobrancaRepository.obterDetalhesCobranca(idCobranca);
 	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<CalculaParcelasVO> recalcularParcelas(
@@ -961,9 +962,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		if(valorTotal.compareTo(valorSelecionado) != 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A Soma de todas as parcelas deve ser " + CurrencyUtil.formatarValor(filtro.getValorSelecionado())+"!");
 		}
+		
 		return parcelas;
-		
-		
 	}
 
 	/**
@@ -993,16 +993,75 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		return dataParcela;
 	}
+	
+	/**
+	 * Obtem valor minimo de cobrança das configurações de parametro de cobrança
+	 * @param numeroCota
+	 * @return BigDecimal
+	 */
+	private BigDecimal obterValorMinimoEmissao(Integer numeroCota){
+		
+        Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		BigDecimal valorMinimoCobranca = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getValorMininoCobranca():null;
+		
+		if (valorMinimoCobranca == null){
+			
+		    FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		    
+		    valorMinimoCobranca = formaCobranca!=null?formaCobranca.getValorMinimoEmissao():null;
+		}
+		
+		return valorMinimoCobranca;
+	}
+	
+	/**
+	 * Obtem quantidade de parcelas para que o valor das parcelas esteja de acordo com o valor mínimo dos parametros de cobrança
+	 * @param filtro
+	 * @return Integer
+	 */
+	@Transactional
+	@Override
+	public Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro){
+		
+		BigDecimal valorMinimoCobranca = this.obterValorMinimoEmissao(filtro.getNumeroCota());
+		
+		BigDecimal valorTotal = filtro.getValorSelecionado();
+		
+		if (valorTotal.compareTo(valorMinimoCobranca) < 0){
+			
+			return 1;
+		}
+		
+		int quantidadeParcelas = this.distribuidorService.obter().getNegociacaoAteParcelas();
+		
+		BigDecimal valorParcela = BigDecimal.ZERO; 
+				
+		do{
+			
+			valorParcela = valorTotal.divide(BigDecimal.valueOf(quantidadeParcelas),
+							                                    DEFAULT_SCALE, 
+							                                    RoundingMode.HALF_EVEN);
+			
+			quantidadeParcelas--;
+		}
+		while ((valorParcela.compareTo(valorMinimoCobranca) < 0) && (quantidadeParcelas>=0));
+		
+		return Integer.valueOf(quantidadeParcelas+1);
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<CalculaParcelasVO> calcularParcelas(
 			FiltroCalculaParcelas filtro) {
 		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
 
+		Integer qntParcelas = filtro.getQntdParcelas();
+
 		BigDecimal valorParcela = 
 				filtro.getValorSelecionadoSemEncargo().divide(
 						BigDecimal.valueOf(
-								filtro.getQntdParcelas()),
+								qntParcelas),
 								DEFAULT_SCALE, RoundingMode.HALF_EVEN);		
 		BigDecimal somaParelas = BigDecimal.ZERO;
 		
@@ -1010,7 +1069,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		BigDecimal valorEncargo = 
 				filtro.getValorEncargoSelecionado().divide(
 						BigDecimal.valueOf(
-								filtro.getQntdParcelas()),
+								qntParcelas),
 								DEFAULT_SCALE, RoundingMode.HALF_EVEN);
 		BigDecimal somaEncargo = BigDecimal.ZERO;
 
@@ -1020,10 +1079,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		
 		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();	
 
-		for (int i = 0; i < filtro.getQntdParcelas(); i++) {
+		for (int i = 0; i < qntParcelas; i++) {
 			CalculaParcelasVO parcela = new CalculaParcelasVO();
 			
-			if(i == filtro.getQntdParcelas() -1){
+			if(i == qntParcelas -1){
 				valorParcela = filtro.getValorSelecionadoSemEncargo().subtract(somaParelas);
 				valorParcela = valorParcela.setScale(DEFAULT_SCALE,RoundingMode.HALF_EVEN);
 			}
@@ -1034,7 +1093,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 					&& (filtro.getIsentaEncargos() != null && !filtro
 							.getIsentaEncargos())){
 			
-				if(i == filtro.getQntdParcelas() -1){
+				if(i == qntParcelas -1){
 					valorEncargo = filtro.getValorEncargoSelecionado().subtract(somaEncargo);
 					valorEncargo = valorEncargo.setScale(DEFAULT_SCALE,RoundingMode.HALF_EVEN);
 				}
@@ -1056,8 +1115,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		}
 		return listParcelas;
 	}
-
-
 
 	private Date getDataParcela(Date dataBase, TipoFormaCobranca periodicidade,
 			List<DiaSemanaDTO> semanalDias, Integer quinzenalDia1,
@@ -1190,5 +1247,4 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		return null;
 	}
-
 }

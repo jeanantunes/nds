@@ -10,7 +10,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
-import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 
 public interface GerarCobrancaService {
 	
@@ -25,9 +24,6 @@ public interface GerarCobrancaService {
 			TipoCobranca tipoCobranca, int semana);
 	
 	boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota );
-
-	void enviarDocumentosCobrancaEmail(String nossoNumero, String email)
-			throws AutenticacaoEmailException;
 
 	/**
 	 * Envia Cobranças para email da Cota

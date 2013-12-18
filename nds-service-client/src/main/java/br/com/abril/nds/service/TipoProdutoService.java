@@ -68,12 +68,6 @@ public interface TipoProdutoService {
 	public abstract TipoProduto buscaPorId(Long id);
 	
 	/**
-	 * Obtem todos os tipos de produtos
-	 * @return lista tipoProduto
-	 */
-	public abstract List<TipoProduto> obterTodosTiposProduto();
-	
-	/**
 	 * Obtem um codigo sugerido pelo sistema para ser cadastrado no tipo produto
 	 * @return codigo
 	 */
@@ -100,4 +94,6 @@ public interface TipoProdutoService {
 	List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro);
 	
 	Long obterQunatidade(FiltroRelatorioTiposProdutos filtro);
+
+	List<TipoProduto> obterTiposProdutoDesc();
 }

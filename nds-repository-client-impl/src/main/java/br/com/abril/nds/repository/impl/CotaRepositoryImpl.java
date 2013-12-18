@@ -3375,5 +3375,25 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	    
 	    return query.list();
 	}
-	
+
+	@Override
+	public SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select situacaoCadastro from Cota where numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (SituacaoCadastro) query.uniqueResult();
+	}
+
+	@Override
+	public Long obterIdPorNumeroCota(Integer numeroCota) {
+		
+		Query query = this.getSession().createQuery("select id from Cota where numeroCota = :numeroCota");
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (Long) query.uniqueResult();
+	}
 }

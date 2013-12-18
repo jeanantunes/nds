@@ -19,6 +19,7 @@ import org.apache.poi.util.IOUtils;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl;
+import br.com.abril.nds.service.impl.DocumentoCobrancaServiceImpl;
 import br.com.abril.nds.util.ImpressaoConstantes;
 import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.ImpressoraUtil;
@@ -212,8 +213,8 @@ public class ImpressaoFinalizacaoEncalheTest {
 	}
 	
 	public static String getDadosSlipMock() {
-		ConferenciaEncalheServiceImpl conf = new ConferenciaEncalheServiceImpl();
-		String saida = conf.gerarSlipTxtMatricial(new ImpressaoFinalizacaoEncalheTest().getSlipDtoMock()).toString();
+		DocumentoCobrancaServiceImpl cob = new DocumentoCobrancaServiceImpl();
+		String saida = cob.gerarSlipTxtMatricial(new ImpressaoFinalizacaoEncalheTest().getSlipDtoMock()).toString();
 		saida = saida.replaceAll(ImpressaoConstantes.CARACTER_INDENT_LINEFEED_SCAPE, ImpressaoConstantes.CR + ImpressaoConstantes.LINE_FEED);
 		return saida;
 	}

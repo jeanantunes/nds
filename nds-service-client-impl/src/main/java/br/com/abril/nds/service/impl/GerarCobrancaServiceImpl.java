@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.financeiro.BoletoEmail;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -53,11 +54,11 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
+import br.com.abril.nds.repository.BoletoEmailRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
@@ -68,6 +69,7 @@ import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoReposit
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
@@ -146,17 +148,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
+	private BoletoEmailService boletoEmailService;
+	
+	@Autowired
 	private NegociacaoDividaRepository negociacaoRepository;
+	
+	@Autowired
+	private BoletoEmailRepository boletoEmailRepository;
 	
 	@Autowired
 	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
-	
-	@Autowired
-	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
-	
+
 	/**
 	 * Obtém a situação da cota
 	 * @param idCota
@@ -287,6 +292,40 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               new HashMap<String, Boolean>(),
         		               true);
 	}
+	
+	/**
+	 * Obtém lista de nosso numero para envio de documento de cobrança por email
+	 * @param nossoNumeroEnvioEmail
+	 * @return List<String>
+	 */
+    private List<String> obterListaNossoNumeroEnvioEmail(Map<String, Boolean> nossoNumeroEnvioEmail){
+		
+		List<String> listaNossoNumero = new ArrayList<String>();
+
+		for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+			
+			if (nossoNumeroEnvioEmail.get(nossoNumero)){
+				
+				listaNossoNumero.add(nossoNumero);
+			}
+		}
+        
+        return listaNossoNumero;
+	}
+    
+    /**
+     * Salva informações pendência de envio de documento de cobrança por email
+     * @param nossoNumeroEnvioEmail
+     */
+    private void salvarBoletoEmailPendenteEnvio(Map<String, Boolean> nossoNumeroEnvioEmail){
+    	
+        List<String> listaNossoNumero = this.obterListaNossoNumeroEnvioEmail(nossoNumeroEnvioEmail);
+		
+		if (listaNossoNumero!=null && !listaNossoNumero.isEmpty()){
+		
+		    this.boletoEmailService.salvarBoletoEmail(listaNossoNumero);
+		}
+    }
 	
 	/**
 	 * Gera Cobraça para uma ou todas as cotas com pendências financeiras
@@ -483,6 +522,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							formaCobrancaClone.isRecebeCobrancaEmail());
 			}
 		}
+		
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
 		
 		if (!msgs.isEmpty()){
 			
@@ -1109,6 +1150,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
+	/**
+	 * Remove pendencia de envio de boletos por email da Cobranca
+	 * @param cobrancaId
+	 */
+	private void excluirBoletoEmailAssociacao(Long cobrancaId){
+		
+		BoletoEmail be = this.boletoEmailRepository.obterBoletoEmailPorCobranca(cobrancaId);
+		
+		if (be != null){
+		
+		    this.boletoEmailRepository.remover(be);
+		}
+	}
+	
 	@Transactional
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
@@ -1130,7 +1185,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
 				if (divida != null) {
-				
+					
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
 					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
@@ -1176,7 +1231,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado,
 			Date dataOperacao){
 		
-		this.cobrancaRepository.remover(divida.getCobranca());
+		Cobranca cobranca = divida.getCobranca();
+		
+		if (cobranca != null){
+		    
+			this.excluirBoletoEmailAssociacao(cobranca.getId());
+			
+			this.cobrancaRepository.remover(cobranca);
+		}
 		
 	    this.dividaRepository.remover(divida);
 	}
@@ -1287,9 +1349,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return true;
 	}
 
-	@Override
-	@Transactional(noRollbackFor = AutenticacaoEmailException.class)
-	public void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
+	private void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
 		
 		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
@@ -1312,7 +1372,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (email == null || email.trim().isEmpty()){
 
-			throw new ValidacaoException(TipoMensagem.ERROR,"A [cota: "+ cota.getNumeroCota() +"] não possui email cadastrado");
+			return;
 		}
 		
         for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
@@ -1320,21 +1380,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (nossoNumeroEnvioEmail.get(nossoNumero)){
 
 				if (this.aceitaEnvioEmail(cota, nossoNumero)) {
-
+					
 					try {
-
+			            
 						this.enviarDocumentosCobrancaEmail(nossoNumero, email);
-
-					} catch (AutenticacaoEmailException e) {
-						
-						throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao Enviar Email de Cobrança para a [Cota:"+ cota.getNumeroCota() +"]: "+e.getMessage());
-					}
+	            
+	                } catch (AutenticacaoEmailException e) {
+	  
+	                    e.printStackTrace();
+	                }
 				}
 			}
 		}	
 	}
 	
-	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
+    private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
 		
 		if (formaCobranca==null){
 			

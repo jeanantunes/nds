@@ -309,7 +309,22 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public void setPathBancasExportacao(String pathBancasExportacao) {
 		this.params.put(TipoParametroSistema.PATH_INTERFACE_BANCAS_EXPORTACAO, pathBancasExportacao);
 	}
+	
+	/**
+	 * @return the pathPickingExportacao
+	 */
+	public String getPathPickingExportacao() {
+		return this.getParametroSistemaString(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO);
+	}
 
+	/**
+	 * @param pathPickingExportacao
+	 *            the pathPickingExportacao to set
+	 */
+	public void setPathPickingExportacao(String pathPickingExportacao) {
+		this.params.put(TipoParametroSistema.PATH_INTERFACE_PICKING_EXPORTACAO, pathPickingExportacao);
+	}
+	
 	/**
 	 * @return the pathGfsImportacao
 	 */

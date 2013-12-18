@@ -411,4 +411,17 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 			}
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoProduto> obterTiposProdutoDesc() {
+		
+		StringBuilder hql = new StringBuilder("select id as id, descricao as descricao ");
+		hql.append(" from TipoProduto ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(TipoProduto.class));
+		
+		return query.list();
+	}
 }
