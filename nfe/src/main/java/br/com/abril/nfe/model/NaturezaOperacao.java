@@ -1,0 +1,63 @@
+package br.com.abril.nfe.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "NATUREZA_OPERACAO")
+public class NaturezaOperacao {
+	
+	@Id
+	@GeneratedValue()
+	private Long id;
+
+	@Column(name = "NATUREZA_OPERACAO")
+	private	String descricao;
+
+	@Column(name="CODIGO_CFOP")
+	private String codigoCfop;
+
+	@Column(name="CFOP")
+	private String cfop;
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public String getDescricao() {
+		return descricao;
+	}
+	
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getCodigoCfop() {
+		return codigoCfop;
+	}
+
+	public void setCodigoCfop(String codigoCfop) {
+		this.codigoCfop = codigoCfop;
+	}
+
+	public String getCfop() {
+		return cfop;
+	}
+
+	public void setCfop(String cfop) {
+		this.cfop = cfop;
+	}
+
+	@Override
+	public String toString() {
+		return "NaturezaOperacao [id=" + id + ", descricao=" + descricao
+				+ ", codigoCfop=" + codigoCfop + ", cfop=" + cfop + "]";
+	}
+}
