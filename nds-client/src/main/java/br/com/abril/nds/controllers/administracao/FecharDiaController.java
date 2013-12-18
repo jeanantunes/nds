@@ -707,11 +707,7 @@ public class FecharDiaController extends BaseController {
          */
         JQUERY_FILE_DOWNLOAD_PLUGIN
     }
-<<<<<<< HEAD
-}
 
-=======
-    
     @Post
     public void isDataOperacaoDistribuidor(Date data){
     	
@@ -727,4 +723,3 @@ public class FecharDiaController extends BaseController {
     	result.use(CustomMapJson.class).put("isDataOperacaoDistribuidor", isDataOperacao).serialize();
     }
 }
->>>>>>> DGB/master

@@ -3386,7 +3386,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	}
 
 	@Override
-<<<<<<< HEAD
 	public List<CotaDTO> obterCotasPorNomeAutoComplete(String nome) {
 		
 		List<?> lista = super.getSession().createSQLQuery("select c.ID, c.NUMERO_COTA, p.NOME, c.SITUACAO_CADASTRO from COTA c join PESSOA p on p.ID = c.PESSOA_ID where p.nome like ?")
@@ -3649,8 +3648,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
     	return query.list();
 	}
 	
-}
-=======
 	public SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota) {
 		
 		Query query = 
@@ -3671,4 +3668,3 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		return (Long) query.uniqueResult();
 	}
 }
->>>>>>> DGB/master

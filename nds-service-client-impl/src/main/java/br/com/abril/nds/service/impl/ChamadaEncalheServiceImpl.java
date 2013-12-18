@@ -530,11 +530,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		for(CotaEmissaoDTO dto : lista) {
 			
-<<<<<<< HEAD
 			cota = cotaRepository.obterPorNumeroDaCota( dto.getNumCota());
-=======
-			cota = cotaRepository.obterPorNumerDaCota(dto.getNumCota());
->>>>>>> DGB/master
 
 			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
 
