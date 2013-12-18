@@ -109,7 +109,7 @@ public class InformacoesProdutoController extends BaseController {
 		
 		Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodProduto());
 		
-		filtro.setCodProduto(produto.getCodigoICD() == null ? produto.getCodigo() : produto.getCodigoICD());
+		filtro.setCodProduto(produto.getCodigoICD().isEmpty() ? produto.getCodigo() : produto.getCodigoICD());
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 
