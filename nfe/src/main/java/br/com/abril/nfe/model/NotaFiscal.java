@@ -14,20 +14,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nfe.enums.TipoNotaFiscal;
+import br.com.abril.nfe.enums.NotaFiscalTipoOperacao;
 
 @Entity
 @Table(name = "NOTA_FISCAL")
-@SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
 public class NotaFiscal implements Serializable {
 
 	private static final long serialVersionUID = 2732018921335153522L;
 	
 	@Id
-	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
+	@GeneratedValue()
 	@Column(name="ID")
 	private Long id;
 	
@@ -77,8 +75,8 @@ public class NotaFiscal implements Serializable {
 	protected BigDecimal valorInformado;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_NotaFiscal")
-	private TipoNotaFiscal tipoNotaFiscal;	
+	@Column(name = "TIPO_NOTA_FISCAL")
+	private NotaFiscalTipoOperacao tipoNotaFiscal;	
 	
 	@OneToOne(mappedBy="emitenteDestinario")
 	@JoinColumn(name="EMITENTE_DESTINARIO_ID", unique=true)
@@ -86,7 +84,7 @@ public class NotaFiscal implements Serializable {
 	
 	@OneToOne(mappedBy="notaFiscalFatura")
 	@JoinColumn(name="NOTA_FISCAL_FATURA_ID", unique=true)
-	private NotaFiscalFatura notaFiscalFatura;
+	private List<NotaFiscalFatura> listaNotaFiscalFaturas;
 	
 	@OneToOne(mappedBy="notaFiscalTransportador")
 	@JoinColumn(name="NOTA_FISCAL_TRANSPORTADOR_ID", unique=true)
@@ -233,12 +231,12 @@ public class NotaFiscal implements Serializable {
 	}
 
 
-	public TipoNotaFiscal getTipoNotaFiscal() {
+	public NotaFiscalTipoOperacao getTipoNotaFiscal() {
 		return tipoNotaFiscal;
 	}
 
 
-	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
+	public void setTipoNotaFiscal(NotaFiscalTipoOperacao tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 
@@ -250,16 +248,6 @@ public class NotaFiscal implements Serializable {
 
 	public void setEmitenteDestinario(EmitenteDestinario emitenteDestinario) {
 		this.emitenteDestinario = emitenteDestinario;
-	}
-
-
-	public NotaFiscalFatura getNotaFiscalFatura() {
-		return notaFiscalFatura;
-	}
-
-
-	public void setNotaFiscalFatura(NotaFiscalFatura notaFiscalFatura) {
-		this.notaFiscalFatura = notaFiscalFatura;
 	}
 	
 	public NotaFiscalValorCalculado getNotaFiscalValorCalculado() {
