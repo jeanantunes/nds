@@ -357,15 +357,64 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.alterarReparte = function(input, index) {
 		
 		if (!$.isNumeric(input.value)) {
-			
 			exibirMensagem("WARNING", ["Digite um número valido!"]);
 			return;
 		}
 		
-		T.lancamentos[index].repDistrib = input.value;
-		var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
-		$("#sobra" + index, _workspace).text(vlr);
-		T.lancamentos[index].sobra = vlr;
+//		T.lancamentos[index].repDistrib = input.value;
+//		var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
+//		$("#sobra" + index, _workspace).text(vlr);
+//		T.lancamentos[index].sobra = vlr;
+
+        //TODO se existe estudo, atualizar o total de reparte distribuido
+        if (T.lancamentos[index].estudo && T.lancamentos[index].estudo > 0) {
+            $('<div>Confirma alteração de reparte para este estudo?</div>').dialog({
+                escondeHeader: false,
+                title: 'Confirmação',
+                buttons: {
+                    "Confirmar": function() {
+                        $(this).dialog("close");
+                        $.ajax({
+                            url: pathTela + '/distribuicao/analise/parcial/atualizaReparteTotalESaldo',
+                            data: [{name: 'idEstudo', value: T.lancamentos[index].estudo},
+                                   {name: 'reparteTotal', value: input.value}],
+                            type: 'POST',
+                            success: function(result) {
+                                if (result.mensagens) {
+                                    input.value = T.lancamentos[index].repDistrib;
+                                    exibirMensagem(result.mensagens);
+                                } else {
+                                    T.lancamentos[index].repDistrib = input.value;
+                                    var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
+                                    $("#sobra" + index, _workspace).text(vlr);
+                                    T.lancamentos[index].sobra = vlr;
+
+                                    if (typeof analiseParcialController != 'undefined') {
+                                        //tentar atualizar valores na tela de analise aberta
+                                        try{
+                                            $('span#total_reparte_estudo_cabecalho').text(input.value);
+                                            $('span#saldo_reparte').text(result);
+                                        }
+                                        catch(e){
+                                            exibirMensagem('WARNING', [e.message]);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    },
+                    "Cancelar": function() {
+                        input.value = T.lancamentos[index].repDistrib;
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        } else {
+            T.lancamentos[index].repDistrib = input.value;
+            var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
+            $("#sobra" + index, _workspace).text(vlr);
+            T.lancamentos[index].sobra = vlr;
+        }
 	},
 	
 	this.gerarCheckDistribuicao = function(id, index, estudo) {

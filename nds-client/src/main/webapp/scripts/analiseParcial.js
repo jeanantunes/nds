@@ -1176,6 +1176,12 @@ var analiseParcialController = $.extend(true, {
         $('#password').val('');
         $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
 
+        //limpa os campos ao abrir o pop-up
+        $("#cotasQueNaoEntraramNoEstudo_cota").val('');
+        $("#cotasQueNaoEntraramNoEstudo_nome").val('');
+        $("#cotasQueNaoEntraramNoEstudo_motivo").val('');
+        $("#cotasQueNaoEntraramNoEstudo_elementos").val('');
+
         analiseParcialController.cotasQueNaoEntraramNoEstudo();
 
         $("#dialog-cotas-estudos").dialog({
