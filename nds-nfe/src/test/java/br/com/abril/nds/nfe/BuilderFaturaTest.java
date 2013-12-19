@@ -3,40 +3,48 @@ package br.com.abril.nds.nfe;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.filtro.FiltroNFe;
-import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.nfe.model.NotaFiscalDTO;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
+@TransactionConfiguration(defaultRollback = true)
+@Transactional
 public class BuilderFaturaTest {
 	
 	@Autowired
-	private NotaFiscalFaturaNdsServiceTest notaFiscalFaturaNds;
+	private NotaFiscalNdsServiceTest notaFiscalFaturaNds;
 	
 	@Test
 	public void pesquisarNotaFiscal() {
 		
-		FiltroNFe filtro = obterFiltroNFe();
+		NotaFiscalDTO nfe = obterNotaFiscal();
 		
-		notaFiscalFaturaNds.obterDadoFatura(filtro);
+		notaFiscalFaturaNds.obterDadoFatura(nfe);
 		
 		Assert.assertNotNull(null);
 		
 	}
 	
-	private FiltroNFe obterFiltroNFe() {
+	private NotaFiscalDTO obterNotaFiscal() {
 		
-		FiltroNFe filtro = new FiltroNFe();
+		NotaFiscalDTO notaFiscalDTO = new NotaFiscalDTO();
 		
-		PaginacaoVO paginacao = new PaginacaoVO();
-
-		paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
-		paginacao.setPaginaAtual(1);
-		paginacao.setQtdResultadosPorPagina(500);
-
-		filtro.setPaginacao(paginacao);
+		notaFiscalDTO.setId(1L);
+		notaFiscalDTO.setAmbiente(null);
+		notaFiscalDTO.setChaveAcesso("1234");
+		notaFiscalDTO.setNumero(1L);
+		notaFiscalDTO.setProtocolo(null);
+		notaFiscalDTO.setSerie("1");
+		notaFiscalDTO.setVersao("1");
 		
-		return filtro;
+		return notaFiscalDTO;
 		
 	}
 }
