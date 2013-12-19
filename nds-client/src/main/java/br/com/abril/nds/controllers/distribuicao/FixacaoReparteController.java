@@ -148,7 +148,7 @@ public class FixacaoReparteController extends BaseController {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(numeroCota));
 		
-		if(cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+		if(cota.getTipoDistribuicaoCota() != null && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel fixar reparte para cota [ "+ numeroCota +" ] tipo[" +	TipoDistribuicaoCota.ALTERNATIVO.toString() + "].");
 	}else{
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
