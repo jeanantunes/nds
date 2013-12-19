@@ -462,13 +462,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 			Usuario usuario = usuarioService.getUsuarioLogado();
 			
+			lancamento = this.salvarLancamento(lancamento, dto, produtoEdicao, usuario);
+
 			if(dto.isParcial()) {
 				
-				this.salvarLancamentoParcial(dto, produtoEdicao,usuario,indNovoProdutoEdicao);
-			
-			} else {
-				
-				this.salvarLancamento(lancamento, dto, produtoEdicao,indNovoProdutoEdicao, usuario);
+				this.salvarLancamentoParcial(dto, produtoEdicao,usuario, indNovoProdutoEdicao, lancamento);
 			}
 		}
 		
@@ -518,42 +516,71 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			|| StatusLancamento.RECOLHIDO.equals(lancamento.getStatus());
 	}
 	
-	private void salvarLancamentoParcial(ProdutoEdicaoDTO dto,ProdutoEdicao produtoEdicao, Usuario usuario, boolean indNovoProdutoEdicao) {
+	private void salvarLancamentoParcial(ProdutoEdicaoDTO dto,ProdutoEdicao produtoEdicao, Usuario usuario,
+										 boolean indNovoProdutoEdicao, Lancamento lancamento) {
 		
 		if(indNovoProdutoEdicao){
 			
-			LancamentoParcial lancamentoParcial = new LancamentoParcial();
-			lancamentoParcial.setProdutoEdicao(produtoEdicao);
-			lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);
-			lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
-			lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
+			LancamentoParcial lancamentoParcial =
+				this.criarNovoLancamentoParcial(dto, produtoEdicao);
 			
-			lancamentoParcial = lancamentoParcialRepository.merge(lancamentoParcial);
+			PeriodoLancamentoParcial periodo =
+				this.criarNovoPeriodoLancamentoParcial(lancamentoParcial);
 			
-			PeriodoLancamentoParcial periodo = new PeriodoLancamentoParcial();
-			periodo.setLancamentoParcial(lancamentoParcial);
-			periodo.setTipo(TipoLancamentoParcial.FINAL);
-			periodo.setStatus(StatusLancamentoParcial.PROJETADO);
-			periodo.setNumeroPeriodo(1);
-			
-			periodo = periodoLancamentoParcialRepository.merge(periodo);
-			
-			Lancamento lancamento = criarNovoLancamento(produtoEdicao, dto, usuario);
 			lancamento.setPeriodoLancamentoParcial(periodo);
 			
-			lancamentoRepository.adicionar(lancamento);
-		}
-		else{
+			lancamentoRepository.merge(lancamento);
+		
+		} else {
 			
 			LancamentoParcial lancamentoParcial  = produtoEdicao.getLancamentoParcial();
 			
+			if (lancamentoParcial == null) {
+				
+				lancamentoParcial =
+					this.criarNovoLancamentoParcial(dto, produtoEdicao);
+				
+				PeriodoLancamentoParcial periodo =
+					this.criarNovoPeriodoLancamentoParcial(lancamentoParcial);
+				
+				lancamento.setPeriodoLancamentoParcial(periodo);
+				
+				lancamentoRepository.merge(lancamento);
+				
+			} else {
+			
+				lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
+				lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
+				
+				lancamentoParcialRepository.merge(lancamentoParcial);
+			}
+			
 			this.validarPeriodoLancamentoParcial(dto, produtoEdicao);
-			
-			lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
-			lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
-			
-			lancamentoParcialRepository.merge(lancamentoParcial);	
 		}
+	}
+
+	private PeriodoLancamentoParcial criarNovoPeriodoLancamentoParcial(
+		LancamentoParcial lancamentoParcial) {
+		PeriodoLancamentoParcial periodo = new PeriodoLancamentoParcial();
+		periodo.setLancamentoParcial(lancamentoParcial);
+		periodo.setTipo(TipoLancamentoParcial.FINAL);
+		periodo.setStatus(StatusLancamentoParcial.PROJETADO);
+		periodo.setNumeroPeriodo(1);
+		
+		periodo = periodoLancamentoParcialRepository.merge(periodo);
+		return periodo;
+	}
+
+	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicaoDTO dto,
+		ProdutoEdicao produtoEdicao) {
+		LancamentoParcial lancamentoParcial = new LancamentoParcial();
+		lancamentoParcial.setProdutoEdicao(produtoEdicao);
+		lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);
+		lancamentoParcial.setLancamentoInicial(dto.getDataLancamentoPrevisto());
+		lancamentoParcial.setRecolhimentoFinal(dto.getDataRecolhimentoPrevisto());
+		
+		lancamentoParcial = lancamentoParcialRepository.merge(lancamentoParcial);
+		return lancamentoParcial;
 	}
 
 	private Lancamento criarNovoLancamento(ProdutoEdicao produtoEdicao,ProdutoEdicaoDTO dto, Usuario usuario) {
@@ -807,20 +834,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	/**
-	 * Salva um novo lançamento.
+	 * Salva o lançamento.
 	 * 
 	 * @param lancamento
 	 * @param dto
 	 * @param produtoEdicao
-	 * @param indNovoProdutoEdicao 
 	 * @param usuario 
 	 */
-	private void salvarLancamento(Lancamento lancamento, ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
-		
-		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
-			
-			lancamentoParcialRepository.remover(produtoEdicao.getLancamentoParcial());			
-		}
+	private Lancamento salvarLancamento(Lancamento lancamento, ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, Usuario usuario) {
 		
 		lancamento.setNumeroLancamento(dto.getNumeroLancamento());
 		lancamento.setTipoLancamento(dto.getTipoLancamento());
@@ -851,15 +872,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			lancamento.setDataStatus(dtSysdate);
 			
 			lancamento.setProdutoEdicao(produtoEdicao);
-	
-			lancamentoRepository.adicionar(lancamento);
-			produtoEdicao.getLancamentos().add(lancamento);
-		} else {			
 			
-			lancamentoRepository.alterar(lancamento);
-		}
+			produtoEdicao.getLancamentos().add(lancamento);
+		} 
+		
+		lancamento = lancamentoRepository.merge(lancamento);
 		
 		produtoEdicaoRepository.alterar(produtoEdicao);
+		
+		return lancamento;
 	}
 	
 	@Override
