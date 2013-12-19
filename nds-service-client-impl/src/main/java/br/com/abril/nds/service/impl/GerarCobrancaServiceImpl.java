@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.financeiro.BoletoEmail;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.CobrancaBoletoEmBranco;
 import br.com.abril.nds.model.financeiro.CobrancaCheque;
@@ -53,11 +54,11 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoDistribuidorRepository;
+import br.com.abril.nds.repository.BoletoEmailRepository;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
@@ -149,14 +150,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private NegociacaoDividaRepository negociacaoRepository;
 	
 	@Autowired
+	private BoletoEmailRepository boletoEmailRepository;
+	
+	@Autowired
 	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
-	
-	@Autowired
-	private ControleConferenciaEncalheCotaRepository conferenciaEncalheCotaRepository;
-	
+
 	/**
 	 * Obtém a situação da cota
 	 * @param idCota
@@ -1109,6 +1110,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
+	/**
+	 * Remove pendencia de envio de boletos por email da Cobranca
+	 * @param cobrancaId
+	 */
+	private void excluirBoletoEmailAssociacao(Long cobrancaId){
+		
+		BoletoEmail be = this.boletoEmailRepository.obterBoletoEmailPorCobranca(cobrancaId);
+		
+		if (be != null){
+		
+		    this.boletoEmailRepository.remover(be);
+		}
+	}
+	
 	@Transactional
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
@@ -1130,7 +1145,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
 				if (divida != null) {
-				
+					
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
 					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
@@ -1176,7 +1191,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado,
 			Date dataOperacao){
 		
-		this.cobrancaRepository.remover(divida.getCobranca());
+		Cobranca cobranca = divida.getCobranca();
+		
+		if (cobranca != null){
+		    
+			this.excluirBoletoEmailAssociacao(cobranca.getId());
+			
+			this.cobrancaRepository.remover(cobranca);
+		}
 		
 	    this.dividaRepository.remover(divida);
 	}
@@ -1332,7 +1354,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}	
 	}
 	
-	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
+    private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
 		
 		if (formaCobranca==null){
 			

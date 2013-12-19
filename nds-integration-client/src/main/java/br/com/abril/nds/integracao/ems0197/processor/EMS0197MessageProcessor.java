@@ -15,7 +15,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.dto.InterfacePickingDTO;
+import br.com.abril.nds.dto.DetalhesPickingDTO;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Detalhe;
 import br.com.abril.nds.integracao.ems0197.outbound.EMS0197Header;
@@ -70,9 +70,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 				
 				print.println(fixedFormatManager.export(outheader));
 			
-				List<InterfacePickingDTO> listDetalhes = getDetalhesPicking(outheader.getIdCota(), this.dataLctoDistrib);
+				List<DetalhesPickingDTO> listDetalhes = getDetalhesPicking(outheader.getIdCota(), this.dataLctoDistrib);
 				
-				for(InterfacePickingDTO pickingDTO : listDetalhes){
+				for(DetalhesPickingDTO pickingDTO : listDetalhes){
 					
 					EMS0197Detalhe outDetalhe = createDetalhes(pickingDTO);
 
@@ -117,7 +117,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * @param movimentoEstoqueCota
 	 * @return
 	 */
-	private EMS0197Detalhe createDetalhes(InterfacePickingDTO pickingDTO) {
+	private EMS0197Detalhe createDetalhes(DetalhesPickingDTO pickingDTO) {
 		
 		EMS0197Detalhe outDetalhe = new EMS0197Detalhe();
 		
@@ -188,7 +188,7 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<InterfacePickingDTO> getDetalhesPicking(Long idCota, Date data) {
+	public List<DetalhesPickingDTO> getDetalhesPicking(Long idCota, Date data) {
 		
 		StringBuilder sql = new StringBuilder();
 
@@ -239,9 +239,9 @@ public class EMS0197MessageProcessor extends AbstractRepository implements Messa
 		query.addScalar("precoVendaProdutoEdicao", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("valorDescontoMEC", StandardBasicTypes.BIG_DECIMAL);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InterfacePickingDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(DetalhesPickingDTO.class));
 
-		return (List<InterfacePickingDTO>) query.list();
+		return (List<DetalhesPickingDTO>) query.list();
 	}
 						
 	@Override

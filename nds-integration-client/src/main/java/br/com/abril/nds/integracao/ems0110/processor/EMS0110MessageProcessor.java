@@ -339,7 +339,15 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 		ProdutoEdicao edicao = new ProdutoEdicao();
 		Dimensao dimensao = new Dimensao();
-		Brinde brinde = new Brinde();
+		
+		Brinde brinde = null;
+		
+		if (input.isContemBrinde()){
+			
+			brinde = new Brinde();
+			brinde.setDescricao(input.getDescBrinde());
+			brinde.setPermiteVendaSeparada(input.getCondVendeSeparado());
+		}
 		
 		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
 
@@ -399,9 +407,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		dimensao.setComprimento(input.getComprimento());
 		dimensao.setEspessura(input.getExpessura());
 		edicao.setDimensao(dimensao);
-
-		brinde.setDescricao(input.getDescBrinde());
-		brinde.setPermiteVendaSeparada(input.getCondVendeSeparado());
+		
 		edicao.setBrinde(brinde);
 
 		String codigoDeBarras = input.getCodBarra();

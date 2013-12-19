@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -106,9 +107,10 @@ public class EmissaoBandeiraController extends BaseController {
 	
 
 	@Get("/imprimirBandeira")
-	public Download imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets  ) throws Exception{
+	public Download imprimirBandeira(Integer anoSemana, Long fornecedor, Integer numeroPallets,
+			Date dataEnvio) throws Exception{
 		
-		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(anoSemana, numeroPallets);
+		byte[] comprovate = emissaoBandeiraService.imprimirBandeira(anoSemana, numeroPallets, dataEnvio);
 		
 		return new ByteArrayDownload(comprovate,"application/pdf", "bandeira_" + anoSemana + ".pdf", true);
 	}
