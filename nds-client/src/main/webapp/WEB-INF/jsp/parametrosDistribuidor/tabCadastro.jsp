@@ -1,4 +1,4 @@
-<div id="tabCadastroFiscal">
+<div id="tabCadastro">
 	<br/>
 	<fieldset style="width: 380px !important; float: left; margin-left:10px;">
 		<legend>Cadastro Distribuidor</legend>
