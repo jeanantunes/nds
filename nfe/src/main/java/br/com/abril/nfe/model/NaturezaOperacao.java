@@ -12,6 +12,7 @@ public class NaturezaOperacao {
 	
 	@Id
 	@GeneratedValue
+	@Column(name="ID")
 	private Long id;
 
 	@Column(name = "NATUREZA_OPERACAO")
