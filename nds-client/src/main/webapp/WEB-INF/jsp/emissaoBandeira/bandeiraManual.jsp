@@ -92,7 +92,7 @@
 		</tr>
 		<tr>
 			<td width="881" align="center">
-		  		<input id="dataEnvio" type="text" class="inputLinhaToda"/>
+		  		<input id="dataEnvioManual" type="text" class="inputLinhaToda"/>
 		  	</td>
 		</tr>
 	</table>

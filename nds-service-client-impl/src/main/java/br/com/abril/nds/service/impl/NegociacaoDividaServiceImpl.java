@@ -1033,7 +1033,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			return 1;
 		}
 		
-		int quantidadeParcelas = 6;
+		int quantidadeParcelas = this.distribuidorService.obter().getNegociacaoAteParcelas();
 		
 		BigDecimal valorParcela = BigDecimal.ZERO; 
 				

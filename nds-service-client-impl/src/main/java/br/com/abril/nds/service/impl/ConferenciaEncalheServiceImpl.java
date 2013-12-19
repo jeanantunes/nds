@@ -1550,11 +1550,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			for (String nossoNumero : nossoNumeroCollection.keySet()){
 				
 				if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
+					
 					associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
 				}
 				
-				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero,
-						nossoNumeroCollection.get(nossoNumero));
+				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, nossoNumeroCollection.get(nossoNumero));
 				
 				this.enviarEmailDocumentosCobranca(controleConfEncalheCota, nossoNumero);
 			}

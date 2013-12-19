@@ -2,15 +2,15 @@ package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.math.BigDecimal;
 
-public interface ModeloPickingDetalheInterface {
+public interface InterfaceDetalhesPicking {
 	
-	public void setCodigoCota(Integer codigoCota) ;
+	public void setCodigoCota(String codigoCota) ;
 	
-	public void setSequenciaNotaEnvio(Integer sequenciaNotaEnvio);
+	public void setSequenciaNotaEnvio(String sequenciaNotaEnvio);
 	
 	public void setCodigoProduto(String codigoProduto);
 	
-	public void setEdicao(Long edicao);
+	public void setEdicao(String edicao);
 	
 	public void setNomePublicacao(String nomePublicacao);
 	
