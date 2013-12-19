@@ -335,8 +335,6 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 			if (!produtoMapa.containsKey(item.getIdProdutoEdicao())) {
 				
-				//TODO refector estoque juramentado
-				
 				BigInteger somaEstoqueJuramentado =
 						this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
 								item.getIdProdutoEdicao(), filtro.getDataDate());
@@ -522,9 +520,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
 		
 		for (ProdutoAbastecimentoDTO produto : mapaCota) {
-			
-			//TODO refector estoque juramentado
-			
+		
 			BigInteger somaEstoqueJuramentado =
 					this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
 							produto.getIdProdutoEdicao(), filtro.getDataDate());

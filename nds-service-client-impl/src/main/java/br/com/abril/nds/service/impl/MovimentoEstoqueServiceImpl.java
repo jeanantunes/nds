@@ -975,14 +975,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoqueCota.getStatus())) {
 			
-			//TODO refector estoque juramentado
-			
-			/*
-			if (tipoMovimentoEstoque.isIncideJuramentado()) {
-
-				this.atualizarEstoqueProdutoCotaJuramentado(movimentoEstoqueCota, tipoMovimentoEstoque);
-			}*/
-
 			Long idCota = movimentoEstoqueCota.getCota().getId();
 			Long idProdutoEd = movimentoEstoqueCota.getProdutoEdicao().getId();
 			
@@ -1049,7 +1041,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	/*
 	 * Atualiza o estoque do produto da cota juramentado.
 	 */
-	private void atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
+	public EstoqueProdutoCotaJuramentado atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
 														TipoMovimentoEstoque tipoMovimentoEstoque) {
 
 		Long idProdutoEdicao = movimentoEstoqueCota.getProdutoEdicao().getId();
@@ -1094,15 +1086,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				estoqueProdutoCotaJuramentado.getProdutoEdicao());
 
 		estoqueProdutoCotaJuramentado.getMovimentos().add(movimentoEstoqueCota);
-
-		if (estoqueProdutoCotaJuramentado.getId() == null) {
-
-			this.estoqueProdutoCotaJuramentadoRepository.adicionar(estoqueProdutoCotaJuramentado);
-
-		} else {
-
-			this.estoqueProdutoCotaJuramentadoRepository.alterar(estoqueProdutoCotaJuramentado);
-		}
+		
+		estoqueProdutoCotaJuramentado = this.estoqueProdutoCotaJuramentadoRepository.merge(estoqueProdutoCotaJuramentado);
+		
+		return estoqueProdutoCotaJuramentado ;
 	}
 
 	@Override
