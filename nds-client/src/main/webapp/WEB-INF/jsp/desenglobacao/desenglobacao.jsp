@@ -1,4 +1,3 @@
-
 <script type="text/javascript" src="scripts/desenglobacao.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
@@ -13,28 +12,25 @@
 
 </script>
 <style type="text/css">
-.ui-tabs .ui-tabs-panel {
-	padding: 0.45em 0.4em !important;
-}
-
-#tbInsertCotaEnglobada th {
-	text-align: left;
-}
-
-#tableCotasEnglobadas input[type="text"], input[type="password"], textarea {
-	border: 1px solid #BBBBBB;
-	box-shadow: 2px 2px 1px #EEEEEE inset;
-	padding: 2px 4px;
-}
-
-#btnInserirCotaEnglobada {
-	float: right;
-	margin-right: 15px;
-	margin-top: 10px;
-}
-
-
-
+	.ui-tabs .ui-tabs-panel {
+		padding: 0.45em 0.4em !important;
+	}
+	
+	#tbInsertCotaEnglobada th {
+		text-align: left;
+	}
+	
+	#tableCotasEnglobadas input[type="text"], input[type="password"], textarea {
+		border: 1px solid #BBBBBB;
+		box-shadow: 2px 2px 1px #EEEEEE inset;
+		padding: 2px 4px;
+	}
+	
+	#btnInserirCotaEnglobada {
+		float: right;
+		margin-right: 15px;
+		margin-top: 10px;
+	}
 </style>
 
 	<div class="corpo">
@@ -163,6 +159,7 @@
 			
 		</form>
 	</div>
-<div id="dialog-excluir-desenglobacao" title="Excluir ajuste" style="display:none">
-		<p>Confirma a exclusão desta desengloba&ccedil;&atilde;o?</p>
+	
+	<div id="dialog-excluir-desenglobacao" title="Excluir ajuste" style="display:none">
+			<p>Confirma a exclusão desta desengloba&ccedil;&atilde;o?</p>
 	</div>

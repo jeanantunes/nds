@@ -51,6 +51,8 @@ var desenglobacaoController = $.extend(true, {
     },
 
     init : function() {
+    	
+    	$('#formInserirEnglobada').hide();
 
         // ###### INICIO FILTRO DA TELA PRINCIPAL ######
 		

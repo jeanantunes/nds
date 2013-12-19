@@ -44,6 +44,7 @@ import java.util.*;
 
 @Resource
 @Path("/matrizDistribuicao")
+@Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
 public class MatrizDistribuicaoController extends BaseController {
 
     Logger log = LoggerFactory.getLogger(MatrizDistribuicaoController.class);
@@ -92,7 +93,6 @@ public class MatrizDistribuicaoController extends BaseController {
     private static final int MAX_DUPLICACOES_PERMITIDAS = 2;
 
     @Path("/")
-    @Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
     public void index() {
 
         session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

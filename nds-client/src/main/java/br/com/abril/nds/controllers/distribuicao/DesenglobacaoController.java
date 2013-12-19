@@ -53,7 +53,7 @@ public class DesenglobacaoController extends BaseController {
     @Autowired
     private CotaService cotaService;
 
-    @Path("/index")
+    @Path("/")
     public void desenglobacao(){
 
     }
