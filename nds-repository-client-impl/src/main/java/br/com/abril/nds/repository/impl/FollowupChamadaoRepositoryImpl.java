@@ -74,8 +74,8 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		hql.append(" WHERE cota.situacaoCadastro = 'SUSPENSO' ");
 		hql.append(" AND ce.tipoChamadaEncalhe = 'CHAMADAO' ");
-		hql.append(" ORDER BY cota.numeroCota, nomeJornaleiro");
-		hql.append(" GROUP BY cota.numeroCota, nomeJornaleiro");		
+		hql.append(" GROUP BY cota.numeroCota, pessoa.nome");		
+		hql.append(" ORDER BY cota.numeroCota, pessoa.nome");
 
 		return hql.toString();
 	}

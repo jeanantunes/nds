@@ -103,7 +103,7 @@ public class HistoricoVendaController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Path("/index")
+	@Path("/")
 	public void historicoVenda(){
 		result.include("componenteList", ComponentesPDV.values());
 		this.carregarComboClassificacao();

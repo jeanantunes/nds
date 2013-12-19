@@ -110,7 +110,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		if(cota==null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Digite uma cota válida."));
 		
-		boolean tipoAlternativo = cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
+		boolean tipoAlternativo = cota.getTipoDistribuicaoCota() != null && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
 		
 		if (!tipoAlternativo) {
 			

@@ -91,7 +91,7 @@ public class MatrizDistribuicaoController extends BaseController {
     private static final String LISTA_DE_DUPLICACOES = "LISTA_DE_DUPLICACOES";
     private static final int MAX_DUPLICACOES_PERMITIDAS = 2;
 
-    @Path("/matrizDistribuicao")
+    @Path("/")
     @Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
     public void index() {
 
