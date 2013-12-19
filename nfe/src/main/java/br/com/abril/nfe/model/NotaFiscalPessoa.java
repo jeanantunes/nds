@@ -1,6 +1,7 @@
 package br.com.abril.nfe.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -9,9 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.com.abril.nfe.model.interfaces.Endereco;
+import br.com.abril.nfe.model.interfaces.Telefone;
+
 @Entity
 @Table(name="NOTA_FISCAL_PESSOA")
-public class NotaFiscalPessoa implements Serializable, Pessoa {
+public abstract class NotaFiscalPessoa implements Serializable {
 	
 	private static final long serialVersionUID = -4659540498651547848L;
 	
@@ -25,6 +29,15 @@ public class NotaFiscalPessoa implements Serializable, Pessoa {
 
 	@Column(name="EMAIL")
 	private String email;
+	
+	@Column(name = "HORA_SAIDA")
+	private	String horaSaida;
+
+	@Column(name = "DATA_EMISSAO", nullable = false)
+	private Date dataEmissao;
+	
+	@Column(name = "DATA_EXPEDICAO", nullable = false)
+	private Date dataEntradaSaida;
 	
 	@Embedded
 	private Telefone telefone;
@@ -46,23 +59,5 @@ public class NotaFiscalPessoa implements Serializable, Pessoa {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	@Override
-	public String getNome() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Telefone getTelefone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Endereco getEndereco() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
