@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.com.abril.nfe.model.interfaces.Endereco;
+
 @Entity
 @Table(name="NOTA_FISCAL_ENDERECO")
 public class NotaFicalEndereco implements Serializable, Endereco {
@@ -16,6 +18,7 @@ public class NotaFicalEndereco implements Serializable, Endereco {
 
 	@Id
 	@GeneratedValue
+	@Column(name="ID")
 	private Long id;
 	
 	@Column(name = "TIPO_LOGRADOURO", length=60)

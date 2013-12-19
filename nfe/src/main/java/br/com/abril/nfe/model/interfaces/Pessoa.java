@@ -1,4 +1,5 @@
-package br.com.abril.nfe.model;
+package br.com.abril.nfe.model.interfaces;
+
 
 public interface Pessoa {
 

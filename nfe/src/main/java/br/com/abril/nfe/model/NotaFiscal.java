@@ -54,9 +54,6 @@ public class NotaFiscal implements Serializable {
 	@JoinColumn(name="EMITENTE_DESTINARIO_PESSOA_ID", unique=true)
 	private NotaFiscalPessoa emitenteDestinario;
 	
-	@Column(name = "INFORMACOES_COMPLEMENTARES")
-	private	String informacoesComplementares;
-	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "NOTA_FISCAL_TIPO_OPERACAO")
 	private NotaFiscalTipoOperacao notaFiscalTipoOperacao;	
@@ -74,7 +71,10 @@ public class NotaFiscal implements Serializable {
 	
 	@OneToMany()
 	private List<NotaFiscalItem> notaFiscalitens;
-
+	
+	@Column(name = "INFORMACOES_COMPLEMENTARES")
+	private	String informacoesComplementares;
+	
 	public Long getId() {
 		return id;
 	}
