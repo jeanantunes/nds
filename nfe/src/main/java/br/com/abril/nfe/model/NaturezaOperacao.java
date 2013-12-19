@@ -11,53 +11,56 @@ import javax.persistence.Table;
 public class NaturezaOperacao {
 	
 	@Id
-	@GeneratedValue()
+	@GeneratedValue
 	private Long id;
 
 	@Column(name = "NATUREZA_OPERACAO")
 	private	String descricao;
 
-	@Column(name="CODIGO_CFOP")
-	private String codigoCfop;
+	@Column(name="CFOP_ESTADO")
+	private String cfopEstado;
 
-	@Column(name="CFOP")
-	private String cfop;
-	
+	@Column(name="CFOP_FORA_ESTADO")
+	private String cfopForaEstado;
+
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+
 	public String getDescricao() {
 		return descricao;
 	}
-	
+
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
 
-	public String getCodigoCfop() {
-		return codigoCfop;
+	public String getCfopEstado() {
+		return cfopEstado;
 	}
 
-	public void setCodigoCfop(String codigoCfop) {
-		this.codigoCfop = codigoCfop;
+	public void setCfopEstado(String cfopEstado) {
+		this.cfopEstado = cfopEstado;
 	}
 
-	public String getCfop() {
-		return cfop;
+	public String getCfopForaEstado() {
+		return cfopForaEstado;
 	}
 
-	public void setCfop(String cfop) {
-		this.cfop = cfop;
+
+	public void setCfopForaEstado(String cfopForaEstado) {
+		this.cfopForaEstado = cfopForaEstado;
 	}
 
 	@Override
 	public String toString() {
 		return "NaturezaOperacao [id=" + id + ", descricao=" + descricao
-				+ ", codigoCfop=" + codigoCfop + ", cfop=" + cfop + "]";
+				+ ", cfopForaEstado=" + cfopForaEstado + ", cfopEstado=" + cfopEstado + "]";
 	}
+	
 }
