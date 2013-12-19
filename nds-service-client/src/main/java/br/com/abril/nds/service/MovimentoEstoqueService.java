@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -105,6 +106,7 @@ public interface MovimentoEstoqueService {
 
 	MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(Long id,TipoMovimentoEstoque tipoMovimento, Date dataOperacao);
 
-	
+	EstoqueProdutoCotaJuramentado atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
+			TipoMovimentoEstoque tipoMovimentoEstoque);
 	
 }
