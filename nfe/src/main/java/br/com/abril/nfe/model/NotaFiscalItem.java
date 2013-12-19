@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -47,6 +48,10 @@ public class NotaFiscalItem implements Serializable {
 
 	@Column(name="VALOR_PRODUTO")
 	private BigDecimal valorProduto;
+	
+	@Column(name="NOTA_FISCAL_ID")
+	@OneToMany(mappedBy="notaFiscal")
+	private NotaFiscal notaFiscal;
 	
 	public Long getId() {
 		return id;
@@ -126,6 +131,14 @@ public class NotaFiscalItem implements Serializable {
 
 	public void setValorProduto(BigDecimal valorProduto) {
 		this.valorProduto = valorProduto;
+	}
+
+	public NotaFiscal getNotaFiscal() {
+		return notaFiscal;
+	}
+
+	public void setNotaFiscal(NotaFiscal notaFiscal) {
+		this.notaFiscal = notaFiscal;
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import br.com.abril.nfe.enums.TipoAtividade;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 
 public class OrigemItemNotaFiscal  implements Serializable {
 	
@@ -23,7 +23,5 @@ public class OrigemItemNotaFiscal  implements Serializable {
 	public void setTipoAtividade(TipoAtividade tipoAtividade) {
 		this.tipoAtividade = tipoAtividade;
 	}
-	
-	
 	
 }

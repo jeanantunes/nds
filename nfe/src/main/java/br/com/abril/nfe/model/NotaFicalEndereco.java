@@ -10,13 +10,16 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="NOTA_FISCAL_ENDERECO")
-public class NotaFicalEndereco implements Serializable {
+public class NotaFicalEndereco implements Serializable, Endereco {
 	
 	private static final long serialVersionUID = 7384512437561238172L;
 
 	@Id
-	@GeneratedValue(generator="NOTA_FISCAL_ENDERECO_ID")
+	@GeneratedValue
 	private Long id;
+	
+	@Column(name = "TIPO_LOGRADOURO", length=60)
+	private String tipoLogradouro;
 	
 	@Column(name = "LOGRADOURO", length=60)
 	private String logradouro;
@@ -39,8 +42,8 @@ public class NotaFicalEndereco implements Serializable {
 	@Column(name = "CEP", length=9)
 	private String cep;
 	
-	@Column(name = "CODIGO_UF", length=2)
-	private String codigoUf;
+	@Column(name = "PAIS", length=60)
+	private String pais;
 
 	public Long getId() {
 		return id;
@@ -98,32 +101,27 @@ public class NotaFicalEndereco implements Serializable {
 		this.bairro = bairro;
 	}
 
-	public String getCep() {
+	public String getCEP() {
 		return cep;
 	}
 
-	public void setCep(String cep) {
+	public void setCEP(String cep) {
 		this.cep = cep;
 	}
 
-	public String getCodigoUf() {
-		return codigoUf;
-	}
-
-	public void setCodigoUf(String codigoUf) {
-		this.codigoUf = codigoUf;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	@Override
+	public String getTipoLogradouro() {
+		return this.tipoLogradouro;
 	}
 
 	@Override
-	public String toString() {
-		return "Endereco [id=" + id + ", logradouro=" + logradouro
-				+ ", numero=" + numero + ", uf=" + uf + ", cidade=" + cidade
-				+ ", complemento=" + complemento + ", bairro=" + bairro
-				+ ", cep=" + cep + ", codigoUf=" + codigoUf + "]";
+	public String getUF() {
+		return this.uf;
+	}
+
+	@Override
+	public String getPais() {
+		return this.pais;
 	}
 	
 }
