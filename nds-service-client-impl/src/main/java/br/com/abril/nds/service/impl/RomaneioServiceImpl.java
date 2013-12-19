@@ -95,9 +95,9 @@ public class RomaneioServiceImpl implements RomaneioService {
 			// Formata os romaneios para o relatório:
 			if (lstRomaneioDTO != null && !lstRomaneioDTO.isEmpty()){
 				
-				Long idRota = Long.valueOf(0);
-				Long idRoteiro = Long.valueOf(0);
-				Long idBox = Long.valueOf(0);
+				Long idRota = null;
+				Long idRoteiro = null;
+				Long idBox = null;
 				
 				RomaneioModelo01DTO dto = null;
 				for (RomaneioDTO romaneio : lstRomaneioDTO){
