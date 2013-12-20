@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+import br.com.abril.nds.util.Util;
+
 public class RomaneioDTO implements Serializable {
 
 
@@ -62,7 +64,8 @@ public class RomaneioDTO implements Serializable {
 	private BigInteger qtdProduto5;
 	
 	private Long numeroNotaEnvio;
-		
+	
+	private String cep;
 	
 	public RomaneioDTO() {}
 	
@@ -301,5 +304,13 @@ public class RomaneioDTO implements Serializable {
 
 	public void setIdRoteiro(Long idRoteiro) {
 		this.idRoteiro = idRoteiro;
+	}
+
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = Util.adicionarMascaraCEP(cep);
 	}
 }

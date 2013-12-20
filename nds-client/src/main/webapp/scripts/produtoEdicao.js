@@ -914,7 +914,7 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
 		
-		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", (bloquear || numeroEdicao == 1));
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", bloquear);
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataRecolhimentoPrevisto", bloquear);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peb", bloquear);
@@ -1228,6 +1228,58 @@ var produtoEdicaoController =$.extend(true,  {
 		});	      
 	},
 	
+	popup_excluir_capa:			function () {
+		// $( "#produtoEdicaoController-dialog:ui-dialog" ).dialog( "destroy" );
+
+		$( "#produtoEdicaoController-dialog-excluir-capa" ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$.postJSON(
+							 contextPath + '/capa/removerCapa',
+							{idProdutoEdicao : $("#produtoEdicaoController-idProdutoEdicao",this.workspace).val()},
+							function(result) {
+								$( "#produtoEdicaoController-dialog-excluir-capa" ).dialog( "close" );
+
+								var mensagens = (result.mensagens) ? result.mensagens : result;
+								var tipoMensagem = mensagens.tipoMensagem;
+								var listaMensagens = mensagens.listaMensagens;
+
+								if (tipoMensagem && listaMensagens) {
+									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+									if (tipoMensagem == "SUCCESS") { 
+										var img = $("<img />").attr('width', '144').attr('height', '185').attr('alt', 'Capa');
+										$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
+										$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
+									}
+								}
+							},
+							function(result) {
+								$( "#produtoEdicaoController-dialog-excluir-capa" ,this.workspace).dialog( "close" );
+
+								var mensagens = (result.mensagens) ? result.mensagens : result.result;
+								var tipoMensagem = mensagens.tipoMensagem;
+								var listaMensagens = mensagens.listaMensagens;
+
+								if (tipoMensagem && listaMensagens) {
+									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+								}
+							},
+							true
+					);
+				},
+				"Cancelar": function() {
+					$( "#produtoEdicaoController-dialog-excluir-capa" ,this.workspace).dialog( "close" );
+				}
+			},
+			form: $("#produtoEdicaoController-dialog-excluir-capa", this.workspace).parents("form")
+			
+		});
+	},
+	
 	removerEdicao: function (id) {
 
 		$.postJSON(
@@ -1242,18 +1294,12 @@ var produtoEdicaoController =$.extend(true,  {
 							
 							var tipoMensagem = 'WARNING';
 							var listaMensagens = [];
-							
-							/*
-							for (var i=0; i<result.map.length; i++) {
-								listaMensagens[i] = result.map[i][1];
-							}
-							*/
-							
-							if(result.map.length > 0) {
-								listaMensagens[0] = "Existem restrições que impedem a exclusão desta edição.";
-							}
-							
-							if (tipoMensagem && listaMensagens) {
+																			
+							$.each(result.map, function(index, value){
+								listaMensagens.push(value[1]);
+							});
+														
+							if (tipoMensagem && listaMensagens.length>0) {
 
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
@@ -1307,58 +1353,6 @@ var produtoEdicaoController =$.extend(true,  {
 					true
 			);
 		
-	},
-	
-	popup_excluir_capa:			function () {
-		// $( "#produtoEdicaoController-dialog:ui-dialog" ).dialog( "destroy" );
-
-		$( "#produtoEdicaoController-dialog-excluir-capa" ).dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$.postJSON(
-							 contextPath + '/capa/removerCapa',
-							{idProdutoEdicao : $("#produtoEdicaoController-idProdutoEdicao",this.workspace).val()},
-							function(result) {
-								$( "#produtoEdicaoController-dialog-excluir-capa" ).dialog( "close" );
-
-								var mensagens = (result.mensagens) ? result.mensagens : result;
-								var tipoMensagem = mensagens.tipoMensagem;
-								var listaMensagens = mensagens.listaMensagens;
-
-								if (tipoMensagem && listaMensagens) {
-									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-									if (tipoMensagem == "SUCCESS") { 
-										var img = $("<img />").attr('width', '144').attr('height', '185').attr('alt', 'Capa');
-										$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
-										$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
-									}
-								}
-							},
-							function(result) {
-								$( "#produtoEdicaoController-dialog-excluir-capa" ,this.workspace).dialog( "close" );
-
-								var mensagens = (result.mensagens) ? result.mensagens : result.result;
-								var tipoMensagem = mensagens.tipoMensagem;
-								var listaMensagens = mensagens.listaMensagens;
-
-								if (tipoMensagem && listaMensagens) {
-									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-								}
-							},
-							true
-					);
-				},
-				"Cancelar": function() {
-					$( "#produtoEdicaoController-dialog-excluir-capa" ,this.workspace).dialog( "close" );
-				}
-			},
-			form: $("#produtoEdicaoController-dialog-excluir-capa", this.workspace).parents("form")
-			
-		});
 	},
 	
 	mostrar_prod:function (){

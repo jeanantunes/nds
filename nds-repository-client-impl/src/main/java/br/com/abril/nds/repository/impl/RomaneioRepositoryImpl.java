@@ -388,6 +388,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", endereco.bairro as bairro ");		
 		hql.append(", endereco.cidade as cidade ");
 		hql.append(", endereco.uf as uf ");
+		hql.append(", endereco.cep as cep ");
 		
 		int qtdProdutos = 0;
 		if (filtro.getProdutos() != null && !filtro.getProdutos().isEmpty()) {

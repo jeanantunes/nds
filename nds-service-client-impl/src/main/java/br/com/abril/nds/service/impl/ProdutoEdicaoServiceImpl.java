@@ -894,25 +894,40 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
 		}
-
-		if(produtoEdicao.getEstoqueProduto() != null) {
-			
-			validacaoMap.put("edicaoPossuiEstoque", "Esta Edição não pode ser excluida por já ter estoque!");
-		}
 		
 		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
 		
 		for (Lancamento lancamento : lancamentos) {
-			
-			if(lancamento.getEstudo() != null) {
-				validacaoMap.put("edicaoPossuiEstudo", "Esta Edição já possui estudo!");
-			}
-			
+									
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
-							|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO))) {
+					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
+					|| lancamento.getStatus().equals(StatusLancamento.FURO)) ) {
+								
+				validacaoMap.put("edicaoExpedida", "Esta edição não pode ser excluida pois possui lançamento expedido!");
 				
-				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição não pode ser excluida por ter lancamentos já balanceados!");
+				return validacaoMap;
+			}
+			
+			if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) {
+				
+				validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
+				
+				return validacaoMap;
+			}
+			
+			if(lancamento.getStatus().equals(StatusLancamento.BALANCEADO))
+				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição possui lancamento já balanceado, é necessário realizar o Furo da Edição!");
+						
+			if(lancamento.getEstudo() != null) {
+				validacaoMap.put("edicaoPossuiEstudo", "Esta edição já possui estudo!");
+			}
+			
+			if(produtoEdicao.getEstoqueProduto() != null) {
+				
+				validacaoMap.put("edicaoPossuiEstoque", "Esta edição possui produtos em estoque e não pode ser excluida!");
+
+				return validacaoMap;
 			}
 		}
 		
@@ -929,24 +944,37 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
-
-		if(produtoEdicao.getEstoqueProduto() != null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição não pode ser excluida por ter estoque!");
-		}
 		
 		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
 		
 		for (Lancamento lancamento : lancamentos) {
 			
+			if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) 
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição possui nota emitida e não pode ser excluida!");
+			
+			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
-					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO))) {
+					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
+					|| lancamento.getStatus().equals(StatusLancamento.FURO)) ) {
+								
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição não pode ser excluida pois possui lançamento expedido!");
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição não pode ser excluida por ter lancamentos já balanceados!");
+			}
+			
+			if(lancamento.getStatus().equals(StatusLancamento.BALANCEADO))
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição possui lancamento já balanceado, é necessário realizar o Furo da Edição!");
+						
+			if(lancamento.getEstudo() != null) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição já possui estudo!");
+			}
+			
+			if(produtoEdicao.getEstoqueProduto() != null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição possui produtos em estoque e não pode ser excluida!");
 			}
 		}
-
+		
 		try {
 			
 			for (Lancamento lancamento : lancamentos){				
@@ -996,7 +1024,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		} catch (DataIntegrityViolationException e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por estar associada em outras partes do sistema!");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Esta edição não pode ser excluida por estar associada em outras partes do sistema!");
 			
 		} catch (Exception e) {
 			LOGGER.error("Ocorreu um erro ao tentar excluir a edição!", e);
