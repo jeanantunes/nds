@@ -27,8 +27,10 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroEntregaBanca;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -1205,5 +1207,26 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return controleConferenciaEncalhe;
 		
+	}
+
+	@Override
+	@Transactional
+	public List<DistribuidorTipoNotaFiscal> obterTiposNotaFiscalDistribuidor() {
+		List<DistribuidorTipoNotaFiscal> tiposNotaFiscal = new ArrayList<>();
+		tiposNotaFiscal.addAll(distribuidorService.obter().getTiposNotaFiscalDistribuidor());
+		if(!tiposNotaFiscal.isEmpty()) {
+			for(DistribuidorTipoNotaFiscal dtnf : tiposNotaFiscal) {
+				for(NotaFiscalTipoEmissao nfte : dtnf.getTipoEmissaoDisponiveis()) {
+					nfte.getDescricao();
+				}
+			}
+		}
+		return tiposNotaFiscal;
+	}
+
+	@Override
+	public NotaFiscalTipoEmissao obterNotaFiscalTipoEmissao() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

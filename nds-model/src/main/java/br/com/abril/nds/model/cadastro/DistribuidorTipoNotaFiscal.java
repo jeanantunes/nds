@@ -31,10 +31,9 @@ public class DistribuidorTipoNotaFiscal {
 	@JoinTable(
 	            name="DISTRIBUIDOR_NOTA_FISCAL_TIPOS_TIPO_EMISSAO",
 	            joinColumns={
-	                    @JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPOS", name="NOTA_FISCAL_TIPO_ID", referencedColumnName="id"),
-	                    //@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id", nullable=false)
-	                    }/*,
-	            inverseJoinColumns=@JoinColumn(table="PHONE_MODEL",name="fk_phone_model_id", referencedColumnName="id")*/)
+	            		@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPOS", name="NOTA_FISCAL_TIPO_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO",name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
 	private List<NotaFiscalTipoEmissao> tipoEmissaoDisponiveis;
 	
 	@OneToOne

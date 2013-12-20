@@ -115,6 +115,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.include("fornecedores", fornecedorService.obterFornecedores());
 		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
 		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
+		result.include("listaTiposNotaFiscal", parametrosDistribuidorService.obterTiposNotaFiscalDistribuidor());
+		result.include("listaTiposEmissaoNotaFiscal", parametrosDistribuidorService.obterNotaFiscalTipoEmissao());
 		
 		this.buscarLogoArmazenarSessao();
 		

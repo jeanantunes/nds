@@ -74,14 +74,42 @@
 		<table width="100%" border="0" cellspacing="2" cellpadding="0">
 			<tr>
 				<td>
-					<table width="100%" border="0" cellspacing="2" cellpadding="0">
+					<table width="100%" border="1" cellspacing="2" cellpadding="0">
 						<tr>
 							<td></td>
 							<td align="center">Desobriga Emissão</td>
 							<td align="center">Consolida emissão a Jornaleiros Diversos</td>
 							<td align="center">Consolida emissão por Destinatário</td>
 						</tr>
+						<c:forEach var="tiposNotaFiscal" items="${listaTiposNotaFiscal}">
 						<tr>
+							<td>${tiposNotaFiscal.descricao}
+								<%-- <option value="${tipoEmissao.id}">${tipoEmissao.descricao}</option> --%>
+							</td>
+							<%--<c:forEach var="tipoEmissaoNotaFiscal" varStatus="status" items="${tiposNotaFiscal.tipoEmissaoDisponiveis[0]}">
+								<td align="center">
+									${tiposNotaFiscal.tipoEmissaoDisponiveis[0].descricao}
+									<c:if test="tiposNotaFiscal.descricao == 'Desobriga Emissão'" >
+									<input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" 
+									checked="checked" /> 
+									</c:if>
+								</td>
+								<td align="center">
+									<c:if test="tiposNotaFiscal.descricao == 'Consolida emissão a Jornaleiros Diversos'" >
+									<input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" 
+									checked="checked" /> 
+									</c:if>
+								</td>
+								<td align="center">
+									<c:if test="tiposNotaFiscal.descricao == 'Consolida emissão por Destinatário'" >
+									<input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" 
+									checked="checked" /> 
+									</c:if>
+								</td>
+							</c:forEach>  --%>
+						</tr>
+						</c:forEach>
+						<%-- <tr>
 							<td>Nota Fiscal de Envio para a Cota</td>
 							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" /></td>
 							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" checked="checked"/></td>
@@ -110,7 +138,7 @@
 							<td align="center"><input type="radio" name="notaFiscalVendaFornecedor" id="notaFiscalEnvioCota" /></td>
 							<td align="center"></td>
 							<td align="center"><input type="radio" name="notaFiscalVendaFornecedor" id="notaFiscalEnvioCota" checked="checked"/></td>
-						</tr>
+						</tr> --%>
 					</table>
 				</td>
 			</tr>

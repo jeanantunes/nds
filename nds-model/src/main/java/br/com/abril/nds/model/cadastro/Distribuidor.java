@@ -324,6 +324,9 @@ public class Distribuidor {
 	@Column(name = "PARAR_ACUM_DIVIDAS", nullable = false)
 	private boolean pararAcumuloDividas;
 	
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -1159,4 +1162,20 @@ public class Distribuidor {
 	public void setPararAcumuloDividas(boolean pararAcumuloDividas) {
 		this.pararAcumuloDividas = pararAcumuloDividas;
 	}
+
+	/**
+	 * @return
+	 */
+	public Set<DistribuidorTipoNotaFiscal> getTiposNotaFiscalDistribuidor() {
+		return tiposNotaFiscalDistribuidor;
+	}
+
+	/**
+	 * @param tiposNotaFiscalDistribuidor
+	 */
+	public void setTiposNotaFiscalDistribuidor(
+			Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor) {
+		this.tiposNotaFiscalDistribuidor = tiposNotaFiscalDistribuidor;
+	}
+	
 }
