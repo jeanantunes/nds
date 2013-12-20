@@ -29,7 +29,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		if (filtros == null) {
 		
-			data.push({name:'dataLancamento', value: $("#datepickerDe").val()});
+			data.push({name:'dataLancamento', value: $("#matrizDistribuicao_datepickerDe").val()});
 			
 			$('[id^="fornecedor_"]').each(function(key){
 				if (this.checked) {
@@ -1385,7 +1385,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			disableSelect : true
 			});
 
-		$( "#datepickerDe", _workspace ).datepicker({
+		$( "#matrizDistribuicao_datepickerDe", _workspace ).datepicker({
 			showOn: "button",
 			dateFormat: 'dd/mm/yy',
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -1398,7 +1398,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			buttonImageOnly: true
 		});
 		
-		$("#datepickerDe", _workspace).mask("99/99/9999");
+		$("#matrizDistribuicao_datepickerDe", _workspace).mask("99/99/9999");
 		$("#datepickerDe_1", _workspace).mask("99/99/9999");
 		
 		
