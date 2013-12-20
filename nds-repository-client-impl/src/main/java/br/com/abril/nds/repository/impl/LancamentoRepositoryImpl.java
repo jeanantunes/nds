@@ -40,6 +40,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -558,13 +559,17 @@ public class LancamentoRepositoryImpl extends
 		List<String> statusParaBalanceamentoRecolhimento =
 			this.getStatusParaBalanceamentoRecolhimento();
 		
+		List<String> gruposMovimentoEstoqueSaidaDistribuidor =
+			this.getGruposMovimentoEstoqueSaidaDistribuidor();
+		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo);
-		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		
 		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
+		query.setParameterList("gruposMovimentoEstoqueSaidaDistribuidor", gruposMovimentoEstoqueSaidaDistribuidor);
 
 		List<Object[]> expectativasEncalheDia = query.list();
 
@@ -597,6 +602,20 @@ public class LancamentoRepositoryImpl extends
 		return statusParaBalanceamentoRecolhimento;
 	}
 	
+	private List<String> getGruposMovimentoEstoqueSaidaDistribuidor() {
+		
+		String[] arrayGruposMovimentoEstoqueSaidaDistribuidor =
+			{GrupoMovimentoEstoque.ENVIO_JORNALEIRO.toString(),
+			 GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.toString(),
+			 GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.toString(),
+			 GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.toString()};
+		
+		List<String> gruposMovimentoEstoqueSaidaDistribuidor =
+			Arrays.asList(arrayGruposMovimentoEstoqueSaidaDistribuidor);
+		
+		return gruposMovimentoEstoqueSaidaDistribuidor;
+	}
+	
 	private String getConsultaBalanceamentoRecolhimentoAnalitico() {
 		
 		StringBuilder sql = new StringBuilder();
@@ -616,13 +635,13 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append("  sum( ");
 		sql.append("  case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");
-		sql.append("	then (((movimentoEstoqueCota.QTDE) - ((movimentoEstoqueCota.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
-		sql.append("   	else ((movimentoEstoqueCota.QTDE) - ((movimentoEstoqueCota.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");  
+		sql.append("	then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
+		sql.append("   	else ((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");  
 		sql.append(" 	end ");
 		sql.append("  ) as expectativaEncalhe, ");
 		  
 		sql.append("  sum( ");
-		sql.append("  ((movimentoEstoqueCota.QTDE) - ((movimentoEstoqueCota.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
+		sql.append("  ((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
 		sql.append("     0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, ");
 		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, produtoEdicao.DESCONTO / 100 ,");
 		sql.append("     0)) ) ) ");
@@ -648,12 +667,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append("             estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID ");    
 		sql.append("             and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA ");
 		sql.append("         ) ");
-		sql.append(" inner join ");
-		sql.append("     ESTUDO_COTA estudoCota ");
-		sql.append("         on estudo.ID = estudoCota.ESTUDO_ID ");
-		sql.append(" inner join ");
-		sql.append("     COTA cota ");
-		sql.append("         on cota.ID = estudoCota.COTA_ID ");
 		sql.append(" inner join ");
 		sql.append("     PRODUTO_EDICAO produtoEdicao ");   
 		sql.append("         on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
@@ -691,20 +704,19 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	  TIPO_PRODUTO tipoProduto ");
 		sql.append(" 	  		on produto.TIPO_PRODUTO_ID=tipoProduto.ID ");
 		sql.append(" inner join ");
-		sql.append(" 	  MOVIMENTO_ESTOQUE_COTA movimentoEstoqueCota ");
+		sql.append(" 	  MOVIMENTO_ESTOQUE movimentoEstoque ");
 		sql.append(" 	  		on ( ");
-		sql.append("					movimentoEstoqueCota.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append("	 	  			and movimentoEstoqueCota.COTA_ID = cota.ID ");
-		sql.append("	 	  			and movimentoEstoqueCota.LANCAMENTO_ID = lancamento.ID ");
+		sql.append("					movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append("	 	  			and movimentoEstoque.DATA between lancamento.DATA_LCTO_PREVISTA and lancamento.DATA_REC_PREVISTA ");
 		sql.append("			) ");
 		sql.append(" inner join ");
 		sql.append(" 	  TIPO_MOVIMENTO tipoMovimento ");
-		sql.append(" 	  		on tipoMovimento.ID = movimentoEstoqueCota.TIPO_MOVIMENTO_ID ");
+		sql.append(" 	  		on tipoMovimento.ID = movimentoEstoque.TIPO_MOVIMENTO_ID ");
 		 
 		sql.append(" where lancamento.STATUS in ( ");
 		sql.append("         :statusParaBalanceamentoRecolhimento ");
 		sql.append("     ) ");
-		sql.append(" and tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA' ");
+		sql.append(" 	 and tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentoEstoqueSaidaDistribuidor) ");
 		sql.append("     and ( ");
 		sql.append("         lancamento.DATA_REC_DISTRIB between :periodoInicial and :periodoFinal ");
 		sql.append("     ) ");
@@ -727,9 +739,9 @@ public class LancamentoRepositoryImpl extends
 				   + " lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, "
 				   + " case "
 				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then "
-				   + " sum(((movimentoEstoqueCota.QTDE) - ((movimentoEstoqueCota.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) "
+				   + " sum(((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) "
 				   + " else "
-				   + " sum((movimentoEstoqueCota.QTDE) - ((movimentoEstoqueCota.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) "
+				   + " sum((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) "
 				   + " end as expectativaEncalhe ";
 		
 		String clausulaFrom = getConsultaBalanceamentoRecolhimentoAnalitico();
@@ -774,6 +786,9 @@ public class LancamentoRepositoryImpl extends
 		List<String> statusParaBalanceamentoRecolhimento =
 			this.getStatusParaBalanceamentoRecolhimento();
 		
+		List<String> gruposMovimentoEstoqueSaidaDistribuidor =
+			this.getGruposMovimentoEstoqueSaidaDistribuidor();
+		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
@@ -781,6 +796,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		
 		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
+		query.setParameterList("gruposMovimentoEstoqueSaidaDistribuidor", gruposMovimentoEstoqueSaidaDistribuidor);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoRecolhimentoDTO.class));
 		
