@@ -210,11 +210,11 @@
 			<tr>
 				<td>Regime Especial</td>
 				<td>
-					<c:if test="${parametrosDistribuidor.regimeEspecial}">
+					<c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
 						<input type="checkbox" name="regimeEspecial"
 						   	   id="regimeEspecial" checked="checked" />
 					</c:if>
-                    <c:if test="${empty parametrosDistribuidor.regimeEspecial or (not parametrosDistribuidor.regimeEspecial)}">
+                    <c:if test="${empty parametrosDistribuidor.possuiRegimeEspecialDispensaInterna or (not parametrosDistribuidor.possuiRegimeEspecialDispensaInterna)}">
 						<input type="checkbox" name="regimeEspecial"
 						   	   id="regimeEspecial" />
 			   	   	</c:if>

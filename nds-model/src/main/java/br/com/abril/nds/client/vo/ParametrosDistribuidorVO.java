@@ -33,7 +33,7 @@ public class ParametrosDistribuidorVO {
     
     private ObrigacaoFiscal obrigacaoFiscal;
     
-    private boolean regimeEspecial;
+    private boolean possuiRegimeEspecialDispensaInterna;
     
     private EnderecoVO endereco = new EnderecoVO();
     
@@ -387,12 +387,12 @@ public class ParametrosDistribuidorVO {
         this.obrigacaoFiscal = obrigacaoFiscal;
     }
     
-    public boolean getRegimeEspecial() {
-        return regimeEspecial;
+    public boolean isPossuiRegimeEspecialDispensaInterna() {
+        return possuiRegimeEspecialDispensaInterna;
     }
 
-    public void setRegimeEspecial(boolean regimeEspecial) {
-        this.regimeEspecial = regimeEspecial;
+    public void setPossuiRegimeEspecialDispensaInterna(boolean possuiRegimeEspecialDispensaInterna) {
+        this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
     }
 
     /**

@@ -46,7 +46,6 @@ import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -740,8 +739,7 @@ public class Fixture {
 		distribuidor.setQuantidadeDiasSuspensaoCotas(7);
 		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
 		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
-		distribuidor.setObrigacaoFiscal(ObrigacaoFiscal.COTA_TOTAL);
-		distribuidor.setRegimeEspecial(true);
+		distribuidor.setPossuiRegimeEspecialDispensaInterna(true);
 		distribuidor.setUtilizaProcuracaoEntregadores(true);
 		distribuidor.setInformacoesComplementaresProcuracao("Info Complementares Procuração");
 		distribuidor.setUtilizaGarantiaPdv(true);

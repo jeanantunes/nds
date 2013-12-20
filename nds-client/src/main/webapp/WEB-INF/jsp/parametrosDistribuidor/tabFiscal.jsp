@@ -24,11 +24,11 @@
 						<tr>
 							<td>Obrigação Fiscal possui Regime Especial ou Dispensa
 								Interna?</td>
-							<td><c:if test="${parametrosDistribuidor.regimeEspecial}">
+							<td><c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
 									<input type="checkbox" name="regimeEspecial"
 										id="regimeEspecial" checked="checked" />
 								</c:if> <c:if
-									test="${empty parametrosDistribuidor.regimeEspecial or (not parametrosDistribuidor.regimeEspecial)}">
+									test="${empty parametrosDistribuidor.possuiRegimeEspecialDispensaInterna or (not parametrosDistribuidor.possuiRegimeEspecialDispensaInterna)}">
 									<input type="checkbox" name="regimeEspecial"
 										id="regimeEspecial" />
 								</c:if></td>
@@ -82,31 +82,31 @@
 							<td align="center">Consolida emissão por Destinatário</td>
 						</tr>
 						<tr>
-							<td align="center">Nota Fiscal de Envio para a Cota</td>
+							<td>Nota Fiscal de Envio para a Cota</td>
 							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" /></td>
 							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" checked="checked"/></td>
 							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" /></td>
 						</tr>
 						<tr>
-							<td align="center">Nota Fiscal de Devolução pela Cota</td>
+							<td>Nota Fiscal de Devolução pela Cota</td>
 							<td align="center"><input type="radio" name="notaFiscalDevolucaoPelaCota" id="notaFiscalEnvioCota" /></td>
 							<td align="center"><input type="radio" name="notaFiscalDevolucaoPelaCota" id="notaFiscalEnvioCota" checked="checked"/></td>
 							<td align="center"><input type="radio" name="notaFiscalDevolucaoPelaCota" id="notaFiscalEnvioCota" /></td>
 						</tr>
 						<tr>
-							<td align="center">Nota Fiscal de Venda</td>
+							<td>Nota Fiscal de Venda</td>
 							<td align="center"><input type="radio" name="notaFiscalVenda" id="notaFiscalEnvioCota" /></td>
 							<td align="center"><input type="radio" name="notaFiscalVenda" id="notaFiscalEnvioCota" checked="checked"/></td>
 							<td align="center"><input type="radio" name="notaFiscalVenda" id="notaFiscalEnvioCota" /></td>
 						</tr>
 						<tr>
-							<td align="center">Nota Fiscal de Devolução ao Fornecedor</td>
+							<td>Nota Fiscal de Devolução ao Fornecedor</td>
 							<td align="center"><input type="radio" name="notaFiscalDevolucaoFornecedor" id="notaFiscalEnvioCota" checked="checked"/></td>
 							<td align="center"></td>
 							<td align="center"><input type="radio" name="notaFiscalDevolucaoFornecedor" id="notaFiscalEnvioCota" /></td>
 						</tr>
 						<tr>
-							<td align="center">Nota Fiscal Simbólica de Venda ao Fornecedor</td>
+							<td>Nota Fiscal Simbólica de Venda ao Fornecedor</td>
 							<td align="center"><input type="radio" name="notaFiscalVendaFornecedor" id="notaFiscalEnvioCota" /></td>
 							<td align="center"></td>
 							<td align="center"><input type="radio" name="notaFiscalVendaFornecedor" id="notaFiscalEnvioCota" checked="checked"/></td>

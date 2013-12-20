@@ -101,10 +101,6 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.numeroTelefone', value: $('#numeroTelefone', this.workspace).val()},
 			{name:'parametrosDistribuidor.numeroDDD', value: $('#numeroDDD', this.workspace).val()},
 			
-			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
-			{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal', this.workspace).val()},
-			{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial', this.workspace).is(':checked')},
-			
 			{name:'parametrosDistribuidor.relancamentoParciaisEmDias', value: $('#relancamentoParciaisEmDias', this.workspace).val()},
 			{name:'parametrosDistribuidor.aceitaEncalheJuramentada', value: $('#aceitaEncalheJuramentada', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.tipoContabilizacaoCE', value: $("input[name='parametrosDistribuidor.tipoContabilizacaoCE']:checked", this.workspace).val()},
@@ -199,7 +195,11 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaDe', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')}
+			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
+			
+			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
+			{name:'parametrosDistribuidor.regimeEspecial', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')}
+			
 		];
 		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",

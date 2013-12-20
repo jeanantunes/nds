@@ -416,9 +416,6 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getRegimeTributario() == null) {
 	        erros.add("É necessário informar o campo Regime Tributário!");
 	    }
-	    if (vo.getObrigacaoFiscal() == null) {
-	        erros.add("É necessário informar o campo Obrigação Fiscal!");
-	    }
 	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
 	    }
