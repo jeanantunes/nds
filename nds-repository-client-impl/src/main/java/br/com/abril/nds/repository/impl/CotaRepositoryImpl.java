@@ -872,6 +872,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
+		
+
 
 		StringBuilder hql = new StringBuilder();
 
@@ -881,54 +883,63 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		Query query = getSession().createQuery(hql.toString());
 
+
+		if (filtro.getCotaId() != null) {
+		    query.setParameter("cotaId", filtro.getCotaId());
+		}
+
 		if (filtro.getNumeroCota() != null) {
-			query.setParameter("numeroCota", filtro.getNumeroCota());
+		    query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
 		if (filtro.getNumeroCpfCnpj() != null
-				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj() + "%");
+			&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
+		    query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj() + "%");
 		}
 
 		if (filtro.getNomeCota() != null
-				&& !filtro.getNomeCota().trim().isEmpty()) {
-			query.setParameter("nomeCota", filtro.getNomeCota() + "%" );
+			&& !filtro.getNomeCota().trim().isEmpty()) {
+		    query.setParameter("nomeCota", filtro.getNomeCota() + "%" );
 		}
-		
+
 		if (filtro.getLogradouro() != null
-				&& !filtro.getLogradouro().trim().isEmpty()) {
+			&& !filtro.getLogradouro().trim().isEmpty()) {
 
-			query.setParameter("logradouro", filtro.getLogradouro() + "%" );
+		    query.setParameter("logradouro", filtro.getLogradouro() + "%" );
 		}
-		
+
 		if (filtro.getBairro() != null
-				&& !filtro.getBairro().trim().isEmpty()) {
+			&& !filtro.getBairro().trim().isEmpty()) {
 
-			query.setParameter("bairro", filtro.getBairro() + "%" );
+		    query.setParameter("bairro", filtro.getBairro() + "%" );
 		}
-		
+
 		if (filtro.getMunicipio() != null
-				&& !filtro.getMunicipio().trim().isEmpty()) {
+			&& !filtro.getMunicipio().trim().isEmpty()) {
 
-			query.setParameter("municipio", filtro.getMunicipio() + "%" );
+		    query.setParameter("municipio", filtro.getMunicipio() + "%" );
 		}
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				CotaDTO.class));
-		
+		if (filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+		    query.setParameter("situacaoCadastro", SituacaoCadastro.valueOf(filtro.getStatus()));
+		}
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+
 		if (filtro.getPaginacao() != null) {
 
-			if (filtro.getPaginacao().getPosicaoInicial() != null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
+		    if (filtro.getPaginacao().getPosicaoInicial() != null) {
+			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		    }
 
-			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-				query.setMaxResults(filtro.getPaginacao()
-						.getQtdResultadosPorPagina());
-			}
+		    if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(filtro.getPaginacao()
+				.getQtdResultadosPorPagina());
+		    }
 		}
 
 		return query.list();
+	    
 	}
 
 	public Long obterQuantidadeCotasPesquisadas(FiltroCotaDTO filtro) {
@@ -969,6 +980,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				&& !filtro.getMunicipio().trim().isEmpty()) {
 
 			query.setParameter("municipio", filtro.getMunicipio() + "%" );
+		}
+		
+		if (filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+		    query.setParameter("situacaoCadastro", SituacaoCadastro.valueOf(filtro.getStatus()));
 		}
 
 		return (Long) query.uniqueResult();
@@ -1020,137 +1035,157 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		int colunaNumeroCpfCnpj 	 = 4;
 		int colunaContato  = 5;
 		int colunaTelefone = 6;
-		
+
 		if (isCount) {
-			
-			hql.append(" select count(distinct cota.numeroCota) ");
-			
-			
-			
+
+		    hql.append(" select count(distinct cota.numeroCota) ");
+
 		} else {
 
-			hql.append(
-					"SELECT cota.id as idCota, cota.numeroCota as numeroCota, ")
-					.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
-					.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
-					.append(" else null end as nomePessoa, ")
-					.append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
-					.append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
-					.append(" else null end as numeroCpfCnpj, ")
-					
-					
-					.append(getSubSqlPesquisaContatoPDV())
-					.append(getSubSqlPesquisaTelefone())
-					
-					.append(" pessoa.email as email ,")
-					.append(" cota.situacaoCadastro as status, ")
-					.append(" box.nome as descricaoBox ");
+		    hql.append(
+			    " SELECT cota.id as idCota, cota.numeroCota as numeroCota, cota.parametroDistribuicao.recebeComplementar as recebeComplementar, cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ")
+			    .append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
+			    .append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
+			    .append(" else null end as nomePessoa, ")
+			    .append(" case when (pessoa.cpf is not null) then ( pessoa.cpf )")
+			    .append(" when (pessoa.cnpj is not null) then ( pessoa.cnpj )")
+			    .append(" else null end as numeroCpfCnpj, ")
+
+
+			    .append(getSubSqlPesquisaContatoPDV())
+			    .append(getSubSqlPesquisaTelefone())
+
+			    .append(" pessoa.email as email ,")
+			    .append(" cota.situacaoCadastro as status, ")
+			    .append(" box.nome as descricaoBox ");
 		}
 
 		hql.append(" FROM Cota cota 								")
-				.append(" join cota.pessoa pessoa 					")
-				.append(" left join cota.enderecos enderecoCota 	")
-				.append(" left join enderecoCota.endereco endereco 	")
-		        .append(" left join cota.box box ");
+		   .append(" join cota.pessoa pessoa 					")
+		   .append(" left join cota.enderecos enderecoCota 	")
+		   .append(" left join enderecoCota.endereco endereco 	")
+		   .append(" left join cota.box box ");
 
-		
-		
-		if(	filtro.getNumeroCota() != null ||
+
+
+		if(	filtro.getCotaId() != null || filtro.getNumeroCota() != null ||
 			(filtro.getNumeroCpfCnpj() != null && !filtro.getNumeroCpfCnpj().trim().isEmpty()) ||
 			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
 			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
 			(filtro.getBairro() != null && !filtro.getBairro().trim().isEmpty()) ||
-			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty())) {
-			
-			hql.append(" WHERE ");
-			
+			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty()) ||
+			(filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS"))) {
+
+		    hql.append(" WHERE ");
+
 		}
-		
+
 		boolean indAnd = false;
 
-		if (filtro.getNumeroCota() != null) {
-			
-			hql.append(" cota.numeroCota =:numeroCota ");
-			
-			indAnd = true;
+		if (filtro.getCotaId() != null) {
+
+		    hql.append(" cota.id = :cotaId ");
+
+		    indAnd = true;
 		}
 
+		if (filtro.getNumeroCota() != null) {
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" cota.numeroCota =:numeroCota ");
+
+		    indAnd = true;
+		}
+
+
 		if (filtro.getNumeroCpfCnpj() != null
-				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
-			
-			if(indAnd) {
-				hql.append(" AND ");
-			}
-			
-			hql.append(" ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
-			
-			indAnd = true;
+			&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
+
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" ( upper (pessoa.cpf) like(:numeroCpfCnpj) OR  upper(pessoa.cnpj) like upper (:numeroCpfCnpj) ) ");
+
+		    indAnd = true;
 		}
 
 		if (filtro.getNomeCota() != null
-				&& !filtro.getNomeCota().trim().isEmpty()) {
+			&& !filtro.getNomeCota().trim().isEmpty()) {
 
-			if(indAnd) {
-				hql.append(" AND ");
-			}
-			
-			hql.append(" ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
-			
-			indAnd = true;
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" ( upper(pessoa.nome) like upper(:nomeCota) OR  upper(pessoa.razaoSocial) like  upper(:nomeCota ) )");
+
+		    indAnd = true;
 		}
-		
+
 		if (filtro.getLogradouro() != null
-				&& !filtro.getLogradouro().trim().isEmpty()) {
+			&& !filtro.getLogradouro().trim().isEmpty()) {
 
-			if(indAnd) {
-				hql.append(" AND ");
-			}
-			
-			hql.append(" ( upper(endereco.logradouro) like upper(:logradouro) )");
-			
-			indAnd = true;
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" ( upper(endereco.logradouro) like upper(:logradouro) )");
+
+		    indAnd = true;
 		}
-		
+
 		if (filtro.getBairro() != null
-				&& !filtro.getBairro().trim().isEmpty()) {
+			&& !filtro.getBairro().trim().isEmpty()) {
 
-			if(indAnd) {
-				hql.append(" AND ");
-			}
-			
-			hql.append(" ( upper(endereco.bairro) like upper(:bairro) )");
-			
-			indAnd = true;
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" ( upper(endereco.bairro) like upper(:bairro) )");
+
+		    indAnd = true;
 		}
-		
+
 		if (filtro.getMunicipio() != null
-				&& !filtro.getMunicipio().trim().isEmpty()) {
+			&& !filtro.getMunicipio().trim().isEmpty()) {
 
-			if(indAnd) {
-				hql.append(" AND ");
-			}
-			
-			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
+
+		    indAnd = true;
 		}
 
-		
+		if (filtro.getStatus() != null
+			&& !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+
+		    if(indAnd) {
+			hql.append(" AND ");
+		    }
+
+		    hql.append(" cota.situacaoCadastro =:situacaoCadastro ");
+		}
+
+
 		if (!isCount) {
 
-			hql.append("group by ");
-			hql.append("cota.id, ");
-			hql.append("cota.numeroCota, ");
-			hql.append(colunaRazaoSocNomePessoa + ", ");
-			hql.append(colunaNumeroCpfCnpj 		+ ", ");
-			hql.append(colunaContato 			+ ", ");
-			hql.append(colunaTelefone 			+ ", ");
-			hql.append("pessoa.email, ");
-			hql.append("cota.situacaoCadastro, ");
-			hql.append("box.nome  ");
-			
-		} 
-		
+		    hql.append("group by ");
+		    hql.append("cota.id, ");
+		    hql.append("cota.numeroCota, ");
+		    hql.append(colunaRazaoSocNomePessoa + ", ");
+		    hql.append(colunaNumeroCpfCnpj 		+ ", ");
+		    hql.append(colunaContato 			+ ", ");
+		    hql.append(colunaTelefone 			+ ", ");
+		    hql.append("pessoa.email, ");
+		    hql.append("cota.situacaoCadastro, ");
+		    hql.append("box.nome  ");
 
-		
+		} 
+
 		return hql.toString();
 	}
 
