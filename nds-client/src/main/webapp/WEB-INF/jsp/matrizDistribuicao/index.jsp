@@ -123,7 +123,7 @@ var lancamentosSelecionados = [];
 		            
 		            </td>
 			   	        <td width="120">Data de Lançamento:</td>
-		   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
+		   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="matrizDistribuicao_datepickerDe" style="width:80px;" value="${data}" /></td>
 			   	        <td width="30" align="center">&nbsp;</td>
 			   	        <td ><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
