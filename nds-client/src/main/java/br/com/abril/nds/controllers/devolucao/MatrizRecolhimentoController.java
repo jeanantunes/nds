@@ -174,7 +174,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO, balanceamentoRecolhimento);
 		}
 		
-		/*
+		
 		if (balanceamentoRecolhimento == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
@@ -182,7 +182,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
 		}
-		*/
+		
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
