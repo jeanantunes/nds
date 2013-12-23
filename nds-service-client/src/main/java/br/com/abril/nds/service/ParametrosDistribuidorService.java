@@ -49,6 +49,6 @@ public interface ParametrosDistribuidorService {
 	/**
 	 * @return
 	 */
-	public NotaFiscalTipoEmissao obterNotaFiscalTipoEmissao();
+	public List<NotaFiscalTipoEmissao> obterTiposEmissoesNotaFiscalDistribuidor();
 	
 }

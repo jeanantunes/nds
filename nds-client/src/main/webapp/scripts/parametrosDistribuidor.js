@@ -198,9 +198,21 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
 			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
-			{name:'parametrosDistribuidor.regimeEspecial', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')}
+			{name:'parametrosDistribuidor.possuiRegimeEspecialDispensaInterna', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')},
 			
 		];
+		
+		itensTiposNotasFiscais = [];
+		
+		$.each($('#tabFiscal :input[type=radio]'), function(index, value) {
+			itensTiposNotasFiscais[index] = value.name;
+		});
+		
+		itensTiposNotasFiscais = jQuery.unique(itensTiposNotasFiscais);
+		
+		$.each(itensTiposNotasFiscais, function(index, value) {
+			data.push({name:'parametrosDistribuidor.tiposNotasFiscais.'+itensTiposNotasFiscais[index], value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val()});
+		});
 		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",
 				   data,

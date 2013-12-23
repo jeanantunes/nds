@@ -18,9 +18,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -325,7 +327,18 @@ public class Distribuidor {
 	private boolean pararAcumuloDividas;
 	
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("id")
 	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
+	
+	@OneToMany
+	@JoinTable(
+	            name="DISTRIBUIDOR_TIPOS_EMISSOES_NOTA_FISCAL",
+	            joinColumns={
+	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
+	@OrderBy("sequencia")
+	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
 	
 	public Long getId() {
 		return id;
@@ -1176,6 +1189,15 @@ public class Distribuidor {
 	public void setTiposNotaFiscalDistribuidor(
 			Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor) {
 		this.tiposNotaFiscalDistribuidor = tiposNotaFiscalDistribuidor;
+	}
+
+	public Set<NotaFiscalTipoEmissao> getTiposEmissoesNotaFiscalDistribuidor() {
+		return tiposEmissoesNotaFiscalDistribuidor;
+	}
+
+	public void setTiposEmissoesNotaFiscalDistribuidor(
+			Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor) {
+		this.tiposEmissoesNotaFiscalDistribuidor = tiposEmissoesNotaFiscalDistribuidor;
 	}
 	
 }

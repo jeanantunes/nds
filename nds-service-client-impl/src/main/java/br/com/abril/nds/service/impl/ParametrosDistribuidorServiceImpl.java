@@ -886,6 +886,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
+		
+		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNomeCampoTela().equals("notaFiscalDevolucaoCota")) {
+				NotaFiscalTipoEmissao notaFiscalTipoEmissao = new NotaFiscalTipoEmissao();
+				notaFiscalTipoEmissao.setId(parametrosDistribuidor.getTiposNotasFiscais().getNotaFiscalDevolucaoCota());
+				dtnf.setTipoEmissao(notaFiscalTipoEmissao);
+			}
+		}
+		
+		
 		distribuidorService.alterar(distribuidor);
 		
 		distribuidor.setEnderecoDistribuidor(
@@ -1225,8 +1235,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	}
 
 	@Override
-	public NotaFiscalTipoEmissao obterNotaFiscalTipoEmissao() {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional
+	public List<NotaFiscalTipoEmissao> obterTiposEmissoesNotaFiscalDistribuidor() {
+		List<NotaFiscalTipoEmissao> tiposEmissaoNotaFiscal = new ArrayList<>();
+		tiposEmissaoNotaFiscal.addAll(distribuidorService.obter().getTiposEmissoesNotaFiscalDistribuidor());
+		return tiposEmissaoNotaFiscal;
 	}
 }
