@@ -360,6 +360,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			exibirMensagem("WARNING", ["Digite um número valido!"]);
 			return;
 		}
+
+        // evita a chamada dupla com o enter...
+        if (T.lancamentos[index].repDistrib == input.value) {
+            return;
+        }
 		
         if (T.lancamentos[index].estudo && T.lancamentos[index].estudo > 0) {
             $('<div>Confirma alteração de reparte para este estudo?</div>').dialog({
@@ -383,8 +388,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                                     $("#sobra" + index, _workspace).text(vlr);
                                     T.lancamentos[index].sobra = vlr;
 
-                                    //remove a tab pq ao alterar o reparte precisa recalcular toda a tela
-                                    $('#workspace').tabs('remove', $('#workspace').tabs('Histograma Pré Análise').index());
+                                    if (typeof histogramaPosEstudoController != 'undefined') {
+                                        //tenta atualizar os valores da tela de histograma pré analise
+                                        try{
+                                            $('#fieldSetResumoReservaTecnica').html(formatarMilhar(vlr));
+                                            $('#fieldSetResumoReparteDistribuida').html(formatarMilhar(input.value));
+                                        }catch(e){
+                                            exibirMensagem('WARNING', [e.message]);
+                                        }
+                                    }
 
                                     if (typeof analiseParcialController != 'undefined') {
                                         //tentar atualizar valores na tela de analise aberta
