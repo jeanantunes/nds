@@ -361,12 +361,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		
-//		T.lancamentos[index].repDistrib = input.value;
-//		var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
-//		$("#sobra" + index, _workspace).text(vlr);
-//		T.lancamentos[index].sobra = vlr;
-
-        //TODO se existe estudo, atualizar o total de reparte distribuido
         if (T.lancamentos[index].estudo && T.lancamentos[index].estudo > 0) {
             $('<div>Confirma alteração de reparte para este estudo?</div>').dialog({
                 escondeHeader: false,
@@ -388,6 +382,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                                     var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
                                     $("#sobra" + index, _workspace).text(vlr);
                                     T.lancamentos[index].sobra = vlr;
+
+                                    //remove a tab pq ao alterar o reparte precisa recalcular toda a tela
+                                    $('#workspace').tabs('remove', $('#workspace').tabs('Histograma Pré Análise').index());
 
                                     if (typeof analiseParcialController != 'undefined') {
                                         //tentar atualizar valores na tela de analise aberta
