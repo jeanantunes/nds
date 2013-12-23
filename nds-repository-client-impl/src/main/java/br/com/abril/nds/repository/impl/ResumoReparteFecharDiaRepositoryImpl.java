@@ -128,7 +128,9 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
         
-        query.setParameterList("statusDiferencaGFS", Arrays.asList(StatusAprovacao.PENDENTE));
+        query.setParameterList("statusDiferencaGFS", Arrays.asList(StatusAprovacao.PENDENTE,
+        														   StatusAprovacao.GANHO,
+        														   StatusAprovacao.PERDA));
         
         query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
         															TipoDiferenca.SOBRA_EM,
