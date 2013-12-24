@@ -24,8 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
+import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -1714,6 +1716,25 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		return null;
 
+	}
+
+	@Override
+	public List<br.com.abril.nds.model.fiscal.NotaFiscal> obterNotaFiscal(
+			ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscal) {
+		
+		this.notaFiscalRepository.obterNotaFiscal(dadoConsultaLoteNotaFiscal);
+		
+		return null;
+	}
+
+	@Override
+	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
+		
+		LOGGER.info("obter informações da cota sumarizadas...");
+		
+		this.notaFiscalRepository.consultaCotaExemplaresSumarizados(filtro);
+		
+		return null;
 	}
 
 }

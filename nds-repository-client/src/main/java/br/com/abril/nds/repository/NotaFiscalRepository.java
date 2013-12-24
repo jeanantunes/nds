@@ -2,8 +2,11 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
+import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 
@@ -23,4 +26,8 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro);
 
 	List<Long> obterNumerosNFePorLancamento(Long idLancamento);
+
+	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroViewNotaFiscalDTO filtro);
+	
+	public abstract List<NotaFiscal> obterNotaFiscal(ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscal);
 }

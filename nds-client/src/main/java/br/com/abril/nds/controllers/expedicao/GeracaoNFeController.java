@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -66,6 +68,11 @@ public class GeracaoNFeController extends BaseController {
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
 	
+	@Autowired
+	private HttpServletRequest request;
+	
+	private static final String FILTRO_SESSION_NOTA_FISCAL = "filtroNotaFiscal";
+	
 	@Path("/")
 	public void index() {
 		
@@ -98,30 +105,18 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/busca.json")
-	public void busca(
-			Integer intervaloBoxDe, Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte,
-			List<Long> listIdFornecedor, Long tipoNotaFiscal,
-			Long idRoteiro, Long idRota,
-			String sortname, String sortorder, int rp, int page) {
+	public void busca(FiltroViewNotaFiscalDTO filtro) {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL,	filtro);
 		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
-		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
-		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs =	
-				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, 
-						listIdFornecedor, tipoNotaFiscal, idRoteiro, idRota, sortname, sortorder, rp, page, null);
+		List<CotaExemplaresDTO> cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);
 		
 		if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
+		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(filtro.getPage()).total(cotaExemplaresDTOs.size()).serialize();
 	}
 	
 	@Post("/buscaCotasSuspensas.json")
@@ -203,7 +198,8 @@ public class GeracaoNFeController extends BaseController {
 		return listaTipoNotaFiscal;
 	}
 	
-	public void exportar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
+	@SuppressWarnings("deprecation")
+	public void exportar(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal,String sortname,
 			String sortorder,FileType fileType) throws IOException {

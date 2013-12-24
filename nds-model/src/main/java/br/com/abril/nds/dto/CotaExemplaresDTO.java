@@ -9,12 +9,8 @@ import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class CotaExemplaresDTO implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5054002962389418662L;
 	
+	private static final long serialVersionUID = -5054002962389418662L;
 	
 	private Long idCota;
 	@Export(label="Cota", alignment=Alignment.LEFT)
