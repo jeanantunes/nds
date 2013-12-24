@@ -1,5 +1,7 @@
 package br.com.abril.nds.client.vo;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
@@ -33,7 +35,7 @@ public class ParametrosDistribuidorVO {
     
     private ObrigacaoFiscal obrigacaoFiscal;
     
-    private boolean regimeEspecial;
+    private boolean possuiRegimeEspecialDispensaInterna;
     
     private EnderecoVO endereco = new EnderecoVO();
     
@@ -246,6 +248,8 @@ public class ParametrosDistribuidorVO {
     private Integer chamadaoDiasSuspensao;
     
     private String chamadaoValorConsignado;
+    
+    private TiposNotasFiscaisVO tiposNotasFiscais;
 
     /**
      * @return the razaoSocial
@@ -387,12 +391,12 @@ public class ParametrosDistribuidorVO {
         this.obrigacaoFiscal = obrigacaoFiscal;
     }
     
-    public boolean getRegimeEspecial() {
-        return regimeEspecial;
+    public boolean isPossuiRegimeEspecialDispensaInterna() {
+        return possuiRegimeEspecialDispensaInterna;
     }
 
-    public void setRegimeEspecial(boolean regimeEspecial) {
-        this.regimeEspecial = regimeEspecial;
+    public void setPossuiRegimeEspecialDispensaInterna(boolean possuiRegimeEspecialDispensaInterna) {
+        this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
     }
 
     /**
@@ -1321,4 +1325,13 @@ public class ParametrosDistribuidorVO {
 	public void setNumeroDDD(String numeroDDD) {
 		this.numeroDDD = numeroDDD;
 	}
+
+	public TiposNotasFiscaisVO getTiposNotasFiscais() {
+		return tiposNotasFiscais;
+	}
+
+	public void setTiposNotasFiscais(TiposNotasFiscaisVO tiposNotasFiscais) {
+		this.tiposNotasFiscais = tiposNotasFiscais;
+	}
+	
 }
