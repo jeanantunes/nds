@@ -18,9 +18,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -210,12 +212,14 @@ public class Distribuidor {
 	@Column(name = "TIPO_ATIVIDADE", nullable = true)
 	private TipoAtividade tipoAtividade = TipoAtividade.MERCANTIL;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "OBRIGACAO_FISCAL", nullable = true)
-	private ObrigacaoFiscal obrigacaoFiscal;
+	@Column(name = "POSSUI_REGIME_ESPECIAL_DISPENSA_INTERNA", nullable = false)
+	private boolean possuiRegimeEspecialDispensaInterna;
 	
-	@Column(name = "REGIME_ESPECIAL", nullable = false)
-	private boolean regimeEspecial;
+	@Column(name = "NUMERO_DISPOSITIVO_LEGAL")
+	private String numeroDispositivoLegal;
+	
+	@Column(name = "DATA_LIMITE_VIGENCIA_REGIME_ESPECIAL")
+	private String dataLimiteVigenciaRegimeEspecial;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
@@ -321,6 +325,20 @@ public class Distribuidor {
 	
 	@Column(name = "PARAR_ACUM_DIVIDAS", nullable = false)
 	private boolean pararAcumuloDividas;
+	
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("id")
+	private Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor = new HashSet<DistribuidorTipoNotaFiscal>();
+	
+	@OneToMany
+	@JoinTable(
+	            name="DISTRIBUIDOR_TIPOS_EMISSOES_NOTA_FISCAL",
+	            joinColumns={
+	            		@JoinColumn(table="DISTRIBUIDOR", name="DISTRIBUIDOR_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPO_EMISSAO", name="NOTA_FISCAL_TIPO_EMISSAO_ID", referencedColumnName="id"))
+	@OrderBy("sequencia")
+	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
 	
 	public Long getId() {
 		return id;
@@ -760,20 +778,30 @@ public class Distribuidor {
 		this.tipoAtividade = tipoAtividade;
 	}
 
-	public ObrigacaoFiscal getObrigacaoFiscal() {
-		return obrigacaoFiscal;
+	public boolean isPossuiRegimeEspecialDispensaInterna() {
+		return possuiRegimeEspecialDispensaInterna;
 	}
 
-	public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
-		this.obrigacaoFiscal = obrigacaoFiscal;
+	public void setPossuiRegimeEspecialDispensaInterna(
+			boolean possuiRegimeEspecialDispensaInterna) {
+		this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
 	}
 
-	public boolean isRegimeEspecial() {
-		return regimeEspecial;
+	public String getNumeroDispositivoLegal() {
+		return numeroDispositivoLegal;
 	}
 
-	public void setRegimeEspecial(boolean regimeEspecial) {
-		this.regimeEspecial = regimeEspecial;
+	public void setNumeroDispositivoLegal(String numeroDispositivoLegal) {
+		this.numeroDispositivoLegal = numeroDispositivoLegal;
+	}
+
+	public String getDataLimiteVigenciaRegimeEspecial() {
+		return dataLimiteVigenciaRegimeEspecial;
+	}
+
+	public void setDataLimiteVigenciaRegimeEspecial(
+			String dataLimiteVigenciaRegimeEspecial) {
+		this.dataLimiteVigenciaRegimeEspecial = dataLimiteVigenciaRegimeEspecial;
 	}
 
 	public TipoImpressaoCE getTipoImpressaoCE() {
@@ -1007,18 +1035,6 @@ public class Distribuidor {
 	}
 
 	/**
-	 * Conforme esclarecido pela àrea de negócios qualquer
-	 * valor de {@link ObrigacaoFiscal} atribuído ao Distribuidor
-	 * indica que este possui obrigação fiscal.
-	 * 
-	 * @return true se o Distribuidor possui obrigação
-	 * fiscal, false caso contrário
-	 */
-	public boolean possuiObrigacaoFiscal() {
-	    return obrigacaoFiscal != null;
-	}
-
-	/**
 	 * @return the fechamentoDiarioEmAndamento
 	 */
 	public Boolean getFechamentoDiarioEmAndamento() {
@@ -1159,4 +1175,29 @@ public class Distribuidor {
 	public void setPararAcumuloDividas(boolean pararAcumuloDividas) {
 		this.pararAcumuloDividas = pararAcumuloDividas;
 	}
+
+	/**
+	 * @return
+	 */
+	public Set<DistribuidorTipoNotaFiscal> getTiposNotaFiscalDistribuidor() {
+		return tiposNotaFiscalDistribuidor;
+	}
+
+	/**
+	 * @param tiposNotaFiscalDistribuidor
+	 */
+	public void setTiposNotaFiscalDistribuidor(
+			Set<DistribuidorTipoNotaFiscal> tiposNotaFiscalDistribuidor) {
+		this.tiposNotaFiscalDistribuidor = tiposNotaFiscalDistribuidor;
+	}
+
+	public Set<NotaFiscalTipoEmissao> getTiposEmissoesNotaFiscalDistribuidor() {
+		return tiposEmissoesNotaFiscalDistribuidor;
+	}
+
+	public void setTiposEmissoesNotaFiscalDistribuidor(
+			Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor) {
+		this.tiposEmissoesNotaFiscalDistribuidor = tiposEmissoesNotaFiscalDistribuidor;
+	}
+	
 }

@@ -115,6 +115,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.include("fornecedores", fornecedorService.obterFornecedores());
 		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
 		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
+		result.include("listaTiposNotaFiscal", parametrosDistribuidorService.obterTiposNotaFiscalDistribuidor());
+		result.include("listaTiposEmissaoNotaFiscal", parametrosDistribuidorService.obterTiposEmissoesNotaFiscalDistribuidor());
 		
 		this.buscarLogoArmazenarSessao();
 		
@@ -415,9 +417,6 @@ public class ParametrosDistribuidorController extends BaseController {
 	    
 	    if (vo.getRegimeTributario() == null) {
 	        erros.add("É necessário informar o campo Regime Tributário!");
-	    }
-	    if (vo.getObrigacaoFiscal() == null) {
-	        erros.add("É necessário informar o campo Obrigação Fiscal!");
 	    }
 	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");

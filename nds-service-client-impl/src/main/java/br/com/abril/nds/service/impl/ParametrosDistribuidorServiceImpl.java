@@ -27,8 +27,10 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.ParametroEntregaBanca;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -182,8 +184,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
 		parametrosDistribuidor.setRegimeTributario(distribuidor.getTipoAtividade());
-		parametrosDistribuidor.setObrigacaoFiscal(distribuidor.getObrigacaoFiscal());
-		parametrosDistribuidor.setRegimeEspecial(distribuidor.isRegimeEspecial());
+		parametrosDistribuidor.setPossuiRegimeEspecialDispensaInterna(distribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
 		// Parciais / Matriz de Lançamento
 		parametrosDistribuidor.setRelancamentoParciaisEmDias(distribuidor.getFatorRelancamentoParcial());
@@ -567,8 +568,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setCodigoDistribuidorFC(parametrosDistribuidor.getCodigoDistribuidorFC());
 		
 		distribuidor.setTipoAtividade(parametrosDistribuidor.getRegimeTributario());
-		distribuidor.setObrigacaoFiscal(parametrosDistribuidor.getObrigacaoFiscal());
-		distribuidor.setRegimeEspecial(parametrosDistribuidor.getRegimeEspecial());
+		distribuidor.setPossuiRegimeEspecialDispensaInterna(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
 		// Parciais / Matriz de Lançamento
 		distribuidor.setFatorRelancamentoParcial(parametrosDistribuidor.getRelancamentoParciaisEmDias());
@@ -885,6 +885,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
+		
+		
+		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+			if(dtnf.getNomeCampoTela().equals("notaFiscalDevolucaoCota")) {
+				NotaFiscalTipoEmissao notaFiscalTipoEmissao = new NotaFiscalTipoEmissao();
+				notaFiscalTipoEmissao.setId(parametrosDistribuidor.getTiposNotasFiscais().getNotaFiscalDevolucaoCota());
+				dtnf.setTipoEmissao(notaFiscalTipoEmissao);
+			}
+		}
+		
 		
 		distribuidorService.alterar(distribuidor);
 		
@@ -1207,5 +1217,28 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return controleConferenciaEncalhe;
 		
+	}
+
+	@Override
+	@Transactional
+	public List<DistribuidorTipoNotaFiscal> obterTiposNotaFiscalDistribuidor() {
+		List<DistribuidorTipoNotaFiscal> tiposNotaFiscal = new ArrayList<>();
+		tiposNotaFiscal.addAll(distribuidorService.obter().getTiposNotaFiscalDistribuidor());
+		if(!tiposNotaFiscal.isEmpty()) {
+			for(DistribuidorTipoNotaFiscal dtnf : tiposNotaFiscal) {
+				for(NotaFiscalTipoEmissao nfte : dtnf.getTipoEmissaoDisponiveis()) {
+					nfte.getDescricao();
+				}
+			}
+		}
+		return tiposNotaFiscal;
+	}
+
+	@Override
+	@Transactional
+	public List<NotaFiscalTipoEmissao> obterTiposEmissoesNotaFiscalDistribuidor() {
+		List<NotaFiscalTipoEmissao> tiposEmissaoNotaFiscal = new ArrayList<>();
+		tiposEmissaoNotaFiscal.addAll(distribuidorService.obter().getTiposEmissoesNotaFiscalDistribuidor());
+		return tiposEmissaoNotaFiscal;
 	}
 }
