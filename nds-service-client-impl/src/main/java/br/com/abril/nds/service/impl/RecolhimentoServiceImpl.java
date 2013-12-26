@@ -674,11 +674,21 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																		 listaIdsFornecedores, 
 																		 GrupoProduto.CROMO);
 		}
-
+		
 		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
+		
+		//TODO Certo
+        BigDecimal media = BigDecimal.ZERO;
+		
+		for (BigDecimal bigDecimal : mapaExpectativaEncalheTotalDiaria.values()) {
+			media = media.add(bigDecimal);
+		}
+		
+		dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.divide(new BigDecimal(""+dadosRecolhimento.getDatasRecolhimentoFornecedor().size())).longValue());
+		
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
 		
@@ -738,9 +748,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * Obtém as datas de recolhimento dos fornecedores informados.
 	 */
-	private TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
+	@Transactional (readOnly = true)
+	public TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
 														   List<Long> listaIdsFornecedores) {
-		
+       
+		if (periodoRecolhimento == null || listaIdsFornecedores == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR ,
+										 "periodo ou fornecedores nulos");
+		}
+
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				listaIdsFornecedores, OperacaoDistribuidor.RECOLHIMENTO);
@@ -748,7 +765,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (listaDistribuicaoFornecedor == null || listaDistribuicaoFornecedor.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING ,
-										 "Dias de recolhimento para os fornecedores não encontrados!");
+										 //"Dias de recolhimento para os fornecedores não encontrados!");
+					                      "Cadastrar os dias de recolhimento para os fornecedores selecionados.");
 		}
 		
 		Set<Integer> diasSemanaFornecedor = new TreeSet<Integer>();
