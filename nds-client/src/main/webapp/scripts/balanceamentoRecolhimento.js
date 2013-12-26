@@ -756,6 +756,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'PEB',
+				name : 'peb',
+				width : 20,
+				sortable : true,
+				align : 'right'
+			}, {
 				display : 'Rcto',
 				name : 'dataRecolhimento',
 				width : 60,

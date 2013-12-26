@@ -52,6 +52,16 @@ public class ProdutoRecolhimentoFormatadoVO {
 	
 	private boolean aceiteDataNova;
 	
+	private Long peb;
+	
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
+	}
+
 	/**
 	 * @return the idFornecedor
 	 */

@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
@@ -91,4 +94,10 @@ public interface RecolhimentoService {
 	
 	void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
 	
+	/**
+	 * Obtém as datas de recolhimento dos fornecedores informados.
+	 */
+	public TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
+														   List<Long> listaIdsFornecedores);
+
 }
