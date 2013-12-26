@@ -92,9 +92,12 @@ public interface RecolhimentoService {
 										 TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 										 List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada);
 	
+	void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
+	
 	/**
 	 * Obtém as datas de recolhimento dos fornecedores informados.
 	 */
 	public TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
 														   List<Long> listaIdsFornecedores);
+
 }
