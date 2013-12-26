@@ -675,7 +675,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 			try {
 				
-				boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
+				boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoNaoVencidoOuPagoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
 
 				if (existeBoletoAntecipado){
 				

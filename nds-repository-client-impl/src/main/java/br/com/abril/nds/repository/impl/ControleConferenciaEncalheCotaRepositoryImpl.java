@@ -104,7 +104,6 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Long> obterListaIdControleConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro) {
 		
 		StringBuffer sql = new StringBuffer();
@@ -369,5 +368,34 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO);
 		
 		return (query.list().size() > 0);
+	}
+    
+    /**
+     * Obtém ControleConferenciaEncalheCota por Cobrança
+     * @param idCobranca
+     * @return ControleConferenciaEncalheCota
+     */
+    @Override
+	public ControleConferenciaEncalheCota obterControleConferenciaEncalheCotaPorIdCobranca(Long idCobranca) {
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select c from ControleConferenciaEncalheCota c ");		
+		
+		hql.append(" join c.cobrancasControleConferenciaEncalheCota cobrancaControleConferencia ");
+		
+		hql.append(" join cobrancaControleConferencia.cobranca cobranca ");
+		
+		hql.append(" where cobranca.id = :idCobranca ");
+		
+		hql.append(" and c.status = :statusConcluido ");
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idCobranca", idCobranca);
+		
+		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO);
+		
+		return (ControleConferenciaEncalheCota) query.uniqueResult();
 	}
 }
