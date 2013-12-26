@@ -1601,7 +1601,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
 		}
 		
-		//TODO: chamar método no service.
+		this.recolhimentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
 
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();

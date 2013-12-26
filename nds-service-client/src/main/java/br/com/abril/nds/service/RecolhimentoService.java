@@ -89,4 +89,6 @@ public interface RecolhimentoService {
 										 TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 										 List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada);
 	
+	void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
+	
 }
