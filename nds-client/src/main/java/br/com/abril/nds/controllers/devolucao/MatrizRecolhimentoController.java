@@ -40,6 +40,7 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
@@ -1555,7 +1556,56 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		return null;
 	}
+
+	@Get
+	public void isTodasDatasConfirmadas() {
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			if (!confirmacaoVO.isConfirmado()) {
+				
+				this.result.use(Results.json()).from(false, "result").serialize();
+				
+				return;
+			}
+		}
+
+		this.result.use(Results.json()).from(true, "result").serialize();
+	}
 	
+	@Get
+	public void obterDatasConfirmadas() {
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+
+		List<String> datasConfirmadas = new ArrayList<>();
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			if (confirmacaoVO.isConfirmado()) {
+				
+				datasConfirmadas.add(confirmacaoVO.getMensagem());
+			}
+		}
+		
+		this.result.use(Results.json()).from(datasConfirmadas, "result").serialize();
+	}
+	
+	@Post
+	public void reabrirMatriz(List<Date> datasReabertura) {
+
+		if (datasReabertura == null || datasReabertura.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
+		}
+		
+		//TODO: chamar método no service.
+
+		this.result.use(PlainJSONSerialization.class).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
+	}
 
 	/**
 	 * Obtem agrupamento diário para confirmação de Balanceamento
