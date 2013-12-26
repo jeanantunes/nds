@@ -85,6 +85,11 @@
 				</a>
 			</span>
 			
+			<span class="bt_novos" >
+				<a isEdicao="true" id="linkReabrirMatriz" href="javascript:;" title="Reabrir Matriz">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				</a>
+			</span>
 			
 		</div>
 		</div>
@@ -144,6 +149,23 @@
 		    	<legend>Confirmar Balanceamento</legend>
 
 		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamentoRecolhimento">
+		        </table>
+
+		    </fieldset>
+		</div>
+		</form>
+
+		<form id="form-reabrir-matriz">
+		<div id="dialog-reabrir-matriz" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-reabertura" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Reabrir Matrizes Confirmadas</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableReaberturaMatrizConfirmada">
 		        </table>
 
 		    </fieldset>

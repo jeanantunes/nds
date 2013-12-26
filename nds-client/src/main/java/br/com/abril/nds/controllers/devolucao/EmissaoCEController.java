@@ -229,7 +229,7 @@ public class EmissaoCEController extends BaseController {
 		return listaRoteiros;
 	}
 
-	private void obterDadosImpressaoCE(FiltroEmissaoCE filtro){
+	private DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoCE(FiltroEmissaoCE filtro){
 	
         session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
 		
@@ -254,37 +254,58 @@ public class EmissaoCEController extends BaseController {
 		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 
 		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
+		
+		return dados;
 	}
 	
 	@Post
 	@Path("/obterDadosImpressaoBoletosEmBranco")
-	public void obterDadosImpressaoBoletosEmBranco() {
-		
-		FiltroEmissaoCE filtro = getFiltroSessao();
-		
-		this.obterDadosImpressaoCE(filtro);
+	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) {
 		
 		boolean existemBoletosEmBranco = false;
 		
-		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
-		
-		if (dados==null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
-		}
-		
-		List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
+		FiltroEmissaoCE filtro = getFiltroSessao();
 
-		if (boletosEmBranco!=null && boletosEmBranco.size() > 0){
+		boolean boletosEmitidosNoPeriodo = this.boletoService.existeBoletoAntecipadoPeriodoRecolhimentoECota(filtro.getNumCotaDe(),
+				                                                                                             filtro.getNumCotaAte(), 
+				                                                                                             filtro.getDtRecolhimentoDe(), 
+				                                                                                             filtro.getDtRecolhimentoAte());
+
+		if (!verificarReemissao || !boletosEmitidosNoPeriodo){
 			
-			this.boletoService.salvaBoletosAntecipado(boletosEmBranco);
+			DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
 			
-			session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
+			if (dados == null){
+
+			    dados = this.obterDadosImpressaoCE(filtro);
+			}    
 			
-			existemBoletosEmBranco = true;
+			if (dados == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+			}
+			
+			List<BoletoEmBrancoDTO> boletosEmBranco = this.obterDadosBoletosEmBrancoPorListaCE(dados.getCotasEmissao(), filtro);
+			
+			if (boletosEmBranco!=null && boletosEmBranco.size() > 0){
+				
+				this.boletoService.salvaBoletosAntecipado(boletosEmBranco);
+				
+				session.setAttribute(BOLETOS_EM_BRANCO, boletosEmBranco);	
+				
+				existemBoletosEmBranco = true;
+			}
+			else{
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,"Não foi possível Emitir a Boleto em Branco !");
+			}
+			
+			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
+	    }
+		else{
+			
+			result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
 		}
-		
-		result.use(Results.json()).from(existemBoletosEmBranco,"result").recursive().serialize();
 	}
 
 	public void imprimirCE() {

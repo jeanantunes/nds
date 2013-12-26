@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.financeiro;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -52,6 +53,8 @@ public class BoletoEmailController extends BaseController {
 	
 	@Post
 	public void emitirBoletosFechamentoEncalhe(){
+
+		List<String> mensagensBoletosNaoEmitidos = new ArrayList<String>();
 			
 		List<BoletoEmail> listaBoletoEmail = this.boletoEmailService.buscarTodos();
 		
@@ -64,25 +67,32 @@ public class BoletoEmailController extends BaseController {
 		
 		int boletosEmitidos = 0;
 		
-		try{
-			
-			for(BoletoEmail bm : listaBoletoEmail){
-				
+		for(BoletoEmail bm : listaBoletoEmail){
+
+		    try{
+
 				this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir);
 				
 				this.boletoEmailService.enviarBoletoEmail(bm);
-			}
-		}	
-        catch(Exception e){
+			}	
+            catch(Exception e){
         	
-        	throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao enviar boleto"+e.getMessage());
-        }
-		finally{
+        	    mensagensBoletosNaoEmitidos.add("Boleto "+boletosEmitidos+" de "+totalBoletosEmitir+" não enviado. Motivo: "+e.getMessage());
+            }
+		    finally{
 		    
-        	this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, STATUS_FINALIZADO);
-        }
+        	    this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, STATUS_FINALIZADO);
+            }
+		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boletos pendentes emitidos com sucesso!"), "result").recursive().serialize();
+		if (mensagensBoletosNaoEmitidos.isEmpty()){
+		
+		    this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boletos pendentes emitidos com sucesso!"), "result").recursive().serialize();
+		}
+		else{
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, mensagensBoletosNaoEmitidos), "result").recursive().serialize();
+		}
 	}
 	
 	@Post
