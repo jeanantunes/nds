@@ -1258,9 +1258,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	abrirPopupReabrirMatriz : function() {
 	
-		var _this = this;
-		
-		$( "#dialog-reabrir-matriz", _this.workspace).dialog({
+		$( "#dialog-reabrir-matriz", balanceamentoRecolhimentoController.workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -1283,13 +1281,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			    	}
 				}
 			],
-		    form: $("form-reabrir-matriz", _this.workspace)
+			beforeClose: function() {
+				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
+		    },
+		    form: $("#form-reabrir-matriz", balanceamentoRecolhimentoController.workspace)
 		});
 	},
 	
 	popularPopupReaberturaMatrizes: function(result) {
-		
-		$("#tableReaberturaMatrizConfirmada", balanceamentoRecolhimentoController.workspace).clear();
 		
 		var conteudo = '';
 		
@@ -1301,19 +1300,18 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			conteudo += '</tr>';
 		});
 		
-		$("#tableReaberturaMatrizConfirmada", balanceamentoRecolhimentoController.workspace).append(conteudo);
+		$("#tableReaberturaMatrizConfirmada", balanceamentoRecolhimentoController.workspace).html(conteudo);
 	},
 	
 	reabrirMatriz: function() {
 
-		var datasReabertura = [];
-		var params=[];
-
+		var params = new Array();
+		
 		$("input[name='checkMatrizReabertura']:checked").each(function(index, value) {
 			
-			params.push({name:'datasReabertura['+index+']', value: value.value});
+			params.push({name: 'datasReabertura['+index+']', value: value.value});
 		});
-
+		
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/reabrirMatriz",
 			params,
@@ -1323,8 +1321,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					result.tipoMensagem, 
 					result.listaMensagens
 				);
-				balanceamentoRecolhimentoController.pesquisar();
-				$("input[name='checkMatrizReabertura']:checked").attr("checked", false);
 			}
 		);
 	},
