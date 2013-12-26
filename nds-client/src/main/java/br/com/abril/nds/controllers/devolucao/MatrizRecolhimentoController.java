@@ -1566,13 +1566,13 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			if (!confirmacaoVO.isConfirmado()) {
 				
-				this.result.use(Results.json()).from(false, "result").serialize();
+				this.result.use(Results.json()).withoutRoot().from(false).serialize();
 				
 				return;
 			}
 		}
 
-		this.result.use(Results.json()).from(true, "result").serialize();
+		this.result.use(Results.json()).withoutRoot().from(true).serialize();
 	}
 	
 	@Get
