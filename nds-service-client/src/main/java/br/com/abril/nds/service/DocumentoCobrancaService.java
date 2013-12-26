@@ -3,29 +3,75 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
+import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 public interface DocumentoCobrancaService {
 
 	/**
-	 * Retorna um arquivo de uma cobrança segundo seu número.
-	 * @param nossoNumero -nosso número referente a cobrança.
-	 * @return byte[] 
+	 * BOLETO
+	 * 
+	 * Gera documento de cobrança
+	 * @param nossoNumero
 	 */
 	byte[] gerarDocumentoCobranca(String nossoNumero);
 	
 	/**
-	 * Envia um documento de cobrança por e-mail dado seu número
-	 * @param nossoNumero - nosso número referente a cobrança.
+	 * BOLETO
+	 * 
+	 * Envia Cobranca por Email
+	 * @param nossoNumero
 	 */
 	void enviarDocumentoCobrancaPorEmail(String nossoNumero);
 	
 	/**
-	 * Retorna um arquivo com um grupo de cobranças segundo os parâmetros informados.
-	 * @param dividas - objetos com os dados da divida gerada
-	 * @param tipoCobranca - tipo de cobrança 
-	 * @return byte[]
+	 * BOLETO
+	 * 
+	 * Gerar documento de Cobranca
+	 * @param dividas
+	 * @param tipoCobranca
 	 */
 	byte[] gerarDocumentoCobranca(List<GeraDividaDTO> dividas,TipoCobranca tipoCobranca);
+
+	/**
+	 * SLIP
+	 * 
+	 * Gera Slip da Cobrança
+	 * @param idControleConferenciaEncalheCota
+	 * @param incluirNumeroSlip
+	 * @param tpArquivo
+	 * @return byte[]
+	 */
+	byte[] gerarSlipCobranca(Long idControleConferenciaEncalheCota,boolean incluirNumeroSlip, TipoArquivo tpArquivo);
 	
+	/**
+	 * SLIP
+	 * 
+	 * Gera Slip da Cobrança
+	 * @param nossoNumero
+	 * @param incluirNumeroSlip
+	 * @param tpArquivo
+	 * @return byte[]
+	 */
+	byte[] gerarSlipCobranca(String nossoNumero, boolean incluirNumeroSlip,
+			TipoArquivo tpArquivo);
+
+	/**
+     * SLIP
+     * 
+     * Gera Slip da Cobrança para Impressão em Impressora Matricial
+     * @param idControleConferenciaEncalheCota
+     * @param incluirNumeroSlip
+     * @return byte[]
+     */
+	byte[] gerarSlipCobrancaMatricial(Long idControleConferenciaEncalheCota,boolean incluirNumeroSlip);
+
+	/**
+	 * RECIBO
+	 * 
+	 * Gera Recibo da Cobrança
+	 * @param nossoNumero
+	 * @return byte[]
+	 */
+    byte[] gerarReciboCobranca(String nossoNumero);
 }
