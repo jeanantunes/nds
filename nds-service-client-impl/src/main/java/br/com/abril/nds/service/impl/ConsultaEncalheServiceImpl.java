@@ -21,14 +21,12 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
-import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
+import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -45,19 +43,13 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
-	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
-	
-	@Autowired
-	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
-	
-	@Autowired
 	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 	
 	@Autowired
-	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
+	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -225,7 +217,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			
 			for(Long idControleConferenciaEncalheCota : listaConferenciaEncalheCotas) {
 			
-				arquivo = conferenciaEncalheService.gerarSlip(idControleConferenciaEncalheCota, false, TipoArquivo.PDF);
+				arquivo = this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, false, TipoArquivo.PDF);
 				
 				arquivos.add(arquivo);
 			

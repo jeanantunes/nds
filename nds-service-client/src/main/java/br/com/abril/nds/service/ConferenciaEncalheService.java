@@ -10,13 +10,11 @@ import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -235,24 +233,6 @@ public interface ConferenciaEncalheService {
 			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException;
 	
 	/**
-	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota para impressora matricial
-	 * 
-	 * @param idControleConferenciaEncalheCota
-	 * @param incluirNumeroSlip
-	 * @return
-	 */
-	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
-	
-	/**
-	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
-	 * 
-	 * @param idControleConferenciaEncalheCota
-	 * @param incluirNumeroSlip
-	 * @return
-	 */
-	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
-	
-	/**
 	 * Obtem valor total para geração de crédito na C.E.
 	 * @param idControleConferenciaEncalheCota
 	 * @return BigDecimal
@@ -261,10 +241,6 @@ public interface ConferenciaEncalheService {
 
 	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao);
 	
-	public SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
-
-	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao);
-	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
@@ -272,5 +248,11 @@ public interface ConferenciaEncalheService {
 	boolean isLancamentoParcial(Long idProdutoEdicao);
 	
 	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao);
+
+	BigDecimal obterValorTotalDesconto(Integer numeroCota, Date dataOperacao);
+
+	BigDecimal obterValorTotalReparteSemDesconto(Integer numeroCota,Date dataOperacao);
+
+	BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao);
 	
 }
