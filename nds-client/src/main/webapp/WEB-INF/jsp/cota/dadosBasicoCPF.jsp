@@ -11,10 +11,10 @@
      	 
      	 <strong>Tipo:</strong>
      	 
-	     <select name="cotaDTO.tipoCota" id="cotaDTO.tipoCota" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
+	     <select name="cotaDTO.tipoDistribuicao" id="cotaDTO.tipoDistribuicao" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
 	        <option value="" selected="selected">Selecione...</option>
-	        <option value="A">Alternativo</option>
-	        <option value="C">Convencional</option>
+	        <option value="ALTERNATIVO">Alternativo</option>
+	        <option value="CONVENCIONAL">Convencional</option>
 	      </select>
      
      </td>

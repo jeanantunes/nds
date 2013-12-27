@@ -22,21 +22,29 @@
 
 <body>
 
-<form id="idEmissaoCEfornecedor">
-	<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
-	<fieldset>
-		<legend>Selecione um ou mais Fornecedores</legend>
-	    <select id="selectFornecedores" name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
-	      
-		      <c:forEach items="${listaFornecedores}" var="fornecedor">
-		      	<option value="${fornecedor.key}_${fornecedor.value}">${fornecedor.value}</option>
-		      </c:forEach>
-	    
-	    </select>
-	
-	</fieldset>
-	</div>
-</form>
+		<form id="idEmissaoCEfornecedor">
+			<div id="dialog-pesq-fornecedor" title="Selecionar Fornecedor">
+			<fieldset>
+				<legend>Selecione um ou mais Fornecedores</legend>
+			    <select id="selectFornecedores" name="" size="1" multiple="multiple" style="width:440px; height:150px;" >
+			      
+				      <c:forEach items="${listaFornecedores}" var="fornecedor">
+				      	<option value="${fornecedor.key}_${fornecedor.value}">${fornecedor.value}</option>
+				      </c:forEach>
+			    
+			    </select>
+			
+			</fieldset>
+			</div>
+		</form>
+		
+		<form id="idDialogReemissaoBoletoAntecipado">
+			<div id="dialog-reemissao-boleto-antecipado" title="Reemissão de Boletos em Branco">
+			<fieldset>
+				<legend>Já existem boletos emitidos no período informado. Deseja cancelar os boletos já emitidos?</legend>
+			</fieldset>
+			</div>
+		</form>
 		
 		<div class="areaBts">
 			<div class="area">

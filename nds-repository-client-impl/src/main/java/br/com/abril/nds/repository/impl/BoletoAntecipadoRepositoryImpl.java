@@ -116,14 +116,15 @@ public class BoletoAntecipadoRepositoryImpl extends AbstractRepositoryModel<Bole
 	}
 	
 	/**
-	 * Obtem BoletoAntecipado por Data de Recolhimento e Cota
+	 * Obtem lista de BoletoAntecipado por Data de Recolhimento e Cota
 	 * @param idCota
 	 * @param dataRecolhimento
 	 * @param listaStatus
-	 * @return BoletoAntecipado
+	 * @return List<BoletoAntecipado>
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public BoletoAntecipado obterBoletoAntecipadoPorDataRecolhimentoECota(Long idCota, Date dataRecolhimento, List<StatusDivida> listaStatus) {
+	public List<BoletoAntecipado> obterBoletosAntecipadosPorDataRecolhimentoECota(Long idCota, Date dataRecolhimento, List<StatusDivida> listaStatus) {
 		
         StringBuilder hql = new StringBuilder();
 		
@@ -145,19 +146,21 @@ public class BoletoAntecipadoRepositoryImpl extends AbstractRepositoryModel<Bole
 		
 		query.setParameterList("listaStatusDivida", listaStatus);
 		
-		return (BoletoAntecipado) query.uniqueResult();
+		return query.list();
 	}
 	
 	/**
-	 * Obtem Boletos Antecipados por Periodo Recolhimento CE e cota
-	 * @param numeroCota
+	 * Obtem Boletos Antecipados por Periodo Recolhimento CE e intervalo de cotas
+	 * @param numeroCotaDe
+	 * @param numeroCotaAte
 	 * @param dataRecolhimentoCEDe
 	 * @param dataRecolhimentoCEAte
 	 * @return List<BoletoAntecipado>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<BoletoAntecipado> obterBoletosAntecipadosPorPeriodoRecolhimentoECota(Integer numeroCota, 
+	public List<BoletoAntecipado> obterBoletosAntecipadosPorPeriodoRecolhimentoECota(Integer numeroCotaDe, 
+																					 Integer numeroCotaAte,
 			                                                                         Date dataRecolhimentoCEDe, 
 			                                                                         Date dataRecolhimentoCEAte) {
 		
@@ -177,15 +180,31 @@ public class BoletoAntecipadoRepositoryImpl extends AbstractRepositoryModel<Bole
 		
 		hql.append(" ) ");
 		
-		hql.append(" and ba.chamadaEncalheCota.cota.numeroCota = :numeroCota ");
+		if (numeroCotaDe != null){
+		
+		    hql.append(" and ba.chamadaEncalheCota.cota.numeroCota >= :numeroCotaDe ");
+		}
+		
+		if (numeroCotaAte != null){
+		    
+			hql.append(" and ba.chamadaEncalheCota.cota.numeroCota <= :numeroCotaAte ");
+		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
-		
+			
 		query.setParameter("dataRecolhimentoCEDe", dataRecolhimentoCEDe);
-		
+		    
 		query.setParameter("dataRecolhimentoCEAte", dataRecolhimentoCEAte);
 		
-		query.setParameter("numeroCota", numeroCota);
+		if (numeroCotaDe != null){
+		    
+			query.setParameter("numeroCotaDe", numeroCotaDe);
+		}    
+		
+		if (numeroCotaAte != null){
+		    
+			query.setParameter("numeroCotaAte", numeroCotaAte);
+		}    
 		
 		return (List<BoletoAntecipado>) query.list();
 	}

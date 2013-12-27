@@ -1425,6 +1425,8 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    cota.setPessoa(persistePessoaCota(cota, cotaDto));
 	    
+	    cota.setTipoDistribuicaoCota(cotaDto.getTipoDistribuicaoCota());
+	    
 	    cota  = cotaRepository.merge(cota);
 	    
 	    if(newCota) {

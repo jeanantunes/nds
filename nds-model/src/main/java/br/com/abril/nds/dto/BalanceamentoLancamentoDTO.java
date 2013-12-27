@@ -3,9 +3,12 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
  * DTO com dados do balanceamento de lançamento.
@@ -23,6 +26,8 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	private TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento;
 	
 	private BigInteger capacidadeDistribuicao;
+	
+	private long mediaLancamentoDistribuidor;
 	
 	private Date dataLancamento;
 	
@@ -51,6 +56,24 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 			TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
 		this.matrizLancamento = matrizLancamento;
 	}
+	
+	/**
+	 * @param matrizRecolhimento the matrizRecolhimento to add
+	 */
+	public void addMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
+		
+	
+		for(Entry<Date, List <ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()){
+			if(this.matrizLancamento.containsKey(entry.getKey())){
+				this.matrizLancamento.get(entry.getKey()).addAll(entry.getValue());
+			}else{
+				Map<Date, List <ProdutoLancamentoDTO>> map = new HashMap<>();
+				map.put(entry.getKey(), entry.getValue());
+				this.matrizLancamento.putAll(map);
+			}
+		}
+	}
+
 
 	/**
 	 * @return the capacidadeDistribuicao
@@ -66,6 +89,38 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
 	}
 
+	/**
+	 * @param capacidadeDistribuicao the capacidadeDistribuicao to add
+	 */
+	public void addCapacidadeDistribuicao(
+			BigInteger capacidadeDistribuicao) {
+		this.capacidadeDistribuicao = capacidadeDistribuicao;
+	}
+	
+	/**
+	 * @return the capacidadeRecolhimentoDistribuidor
+	 */
+	public long getMediaLancamentoDistribuidor() {
+		return mediaLancamentoDistribuidor;
+	}
+
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
+	 */
+	public void setMediaLancamentoDistribuidor(
+			long mediaLancamentoDistribuidor) {
+		this.mediaLancamentoDistribuidor = mediaLancamentoDistribuidor;
+	}
+	
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to add
+	 */
+	public void addMediaLancamentoDistribuidor(
+			long mediaLancamentoDistribuidor) {
+		this.mediaLancamentoDistribuidor = this.mediaLancamentoDistribuidor+mediaLancamentoDistribuidor;
+	}
+
+	
 	/**
 	 * @return the dataLancamento
 	 */
@@ -93,6 +148,14 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	public void setProdutosLancamentosCancelados(
 			List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados) {
 		this.produtosLancamentosCancelados = produtosLancamentosCancelados;
+	}
+	
+	/**
+	 * @param produtosLancamentosCancelados the produtosLancamentosCancelados to set
+	 */
+	public void addProdutosLancamentosCancelados(
+			List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados) {
+		this.produtosLancamentosCancelados.addAll(produtosLancamentosCancelados);
 	}
 
 	/**
