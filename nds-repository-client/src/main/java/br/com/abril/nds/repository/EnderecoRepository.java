@@ -27,6 +27,10 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 
 	List<String> obterMunicipiosCotas();
 	
+	List<String> obterBairrosCotas();
+	
+	List<String> obterUFsCotas();
+	
 	List<String> obterLocalidadesPorUFNome(String nome, String siglaUF);
 	
 	List<String> obterBairrosPorCodigoIBGENome(String nome, Long codigoIBGE); 
@@ -49,8 +53,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	
 	List<String> obterLocalidadesPorUFPDVBoxEspecial(String uf);
 
-	List<String> obterBairrosCotas();
-	
 	List<String> obterUFsPDVSemRoteirizacao();
 	
 	Endereco getEnderecoSaneado(String cep);
@@ -58,5 +60,6 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade);
 	
 	List<String> obterBairrosPDVBoxEspecial(String uf, String cidade);
+
 	
 }

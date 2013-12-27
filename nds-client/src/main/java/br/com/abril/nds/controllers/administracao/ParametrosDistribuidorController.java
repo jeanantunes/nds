@@ -117,7 +117,13 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
 		result.include("listaTiposNotaFiscal", parametrosDistribuidorService.obterTiposNotaFiscalDistribuidor());
 		result.include("listaTiposEmissaoNotaFiscal", parametrosDistribuidorService.obterTiposEmissoesNotaFiscalDistribuidor());
+		result.include("listaEstadosAnuencia", parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor());
 		
+		boolean possuiDistribuicaoOutrosEstados = (parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor()
+														.contains(parametrosDistribuidorService.getParametrosDistribuidor().getEndereco().getUf()) 
+														&& parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor().size() > 1);
+		result.include("possuiDistribuicaoOutrosEstados", possuiDistribuicaoOutrosEstados);
+				
 		this.buscarLogoArmazenarSessao();
 		
 		session.removeAttribute(COTAS_SELECIONADAS);
@@ -418,6 +424,21 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getRegimeTributario() == null) {
 	        erros.add("É necessário informar o campo Regime Tributário!");
 	    }
+	    
+	    if (vo.isPossuiRegimeEspecialDispensaInterna()) {
+	    	if(vo.getNumeroDispositivoLegal() == null) {
+	    		erros.add("É necessário informar o Número do Dispositivo Legal!");
+	    	}
+	    	
+	    	if(vo.getDataLimiteVigenciaRegimeEspecial() == null) {
+	    		erros.add("É necessário informar a Data Limite de Vigência do Regime Especial!");
+	    	}
+	    	
+	    	if(vo.getTiposNotasFiscais() == null || vo.getTiposNotasFiscais().isEmpty()) {
+	    		erros.add("É necessário informar os Tipos de Emissões dos Tipos de Notas ficais!");
+	    	}
+	    }
+	    
 	    if (vo.getCapacidadeManuseioHomemHoraLancamento() == null) {
 	        erros.add("É necessário informar a Capacidade de Manuseio no Lançamento!");
 	    }

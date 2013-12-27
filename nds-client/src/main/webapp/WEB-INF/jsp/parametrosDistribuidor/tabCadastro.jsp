@@ -196,29 +196,12 @@
 				</td>
 			</tr>
 			<tr>
-				<td width="102">Obrigação Fiscal</td>
-				<td width="185">
-					<select name="obrigacaoFiscal" id="obrigacaoFiscal"
-							style="width: 150px;">
-						<option selected="selected"></option>
-						<c:forEach var="obrigacaoFiscal" items="${listaObrigacaoFiscal}">
-							<option value="${obrigacaoFiscal.key}">${obrigacaoFiscal.value}</option>
-						</c:forEach>
-					</select>
-				</td>
+				<td width="102"></td>
+				<td width="185"></td>
 			</tr>
 			<tr>
-				<td>Regime Especial</td>
-				<td>
-					<c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
-						<input type="checkbox" name="regimeEspecial"
-						   	   id="regimeEspecial" checked="checked" />
-					</c:if>
-                    <c:if test="${empty parametrosDistribuidor.possuiRegimeEspecialDispensaInterna or (not parametrosDistribuidor.possuiRegimeEspecialDispensaInterna)}">
-						<input type="checkbox" name="regimeEspecial"
-						   	   id="regimeEspecial" />
-			   	   	</c:if>
-				</td>
+				<td></td>
+				<td></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>

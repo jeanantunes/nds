@@ -218,12 +218,13 @@ public class Distribuidor {
 	@Column(name = "NUMERO_DISPOSITIVO_LEGAL")
 	private String numeroDispositivoLegal;
 	
+	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_LIMITE_VIGENCIA_REGIME_ESPECIAL")
-	private String dataLimiteVigenciaRegimeEspecial;
+	private Date dataLimiteVigenciaRegimeEspecial;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
-	private TipoImpressaoCE tipoImpressaoCE;	
+	private TipoImpressaoCE tipoImpressaoCE;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
@@ -795,12 +796,12 @@ public class Distribuidor {
 		this.numeroDispositivoLegal = numeroDispositivoLegal;
 	}
 
-	public String getDataLimiteVigenciaRegimeEspecial() {
+	public Date getDataLimiteVigenciaRegimeEspecial() {
 		return dataLimiteVigenciaRegimeEspecial;
 	}
 
 	public void setDataLimiteVigenciaRegimeEspecial(
-			String dataLimiteVigenciaRegimeEspecial) {
+			Date dataLimiteVigenciaRegimeEspecial) {
 		this.dataLimiteVigenciaRegimeEspecial = dataLimiteVigenciaRegimeEspecial;
 	}
 
