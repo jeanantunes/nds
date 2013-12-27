@@ -1137,21 +1137,17 @@ public class LancamentoRepositoryImpl extends
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
-																   List<Long> fornecedores, List<Long> produtoEdicaoIds) {
+	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
 
-		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico(produtoEdicaoIds)
-				   + " order by dataLancamentoDistribuidor ";
+		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
+				   + " order by dataLancamentoDistribuidor ";	
 		
-		Query query = this.getQueryBalanceamentoRecolhimento(periodoDistribuicao,
-															 fornecedores,
-															 produtoEdicaoIds,
-															 sql);
+		Query query = this.getQueryBalanceamentoRecolhimento(periodoDistribuicao, fornecedores, sql);
 
 		return query.list();
 	}
 	
-	private String montarConsultaBalanceamentoLancamentoAnalitico(List<Long> produtoEdicaoIds) {
+	private String montarConsultaBalanceamentoLancamentoAnalitico() {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -1203,12 +1199,12 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" fornecedor.id as idFornecedor ");
 		
-		sql.append(montarClausulaFromConsultaBalanceamentoLancamento(produtoEdicaoIds));
+		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		
 		return sql.toString();
 	}
 	
-	private String montarClausulaFromConsultaBalanceamentoLancamento(List<Long> produtoEdicaoIds) {
+	private String montarClausulaFromConsultaBalanceamentoLancamento() {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -1272,17 +1268,10 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	) ");
 		sql.append(" ) ");
 		
-		if (!produtoEdicaoIds.isEmpty()) {
-			sql.append(" and lancamento.PRODUTO_EDICAO_ID in (:produtosNaCesta) ");		
-		}
-		
 		return sql.toString();
 	}
 	
-	private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoDistribuicao,
-											        List<Long> fornecedores,
-											        List<Long> produtoEdicaoIds, 
-											        String sql) {
+	private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, String sql) {
 
 		Query query = getSession().createSQLQuery(sql).addScalar("parcial")
 			.addScalar("statusLancamento")
@@ -1306,16 +1295,14 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
-		this.aplicarParametros(query, periodoDistribuicao, fornecedores, produtoEdicaoIds);
+		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
 
 		return query;
 	}
 	
-	private void aplicarParametros(Query query,
-								   Intervalo<Date> periodoDistribuicao,
-								   List<Long> fornecedores, List<Long> produtoEdicaoIds) {
+	private void aplicarParametros(Query query, Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
 		
 		List<String> statusLancamentoDataMenorFinal =
 			Arrays.asList(StatusLancamento.PLANEJADO.name(), StatusLancamento.CONFIRMADO.name(),
@@ -1334,9 +1321,6 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 		
-		if (!produtoEdicaoIds.isEmpty()) {
-			query.setParameterList("produtosNaCesta", produtoEdicaoIds);
-		}
 	}
 
 	@Override
