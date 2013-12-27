@@ -31,24 +31,13 @@ public interface BoletoAntecipadoRepository extends Repository<BoletoAntecipado,
 	BoletoAntecipado obterBoletoAntecipadoPorNossoNumero(String nossoNumero);
 	
 	/**
-	 * Obtem BoletoAntecipado por Data de Recolhimento e Cota
+	 * Obtem lista de BoletoAntecipado por Data de Recolhimento e Cota
 	 * @param idCota
 	 * @param dataRecolhimento
 	 * @param listaStatus
-	 * @return BoletoAntecipado
-	 */
-	BoletoAntecipado obterBoletoAntecipadoPorDataRecolhimentoECota(Long idCota, Date dataRecolhimento, List<StatusDivida> listaStatus);
-
-	/**
-	 * Obtem Boletos Antecipados por Periodo Recolhimento CE e cota
-	 * @param numeroCota
-	 * @param dataRecolhimentoCEDe
-	 * @param dataRecolhimentoCEAte
 	 * @return List<BoletoAntecipado>
 	 */
-	List<BoletoAntecipado> obterBoletosAntecipadosPorPeriodoRecolhimentoECota(Integer numeroCota, 
-			                                                                  Date dataRecolhimentoCEDe, 
-			                                                                  Date dataRecolhimentoCEAte);
+	List<BoletoAntecipado> obterBoletosAntecipadosPorDataRecolhimentoECota(Long idCota, Date dataRecolhimento, List<StatusDivida> listaStatus);
 
 	/**
 	 * Obtem BoletoAntecipado por ChamadaEncalheCota e Periodo de Recolhimento selecionado na Emissao
@@ -62,4 +51,17 @@ public interface BoletoAntecipadoRepository extends Repository<BoletoAntecipado,
 			                                                            Date dataRecolhimentoCEDe, 
 			                                                            Date dataRecolhimentoCEAte,
 			                                                            List<StatusDivida> listaStatus);
+
+	/**
+	 * Obtem Boletos Antecipados por Periodo Recolhimento CE e intervalo de cotas
+	 * @param numeroCotaDe
+	 * @param numeroCotaAte
+	 * @param dataRecolhimentoCEDe
+	 * @param dataRecolhimentoCEAte
+	 * @return List<BoletoAntecipado>
+	 */
+	List<BoletoAntecipado> obterBoletosAntecipadosPorPeriodoRecolhimentoECota(Integer numeroCotaDe, 
+			                                                                  Integer numeroCotaAte,
+			                                                                  Date dataRecolhimentoCEDe, 
+			                                                                  Date dataRecolhimentoCEAte);
 }

@@ -517,7 +517,7 @@ public class LancamentoRepositoryImpl extends
 
 		String sql = getConsultaBalanceamentoRecolhimentoAnalitico()
 				   + " group by lancamento.ID "
-				   + " order by dataRecolhimentoDistribuidor ";
+				   + " order by dataRecolhimentoDistribuidor,idFornecedor,peb ";
 
 		Query query = getQueryBalanceamentoRecolhimentoComParametros(periodoRecolhimento, fornecedores, grupoCromo, sql);
 
@@ -612,6 +612,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, ");
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
+		sql.append(" produtoEdicao.PEB as peb, "); //TODO Se de editor for 0 ou null pegar o do produto
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
 		
 		sql.append("  sum( ");
@@ -764,6 +765,7 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("idEditor", StandardBasicTypes.LONG)
 													  .addScalar("idLancamento", StandardBasicTypes.LONG)
 													  .addScalar("numeroEdicao", StandardBasicTypes.LONG)
+													  .addScalar("peb", StandardBasicTypes.LONG)
 													  .addScalar("idFornecedor", StandardBasicTypes.LONG)
 													  .addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 													  .addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN)
@@ -2192,4 +2194,49 @@ public class LancamentoRepositoryImpl extends
     	
     	return (Lancamento)query.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterLancamentosConfirmados(List<Date> datasConfirmadas) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+		
+		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.EM_RECOLHIMENTO);
+		statusLancamento.add(StatusLancamento.RECOLHIDO);
+		
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+		
+		return query.list();
+	}
+	
+	@Override
+	public boolean existeConferenciaEncalheParaLancamento(Long idLancamento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when(count(lancamento.id) > 0) then true else false end ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.chamadaEncalhe chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ");
+		hql.append(" join chamadaEncalheCotas.conferenciasEncalhe conferenciasEncalhe ");
+		hql.append(" where lancamento.id = :idLancamento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
 }

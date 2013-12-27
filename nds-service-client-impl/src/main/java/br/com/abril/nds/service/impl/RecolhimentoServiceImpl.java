@@ -674,11 +674,21 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																		 listaIdsFornecedores, 
 																		 GrupoProduto.CROMO);
 		}
-
+		
 		TreeMap<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
+		
+		//TODO Certo
+        BigDecimal media = BigDecimal.ZERO;
+		
+		for (BigDecimal bigDecimal : mapaExpectativaEncalheTotalDiaria.values()) {
+			media = media.add(bigDecimal);
+		}
+		
+		dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.divide(new BigDecimal(""+dadosRecolhimento.getDatasRecolhimentoFornecedor().size())).longValue());
+		
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
 		
@@ -738,9 +748,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * Obtém as datas de recolhimento dos fornecedores informados.
 	 */
-	private TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
+	@Transactional (readOnly = true)
+	public TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
 														   List<Long> listaIdsFornecedores) {
-		
+       
+		if (periodoRecolhimento == null || listaIdsFornecedores == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR ,
+										 "periodo ou fornecedores nulos");
+		}
+
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedor = 
 			this.distribuidorRepository.buscarDiasDistribuicaoFornecedor(
 				listaIdsFornecedores, OperacaoDistribuidor.RECOLHIMENTO);
@@ -748,7 +765,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (listaDistribuicaoFornecedor == null || listaDistribuicaoFornecedor.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING ,
-										 "Dias de recolhimento para os fornecedores não encontrados!");
+										 //"Dias de recolhimento para os fornecedores não encontrados!");
+					                      "Cadastrar os dias de recolhimento para os fornecedores selecionados.");
 		}
 		
 		Set<Integer> diasSemanaFornecedor = new TreeSet<Integer>();
@@ -1370,6 +1388,78 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	private boolean existeMaisDeUmLancamento(List<Long> idLancamentos) {
 		
 		return idLancamentos.size() > 1;
+	}
+	
+	@Transactional
+	public void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario) {
+		
+		this.validarReaberturaMatriz(
+			datasConfirmadas, this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		List<Lancamento> lancamentos = 
+			this.lancamentoRepository.obterLancamentosConfirmados(datasConfirmadas);
+		
+		for(Lancamento lancamento: lancamentos) {
+			
+			this.validarLancamentoParaReabertura(lancamento);
+			
+			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
+			
+			lancamento.setUsuario(usuario);
+			
+			this.lancamentoRepository.alterar(lancamento);
+			
+			this.removerChamadaEncalhe(lancamento.getChamadaEncalhe());
+		}
+	}
+
+	private void validarLancamentoParaReabertura(Lancamento lancamento) {
+		
+		if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Existem lançamentos que já se econtram em processo de recolhimento!");
+		}
+		
+		if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Existem lançamentos que já possuem conferência de encalhe!");
+		}
+	}
+
+	private void validarReaberturaMatriz(List<Date> datasConfirmadas, Date dataOperacao) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (datasConfirmadas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data foi informada!");
+		}
+		
+		for (Date dataConfirmada : datasConfirmadas) {
+			
+			if (dataConfirmada.compareTo(dataOperacao) <= 0) {
+				
+				String dataFormatada = DateUtil.formatarDataPTBR(dataConfirmada);
+				
+				mensagens.add("Para reabrir a matriz, a data (" + dataFormatada
+					+ ") deve ser maior que a data de operação!");
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
+	}
+
+	private void removerChamadaEncalhe(Set<ChamadaEncalhe> chamadasEncalhe) {
+		
+		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
+			
+			this.chamadaEncalheRepository.remover(chamadaEncalhe);
+		}
 	}
 	
 }

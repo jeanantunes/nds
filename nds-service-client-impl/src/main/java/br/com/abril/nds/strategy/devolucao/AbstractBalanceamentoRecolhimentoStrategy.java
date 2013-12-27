@@ -13,9 +13,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.service.ProdutoService;
 
 /**
  * Classe abstrata para estratégias de balanceamento de recolhimento.
@@ -160,9 +164,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = produtosRecolhimento.get(indice);
 			
-			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)) {
+			//TODO
+			if (produtoRecolhimento.getDataRecolhimentoDistribuidor().equals(dataRecolhimentoDesejada)){
 				
-				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
+				if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor())) {
 					
 					produtosRecolhimentoNaoBalanceaveis.add(produtosRecolhimento.remove(indice--));
 				}
@@ -176,10 +181,10 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 * Verifica se o produto de recolhimento pode ser balanceado ou não.
 	 */
 	private boolean isProdutoNaoBalanceavel(boolean forcarBalanceamento,
-										 	ProdutoRecolhimentoDTO produtoRecolhimento) {
-		
-		return produtoRecolhimento.isBalanceamentoConfirmado()
-				|| (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento);
+										 	ProdutoRecolhimentoDTO produtoRecolhimento,TreeSet<Date> dataRecolhimentoFornecedor) {
+
+		//TODO
+		return (produtoRecolhimento.isBalanceamentoConfirmado() || (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento) || (produtoRecolhimento.getPeb()<22 && dataRecolhimentoFornecedor.contains(produtoRecolhimento.getDataRecolhimentoPrevista())));
 	}
 	
 	/*
@@ -322,7 +327,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento)) {
+			if (this.isProdutoNaoBalanceavel(dadosRecolhimento.isForcarBalanceamento(), produtoRecolhimento, dadosRecolhimento.getDatasRecolhimentoFornecedor())) {
 				
 				continue;
 			}
@@ -380,7 +385,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 			expectativaEncalheABalancear = expectativaEncalheTotalAtualNaData.add(expectativaEncalheABalancear);
 		}
 		
-		if (expectativaEncalheABalancear.compareTo(new BigDecimal(capacidadeManuseio)) > 0) {
+		if (expectativaEncalheABalancear.compareTo(new BigDecimal(capacidadeManuseio)) > 0) { 
 			
 			excessoExpectativaEncalhe = expectativaEncalheABalancear.subtract(new BigDecimal(capacidadeManuseio));
 		}
@@ -395,6 +400,8 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 											   List<ProdutoRecolhimentoDTO> produtosRecolhimentoAtuais,
 											   List<ProdutoRecolhimentoDTO> produtosRecolhimentoNovos,
 											   Date dataBalanceamento) {
+		
+		//matrizRecolhimento, produtosRecolhimentoNaData, produtosRecolhimentoElegiveis, dataBalanceamento
 		
 		if (produtosRecolhimentoNovos == null || produtosRecolhimentoNovos.isEmpty()) {
 			
