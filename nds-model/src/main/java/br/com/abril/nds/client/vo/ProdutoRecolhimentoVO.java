@@ -50,6 +50,9 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Lçto")
 	private Date dataLancamento;
 	
+	@Export(label="PEB")
+	private Long peb;
+	
 	@Export(label="Rcto")
 	private Date dataRecolhimento;
 	
@@ -68,6 +71,15 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal encalhe;
 	
+	
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
+	}
+
 	@Export(label="Total R$", columnType=ColumType.MOEDA)
 	private BigDecimal valorTotal;
 	
