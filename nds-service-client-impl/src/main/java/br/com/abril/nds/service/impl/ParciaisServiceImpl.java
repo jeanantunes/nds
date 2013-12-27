@@ -92,22 +92,16 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	private Integer getPebProduto(ProdutoEdicao produtoEdicao, Integer qntPeriodos){
 		
-		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
-		
 		if(produtoEdicao == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Produto Edição não encontrado!");
-		}
-		
-		if(fatorRelancamentoParcial == null ){
-			return produtoEdicao.getPeb();
 		}
 		
 		if(qntPeriodos == null || qntPeriodos <= 1){
 			return produtoEdicao.getPeb();
 		}
 		
-		return ((produtoEdicao.getPeb() - (fatorRelancamentoParcial*(qntPeriodos-1))) / qntPeriodos);
+		return ((produtoEdicao.getPeb() / qntPeriodos));
 	}
 
 	private void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
@@ -148,16 +142,16 @@ public class ParciaisServiceImpl implements ParciaisService{
 				dtLancamento = lancamentoParcial.getLancamentoInicial();			
 			} else {
 				
-				dtLancamento = calendarioService.adicionarDiasRetornarDiaUtil(ultimoLancamento.getDataRecolhimentoDistribuidor(),fatorRelancamentoParcial) ;
+				dtLancamento = 
+						calendarioService.obterProximaDataDiaUtil(
+								DateUtil.adicionarDias(ultimoLancamento.getDataRecolhimentoDistribuidor(),fatorRelancamentoParcial));
 			}
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtLancamento) > 0) {
 				break;
 			}			
 			
-			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
-			
-			dtRecolhimento = this.obterDataRecolhimentoIdeal(dtRecolhimento);
+			dtRecolhimento = this.obterDataRecolhimentoIdeal(DateUtil.adicionarDias(dtLancamento,peb));
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
