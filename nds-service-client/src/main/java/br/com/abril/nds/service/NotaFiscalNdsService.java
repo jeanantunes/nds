@@ -1,4 +1,4 @@
-package br.com.abril.nds.nfe;
+package br.com.abril.nds.service;
 
 public interface NotaFiscalNdsService {
 

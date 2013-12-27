@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -105,7 +106,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
 			
 			cotaExemplares.setIdCota(cota.getId());
-			cotaExemplares.setExemplares(cotasTotalItens.get(cota).getQuantidade().longValue());
+			cotaExemplares.setExemplares(cotasTotalItens.get(cota).getQuantidade());
 			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
 			cotaExemplares.setNumeroCota(cota.getNumeroCota());
 			cotaExemplares.setTotal(cotasTotalItens.get(cota).getPreco());
@@ -201,6 +202,18 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
 		
 		this.notaFiscalService.exportarNotasFiscais(listaNotaFiscal);
+	}
+
+	@Override
+	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
+		return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+	}
+
+	@Override
+	public Integer consultaCotaExemplareSumarizadoQtd(
+			FiltroViewNotaFiscalDTO filtro) {
+		
+		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);
 	}
 	
 }

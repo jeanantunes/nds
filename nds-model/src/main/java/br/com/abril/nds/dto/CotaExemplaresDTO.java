@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -9,20 +10,36 @@ import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class CotaExemplaresDTO implements Serializable {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -5054002962389418662L;
 	
+	public CotaExemplaresDTO() {
+		
+	}
 	
+	public CotaExemplaresDTO(Long idCota, Integer numeroCota, String nomeCota,
+			BigInteger exemplares, BigDecimal total, BigDecimal totalDesconto,
+			boolean inativo) {
+		super();
+		this.idCota = idCota;
+		this.numeroCota = numeroCota;
+		this.nomeCota = nomeCota;
+		this.exemplares = exemplares;
+		this.total = total;
+		this.totalDesconto = totalDesconto;
+		this.inativo = inativo;
+	}
+
 	private Long idCota;
+	
 	@Export(label="Cota", alignment=Alignment.LEFT)
 	private Integer numeroCota;
+	
 	@Export(label="Nome", alignment=Alignment.LEFT)
 	private String nomeCota;
+	
 	@Export(label="Total Exemplares", alignment=Alignment.CENTER)
-	private Long exemplares;
+	private BigInteger exemplares;
 	
 	@Export(label="Total R$", alignment=Alignment.RIGHT)
 	private BigDecimal total;
@@ -73,21 +90,7 @@ public class CotaExemplaresDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
-
-	/**
-	 * @return the exemplares
-	 */
-	public Long getExemplares() {
-		return exemplares;
-	}
-
-	/**
-	 * @param exemplares the exemplares to set
-	 */
-	public void setExemplares(Long exemplares) {
-		this.exemplares = exemplares;
-	}
-
+	
 	/**
 	 * @return the inativo
 	 */
@@ -116,5 +119,19 @@ public class CotaExemplaresDTO implements Serializable {
 
 	public void setTotalDesconto(BigDecimal totalDesconto) {
 		this.totalDesconto = totalDesconto;
+	}
+	
+	/**
+	 * @return the exemplares
+	 */
+	public void setExemplares(BigInteger exemplares) {
+		this.exemplares = exemplares;
+	}
+	
+	/**
+	 * @param exemplares the exemplares to set
+	 */
+	public BigInteger getExemplares() {
+		return exemplares;
 	}
 }

@@ -13,6 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
+
 @Entity
 @Table(name="DISTRIBUIDOR_NOTA_FISCAL_TIPOS")
 public class DistribuidorTipoNotaFiscal {
@@ -44,7 +46,16 @@ public class DistribuidorTipoNotaFiscal {
 	@OneToOne
 	@JoinColumn(name="DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
-
+	
+	@OneToMany
+	@JoinTable(
+	            name="TIPO_NOTA_TIPO_MOVIMENTO",
+	            joinColumns={
+	            		@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPOS", name="TIPO_NOTA_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO",name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
+	private List<TipoMovimento> tipoMovimento;
+	
 	public Long getId() {
 		return id;
 	}
@@ -93,5 +104,12 @@ public class DistribuidorTipoNotaFiscal {
 			List<NotaFiscalTipoEmissao> tipoEmissaoDisponiveis) {
 		this.tipoEmissaoDisponiveis = tipoEmissaoDisponiveis;
 	}
-	
+
+	public List<TipoMovimento> getTipoMovimento() {
+		return tipoMovimento;
+	}
+
+	public void setTipoMovimento(List<TipoMovimento> tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
+	}
 }

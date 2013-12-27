@@ -6,34 +6,13 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.util.Intervalo;
 
 public interface GeracaoNFeService {
 	
-	
-	/**
-	 * Busca a quantidade de exemplares relacionadas a cota para gerar NFe
-	 * 
-	 * @param intervaloBox Intervalo de Box(de ate)
-	 * @param intervalorCota Intervalo de Cota(de ate)
-	 * @param intervaloDateMovimento Intervalo de Data(de ate)
-	 * @param listIdFornecedor lista de fornecedores
-	 * @param sortname
-	 * @param sortorder
-	 * @param rp
-	 * @param page
-	 * @param situacaoCadastro 
-	 * @param tipoNotaFiscal Tipo de nota
-	 * @return
-	 */
-	public abstract List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
-	Intervalo<Integer> intervalorCota,
-	Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota, 
-	String sortname, String sortorder, Integer rp, Integer page, SituacaoCadastro situacaoCadastro);
-
-
 	/**
 	 * Gera nota fiscal
 	 * 
@@ -50,5 +29,19 @@ public interface GeracaoNFeService {
 	public abstract void gerarNotaFiscal(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota,
 			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, 
 			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas,  Condicao condicao) throws FileNotFoundException, IOException;
+
+
+	List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
+			Intervalo<Integer> intervalorCota,
+			Intervalo<Date> intervaloDateMovimento,
+			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro,
+			Long idRota, String sortname, String sortorder,
+			Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro);
+
+	
+	public abstract List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
+
+
+	public abstract Integer consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
 
 }
