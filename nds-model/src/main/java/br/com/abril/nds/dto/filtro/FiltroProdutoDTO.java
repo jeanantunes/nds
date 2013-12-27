@@ -43,7 +43,7 @@ public class FiltroProdutoDTO implements Serializable {
 	
 	public FiltroProdutoDTO(String codigo, String nome, String editor, String fornecedor, Long codigoTipoProduto, String sortOrder, String sortName, Boolean isGeracaAutomatica) {
 		
-		this.codigo = StringUtils.leftPad(codigo, 8, '0');
+		this.codigo = codigo;
 		this.nome = nome;
 		this.editor = editor;
 		this.fornecedor = fornecedor;

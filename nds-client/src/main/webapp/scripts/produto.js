@@ -222,7 +222,7 @@ var produtoController = $.extend(true, {
 			colModel : [ {
 				display : 'C&oacute;digo',
 				name : 'codigo',
-				width : 50,
+				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -234,7 +234,7 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Tipo Produto',
 				name : 'tipoProdutoDescricao',
-				width : 93,
+				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -276,7 +276,7 @@ var produtoController = $.extend(true, {
 			}, {
 				display : 'Ação',
 				name : 'acao',
-				width : 60,
+				width : 52,
 				sortable : false,
 				align : 'center'
 			}],
@@ -503,6 +503,11 @@ var produtoController = $.extend(true, {
 
 									$(".filtro", this.workspace).each(function() {  
 										$("input[type='text'], select", this.workspace).val(""); 
+									});
+									
+									$(".produtosGrid", this.workspace).flexOptions({
+										params: null,
+										newp: 1
 									});
 									
 									$(".produtosGrid", this.workspace).flexReload();

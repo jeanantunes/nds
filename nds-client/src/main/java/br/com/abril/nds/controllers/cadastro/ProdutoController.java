@@ -14,6 +14,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.*;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.*;
@@ -91,6 +92,8 @@ public class ProdutoController extends BaseController {
 	private static List<ItemDTO<FaixaEtaria,String>> listaFaixaEtaria =  new ArrayList<ItemDTO<FaixaEtaria,String>>();
 	
 	private static List<ItemDTO<FormatoProduto,String>> listaFormatoProduto =  new ArrayList<ItemDTO<FormatoProduto,String>>();
+	
+	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
 	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 	
@@ -502,6 +505,12 @@ public class ProdutoController extends BaseController {
 			listaFormatoProduto.add(new ItemDTO<FormatoProduto,String>(item,item.getDescFormatoProduto()));
 		}
 		result.include("listaFormatoProduto",listaFormatoProduto);	
+		
+		listaTipoLancamento.clear();
+		for(TipoLancamento item:TipoLancamento.values()){
+			listaTipoLancamento.add(new ItemDTO<TipoLancamento,String>(item,item.getDescricao()));
+		}
+		result.include("listaTipoLancamento",listaTipoLancamento);
 
 		listaTemaProduto.clear();
 		for(TemaProduto item:TemaProduto.values()){
