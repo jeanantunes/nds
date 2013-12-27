@@ -82,14 +82,31 @@ public class DividaServiceImpl implements DividaService {
 
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
-	
+
+	private long calculaDiasEmAtraso(StatusDividaDTO item, Date dataOperacao){
+		
+		long qntDias = 0L;
+		
+		if (StatusDivida.QUITADA.getDescricao().equals(item.getSituacao())){
+			
+			qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), 
+												  DateUtil.parseDataPTBR(item.getDataPagamento()));
+		}
+		else{
+			
+			qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), dataOperacao);
+		}
+			
+		return ( (qntDias <= 0) ? 0L : qntDias);
+	}
+
 	@Override
 	@Transactional
 	public List<StatusDividaDTO> obterInadimplenciasCota(
 			FiltroCotaInadimplenteDTO filtro) {
 		
 		List<StatusDividaDTO> dividas = dividaRepository.obterInadimplenciasCota(filtro);
-		
+
 		if(!dividas.isEmpty()){
 		
 			Date dataOperacao = filtro.getDataOperacaoDistribuidor();
@@ -100,20 +117,8 @@ public class DividaServiceImpl implements DividaService {
 			}
 			
 			for(StatusDividaDTO item : dividas){
-				
-				long qntDias = 0L;
-				
-				if (StatusDivida.QUITADA.getDescricao().equals(item.getSituacao())){
 					
-					qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), 
-														  DateUtil.parseDataPTBR(item.getDataPagamento()));
-				}
-				else{
-					
-					qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), dataOperacao);
-				}
-					
-				item.setDiasAtraso( (qntDias <= 0) ? 0L : qntDias);
+				item.setDiasAtraso(this.calculaDiasEmAtraso(item, dataOperacao));
 			}
 		}
 		

@@ -1464,8 +1464,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																			 controleConferenciaEncalheCota.getUsuario(),
 																			 controleConferenciaEncalheCota.getId());
 		
-			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoNaoVencidoOuPagoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
-					                                                                                                        controleConferenciaEncalheCota.getDataOperacao());
+			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
+					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
 			
 			if (existeBoletoAntecipado){
 				
