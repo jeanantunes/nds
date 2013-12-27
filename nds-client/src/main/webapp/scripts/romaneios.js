@@ -113,6 +113,8 @@ var romaneiosController = $.extend(true, {
 				
 				value.cell.numeroNotaEnvio = '';
 			}
+			
+			value.cell.logradouro += ' - ' + value.cell.cep;
 		});
 		
 		$(".grids", romaneiosController.workspace).show();
