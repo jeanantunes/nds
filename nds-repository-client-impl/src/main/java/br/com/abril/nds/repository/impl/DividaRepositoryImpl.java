@@ -33,7 +33,6 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-
 @Repository
 public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
 		DividaRepository {
@@ -277,7 +276,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		return hql.toString();
 	}
 	
-	
 	/**
 	 * Retorna a string hql com a oredenação da consulta
 	 * @param filtro
@@ -293,7 +291,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		{
 			return "";
 		}
-	
 		
 		String orderByColumn = "";
 		
@@ -355,33 +352,192 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		return  hql.toString();
 	}
+
+	/**
+     * Obtem SQL de total de Boletos Antecipados Inadimplentes
+     * 
+     * @param filtro
+     * @return StringBuilder
+     */
+	private StringBuilder getSqlBoletosAntecipadosAcumulados(FiltroCotaInadimplenteDTO filtro){
+		
+        StringBuilder sql = new StringBuilder();
+		
+		sql.append(" ( ");
+		
+		sql.append("  SELECT SUM(BA.VALOR) ");
+		
+		sql.append("  FROM BOLETO_ANTECIPADO AS BA  ");
+		
+		sql.append("  JOIN CHAMADA_ENCALHE_COTA AS CHAMADA_ENCALHE_COTA_ ON (CHAMADA_ENCALHE_COTA_.ID = BA.CHAMADA_ENCALHE_COTA_ID) ");
+		
+	    sql.append("  JOIN COTA AS C ON(C.ID=CHAMADA_ENCALHE_COTA_.COTA_ID) ");
+	    
+		sql.append("  WHERE BA.STATUS IN (:statusDivida) ");
+		
+		if(filtro.getNumCota() != null) {
+			
+		    sql.append("  AND C.NUMERO_COTA = :numCota ");
+		}    
+		
+		sql.append(" ) ");
+		
+		return sql;
+	}
 	
+	/**
+     * Obtem SQL da consulta de Boletos Antecipados Inadimplentes
+     * 
+     * @param filtro
+     * @return StringBuilder
+     */
+	private StringBuilder getSqlInadimplenciaBoletosAntecipados(FiltroCotaInadimplenteDTO filtro){
+	
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT ");
+		
+		sql.append(  this.getSqlBoletosAntecipadosAcumulados(filtro)+" as dividaAcumulada, ");
+		
+		sql.append(" BOLETO_ANTECIPADO_.ID as idDivida, ");
+		
+		sql.append(" COTA_.ID AS idCota, ");
+		
+		sql.append(" BOLETO_ANTECIPADO_.ID AS idCobranca, ");
+		
+		sql.append(" BOLETO_ANTECIPADO_.ID as idNegociacao, ");
+		
+		sql.append(" 0 as comissaoSaldoDivida, ");
+		
+		sql.append(" COTA_.NUMERO_COTA AS numCota, ");
+		
+		sql.append(" COTA_.SITUACAO_CADASTRO as status, ");
+		
+		sql.append(" CASE WHEN PESSOA_.NOME IS NOT NULL ");
+		sql.append(" THEN PESSOA_.NOME ");
+		sql.append(" ELSE PESSOA_.RAZAO_SOCIAL END AS nome, ");
+		
+		sql.append(" (select ");
+		sql.append(" sum(coalesce(movimentoe0_.PRECO_COM_DESCONTO, ");
+		sql.append(" produtoedi4_.PRECO_VENDA, ");
+		sql.append(" 0)*movimentoe0_.QTDE) as col_0_0_ ");
+		sql.append(" from ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA movimentoe0_ ");
+		sql.append(" inner join ");
+		sql.append(" COTA cota2_ ");
+		sql.append(" on movimentoe0_.COTA_ID=cota2_.ID ");
+		sql.append(" inner join ");
+		sql.append(" TIPO_MOVIMENTO tipomovime3_ ");
+		sql.append(" on movimentoe0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_EDICAO produtoedi4_ ");
+		sql.append(" on movimentoe0_.PRODUTO_EDICAO_ID=produtoedi4_.ID ");
+		sql.append(" left outer join ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA movimentoe11_ ");
+		sql.append(" on movimentoe0_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe11_.ID ");
+		sql.append(" where ");
+		sql.append(" (tipomovime3_.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentoEstoque)) ");
+		sql.append(" and (movimentoe0_.STATUS_ESTOQUE_FINANCEIRO is null ");
+		sql.append(" or movimentoe0_.STATUS_ESTOQUE_FINANCEIRO=:statusEstoqueFinanceiro) ");
+		sql.append(" and tipomovime3_.OPERACAO_ESTOQUE=:operacaoEstoqueEntrada ");
+		sql.append(" and (movimentoe11_.ID is null) ");
+		sql.append(" and cota2_.ID=COTA_.ID) AS consignado, ");
+		
+		sql.append(" BOLETO_ANTECIPADO_.DATA_VENCIMENTO as dataVencimento, ");
+		
+		sql.append(" BOLETO_ANTECIPADO_.DATA_PAGAMENTO as dataPagamento, ");
+		
+		sql.append(" BOLETO_ANTECIPADO_.STATUS as situacao ");
+		
+		sql.append(this.getSqlFromInadimplenciaBoletosAntecipados(filtro));
+		
+		return sql;
+	}
+	
+	/**
+     * Obtem clausula From da consulta de Boletos Antecipados Inadimplentes
+     * 
+     * @param filtro
+     * @return StringBuilder
+     */
+    private StringBuilder getSqlFromInadimplenciaBoletosAntecipados(FiltroCotaInadimplenteDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+		
+        sql.append(" FROM BOLETO_ANTECIPADO BOLETO_ANTECIPADO_ ");
+		
+		sql.append(" JOIN CHAMADA_ENCALHE_COTA AS CHAMADA_ENCALHE_COTA_ ON (CHAMADA_ENCALHE_COTA_.ID = BOLETO_ANTECIPADO_.CHAMADA_ENCALHE_COTA_ID) ");
+		
+		sql.append(" JOIN COTA AS COTA_ ON(COTA_.ID=CHAMADA_ENCALHE_COTA_.COTA_ID) ");
+		
+		sql.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ");
+		
+		sql.append(this.getSqlWhereInadimplenciaBoletosAntecipados(filtro));
+		
+		return sql;
+	}
+	
+    /**
+     * Obtem clausula Where da consulta de Boletos Antecipados Inadimplentes
+     * 
+     * @param filtro
+     * @return StringBuilder
+     */
+	private StringBuilder getSqlWhereInadimplenciaBoletosAntecipados(FiltroCotaInadimplenteDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" WHERE BOLETO_ANTECIPADO_.BOLETO_ANTECIPADO_ID IS NULL ");
+		
+		if(filtro.getPeriodoDe() != null) {
+            
+			sql.append(" AND BOLETO_ANTECIPADO_.DATA_VENCIMENTO >= :periodoDe ");
+		}
+		
+		if(filtro.getPeriodoAte() != null) {
+		    
+			sql.append(" AND BOLETO_ANTECIPADO_.DATA_VENCIMENTO <= :periodoAte ");
+		}
+		
+		if(filtro.getNumCota() != null) {
+		    
+			sql.append(" AND COTA_.NUMERO_COTA = :numCota ");
+		}
+		
+		if(filtro.getStatusCota() != null) {
+		
+		    sql.append(" AND COTA_.SITUACAO_CADASTRO = :statusCota ");
+		}
+  
+		sql.append(" AND BOLETO_ANTECIPADO_.STATUS IN (:statusDivida) ");
+		
+		return sql;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<StatusDividaDTO> obterInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 	
 		StringBuilder sql =
-			new StringBuilder(
-				this.getSqlInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());
+			new StringBuilder(this.getSqlInadimplenciaClausulaSelect() + 
+				              this.getSqlInadimplenciaClausulaFrom());
 		
 		HashMap<String,Object> params = new HashMap<>();
 		
 		HashMap<String, List<?>> paramsList = new HashMap<>();
 		
 		tratarFiltro(sql,params,paramsList,filtro);
+
+		sql.append(" UNION ALL ");
 		
+		sql.append(this.getSqlInadimplenciaBoletosAntecipados(filtro));
+
 		paramsList.put("gruposMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()));
 		
 		params.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
 		params.put("operacaoEstoqueEntrada", OperacaoEstoque.ENTRADA.name());
-		
+
 		sql.append(obterOrderByInadimplenciasCota(filtro));
-		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-			sql.append(" LIMIT :inicio,:qtdeResult");
-			params.put("inicio", filtro.getPaginacao().getPosicaoInicial());
-			params.put("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina());
-		}
 		
 		Query query = getSession().createSQLQuery(sql.toString())
 				.addScalar("idDivida", StandardBasicTypes.LONG)
@@ -399,15 +555,24 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.addScalar("dividaAcumulada");
 		
 		for(String key : params.keySet()){
+			
 			query.setParameter(key, params.get(key));
 		}
 		
 		for(String key : paramsList.keySet()){
+			
 			query.setParameterList(key, paramsList.get(key));
 		}
 		
+        if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+			
+		    query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		    
+		    query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
+
 		query.setResultTransformer(Transformers.aliasToBean(StatusDividaDTO.class));
-				
+		
 		return query.list();
 	}	
 		
@@ -459,9 +624,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			sql.append(" COTA_.SITUACAO_CADASTRO = :statusCota ");
 			params.put("statusCota",filtro.getStatusCota());
 		}
+		
 		if (filtro.getStatusDivida() != null && !filtro.getStatusDivida().isEmpty()) {
-
-			sql.append(" AND ( ");
 			
 			boolean utilizarAnd = false;
 			
@@ -470,7 +634,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 					filtro.getStatusDivida().contains(StatusDivida.PENDENTE_INADIMPLENCIA) ||
 					filtro.getStatusDivida().contains(StatusDivida.POSTERGADA)) {
 				
-				sql.append(" COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
+				sql.append("AND COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
 				params.put("dataAtual", filtro.getDataOperacaoDistribuidor());
 				utilizarAnd = true;			
 			}
@@ -483,8 +647,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				sql.append(utilizarAnd ? "  ) " : "");
 			}
 		}
-		
-		sql.append(" ) ");
 			
 		sql.append(" AND DIVIDA_.STATUS in (:statusDivida) ");
 		
@@ -497,7 +659,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		for (StatusDivida statusDivida : statusDividas) {
 			
-			parsedStatus.add(statusDivida.name());
+			if (statusDivida!=null){
+			    
+				parsedStatus.add(statusDivida.name());
+			}
 		}
 		
 		return parsedStatus;
@@ -550,16 +715,29 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	
 	public Long obterTotalInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 		
-		StringBuilder sql =
-			new StringBuilder(
-				this.getSqlCountInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());	
+		StringBuilder sql = new StringBuilder(" SELECT ");
 		
+		sql.append(" ( ");
+		
+		sql.append(this.getSqlCountInadimplenciaClausulaSelect() + 
+				   this.getSqlInadimplenciaClausulaFrom());	
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
 		HashMap<String, List<?>> paramsList = new HashMap<>();
 		
 		tratarFiltro(sql,params,paramsList,filtro);
+
+		sql.append(" ) ");
+		
+        sql.append(" + ");
+		
+        sql.append(" ( ");
+        
+		sql.append(this.getSqlCountInadimplenciaBoletoAntecipadoClausulaSelect() + 
+				   this.getSqlFromInadimplenciaBoletosAntecipados(filtro));
+
+		sql.append(" ) FROM DUAL ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
@@ -576,16 +754,25 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	
 	public Long obterTotalCotasInadimplencias(FiltroCotaInadimplenteDTO filtro) {
 		
-		StringBuilder sql =
-			new StringBuilder(
-				this.getSqlCountCotasInadimplentesClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());	
+        StringBuilder sql = new StringBuilder(" SELECT COUNT(DISTINCT CONTAGEM.COTA_ID) FROM ");
 		
+		sql.append(" ( ");
 		
-		HashMap<String,Object> params = new HashMap<String, Object>();
+		sql.append(this.getSqlCountCotasInadimplentesClausulaSelect() + 
+				   this.getSqlInadimplenciaClausulaFrom());	
+		
+        HashMap<String,Object> params = new HashMap<String, Object>();
 		
 		HashMap<String, List<?>> paramsList = new HashMap<>();
 		
 		tratarFiltro(sql,params,paramsList,filtro);
+		
+        sql.append(" UNION ALL ");
+        
+        sql.append(this.getSqlCountCotasInadimplentesBoletoAntecipadoClausulaSelect() +
+        		   this.getSqlFromInadimplenciaBoletosAntecipados(filtro));
+        
+        sql.append(" ) AS CONTAGEM ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
@@ -602,17 +789,27 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 
 	@Override
 	public Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro) {
+
+		StringBuilder sql = new StringBuilder(" SELECT SUM(SOMATORIO.VALOR) FROM ");
 		
-		StringBuilder sql =
-			new StringBuilder(
-				this.getSqlSumValorInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());	
+        sql.append(" ( ");
 		
-		HashMap<String,Object> params = new HashMap<String, Object>();
+		sql.append(this.getSqlSumValorInadimplenciaClausulaSelect() + 
+				   this.getSqlInadimplenciaClausulaFrom());	
+		
+        HashMap<String,Object> params = new HashMap<String, Object>();
 		
 		HashMap<String, List<?>> paramsList = new HashMap<>();
 		
 		tratarFiltro(sql,params,paramsList,filtro);
 		
+        sql.append(" UNION ALL ");
+        
+        sql.append(this.getSqlSumValorInadimplenciaBoletoAntecipadoClausulaSelect() +
+        		   this.getSqlFromInadimplenciaBoletosAntecipados(filtro));
+        
+        sql.append(" ) AS SOMATORIO ");
+
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		for(String key : params.keySet()){
@@ -933,13 +1130,21 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" where ");
 		sql.append(" ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
 		sql.append(" END as dividaAcumulada, ");
+		
 		sql.append(" DIVIDA_.ID as idDivida, ");
+		
 		sql.append(" COTA_.ID AS idCota, ");
+		
 		sql.append(" COBRANCA_.ID AS idCobranca, ");
+		
 		sql.append(" NEGOCIACAO_.ID as idNegociacao, ");
+		
 		sql.append(" NEGOCIACAO_.COMISSAO_PARA_SALDO_DIVIDA as comissaoSaldoDivida, ");
+		
 		sql.append(" COTA_.NUMERO_COTA AS numCota, ");
+		
 		sql.append(" COTA_.SITUACAO_CADASTRO as status, ");
+		
 		sql.append(" CASE WHEN PESSOA_.NOME IS NOT NULL ");
 		sql.append(" THEN PESSOA_.NOME ");
 		sql.append(" ELSE PESSOA_.RAZAO_SOCIAL END AS nome, ");
@@ -971,7 +1176,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" and cota2_.ID=COTA_.ID) AS consignado, ");
 		
 		sql.append(" COBRANCA_.DT_VENCIMENTO as dataVencimento, ");
+		
 		sql.append(" COBRANCA_.DT_PAGAMENTO as dataPagamento, ");
+		
 		sql.append(" DIVIDA_.STATUS as situacao ");
 		
 		return sql.toString();
@@ -982,14 +1189,29 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		return " SELECT COUNT(*) ";
 	}
 	
+    private String getSqlCountInadimplenciaBoletoAntecipadoClausulaSelect() {
+		
+		return " SELECT COUNT(*) ";
+	}
+	
 	private String getSqlCountCotasInadimplentesClausulaSelect() {
 		
-		return " SELECT COUNT(DISTINCT COTA_.ID) ";
+		return " SELECT COTA_.ID AS COTA_ID ";
+	}
+	
+    private String getSqlCountCotasInadimplentesBoletoAntecipadoClausulaSelect() {
+		
+		return " SELECT COTA_.ID AS COTA_ID ";
 	}
 	
 	private String getSqlSumValorInadimplenciaClausulaSelect() {
 		
-		return " SELECT SUM(DIVIDA_.VALOR) ";
+		return " SELECT DIVIDA_.VALOR AS VALOR ";
+	}
+	
+    private String getSqlSumValorInadimplenciaBoletoAntecipadoClausulaSelect() {
+		
+		return " SELECT BOLETO_ANTECIPADO_.VALOR AS VALOR ";
 	}
 
 	@Override
@@ -1016,12 +1238,5 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    
 		Long retorno = (Long) query.uniqueResult();
 		return retorno;
-	}
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

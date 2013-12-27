@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
@@ -44,6 +46,7 @@ import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
@@ -95,6 +98,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private NegociacaoDividaRepository negociacaoDividaRepository;
 	
 	/**
 	 * Gera Movimentos Financeiro para a Cota
@@ -294,7 +300,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Transactional
 	public MovimentoFinanceiroCota obterMovimentoFinanceiroCotaPorId(Long idMovimento) {
 		
-		return this.movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
+		MovimentoFinanceiroCota m = this.movimentoFinanceiroCotaRepository.buscarPorId(idMovimento);
+		
+		Hibernate.initialize(m.getConsolidadoFinanceiroCota());
+		
+		return m;
 	}
 	
 	/**
@@ -653,7 +663,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			GrupoMovimentoFinaceiro tmf = ((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro();
 			
 			if (tmf.equals(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE)||
-				tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE)){
+				tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE)||
+				tmf.equals(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO)){
 			
 				List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
 				
@@ -689,6 +700,19 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				for (Long idHmfc : idsHmfc){
 					
 					this.historicoMovimentoFinanceiroCotaRepository.removerPorId(idHmfc);
+				}
+				
+				if (tmf.equals(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO)){
+					
+					Negociacao negociacao = this.negociacaoDividaRepository.obterNegociacaoPorMovFinanceiroId(mfc.getId());
+					
+					if (negociacao != null && 
+						(negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty())){
+						
+						negociacao.setValorDividaPagaComissao(negociacao.getValorDividaPagaComissao().add(mfc.getValor()));
+						
+						this.negociacaoDividaRepository.alterar(negociacao);
+					}
 				}
 
 			    idsMfc.add(mfc.getId());

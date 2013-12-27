@@ -196,6 +196,14 @@
 	</div>
 </form>
 
+<form id="form-valor-venda-dia">
+	<div id="dialog-valor-venda-dia" title="Detalhe Tipo de Movimento" style="display: none;">
+		<fieldset>
+			<table class="valorVendaDiaGrid"></table>
+		</fieldset>
+	</div>
+</form>
+
 <form id="form-encargos">
 	<div id="dialog-encargos" title="Detalhes do Encargo" style="display: none;">
 		<fieldset>

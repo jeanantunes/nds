@@ -3,7 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -22,6 +25,8 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento;
 
 	private BigInteger capacidadeRecolhimentoDistribuidor;
+	
+	private long mediaRecolhimentoDistribuidor;
 	
 	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados;
 	
@@ -49,6 +54,23 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	public void setMatrizRecolhimento(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		this.matrizRecolhimento = matrizRecolhimento;
 	}
+	
+	/**
+	 * @param matrizRecolhimento the matrizRecolhimento to add
+	 */
+	public void addMatrizRecolhimento(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
+		
+	
+		for(Entry<Date, List <ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()){
+			if(this.matrizRecolhimento.containsKey(entry.getKey())){
+				this.matrizRecolhimento.get(entry.getKey()).addAll(entry.getValue());
+			}else{
+				Map<Date, List <ProdutoRecolhimentoDTO>> map = new HashMap<>();
+				map.put(entry.getKey(), entry.getValue());
+				this.matrizRecolhimento.putAll(map);
+			}
+		}
+	}
 
 	/**
 	 * @return the capacidadeRecolhimentoDistribuidor
@@ -63,6 +85,37 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	public void setCapacidadeRecolhimentoDistribuidor(
 			BigInteger capacidadeRecolhimentoDistribuidor) {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
+	}
+	
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to add
+	 */
+	public void addCapacidadeRecolhimentoDistribuidor(
+			BigInteger capacidadeRecolhimentoDistribuidor) {
+		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
+	}
+	
+	/**
+	 * @return the capacidadeRecolhimentoDistribuidor
+	 */
+	public long getMediaRecolhimentoDistribuidor() {
+		return mediaRecolhimentoDistribuidor;
+	}
+
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to set
+	 */
+	public void setMediaRecolhimentoDistribuidor(
+			long mediaRecolhimentoDistribuidor) {
+		this.mediaRecolhimentoDistribuidor = mediaRecolhimentoDistribuidor;
+	}
+	
+	/**
+	 * @param capacidadeRecolhimentoDistribuidor the capacidadeRecolhimentoDistribuidor to add
+	 */
+	public void addMediaRecolhimentoDistribuidor(
+			long mediaRecolhimentoDistribuidor) {
+		this.mediaRecolhimentoDistribuidor = this.mediaRecolhimentoDistribuidor+mediaRecolhimentoDistribuidor;
 	}
 
 	/**
@@ -80,6 +133,15 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 		this.produtosRecolhimentoNaoBalanceados = produtosRecolhimentoNaoBalanceados;
 	}
 
+	
+	/**
+	 * @param produtosRecolhimentoNaoBalanceados the produtosRecolhimentoNaoBalanceados to set
+	 */
+	public void addProdutosRecolhimentoNaoBalanceados(
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados) {
+		this.produtosRecolhimentoNaoBalanceados.addAll(produtosRecolhimentoNaoBalanceados);
+	}
+	
 	/**
 	 * @return the cotasOperacaoDiferenciada
 	 */
@@ -96,6 +158,13 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	}
 
 	/**
+	 * @param cotasOperacaoDiferenciada the cotasOperacaoDiferenciada to add
+	 */
+	public void addCotasOperacaoDiferenciada(
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		this.cotasOperacaoDiferenciada.addAll(cotasOperacaoDiferenciada);
+	}
+	/**
 	 * @return the produtosRecolhimentoAgrupados
 	 */
 	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoAgrupados() {
@@ -108,6 +177,14 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	public void setProdutosRecolhimentoAgrupados(
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 		this.produtosRecolhimentoAgrupados = produtosRecolhimentoAgrupados;
+	}
+	
+	/**
+	 * @param produtosRecolhimentoAgrupados the produtosRecolhimentoAgrupados to add
+	 */
+	public void addProdutosRecolhimentoAgrupados(
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
+		this.produtosRecolhimentoAgrupados.addAll(produtosRecolhimentoAgrupados);
 	}
 	
 }

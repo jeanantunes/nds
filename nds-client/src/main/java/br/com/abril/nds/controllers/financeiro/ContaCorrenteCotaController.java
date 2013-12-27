@@ -31,6 +31,7 @@ import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
 import br.com.abril.nds.dto.ResultadosContaCorrenteConsignadoDTO;
 import br.com.abril.nds.dto.ResultadosContaCorrenteEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
@@ -667,5 +668,16 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor.setScale(4, RoundingMode.HALF_EVEN));
 		
 		this.result.use(Results.json()).from(dados, "result").recursive().serialize();
+	}
+	
+	@Post
+	public void consultarValorVendaDia(Long idConsolidado, Date data, Integer numeroCota,
+			String sortname, String sortorder){
+		
+		List<MovimentoFinanceiroDTO> movs = 
+				 this.contaCorrenteCotaService.consultarValorVendaDia(
+						 numeroCota, idConsolidado, data);
+		
+		this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
 	}
 }

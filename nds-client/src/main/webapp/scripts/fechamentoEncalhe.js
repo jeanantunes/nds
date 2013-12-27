@@ -1244,7 +1244,7 @@ var fechamentoEncalheController = $.extend(true, {
 			null,
 			function(result) {
 			
-				if(!result || result == '' || result == 'FINALIZADO' || result.tipoMensagem) {
+				if(!result || result == '' || result == 'ENVIO_FINALIZADO' || result.tipoMensagem) {
 					
 					$('#mensagemLoading').text('Aguarde, carregando ...');
 					
@@ -1255,7 +1255,14 @@ var fechamentoEncalheController = $.extend(true, {
 					
 				} else {
 					
-					$('#mensagemLoading').text(result);
+					if (result == 'FINALIZADO'){
+						
+						$('#mensagemLoading').text('Aguarde, envio de boletos ...');
+					}
+					else{
+					
+					    $('#mensagemLoading').text(result);
+					}
 					
 					setTimeout(fechamentoEncalheController.obterStatusEmissaoBoletosFechamentoEncalhe,5000);
 				}
