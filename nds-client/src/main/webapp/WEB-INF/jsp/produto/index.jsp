@@ -11,6 +11,29 @@
 	produtoController.inicializar(pesquisaProdutoCadastroProduto);
 	
 	</script>
+	<style>
+		label { 
+		        vertical-align:super; 
+		}
+		
+		#dialog-novo label { 
+		        width:370px; margin-bottom:10px; float:left; font-weight:bold; line-height:26px; 
+		}
+		
+		.ui-tabs .ui-tabs-panel {
+		   /*padding: 6px!important;*/
+		}
+    </style>
+
+	</head>
+
+<body>
+
+        <form action="/produto" id="excluir_form">
+        <div id="dialog-excluir" title="Excluir Produto">
+                <p>Confirma a exclus&atilde;o deste Produto?</p>
+        </div>
+        </form>
 	<form action="/produto" id="incluir_form">
 	<div id="dialog-novo" title="Incluir Novo Produto">
      
@@ -140,7 +163,7 @@
 				</td>
 				
 				<td style="vertical-align: top;" >
-					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;" id="fieldSegmentacao">
+					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 240px;" id="fieldSegmentacao">
 						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
@@ -198,8 +221,20 @@
 							                    </select> 
 											</td>
 										</tr>
-										
-										
+
+										<tr>
+											<td><strong>Segmento:</strong></td>
+											<td><select class="habilitarCampoInterfaceSegmentacao"
+												name="comboTipoSegmento" id="comboTipoSegmento"
+												style="width: 150px;">
+													<option value="">Selecione</option>
+													<c:forEach varStatus="counter" var="itemSegmento"
+														items="${listaSegmentoProduto}">
+														<option value="${itemSegmento.key}">${itemSegmento.value}</option>
+													</c:forEach>
+											</select></td>
+										</tr>
+
 										<tr>
 											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
 											<td>
