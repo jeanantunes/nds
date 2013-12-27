@@ -139,19 +139,26 @@ public class ParciaisServiceImpl implements ParciaisService{
 		for(int numeroPeriodo=1 ; numeroPeriodo<=qtdePeriodos; numeroPeriodo++) {
 		
 			if(ultimoLancamento == null) {
-				dtLancamento = lancamentoParcial.getLancamentoInicial();			
+				
+				dtLancamento = lancamentoParcial.getLancamentoInicial();
+				
+				dtRecolhimento = dtLancamento;
+				
 			} else {
 				
+				dtLancamento = DateUtil.adicionarDias(ultimoLancamento.getDataLancamentoDistribuidor(),peb + fatorRelancamentoParcial);
+				
 				dtLancamento = 
-						calendarioService.obterProximaDataDiaUtil(
-								DateUtil.adicionarDias(ultimoLancamento.getDataRecolhimentoDistribuidor(),fatorRelancamentoParcial));
+						calendarioService.obterProximaDataDiaUtil(dtLancamento);
+				
+				dtRecolhimento = ultimoLancamento.getDataRecolhimentoDistribuidor();
 			}
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtLancamento) > 0) {
 				break;
 			}			
 			
-			dtRecolhimento = this.obterDataRecolhimentoIdeal(DateUtil.adicionarDias(dtLancamento,peb));
+			dtRecolhimento = this.obterDataRecolhimentoIdeal(DateUtil.adicionarDias(dtRecolhimento,peb));
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
