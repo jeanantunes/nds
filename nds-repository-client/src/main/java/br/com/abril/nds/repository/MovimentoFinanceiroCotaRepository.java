@@ -213,4 +213,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return BigDecimal
 	 */
 	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
+
+	List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota,
+			Long idConsolildado, List<Long> tiposMovimento, Date data);
 }

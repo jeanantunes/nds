@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -41,7 +42,9 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.PDFUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -155,7 +158,27 @@ public class NegociacaoDividaController extends BaseController {
 		
 		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);
 		
-		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
+		BigDecimal total = BigDecimal.ZERO;
+		for (NegociacaoDividaDetalheVO d : listDividas){
+			
+			if (d.getTipoMovimentoFinanceiro().getOperacaoFinaceira() == OperacaoFinaceira.CREDITO){
+				total = total.subtract(d.getValor());
+			} else {
+				total = total.add(d.getValor());
+			}
+		}
+		
+		TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>> tableModel = 
+				new TableModel<CellModelKeyValue<NegociacaoDividaDetalheVO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listDividas));
+		tableModel.setPage(1);
+		tableModel.setTotal(listDividas.size());
+		
+		Object[] dados = new Object[2];
+		dados[0] = tableModel;
+		dados[1] = total;
+		
+		result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}
 	
 	@Path("/obterQuantidadeParcelas.json")
