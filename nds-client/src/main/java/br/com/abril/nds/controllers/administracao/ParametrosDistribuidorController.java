@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
@@ -436,6 +437,14 @@ public class ParametrosDistribuidorController extends BaseController {
 	    	
 	    	if(vo.getTiposNotasFiscais() == null || vo.getTiposNotasFiscais().isEmpty()) {
 	    		erros.add("É necessário informar os Tipos de Emissões dos Tipos de Notas ficais!");
+	    	}
+	    	
+	    	if(vo.getTiposNotasFiscais() != null && !vo.getTiposNotasFiscais().isEmpty()) {
+	    		for(TiposNotasFiscaisParametrosVO tnfp : vo.getTiposNotasFiscais()) {
+	    			if(Long.parseLong(tnfp.getValor()) < 0) {
+	    				erros.add("É necessário informar os Tipos de Emissões!");
+	    			}
+	    		}
 	    	}
 	    }
 	    

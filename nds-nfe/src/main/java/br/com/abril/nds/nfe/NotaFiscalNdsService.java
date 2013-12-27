@@ -1,7 +1,0 @@
-package br.com.abril.nds.nfe;
-
-public interface NotaFiscalNdsService {
-
-	
-	
-}

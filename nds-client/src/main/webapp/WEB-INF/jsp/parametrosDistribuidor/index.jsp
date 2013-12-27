@@ -43,6 +43,7 @@
 	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
 	$('.camposEspecificosRegimeEspecial').hide();
 	</c:if>
+	
 </script>
 
 </head>
