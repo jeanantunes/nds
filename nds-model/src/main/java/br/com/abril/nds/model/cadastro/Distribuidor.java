@@ -224,7 +224,7 @@ public class Distribuidor {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_CE", nullable = true)
-	private TipoImpressaoCE tipoImpressaoCE;	
+	private TipoImpressaoCE tipoImpressaoCE;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)

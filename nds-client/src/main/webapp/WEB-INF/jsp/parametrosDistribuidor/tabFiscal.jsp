@@ -49,8 +49,8 @@
 							<td></td>
 						</tr>
 						<tr class="camposEspecificosRegimeEspecial">
-							<td>Data de término da Vigência</td>
-							<td><input type="text" name="dataLimiteVigenciaRegimeEspecial" id="dataLimiteVigenciaRegimeEspecial" value="${parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial}" /></td>
+							<td>Data de Término da Vigência</td>
+							<td><input type="text" name="dataLimiteVigenciaRegimeEspecial" id="dataLimiteVigenciaRegimeEspecial" value="<fmt:formatDate value="${parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial}" pattern="dd/MM/yyyy"/>" /></td>
 							<td></td>
 							<td></td>
 						</tr>

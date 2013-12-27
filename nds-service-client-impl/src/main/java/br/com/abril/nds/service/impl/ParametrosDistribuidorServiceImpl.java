@@ -401,6 +401,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 		}
 		
+		parametrosDistribuidor.setNumeroDispositivoLegal(distribuidor.getNumeroDispositivoLegal());
+		parametrosDistribuidor.setDataLimiteVigenciaRegimeEspecial(distribuidor.getDataLimiteVigenciaRegimeEspecial());
+		
 		return parametrosDistribuidor;
 	}
 	

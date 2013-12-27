@@ -40,6 +40,10 @@
 	
 	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
 	bloquearItensEdicao(parametrosDistribuidorController.workspace);
+	
+	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
+	$('.camposEspecificosRegimeEspecial').hide();
+	</c:if>
 </script>
 
 </head>
