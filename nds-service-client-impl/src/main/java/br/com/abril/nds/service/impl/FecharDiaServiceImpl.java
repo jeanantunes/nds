@@ -1615,13 +1615,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 		LOG.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
 		
-		processarDividasNaoPagas(usuario, dataFechamento);
-		
-		LOG.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
-		
 		try {
 
-			
 			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
 
 			LOG.info("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
@@ -1633,6 +1628,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.processarLancamentosRecolhimento(usuario);
 
 			LOG.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
+			
+			processarDividasNaoPagas(usuario, dataFechamento);
+			
+			LOG.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
 			
 			return fechamentoDiarioDTO;
 		

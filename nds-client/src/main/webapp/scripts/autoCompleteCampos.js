@@ -77,6 +77,37 @@ function AutoCompleteCampos(workspace) {
 	},
 	
 	
+	this.autoCompletarPorNomeSimples = function(action, idCampoNome, parametroPesquisa, disparoDaPesquisa, isFromModal) {
+		
+		var	localParametroPesquisa = parametroPesquisa;
+		
+		if(!disparoDaPesquisa){
+			disparoDaPesquisa = 2;
+		}
+		
+		if(!parametroPesquisa){
+			localParametroPesquisa = nomeProduto;
+		}
+		
+		var nome = $(idCampoNome, autoComplete.workspace).val();
+		
+		nome = $.trim(nome);
+		
+		$(idCampoNome, autoComplete.workspace).autocomplete({source: [""]});
+		
+		if (nome && nome.length > disparoDaPesquisa) {
+			
+			$.postJSON(
+				contextPath + action, [{name : localParametroPesquisa, value : nome}],
+				function(result) { 
+					autoComplete.exibirAutoCompletePorNomeSimples(result, idCampoNome);
+				},
+				null, 
+				isFromModal
+			);
+		}
+	},
+
 	this.autoCompletarPorNome = function(action, idCampoCodigo, idCampoNome, parametroPesquisa, disparoDaPesquisa, isFromModal) {
 		
 		var	localParametroPesquisa = parametroPesquisa;
@@ -106,7 +137,7 @@ function AutoCompleteCampos(workspace) {
 				isFromModal
 			);
 		}
-},
+	},
 	
 	this.autoCompletarPorCodigo = function(action, idCampoCodigo, idCampoNome, parametroPesquisa, isFromModal, disparoDaPesquisa) {
 	
@@ -182,6 +213,26 @@ function AutoCompleteCampos(workspace) {
 				close : function(event, ui) {
 					$(idCampoCodigo, autoComplete.workspace).val(ui.item.chave.numero);
 					$(idCampoNome, autoComplete.workspace).val(ui.item.chave.label);
+				},
+				minLength: autoComplete.tamanhoInicial,
+				delay : 0,
+			});
+	};
+	
+	//Exibe o auto complete no campo
+	this.exibirAutoCompletePorNomeSimples = function(result, idCampoNome) {
+	
+			$(idCampoNome, autoComplete.workspace).autocomplete({
+				source: result,
+				
+				select : function(event, ui) {
+					$(idCampoNome, autoComplete.workspace).val(ui.item.label);
+				},
+				focus : function(event, ui) {
+					$(idCampoNome, autoComplete.workspace).val(ui.item.label);
+				},
+				close : function(event, ui) {
+					$(idCampoNome, autoComplete.workspace).val(ui.item.label);
 				},
 				minLength: autoComplete.tamanhoInicial,
 				delay : 0,

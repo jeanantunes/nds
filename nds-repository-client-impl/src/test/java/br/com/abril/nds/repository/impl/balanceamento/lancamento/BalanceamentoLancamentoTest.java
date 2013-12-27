@@ -396,7 +396,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
-			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores, produtoEdicaoIds);
+			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores);
 
 		Assert.assertEquals(lancamentos.size(), produtosLancamento.size());
 

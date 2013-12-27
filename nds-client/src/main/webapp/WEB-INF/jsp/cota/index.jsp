@@ -11,6 +11,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/tabCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pdv.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/autoCompleteCampos.js"></script>
 
 <script language="javascript" type="text/javascript">
 	
@@ -109,18 +110,15 @@
 		   <tr>
 				<td width="78">Logradouro:</td>
 				<td colspan="3">
-					<input type="text" id="logradouroPesquisa" style="width:170px;"
-						   onkeyup="MANTER_COTA.pesquisarLogradouros('#logradouroPesquisa');"/>
+					<input type="text" id="logradouroPesquisa" style="width:170px;"/>
 				</td>
 				<td width="43">Bairro:</td>
 				<td width="214">
-					<input type="text" id="bairroPesquisa" style="width:200px;"
-						   onkeyup="MANTER_COTA.pesquisarBairros('#bairroPesquisa');"/>
+					<input type="text" id="bairroPesquisa" style="width:200px;"/>
 				</td>
 				<td width="86">Munic&iacute;pio:</td>
 				<td width="193">
-					<input type="text" id="municipioPesquisa" style="width:180px;"
-						   onkeyup="MANTER_COTA.pesquisarMunicipios('#municipioPesquisa');"/>
+					<input type="text" id="municipioPesquisa" style="width:180px;"/>
 				</td>
 				<td width="126">
 	               	<span class="bt_novos">

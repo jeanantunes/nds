@@ -200,45 +200,13 @@ public class CotaController extends BaseController {
 	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 
-
-
-
-
-
-
-
-
-
-
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
 	public void verificarTipoConvencional(Long idCota) {
-		
-
-
 
 		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
 		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
 	}
 
@@ -912,7 +880,16 @@ public class CotaController extends BaseController {
 		logger.info("-->CotaController.apagarTipoCota");
 		cotaService.apagarTipoCota(idCota,  tipoCota);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!"),
+		
+		String mensagemSucess;
+		
+		if(tipoCota.equalsIgnoreCase("convencional")){
+			mensagemSucess = "Fixação da Cota apagada com sucesso!";
+		}else{
+			mensagemSucess = "Mix da Cota apagado com sucesso!";
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagemSucess),
 				Constantes.PARAM_MSGS).recursive().serialize();	
 	}
 	
