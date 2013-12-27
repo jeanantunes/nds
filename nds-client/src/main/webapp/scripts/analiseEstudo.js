@@ -136,10 +136,10 @@ var analiseEstudoController = $.extend(true, {
                     {name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val()},
                     {name : 'filtro.dataLancamento', value :  $("#dataLancamento", analiseEstudoController.workspace).val()}];
 
-        $(".estudosGrid", this.workspace).flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
+        $(".estudosGrid").flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
             params: data});
 
-        $(".estudosGrid", this.workspace).flexReload();	
+        $(".estudosGrid").flexReload();	
     },
 
     redirectToTelaAnalise : function(numeroEstudo, event){

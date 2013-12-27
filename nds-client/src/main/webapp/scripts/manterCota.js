@@ -6,6 +6,8 @@ var ModoTela = {
 
 var TAB_COTA = new TabCota('tabCota');
 
+var autoCompl;
+
 var MANTER_COTA = $.extend(true, {
 
     numeroCota:"",
@@ -23,6 +25,9 @@ var MANTER_COTA = $.extend(true, {
     resultCotaLength:0,
     
     init: function() {
+    	
+    	autoCompl = new AutoCompleteCampos(MANTER_COTA.workspace);
+    	
         this.definirModoTelaCadastroCota();
 
         $( "#tabpdv", this.workspace ).tabs();
@@ -30,6 +35,18 @@ var MANTER_COTA = $.extend(true, {
         $("#descricaoPessoa", this.workspace).autocomplete({source: ""});
 
         $("#numCota", this.workspace).numeric();
+        
+        $('#logradouroPesquisa').keyup(function (){
+        	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarLogradouros", '#logradouroPesquisa', "nomeLogradouro", 1);
+    	});
+        
+        $('#bairroPesquisa').keyup(function (){
+        	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarBairros", '#bairroPesquisa', "nomeBairro", 1);
+    	});
+        
+        $('#municipioPesquisa').keyup(function (){
+        	autoCompl.autoCompletarPorNomeSimples("/cadastro/endereco/pesquisarLocalidades", '#municipioPesquisa', "nomeLocalidade", 1);
+    	});
 
         COTA_FORNECEDOR.initTabFornecedorCota();
 
@@ -635,44 +652,6 @@ var MANTER_COTA = $.extend(true, {
         $(".ui-dialog-title-dialog-cota", this.workspace).html(value);
     },
 
-    pesquisarLogradouros: function(idCampoPesquisa) {
-
-        var nomeLogra = $(idCampoPesquisa, this.workspace).val();
-
-        nomeLogra = $.trim(nomeLogra);
-
-        $(idCampoPesquisa, this.workspace).autocomplete({source: ""});
-
-        if (nomeLogra && nomeLogra.length > 2) {
-
-            $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLogradouros", {nomeLogradouro:nomeLogra},
-                function(result) {
-                    MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
-                }
-            );
-        }
-    },
-
-    pesquisarBairros: function(idCampoPesquisa) {
-
-        var nomeBairro = $(idCampoPesquisa, this.workspace).val();
-
-        nomeBairro = $.trim(nomeBairro);
-
-        $(idCampoPesquisa, this.workspace).autocomplete({source: ""});
-
-        if (nomeBairro && nomeBairro.length > 2) {
-
-            $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarBairros", {nomeBairro:nomeBairro},
-                function(result) {
-                    MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
-                }
-            );
-        }
-    },
-
     /**
      * Flag que indica alteraÃ§Ãµes no cadastro da cota.
      */
@@ -722,26 +701,6 @@ var MANTER_COTA = $.extend(true, {
     	
     },
     
-    
-    pesquisarMunicipios: function(idCampoPesquisa) {
-
-        var nomeMunicipio = $(idCampoPesquisa, this.workspace).val();
-
-        nomeMunicipio = $.trim(nomeMunicipio);
-
-        $(idCampoPesquisa, this.workspace).autocomplete({source: ""});
-
-        if (nomeMunicipio && nomeMunicipio.length > 2) {
-
-            $.postJSON(
-                contextPath + "/cadastro/endereco/pesquisarLocalidades", {nomeLocalidade:nomeMunicipio},
-                function(result) {
-                    MANTER_COTA.exibirAutoComplete(result, idCampoPesquisa);
-                }
-            );
-        }
-    },
-
     exibirAutoComplete: function(result, idCampo) {
 
         $(idCampo, this.workspace).autocomplete({
@@ -1262,7 +1221,7 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
-        $('[name="cotaDTO.tipoCota"]', this.workspace).val(result.tipoCota);
+        $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoCota);
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
@@ -1302,7 +1261,7 @@ var COTA_CNPJ = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
-        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.tipoCota"]:visible', this.workspace).val()});
+        formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
 
         var existeCota = false;
         for (var i = 0; i < formData.length; i++) {
@@ -1483,7 +1442,7 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
-        $('[name="cotaDTO.tipoCota"]', this.workspace).val(result.tipoCota);
+        $('[name="cotaDTO.tipoDistribuicao"]', this.workspace).val(result.tipoDistribuicaoCota);
         
 //        //Ajuste 0153
 //        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
@@ -1530,7 +1489,7 @@ var COTA_CPF = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
-        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.tipoCota"]:visible', this.workspace).val()});
+        formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicao"]:visible', this.workspace).val()});
 
         if (MANTER_COTA.numeroCota) {
         	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
@@ -1557,7 +1516,9 @@ var COTA_CPF = $.extend(true, {
                     MANTER_COTA.isAlteracaoTitularidade = false;
                 }
                 
-                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento);
+                if(result.dataNascimento) {
+                	$("#dataNascimento", this.workspace).val(result.dataNascimento.$);
+                }
                 
                 MANTER_COTA._indCadastroCotaAlterado = false;
 
