@@ -226,28 +226,28 @@ var geracaoNFeController = $.extend({
 		if (typeof data.mensagens == "object") {
 		
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			$("#geracaoNfe-pesquisa", geracaoNotaEnvioController.workspace).hide();
+			$("#geracaoNfe-pesquisa", geracaoNFeController.workspace).hide();
 		
 		} else {
 			
 			for(var index in data.rows) {
 				
-				// if(data.rows[index].cell["notaImpressa"]) {
-					//data.rows[index].cell["notaImpressa"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_check.gif" border="0" />';
+				if(data.rows[index].cell["notaImpressa"]) {
+					data.rows[index].cell["notaImpressa"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_check.gif" border="0" />';
 		
-				//}else {
-					//data.rows[index].cell["notaImpressa"] = "";
-				//}
+				}else {
+					data.rows[index].cell["notaImpressa"] = "";
+				}
 			
-				//if(data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
-					//data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
-				//} else if(data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
+				if(data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
+					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
+				} else if(data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
 				
-					//data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
+					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
 				
-				//} else {
-					//data.rows[index].cell["situacaoCadastro"] = "";
-				//}
+				} else {
+					data.rows[index].cell["situacaoCadastro"] = "";
+				}
 			}
 			return data;
 		}
@@ -281,8 +281,8 @@ var geracaoNFeController = $.extend({
 		sortable : true,
 		align : 'right',
 	},  {
-		display : 'Status',
-		name : 'notaImpressa',
+		display : 'Total Desconto R$',
+		name : 'totalDesconto',
 		width : 100,
 		sortable : true,
 		align : 'center',
@@ -320,17 +320,6 @@ var geracaoNFeController = $.extend({
 			});
 		}
 		
-		/*
-		
-		private String sortname; 
-		
-		private String sortorder; 
-		
-		private Integer rp; 
-		
-		private Integer page;
-		 */
-		
 		var grid = $("#geracaoNfe-gridNFe");
 		
 		var uri = "busca.json";
@@ -342,6 +331,8 @@ var geracaoNFeController = $.extend({
 		});
 		
 		grid.flexReload();
+		
+		$(".grids").show();
 	
 	},
 	
@@ -429,5 +420,45 @@ var geracaoNFeController = $.extend({
 
 		});
 	},
+	
+	/**
+	 * funcao responsavel por carregar o combos por Roteiro
+	 */
+	changeRoteiro : function(){
+    	
+        var boxDe = $("#geracaoNotaEnvio-filtro-boxDe").val();
+    	
+    	var boxAte = $("#geracaoNotaEnvio-filtro-boxAte").val();
+    	
+    	var idRota = $("#geracaoNotaEnvio-filtro-selectRota").val();
+    	
+    	var idRoteiro = $("#geracaoNotaEnvio-filtro-selectRoteiro").val();
+     	
+     	var params = [{
+				            name : "idRoteiro",
+				            value : idRoteiro	
+						  }];
+     	
+     	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
+			function(result) {
+    		
+    		    var listaRota = result[0];
+    		 
+    		    var listaBox = result[1];
+    		    
+    		    var listaRoteiro = result[2];
+ 		    
+    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);  
+    		    
+    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
+     		    
+    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
+    		    
+    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+    	    }    
+		);
+	},
+	
+	
 }, BaseController);
 //@ sourceURL=geracaoNFe.js

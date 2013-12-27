@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
 public class FiltroViewNotaFiscalDTO {
@@ -27,20 +28,14 @@ public class FiltroViewNotaFiscalDTO {
 	
 	private Long idRoteiro; 
 	
-	private Long idRota; 
-	
-	private String sortname; 
-	
-	private String sortorder; 
-	
-	private Integer rp; 
-	
-	private Integer page; 
+	private Long idRota;  
 	
 	private List<Long> listIdFornecedor; 
 	
 	private SituacaoCadastro situacaoCadastro;
 
+	private PaginacaoVO paginacaoVO;
+	
 	public Integer getIntervaloBoxInicial() {
 		return intervaloBoxInicial;
 	}
@@ -112,39 +107,7 @@ public class FiltroViewNotaFiscalDTO {
 	public void setIdRota(Long idRota) {
 		this.idRota = idRota;
 	}
-
-	public String getSortname() {
-		return sortname;
-	}
-
-	public void setSortname(String sortname) {
-		this.sortname = sortname;
-	}
-
-	public String getSortorder() {
-		return sortorder;
-	}
-
-	public void setSortorder(String sortorder) {
-		this.sortorder = sortorder;
-	}
-
-	public Integer getRp() {
-		return rp;
-	}
-
-	public void setRp(Integer rp) {
-		this.rp = rp;
-	}
-
-	public Integer getPage() {
-		return page;
-	}
-
-	public void setPage(Integer page) {
-		this.page = page;
-	}
-
+	
 	public List<Long> getListIdFornecedor() {
 		return listIdFornecedor;
 	}
@@ -167,5 +130,13 @@ public class FiltroViewNotaFiscalDTO {
 
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
+	}
+
+	public PaginacaoVO getPaginacaoVO() {
+		return paginacaoVO;
+	}
+
+	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
+		this.paginacaoVO = paginacaoVO;
 	}
 }

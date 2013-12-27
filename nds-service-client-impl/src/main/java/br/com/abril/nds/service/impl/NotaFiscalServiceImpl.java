@@ -1732,9 +1732,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		LOGGER.info("obter informações da cota sumarizadas...");
 		
-		this.notaFiscalRepository.consultaCotaExemplaresSumarizados(filtro);
+		if (filtro.getDataInicial() == null || filtro.getDataFinal() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"O intervalo de datas não pode ser nula!");
+		}
 		
-		return null;
+		return this.notaFiscalRepository.consultaCotaExemplaresSumarizados(filtro);
+	}
+
+	@Override
+	public Integer consultaCotaExemplareSumarizadoQtd(
+			FiltroViewNotaFiscalDTO filtro) {
+		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
 }

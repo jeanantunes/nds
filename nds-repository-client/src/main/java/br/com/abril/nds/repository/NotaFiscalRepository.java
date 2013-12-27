@@ -30,4 +30,7 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroViewNotaFiscalDTO filtro);
 	
 	public abstract List<NotaFiscal> obterNotaFiscal(ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscal);
+
+	public abstract Integer consultaCotaExemplaresSumarizadosQtd(
+			FiltroViewNotaFiscalDTO filtro);
 }

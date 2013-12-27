@@ -169,11 +169,6 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>nds-nfe</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>br.com.abril</groupId>
 			<artifactId>nds-integration-client</artifactId>
 			<version>1.0</version>
 		</dependency>

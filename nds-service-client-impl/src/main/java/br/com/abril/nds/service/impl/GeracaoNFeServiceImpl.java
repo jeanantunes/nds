@@ -106,7 +106,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
 			
 			cotaExemplares.setIdCota(cota.getId());
-			cotaExemplares.setExemplares(cotasTotalItens.get(cota).getQuantidade().longValue());
+			cotaExemplares.setExemplares(cotasTotalItens.get(cota).getQuantidade());
 			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
 			cotaExemplares.setNumeroCota(cota.getNumeroCota());
 			cotaExemplares.setTotal(cotasTotalItens.get(cota).getPreco());
@@ -206,9 +206,14 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 
 	@Override
 	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
-		
-
 		return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
+	}
+
+	@Override
+	public Integer consultaCotaExemplareSumarizadoQtd(
+			FiltroViewNotaFiscalDTO filtro) {
+		
+		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);
 	}
 	
 }

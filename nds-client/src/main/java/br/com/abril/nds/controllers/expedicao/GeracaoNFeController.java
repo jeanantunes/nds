@@ -33,6 +33,8 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -76,9 +78,16 @@ public class GeracaoNFeController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		result.include("fornecedores", fornecedorService
-				.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
-		
+		this.obterTodosFornecedoresAtivos();
+		this.iniciarComboRoteiro();
+		this.iniciarComboRota();
+	}
+
+	private void obterTodosFornecedoresAtivos() {
+		result.include("fornecedores", fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+	}
+
+	private void iniciarComboRoteiro() {
 		result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
 		
 		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
@@ -91,7 +100,9 @@ public class GeracaoNFeController extends BaseController {
 		}
 		
 		result.include("roteiros", listRoteiro);
-		
+	}
+
+	private void iniciarComboRota() {
 		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
 		
 		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
@@ -105,18 +116,34 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/busca.json")
-	public void busca(FiltroViewNotaFiscalDTO filtro) {
+	public void busca(FiltroViewNotaFiscalDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL,	filtro);
+		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL, filtro);
+		
+		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		
+		filtro.setPaginacaoVO(paginacao);
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);
 		
+		Integer totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
+		
 		if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(filtro.getPage()).total(cotaExemplaresDTOs.size()).serialize();
+		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros).serialize();
+	}
+
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,
+			int page) {
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+	    paginacao.setPaginaAtual(page);
+	    paginacao.setQtdResultadosPorPagina(rp);
+	    paginacao.setSortOrder(sortorder);
+	    paginacao.setSortColumn(sortname);
+		return paginacao;
 	}
 	
 	@Post("/buscaCotasSuspensas.json")

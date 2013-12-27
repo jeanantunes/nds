@@ -9,12 +9,14 @@ import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.LongType;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.NfeDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -590,7 +592,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(queryUnicaNotafiscal());
+		// hql.append(queryUnicaNotafiscal());
 		Query query = getSession().createQuery(hql.toString());
 		query.list();
 				
@@ -598,26 +600,58 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroViewNotaFiscalDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
-		StringBuilder hql = new StringBuilder("select ");
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" mec.cota.id as idCota, ");
 		hql.append(" mec.cota.numeroCota as numeroCota, ");
-		hql.append(" mec.cota. as nomeCota, 	        ");
-		hql.append(" mec. as totalExemplares, 			");
-		hql.append(" mec. as total , 				    "); 
-		hql.append(" mec. as totalDesconto, 		    "); 	
-		hql.append(queryUnicaNotafiscal());
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomeCota,");
+		hql.append(" SUM(mec.qtde) as exemplares, ");
+		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
+		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto"); 	
 		
+		Query query = queryConsultaNfe(filtro, hql, false);
+		
+		if(filtro.getPaginacaoVO()!=null) {
+			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+
+			if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!=null) {
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaExemplaresDTO.class));
+		
+		return query.list();
+	}
+
+	private Query queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount) {
+		
+		hql.append(" FROM MovimentoEstoqueCota mec ")
+		.append(" JOIN mec.tipoMovimento tipoMovimento ")
+		.append(" JOIN mec.lancamento lancamento ")
+		.append(" JOIN mec.cota cota ")
+		.append(" JOIN cota.pessoa pessoa ")
+		.append(" LEFT JOIN cota.box box ")
+		.append(" JOIN mec.produtoEdicao produtoEdicao")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.fornecedores fornecedor")
+		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ");
 		
 		// Tipo de Nota:		
 		if(filtro.getIdTipoNotaFiscal() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
+			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
+			hql.append("FROM DistribuidorTipoNotaFiscal dtp ");
+			hql.append("JOIN dtp.tipoMovimento tm ");
+			hql.append("WHERE dtp.id in(:tipoNota)) ");
 		}
 		
-		
 		// Data Emissão:	...		
-		if(filtro.getIdTipoNotaFiscal() !=null) {
+		if(filtro.getDataEmissao() !=null) {
 			hql.append(" AND BOX.CODIGO = :codigoBox ");
 		}
 		
@@ -633,30 +667,32 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		// Cota de:	 Até   
 		if(filtro.getIntervaloBoxInicial() !=null) {
-			hql.append(" AND ");
-			hql.append(" BOX.CODIGO = :codigoBox ");
+			hql.append(" AND BOX.CODIGO = :codigoBox ");
 		}
 		
 		// Intervalo Box:	 Até		
 		if(filtro.getIntervaloBoxInicial() !=null) {
-			hql.append(" AND ");
-			hql.append(" BOX.CODIGO = :codigoBox ");
+			hql.append(" AND BOX.CODIGO = :codigoBox ");
 		}
 		
 		if(filtro.getIntervaloBoxInicial() !=null) {
-			hql.append(" AND ");
-			hql.append(" BOX.CODIGO = :codigoBox ");
+			hql.append(" AND BOX.CODIGO = :codigoBox ");
 		}
 		 
 		
 		if(filtro.getListIdFornecedor() !=null) {
-			hql.append(" AND ");
-			hql.append(" BOX.CODIGO = :codigoBox ");
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 				
 		hql.append(" GROUP BY mec.cota.numeroCota ");
-		
-		Query query = getSession().createQuery(hql.toString());
+
+		if(!isCount){
+			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
+			}
+		}
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		Query query = this.getSession().createQuery(hql.toString());		
 		
 		// Data Movimento:	...  Até   ...
 		if (filtro.getDataInicial() != null && filtro.getDataFinal() != null) {
@@ -664,25 +700,27 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			query.setParameter("dataFinal", filtro.getDataFinal());
 		}
 		
-		query.list();
-				
-		return null;
+		// tipo da nota fiscal		
+		if(filtro.getIdTipoNotaFiscal() !=null && !"".equals(filtro.getIdTipoNotaFiscal())) {
+			query.setParameter("tipoNota", filtro.getIdTipoNotaFiscal());
+		}
+		
+		// forncedor id		
+		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+		return query;
 	}
 
-	private String queryUnicaNotafiscal() {
+	@Override
+	public Integer consultaCotaExemplaresSumarizadosQtd(
+			FiltroViewNotaFiscalDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder("")
-		.append(" FROM MovimentoEstoqueCota mec ")
-		.append(" JOIN mec.tipoMovimento tipoMovimento ")
-		.append(" JOIN mec.lancamento lancamento ")
-		.append(" JOIN mec.cota cota ")
-		.append(" LEFT JOIN cota.box box ")
-		.append(" JOIN mec.produtoEdicao produtoEdicao")
-		.append(" JOIN produtoEdicao.produto produto ")
-		.append(" JOIN produto.fornecedor")
-		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ")
-		.append(" AND mec.tipoMovimento.grupoMovimentoEstoque in(:grupoMovimentoEstoque) ");
-
-		return hql.toString();
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" COUNT(mec.cota.id) ");
+		Query query = queryConsultaNfe(filtro, hql, true);
+		
+		return (Integer) query.list().size();
 	}
 }

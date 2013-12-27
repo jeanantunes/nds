@@ -41,4 +41,7 @@ public interface GeracaoNFeService {
 	
 	public abstract List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
 
+
+	public abstract Integer consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
+
 }
