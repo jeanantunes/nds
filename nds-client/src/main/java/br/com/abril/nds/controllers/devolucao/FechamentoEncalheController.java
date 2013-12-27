@@ -6,10 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,7 +34,6 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
@@ -102,9 +99,6 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	protected BoletoService boletoService;
-	
-	@Autowired
-	protected BoletoEmailService boletoEmailService;
 	
 	@Autowired
 	private HttpSession session;
@@ -511,24 +505,7 @@ public class FechamentoEncalheController extends BaseController {
 		}
 	}
 
-    private List<String> obterListaNossoNumeroEnvioEmail(Map<String, Boolean> nossoNumeroEnvioEmail){
-		
-		List<String> listaNossoNumero = new ArrayList<String>();
-
-		for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
-			
-			if (nossoNumeroEnvioEmail.get(nossoNumero)){
-				
-				listaNossoNumero.add(nossoNumero);
-			}
-		}
-        
-        return listaNossoNumero;
-	}
-
 	private void realizarCobrancaTodasCotas(Date dataOperacao, List<CotaAusenteEncalheDTO> listaCotasAusentes) throws GerarCobrancaValidacaoException {
-		
-		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 		
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 		
@@ -548,14 +525,10 @@ public class FechamentoEncalheController extends BaseController {
 				
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
 
-				nossoNumeroEnvioEmail = this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
-												                                           getUsuarioLogado(), 
-												                                           cotaAusenteEncalheDTO.getIdCota(),
-												                                           validacaoVO);
-				
-				List<String> listaNossoNumero = this.obterListaNossoNumeroEnvioEmail(nossoNumeroEnvioEmail);
-					
-				this.boletoEmailService.salvarBoletoEmail(listaNossoNumero);	
+				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
+												                   getUsuarioLogado(), 
+												                   cotaAusenteEncalheDTO.getIdCota(),
+												                   validacaoVO);					
 			}
 		} catch (Exception e) {
 

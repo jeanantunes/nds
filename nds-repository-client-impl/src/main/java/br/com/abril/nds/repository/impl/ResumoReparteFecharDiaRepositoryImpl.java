@@ -20,9 +20,11 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
+import br.com.abril.nds.server.model.Status;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -62,7 +64,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         //Sql que obtem as diferencas apontadas para distribuidor que estão pendentes de aprovação do GFS
         String templateHqlDiferencaGFSPendenteDeAprovacao =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
 	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append(" where lancamentoDiferenca.status in (:statusDiferencaGFS) and  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
+	        .append(" where lancamentoDiferenca.movimentoEstoque.statusIntegracao in (:statusIntegracaoGFS) and  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
         
         //Sql que obtem as diferenças direcionadas apenas para as cotas
@@ -128,7 +130,13 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("grupoMovimentoRecebimentoFisico", GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
         
-        query.setParameterList("statusDiferencaGFS", Arrays.asList(StatusAprovacao.PENDENTE));
+        query.setParameterList("statusIntegracaoGFS", Arrays.asList(StatusIntegracao.EM_PROCESSAMENTO,
+													        		StatusIntegracao.EM_PROCESSO,
+													        		StatusIntegracao.SOLICITADO,
+													        		StatusIntegracao.NAO_INTEGRADO,
+													        		StatusIntegracao.RE_INTEGRADO,
+													        		StatusIntegracao.INTEGRADO,
+													        		StatusIntegracao.AGUARDANDO_GFS));
         
         query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
         															TipoDiferenca.SOBRA_EM,

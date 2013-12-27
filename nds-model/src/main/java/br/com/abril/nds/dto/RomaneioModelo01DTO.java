@@ -170,5 +170,4 @@ public class RomaneioModelo01DTO implements Serializable {
 	public void setPacotePadrao(Long pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
-	
 }
