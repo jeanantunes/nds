@@ -214,7 +214,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$.each(itensTiposNotasFiscais, function(index, value) {
 			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].nome', value: itensTiposNotasFiscais[index]});
-			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].valor', value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val()});
+			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].valor', value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val() != undefined ? $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val() : -1});
 		});
 		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",

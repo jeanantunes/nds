@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -22,7 +21,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
@@ -57,6 +55,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_FURO_ID")
 	MovimentoEstoqueCota movimentoEstoqueCotaFuro;
 	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ESTORNO_ID")
+	MovimentoEstoqueCota movimentoEstoqueCotaEstorno;
+	
 	// Esta data é utilizada para a data do lançamento do distribuidor aparecer corretamente na consulta consignado cota
 	// Implementado em conjunto com Cesar Pop Punk
 	@Temporal(TemporalType.DATE)
@@ -87,13 +89,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
-	@ManyToOne(optional=true)
-	@JoinColumns({
-		@JoinColumn(name="NOTA_ENVIO_ITEM_NOTA_ENVIO_ID", referencedColumnName="NOTA_ENVIO_ID"),
-		@JoinColumn(name="NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA")
-	})
-	private ItemNotaEnvio itemNotaEnvio;
-	
+	@Column(name = "NOTA_FISCAL_EMITIDA")
+	private boolean notaFiscalEmitida;
+		
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -237,12 +235,21 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
 
-	public ItemNotaEnvio getItemNotaEnvio() {
-		return itemNotaEnvio;
+	public MovimentoEstoqueCota getMovimentoEstoqueCotaEstorno() {
+		return movimentoEstoqueCotaEstorno;
 	}
 
-	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
-		this.itemNotaEnvio = itemNotaEnvio;
+	public void setMovimentoEstoqueCotaEstorno(
+			MovimentoEstoqueCota movimentoEstoqueCotaEstorno) {
+		this.movimentoEstoqueCotaEstorno = movimentoEstoqueCotaEstorno;
+	}
+
+	public boolean isNotaFiscalEmitida() {
+		return notaFiscalEmitida;
+	}
+
+	public void setNotaFiscalEmitida(boolean notaFiscalEmitida) {
+		this.notaFiscalEmitida = notaFiscalEmitida;
 	}
 	
 }
