@@ -65,10 +65,7 @@
 		   
     <input type="hidden" id="regimeTributarioHidden"
 		   value="${parametrosDistribuidor.regimeTributario}" />
-		   
-    <input type="hidden" id="obrigacaoFiscalHidden"
-		   value="${parametrosDistribuidor.obrigacaoFiscal}" />
-		  
+		   		  
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
 		   

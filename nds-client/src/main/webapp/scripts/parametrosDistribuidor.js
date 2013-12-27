@@ -199,6 +199,8 @@ var parametrosDistribuidorController = $.extend(true, {
 			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.possuiRegimeEspecialDispensaInterna', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.numeroDispositivoLegal', value: $('#numeroDispositivoLegal', this.workspace).val()},
+			{name:'parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial', value: $('#dataLimiteVigenciaRegimeEspecial', this.workspace).val()},
 			
 		];
 		
@@ -211,7 +213,8 @@ var parametrosDistribuidorController = $.extend(true, {
 		itensTiposNotasFiscais = jQuery.unique(itensTiposNotasFiscais);
 		
 		$.each(itensTiposNotasFiscais, function(index, value) {
-			data.push({name:'parametrosDistribuidor.tiposNotasFiscais.'+itensTiposNotasFiscais[index], value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val()});
+			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].nome', value: itensTiposNotasFiscais[index]});
+			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].valor', value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val()});
 		});
 		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",
@@ -221,6 +224,15 @@ var parametrosDistribuidorController = $.extend(true, {
 					   				  resultado.listaMensagens);
 					   parametrosDistribuidorController.recarregarDiasDistribuidorFornecedorGrid();
 				   });
+	},
+	
+	changeFlagRegimeEspecial : function() {
+		if($('#possuiRegimeEspecialDispensaInterna').is(':checked')) {
+			$('.camposEspecificosRegimeEspecial').show();
+		} else {
+			$('.camposEspecificosRegimeEspecial').hide()
+		}
+		
 	},
 
 	atualizarLogo: function() {

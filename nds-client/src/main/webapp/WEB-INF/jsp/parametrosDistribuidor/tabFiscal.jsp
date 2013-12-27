@@ -24,40 +24,37 @@
 						<tr>
 							<td>Obrigação Fiscal possui Regime Especial ou Dispensa
 								Interna?</td>
-							<td><c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
-									<input type="checkbox" name="regimeEspecial"
-										id="regimeEspecial" checked="checked" />
-								</c:if> <c:if
-									test="${empty parametrosDistribuidor.possuiRegimeEspecialDispensaInterna or (not parametrosDistribuidor.possuiRegimeEspecialDispensaInterna)}">
-									<input type="checkbox" name="regimeEspecial"
-										id="regimeEspecial" />
-								</c:if></td>
-							<td>Possui anuência em outros estados?</td>
-							<td><input type="checkbox" name="estadoAnuencia"
-								id="estadoAnuencia_1" checked="checked" /> MT </br> <input
-								type="checkbox" name="estadoAnuencia" id="estadoAnuencia_2" />
-								MG</td>
-						</tr>
-						<tr>
-							<td>Número do dispositivo legal</td>
-							<td><input type="text" name="numeroDispositivoLegal"
-								id="numeroDispositivoLegal" /></td>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td>Data de Vigência</td>
-							<td><input type="text" name="dataVigencia" id="dataVigencia" />
+							<td><input type="checkbox" name="possuiRegimeEspecialDispensaInterna" id="possuiRegimeEspecialDispensaInterna" 
+										onchange="parametrosDistribuidorController.changeFlagRegimeEspecial()"
+										<c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">checked="checked"</c:if> />
 							</td>
+							<td><c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna && possuiDistribuicaoOutrosEstados}">
+								Possui anuência em outros estados?
+								</c:if>
+							</td>
+							<td>
+							<c:if test="${parametrosDistribuidor.possuiRegimeEspecialDispensaInterna && possuiDistribuicaoOutrosEstados}">
+							<c:forEach var="estadoAnuencia" varStatus="status" items="${listaEstadosAnuencia}">
+								<c:if test="${estadoAnuencia != parametrosDistribuidor.endereco.uf}">
+								<input type="checkbox" name="estadoAnuencia" id="estadoAnuencia_${status.index}" /> ${estadoAnuencia} </br>
+								</c:if>
+							</c:forEach>
+							</c:if>
+							</td>
+						</tr>
+						<tr class="camposEspecificosRegimeEspecial">
+							<td>Número do dispositivo legal</td>
+							<td><input type="text" name="numeroDispositivoLegal" id="numeroDispositivoLegal" value="${parametrosDistribuidor.numeroDispositivoLegal}" /></td>
 							<td></td>
 							<td></td>
 						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
+						<tr class="camposEspecificosRegimeEspecial">
+							<td>Data de término da Vigência</td>
+							<td><input type="text" name="dataLimiteVigenciaRegimeEspecial" id="dataLimiteVigenciaRegimeEspecial" value="${parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial}" /></td>
 							<td></td>
 							<td></td>
 						</tr>
+						</div>
 					</table>
 				</td>
 			</tr>
@@ -67,14 +64,14 @@
 
 	<br clear="all" />
 
-	<fieldset
-		style="width: 98% !important; margin-bottom: 5px; float: left;">
+	<fieldset class="camposEspecificosRegimeEspecial" style="width: 98% !important; margin-bottom: 5px; float: left;">
+	
 		<legend>Tipos de Nota Fiscal</legend>
 
 		<table class="tiposNotasFiscaisDistribuidor" width="100%" border="0" cellspacing="2" cellpadding="0">
 			<tr>
 				<td>
-					<table width="100%" border="1" cellspacing="2" cellpadding="0">
+					<table width="100%" border="0" cellspacing="2" cellpadding="0">
 						<tr>
 							<td></td>
 						<c:forEach var="tipoEmissaoNotaFiscal" items="${listaTiposEmissaoNotaFiscal}">
@@ -102,60 +99,8 @@
 								</c:forEach>
 								</td>
 							</c:forEach>
-							
-							<%--<c:forEach var="tipoEmissaoNotaFiscal" varStatus="status" items="${tiposNotaFiscal.tipoEmissaoDisponiveis[0]}">
-								<td align="center">
-									${tiposNotaFiscal.tipoEmissaoDisponiveis[0].descricao}
-									<c:if test="tiposNotaFiscal.descricao == 'Desobriga Emissão'" >
-									<input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" 
-									checked="checked" /> 
-									</c:if>
-								</td>
-								<td align="center">
-									<c:if test="tiposNotaFiscal.descricao == 'Consolida emissão a Jornaleiros Diversos'" >
-									<input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" 
-									checked="checked" /> 
-									</c:if>
-								</td>
-								<td align="center">
-									<c:if test="tiposNotaFiscal.descricao == 'Consolida emissão por Destinatário'" >
-									<input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" 
-									checked="checked" /> 
-									</c:if>
-								</td>
-							</c:forEach>  --%>
 						</tr>
 						</c:forEach>
-						<%-- <tr>
-							<td>Nota Fiscal de Envio para a Cota</td>
-							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" /></td>
-							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" checked="checked"/></td>
-							<td align="center"><input type="radio" name="notaFiscalEnvioCota" id="notaFiscalEnvioCota" /></td>
-						</tr>
-						<tr>
-							<td>Nota Fiscal de Devolução pela Cota</td>
-							<td align="center"><input type="radio" name="notaFiscalDevolucaoPelaCota" id="notaFiscalEnvioCota" /></td>
-							<td align="center"><input type="radio" name="notaFiscalDevolucaoPelaCota" id="notaFiscalEnvioCota" checked="checked"/></td>
-							<td align="center"><input type="radio" name="notaFiscalDevolucaoPelaCota" id="notaFiscalEnvioCota" /></td>
-						</tr>
-						<tr>
-							<td>Nota Fiscal de Venda</td>
-							<td align="center"><input type="radio" name="notaFiscalVenda" id="notaFiscalEnvioCota" /></td>
-							<td align="center"><input type="radio" name="notaFiscalVenda" id="notaFiscalEnvioCota" checked="checked"/></td>
-							<td align="center"><input type="radio" name="notaFiscalVenda" id="notaFiscalEnvioCota" /></td>
-						</tr>
-						<tr>
-							<td>Nota Fiscal de Devolução ao Fornecedor</td>
-							<td align="center"><input type="radio" name="notaFiscalDevolucaoFornecedor" id="notaFiscalEnvioCota" checked="checked"/></td>
-							<td align="center"></td>
-							<td align="center"><input type="radio" name="notaFiscalDevolucaoFornecedor" id="notaFiscalEnvioCota" /></td>
-						</tr>
-						<tr>
-							<td>Nota Fiscal Simbólica de Venda ao Fornecedor</td>
-							<td align="center"><input type="radio" name="notaFiscalVendaFornecedor" id="notaFiscalEnvioCota" /></td>
-							<td align="center"></td>
-							<td align="center"><input type="radio" name="notaFiscalVendaFornecedor" id="notaFiscalEnvioCota" checked="checked"/></td>
-						</tr> --%>
 					</table>
 				</td>
 			</tr>

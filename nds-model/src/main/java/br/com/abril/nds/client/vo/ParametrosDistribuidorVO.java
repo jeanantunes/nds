@@ -1,8 +1,8 @@
 package br.com.abril.nds.client.vo;
 
+import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -33,9 +33,11 @@ public class ParametrosDistribuidorVO {
     
     private TipoAtividade regimeTributario;
     
-    private ObrigacaoFiscal obrigacaoFiscal;
-    
     private boolean possuiRegimeEspecialDispensaInterna;
+    
+	private String numeroDispositivoLegal;
+	
+	private Date dataLimiteVigenciaRegimeEspecial;
     
     private EnderecoVO endereco = new EnderecoVO();
     
@@ -249,7 +251,7 @@ public class ParametrosDistribuidorVO {
     
     private String chamadaoValorConsignado;
     
-    private TiposNotasFiscaisVO tiposNotasFiscais;
+    private List<TiposNotasFiscaisParametrosVO> tiposNotasFiscais;
 
     /**
      * @return the razaoSocial
@@ -376,20 +378,6 @@ public class ParametrosDistribuidorVO {
     public void setRegimeTributario(TipoAtividade regimeTributario) {
         this.regimeTributario = regimeTributario;
     }
-
-    /**
-     * @return the obrigacaoFiscal
-     */
-    public ObrigacaoFiscal getObrigacaoFiscal() {
-        return obrigacaoFiscal;
-    }
-
-    /**
-     * @param obrigacaoFiscal the obrigacaoFiscal to set
-     */
-    public void setObrigacaoFiscal(ObrigacaoFiscal obrigacaoFiscal) {
-        this.obrigacaoFiscal = obrigacaoFiscal;
-    }
     
     public boolean isPossuiRegimeEspecialDispensaInterna() {
         return possuiRegimeEspecialDispensaInterna;
@@ -399,7 +387,24 @@ public class ParametrosDistribuidorVO {
         this.possuiRegimeEspecialDispensaInterna = possuiRegimeEspecialDispensaInterna;
     }
 
-    /**
+    public String getNumeroDispositivoLegal() {
+		return numeroDispositivoLegal;
+	}
+
+	public void setNumeroDispositivoLegal(String numeroDispositivoLegal) {
+		this.numeroDispositivoLegal = numeroDispositivoLegal;
+	}
+
+	public Date getDataLimiteVigenciaRegimeEspecial() {
+		return dataLimiteVigenciaRegimeEspecial;
+	}
+
+	public void setDataLimiteVigenciaRegimeEspecial(
+			Date dataLimiteVigenciaRegimeEspecial) {
+		this.dataLimiteVigenciaRegimeEspecial = dataLimiteVigenciaRegimeEspecial;
+	}
+
+	/**
      * @return the endereco
      */
     public EnderecoVO getEndereco() {
@@ -1326,11 +1331,11 @@ public class ParametrosDistribuidorVO {
 		this.numeroDDD = numeroDDD;
 	}
 
-	public TiposNotasFiscaisVO getTiposNotasFiscais() {
+	public List<TiposNotasFiscaisParametrosVO> getTiposNotasFiscais() {
 		return tiposNotasFiscais;
 	}
 
-	public void setTiposNotasFiscais(TiposNotasFiscaisVO tiposNotasFiscais) {
+	public void setTiposNotasFiscais(List<TiposNotasFiscaisParametrosVO> tiposNotasFiscais) {
 		this.tiposNotasFiscais = tiposNotasFiscais;
 	}
 	
