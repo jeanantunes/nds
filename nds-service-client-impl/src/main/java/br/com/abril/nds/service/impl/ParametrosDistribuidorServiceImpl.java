@@ -10,7 +10,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
+import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -58,6 +61,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
+import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
@@ -110,6 +114,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private EnderecoDistribuidorRepository enderecoDistribuidorRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
@@ -393,6 +400,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
 			}
 		}
+		
+		parametrosDistribuidor.setNumeroDispositivoLegal(distribuidor.getNumeroDispositivoLegal());
+		parametrosDistribuidor.setDataLimiteVigenciaRegimeEspecial(distribuidor.getDataLimiteVigenciaRegimeEspecial());
 		
 		return parametrosDistribuidor;
 	}
@@ -886,15 +896,41 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
-		
-		for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
-			if(dtnf.getNomeCampoTela().equals("notaFiscalDevolucaoCota")) {
+		if(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna()) {
+
+			distribuidor.setPossuiRegimeEspecialDispensaInterna(true);
+			
+			distribuidor.setNumeroDispositivoLegal(parametrosDistribuidor.getNumeroDispositivoLegal());
+			
+			distribuidor.setDataLimiteVigenciaRegimeEspecial(parametrosDistribuidor.getDataLimiteVigenciaRegimeEspecial());
+			
+			Map<String, Long> tiposNotasFiscaisMap = new HashMap<String, Long>();
+			for(TiposNotasFiscaisParametrosVO tnfp : parametrosDistribuidor.getTiposNotasFiscais()) {
+				tiposNotasFiscaisMap.put(tnfp.getNome(), Long.parseLong(tnfp.getValor()));
+			}
+			
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+				
 				NotaFiscalTipoEmissao notaFiscalTipoEmissao = new NotaFiscalTipoEmissao();
-				notaFiscalTipoEmissao.setId(parametrosDistribuidor.getTiposNotasFiscais().getNotaFiscalDevolucaoCota());
+				notaFiscalTipoEmissao.setId(tiposNotasFiscaisMap.get(dtnf.getNomeCampoTela()));
 				dtnf.setTipoEmissao(notaFiscalTipoEmissao);
+	
+			}
+			
+		} else {
+			
+			distribuidor.setPossuiRegimeEspecialDispensaInterna(false);
+			
+			distribuidor.setNumeroDispositivoLegal(null);
+			
+			distribuidor.setDataLimiteVigenciaRegimeEspecial(null);
+			
+			for(DistribuidorTipoNotaFiscal dtnf : distribuidor.getTiposNotaFiscalDistribuidor()) {
+
+				dtnf.setTipoEmissao(null);
+	
 			}
 		}
-		
 		
 		distribuidorService.alterar(distribuidor);
 		
@@ -1240,5 +1276,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		List<NotaFiscalTipoEmissao> tiposEmissaoNotaFiscal = new ArrayList<>();
 		tiposEmissaoNotaFiscal.addAll(distribuidorService.obter().getTiposEmissoesNotaFiscalDistribuidor());
 		return tiposEmissaoNotaFiscal;
+	}
+
+	@Override
+	public List<String> obterEstadosAtendidosPeloDistribuidor() {
+		
+		return enderecoRepository.obterUFsCotas();
+		
 	}
 }

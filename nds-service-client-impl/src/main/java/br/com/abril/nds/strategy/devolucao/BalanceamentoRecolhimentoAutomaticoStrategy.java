@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,10 +14,13 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RecolhimentoService;
 
 /**
  * Estratégia de balanceamento de recolhimento automático.
@@ -26,6 +30,11 @@ import br.com.abril.nds.dto.RecolhimentoDTO;
  */
 public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalanceamentoRecolhimentoStrategy {
 
+	@Autowired
+	ProdutoService produtoService; 
+	
+	@Autowired
+	RecolhimentoService recolhimentoService;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -104,7 +113,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		
 		Collections.sort(produtosRecolhimentoBalanceaveis, comparatorChain);
 		
-		BigDecimal expectativaEncalheASerPreenchida = 
+		BigDecimal expectativaEncalheASerPreenchida =
 			new BigDecimal(capacidadeManuseio).subtract(expectativaEncalheTotalAtualNaData);
 		
 		BigDecimal expectativaEncalheElegivel = BigDecimal.ZERO;
@@ -112,6 +121,11 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoElegiveis = 
 			new ArrayList<ProdutoRecolhimentoDTO>();
 		
+		//TODO
+		if(produtosRecolhimentoNaData==null){
+			produtosRecolhimentoNaData = new ArrayList<>();
+		}
+		//
 		for (int indice = 0; indice < produtosRecolhimentoBalanceaveis.size(); indice++) {
 			
 			ProdutoRecolhimentoDTO produtoRecolhimentoBalanceavel = produtosRecolhimentoBalanceaveis.get(indice);
@@ -124,9 +138,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 				
 				break;
 			}
-			
+
 			produtosRecolhimentoElegiveis.add(produtoRecolhimentoBalanceavel);
-			
 			produtosRecolhimentoBalanceaveis.remove(indice--);
 		}
 		
@@ -149,7 +162,11 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados = null;
 
-		BigInteger capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+		//BigInteger capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+		//TODO
+		//dadosRecolhimento.addMediaRecolhimentoDistribuidor(dadosRecolhimento.getProdutosRecolhimento().size());
+		BigInteger capacidadeManuseio = new BigInteger(""+dadosRecolhimento.getMediaRecolhimentoDistribuidor());
+		
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis = 
 			super.obterProdutosRecolhimentoBalanceaveisPorData(
@@ -170,6 +187,18 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 		if (super.validarLimiteCapacidadeRecolhimentoDistribuidor(excessoExpectativaEncalhe)) {
 
+			//TODO
+			//List lista;
+			/*Montar lista de produtos para serem recolhidos na dada
+			for(int i= 0;i < produtosRecolhimentoBalanceaveis.size();i++){
+				
+				lista = new LinkedList<Long>();
+				lista.add(produtosRecolhimentoBalanceaveis.get(i).getIdFornecedor());
+				//Remove 
+				recolhimentoService.obterDatasRecolhimentoFornecedor(dataBalanceamento, lista);
+				if(produtosRecolhimentoBalanceaveis.get(i).getIdFornecedor())
+			}
+			*/
 			super.atualizarMatrizRecolhimento(
 				matrizRecolhimentoBalanceada, produtosRecolhimentoNaData,
 				produtosRecolhimentoBalanceaveis, dataBalanceamento);
@@ -239,7 +268,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 		BigInteger capacidadeRecolhimentoExcedente = null;
 
-		BigInteger capacidadeRecolhimento = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+		//BigInteger capacidadeRecolhimento = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
+		//TODO
+		//dadosRecolhimento.addMediaRecolhimentoDistribuidor(dadosRecolhimento.getProdutosRecolhimento().size());
+		BigInteger capacidadeRecolhimento = new BigInteger(""+dadosRecolhimento.getMediaRecolhimentoDistribuidor());
 
 		BigInteger totalDiasRecolhimento = BigInteger.valueOf(datasRecolhimento.size());
 
@@ -286,6 +318,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			BigDecimal expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
 			
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimento.get(dataBalanceamento);
+			
 			
 			produtosRecolhimentoBalanceaveis =
 				this.alocarProdutosMatrizRecolhimento(

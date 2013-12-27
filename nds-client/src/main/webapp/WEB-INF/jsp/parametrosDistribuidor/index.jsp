@@ -31,7 +31,6 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/operacaoDiferenciada.js"></script>
 
-
 <script type="text/javascript">
 	
 	parametrosDistribuidorController.init();
@@ -40,6 +39,10 @@
 	
 	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
 	bloquearItensEdicao(parametrosDistribuidorController.workspace);
+	
+	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
+	$('.camposEspecificosRegimeEspecial').hide();
+	</c:if>
 </script>
 
 </head>
@@ -65,10 +68,7 @@
 		   
     <input type="hidden" id="regimeTributarioHidden"
 		   value="${parametrosDistribuidor.regimeTributario}" />
-		   
-    <input type="hidden" id="obrigacaoFiscalHidden"
-		   value="${parametrosDistribuidor.obrigacaoFiscal}" />
-		  
+		   		  
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
 		   

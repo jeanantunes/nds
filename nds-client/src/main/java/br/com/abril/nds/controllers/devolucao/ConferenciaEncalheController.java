@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -156,9 +155,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private BoxService boxService;
-
-	@Autowired
-	private HttpServletResponse httpResponse;
 	
 	@Path("/")
 	public void index() {
@@ -1583,7 +1579,8 @@ public class ConferenciaEncalheController extends BaseController {
 																										  listaConferenciaEncalheCotaToSave, 
 																										  this.getSetConferenciaEncalheExcluirFromSession(), 
 																										  this.getUsuarioLogado(),
-																										  indConferenciaContingencia);
+																										  indConferenciaContingencia,
+																										  info.getReparte());
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			

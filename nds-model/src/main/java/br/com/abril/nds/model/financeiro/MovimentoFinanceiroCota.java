@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -46,7 +45,7 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@OneToOne(mappedBy="movimentoFinanceiroCota")
 	private ParcelaNegociacao parcelaNegociacao;
 	
-	@ManyToMany(mappedBy="movimentos", fetch=FetchType.EAGER)
+	@ManyToMany(mappedBy="movimentos")
 	private List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota;
 	
 	@ManyToOne(optional = false)

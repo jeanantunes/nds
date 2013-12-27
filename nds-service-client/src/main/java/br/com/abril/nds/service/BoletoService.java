@@ -208,10 +208,25 @@ public interface BoletoService {
 	void salvaBoletosAntecipado(List<BoletoEmBrancoDTO> listaBbDTO);
 
 	/**
-	 * Verifica se existe boleto antecipado para a cota na data de recolhimento
+	 * Verifica se existe boleto antecipado para a cota
+	 * Data de recolhimento dentro do periodo de emissao CE do Boleto antecipado
+	 * Boletos em Branco sem reimpressão
 	 * @param idCota
 	 * @param dataRecolhimento
 	 * @return boolean
 	 */
 	boolean existeBoletoAntecipadoCotaDataRecolhimento(Long idCota,Date dataRecolhimento);
+
+	/**
+	 * Verifica se existe Boleto Antecipado emitido para a faixa de cotas no periodo de recolhimento
+	 * @param numeroCotaDe
+	 * @param numeroCotaAte
+	 * @param dataRecolhimentoDe
+	 * @param dataRecolhimentoAte
+	 * @return boolean
+	 */
+	boolean existeBoletoAntecipadoPeriodoRecolhimentoECota(Integer numeroCotaDe, 
+			                                               Integer numeroCotaAte,
+			                                               Date dataRecolhimentoDe, 
+			                                               Date dataRecolhimentoAte);
 }
