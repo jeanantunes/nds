@@ -479,7 +479,6 @@
 				<module>nds-util</module>
 				<module>nds-common</module>
 				<module>nfe</module>
-				<module>nds-nfe</module>
 				<module>nds-repository-client</module>
 				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>
@@ -500,7 +499,6 @@
 				<module>nds-util</module>
 				<module>nds-common</module>
 				<module>nfe</module>
-				<module>nds-nfe</module>
 				<module>nds-repository-client</module>
 				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>
