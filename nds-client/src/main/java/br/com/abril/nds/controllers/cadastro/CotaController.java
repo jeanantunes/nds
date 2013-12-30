@@ -884,9 +884,9 @@ public class CotaController extends BaseController {
 		String mensagemSucess;
 		
 		if(tipoCota.equalsIgnoreCase("convencional")){
-			mensagemSucess = "Fixação da Cota apagada com sucesso!";
-		}else{
 			mensagemSucess = "Mix da Cota apagado com sucesso!";
+		}else{
+			mensagemSucess = "Fixação da Cota apagada com sucesso!";
 		}
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagemSucess),
