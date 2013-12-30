@@ -424,7 +424,6 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoSexo", produtoController.workspace).val(result.sexo);
 						$("#segmentacaoFaixaEtaria", produtoController.workspace).val(result.faixaEtaria);
 						$("#segmentacaoFormato", produtoController.workspace).val(result.formatoProduto);
-//						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
 						$("#segmentacaoFormaFisica", produtoController.workspace).val(result.formaFisica);//ainda nao carrega
 						
 						$("#percentualDesconto", produtoController.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
@@ -542,35 +541,10 @@ var produtoController = $.extend(true, {
 	},
 	
 	novoProduto : function () {
+		
 		produtoController.limparModalCadastro();
 		
 		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
-		
-		$("#comboFornecedoresCadastro").change(function(){
-			
-			var fornecedores = [1,2,16];
-			var idFornecedor = parseInt($(this).val());
-			
-			console.log(idFornecedor);
-			
-			if(idFornecedor==0){
-				$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
-				$("#codigoProdutoICDCadastro").val('');
-				return;
-			}
-			
-			$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).show();
-			
-			
-			var disabled=(fornecedores.indexOf(idFornecedor)==-1);
-			$("#codigoProdutoICDCadastro").prop('disabled', disabled);
-			if(disabled == false){ 
-				$("#codigoProdutoICDCadastro").val('');
-			}else{
-				produtoController.atualizaICD();
-				
-			}
-		});
 		
 		produtoController.trocarOrdemCampos(true);
 		
@@ -656,7 +630,6 @@ var produtoController = $.extend(true, {
 		$("#segmentacaoFormato", this.workspace).val("");
 		$("#comboClassifProd", this.workspace).val("");
 		$("#comboTipoSegmento", this.workspace).val("");
-//		$("#segmentacaoTemaPrincipal", this.workspace).val("");
 		
 		$("#selGeracaoAuto", produtoController.workspace).attr('checked', false);
 	},
@@ -680,7 +653,6 @@ var produtoController = $.extend(true, {
         			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato", produtoController.workspace).val()},
-//        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.formaFisica",value:$("#segmentacaoFormaFisica", produtoController.workspace).val()},
         			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
@@ -796,7 +768,7 @@ var produtoController = $.extend(true, {
 	},
 	
 	proximoCodigoDisponivel : function(comboFornecedor){
-		     
+		
 		if (comboFornecedor.value && comboFornecedor.value != '0'){
 
 			var _this = this;
@@ -832,6 +804,33 @@ var produtoController = $.extend(true, {
 	         $("#codigoProdutoCadastro", this.workspace).mask("?99999999");
 	         $("#codigoProdutoCadastro", this.workspace).val("");
 	       }
+		
+		produtoController.exibir_formatarCodICD();
+		
+	     },
+	     
+	     exibir_formatarCodICD : function(){
+	    	
+	 			var fornecedores = [1,2,16];
+	 			var idFornecedor = parseInt($('#comboFornecedoresCadastro').val());
+	 			
+	 			if(idFornecedor==0){
+	 				$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
+	 				$("#codigoProdutoICDCadastro").val('');
+	 				return;
+	 			}
+	 			
+	 			$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).show();
+	 			
+	 			var disabled=(fornecedores.indexOf(idFornecedor)==-1);
+	 			
+	 			$("#codigoProdutoICDCadastro").prop('disabled', disabled);
+	 			
+	 			if(disabled == false){ 
+	 				$("#codigoProdutoICDCadastro").val('');
+	 			}else{
+	 				produtoController.atualizaICD();
+	 			}
 	     },
 	             
          validarCodigoProduto : function(){
