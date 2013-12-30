@@ -46,7 +46,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
@@ -94,7 +94,7 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
     protected CFOP cfop5949;
     protected CFOP cfop6949;
     
-    protected TipoNotaFiscal tipoNotaFiscalRemessaDistribuicao;
+    protected NaturezaOperacao tipoNotaFiscalRemessaDistribuicao;
     
     protected NotaFiscalEntradaFornecedor notaFiscalFornecedor;
     
@@ -502,7 +502,7 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
         cfop6949.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
         save(cfop6949);
     
-        tipoNotaFiscalRemessaDistribuicao = new TipoNotaFiscal();
+        tipoNotaFiscalRemessaDistribuicao = new NaturezaOperacao();
         tipoNotaFiscalRemessaDistribuicao.setCfopEstado(cfop5949);
         tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados(cfop6949);
         tipoNotaFiscalRemessaDistribuicao

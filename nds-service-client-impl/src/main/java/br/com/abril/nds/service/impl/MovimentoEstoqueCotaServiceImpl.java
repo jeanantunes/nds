@@ -22,7 +22,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -90,7 +90,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Override
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, 
-			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
+			NaturezaOperacao tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
 			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota =
@@ -111,7 +111,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 * @return movimentos que não possuem nota
 	 */
 	private List<MovimentoEstoqueCota> filtrarMovimentosQueJaPossuemNotas(
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, TipoNotaFiscal tipoNotaFiscal) {
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, NaturezaOperacao tipoNotaFiscal) {
 		
 		List<MovimentoEstoqueCota> listaMovimentosFiltrados = new ArrayList<MovimentoEstoqueCota>();
 		
@@ -129,7 +129,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 					
 						NotaFiscal notaFiscal = produtoServico.getProdutoServicoPK().getNotaFiscal();
 					
-						TipoNotaFiscal tipoNota = notaFiscal.getIdentificacao().getTipoNotaFiscal();
+						NaturezaOperacao tipoNota = notaFiscal.getIdentificacao().getTipoNotaFiscal();
 					
 						if (tipoNota.equals(tipoNotaFiscal)) {
 							possuiNota = true;
@@ -175,7 +175,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	public void transferirReparteParaSuplementar(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
 												 List<Long> idsCota, Intervalo<Date> periodo,
 												 List<Long> listaIdFornecedores, List<Long> listaIdProduto, 
-												 TipoNotaFiscal tipoNotaFiscal) {
+												 NaturezaOperacao tipoNotaFiscal) {
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoque = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);

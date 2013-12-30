@@ -26,7 +26,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
@@ -56,7 +56,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		cfop = Fixture.cfop5102();
 		save(cfop);
 
-		TipoNotaFiscal tp = Fixture.tipoNotaFiscalRecebimento(cfop);
+		NaturezaOperacao tp = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tp);
 
 		NotaFiscalEntrada notaFiscal = new NotaFiscalEntradaFornecedor();
@@ -361,7 +361,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		notaFiscal.setValorLiquido(new BigDecimal("9"));
 		notaFiscal.setValorDesconto(new BigDecimal("1"));
 
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		tipoNotaFiscal.setDescricao("teste");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		tipoNotaFiscal.setNopCodigo(1L);

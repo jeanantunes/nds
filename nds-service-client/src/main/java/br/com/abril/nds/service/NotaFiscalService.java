@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -107,7 +107,7 @@ public interface NotaFiscalService {
 	 * @return lista de itens para nota fiscal
 	 */
 	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
-			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, TipoNotaFiscal tipoNotaFiscal);
+			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, NaturezaOperacao tipoNotaFiscal);
 	
 	/**
 	 * Cria uma nota fiscal referenciada a partir de uma nota fiscal

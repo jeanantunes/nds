@@ -188,7 +188,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
@@ -418,8 +418,8 @@ public class DataLoader {
 	private static MovimentoFinanceiroCota movimentoFinanceiroCota30;
 
 	private static CFOP cfop5102;
-	private static TipoNotaFiscal tipoNotaFiscalRecebimento; //Precisa Remover
-	private static TipoNotaFiscal tipoNotaFiscalDevolucao;//Precisa Remover
+	private static NaturezaOperacao tipoNotaFiscalRecebimento; //Precisa Remover
+	private static NaturezaOperacao tipoNotaFiscalDevolucao;//Precisa Remover
 	public static Usuario usuarioJoao;
 	private static Fornecedor fornecedorAcme;
 	private static Fornecedor fornecedorDinap;
@@ -1648,7 +1648,7 @@ public class DataLoader {
 	private static void gerarTiposNotasMercantil(Session session) {
 		
 		// Regime Fiscal Mercantil:TODO
-		tipoNotaFiscalDevolucao = new TipoNotaFiscal();
+		tipoNotaFiscalDevolucao = new NaturezaOperacao();
 		tipoNotaFiscalDevolucao.setCfopEstado(cfop1918);
 		tipoNotaFiscalDevolucao.setCfopOutrosEstados(cfop2918);
 		tipoNotaFiscalDevolucao.setNopDescricao("Devolução de mercadoria remetida em consignação.");
@@ -1665,7 +1665,7 @@ public class DataLoader {
 		tipoNotaFiscalDevolucao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,tipoNotaFiscalDevolucao);
 		
-		TipoNotaFiscal entradaDevolucaoSimbolicaMercadoriaVendida = new TipoNotaFiscal();
+		NaturezaOperacao entradaDevolucaoSimbolicaMercadoriaVendida = new NaturezaOperacao();
 		entradaDevolucaoSimbolicaMercadoriaVendida.setCfopEstado(cfop1919);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setCfopOutrosEstados(cfop2919);
 		entradaDevolucaoSimbolicaMercadoriaVendida.setNopDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, remetida anteriormente em consignação mercantil ou industrial.");
@@ -1682,7 +1682,7 @@ public class DataLoader {
 		entradaDevolucaoSimbolicaMercadoriaVendida.getProcesso().add(Processo.VENDA);
 		save(session,entradaDevolucaoSimbolicaMercadoriaVendida);
 		
-		TipoNotaFiscal vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota = new TipoNotaFiscal();
+		NaturezaOperacao vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota = new NaturezaOperacao();
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setCfopEstado(cfop5114);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setCfopOutrosEstados(cfop6114);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil.");
@@ -1699,7 +1699,7 @@ public class DataLoader {
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota.getProcesso().add(Processo.VENDA);
 		save(session,vendaMercadoriaRemetidaAnteriormenteConsignacaoDistribuidorCota);
 		
-		TipoNotaFiscal vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor = new TipoNotaFiscal();
+		NaturezaOperacao vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor = new NaturezaOperacao();
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setCfopEstado(cfop5114);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setCfopOutrosEstados(cfop6114);
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil.");
@@ -1716,7 +1716,7 @@ public class DataLoader {
 		vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor.getProcesso().add(Processo.VENDA);
 		save(session,vendaMercadoriaRemetidaAnteriormenteConsignacaoTreeLogDistribuidor);
 		
-		TipoNotaFiscal remessaMercadoriaConsignacao = new TipoNotaFiscal();
+		NaturezaOperacao remessaMercadoriaConsignacao = new NaturezaOperacao();
 		remessaMercadoriaConsignacao.setCfopEstado(cfop5917);
 		remessaMercadoriaConsignacao.setCfopOutrosEstados(cfop6917);
 		remessaMercadoriaConsignacao.setNopDescricao("Remessa de Mercadoria em Consignação mercantil.");
@@ -1735,7 +1735,7 @@ public class DataLoader {
 		remessaMercadoriaConsignacao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);		
 		save(session,remessaMercadoriaConsignacao);
 		
-		TipoNotaFiscal remessaMercadoriaConsignacaoDistribuidorCota = new TipoNotaFiscal();
+		NaturezaOperacao remessaMercadoriaConsignacaoDistribuidorCota = new NaturezaOperacao();
 		remessaMercadoriaConsignacaoDistribuidorCota.setCfopEstado(cfop5917);
 		remessaMercadoriaConsignacaoDistribuidorCota.setCfopOutrosEstados(cfop6917);
 		remessaMercadoriaConsignacaoDistribuidorCota.setNopDescricao("Remessa de Mercadoria em Consignação mercantil.");
@@ -1754,7 +1754,7 @@ public class DataLoader {
 		remessaMercadoriaConsignacao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);	
 		save(session,remessaMercadoriaConsignacaoDistribuidorCota);
 		
-		TipoNotaFiscal devolucaoMercadoriaRecebidaConsignacao = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoMercadoriaRecebidaConsignacao = new NaturezaOperacao();
 		devolucaoMercadoriaRecebidaConsignacao.setCfopEstado(cfop5918);
 		devolucaoMercadoriaRecebidaConsignacao.setCfopOutrosEstados(cfop6918);
 		devolucaoMercadoriaRecebidaConsignacao.setNopDescricao("Devolução de Mercadoria Recebida em Consignação mercantil.");
@@ -1773,7 +1773,7 @@ public class DataLoader {
 		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.SOBRA_ENCALHE);
 		save(session,devolucaoMercadoriaRecebidaConsignacao);
 
-		TipoNotaFiscal devolucaoMercadoriaRecebidaConsignacaoCota = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoMercadoriaRecebidaConsignacaoCota = new NaturezaOperacao();
 		devolucaoMercadoriaRecebidaConsignacaoCota.setCfopEstado(cfop5918);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setCfopOutrosEstados(cfop6918);
 		devolucaoMercadoriaRecebidaConsignacaoCota.setNopDescricao("Devolução de Mercadoria Recebida em Consignação mercantil.");
@@ -1792,7 +1792,7 @@ public class DataLoader {
 		devolucaoMercadoriaRecebidaConsignacao.getProcesso().add(Processo.SOBRA_ENCALHE);
 		save(session,devolucaoMercadoriaRecebidaConsignacaoCota);		
 		
-		TipoNotaFiscal devolucaoSimbolicaMErcadoriaVendida = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoSimbolicaMErcadoriaVendida = new NaturezaOperacao();
 		devolucaoSimbolicaMErcadoriaVendida.setCfopEstado(cfop5919);
 		devolucaoSimbolicaMErcadoriaVendida.setCfopOutrosEstados(cfop6919);
 		devolucaoSimbolicaMErcadoriaVendida.setNopDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial.");
@@ -1809,7 +1809,7 @@ public class DataLoader {
 		devolucaoSimbolicaMErcadoriaVendida.getProcesso().add(Processo.VENDA);
 		save(session,devolucaoSimbolicaMErcadoriaVendida);
 		
-		TipoNotaFiscal devolucaoSimbolicaMErcadoriaVendidaDistri = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoSimbolicaMErcadoriaVendidaDistri = new NaturezaOperacao();
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setCfopEstado(cfop5919);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setCfopOutrosEstados(cfop6919);
 		devolucaoSimbolicaMErcadoriaVendidaDistri.setNopDescricao("Devolução Simbólica de Mercadoria Vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial.");
@@ -1832,7 +1832,7 @@ public class DataLoader {
 	
 	private static void gerarTiposNotasPrestador(Session session) {
 
-		tipoNotaFiscalRecebimento = new TipoNotaFiscal();
+		tipoNotaFiscalRecebimento = new NaturezaOperacao();
 		tipoNotaFiscalRecebimento.setCfopEstado(cfop5115);
 		tipoNotaFiscalRecebimento.setCfopOutrosEstados(cfop6115);
 		tipoNotaFiscalRecebimento.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
@@ -1849,7 +1849,7 @@ public class DataLoader {
 		tipoNotaFiscalRecebimento.getProcesso().add(Processo.VENDA);
 		save(session,tipoNotaFiscalRecebimento);
 		
-		TipoNotaFiscal entradaRetornoRemessaDistribuicao = new TipoNotaFiscal();
+		NaturezaOperacao entradaRetornoRemessaDistribuicao = new NaturezaOperacao();
 		entradaRetornoRemessaDistribuicao.setCfopEstado(cfop1949);
 		entradaRetornoRemessaDistribuicao.setCfopOutrosEstados(cfop2949);
 		entradaRetornoRemessaDistribuicao.setNopDescricao("NF-e Retorno de Remessa para Distribuição");
@@ -1866,7 +1866,7 @@ public class DataLoader {
 		entradaRetornoRemessaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,entradaRetornoRemessaDistribuicao);		
 		
-		TipoNotaFiscal devolucaoRemssaDistribuicao = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoRemssaDistribuicao = new NaturezaOperacao();
 		devolucaoRemssaDistribuicao.setCfopEstado(cfop5949);
 		devolucaoRemssaDistribuicao.setCfopOutrosEstados(cfop6949);
 		devolucaoRemssaDistribuicao.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
@@ -1885,7 +1885,7 @@ public class DataLoader {
 		devolucaoRemssaDistribuicao.getProcesso().add(Processo.SOBRA_ENCALHE);
 		save(session,devolucaoRemssaDistribuicao);
 		
-		devolucaoRemssaDistribuicao = new TipoNotaFiscal();
+		devolucaoRemssaDistribuicao = new NaturezaOperacao();
 		devolucaoRemssaDistribuicao.setCfopEstado(cfop5949);
 		devolucaoRemssaDistribuicao.setCfopOutrosEstados(cfop6949);
 		devolucaoRemssaDistribuicao.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
@@ -1905,7 +1905,7 @@ public class DataLoader {
 		save(session,devolucaoRemssaDistribuicao);
 
 		
-		TipoNotaFiscal remessaDistribuicao = new TipoNotaFiscal();
+		NaturezaOperacao remessaDistribuicao = new NaturezaOperacao();
 		remessaDistribuicao.setCfopEstado(cfop5949);
 		remessaDistribuicao.setCfopOutrosEstados(cfop6949);
 		remessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
@@ -1924,7 +1924,7 @@ public class DataLoader {
 		remessaDistribuicao.getProcesso().add(Processo.SOBRA_REPARTE);
 		save(session,remessaDistribuicao);		
 		
-		remessaDistribuicao = new TipoNotaFiscal();
+		remessaDistribuicao = new NaturezaOperacao();
 		remessaDistribuicao.setCfopEstado(cfop5949);
 		remessaDistribuicao.setCfopOutrosEstados(cfop6949);
 		remessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
@@ -1943,7 +1943,7 @@ public class DataLoader {
 		remessaDistribuicao.getProcesso().add(Processo.SOBRA_REPARTE);
 		save(session,remessaDistribuicao);		
 
-		remessaDistribuicao = new TipoNotaFiscal();
+		remessaDistribuicao = new NaturezaOperacao();
 		remessaDistribuicao.setCfopEstado(cfop5949);
 		remessaDistribuicao.setCfopOutrosEstados(cfop6949);
 		remessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
@@ -1965,7 +1965,7 @@ public class DataLoader {
 	
 	private static void gerarTiposNotasPrestadorFilial(Session session) {
 		
-		TipoNotaFiscal tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		NaturezaOperacao tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-E Remessa para Distribuição.");
@@ -1982,7 +1982,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-E Remessa para Distribuição.");
@@ -2000,7 +2000,7 @@ public class DataLoader {
 		save(session,tipoNotaFiscalPrestadorFilial);
 
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e Retorno de Distribuição");
@@ -2017,7 +2017,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.FALTA_REPARTE);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e Retorno de Distribuição");
@@ -2035,7 +2035,7 @@ public class DataLoader {
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e de Remessa para Distribuição (NECA / Danfe)");
@@ -2052,7 +2052,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.NOTA_LANCAMENTO);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e de Remessa para Distribuição (NECA / Danfe)");
@@ -2070,7 +2070,7 @@ public class DataLoader {
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
@@ -2087,7 +2087,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
@@ -2104,7 +2104,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop1949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop2949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e de Entrada de Retorno de Remessa para Distribuição");
@@ -2121,7 +2121,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop1949);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop2949);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("NF-e de Entrada de Retorno de Remessa para Distribuição");
@@ -2140,7 +2140,7 @@ public class DataLoader {
 		
 		
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5115);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6115);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
@@ -2157,7 +2157,7 @@ public class DataLoader {
 		tipoNotaFiscalPrestadorFilial.getProcesso().add(Processo.VENDA);
 		save(session,tipoNotaFiscalPrestadorFilial);
 		
-		tipoNotaFiscalPrestadorFilial = new TipoNotaFiscal();
+		tipoNotaFiscalPrestadorFilial = new NaturezaOperacao();
 		tipoNotaFiscalPrestadorFilial.setCfopEstado(cfop5115);
 		tipoNotaFiscalPrestadorFilial.setCfopOutrosEstados(cfop6115);
 		tipoNotaFiscalPrestadorFilial.setNopDescricao("Venda de Mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil.");
@@ -2176,7 +2176,7 @@ public class DataLoader {
 	}
 	
 	private static void gerarTiposNotasPrestadorCotaContribuinte(Session session) {
-		TipoNotaFiscal entradaRetornoRemessaDistribuicao = new TipoNotaFiscal();
+		NaturezaOperacao entradaRetornoRemessaDistribuicao = new NaturezaOperacao();
 		entradaRetornoRemessaDistribuicao.setCfopEstado(cfop1949);
 		entradaRetornoRemessaDistribuicao.setCfopOutrosEstados(cfop2949);
 		entradaRetornoRemessaDistribuicao.setNopDescricao("NF-e de Entrada de Retorno de Remessa para Distribuição");
@@ -2193,7 +2193,7 @@ public class DataLoader {
 		entradaRetornoRemessaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,entradaRetornoRemessaDistribuicao);		
 		
-		TipoNotaFiscal vendaMercadoriaRecebicaAnteriormenteConsignacao = new TipoNotaFiscal();
+		NaturezaOperacao vendaMercadoriaRecebicaAnteriormenteConsignacao = new NaturezaOperacao();
 		vendaMercadoriaRecebicaAnteriormenteConsignacao.setCfopEstado(cfop5115);
 		vendaMercadoriaRecebicaAnteriormenteConsignacao.setCfopOutrosEstados(cfop6115);
 		vendaMercadoriaRecebicaAnteriormenteConsignacao.setNopDescricao("Venda de Mercadoria recebida anteriormente em Consignação");
@@ -2210,7 +2210,7 @@ public class DataLoader {
 		vendaMercadoriaRecebicaAnteriormenteConsignacao.getProcesso().add(Processo.VENDA);
 		save(session,vendaMercadoriaRecebicaAnteriormenteConsignacao);
 		
-		TipoNotaFiscal devolucaoRemssaDistribuicao = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoRemssaDistribuicao = new NaturezaOperacao();
 		devolucaoRemssaDistribuicao.setCfopEstado(cfop5949);
 		devolucaoRemssaDistribuicao.setCfopOutrosEstados(cfop6949);
 		devolucaoRemssaDistribuicao.setNopDescricao("NF-e de Devolução de Remessa para Distribuição");
@@ -2227,7 +2227,7 @@ public class DataLoader {
 		devolucaoRemssaDistribuicao.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,devolucaoRemssaDistribuicao);
 		
-		TipoNotaFiscal remessaDistribuicaoNECA = new TipoNotaFiscal();
+		NaturezaOperacao remessaDistribuicaoNECA = new NaturezaOperacao();
 		remessaDistribuicaoNECA.setCfopEstado(cfop5949);
 		remessaDistribuicaoNECA.setCfopOutrosEstados(cfop6949);
 		remessaDistribuicaoNECA.setNopDescricao("NF-e de Remessa para Distribuição (NECA / Danfe)");
@@ -2244,7 +2244,7 @@ public class DataLoader {
 		remessaDistribuicaoNECA.getProcesso().add(Processo.NOTA_LANCAMENTO);
 		save(session,remessaDistribuicaoNECA);		
 		
-		TipoNotaFiscal devolucaoEncalhe = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoEncalhe = new NaturezaOperacao();
 		devolucaoEncalhe.setCfopEstado(cfop5949);
 		devolucaoEncalhe.setCfopOutrosEstados(cfop6949);
 		devolucaoEncalhe.setNopDescricao("NF-e Devolução de Encalhe");
@@ -2261,7 +2261,7 @@ public class DataLoader {
 		devolucaoEncalhe.getProcesso().add(Processo.DEVOLUCAO_ENCALHE);
 		save(session,devolucaoEncalhe);
 		
-		TipoNotaFiscal retornoRemessaDistribuicaoNECA = new TipoNotaFiscal();
+		NaturezaOperacao retornoRemessaDistribuicaoNECA = new NaturezaOperacao();
 		retornoRemessaDistribuicaoNECA.setCfopEstado(cfop5949);
 		retornoRemessaDistribuicaoNECA.setCfopOutrosEstados(cfop6949);
 		retornoRemessaDistribuicaoNECA.setNopDescricao("Retorno de Remessa para Distribuição");
@@ -2278,7 +2278,7 @@ public class DataLoader {
 		retornoRemessaDistribuicaoNECA.getProcesso().add(Processo.FALTA_REPARTE);
 		save(session,retornoRemessaDistribuicaoNECA);
 		
-		TipoNotaFiscal devolucaoEncalheComplementar = new TipoNotaFiscal();
+		NaturezaOperacao devolucaoEncalheComplementar = new NaturezaOperacao();
 		devolucaoEncalheComplementar.setCfopEstado(cfop5949);
 		devolucaoEncalheComplementar.setCfopOutrosEstados(cfop6949);
 		devolucaoEncalheComplementar.setNopDescricao("NF-e (Complementar) Devolução de Encalhe");
@@ -2295,7 +2295,7 @@ public class DataLoader {
 		devolucaoEncalheComplementar.getProcesso().add(Processo.SOBRA_ENCALHE);
 		save(session,devolucaoEncalheComplementar);
 		
-		TipoNotaFiscal remessaDistribuicao = new TipoNotaFiscal();
+		NaturezaOperacao remessaDistribuicao = new NaturezaOperacao();
 		remessaDistribuicao.setCfopEstado(cfop5949);
 		remessaDistribuicao.setCfopOutrosEstados(cfop6949);
 		remessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
@@ -2312,7 +2312,7 @@ public class DataLoader {
 		remessaDistribuicao.getProcesso().add(Processo.CONSIGNACAO_REPARTE_NORMAL);
 		save(session,remessaDistribuicao);		
 		
-		TipoNotaFiscal remessaDistribuicaoComplementar = new TipoNotaFiscal();
+		NaturezaOperacao remessaDistribuicaoComplementar = new NaturezaOperacao();
 		remessaDistribuicaoComplementar.setCfopEstado(cfop5949);
 		remessaDistribuicaoComplementar.setCfopOutrosEstados(cfop6949);
 		remessaDistribuicaoComplementar.setNopDescricao("NF-e Complementar (Remessa para Distribuição)");
@@ -9192,7 +9192,7 @@ public class DataLoader {
 
 			Calendar calendar = Calendar.getInstance();
 
-			TipoNotaFiscal tipoNotaFiscal = i % 2 == 0 ? tipoNotaFiscalRecebimento : tipoNotaFiscalDevolucao;
+			NaturezaOperacao tipoNotaFiscal = i % 2 == 0 ? tipoNotaFiscalRecebimento : tipoNotaFiscalDevolucao;
 
 			notaFiscalFornecedor = Fixture.notaFiscalEntradaFornecedor(
 					cfop5102,

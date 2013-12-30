@@ -11,7 +11,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -33,7 +33,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 
 	@Override
 	@Transactional
-	public TipoNotaFiscal obterPorId(Long id) {
+	public NaturezaOperacao obterPorId(Long id) {
 
 		return this.tipoNotaFiscalRepository.buscarPorId(id);
 	}
@@ -61,11 +61,11 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	@Transactional
 	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoAtividade tipoAtividade) {
 
-		List<TipoNotaFiscal> listaTipoNotaFiscal = this.obterTiposNotaFiscal(tipoAtividade);
+		List<NaturezaOperacao> listaTipoNotaFiscal = this.obterTiposNotaFiscal(tipoAtividade);
 
 		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
 
-		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+		for (NaturezaOperacao tipoNotaFiscal : listaTipoNotaFiscal) {
 
 			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
 
@@ -80,7 +80,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	
 	@Override
 	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotaFiscal(TipoAtividade tipoAtividade){
+	public List<NaturezaOperacao> obterTiposNotaFiscal(TipoAtividade tipoAtividade){
 		
 		if (tipoAtividade == null){
 			
@@ -98,11 +98,11 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			return null;
 		}
 
-		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
+		List<NaturezaOperacao> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
 
 		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
 
-		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+		for (NaturezaOperacao tipoNotaFiscal : listaTipoNotaFiscal) {
 
 			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
 
@@ -120,7 +120,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor() {
+	public List<NaturezaOperacao> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor() {
 
 		return tipoNotaFiscalRepository.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(
 				this.distribuidorRepository.tipoAtividade());
@@ -128,7 +128,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 
 	@Transactional
 	@Override
-	public List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
+	public List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
 
 		return tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 
@@ -144,11 +144,11 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			return null;
 		}
 
-		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao, tipoDestinatario, tipoEmitente, grupoNotaFiscal);
+		List<NaturezaOperacao> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao, tipoDestinatario, tipoEmitente, grupoNotaFiscal);
 
 		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();
 
-		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+		for (NaturezaOperacao tipoNotaFiscal : listaTipoNotaFiscal) {
 
 			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
 

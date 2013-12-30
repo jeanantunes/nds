@@ -6,13 +6,13 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 
 public interface TipoNotaFiscalService {
 
-	TipoNotaFiscal obterPorId(Long id);
+	NaturezaOperacao obterPorId(Long id);
 
 	public Integer obterQuantidadeTiposNotasFiscais(FiltroCadastroTipoNotaDTO filtro);
 	
@@ -48,9 +48,9 @@ public interface TipoNotaFiscalService {
 	 */
 	List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal);
 	
-	List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
+	List<NaturezaOperacao> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
 	
-	List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
+	List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro);
 
-	List<TipoNotaFiscal> obterTiposNotaFiscal(TipoAtividade tipoAtividade);
+	List<NaturezaOperacao> obterTiposNotaFiscal(TipoAtividade tipoAtividade);
 }

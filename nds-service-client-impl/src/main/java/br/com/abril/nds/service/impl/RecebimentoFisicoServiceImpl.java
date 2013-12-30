@@ -33,7 +33,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -329,7 +329,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Override
 	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
 		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
 		
@@ -346,7 +346,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	@Transactional
-	public List<TipoNotaFiscal> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
 		return tipoNotaFiscalRepository.obterTiposNotasFiscais();
 	}
 	

@@ -26,14 +26,13 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
  * @created 14-fev-2012 11:35:33
  */
 @Entity
-@Table(name = "TIPO_NOTA_FISCAL")
-@SequenceGenerator(name="TP_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
-public class TipoNotaFiscal implements Serializable {
+@Table(name = "NATUREZA_OPERACAO")
+public class NaturezaOperacao implements Serializable {
 
 	private static final long serialVersionUID = -5552879848986513495L;
 
 	@Id
-	@GeneratedValue(generator = "TP_NOTA_FISCAL_SEQ")
+	@GeneratedValue
 	@Column(name = "ID")
 	private Long id;
 	
@@ -73,14 +72,6 @@ public class TipoNotaFiscal implements Serializable {
 	    joinColumns = @JoinColumn(name = "PROCESSO_NFE_ID"))
 	@Column(name = "PROCESSO")
 	private Set<Processo> processo;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "EMITENTE", nullable = false)
-	private TipoUsuarioNotaFiscal emitente;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "DESTINATARIO", nullable = false)
-	private TipoUsuarioNotaFiscal destinatario;
 	
 	@Column(name = "CONTRIBUINTE", nullable = false)
 	private boolean contribuinte;
@@ -139,22 +130,6 @@ public class TipoNotaFiscal implements Serializable {
 
 	public void setTipoAtividade(TipoAtividade tipoAtividade) {
 		this.tipoAtividade = tipoAtividade;
-	}
-
-	public TipoUsuarioNotaFiscal getEmitente() {
-		return emitente;
-	}
-
-	public void setEmitente(TipoUsuarioNotaFiscal emitente) {
-		this.emitente = emitente;
-	}
-
-	public TipoUsuarioNotaFiscal getDestinatario() {
-		return destinatario;
-	}
-
-	public void setDestinatario(TipoUsuarioNotaFiscal destinatario) {
-		this.destinatario = destinatario;
 	}
 
 	public boolean isContribuinte() {
@@ -229,7 +204,7 @@ public class TipoNotaFiscal implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TipoNotaFiscal other = (TipoNotaFiscal) obj;
+		NaturezaOperacao other = (NaturezaOperacao) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

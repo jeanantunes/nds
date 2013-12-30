@@ -35,7 +35,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -94,7 +94,7 @@ public class LancamentoRepositoryImplExpedicaoTest extends AbstractRepositoryImp
 			save(produtoEdicao);
 			
 			
-			TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
+			NaturezaOperacao tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 			save(tipoNotaFiscal);
 
 			NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture

@@ -56,7 +56,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -862,7 +862,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(rollbackFor=Exception.class)
 	public void gerarNotaFiscal(Date dataEncalhe)  {
 		
-		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
+		List<NaturezaOperacao> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
 				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
@@ -870,7 +870,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 			try {
 
-				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
+				NaturezaOperacao tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
 				if (tipoNotaFiscal != null) {
 				
@@ -907,9 +907,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 
-	private TipoNotaFiscal obterTipoNotaFiscal(
-			List<TipoNotaFiscal> listaTipoNotaFiscal, Cota cota) {
-		TipoNotaFiscal  tipoNotaFiscal = null;
+	private NaturezaOperacao obterTipoNotaFiscal(
+			List<NaturezaOperacao> listaTipoNotaFiscal, Cota cota) {
+		NaturezaOperacao  tipoNotaFiscal = null;
 		
 		Boolean contribuinte = Boolean.FALSE;
 		
@@ -918,7 +918,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			contribuinte = cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica();
 		}
 		
-		for (TipoNotaFiscal tipo : listaTipoNotaFiscal){
+		for (NaturezaOperacao tipo : listaTipoNotaFiscal){
 			if (tipo.isContribuinte() == contribuinte){
 				tipoNotaFiscal = tipo;
 				break;

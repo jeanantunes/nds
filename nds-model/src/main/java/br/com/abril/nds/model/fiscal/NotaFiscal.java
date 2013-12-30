@@ -164,7 +164,7 @@ public abstract class NotaFiscal implements Serializable {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_NF_ID")
-	protected TipoNotaFiscal tipoNotaFiscal;
+	protected NaturezaOperacao tipoNotaFiscal;
 	
 	@Column(name = "VALOR_INFORMADO", nullable = true, precision=18, scale=4)
 	protected BigDecimal valorInformado;
@@ -245,11 +245,11 @@ public abstract class NotaFiscal implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public TipoNotaFiscal getTipoNotaFiscal() {
+	public NaturezaOperacao getTipoNotaFiscal() {
 		return tipoNotaFiscal;
 	}
 
-	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
+	public void setTipoNotaFiscal(NaturezaOperacao tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 

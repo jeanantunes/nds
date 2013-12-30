@@ -55,7 +55,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
@@ -198,7 +198,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal.getPeriodoMovimento();
 
-		Set<TipoNotaFiscal> tiposNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal();
+		Set<NaturezaOperacao> tiposNotaFiscal = dadosConsultaLoteNotaFiscal.getTipoNotaFiscal();
 
 		List<Long> listaIdFornecedores = dadosConsultaLoteNotaFiscal.getListaIdFornecedores();
 
@@ -212,7 +212,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
 			
-			for (TipoNotaFiscal tipoNotaFiscal : tiposNotaFiscal) {
+			for (NaturezaOperacao tipoNotaFiscal : tiposNotaFiscal) {
 				
 				if (tipoNotaFiscal.getTipoAtividade().equals(tipoAtividade)) {
 	
@@ -304,7 +304,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscal notaFiscalCancelada = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
-		TipoNotaFiscal tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
+		NaturezaOperacao tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
 				.getTipoNotaFiscal();
 
 		if (isRemessaMercadoriaConsignacao(tipoNotaFiscal)) {
@@ -355,7 +355,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param tipoNotaFiscal
 	 * @return
 	 */
-	private boolean isDevolucaoMerdadoriaRecebiaConsignacao(TipoNotaFiscal tipoNotaFiscal) {
+	private boolean isDevolucaoMerdadoriaRecebiaConsignacao(NaturezaOperacao tipoNotaFiscal) {
 		return tipoNotaFiscal.getGrupoNotaFiscal() == GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO
 				&& tipoNotaFiscal.getEmitente() == TipoUsuarioNotaFiscal.DISTRIBUIDOR
 				&& tipoNotaFiscal.getDestinatario() == TipoUsuarioNotaFiscal.TREELOG;
@@ -365,7 +365,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param tipoNotaFiscal
 	 * @return
 	 */
-	private boolean isRemessaMercadoriaConsignacao(TipoNotaFiscal tipoNotaFiscal) {
+	private boolean isRemessaMercadoriaConsignacao(NaturezaOperacao tipoNotaFiscal) {
 		return tipoNotaFiscal.getGrupoNotaFiscal() == GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO
 				&& tipoNotaFiscal.getEmitente() == TipoUsuarioNotaFiscal.DISTRIBUIDOR
 				&& tipoNotaFiscal.getDestinatario() == TipoUsuarioNotaFiscal.COTA;
@@ -566,7 +566,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listNotaFiscalReferenciada
 	 * @return
 	 */
-	private Identificacao carregaIdentificacao(TipoNotaFiscal tipoNotaFiscal,
+	private Identificacao carregaIdentificacao(NaturezaOperacao tipoNotaFiscal,
 			Date dataEmissao,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada) {
 
@@ -912,7 +912,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscal notaFiscal = new NotaFiscal();
 
-		TipoNotaFiscal tipoNotaFiscal = tipoNotaFiscalRepository
+		NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository
 				.buscarPorId(idTipoNotaFiscal);
 
 		if (tipoNotaFiscal == null) {
@@ -1048,7 +1048,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscal notaFiscal = new NotaFiscal();
 
-		TipoNotaFiscal tipoNotaFiscal = tipoNotaFiscalRepository
+		NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository
 				.buscarPorId(idTipoNotaFiscal);
 
 		if (tipoNotaFiscal == null) {
@@ -1197,7 +1197,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
-			TipoNotaFiscal tipoNotaFiscal) {
+			NaturezaOperacao tipoNotaFiscal) {
 
 		List<ItemNotaFiscalSaida> itensNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 
@@ -1267,7 +1267,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
 			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
-			TipoNotaFiscal tipoNotaFiscal) {
+			NaturezaOperacao tipoNotaFiscal) {
 
 		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
@@ -1311,7 +1311,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
 			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
-			TipoNotaFiscal tipoNotaFiscal) {
+			NaturezaOperacao tipoNotaFiscal) {
 
 		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
@@ -1346,7 +1346,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, 
 			Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
-			TipoNotaFiscal tipoNotaFiscal) {
+			NaturezaOperacao tipoNotaFiscal) {
 
 		List<ItemNotaFiscalSaida> listaItemNotaFiscal = null;
 
@@ -1377,7 +1377,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor,
 			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
-			TipoNotaFiscal tipoNotaFiscal) {
+			NaturezaOperacao tipoNotaFiscal) {
 
 		List<ItemNotaFiscalSaida> itensNFeEnvioConsignado = this
 				.obterItensNFeRemessaEmConsignacao(parametrosRecolhimentoDistribuidor, idCota,
@@ -1426,7 +1426,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private List<ItemNotaFiscalSaida> gerarItensNotaFiscal(
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,
-			TipoNotaFiscal tipoNotaFiscal, Long idCota) {
+			NaturezaOperacao tipoNotaFiscal, Long idCota) {
 
 		Map<Long, ItemNotaFiscalSaida> mapItemNotaFiscal = new HashMap<Long, ItemNotaFiscalSaida>();
 

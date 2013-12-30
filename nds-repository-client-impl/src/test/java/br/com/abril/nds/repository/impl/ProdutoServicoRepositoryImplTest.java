@@ -34,7 +34,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NCM;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -130,7 +130,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		save(produtoEdicaoCE);
 		CFOP cfop5102 = Fixture.cfop5102();
 		save(cfop5102);
-		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture
+		NaturezaOperacao tipoNotaFiscalRecebimento = Fixture
 				.tipoNotaFiscalRecebimento(cfop5102);
 		Usuario usuario = Fixture.usuarioJoao();
 		save(usuario);

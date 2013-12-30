@@ -23,7 +23,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
@@ -67,7 +67,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
 		
-		Set<TipoNotaFiscal> tiposNota = new HashSet<TipoNotaFiscal>();
+		Set<NaturezaOperacao> tiposNota = new HashSet<NaturezaOperacao>();
 		
 		if (idTipoNotaFiscal == null){
 			
@@ -132,7 +132,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		List<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, null, null, null, null, null, null, null);
 		
-		List<TipoNotaFiscal> tiposNotaFiscal = new ArrayList<TipoNotaFiscal>();
+		List<NaturezaOperacao> tiposNotaFiscal = new ArrayList<NaturezaOperacao>();
 		
 		if (idTipoNotaFiscal == null){
 			
@@ -167,7 +167,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 					}
 				}
 				
-				for (TipoNotaFiscal tipoNota : tiposNotaFiscal){
+				for (NaturezaOperacao tipoNota : tiposNotaFiscal){
 					
 					List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
 							parametrosRecolhimentoDistribuidor, 

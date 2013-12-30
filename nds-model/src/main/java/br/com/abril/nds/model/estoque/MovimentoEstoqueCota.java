@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
@@ -88,6 +90,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne
 	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroCota;
+	
+	@ManyToOne(optional=true)
+	@JoinColumns({
+		@JoinColumn(name="NOTA_ENVIO_ITEM_NOTA_ENVIO_ID", referencedColumnName="NOTA_ENVIO_ID"),
+		@JoinColumn(name="NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA")
+	})
+	private ItemNotaEnvio itemNotaEnvio;
 	
 	@Column(name = "NOTA_FISCAL_EMITIDA")
 	private boolean notaFiscalEmitida;
@@ -242,6 +251,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setMovimentoEstoqueCotaEstorno(
 			MovimentoEstoqueCota movimentoEstoqueCotaEstorno) {
 		this.movimentoEstoqueCotaEstorno = movimentoEstoqueCotaEstorno;
+	}
+
+	public ItemNotaEnvio getItemNotaEnvio() {
+		return itemNotaEnvio;
+	}
+
+	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
+		this.itemNotaEnvio = itemNotaEnvio;
 	}
 
 	public boolean isNotaFiscalEmitida() {

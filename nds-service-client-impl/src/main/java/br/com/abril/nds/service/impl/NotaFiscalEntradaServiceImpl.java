@@ -27,7 +27,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
@@ -131,7 +131,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
 		}
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
+		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
 
 		if (tipoNotaFiscal == null) {
 			

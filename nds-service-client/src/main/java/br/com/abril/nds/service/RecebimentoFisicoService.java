@@ -8,7 +8,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -20,7 +20,7 @@ public interface RecebimentoFisicoService {
 	 
 	 List<CFOP> obterListaCFOP();
 	 
-	 List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
+	 List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao);
 	 
 	 void confirmarRecebimentoFisico(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual, Boolean pularValidacao);
 	 

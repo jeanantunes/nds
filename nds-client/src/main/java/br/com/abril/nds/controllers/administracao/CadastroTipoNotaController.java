@@ -18,7 +18,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -85,7 +85,7 @@ public class CadastroTipoNotaController extends BaseController {
 		
 		FiltroCadastroTipoNotaDTO filtro = obterFiltroParaExportacao();
 		
-		List<TipoNotaFiscal> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
 		
 		FileExporter.to("consulta-edicoes-fechadas-com-saldo", fileType)
 					.inHTTPResponse(this.getNDSFileHeader(), 
@@ -112,7 +112,7 @@ public class CadastroTipoNotaController extends BaseController {
 		
 		FiltroCadastroTipoNotaDTO filtro =  tratarFiltroSessao(operacao, tipoNota, sortname, sortorder, rp, page);
 		
-		List<TipoNotaFiscal> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> lista = tipoNotaFiscalService.consultarTipoNotaFiscal(filtro);
 		
 		if (lista == null || lista.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -167,13 +167,13 @@ public class CadastroTipoNotaController extends BaseController {
 	 * @param listaTipoNotaFiscal
 	 * @return List<RegistroTipoNotaFiscalVO>
 	 */
-	private List<RegistroTipoNotaFiscalVO> getResultadoVO(List<TipoNotaFiscal> listaTipoNotaFiscal, String tipoQuebraLinha) {
+	private List<RegistroTipoNotaFiscalVO> getResultadoVO(List<NaturezaOperacao> listaTipoNotaFiscal, String tipoQuebraLinha) {
 		
 		List<RegistroTipoNotaFiscalVO> listaResultado = new ArrayList<RegistroTipoNotaFiscalVO>();
 		
 		RegistroTipoNotaFiscalVO resultado = null;
 		
-		for (TipoNotaFiscal tipoNotaFiscal : listaTipoNotaFiscal) {
+		for (NaturezaOperacao tipoNotaFiscal : listaTipoNotaFiscal) {
 			
 			resultado = new RegistroTipoNotaFiscalVO();
 			resultado.setNopDescricao(tipoNotaFiscal.getDescricao());
