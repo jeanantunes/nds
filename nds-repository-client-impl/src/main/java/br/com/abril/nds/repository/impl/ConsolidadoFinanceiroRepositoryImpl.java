@@ -1219,545 +1219,542 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		return query.list();
 	}
-	
+		
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro,
-			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
-			List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
-			List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
-			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado, 
-			List<Long> tiposMovimentoPendente, List<Long> tiposMovimentoNegociacaoComissao) {
-		
-		StringBuilder sql = new StringBuilder("select ");
-		sql.append(" cfc.ID as id, ")
-		   .append(" cfc.COTA_ID as cotaId, ")
-		   .append(" COTA.NUMERO_COTA as numeroCota, ")
-		   .append(" box.nome as nomeBox, ")
-		   .append(" cfc.CONSIGNADO as consignado, ")
-		   .append(" cfc.DT_CONSOLIDADO as dataConsolidado, ")
-		   
-		   .append(" (select max(mf_ant.DATA) ")
-		   .append(" from consolidado_financeiro_cota cfc_data ")
-		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
-		   .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
-		   .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
-		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
-		   .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
-		   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
-		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data_ant on cmfc_data_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
-		   .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_data_ant.MVTO_FINANCEIRO_COTA_ID ")
-		   .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
-		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
-		   .append(" and cfc_data.ID=cfc.ID limit 1) as dataPendente, ")
-		   
-		   .append(" (select max(ad_data.NUMERO_ACUMULO) ")
-		   .append(" from consolidado_financeiro_cota cfc_data ")
-		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
-		   .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
-		   .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
-		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
-		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
-		   .append(" and cfc_data.ID=cfc.ID ")
-		   .append(" and COTA.ID=cfc_data.COTA_ID limit 1) as numeroAcumulo, ")
-		   
-		   .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
-		   .append(" cfc.ENCALHE as encalhe, ")
-		   .append(" cfc.ENCARGOS as encargos, ")
-		   .append(" cfc.PENDENTE as pendente, ")
-		   .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
-		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
-		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
-		   //data raiz postergado
-		   
-		   .append(" (select max(mfp.DATA_CRIACAO)  ")
-		   .append(" from  MOVIMENTO_FINANCEIRO_COTA mfp ") 
-           .append(" join consolidado_mvto_financeiro_cota cmfc on cmfc.MVTO_FINANCEIRO_COTA_ID=mfp.id ")
-           .append(" where mfp.COTA_ID = cfc.COTA_ID ")
-           .append(" AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
-           .append(" OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")   
-           .append(" AND cmfc.CONSOLIDADO_FINANCEIRO_ID=cfc.id ")
-		   .append(" limit 1 )")
-		   .append(" AS dataRaiz, ")
+    @Override
+    public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro,
+                    List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
+                    List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
+                    List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
+                    List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado, 
+                    List<Long> tiposMovimentoPendente, List<Long> tiposMovimentoNegociacaoComissao) {
+            
+            StringBuilder sql = new StringBuilder("select ");
+            sql.append(" cfc.ID as id, ")
+               .append(" cfc.COTA_ID as cotaId, ")
+               .append(" COTA.NUMERO_COTA as numeroCota, ")
+               .append(" cfc.CONSIGNADO as consignado, ")
+               
+               .append(" cfc.DT_CONSOLIDADO as dataConsolidado, ")
+               
+               .append(" (select max(mf_ant.DATA) ")
+               .append(" from consolidado_financeiro_cota cfc_data ")
+               .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
+               .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
+               .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+               .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+               .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
+               .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
+               .append(" join consolidado_mvto_financeiro_cota cmfc_data_data_ant on cmfc_data_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
+               .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_data_ant.MVTO_FINANCEIRO_COTA_ID ")
+               .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
+               .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+               .append(" and cfc_data.ID=cfc.ID limit 1) as dataPendente, ")
+               
+               .append(" (select max(ad_data.NUMERO_ACUMULO) ")
+               .append(" from consolidado_financeiro_cota cfc_data ")
+               .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
+               .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
+               .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+               .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+               .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+               .append(" and cfc_data.ID=cfc.ID ")
+               .append(" and COTA.ID=cfc_data.COTA_ID limit 1) as numeroAcumulo, ")
+               
+               .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
+               .append(" cfc.ENCALHE as encalhe, ")
+               .append(" cfc.ENCARGOS as encargos, ")
+               .append(" cfc.PENDENTE as pendente, ")
+               .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
+               .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
+               .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
+               //data raiz postergado
+               
+               .append(" (select max(mfp.DATA_CRIACAO)  ")
+               .append(" from  MOVIMENTO_FINANCEIRO_COTA mfp ") 
+       .append(" join consolidado_mvto_financeiro_cota cmfc on cmfc.MVTO_FINANCEIRO_COTA_ID=mfp.id ")
+       .append(" where mfp.COTA_ID = cfc.COTA_ID ")
+       .append(" AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
+       .append(" OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")   
+       .append(" AND cmfc.CONSOLIDADO_FINANCEIRO_ID=cfc.id ")
+               .append(" limit 1 )")
+               .append(" AS dataRaiz, ")
 
-		   .append(" ( select SUM( coalesce(bc.VALOR_PAGO, 0) ) ")
-		   .append("           from BAIXA_COBRANCA bc ")
-		   .append("           inner join COBRANCA cobranca ")
-		   .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
-		   .append("           inner join DIVIDA divida ")
-		   .append("                 on divida.ID = cobranca.DIVIDA_ID ")
-		   .append("           where bc.STATUS not in (:statusBaixaCobranca) ")
-		   .append("           and cota.ID = cobranca.COTA_ID ")
-		   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
-		   .append("           and cfc.ID) as valorPago, ")
-		   //total
-		   .append(" cfc.TOTAL as total, ")
-		   
-		   //CALCULO DO SALDO = total - valorPago
-		   	.append(" ( ")
-			.append(" 	 SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
-			.append(" 	 else round(cfc.TOTAL, 2) + SUM(coalesce(bc.VALOR_PAGO,0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) end ")
-			.append(" 	 FROM BAIXA_COBRANCA bc ")
-			.append(" 	 INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
-			.append(" 	 INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
-			.append(" 	 WHERE bc.STATUS NOT IN (:statusBaixaCobranca)  ")
-			.append(" 	 AND cota.ID = cobranca.COTA_ID AND divida.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
-			.append(" ) as saldo, ")
+               .append(" ( select SUM( coalesce(bc.VALOR_PAGO, 0) ) ")
+               .append("           from BAIXA_COBRANCA bc ")
+               .append("           inner join COBRANCA cobranca ")
+               .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
+               .append("           inner join DIVIDA divida ")
+               .append("                 on divida.ID = cobranca.DIVIDA_ID ")
+               .append("           where bc.STATUS not in (:statusBaixaCobranca) ")
+               .append("           and cota.ID = cobranca.COTA_ID ")
+               .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
+               .append("           and cfc.ID) as valorPago, ")
+               //total
+               .append(" cfc.TOTAL as total, ")
+               
+               //CALCULO DO SALDO = total - valorPago
+                       .append(" ( ")
+                    .append("          SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
+                    .append("          else round(cfc.TOTAL, 2) + SUM(coalesce(bc.VALOR_PAGO,0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) end ")
+                    .append("          FROM BAIXA_COBRANCA bc ")
+                    .append("          INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
+                    .append("          INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
+                    .append("          WHERE bc.STATUS NOT IN (:statusBaixaCobranca)  ")
+                    .append("          AND cota.ID = cobranca.COTA_ID AND divida.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
+                    .append(" ) as saldo, ")
 
-		   .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) ")
-		   .append(" - (select sum(coalesce(mfdc.valor,0)) from MOVIMENTO_FINANCEIRO_COTA mfdc ")
-		   .append(" join CONSOLIDADO_FINANCEIRO_COTA cfc_ on (mfdc.COTA_ID = cfc_.COTA_ID) ")
-		   .append(" join CONSOLIDADO_MVTO_FINANCEIRO_COTA c_ on (c_.CONSOLIDADO_FINANCEIRO_ID = cfc_.ID and c_.MVTO_FINANCEIRO_COTA_ID = mfdc.ID) ")
-		   .append(" where mfdc.COTA_ID = cfc.COTA_ID ")
-		   .append(" and mfdc.TIPO_MOVIMENTO_ID in (:tiposMovimentoNegociacaoComissao)) ")
-		   .append(" as valorVendaDia, ")
-		   
-		   .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
-		   
-		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
-		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID ")
-		   .append(" join BOX box on COTA.BOX_ID=box.ID ")
-		   .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
-		   .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
-		   .append(" where cota.NUMERO_COTA = :numeroCota ");
-		
-		if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
-			
-			sql.append(" and cfc.DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
-		}
-		
-		sql.append(" group by cfc.ID ")
-		
-		   .append(" union all ")
-		   
-		   .append(" select ")
-		   .append(" null as id, ")
-		   .append(" mfc.COTA_ID as cotaId, ")
-		   .append(" null as numeroCota, ")
-		   .append(" box.nome as nomeBox, ")
-		   
-		   //consignado
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoConsignado) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as consignado, ")
-		   
-		   .append(" mfc.DATA as dataConsolidado, ")
-		   
-		   .append(" (select max(mf_ant.DATA) ")
-		   .append(" from movimento_financeiro_cota mfc_data ")
-		   .append(" join tipo_movimento tm_data on tm_data.ID=mfc_data.TIPO_MOVIMENTO_ID ")
-		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
-		   .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
-		   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
-		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_ant on cmfc_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
-		   .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_ant.MVTO_FINANCEIRO_COTA_ID ")
-		   .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
-		   .append(" where tm_data.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
-		   .append(" and mfc_data.ID=mfc.ID limit 1) as dataPendente, ")
+               .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) ")
+               .append(" - (select sum(coalesce(mfdc.valor,0)) from MOVIMENTO_FINANCEIRO_COTA mfdc ")
+               .append(" join CONSOLIDADO_FINANCEIRO_COTA cfc_ on (mfdc.COTA_ID = cfc_.COTA_ID) ")
+               .append(" join CONSOLIDADO_MVTO_FINANCEIRO_COTA c_ on (c_.CONSOLIDADO_FINANCEIRO_ID = cfc_.ID and c_.MVTO_FINANCEIRO_COTA_ID = mfdc.ID) ")
+               .append(" where mfdc.COTA_ID = cfc.COTA_ID ")
+               .append(" and mfdc.TIPO_MOVIMENTO_ID in (:tiposMovimentoNegociacaoComissao)) ")
+               .append(" as valorVendaDia, ")
+               
+               .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
+               
+               .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
+               .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
+               .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
+               .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
+               .append(" where cota.NUMERO_COTA = :numeroCota ");
+            
+            if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
+                    
+                    sql.append(" and cfc.DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
+            }
+            
+            sql.append(" group by cfc.ID ")
+            
+               .append(" union all ")
+               
+               .append(" select ")
+               .append(" null as id, ")
+               .append(" mfc.COTA_ID as cotaId, ")
+               .append(" null as numeroCota, ")
+               
+               //consignado
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoConsignado) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) as consignado, ")
+               
+               .append(" mfc.DATA as dataConsolidado, ")
+               
+               .append(" (select max(mf_ant.DATA) ")
+               .append(" from movimento_financeiro_cota mfc_data ")
+               .append(" join tipo_movimento tm_data on tm_data.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+               .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+               .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
+               .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
+               .append(" join consolidado_mvto_financeiro_cota cmfc_data_ant on cmfc_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
+               .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_ant.MVTO_FINANCEIRO_COTA_ID ")
+               .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
+               .append(" where tm_data.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+               .append(" and mfc_data.ID=mfc.ID limit 1) as dataPendente, ")
 
-		   .append(" (select max(ad_data.NUMERO_ACUMULO) ")
-		   .append(" from movimento_financeiro_cota mfc_data ")
-		   .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
-		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
-		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
-		   .append(" and mfc_data.ID=mfc.ID ")
-		   .append(" and COTA.ID=mfc_data.COTA_ID limit 1) as numeroAcumulo, ")
-		   
-		   //crédito
-		   .append("(coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoCredito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) - ")
-		   //débito
-		   .append(" coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoDebito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0)")
-		   .append(") as debitoCredito, ")
-		   
-		   //encalhe
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoEncalhe) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as encalhe, ")
-		   
-		   //encargos
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoEncargos) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as encargos, ")
-		   
-		   //pendente
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as pendente, ")
-		   
-		   //valorPostergado
-		   //valorPostergado credito
-		   .append("(coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) - ")
-		   //valorPostergado débito
-		   .append(" coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0)")
-		   .append(") as valorPostergado, ")
-		   
-		   //vendaEncalhe
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoVendaEncalhe) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as vendaEncalhe, ")
-		   
-		   //cobrado
-		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
-		   
-		   //data raiz
-		   .append(" (select ")
-           .append(" max(mfp.DT_CONSOLIDADO) ") 
-           .append(" from ")
-           .append(" CONSOLIDADO_FINANCEIRO_COTA mfp ") 
-           .append(" left join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID=mfp.id ")
-           .append(" where ")
-           .append(" mfp.COTA_ID = mfc.COTA_ID ") 
-           .append(" and mfp.DT_CONSOLIDADO < mfc.DATA limit 1) ")
-           .append(" as dataRaiz, ")
-		   
-		   //valor pago
-		   .append(" 0 as valorPago, ")
-		   
-		    //total
-		   .append("(")
-		   //.append(" (consignado - encalhe + valorPostergado + vendaEncalhe + debitoCredito + encargos + pendente) ")
-		   .append("coalesce((select sum(m.VALOR) * -1 ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoConsignado) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) ")
-		   .append(" - ")
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoEncalhe) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) ")
-		   .append(" + ")
-		   .append("(coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) - ")
-		   .append(" coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0)")
-		   .append(") ")
-		   .append(" - ")
-		   .append("coalesce((select sum(m.VALOR) * -1 ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoVendaEncalhe) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) ")
-		   .append(" + ")
-		   .append("(coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoCredito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) - ")
-		   .append(" coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoDebito) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0)")
-		   .append(") ")
-		   .append(" + ")
-		   .append("coalesce((select sum(m.VALOR) * -1 ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoEncargos) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) ")
-		   .append(" + ")
-		   .append("coalesce((select sum(m.VALOR) * -1 ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) ")
-		   .append(" ) as total, ")
-		   
-		   //saldo
-		   .append(" 0 as saldo, ")
-		   
-		   //valorVendaDia (consignado - encalhe)
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoConsignado) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) ")
-		   .append(" - ")
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoEncalhe) ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as valorVendaDia, ")
-		   
-		   .append(" 0 as inadimplente ")
-		   
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")		  
-		   .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
-		    .append(" join BOX box on COTA.BOX_ID=box.ID ")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and mfc.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(")");
-		
-		if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
-			
-			sql.append(" and mfc.DATA between :inicioPeriodo and :fimPeriodo ");
-		}
-		
-		sql.append(" group by mfc.DATA ");
-		
-		if (filtro.getColunaOrdenacao() != null) {
-			sql.append(" order by ").append(filtro.getColunaOrdenacao()).append(" ");
-			
-			if (filtro.getPaginacao() != null) {
-				
-				sql.append(filtro.getPaginacao().getOrdenacao());
-			}else{
-				
-				sql.append("asc");
-			}
-		}
-		
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.addScalar("id", StandardBasicTypes.LONG);
-		query.addScalar("cotaId", StandardBasicTypes.LONG);
-		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
-		query.addScalar("consignado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("dataConsolidado", StandardBasicTypes.DATE);
-		query.addScalar("debitoCredito", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("encalhe", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("encargos", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("pendente", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("valorPostergado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("vendaEncalhe", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("cobrado", StandardBasicTypes.BOOLEAN);
-		query.addScalar("dataRaiz", StandardBasicTypes.DATE);
-		query.addScalar("dataPendente", StandardBasicTypes.DATE);
-		query.addScalar("valorPago", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("saldo", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("valorVendaDia", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("numeroAcumulo", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("inadimplente", StandardBasicTypes.BOOLEAN);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
-		
-		query.setParameter("numeroCota", filtro.getNumeroCota());
+               .append(" (select max(ad_data.NUMERO_ACUMULO) ")
+               .append(" from movimento_financeiro_cota mfc_data ")
+               .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+               .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+               .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+               .append(" and mfc_data.ID=mfc.ID ")
+               .append(" and COTA.ID=mfc_data.COTA_ID limit 1) as numeroAcumulo, ")
+               
+               //crédito
+               .append("(coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoCredito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) - ")
+               //débito
+               .append(" coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoDebito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0)")
+               .append(") as debitoCredito, ")
+               
+               //encalhe
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoEncalhe) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) as encalhe, ")
+               
+               //encargos
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoEncargos) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) as encargos, ")
+               
+               //pendente
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) as pendente, ")
+               
+               //valorPostergado
+               //valorPostergado credito
+               .append("(coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) - ")
+               //valorPostergado débito
+               .append(" coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0)")
+               .append(") as valorPostergado, ")
+               
+               //vendaEncalhe
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoVendaEncalhe) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) as vendaEncalhe, ")
+               
+               //cobrado
+               .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
+               
+               //data raiz
+               .append(" (select ")
+       .append(" max(mfp.DT_CONSOLIDADO) ") 
+       .append(" from ")
+       .append(" CONSOLIDADO_FINANCEIRO_COTA mfp ") 
+       .append(" left join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID=mfp.id ")
+       .append(" where ")
+       .append(" mfp.COTA_ID = mfc.COTA_ID ") 
+       .append(" and mfp.DT_CONSOLIDADO < mfc.DATA limit 1) ")
+       .append(" as dataRaiz, ")
+               
+               //valor pago
+               .append(" 0 as valorPago, ")
+               
+                //total
+               .append("(")
+               //.append(" (consignado - encalhe + valorPostergado + vendaEncalhe + debitoCredito + encargos + pendente) ")
+               .append("coalesce((select sum(m.VALOR) * -1 ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoConsignado) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) ")
+               .append(" - ")
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoEncalhe) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) ")
+               .append(" + ")
+               .append("(coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) - ")
+               .append(" coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0)")
+               .append(") ")
+               .append(" - ")
+               .append("coalesce((select sum(m.VALOR) * -1 ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoVendaEncalhe) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) ")
+               .append(" + ")
+               .append("(coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoCredito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) - ")
+               .append(" coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoDebito) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0)")
+               .append(") ")
+               .append(" + ")
+               .append("coalesce((select sum(m.VALOR) * -1 ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoEncargos) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) ")
+               .append(" + ")
+               .append("coalesce((select sum(m.VALOR) * -1 ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) ")
+               .append(" ) as total, ")
+               
+               //saldo
+               .append(" 0 as saldo, ")
+               
+               //valorVendaDia (consignado - encalhe)
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoConsignado) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) ")
+               .append(" - ")
+               .append("coalesce((select sum(m.VALOR) ")
+               .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+               .append(" inner join COTA on COTA.ID = m.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and m.TIPO_MOVIMENTO_ID in (:tipoMovimentoEncalhe) ")
+               .append(" and m.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(") and m.DATA = mfc.DATA ")
+               .append("),0) as valorVendaDia, ")
+               
+               .append(" 0 as inadimplente ")
+               
+               .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
+               .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
+               .append(" where COTA.NUMERO_COTA = :numeroCota ")
+               .append(" and mfc.ID not in (")
+               .append("     select MVTO_FINANCEIRO_COTA_ID ")
+               .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+               .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+               .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+               .append(")");
+            
+            if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
+                    
+                    sql.append(" and mfc.DATA between :inicioPeriodo and :fimPeriodo ");
+            }
+            
+            sql.append(" group by mfc.DATA ");
+            
+            if (filtro.getColunaOrdenacao() != null) {
+                    sql.append(" order by ").append(filtro.getColunaOrdenacao()).append(" ");
+                    
+                    if (filtro.getPaginacao() != null) {
+                            
+                            sql.append(filtro.getPaginacao().getOrdenacao());
+                    }else{
+                            
+                            sql.append("asc");
+                    }
+            }
+            
+            SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+            
+            query.addScalar("id", StandardBasicTypes.LONG);
+            query.addScalar("cotaId", StandardBasicTypes.LONG);
+            query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
+            query.addScalar("consignado", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("dataConsolidado", StandardBasicTypes.DATE);
+            query.addScalar("debitoCredito", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("encalhe", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("encargos", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("pendente", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("valorPostergado", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("vendaEncalhe", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("cobrado", StandardBasicTypes.BOOLEAN);
+            query.addScalar("dataRaiz", StandardBasicTypes.DATE);
+            query.addScalar("dataPendente", StandardBasicTypes.DATE);
+            query.addScalar("valorPago", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("saldo", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("valorVendaDia", StandardBasicTypes.BIG_DECIMAL);
+            query.addScalar("numeroAcumulo", StandardBasicTypes.BIG_INTEGER);
+            query.addScalar("inadimplente", StandardBasicTypes.BOOLEAN);
+            
+            query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
+            
+            query.setParameter("numeroCota", filtro.getNumeroCota());
 
-		List<String> statusBaixaCobranca = 
-				Arrays.asList(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA.name(),
-						StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA.name(),
-						StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR.name());
+            List<String> statusBaixaCobranca = 
+                            Arrays.asList(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA.name(),
+                                            StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA.name(),
+                                            StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR.name());
 
-		query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
-		
-		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
-			
-			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
-			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
-		}
-		
-		query.setParameterList("tiposMovimentoCredito", tiposMovimentoCredito);
-		query.setParameterList("tiposMovimentoDebito", tiposMovimentoDebito);
-		query.setParameterList("tipoMovimentoEncalhe", tipoMovimentoEncalhe);
-		query.setParameterList("tiposMovimentoEncargos", tiposMovimentoEncargos);
-		query.setParameterList("tiposMovimentoPostergadoCredito", tiposMovimentoPostergadoCredito);
-		query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
-		query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
-		query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
-		query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
-		query.setParameterList("tiposMovimentoNegociacaoComissao", tiposMovimentoNegociacaoComissao);
-		
-		query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
-		
-		query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
-		
-		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
-		
-		PaginacaoVO paginacao = filtro.getPaginacao();
-		if (paginacao != null) {
-			
-			if (paginacao.getPosicaoInicial() != null) {
-				
-				query.setFirstResult(paginacao.getPosicaoInicial());
-			}
-			
-			if (paginacao.getQtdResultadosPorPagina() != null) {
-				
-				query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-			}
-		}
-		
-		return query.list();
-	}
+            query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
+            
+            if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+                    
+                    query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+                    query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+            }
+            
+            query.setParameterList("tiposMovimentoCredito", tiposMovimentoCredito);
+            query.setParameterList("tiposMovimentoDebito", tiposMovimentoDebito);
+            query.setParameterList("tipoMovimentoEncalhe", tipoMovimentoEncalhe);
+            query.setParameterList("tiposMovimentoEncargos", tiposMovimentoEncargos);
+            query.setParameterList("tiposMovimentoPostergadoCredito", tiposMovimentoPostergadoCredito);
+            query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
+            query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
+            query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
+            query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
+            query.setParameterList("tiposMovimentoNegociacaoComissao", tiposMovimentoNegociacaoComissao);
+            
+            query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
+            
+            query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
+            
+            query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+            
+            PaginacaoVO paginacao = filtro.getPaginacao();
+            if (paginacao != null) {
+                    
+                    if (paginacao.getPosicaoInicial() != null) {
+                            
+                            query.setFirstResult(paginacao.getPosicaoInicial());
+                    }
+                    
+                    if (paginacao.getQtdResultadosPorPagina() != null) {
+                            
+                            query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+                    }
+            }
+            
+            return query.list();
+    }
 	
 	@Override
 	public BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
