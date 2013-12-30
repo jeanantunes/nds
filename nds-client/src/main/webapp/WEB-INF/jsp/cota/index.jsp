@@ -116,7 +116,7 @@
 				<td width="214">
 					<input type="text" id="bairroPesquisa" style="width:200px;"/>
 				</td>
-				<td width="86">Munic&iacute;pio:</td>
+				<td width="86">Cidade:</td>
 				<td width="193">
 					<input type="text" id="municipioPesquisa" style="width:180px;"/>
 				</td>
