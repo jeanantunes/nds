@@ -77,28 +77,26 @@ var negociacaoDividaController = $.extend(true, {
 	
 	pesquisarDetalhes : function(idCobranca) {
 		
-		$(".negociacaoDetalheGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisarDetalhes.json?' , 
-			params: [{name: 'idCobranca' , value: idCobranca}],
-			newp : 1,
-			preProcess: negociacaoDividaController.retornoPesquisaDetalhes
-		});
-			
-		$(".negociacaoDetalheGrid", this.workspace).flexReload();
-		
+		$.postJSON(
+			this.path + 'pesquisarDetalhes.json', 
+			[{name: 'idCobranca' , value: idCobranca}],
+			function(result){
+				
+				$(".negociacaoDetalheGrid", negociacaoDividaController.workspace).flexAddData({
+					page: 1, total: 1, rows: result[0].rows
+				});
+				
+				$('#id_saldo', negociacaoDividaController.workspace).text(floatToPrice(result[1]));
+			});
 	},
 	
 	retornoPesquisaDetalhes : function(result) {
 		
-		var saldo = 0.0;
-		
 		$.each(result.rows, function(index, row) {
-			saldo += row.cell.valorDouble;
 			
 			row.cell.valor = floatToPrice(row.cell.valor);
+			row.cell.data = row.cell.data.$;
 		});
-		
-		$('#id_saldo').text(floatToPrice(saldo));
 		
 		return result;
 	},
@@ -934,6 +932,7 @@ var negociacaoDividaController = $.extend(true, {
 	initGridNegociacaoDetalhe : function() {
 		$(".negociacaoDetalheGrid", negociacaoDividaController.workspace).flexigrid({
 			dataType : 'json',
+			preProcess : negociacaoDividaController.retornoPesquisaDetalhes,
 			colModel : [ {
 				display : 'Data',
 				name : 'data',

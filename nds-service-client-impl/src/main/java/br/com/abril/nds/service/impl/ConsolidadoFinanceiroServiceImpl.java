@@ -115,7 +115,8 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
 						GrupoMovimentoFinaceiro.VENDA_TOTAL,
 						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
-						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA
+						GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
 					)
 				);
 		
@@ -148,13 +149,25 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<Long> tiposMovimentoConsignado = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE));
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
+					)
+				);
+		
+		List<Long> tiposMovimentoNegociacaoComissao = 
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO
+					)
+				);
 		
 		return this.consolidadoFinanceiroRepository.obterContaCorrente(filtro, 
 				tiposMovimentoCredito, tiposMovimentoDebito, tipoMovimentoEncalhe, 
 				tiposMovimentoEncargos, tiposMovimentoPostergadoCredito, 
 				tiposMovimentoPostergadoDebito, tipoMovimentoVendaEncalhe,
-				tiposMovimentoConsignado, tipoMovimentoVendaPendente);
+				tiposMovimentoConsignado, tipoMovimentoVendaPendente,
+				tiposMovimentoNegociacaoComissao);
 	}
 	
 	@Override
