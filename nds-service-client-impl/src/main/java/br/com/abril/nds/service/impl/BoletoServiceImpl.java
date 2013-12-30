@@ -2104,7 +2104,7 @@ public class BoletoServiceImpl implements BoletoService {
 																	            Date dataRecolhimentoCEDe, 
 																	            Date dataRecolhimentoCEAte) {
 		
-        List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.EM_ABERTO, StatusDivida.QUITADA);
+        List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, StatusDivida.QUITADA);
 		
 		BoletoAntecipado boletoAntecipado = this.boletoAntecipadoRepository.obterBoletoAntecipadoPorCECotaEPeriodoRecolhimento(idCE, 
 				                                                                                                               dataRecolhimentoCEDe, 
@@ -2194,7 +2194,7 @@ public class BoletoServiceImpl implements BoletoService {
     	boletoAntecipado.getEmissaoBoletoAntecipado().setDataRecolhimentoCEDe(bbDTO.getDataRecolhimentoCEDe());
     	boletoAntecipado.getEmissaoBoletoAntecipado().setDataRecolhimentoCEAte(bbDTO.getDataRecolhimentoCEAte());
     	boletoAntecipado.setValor(bbDTO.getValorTotalLiquido().add(bbDTO.getValorTotalDebitos().subtract(bbDTO.getValorTotalCreditos())));
-    	boletoAntecipado.setStatus(StatusDivida.EM_ABERTO);
+    	boletoAntecipado.setStatus(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO);
     	boletoAntecipado.setTipoCobranca(TipoCobranca.BOLETO_EM_BRANCO);
     	
     	if (boletoAntecipado.getId()==null){
@@ -2251,7 +2251,7 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	/**
-	 * Verifica se existe boleto antecipado não vencido ou pago para a cota
+	 * Verifica se existe boleto antecipado para a cota
 	 * Data de recolhimento dentro do periodo de emissao CE do Boleto antecipado
 	 * Boletos em Branco sem reimpressão
 	 * @param idCota
@@ -2260,9 +2260,9 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	@Transactional
 	@Override
-	public boolean existeBoletoAntecipadoNaoVencidoOuPagoCotaDataRecolhimento(Long idCota, Date dataRecolhimento){
+	public boolean existeBoletoAntecipadoCotaDataRecolhimento(Long idCota, Date dataRecolhimento){
 		
-		List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.EM_ABERTO, StatusDivida.QUITADA);
+		List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, StatusDivida.QUITADA);
 		
 		List<BoletoAntecipado> bas = this.boletoAntecipadoRepository.obterBoletosAntecipadosPorDataRecolhimentoECota(idCota, dataRecolhimento, listaStatusDivida);
 		
@@ -2273,17 +2273,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		for (BoletoAntecipado ba : bas){
 			
-			if (ba.getEmissaoBoletoAntecipado().getBoletoAntecipadoReimpresso()!=null){
-				
-				continue;
-			}
-		
-	        if (ba.getDataVencimento().compareTo(dataRecolhimento)>0){
-				
-				return true;
-			}
-	
-			if (ba.getStatus().equals(StatusDivida.QUITADA)){
+			if (ba.getEmissaoBoletoAntecipado().getBoletoAntecipadoReimpresso() == null){
 				
 				return true;
 			}
