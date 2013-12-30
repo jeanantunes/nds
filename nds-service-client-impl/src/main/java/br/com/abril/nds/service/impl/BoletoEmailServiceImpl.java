@@ -278,6 +278,15 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
+	 * Remove do controle de envio de boletos por email os boletos nao enviados com datas anteriores à data de operação atual
+	 * @param boletoEmail
+	 */
+	private void removerBoletoNaoEnviado(BoletoEmail boletoEmail){
+		
+		this.boletoEmailRepository.remover(boletoEmail);
+	}
+	
+	/**
 	 * Envia Cobrança por email - Controle de Envio de Boletos
 	 * 
 	 * @param boletoEmail
@@ -290,7 +299,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 		
 		if (boletoEmail.getCobranca().getDataEmissao().compareTo(dataOperacao) < 0){
 			
-			this.boletoEmailRepository.remover(boletoEmail);
+			this.removerBoletoNaoEnviado(boletoEmail);
 			
 			return;
 		}

@@ -1750,4 +1750,53 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota, 
+			Long idConsolidado, List<Long> tiposMovimento, Date data){
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select m.valor as valor, ")
+		   .append(" m.data as data, ")
+		   .append(" m.tipoMovimento.descricao || (case when m.observacao is not null then (' - ' || m.observacao) else '' end) as descricao ")
+		   .append(" from MovimentoFinanceiroCota m ")
+		   .append(" join m.cota cota ");
+		
+		if (idConsolidado != null){
+			
+			hql.append(" join m.consolidadoFinanceiroCota consolidado ");
+		}
+		
+		hql.append(" where cota.numeroCota = :numeroCota ")
+		   .append(" and m.tipoMovimento.id in (:tiposMovimento) ");
+		
+		if (data != null){
+			
+			hql.append(" and m.data = :data ");
+		}
+		
+		if (idConsolidado != null){
+			
+			hql.append(" and consolidado.id = :idConsolidado");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoFinanceiroDTO.class));
+		query.setParameter("numeroCota", numeroCota);
+		
+		if (data != null){
+			
+			query.setParameter("data", data);
+		}
+		
+		if (idConsolidado != null){
+			
+			query.setParameter("idConsolidado", idConsolidado);
+		}
+		
+		query.setParameterList("tiposMovimento", tiposMovimento);
+		
+		return query.list();
+	}
 }

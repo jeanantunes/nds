@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo03_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="03a9c3d6-f4db-49a6-b733-8546a7e683c9">
 	<property name="ireport.zoom" value="2.853116706110016"/>
-	<property name="ireport.x" value="1152"/>
+	<property name="ireport.x" value="366"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Crosstab Data Text" hAlign="Center"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
@@ -15,45 +15,93 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="numeroCota" class="java.lang.Integer">
-		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
-	</field>
-	<field name="nome" class="java.lang.String">
-		<fieldDescription><![CDATA[nome]]></fieldDescription>
-	</field>
-	<field name="logradouro" class="java.lang.String">
-		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
-	</field>
-	<field name="bairro" class="java.lang.String">
-		<fieldDescription><![CDATA[bairro]]></fieldDescription>
-	</field>
-	<field name="cidade" class="java.lang.String">
-		<fieldDescription><![CDATA[cidade]]></fieldDescription>
+	<field name="idRota" class="java.lang.Long">
+		<fieldDescription><![CDATA[idRota]]></fieldDescription>
 	</field>
 	<field name="uf" class="java.lang.String">
 		<fieldDescription><![CDATA[uf]]></fieldDescription>
 	</field>
-	<field name="qtdProduto0" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto0]]></fieldDescription>
+	<field name="qtdProduto2" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
+	</field>
+	<field name="idCota" class="java.lang.Long">
+		<fieldDescription><![CDATA[idCota]]></fieldDescription>
 	</field>
 	<field name="qtdProduto1" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[qtdProduto1]]></fieldDescription>
 	</field>
-	<field name="qtdProduto2" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
+	<field name="numeroLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroLogradouro]]></fieldDescription>
 	</field>
-	<field name="qtdProduto3" class="java.math.BigInteger">
-		<fieldDescription><![CDATA[qtdProduto3]]></fieldDescription>
+	<field name="idBox" class="java.lang.Long">
+		<fieldDescription><![CDATA[idBox]]></fieldDescription>
+	</field>
+	<field name="nomeRoteiro" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeRoteiro]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="numeroCota" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
 	</field>
 	<field name="qtdProduto4" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[qtdProduto4]]></fieldDescription>
 	</field>
+	<field name="cota" class="java.lang.String">
+		<fieldDescription><![CDATA[cota]]></fieldDescription>
+	</field>
+	<field name="qtdProduto3" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto3]]></fieldDescription>
+	</field>
+	<field name="qtdCotas" class="java.lang.Long">
+		<fieldDescription><![CDATA[qtdCotas]]></fieldDescription>
+	</field>
+	<field name="tipoLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[tipoLogradouro]]></fieldDescription>
+	</field>
+	<field name="numeroTelefone" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroTelefone]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[bairro]]></fieldDescription>
+	</field>
+	<field name="logradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
+	</field>
+	<field name="reparteTotal" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[cidade]]></fieldDescription>
+	</field>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[cep]]></fieldDescription>
+	</field>
 	<field name="qtdProduto5" class="java.math.BigInteger">
 		<fieldDescription><![CDATA[qtdProduto5]]></fieldDescription>
 	</field>
-	<field name="numeroNotaEnvio" class="java.lang.Long"/>
-	<field name="tipoLogradouro" class="java.lang.String"/>
-	<field name="numeroLogradouro" class="java.lang.String"/>
+	<field name="qtdProduto0" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto0]]></fieldDescription>
+	</field>
+	<field name="nomeRota" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeRota]]></fieldDescription>
+	</field>
+	<field name="nomeBox" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeBox]]></fieldDescription>
+	</field>
+	<field name="quebra" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[quebra]]></fieldDescription>
+	</field>
+	<field name="idRoteiro" class="java.lang.Long">
+		<fieldDescription><![CDATA[idRoteiro]]></fieldDescription>
+	</field>
+	<field name="numeroNotaEnvio" class="java.lang.Long">
+		<fieldDescription><![CDATA[numeroNotaEnvio]]></fieldDescription>
+	</field>
+	<field name="pacote" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[pacote]]></fieldDescription>
+	</field>
 	<variable name="TOTAL_PROD_1" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[$F{qtdProduto0}]]></variableExpression>
 	</variable>
@@ -439,7 +487,8 @@
 + ($F{numeroLogradouro} == null ? "" : $F{numeroLogradouro} + ", ")
 + ($F{bairro} == null ? "" : $F{bairro} + ", ")
 + ($F{cidade} == null ? "" : $F{cidade} + ", ")
-+ ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
++ ($F{uf} == null ? "" : $F{uf})
++ ($F{cep} == null ? "" : " - " + $F{cep})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="ba8cb4ca-c42e-42c7-a738-43f6368180fb" stretchType="RelativeToTallestObject" x="421" y="0" width="42" height="30">

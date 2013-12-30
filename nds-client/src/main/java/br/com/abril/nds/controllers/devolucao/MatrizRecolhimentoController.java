@@ -134,11 +134,55 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = null ;
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoAux = null ;
+		List <Long> porFornenedor = null;
+	
+		for(int i =0; i<listaIdsFornecedores.size();i++){
+		
+			porFornenedor= new ArrayList<Long>();
+			porFornenedor.add(listaIdsFornecedores.get(i));
+			
+			if(balanceamentoRecolhimento==null){
+		        balanceamentoRecolhimento = 
 				this.obterBalanceamentoRecolhimento(anoNumeroSemana,
-													listaIdsFornecedores,
+													porFornenedor,
 													TipoBalanceamentoRecolhimento.AUTOMATICO,
 													false);
+		        
+			}else{
+				
+				balanceamentoRecolhimentoAux = this.obterBalanceamentoRecolhimento(anoNumeroSemana,
+						porFornenedor,
+						TipoBalanceamentoRecolhimento.AUTOMATICO,
+						false);
+				
+				if(balanceamentoRecolhimentoAux.getCapacidadeRecolhimentoDistribuidor()!=null) 
+					balanceamentoRecolhimento.addCapacidadeRecolhimentoDistribuidor(balanceamentoRecolhimentoAux.getCapacidadeRecolhimentoDistribuidor());
+				if(balanceamentoRecolhimentoAux.getMediaRecolhimentoDistribuidor()!=0) 
+					balanceamentoRecolhimento.addMediaRecolhimentoDistribuidor(balanceamentoRecolhimentoAux.getMediaRecolhimentoDistribuidor());
+				if(balanceamentoRecolhimentoAux.getCotasOperacaoDiferenciada()!=null) 
+					balanceamentoRecolhimento.addCotasOperacaoDiferenciada(balanceamentoRecolhimentoAux.getCotasOperacaoDiferenciada());
+				if(balanceamentoRecolhimentoAux.getMatrizRecolhimento()!=null) 
+					balanceamentoRecolhimento.addMatrizRecolhimento(balanceamentoRecolhimentoAux.getMatrizRecolhimento());
+				if(balanceamentoRecolhimentoAux.getProdutosRecolhimentoAgrupados()!=null) 
+					balanceamentoRecolhimento.addProdutosRecolhimentoAgrupados(balanceamentoRecolhimentoAux.getProdutosRecolhimentoAgrupados());
+				if(balanceamentoRecolhimentoAux.getProdutosRecolhimentoNaoBalanceados()!=null) 
+					balanceamentoRecolhimento.addProdutosRecolhimentoNaoBalanceados(balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
+				
+			}
+			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO, balanceamentoRecolhimento);
+		}
+		
+		/*
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+		}
+		*/
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
@@ -1045,6 +1089,9 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
 				produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
+			produtoRecolhimentoVO.setPeb(
+					produtoRecolhimentoDTO.getPeb());
+			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}		
 		
@@ -1138,6 +1185,9 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		produtoRecolhimentoFormatado.setBloqueioAlteracaoBalanceamento(
 			produtoRecolhimento.isBloqueioAlteracaoBalanceamento());
+		
+		produtoRecolhimentoFormatado.setPeb(
+				produtoRecolhimento.getPeb());
 		
 		return produtoRecolhimentoFormatado;
 	}
@@ -1287,7 +1337,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);
 		}
-		
+		/*
 		if (balanceamentoRecolhimento == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
@@ -1295,7 +1345,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
 		}
-		
+		*/
 		return balanceamentoRecolhimento;
 	}
 	
@@ -1566,13 +1616,13 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			if (!confirmacaoVO.isConfirmado()) {
 				
-				this.result.use(Results.json()).from(false, "result").serialize();
+				this.result.use(Results.json()).withoutRoot().from(false).serialize();
 				
 				return;
 			}
 		}
 
-		this.result.use(Results.json()).from(true, "result").serialize();
+		this.result.use(Results.json()).withoutRoot().from(true).serialize();
 	}
 	
 	@Get
@@ -1601,7 +1651,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
 		}
 		
-		//TODO: chamar método no service.
+		this.recolhimentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
 
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
