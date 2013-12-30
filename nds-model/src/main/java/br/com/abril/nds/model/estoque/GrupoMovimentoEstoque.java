@@ -19,6 +19,11 @@ public enum GrupoMovimentoEstoque  {
 	ESTORNO_RECEBIMENTO_FISICO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO), 
 	
 	/**
+	 * Estorno do recebimento de mercadorias distribuidor (Reparte promocional)
+	 */
+	ESTORNO_REPARTE_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO), 
+	
+	/**
 	 * Envio de reparte à cota pelo distribuidor
 	 */
 	ENVIO_JORNALEIRO(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),

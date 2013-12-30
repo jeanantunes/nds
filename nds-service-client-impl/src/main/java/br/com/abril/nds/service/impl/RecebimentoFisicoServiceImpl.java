@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -896,7 +897,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void inserirMovimentoEstoque(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
-					
+		
+		
+		boolean tratarRepartePromocional = verificarTratamentoRepartePromocional(recebimentoFisicoDTO.getIdProdutoEdicao());
+		
 		// Implementado por Cesar Punk Pop
 		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
 		TipoMovimentoEstoque tipoMovimento = 
@@ -915,8 +919,50 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 		if(indDiferenca) 
 			gerarDiferenca(usuarioLogado, recebimentoFisicoDTO);
+		
+		if(tratarRepartePromocional)
+			tratarRepartePromocional(usuarioLogado, recebimentoFisicoDTO);
 	}
 	
+	private boolean verificarTratamentoRepartePromocional(Long idProdutoEdicao) {
+		
+		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(idProdutoEdicao);
+		
+		if(pe == null || pe.getLancamentos() == null || pe.getLancamentos().isEmpty())
+			return false;
+		
+		if(pe.getEstoqueProduto() != null)
+			return false;
+		
+		Lancamento lancamento = pe.getLancamentos().iterator().next();
+		
+		if(lancamento.getRepartePromocional() == null || lancamento.getRepartePromocional().intValue() == 0)
+			return false;
+		
+		return true;
+	}
+	
+	private void tratarRepartePromocional(Usuario usuarioLogado,
+			RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		
+		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
+				
+		Lancamento lancamento = pe.getLancamentos().iterator().next();
+					
+		TipoMovimentoEstoque tipoMovimento = 
+		tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+			GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL);
+	
+		movimentoEstoqueService.gerarMovimentoEstoque(
+			recebimentoFisicoDTO.getIdProdutoEdicao(), 
+			usuarioLogado.getId(), 
+			lancamento.getRepartePromocional(),
+			tipoMovimento,
+			distribuidorService.obterDataOperacaoDistribuidor(), 
+			false);
+		
+	}
+
 	private void gerarDiferenca(Usuario usuarioLogado,RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		
 		Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
@@ -1053,6 +1099,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ESTORNO_RECEBIMENTO_FISICO);
 		
+		TipoMovimentoEstoque tipoMovimentoEstornoRepartePromocional = 
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL);
+		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for(ItemNotaFiscalEntrada item : itens) {
@@ -1062,13 +1112,25 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 					tipoMovimento,
 					dataOperacao);
 			
+			MovimentoEstoque movimentoEstornoRepartePromocional = movimentoEstoqueService.obterUltimoMovimentoRecebimentoFisico(
+					item.getProdutoEdicao().getId(),
+					tipoMovimentoEstornoRepartePromocional,
+					dataOperacao);
+			
 			if(movimento==null)
 				continue;
+			
+			BigInteger qtdeRepartePromocional = BigInteger.ZERO;
+			
+			if(movimentoEstornoRepartePromocional != null)
+				qtdeRepartePromocional = movimentoEstornoRepartePromocional.getQtde();
+			
+			if(movimentoEstornoRepartePromocional != null)
 			
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					item.getProdutoEdicao().getId(), 
 					movimento.getUsuario().getId(), 
-					movimento.getQtde(),
+					movimento.getQtde().subtract(qtdeRepartePromocional),
 					tipoMovimentoEstorno,
 					dataOperacao, 
 					false);
