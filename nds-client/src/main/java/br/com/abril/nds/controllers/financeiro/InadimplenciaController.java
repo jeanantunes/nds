@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +27,6 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -71,9 +69,6 @@ public class InadimplenciaController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private CobrancaService cobrancaService;
 	
 	private final Result result;
 	private final HttpSession session;
@@ -323,6 +318,7 @@ public class InadimplenciaController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
+	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		

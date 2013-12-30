@@ -79,8 +79,9 @@ public enum GrupoMovimentoFinaceiro {
 	LANCAMENTO_CAUCAO_LIQUIDA(OperacaoFinaceira.DEBITO),
 	
 	
-	RESGATE_CAUCAO_LIQUIDA(OperacaoFinaceira.CREDITO);
+	RESGATE_CAUCAO_LIQUIDA(OperacaoFinaceira.CREDITO),
 	
+	NEGOCIACAO_COMISSAO(OperacaoFinaceira.DEBITO);
 	
 	private OperacaoFinaceira operacaoFinaceira;
 	

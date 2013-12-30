@@ -1579,7 +1579,8 @@ public class ConferenciaEncalheController extends BaseController {
 																										  listaConferenciaEncalheCotaToSave, 
 																										  this.getSetConferenciaEncalheExcluirFromSession(), 
 																										  this.getUsuarioLogado(),
-																										  indConferenciaContingencia);
+																										  indConferenciaContingencia,
+																										  info.getReparte());
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			

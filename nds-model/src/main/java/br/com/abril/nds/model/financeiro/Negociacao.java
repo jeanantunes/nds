@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.financeiro;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +15,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 
@@ -55,6 +58,16 @@ public class Negociacao {
 	
 	@Column(name = "VALOR_DIVIDA_PAGA_COMISSAO", precision=18, scale=4)
 	private BigDecimal valorDividaPagaComissao;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_CRIACAO")
+	private Date dataCriacao;
+	
+	@OneToMany
+	@JoinTable(name="NEGOCIACAO_MOV_FINAN",
+			joinColumns = @JoinColumn(name="NEGOCIACAO_ID"),
+			inverseJoinColumns = @JoinColumn(name="MOV_FINAN_ID"))
+	private List<MovimentoFinanceiroCota> movimentosFinanceiroCota;
 
 	public Long getId() {
 		return id;
@@ -126,5 +139,22 @@ public class Negociacao {
 
 	public void setValorDividaPagaComissao(BigDecimal valorDividaPagaComissao) {
 		this.valorDividaPagaComissao = valorDividaPagaComissao;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public List<MovimentoFinanceiroCota> getMovimentosFinanceiroCota() {
+		return movimentosFinanceiroCota;
+	}
+
+	public void setMovimentosFinanceiroCota(
+			List<MovimentoFinanceiroCota> movimentosFinanceiroCota) {
+		this.movimentosFinanceiroCota = movimentosFinanceiroCota;
 	}
 }

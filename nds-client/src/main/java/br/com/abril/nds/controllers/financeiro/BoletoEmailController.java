@@ -42,7 +42,7 @@ public class BoletoEmailController extends BaseController {
 	@Autowired
 	private HttpSession session;
 	
-	private static final String STATUS_FINALIZADO = "FINALIZADO";
+	private static final String STATUS_ENVIO_FINALIZADO = "ENVIO_FINALIZADO";
 	
 	private static final String STATUS_BOLETO_EMAIL_SESSION = "statusCobrancaCotaSession";
 	
@@ -68,22 +68,22 @@ public class BoletoEmailController extends BaseController {
 		int boletosEmitidos = 0;
 		
 		for(BoletoEmail bm : listaBoletoEmail){
+			
+			this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir);
 
 		    try{
 
-				this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir);
-				
 				this.boletoEmailService.enviarBoletoEmail(bm);
 			}	
             catch(Exception e){
+            	
+            	e.printStackTrace();
         	
-        	    mensagensBoletosNaoEmitidos.add("Boleto "+boletosEmitidos+" de "+totalBoletosEmitir+" não enviado. Motivo: "+e.getMessage());
-            }
-		    finally{
-		    
-        	    this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, STATUS_FINALIZADO);
+        	    mensagensBoletosNaoEmitidos.add("Boleto "+boletosEmitidos+" de "+totalBoletosEmitir+" não enviado. Nosso Numero: "+bm.getCobranca().getNossoNumero());
             }
 		}
+		
+		this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, STATUS_ENVIO_FINALIZADO);
 		
 		if (mensagensBoletosNaoEmitidos.isEmpty()){
 		
