@@ -1232,8 +1232,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		sql.append(" cfc.ID as id, ")
 		   .append(" cfc.COTA_ID as cotaId, ")
 		   .append(" COTA.NUMERO_COTA as numeroCota, ")
+		   .append(" box.nome as nomeBox, ")
 		   .append(" cfc.CONSIGNADO as consignado, ")
-		   
 		   .append(" cfc.DT_CONSOLIDADO as dataConsolidado, ")
 		   
 		   .append(" (select max(mf_ant.DATA) ")
@@ -1308,7 +1308,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")
 		   
 		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
-		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
+		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID ")
+		   .append(" join BOX box on COTA.BOX_ID=box.ID ")
 		   .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
 		   .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
 		   .append(" where cota.NUMERO_COTA = :numeroCota ");
@@ -1326,6 +1327,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" null as id, ")
 		   .append(" mfc.COTA_ID as cotaId, ")
 		   .append(" null as numeroCota, ")
+		   .append(" box.nome as nomeBox, ")
 		   
 		   //consignado
 		   .append("coalesce((select sum(m.VALOR) ")
@@ -1646,8 +1648,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   .append(" 0 as inadimplente ")
 		   
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
+		   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")		  
 		   .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
+		    .append(" join BOX box on COTA.BOX_ID=box.ID ")
 		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
 		   .append(" and mfc.ID not in (")
 		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
