@@ -718,6 +718,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case LANCAMENTO_CAUCAO_LIQUIDA:
 				case RESGATE_CAUCAO_LIQUIDA:
 				case VENDA_TOTAL:
+				case NEGOCIACAO_COMISSAO:
 					
 					vlMovFinanDebitoCredito = 
 						this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
@@ -1212,13 +1213,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				consolidado.setMovimentos(null);
 				
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
-								
-				if (excluiFinanceiro){
+				
+                if (excluiFinanceiro && mfcs!=null && !mfcs.isEmpty()){
 					
-	                if (mfcs!=null && !mfcs.isEmpty()){
-						
-				    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
-					}
+			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
 				}
                               				                        
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
