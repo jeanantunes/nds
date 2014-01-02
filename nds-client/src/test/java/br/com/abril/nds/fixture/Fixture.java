@@ -1524,8 +1524,8 @@ public class Fixture {
 		
 		tipoNotaFiscal.setContribuinte(contribuinte);
 		tipoNotaFiscal.setDescricao(descricao);
-		tipoNotaFiscal.setDestinatario(destinatario);
-		tipoNotaFiscal.setEmitente(emitente);
+//		tipoNotaFiscal.setDestinatario(destinatario);
+//		tipoNotaFiscal.setEmitente(emitente);
 		tipoNotaFiscal.setGrupoNotaFiscal(grupoNotaFiscal);
 		tipoNotaFiscal.setNopCodigo(nopCodigo);
 		tipoNotaFiscal.setNopDescricao(nopDescricao);
@@ -1575,8 +1575,8 @@ public class Fixture {
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
@@ -4375,8 +4375,8 @@ public class Fixture {
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 		tipoNotaFiscal.setNopDescricao("NF-e de DevoluÃ§Ã£o de Remessa para DistruibuiÃ§Ã£o");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
@@ -4410,8 +4410,8 @@ public class Fixture {
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscal.setContribuinte(true);
 		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);

@@ -45,10 +45,9 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -507,10 +506,8 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
         tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados(cfop6949);
         tipoNotaFiscalRemessaDistribuicao
                 .setNopDescricao("NF-E Remessa para Distribuição");
-        tipoNotaFiscalRemessaDistribuicao
-                .setEmitente(TipoUsuarioNotaFiscal.TREELOG);
-        tipoNotaFiscalRemessaDistribuicao
-                .setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//        tipoNotaFiscalRemessaDistribuicao .setEmitente(TipoUsuarioNotaFiscal.TREELOG);
+//        tipoNotaFiscalRemessaDistribuicao .setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
         tipoNotaFiscalRemessaDistribuicao.setContribuinte(false);
         tipoNotaFiscalRemessaDistribuicao
                 .setDescricao("NF-E Remessa para Distribuição");

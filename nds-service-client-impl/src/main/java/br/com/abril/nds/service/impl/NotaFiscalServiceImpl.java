@@ -57,7 +57,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
@@ -301,7 +300,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void cancelarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
-
+		/*
 		NotaFiscal notaFiscalCancelada = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
 		NaturezaOperacao tipoNotaFiscal = notaFiscalCancelada.getIdentificacao()
@@ -321,6 +320,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			}
 		}
 		atualizaRetornoNFe(dadosRetornoNFE);
+		*/
 	}
 
 	/**
@@ -356,9 +356,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private boolean isDevolucaoMerdadoriaRecebiaConsignacao(NaturezaOperacao tipoNotaFiscal) {
+		/*
 		return tipoNotaFiscal.getGrupoNotaFiscal() == GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO
 				&& tipoNotaFiscal.getEmitente() == TipoUsuarioNotaFiscal.DISTRIBUIDOR
 				&& tipoNotaFiscal.getDestinatario() == TipoUsuarioNotaFiscal.TREELOG;
+		*/
+		
+		return false;
 	}
 
 	/**
@@ -366,9 +370,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private boolean isRemessaMercadoriaConsignacao(NaturezaOperacao tipoNotaFiscal) {
+		/*
 		return tipoNotaFiscal.getGrupoNotaFiscal() == GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO
 				&& tipoNotaFiscal.getEmitente() == TipoUsuarioNotaFiscal.DISTRIBUIDOR
 				&& tipoNotaFiscal.getDestinatario() == TipoUsuarioNotaFiscal.COTA;
+		*/
+		return false;
 	}
 
 	@Override

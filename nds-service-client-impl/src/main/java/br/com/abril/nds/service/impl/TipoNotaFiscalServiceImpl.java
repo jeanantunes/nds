@@ -70,7 +70,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			ItemDTO<Long, String> itemNotaFiscal = new ItemDTO<Long, String>();
 
 			itemNotaFiscal.setKey(tipoNotaFiscal.getId());
-			itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao() + " - " + tipoNotaFiscal.getEmitente());
+			itemNotaFiscal.setValue(tipoNotaFiscal.getDescricao()); // + " - " + tipoNotaFiscal.getEmitente());
 
 			listaItensNotasFiscais.add(itemNotaFiscal);
 		}

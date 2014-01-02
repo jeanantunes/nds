@@ -23,11 +23,10 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -366,8 +365,8 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
 		tipoNotaFiscal.setNopCodigo(1L);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.COTA);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.COTA);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscal.setContribuinte(false);
 		tipoNotaFiscal.setSerieNotaFiscal(1);
 		
