@@ -42,7 +42,6 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
@@ -504,20 +503,18 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
         tipoNotaFiscalRemessaDistribuicao = new NaturezaOperacao();
         tipoNotaFiscalRemessaDistribuicao.setCfopEstado(cfop5949);
         tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados(cfop6949);
-        tipoNotaFiscalRemessaDistribuicao
-                .setNopDescricao("NF-E Remessa para Distribuição");
+//        tipoNotaFiscalRemessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
 //        tipoNotaFiscalRemessaDistribuicao .setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 //        tipoNotaFiscalRemessaDistribuicao .setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
         tipoNotaFiscalRemessaDistribuicao.setContribuinte(false);
         tipoNotaFiscalRemessaDistribuicao
                 .setDescricao("NF-E Remessa para Distribuição");
-        tipoNotaFiscalRemessaDistribuicao.setNopCodigo(0L);
+//        tipoNotaFiscalRemessaDistribuicao.setNopCodigo(0L);
         tipoNotaFiscalRemessaDistribuicao.setTipoOperacao(TipoOperacao.SAIDA);
-        tipoNotaFiscalRemessaDistribuicao
-                .setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_DISTRIBUICAO);
+//        tipoNotaFiscalRemessaDistribuicao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_DISTRIBUICAO);
         tipoNotaFiscalRemessaDistribuicao
                 .setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-        tipoNotaFiscalRemessaDistribuicao.setSerieNotaFiscal(17);
+//        tipoNotaFiscalRemessaDistribuicao.setSerieNotaFiscal(17);
         tipoNotaFiscalRemessaDistribuicao.setProcesso(new HashSet<Processo>());
         tipoNotaFiscalRemessaDistribuicao.getProcesso().add(
                 Processo.CONSIGNACAO_REPARTE_NORMAL);

@@ -97,7 +97,7 @@ import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -139,7 +139,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -580,11 +580,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		Identificacao identificacao = new Identificacao();
 		identificacao.setDataEmissao(dataEmissao);
 		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
-		identificacao.setDescricaoNaturezaOperacao(tipoNotaFiscal
-				.getNopDescricao());
-		identificacao.setSerie(tipoNotaFiscal.getSerieNotaFiscal());
-		identificacao.setNumeroDocumentoFiscal(serieRepository
-				.next(tipoNotaFiscal.getSerieNotaFiscal()));
+		//identificacao.setDescricaoNaturezaOperacao(tipoNotaFiscal.getNopDescricao());
+//		identificacao.setSerie(tipoNotaFiscal.getSerieNotaFiscal());
+//		identificacao.setNumeroDocumentoFiscal(serieRepository.next(tipoNotaFiscal.getSerieNotaFiscal()));
 		identificacao.setTipoNotaFiscal(tipoNotaFiscal);
 		// TODO indPag
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
@@ -975,14 +973,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 
-			ProdutoServico produtoServico = carregaProdutoServico(fornecedor,
+			ProdutoServico produtoServico = null; /*carregaProdutoServico(fornecedor,
 					itemNotaFiscal.getIdProdutoEdicao(),
 					itemNotaFiscal.getQuantidade(), cfop,
 					tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino,
 					tipoNotaFiscal.getNopCodigo().intValue(),
 					tipoNotaFiscal.getNopDescricao(), dataEmissao,
 					itemNotaFiscal.getValorUnitario(), raizCNPJ,
-					itemNotaFiscal.getCstICMS());
+					itemNotaFiscal.getCstICMS());*/
 
 			produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
 					sequencia++));
@@ -1136,14 +1134,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 
-			ProdutoServico produtoServico = carregaProdutoServico(cota,
+			ProdutoServico produtoServico = null; /*carregaProdutoServico(cota,
 					itemNotaFiscal.getIdProdutoEdicao(),
 					itemNotaFiscal.getQuantidade(), cfop,
 					tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino,
 					tipoNotaFiscal.getNopCodigo().intValue(),
 					tipoNotaFiscal.getNopDescricao(), dataEmissao,
 					itemNotaFiscal.getValorUnitario(), raizCNPJ,
-					itemNotaFiscal.getCstICMS(), descontos);
+					itemNotaFiscal.getCstICMS(), descontos);*/
 
 			produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
 					sequencia++));
@@ -1208,7 +1206,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		List<ItemNotaFiscalSaida> itensNotaFiscal = new ArrayList<ItemNotaFiscalSaida>();
 
-		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
+		GrupoNotaFiscal grupoNotaFiscal = null; //tipoNotaFiscal.getGrupoNotaFiscal();
 
 		Long idCota = cota.getId();
 
@@ -1437,7 +1435,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		Map<Long, ItemNotaFiscalSaida> mapItemNotaFiscal = new HashMap<Long, ItemNotaFiscalSaida>();
 
-		GrupoNotaFiscal grupoNotaFiscal = tipoNotaFiscal.getGrupoNotaFiscal();
+		GrupoNotaFiscal grupoNotaFiscal = null; // tipoNotaFiscal.getGrupoNotaFiscal();
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
@@ -1650,9 +1648,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 						if (notaFiscal != null) {
 
-							GrupoNotaFiscal grupoNotaFiscal = notaFiscal
-									.getIdentificacao().getTipoNotaFiscal()
-									.getGrupoNotaFiscal();
+							GrupoNotaFiscal grupoNotaFiscal = null; //notaFiscal.getIdentificacao().getTipoNotaFiscal().getGrupoNotaFiscal();
 
 							if (GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO
 									.equals(grupoNotaFiscal)) {

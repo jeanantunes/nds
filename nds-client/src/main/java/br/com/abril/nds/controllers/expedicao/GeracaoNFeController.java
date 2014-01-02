@@ -78,9 +78,14 @@ public class GeracaoNFeController extends BaseController {
 	@Path("/")
 	public void index() {
 		
+		this.obterFornecedoresDestinatarios();
 		this.obterTodosFornecedoresAtivos();
 		this.iniciarComboRoteiro();
 		this.iniciarComboRota();
+	}
+
+	private void obterFornecedoresDestinatarios() {
+		result.include("fornecedoresDestinatarios", fornecedorService.obterFornecedoresDestinatarios(SituacaoCadastro.ATIVO));
 	}
 
 	private void obterTodosFornecedoresAtivos() {

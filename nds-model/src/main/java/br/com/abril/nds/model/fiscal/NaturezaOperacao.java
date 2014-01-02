@@ -13,7 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Processo;
@@ -39,28 +38,17 @@ public class NaturezaOperacao implements Serializable {
 	private String descricao;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "GRUPO_NOTA_FISCAL", nullable = false)
-	private GrupoNotaFiscal grupoNotaFiscal;
-	
-	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "CFOP_ESTADO")
-	private CFOP cfopEstado;
+	@Column(name = "CFOP_ESTADO")
+	private String cfopEstado;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "CFOP_OUTROS_ESTADOS")
-	private CFOP cfopOutrosEstados;
+	@Column(name = "CFOP_OUTROS_ESTADOS")
+	private String cfopOutrosEstados;
 	
-	// Código natureza da operação
-	@Column(name = "NOP_CODIGO", nullable = false)
-	private Long nopCodigo;
-
-	// Descrição natureza da operação
-	@Column(name = "NOP_DESCRICAO", nullable = true)
-	private String nopDescricao;
+	@Column(name = "CFOP_EXTERIOR")
+	private String cfopExterior;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
@@ -74,9 +62,6 @@ public class NaturezaOperacao implements Serializable {
 	
 	@Column(name = "CONTRIBUINTE", nullable = false)
 	private boolean contribuinte;
-	
-	@Column(name = "SERIE_NF", nullable = false)
-	private Integer serieNotaFiscal;
 	
 	public Long getId() {
 		return id;
@@ -94,33 +79,32 @@ public class NaturezaOperacao implements Serializable {
 		this.descricao = descricao;
 	}
 	
-	public GrupoNotaFiscal getGrupoNotaFiscal() {
-		return grupoNotaFiscal;
-	}
-	
-	public void setGrupoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
-		this.grupoNotaFiscal = grupoNotaFiscal;
-		this.tipoOperacao = grupoNotaFiscal.getTipoOperacao();
-	}
-	
 	public TipoOperacao getTipoOperacao() {
 		return tipoOperacao;
 	}
 
-	public CFOP getCfopEstado() {
+	public String getCfopEstado() {
 		return cfopEstado;
 	}
 
-	public void setCfopEstado(CFOP cfopEstado) {
+	public void setCfopEstado(String cfopEstado) {
 		this.cfopEstado = cfopEstado;
 	}
 
-	public CFOP getCfopOutrosEstados() {
+	public String getCfopOutrosEstados() {
 		return cfopOutrosEstados;
 	}
 
-	public void setCfopOutrosEstados(CFOP cfopOutrosEstados) {
+	public void setCfopOutrosEstados(String cfopOutrosEstados) {
 		this.cfopOutrosEstados = cfopOutrosEstados;
+	}
+
+	public String getCfopExterior() {
+		return cfopExterior;
+	}
+
+	public void setCfopExterior(String cfopExterior) {
+		this.cfopExterior = cfopExterior;
 	}
 
 	public TipoAtividade getTipoAtividade() {
@@ -143,22 +127,6 @@ public class NaturezaOperacao implements Serializable {
 		this.tipoOperacao = tipoOperacao;
 	}
 
-	public Long getNopCodigo() {
-		return nopCodigo;
-	}
-
-	public void setNopCodigo(Long nopCodigo) {
-		this.nopCodigo = nopCodigo;
-	}
-
-	public String getNopDescricao() {
-		return nopDescricao;
-	}
-
-	public void setNopDescricao(String nopDescricao) {
-		this.nopDescricao = nopDescricao;
-	}
-
 	/**
 	 * @return the processo
 	 */
@@ -171,20 +139,6 @@ public class NaturezaOperacao implements Serializable {
 	 */
 	public void setProcesso(Set<Processo> processo) {
 		this.processo = processo;
-	}
-
-	/**
-	 * @return the serieNotaFiscal
-	 */
-	public Integer getSerieNotaFiscal() {
-		return serieNotaFiscal;
-	}
-
-	/**
-	 * @param serieNotaFiscal the serieNotaFiscal to set
-	 */
-	public void setSerieNotaFiscal(Integer serieNotaFiscal) {
-		this.serieNotaFiscal = serieNotaFiscal;
 	}
 
 	@Override

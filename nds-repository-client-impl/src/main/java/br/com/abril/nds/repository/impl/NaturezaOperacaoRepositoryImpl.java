@@ -12,13 +12,13 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 
 @Repository
-public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<NaturezaOperacao, Long> 
-										  implements TipoNotaFiscalRepository {
+public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<NaturezaOperacao, Long> 
+										  implements NaturezaOperacaoRepository {
 
-	public TipoNotaFiscalRepositoryImpl() {
+	public NaturezaOperacaoRepositoryImpl() {
 		super(NaturezaOperacao.class);
 	}
 
@@ -156,7 +156,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<Nature
 	@SuppressWarnings("unchecked")
 	public List<NaturezaOperacao> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
+		String hql = " from NaturezaOperacao no where no.tipoAtividade = :tipoAtividade group by no.id ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("tipoAtividade", tipoAtividade);

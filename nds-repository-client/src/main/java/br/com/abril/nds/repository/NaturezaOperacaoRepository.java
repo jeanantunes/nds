@@ -9,7 +9,7 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 
-public interface TipoNotaFiscalRepository extends Repository<NaturezaOperacao, Long> {
+public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao, Long> {
 
 	List<NaturezaOperacao> obterTiposNotasFiscais();
 	

@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -362,13 +361,13 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 
 		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		tipoNotaFiscal.setDescricao("teste");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
-		tipoNotaFiscal.setNopCodigo(1L);
+//		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
+//		tipoNotaFiscal.setNopCodigo(1L);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
 //		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.COTA);
 //		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscal.setContribuinte(false);
-		tipoNotaFiscal.setSerieNotaFiscal(1);
+//		tipoNotaFiscal.setSerieNotaFiscal(1);
 		
 		tipoNotaFiscal.setCfopEstado(cfop);
 		tipoNotaFiscal.setCfopOutrosEstados(cfop);

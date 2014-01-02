@@ -230,7 +230,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		if($('#possuiRegimeEspecialDispensaInterna').is(':checked')) {
 			$('.camposEspecificosRegimeEspecial').show();
 		} else {
-			$('.camposEspecificosRegimeEspecial').hide()
+			$('.camposEspecificosRegimeEspecial').hide();
 		}
 		
 	},

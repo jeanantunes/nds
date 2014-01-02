@@ -48,11 +48,15 @@ var geracaoNFeController = $.extend({
 		$(".input-date").mask("99/99/9999");
 		$("#geracaoNfe-filtro-dataEmissao").val(formatDateToString(new Date()));
 		
+		$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		
 		$("#geracaoNfe-filtro-selectFornecedores").multiselect({
 			selectedList : 6
-		});
+		}).multiselect("checkAll");
 		
-		$("#geracaoNfe-filtro-selectFornecedores").multiselect("checkAll");
 	},
 	
 	/**
@@ -458,6 +462,17 @@ var geracaoNFeController = $.extend({
     	    }    
 		);
 	},
+	
+	verificarTipoDestinatario : function(element) {
+		if(element.value != "FORNECEDOR") {
+			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		} else {
+			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+		}
+		
+		
+	}
 	
 	
 }, BaseController);

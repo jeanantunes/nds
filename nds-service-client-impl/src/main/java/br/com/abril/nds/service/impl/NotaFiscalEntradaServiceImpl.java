@@ -35,7 +35,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -59,7 +59,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private CotaService cotaService;
