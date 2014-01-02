@@ -147,16 +147,14 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/buscaCotasSuspensas.json")
-	public void buscaCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
+	public void buscaCotasSuspensas(FiltroViewNotaFiscalDTO filtro, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(filtro.getIntervaloBoxInicial(), filtro.getIntervaloBoxFinal());
 		
-		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
+		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(filtro.getIntervalorCotaInicial(), filtro.getIntervalorCotaInicial());
 		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
+		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataInicial(), filtro.getDataFinal());
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = 
 				geracaoNFeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
