@@ -61,13 +61,12 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public long getMediaRecolhimentoDistribuidor() {
 		
-		if (((mediaRecolhimentoDistribuidor /100)*50)<=500){
-		   return 500;
+		if (mediaRecolhimentoDistribuidor <1){
+		   return 1;
 		}
 		else{
-			return ((mediaRecolhimentoDistribuidor /100)*50);
+			return mediaRecolhimentoDistribuidor / 50 ;
 		}
-		
 	}
 
 	/**
