@@ -635,7 +635,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mec.cota.id) ");
 		
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, false, false, false), filtro);
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro);
 		
 		return (Integer) query.list().size();
 	}

@@ -1,6 +1,14 @@
 package br.com.abril.nds.service.builders;
 
-public class NotaFiscalBuilder {
+import br.com.abril.nfe.model.NotaFiscal;
+
+public abstract class NotaFiscalBuilder {
+	
+	public NotaFiscal getNotaFiscal (){
+		
+		
+		return null;
+	}
 	
 	public void montaNotaFiscal (){
 		
