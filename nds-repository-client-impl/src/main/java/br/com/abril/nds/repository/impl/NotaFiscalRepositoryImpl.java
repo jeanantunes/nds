@@ -629,15 +629,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	}
 	
 	@Override
-	public Integer consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mec.cota.id) ");
-		
 		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro);
 		
-		return (Integer) query.list().size();
+		return (Long) query.uniqueResult();
 	}
 
 	/**

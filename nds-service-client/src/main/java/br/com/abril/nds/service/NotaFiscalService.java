@@ -156,7 +156,7 @@ public interface NotaFiscalService {
 
 	List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
 
-	Integer consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
+	Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
 
 
 		

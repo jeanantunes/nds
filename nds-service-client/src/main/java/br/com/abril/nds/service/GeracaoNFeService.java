@@ -26,9 +26,7 @@ public interface GeracaoNFeService {
 	 * @param idCotasSuspensas cotas suspensas que vao emitir nota
 	 *  
 	 */
-	public abstract void gerarNotaFiscal(Intervalo<Integer> intervaloBox, Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento, List<Long> listIdFornecedor, List<Long> listIdProduto, 
-			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas,  Condicao condicao) throws FileNotFoundException, IOException;
+	public abstract void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException;
 
 
 	List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
@@ -42,6 +40,6 @@ public interface GeracaoNFeService {
 	public abstract List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
 
 
-	public abstract Integer consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
+	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
 
 }
