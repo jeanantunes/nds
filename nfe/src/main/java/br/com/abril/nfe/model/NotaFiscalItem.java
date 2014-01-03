@@ -46,9 +46,6 @@ public class NotaFiscalItem implements Serializable {
 	@Column(name="VALOR_UNITARIO")
 	private BigDecimal valorUnitario;
 
-	@Column(name="VALOR_PRODUTO")
-	private BigDecimal valorProduto;
-	
 	@Column(name="NOTA_FISCAL_ID")
 	@OneToMany(mappedBy="notaFiscal")
 	private NotaFiscal notaFiscal;
@@ -125,14 +122,6 @@ public class NotaFiscalItem implements Serializable {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public BigDecimal getValorProduto() {
-		return valorProduto;
-	}
-
-	public void setValorProduto(BigDecimal valorProduto) {
-		this.valorProduto = valorProduto;
-	}
-
 	public NotaFiscal getNotaFiscal() {
 		return notaFiscal;
 	}
@@ -147,7 +136,7 @@ public class NotaFiscalItem implements Serializable {
 				+ ", descricao=" + descricao + ", NCM=" + NCM + ", CST=" + CST
 				+ ", unidade=" + unidade + ", valorTotal=" + valorTotal
 				+ ", quantidade=" + quantidade + ", valorUnitario="
-				+ valorUnitario + ", valorProduto=" + valorProduto + "]";
+				+ valorUnitario + "]";
 	}
 
 }

@@ -41,7 +41,7 @@ public class NotaFiscalNdsServiceImpl implements NotaFiscalNdsService {
 		return null;
 	}
 	
-	private void salvarNotaFiscal(){
+	private void salvarNotaFiscal(br.com.abril.nds.model.fiscal.NotaFiscal notaFiscal){
 		
 	}
 	
