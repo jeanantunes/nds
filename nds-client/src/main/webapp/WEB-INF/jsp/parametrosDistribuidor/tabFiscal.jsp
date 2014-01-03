@@ -88,7 +88,7 @@
 								<c:forEach var="tipoEmissaoNotaFiscal" items="${tiposNotaFiscal.tipoEmissaoDisponiveis}">
 									<c:if test="${tipoEmissaoNotaFiscal.descricao == tipoEmissaoNotaFiscalDistribuidor.descricao}">
 										<c:choose>
-											<c:when test="${tiposNotaFiscal.tipoEmissao.id == tipoEmissaoNotaFiscal.id}">
+											<c:when test="${tiposNotaFiscal.tipoEmissao.descricao == tipoEmissaoNotaFiscal.descricao}">
 												<input type="radio" name="${tiposNotaFiscal.nomeCampoTela}" id="tipoEmissao_${tiposNotaFiscal.id}_${tipoEmissaoNotaFiscal.id}" value="${tipoEmissaoNotaFiscal.id}" checked="checked" />
 											</c:when>
 											<c:otherwise>

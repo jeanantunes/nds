@@ -41,7 +41,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -99,11 +99,11 @@ public class EntradaNFETerceirosRepositoryImplTest extends
 
 		save(cfop5102);
 
-		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture
+		NaturezaOperacao tipoNotaFiscalRecebimento = Fixture
 				.tipoNotaFiscalRecebimento(cfop5102);
 		
-		tipoNotaFiscalRecebimento.setCfopEstado(cfop5102);
-		tipoNotaFiscalRecebimento.setCfopOutrosEstados(cfop5102);
+		tipoNotaFiscalRecebimento.setCfopEstado("5102");
+		tipoNotaFiscalRecebimento.setCfopOutrosEstados("5102");
 		
 		save(tipoNotaFiscalRecebimento);
 

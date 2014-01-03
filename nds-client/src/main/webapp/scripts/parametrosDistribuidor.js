@@ -206,7 +206,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		itensTiposNotasFiscais = [];
 		
-		$.each($('#tabFiscal :input[type=radio]'), function(index, value) {
+		$.each($('#tabFiscal :input[type=radio]', this.workspace), function(index, value) {
 			itensTiposNotasFiscais[index] = value.name;
 		});
 		
@@ -230,7 +230,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		if($('#possuiRegimeEspecialDispensaInterna').is(':checked')) {
 			$('.camposEspecificosRegimeEspecial').show();
 		} else {
-			$('.camposEspecificosRegimeEspecial').hide()
+			$('.camposEspecificosRegimeEspecial').hide();
 		}
 		
 	},

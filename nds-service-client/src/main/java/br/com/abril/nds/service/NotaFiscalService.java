@@ -10,6 +10,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
@@ -18,7 +19,8 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -107,7 +109,7 @@ public interface NotaFiscalService {
 	 * @return lista de itens para nota fiscal
 	 */
 	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
-			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, TipoNotaFiscal tipoNotaFiscal);
+			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, NaturezaOperacao tipoNotaFiscal);
 	
 	/**
 	 * Cria uma nota fiscal referenciada a partir de uma nota fiscal
@@ -158,6 +160,6 @@ public interface NotaFiscalService {
 
 	Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
 
-
+	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
 		
 }

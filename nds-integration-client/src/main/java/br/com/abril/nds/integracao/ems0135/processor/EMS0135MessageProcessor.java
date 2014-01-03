@@ -30,7 +30,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -468,7 +468,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		}
 	}
 
-	private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente, TipoUsuarioNotaFiscal destinatario) {
+	private NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente, TipoUsuarioNotaFiscal destinatario) {
 		
 		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal " +
 						"and tipoNotaFiscal.emitente = :emitente and tipoNotaFiscal.destinatario = :destinatario " +
@@ -480,7 +480,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		query.setParameter("emitente", emitente);
 		query.setParameter("destinatario", destinatario);
 		
-		return (TipoNotaFiscal) query.uniqueResult();
+		return (NaturezaOperacao) query.uniqueResult();
 	}
 
 	private PessoaJuridica obterPessoaJuridica(String cnpj) {

@@ -54,6 +54,23 @@ $(function(){
 		<form>
 			<table width="1000px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
+					<td width="91">Destinatário:</td>
+    				<td width="204">
+    					<input type="radio" name="tipoDestinatario" id="tipoDestinatario1" value="COTA" checked="checked" onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> Cota
+    					<input type="radio" name="tipoDestinatario" id="tipoDestinatario2" value="DISTRIBUIDOR" onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> Distribuidor
+    					<input type="radio" name="tipoDestinatario" id="tipoDestinatario3" value="FORNECEDOR" onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> Fornecedor
+					</td>
+    				<td colspan=2>
+    					<select id="geracaoNfe-filtro-selectFornecedoresDestinatarios" name="selectFornecedores" multiple="multiple" style="width:300px">
+							<c:forEach items="${fornecedoresDestinatarios}" var="fornecedor">
+								<option value="${fornecedor.key }">${fornecedor.value }</option>
+							</c:forEach>
+						</select>
+    				</td>
+					<td width="80"></td>
+					<td width="212"></td>
+				</tr>
+				<tr>
 					<td width="91">Tipo de Nota:</td>
     				<td width="204">
 						<select id="geracaoNfe-filtro-tipoNotaFiscal" name="tipoNotaFiscal" style="width:250px; font-size:11px!important">

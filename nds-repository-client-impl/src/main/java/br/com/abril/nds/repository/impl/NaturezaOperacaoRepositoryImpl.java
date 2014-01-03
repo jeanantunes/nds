@@ -8,23 +8,23 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 
 @Repository
-public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNotaFiscal, Long> 
-										  implements TipoNotaFiscalRepository {
+public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<NaturezaOperacao, Long> 
+										  implements NaturezaOperacaoRepository {
 
-	public TipoNotaFiscalRepositoryImpl() {
-		super(TipoNotaFiscal.class);
+	public NaturezaOperacaoRepositoryImpl() {
+		super(NaturezaOperacao.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<TipoNotaFiscal> obterTiposNotasFiscais() {
+	public List<NaturezaOperacao> obterTiposNotasFiscais() {
 
 		String hql = " from TipoNotaFiscal tipoNotaFiscal group by tipoNotaFiscal.id ";
 		
@@ -34,7 +34,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
 		StringBuilder hql = new StringBuilder("");
 		hql.append("from TipoNotaFiscal tipoNotaFiscal ");
@@ -54,7 +54,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	}
 
 	@Override
-	public TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+	public NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
 		
 		String hql = " from TipoNotaFiscal tipoNotaFiscal " +
 				     " where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal " +
@@ -68,14 +68,14 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		query.setParameter("destinatario", TipoUsuarioNotaFiscal.TREELOG);
 		query.setParameter("emitente", TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		
-		return (TipoNotaFiscal) query.uniqueResult();
+		return (NaturezaOperacao) query.uniqueResult();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte) {
+	public NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -90,12 +90,12 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 		query.setParameter("isContribuinte", isContribuinte);
 		query.setParameter("tipoAtividade", tipoAtividade);
 
-		return (TipoNotaFiscal) query.uniqueResult();
+		return (NaturezaOperacao) query.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
+	public List<NaturezaOperacao> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
 		
 		StringBuilder hql  = new StringBuilder();
 		
@@ -154,9 +154,9 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<TipoNotaFiscal> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
+	public List<NaturezaOperacao> obterTiposNotasFiscaisCotasNaoContribuintesPor(TipoAtividade tipoAtividade) {
 		
-		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
+		String hql = " from NaturezaOperacao no where no.tipoAtividade = :tipoAtividade group by no.id ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("tipoAtividade", tipoAtividade);
@@ -169,7 +169,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
+	public List<NaturezaOperacao> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(TipoAtividade tipoAtividade) {
 		
 		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.tipoAtividade = :tipoAtividade group by tipoNotaFiscal.id ";
 		
@@ -250,7 +250,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List <TipoNotaFiscal> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
+	public List <NaturezaOperacao> obterTiposNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
 		
 		String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal group by tipoNotaFiscal.id  ";
 		
@@ -263,7 +263,7 @@ public class TipoNotaFiscalRepositoryImpl extends AbstractRepositoryModel<TipoNo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao,
+	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao,
 			TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente,
 			GrupoNotaFiscal[] grupoNotaFiscal) {
 

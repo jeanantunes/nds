@@ -31,6 +31,28 @@ var geracaoNFeController = $.extend({
 		this.initDialog();
 		this.initButtons();
 		this.initFlexiGrids();
+		
+		params = [];
+		params.push({name: 'tipoDestinatario', value: 'COTA'});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#geracaoNfe-filtro-tipoNotaFiscal").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#geracaoNfe-filtro-tipoNotaFiscal').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+		
 	},
 	
 	
@@ -48,11 +70,15 @@ var geracaoNFeController = $.extend({
 		$(".input-date").mask("99/99/9999");
 		$("#geracaoNfe-filtro-dataEmissao").val(formatDateToString(new Date()));
 		
+		$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		
 		$("#geracaoNfe-filtro-selectFornecedores").multiselect({
 			selectedList : 6
-		});
+		}).multiselect("checkAll");
 		
-		$("#geracaoNfe-filtro-selectFornecedores").multiselect("checkAll");
 	},
 	
 	/**
@@ -512,5 +538,40 @@ var geracaoNFeController = $.extend({
 		);
 	},
 	
+<<<<<<< HEAD
+	verificarTipoDestinatario : function(element) {
+		if(element.value != "FORNECEDOR") {
+			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		} else {
+			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+		}
+		
+		params = [];
+		params.push({name: 'tipoDestinatario', value: element.value});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#geracaoNfe-filtro-tipoNotaFiscal").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#geracaoNfe-filtro-tipoNotaFiscal').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+		
+	}
+	
+	
+=======
+>>>>>>> DGBti/nfe
 }, BaseController);
 //@ sourceURL=geracaoNFe.js

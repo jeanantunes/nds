@@ -2846,10 +2846,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
 		
-		int qtdeIteracao = 
-				(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal) 
+		int qtdeIteracao = 0;//
+				/*(GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal) 
 						|| GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal)) 
-							? 2 : 1 ;
+							? 2 : 1 ;*/
 		int i = 0;
 		while (i < qtdeIteracao) {
 			StringBuffer sql = new StringBuffer("");

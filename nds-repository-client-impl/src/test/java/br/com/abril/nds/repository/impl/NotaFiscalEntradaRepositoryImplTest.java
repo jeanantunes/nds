@@ -22,12 +22,10 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -56,7 +54,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		cfop = Fixture.cfop5102();
 		save(cfop);
 
-		TipoNotaFiscal tp = Fixture.tipoNotaFiscalRecebimento(cfop);
+		NaturezaOperacao tp = Fixture.tipoNotaFiscalRecebimento(cfop);
 		save(tp);
 
 		NotaFiscalEntrada notaFiscal = new NotaFiscalEntradaFornecedor();
@@ -361,18 +359,18 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		notaFiscal.setValorLiquido(new BigDecimal("9"));
 		notaFiscal.setValorDesconto(new BigDecimal("1"));
 
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		tipoNotaFiscal.setDescricao("teste");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
-		tipoNotaFiscal.setNopCodigo(1L);
+//		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO);
+//		tipoNotaFiscal.setNopCodigo(1L);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.COTA);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.COTA);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscal.setContribuinte(false);
-		tipoNotaFiscal.setSerieNotaFiscal(1);
+//		tipoNotaFiscal.setSerieNotaFiscal(1);
 		
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("5102");
+		tipoNotaFiscal.setCfopOutrosEstados("5102");
 		
 		save(tipoNotaFiscal);
 		

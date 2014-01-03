@@ -36,7 +36,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -71,7 +71,7 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 	
 	
 	private CFOP cfop;
-	private TipoNotaFiscal tipoNotaFiscal;
+	private NaturezaOperacao tipoNotaFiscal;
 	private Usuario usuario;
 	private Date dataRecebimento;
 	

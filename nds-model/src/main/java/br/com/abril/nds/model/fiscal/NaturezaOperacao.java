@@ -13,8 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Processo;
@@ -26,14 +24,13 @@ import br.com.abril.nds.model.cadastro.TipoAtividade;
  * @created 14-fev-2012 11:35:33
  */
 @Entity
-@Table(name = "TIPO_NOTA_FISCAL")
-@SequenceGenerator(name="TP_NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
-public class TipoNotaFiscal implements Serializable {
+@Table(name = "NATUREZA_OPERACAO")
+public class NaturezaOperacao implements Serializable {
 
 	private static final long serialVersionUID = -5552879848986513495L;
 
 	@Id
-	@GeneratedValue(generator = "TP_NOTA_FISCAL_SEQ")
+	@GeneratedValue
 	@Column(name = "ID")
 	private Long id;
 	
@@ -41,32 +38,25 @@ public class TipoNotaFiscal implements Serializable {
 	private String descricao;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "GRUPO_NOTA_FISCAL", nullable = false)
-	private GrupoNotaFiscal grupoNotaFiscal;
-	
-	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_OPERACAO", nullable = false)
 	private TipoOperacao tipoOperacao;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "CFOP_ESTADO")
-	private CFOP cfopEstado;
+	@Column(name = "CFOP_ESTADO")
+	private String cfopEstado;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "CFOP_OUTROS_ESTADOS")
-	private CFOP cfopOutrosEstados;
+	@Column(name = "CFOP_OUTROS_ESTADOS")
+	private String cfopOutrosEstados;
 	
-	// Código natureza da operação
-	@Column(name = "NOP_CODIGO", nullable = false)
-	private Long nopCodigo;
-
-	// Descrição natureza da operação
-	@Column(name = "NOP_DESCRICAO", nullable = true)
-	private String nopDescricao;
+	@Column(name = "CFOP_EXTERIOR")
+	private String cfopExterior;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
 	private TipoAtividade tipoAtividade;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_DESTINATARIO", nullable = false)
+	private TipoDestinatario tipoDestinatario;
 	
 	@ElementCollection(targetClass = Processo.class,fetch=FetchType.EAGER) 
 	@CollectionTable(name = "PROCESSO_NFE",
@@ -74,19 +64,8 @@ public class TipoNotaFiscal implements Serializable {
 	@Column(name = "PROCESSO")
 	private Set<Processo> processo;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "EMITENTE", nullable = false)
-	private TipoUsuarioNotaFiscal emitente;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "DESTINATARIO", nullable = false)
-	private TipoUsuarioNotaFiscal destinatario;
-	
 	@Column(name = "CONTRIBUINTE", nullable = false)
 	private boolean contribuinte;
-	
-	@Column(name = "SERIE_NF", nullable = false)
-	private Integer serieNotaFiscal;
 	
 	public Long getId() {
 		return id;
@@ -104,33 +83,32 @@ public class TipoNotaFiscal implements Serializable {
 		this.descricao = descricao;
 	}
 	
-	public GrupoNotaFiscal getGrupoNotaFiscal() {
-		return grupoNotaFiscal;
-	}
-	
-	public void setGrupoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal) {
-		this.grupoNotaFiscal = grupoNotaFiscal;
-		this.tipoOperacao = grupoNotaFiscal.getTipoOperacao();
-	}
-	
 	public TipoOperacao getTipoOperacao() {
 		return tipoOperacao;
 	}
 
-	public CFOP getCfopEstado() {
+	public String getCfopEstado() {
 		return cfopEstado;
 	}
 
-	public void setCfopEstado(CFOP cfopEstado) {
+	public void setCfopEstado(String cfopEstado) {
 		this.cfopEstado = cfopEstado;
 	}
 
-	public CFOP getCfopOutrosEstados() {
+	public String getCfopOutrosEstados() {
 		return cfopOutrosEstados;
 	}
 
-	public void setCfopOutrosEstados(CFOP cfopOutrosEstados) {
+	public void setCfopOutrosEstados(String cfopOutrosEstados) {
 		this.cfopOutrosEstados = cfopOutrosEstados;
+	}
+
+	public String getCfopExterior() {
+		return cfopExterior;
+	}
+
+	public void setCfopExterior(String cfopExterior) {
+		this.cfopExterior = cfopExterior;
 	}
 
 	public TipoAtividade getTipoAtividade() {
@@ -141,20 +119,12 @@ public class TipoNotaFiscal implements Serializable {
 		this.tipoAtividade = tipoAtividade;
 	}
 
-	public TipoUsuarioNotaFiscal getEmitente() {
-		return emitente;
+	public TipoDestinatario getTipoDestinatario() {
+		return tipoDestinatario;
 	}
 
-	public void setEmitente(TipoUsuarioNotaFiscal emitente) {
-		this.emitente = emitente;
-	}
-
-	public TipoUsuarioNotaFiscal getDestinatario() {
-		return destinatario;
-	}
-
-	public void setDestinatario(TipoUsuarioNotaFiscal destinatario) {
-		this.destinatario = destinatario;
+	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		this.tipoDestinatario = tipoDestinatario;
 	}
 
 	public boolean isContribuinte() {
@@ -169,22 +139,6 @@ public class TipoNotaFiscal implements Serializable {
 		this.tipoOperacao = tipoOperacao;
 	}
 
-	public Long getNopCodigo() {
-		return nopCodigo;
-	}
-
-	public void setNopCodigo(Long nopCodigo) {
-		this.nopCodigo = nopCodigo;
-	}
-
-	public String getNopDescricao() {
-		return nopDescricao;
-	}
-
-	public void setNopDescricao(String nopDescricao) {
-		this.nopDescricao = nopDescricao;
-	}
-
 	/**
 	 * @return the processo
 	 */
@@ -197,20 +151,6 @@ public class TipoNotaFiscal implements Serializable {
 	 */
 	public void setProcesso(Set<Processo> processo) {
 		this.processo = processo;
-	}
-
-	/**
-	 * @return the serieNotaFiscal
-	 */
-	public Integer getSerieNotaFiscal() {
-		return serieNotaFiscal;
-	}
-
-	/**
-	 * @param serieNotaFiscal the serieNotaFiscal to set
-	 */
-	public void setSerieNotaFiscal(Integer serieNotaFiscal) {
-		this.serieNotaFiscal = serieNotaFiscal;
 	}
 
 	@Override
@@ -229,7 +169,7 @@ public class TipoNotaFiscal implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TipoNotaFiscal other = (TipoNotaFiscal) obj;
+		NaturezaOperacao other = (NaturezaOperacao) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

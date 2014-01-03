@@ -32,7 +32,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
@@ -196,7 +196,7 @@ public class ConsultaNotasController extends BaseController {
 		
 		if (filtroSessao.getIdTipoNotaFiscal() != null) {
 			
-			TipoNotaFiscal tipoNotaFiscal = 
+			NaturezaOperacao tipoNotaFiscal = 
 				this.tipoNotaFiscalService.obterPorId(filtroSessao.getIdTipoNotaFiscal());
 		
 			if (tipoNotaFiscal != null) {
@@ -222,7 +222,7 @@ public class ConsultaNotasController extends BaseController {
 			}
 		}
 
-		List<TipoNotaFiscal> tiposNotaFiscal = 
+		List<NaturezaOperacao> tiposNotaFiscal = 
 				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
 
 		this.result.include("fornecedores", fornecedoresDistribuicao);

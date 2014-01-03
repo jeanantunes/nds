@@ -307,6 +307,7 @@ public class FornecedorRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ItemDTO<Long, String>> obterFornecedoresIdNome(SituacaoCadastro situacao, Boolean inferface){
+		
 		Criteria criteria = getSession().createCriteria(Fornecedor.class);
 		
 		criteria.createAlias("juridica","juridica");
@@ -570,5 +571,26 @@ public class FornecedorRepositoryImpl extends
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(
+			SituacaoCadastro situacao) {
+
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.createAlias("juridica", "juridica");
+		criteria.add(Restrictions.isNull("fornecedorUnificador"));
+		
+		if(situacao != null) {
+			criteria.add(Restrictions.eq("situacaoCadastro", situacao));		
+		}
+		
+		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		
+		return  criteria.list();
+
 	}
 }

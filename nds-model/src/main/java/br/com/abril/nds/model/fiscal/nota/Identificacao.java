@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -74,7 +74,7 @@ public class Identificacao implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID")
-	private TipoNotaFiscal tipoNotaFiscal;
+	private NaturezaOperacao tipoNotaFiscal;
 
 	/**
 	 * tpNF
@@ -368,14 +368,14 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the tipoNotaFiscal
 	 */
-	public TipoNotaFiscal getTipoNotaFiscal() {
+	public NaturezaOperacao getTipoNotaFiscal() {
 		return tipoNotaFiscal;
 	}
 
 	/**
 	 * @param tipoNotaFiscal the tipoNotaFiscal to set
 	 */
-	public void setTipoNotaFiscal(TipoNotaFiscal tipoNotaFiscal) {
+	public void setTipoNotaFiscal(NaturezaOperacao tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
 }

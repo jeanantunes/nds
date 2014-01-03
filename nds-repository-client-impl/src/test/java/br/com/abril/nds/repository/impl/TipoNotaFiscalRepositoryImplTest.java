@@ -21,17 +21,17 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	String cnpj = "00.000.000/0001-00";
 	String chave = "11111";
@@ -48,7 +48,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		CFOP cfop  = Fixture.cfop5102();
 		save(cfop);
 
-		TipoNotaFiscal tp = Fixture.tipoNotaFiscalDevolucao(cfop);
+		NaturezaOperacao tp = Fixture.tipoNotaFiscalDevolucao(cfop);
 		save(tp);
 		
 		NotaFiscalEntrada notaFiscal = new NotaFiscalEntradaFornecedor();
@@ -73,7 +73,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 	@Test
 	public void obterTiposNotasFiscais() {
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.obterTiposNotasFiscais();
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.obterTiposNotasFiscais();
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 		
@@ -83,7 +83,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 	public void obterTiposNotasFiscaisTipoOperacao() {
 		TipoOperacao tipo =  TipoOperacao.ENTRADA;
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.obterTiposNotasFiscais(tipo);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.obterTiposNotasFiscais(tipo);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 		
@@ -92,7 +92,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 	@Test
 	public void testObterTipoNotaFiscal() {
 		
-		TipoNotaFiscal tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+		NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
 		
 		Assert.assertTrue(tipoNotaFiscal != null);
 		
@@ -104,7 +104,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		GrupoNotaFiscal grupo = GrupoNotaFiscal.NF_TERCEIRO;
 		
-		TipoNotaFiscal tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(grupo, null, false);
+		NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(grupo, null, false);
 		
 		
 	}
@@ -114,7 +114,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		TipoAtividade tipo = TipoAtividade.MERCANTIL;
 		
-		TipoNotaFiscal tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(null, tipo, false);
+		NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(null, tipo, false);
 		
 		
 	}
@@ -124,7 +124,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		Boolean isContruinte = true;
 		
-		TipoNotaFiscal tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(null, null, isContruinte);
+		NaturezaOperacao tipoNotaFiscal = tipoNotaFiscalRepository.obterTipoNotaFiscal(null, null, isContruinte);
 		
 		
 	}
@@ -135,7 +135,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		FiltroCadastroTipoNotaDTO filtro = new FiltroCadastroTipoNotaDTO();
 		filtro.setTipoNota("entrada");
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 			
@@ -147,7 +147,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		FiltroCadastroTipoNotaDTO filtro = new FiltroCadastroTipoNotaDTO();
 		filtro.setTipoAtividade(TipoAtividade.MERCANTIL);
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 	
@@ -163,7 +163,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		filtro.setOrdenacaoColuna(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.OPERACAO);
 		
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 	
@@ -179,7 +179,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		filtro.setOrdenacaoColuna(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.DESCRICAO);
 		
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 	
@@ -195,7 +195,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		filtro.setOrdenacaoColuna(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.CFOP_ESTADO);
 		
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 
@@ -211,7 +211,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		filtro.setOrdenacaoColuna(FiltroCadastroTipoNotaDTO.OrdenacaoColunaConsulta.CFOP_OUTROS_ESTADOS);
 		
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 	
@@ -228,7 +228,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
 		
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 	
@@ -243,7 +243,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		filtro.getPaginacao().setQtdResultadosPorPagina(2);
 		
 		
-		List<TipoNotaFiscal> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
+		List<NaturezaOperacao> tipoNotaFiscal = tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
 		
 		Assert.assertNotNull(tipoNotaFiscal);
 	
@@ -274,7 +274,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		TipoAtividade tipo = TipoAtividade.MERCANTIL;
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(tipo);
 			
 			Assert.assertNotNull(tipoNotaFiscal);
@@ -285,7 +285,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		TipoAtividade tipo = TipoAtividade.MERCANTIL;
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(tipo);
 			
 			Assert.assertNotNull(tipoNotaFiscal);
@@ -296,7 +296,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		GrupoNotaFiscal grupo = GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR;
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotaFiscal(grupo);
 			
 			Assert.assertNotNull(tipoNotaFiscal);
@@ -307,7 +307,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		TipoOperacao tipo = TipoOperacao.ENTRADA;
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotasFiscais(tipo, null, null, null);
 			
 			Assert.assertNotNull(tipoNotaFiscal);
@@ -318,7 +318,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		TipoUsuarioNotaFiscal tipoDestinatario = TipoUsuarioNotaFiscal.DISTRIBUIDOR;
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotasFiscais(null,tipoDestinatario, null, null);
 			
 			Assert.assertNotNull(tipoNotaFiscal);
@@ -329,7 +329,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		
 		TipoUsuarioNotaFiscal tipoEmitente = TipoUsuarioNotaFiscal.COTA;
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotasFiscais(null,null, tipoEmitente, null);
 			
 			Assert.assertNotNull(tipoNotaFiscal);
@@ -343,7 +343,7 @@ public class TipoNotaFiscalRepositoryImplTest extends AbstractRepositoryImplTest
 		grupo[1] = GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA;
 		
 		
-			List<TipoNotaFiscal> tipoNotaFiscal =  
+			List<NaturezaOperacao> tipoNotaFiscal =  
 					tipoNotaFiscalRepository.obterTiposNotasFiscais(null,null, null, grupo);
 			
 			Assert.assertNotNull(tipoNotaFiscal);

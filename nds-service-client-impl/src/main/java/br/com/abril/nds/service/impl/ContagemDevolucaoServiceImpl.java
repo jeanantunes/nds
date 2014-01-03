@@ -53,7 +53,7 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -75,7 +75,7 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.ContagemDevolucaoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.EdicoesFechadasService;
@@ -125,7 +125,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
@@ -685,7 +685,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			return;
 		}
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
+		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 
 		if(tipoNotaFiscal == null) {
 			throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");

@@ -27,7 +27,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
@@ -35,7 +35,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -59,7 +59,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -131,7 +131,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 			notaFiscal.setControleConferenciaEncalheCota(conferenciaEncalheCota);
 		}
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
+		NaturezaOperacao tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(grupoNotaFiscal, tipoAtividade, isContribuinte);
 
 		if (tipoNotaFiscal == null) {
 			

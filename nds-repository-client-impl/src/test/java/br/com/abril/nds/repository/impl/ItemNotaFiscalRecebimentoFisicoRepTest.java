@@ -25,7 +25,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
@@ -37,7 +37,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 	Usuario usuario = new Usuario();
 	TipoProduto tipoProduto = new TipoProduto();
 	TipoFornecedor tipoFornecedorPublicacao = new TipoFornecedor();
-	TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+	NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 	ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
 	NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
 	RecebimentoFisico recebimentoFisico = new RecebimentoFisico();
@@ -88,7 +88,7 @@ public class ItemNotaFiscalRecebimentoFisicoRepTest extends AbstractRepositoryIm
 		save(cfop);
 
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);		
+		NaturezaOperacao tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);		
 		save(tipoNotaFiscal);
 		
 		
