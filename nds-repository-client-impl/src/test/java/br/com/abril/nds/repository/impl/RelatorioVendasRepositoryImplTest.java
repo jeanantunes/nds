@@ -38,6 +38,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTest {
 	
@@ -46,7 +47,7 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 	
 	FiltroCurvaABCDistribuidorDTO filtro;
 	
-	@Before
+	//@Before
 	public void setUp (){
 		
 		NCM ncmRevista = Fixture.ncm(49029000l,"REVISTAS","KG");
@@ -125,6 +126,11 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 		filtro.setEdicaoProduto(new ArrayList<Long>());
 		filtro.getEdicaoProduto().add(1L);
 		
+		filtro.setDataDe(Fixture.criarData(1, Calendar.OCTOBER, 2013));
+		filtro.setDataAte(Fixture.criarData(30, Calendar.OCTOBER, 2013));
+		filtro.setPaginacao(new PaginacaoVO(1, 10, null));
+		
+		
 		List<RegistroCurvaABCDistribuidorVO> registroCurvaABCDistribuidorVOs =  
 					relatorioVendasRepository.obterCurvaABCDistribuidor(filtro);
 		
@@ -135,8 +141,10 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 	@Test
 	public void obterCurvaABCDistribuidor(){
 		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setDataDe(Fixture.criarData(1, Calendar.NOVEMBER, 2012));
-		filtro.setDataAte(Fixture.criarData(1, Calendar.DECEMBER, 2012));
+		filtro.setDataDe(Fixture.criarData(1, Calendar.NOVEMBER, 2013));
+		filtro.setDataAte(Fixture.criarData(30, Calendar.DECEMBER, 2013));
+		filtro.setPaginacao(new PaginacaoVO(1, 10, null));
+		
 		
 		List<RegistroCurvaABCDistribuidorVO> registroCurvaABCDistribuidorVOs =  
 					relatorioVendasRepository.obterCurvaABCDistribuidor(filtro);

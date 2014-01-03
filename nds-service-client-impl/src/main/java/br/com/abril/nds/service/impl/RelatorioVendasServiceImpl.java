@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.dto.RankingDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
@@ -61,21 +62,23 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		if(!lista.isEmpty()){
 			
-			Map<Long, Long> mapRankingCota = this.rankingRepository.obterRankingCota();
+			Map<Long, RankingDTO> mapRankingCota = this.rankingRepository.obterRankingCota(filtroCurvaABCDistribuidorDTO);
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista) {
 				
 				if (!sumarizador.containsKey(dto.getIdCota())) {
 					
 					sumarizador.put(dto.getIdCota(), dto);
-					dto.setRkCota(mapRankingCota.get(dto.getIdCota()));
+					
+					dto.setRkCota(mapRankingCota.get(dto.getIdCota()).getRanking());
+					dto.setFaturamentoCapa(mapRankingCota.get(dto.getIdCota()).getValor());
 					dto.setQuantidadePdvs(this.pdvRepository.obterQntPDV(dto.getIdCota(), null));
 					
 				} else {
 					
 					RegistroCurvaABCDistribuidorVO registro = sumarizador.get(dto.getIdCota());
-					registro.setFaturamentoCapa(this.adicionarValor(registro.getFaturamentoCapa(), dto.getFaturamentoCapa()));
 					
+					registro.setFaturamentoCapa(this.adicionarValor(registro.getFaturamentoCapa(), dto.getFaturamentoCapa()));
 					registro.setVendaExemplares(registro.getVendaExemplares().add(dto.getVendaExemplares()));
 				}
 			}
@@ -94,14 +97,18 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		if(!lista.isEmpty()) {
 			
-			Map<Long, Long> mapRankingEditor = this.rankingRepository.obterRankingEditor();
+			Map<Long, RankingDTO> mapRankingEditor = this.rankingRepository.obterRankingEditor(filtroCurvaABCEditorDTO);
 			
 			for(RegistroCurvaABCEditorVO dto : lista) {
 				
 				if (!sumarizador.containsKey(dto.getCodigoEditor())) {
 					
 					sumarizador.put(dto.getCodigoEditor(), dto);
-					dto.setRkEditor(mapRankingEditor.get(dto.getCodigoEditor()));
+					
+					dto.setRkEditor(mapRankingEditor.get(dto.getCodigoEditor()).getRanking());
+					
+					dto.setFaturamentoCapa(mapRankingEditor.get(dto.getCodigoEditor()).getValor());
+					
 					
 				} else {
 					
@@ -135,11 +142,11 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			Produto produto =
 					this.produtoRepository.obterProdutoPorCodigo(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
 			
-			Map<Long, Long> mapRankingProdutoPorProduto =
-					this.rankingRepository.obterRankingProdutoPorProduto();
+			Map<Long, RankingDTO> mapRankingProdutoPorProduto =
+					this.rankingRepository.obterRankingProdutoPorProduto(filtroCurvaABCDistribuidorDTO);
 				
-				Map<Long, Long> mapRankingCotaPorProduto =
-					this.rankingRepository.obterRankingCotaPorProduto(produto.getId());
+			Map<Long, RankingDTO> mapRankingCotaPorProduto =
+					this.rankingRepository.obterRankingCotaPorProduto(filtroCurvaABCDistribuidorDTO, produto.getId());
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista){
 				
@@ -147,8 +154,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					
 					sumarizador.put(dto.getIdCota(), dto);
 					
-					dto.setRkProduto(mapRankingProdutoPorProduto.get(dto.getIdProduto()));
-					dto.setRkCota(mapRankingCotaPorProduto.get(dto.getIdCota()));
+					dto.setRkProduto(mapRankingProdutoPorProduto.get(dto.getIdProduto()).getRanking());
+					
+					dto.setRkCota(mapRankingCotaPorProduto.get(dto.getIdCota()).getRanking());
+					dto.setFaturamentoCapa(mapRankingCotaPorProduto.get(dto.getIdCota()).getValor());
+					
+					
+					
 					dto.setQuantidadePdvs(this.pdvRepository.obterQntPDV(dto.getIdCota(), null));
 					
 				} else {
@@ -175,7 +187,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
 			
-			Map<Long, Long> mapRanking = this.rankingRepository.obterRankingProdutoPorCota(cota.getId());
+			Map<Long, RankingDTO> mapRanking = this.rankingRepository.obterRankingProdutoPorCota(filtroCurvaABCCotaDTO, cota.getId());
 			
 			for(RegistroCurvaABCCotaDTO dto : lista) {
 				
@@ -183,7 +195,10 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					
 					sumarizador.put(dto.getIdProdutoEdicao(), dto);
 					
-					dto.setRkProduto(mapRanking.get(dto.getIdProdutoEdicao()));
+					dto.setRkProduto(mapRanking.get(dto.getIdProdutoEdicao()).getRanking());
+					
+					dto.setFaturamento(mapRanking.get(dto.getIdProdutoEdicao()).getValor());
+					
 				} else {
 					
 					RegistroCurvaABCCotaDTO registro = sumarizador.get(dto.getIdProdutoEdicao());

@@ -2,6 +2,9 @@ package br.com.abril.nds.repository;
 
 import java.util.Map;
 
+import br.com.abril.nds.dto.RankingDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
+
 
 /**
  * 
@@ -9,14 +12,14 @@ import java.util.Map;
  */
 public interface RankingRepository {
 	
-	Map<Long, Long> obterRankingProdutoPorCota(Long idCota);
+	Map<Long, RankingDTO> obterRankingProdutoPorCota(FiltroCurvaABCDTO filtro, Long idCota);
 	
-	Map<Long, Long> obterRankingCota();
+	Map<Long, RankingDTO> obterRankingCota(FiltroCurvaABCDTO filtro);
 	
-	Map<Long, Long> obterRankingEditor();
+	Map<Long, RankingDTO> obterRankingEditor(FiltroCurvaABCDTO filtro);
 	
-	Map<Long, Long> obterRankingProdutoPorProduto();
+	Map<Long, RankingDTO> obterRankingProdutoPorProduto(FiltroCurvaABCDTO filtro);
 	
-	Map<Long, Long> obterRankingCotaPorProduto(Long idProduto);
+	Map<Long, RankingDTO> obterRankingCotaPorProduto(FiltroCurvaABCDTO filtro, Long idProduto);
 	
 }

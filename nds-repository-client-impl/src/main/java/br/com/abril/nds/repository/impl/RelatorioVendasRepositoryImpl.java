@@ -76,7 +76,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		this.getFiltroCurvaABCDistribuidor(filtro, query);
 		
-		query.setParameterList("grupoMovimentoEstoque", this.obterGruposMovimentoEstoqueCota());
 		query.setParameterList("tiposLancamento", this.obterTiposLancamentosRelatorioVenda());
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
@@ -171,7 +170,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		this.getFiltroCurvaABCEditor(filtro, query);
 		
-		query.setParameterList("grupoMovimentoEstoque", this.obterGruposMovimentoEstoqueCota());
 		query.setParameterList("tiposLancamento", this.obterTiposLancamentosRelatorioVenda());
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCEditorVO.class));
@@ -243,7 +241,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		this.getFiltroCurvaABCCota(filtro, query);
 		
-		query.setParameterList("grupoMovimentoEstoque", this.obterGruposMovimentoEstoqueCota());
 		query.setParameterList("tiposLancamento", this.obterTiposLancamentosRelatorioVenda());
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCCotaDTO.class));
@@ -309,10 +306,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		hql.append(" 				AND fechamentoEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID) ");
 	    
 		hql.append("  WHERE ");
-		hql.append("     tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE IN ( ");
-		hql.append(" 	  		:grupoMovimentoEstoque ");
-		hql.append("     ) ");
-		hql.append("  AND ");
+		
 		hql.append("     lancamento.status IN ( ");
 		hql.append("     		:tiposLancamento ");
 		hql.append("     ) ");
@@ -581,21 +575,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 		
 		return null;
-	}
-	
-	private List<String> obterGruposMovimentoEstoqueCota() {
-		
-		List<String> gruposMovimentoEstoque = new ArrayList<>();
-		
-		for (GrupoMovimentoEstoque grupoMovimentoEstoque : GrupoMovimentoEstoque.values()) {
-			
-			if (grupoMovimentoEstoque.getDominio().equals(Dominio.COTA)) {
-				
-				gruposMovimentoEstoque.add(grupoMovimentoEstoque.name());
-			}
-		}
-		
-		return gruposMovimentoEstoque;
 	}
 	
 	private List<String> obterTiposLancamentosRelatorioVenda(){

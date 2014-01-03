@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,111 +10,138 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
+import br.com.abril.nds.dto.RankingDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.RankingRepository;
 
 @Repository
-public class RankingRepositoryImpl extends AbstractRepository  implements RankingRepository{
+public class RankingRepositoryImpl extends AbstractRepository  implements RankingRepository {
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingProdutoPorCota(Long idCota){
+	public Map<Long, RankingDTO> obterRankingProdutoPorCota(FiltroCurvaABCDTO filtro, Long idCota) {
 		
 		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select	");
 		
-		sql.append("  	select  consolidado.PRODUTO_EDICAO_ID as idProdutoEdicao, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		sql.append(" subRnkg.idProdutoEdicao as idProdutoEdicao, 	");
+		sql.append(" subRnkg.valor as valor, 	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ");
 		
-		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+		sql.append(" from ( ");
 		
-		.append("    where consolidado.COTA_ID = :idCota ")
-	
-		.append("    group by consolidado.PRODUTO_EDICAO_ID ")
-	
-		.append("    order by valor desc ");
+		sql.append(" select ");
+		
+		sql.append(" consolidado.PRODUTO_EDICAO_ID as idProdutoEdicao, ");
+		sql.append(" consolidado.valor as valor ");
+		
+		sql.append(" from ");
+		
+		sql.append(obterSQLRanking(filtro));
+		
+		sql.append(" where consolidado.COTA_ID = :idCota 	");
+		
+		sql.append(" order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
+		
 		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
-		query.addScalar("valor");
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
 		
 		query.setParameter("idCota", idCota);
 		
-		Map<Long, Long> mapRanking = new HashMap<>();
+		getFiltroRanking(filtro, query);
 		
 		List<Object[]> resultList = query.list();
 		
-		long i = 1;
-		
-		for (Object[] result : resultList) {
-			
-			mapRanking.put((long) result[0], i++);
-		}
-		
-		return mapRanking;
+		return popularMapRanking(resultList);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingCota() {
+	public Map<Long, RankingDTO> obterRankingCota(FiltroCurvaABCDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  	select  consolidado.COTA_ID as idCota, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		sql.append(" select	");
 		
-		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+		sql.append(" subRnkg.idCota as idCota, 	");
+		sql.append(" subRnkg.valor as valor, 	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ");
+		
+		sql.append(" from ( ");
+		
+		sql.append(" select ");
+
+		sql.append(" consolidado.COTA_ID as idCota,	");
+		sql.append(" consolidado.valor as valor 	");
+		
+		sql.append(" from ");
+		
+		sql.append(obterSQLRanking(filtro))
 	
 		.append("    group by consolidado.COTA_ID ")
 	
-		.append("    order by valor desc ");
+		.append("    order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
-		query.addScalar("valor");
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
 		
-		Map<Long, Long> mapRanking = new HashMap<>();
+		getFiltroRanking(filtro, query);
 		
 		List<Object[]> resultList = query.list();
 		
-		long i = 1;
+		return popularMapRanking(resultList);
+	}
+	
+	private Map<Long, RankingDTO> popularMapRanking(List<Object[]> resultList){
+		
+		Map<Long, RankingDTO> mapRanking = new HashMap<>();
 		
 		for (Object[] result : resultList) {
 			
-			mapRanking.put((long) result[0], i++);
+			long chave = (long) result[0];
+			
+			BigDecimal valor = (BigDecimal) result[1];
+			
+			BigDecimal valorAcumulado = (BigDecimal) result[2];
+			
+			Long posicaoRanking = (Long) result[3];
+			
+			RankingDTO ranking = new RankingDTO(posicaoRanking, valor, valorAcumulado);
+			
+			mapRanking.put(chave, ranking);
 		}
 		
 		return mapRanking;
+		
 	}
 	
-	/**
-	 * TODO: Finalizar para subtituir os métodos abaixo:
-	 *   
-	 * obterRankingProdutoPorCota, 
-	 * obterRankingCota,
-	 * obterRankingEditor, 
-	 * obterRankingProdutoPorProduto,
-	 * obterRankingCotaPorProduto
-	 * 
-	 * A clausa SELECT da consulta abaixo foi copiada da VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA.
-	 * 
-	 * As clausulas FROM e WHERE são as mesmas utilizadas no método {@code private String getFromWhereObterCurvaABC()} 
-	 * que esta na classe {@link RelatorioVendasRepositoryImpl} 
-	 * ja que este método {@code private String getFromWhereObterCurvaABC()} é utilizado nas consulta de curva ABC
-	 * de produto, distribuidor, cota e editor.
-	 * 
-	 * 
-	 * @return
-	 */
 	@SuppressWarnings("unchecked")
-	
-	//TODO: criar classe mais genérica ( ao invés de utilizar FiltroCurvaABCDistribuidorDTO) 
-	//para receeber parâmetros do filtro das pesquisas de ranking cota, produto, distribuidor e editor
-	//
-	public Map<Long, Long> obterRanking(FiltroCurvaABCDistribuidorDTO filtro) {
+	public StringBuilder obterSQLRanking(FiltroCurvaABCDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("	select  ");
+		sql.append(" ( select ");
+		
+		sql.append(" movimento_estoque_cota.COTA_ID AS COTA_ID, "); 
+		sql.append(" produto_edicao.PRODUTO_ID AS PRODUTO_ID, 	");
+		sql.append(" produto.EDITOR_ID AS EDITOR_ID, 			");
+		sql.append(" movimento_estoque_cota.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID, ");
+		sql.append(" produto_edicao.NUMERO_EDICAO AS NUMERO_EDICAO, ");
+		sql.append(" movimento_estoque_cota.DATA AS DATA_MOVIMENTO, ");
+		sql.append(" produto_edicao.PRECO_VENDA AS PRECO_VENDA,		");
+		
 		sql.append("	sum(( ");
 		sql.append("		( ");
 		sql.append("			coalesce(( ");
@@ -132,10 +160,12 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append("			and (mov_sub_sd.COTA_ID = movimento_estoque_cota.COTA_ID)                                                                               ");
 		sql.append("			and (mov_sub_sd.ID = movimento_estoque_cota.ID) and (prod_sub_sd.ID = produto_edicao.ID))),0)                                           ");
 		sql.append("		) * (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO,0)) / 100))                 ");
-		sql.append("		)) AS VALOR_TOTAL_VENDA_COM_DESCONTO                                                                                                        ");
+		sql.append("		)) AS valor                                                                                                        ");
 		
 		sql.append("	from   ");
+		
 		sql.append("	movimento_estoque_cota  ");
+		
 		sql.append("	inner join produto_edicao on movimento_estoque_cota.produto_edicao_id = produto_edicao.id                        ");
 		sql.append("	inner join produto on (produto_edicao.produto_id = produto.id)                                                   ");
 		sql.append("	inner join tipo_movimento tipomovimento on movimento_estoque_cota.tipo_movimento_id = tipomovimento.id           ");
@@ -161,39 +191,24 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append("	left join fechamento_encalhe fechamentoencalhe on                                                                ");
 		sql.append("		(fechamentoencalhe.data_encalhe = lancamento.data_rec_distrib                                                ");
 		sql.append("		and fechamentoencalhe.produto_edicao_id = produto_edicao.id)                                                 ");
-				    
-		sql.append("	WHERE                                                                  ");
+		
+		sql.append("	WHERE	");
+		
 		sql.append("	lancamento.status IN ( 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO' ) 	   ");
-		sql.append("		group by                                                           ");
-		sql.append("		movimento_estoque_cota.PRODUTO_EDICAO_ID,                          ");
-		sql.append("		movimento_estoque_cota.COTA_ID,                                    ");
-		sql.append("		movimento_estoque_cota.DATA                                        ");
-		sql.append("		order by movimento_estoque_cota.DATA desc limit 10		           ");
 		
 		sql.append(this.getFiltroRanking(filtro, null));
 		
-		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		sql.append("		group by movimento_estoque_cota.PRODUTO_EDICAO_ID,   ");
+		sql.append("		movimento_estoque_cota.COTA_ID, ");
+		sql.append("		movimento_estoque_cota.DATA     ");
 		
-		query.addScalar("idCota", StandardBasicTypes.LONG);
-		query.addScalar("valor");
+		sql.append("		order by movimento_estoque_cota.DATA desc ) as consolidado ");
 		
-		this.getFiltroRanking(filtro, query);
-		
-		Map<Long, Long> mapRanking = new HashMap<>();
-		
-		List<Object[]> resultList = query.list();
-		
-		long i = 1;
-		
-		for (Object[] result : resultList) {
-			mapRanking.put((long) result[0], i++);
-		}
-		
-		return mapRanking;
+		return sql;
 	}
+	
 
-
-	private String getFiltroRanking(FiltroCurvaABCDistribuidorDTO filtro, Query query) {
+	private String getFiltroRanking(FiltroCurvaABCDTO filtro, Query query) {
 		
 		StringBuilder hql = null;
 		
@@ -282,103 +297,134 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 	
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingEditor() {
+	public Map<Long, RankingDTO> obterRankingEditor(FiltroCurvaABCDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  	select  consolidado.EDITOR_ID as idEditor, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		sql.append(" select ");
 		
-		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+		sql.append(" subRnkg.idEditor as idEditor, 	");
+		sql.append(" subRnkg.valor as valor, 	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ")
+		
+		.append(" from ")
+		
+		.append(" ( ")
+		
+		.append(" select ")
+
+		.append(" consolidado.EDITOR_ID as idEditor, ")
+		.append(" consolidado.valor as valor ")
+		
+		.append(" from ")
+		
+		.append(obterSQLRanking(filtro))
 	
 		.append("    group by consolidado.EDITOR_ID ")
 	
-		.append("    order by valor desc ");
+		.append("    order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("idEditor", StandardBasicTypes.LONG);
-		query.addScalar("valor");
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
 		
-		Map<Long, Long> mapRanking = new HashMap<>();
+		getFiltroRanking(filtro, query);
 		
 		List<Object[]> resultList = query.list();
 		
-		long i = 1;
-		
-		for (Object[] result : resultList) {
-			
-			mapRanking.put((long) result[0], i++);
-		}
-		
-		return mapRanking;
+		return popularMapRanking(resultList);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingProdutoPorProduto() {
+	public Map<Long, RankingDTO> obterRankingProdutoPorProduto(FiltroCurvaABCDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  	select  consolidado.PRODUTO_ID as idProduto, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		sql.append(" select ");
+
+		sql.append(" subRnkg.idProduto as idProduto, 	");
+		sql.append(" subRnkg.valor as valor, 	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ")
 		
-		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+		.append(" from ")
 		
-		.append("    group by consolidado.PRODUTO_ID ")
+		.append(" ( ");
+		
+		sql.append(" select consolidado.PRODUTO_ID as idProduto, consolidado.valor as valor ")
+		
+		.append(" from ")
+		
+		.append(obterSQLRanking(filtro))
+		
+		.append("    group by consolidado.PRODUTO_ID ") 	
 	
-		.append("    order by valor desc ");
+		.append("    order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("idProduto", StandardBasicTypes.LONG);
-		query.addScalar("valor");
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
 		
-		Map<Long, Long> mapRanking = new HashMap<>();
+		getFiltroRanking(filtro, query);
 		
 		List<Object[]> resultList = query.list();
 		
-		long i = 1;
-		
-		for (Object[] result : resultList) {
-			
-			mapRanking.put((long) result[0], i++);
-		}
-		
-		return mapRanking;
+		return popularMapRanking(resultList);
+
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingCotaPorProduto(Long idProduto) {
+	public Map<Long, RankingDTO> obterRankingCotaPorProduto(FiltroCurvaABCDTO filtro, Long idProduto) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  	select  consolidado.COTA_ID as idCota, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		sql.append(" select ");
+
+		sql.append(" subRnkg.idCota as idCota, 	");
+		sql.append(" subRnkg.valor as valor, 	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ");
 		
-		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
-	
+		sql.append(" from ");
+		
+		sql.append(" ( ");
+		
+		sql.append(" select  consolidado.COTA_ID as idCota, consolidado.valor as valor ")
+		
+		.append(" from ")
+		
+		.append(obterSQLRanking(filtro))
+
 		.append("    where consolidado.PRODUTO_ID = :idProduto ")
 		
 		.append("    group by consolidado.COTA_ID ")
 	
-		.append("    order by valor desc ");
+		.append("    order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
-		query.addScalar("valor");
-		
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
+	
 		query.setParameter("idProduto", idProduto);
 		
-		Map<Long, Long> mapRanking = new HashMap<>();
+		getFiltroRanking(filtro, query);
+		
 		
 		List<Object[]> resultList = query.list();
 		
-		long i = 1;
-		
-		for (Object[] result : resultList) {
-			
-			mapRanking.put((long) result[0], i++);
-		}
-		
-		return mapRanking;
+		return popularMapRanking(resultList);
+
 	}
 	
 }

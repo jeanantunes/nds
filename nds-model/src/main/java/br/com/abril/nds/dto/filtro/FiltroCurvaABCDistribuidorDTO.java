@@ -21,7 +21,7 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 	 */
 	private static final long serialVersionUID = -1308372670097421023L;
 	
-	public enum TipoConsultaCurvaABC{
+	public enum TipoConsultaCurvaABC {
 		PRODUTO,DISTRIBUIDOR
 	}
 

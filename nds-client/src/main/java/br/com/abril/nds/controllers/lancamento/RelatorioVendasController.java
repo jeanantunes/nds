@@ -497,6 +497,7 @@ public class RelatorioVendasController extends BaseController {
 		} else {
 			
 			resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCProduto(filtro);
+		
 		}
 		
 		if (resultadoCurvaABCDistribuidor == null
@@ -521,6 +522,7 @@ public class RelatorioVendasController extends BaseController {
 				}
 				
 				resultadoPaginado.get(index).setParticipacaoAcumulada(participacao);
+			
 			}
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
@@ -796,17 +798,6 @@ public class RelatorioVendasController extends BaseController {
 			List<RegistroCurvaABCCotaDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(
 					resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao(), 
 					filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString());
-			
-			for (int index = 0 ; index < resultadoPaginado.size() ; index++){
-				
-				BigDecimal participacao = resultadoPaginado.get(index).getParticipacao();
-				
-				if (index > 0){
-					participacao = participacao.add(resultadoPaginado.get(index-1).getParticipacaoAcumulada());
-				}
-				
-				resultadoPaginado.get(index).setParticipacaoAcumulada(participacao);
-			}
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel = 
 					new TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>>();
