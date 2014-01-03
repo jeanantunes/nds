@@ -1,8 +1,8 @@
 package br.com.abril.nds.service.builders;
 
-public class FaturaBuilder <NotaFiscal> {
+public class FaturaBuilder {
 	
-	public void montaNotaFiscal (){
+	public void montarFaturaNotaFiscal (){
 		
 		
 	}

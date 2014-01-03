@@ -7,9 +7,11 @@ import br.com.abril.nfe.model.NotaFiscalItem;
 
 public class ItemNotaFiscalBuilder  {
 	
-	public void montaItemNotaFiscal (List<NotaFiscalItem> itensNotaFiscal, List<MovimentoEstoqueCota> movimentosEstoqueCotas){
+	public List<NotaFiscalItem> montaItemNotaFiscal (List<NotaFiscalItem> itensNotaFiscal, List<MovimentoEstoqueCota> movimentosEstoqueCotas){
 		
+		// popular os itens das notas fiscais
 		
+		return null;
 	}
 	
 }

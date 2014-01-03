@@ -129,9 +129,7 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	@Transactional
 	@Override
 	public List<TipoNotaFiscal> consultarTipoNotaFiscal(FiltroCadastroTipoNotaDTO filtro){
-
 		return tipoNotaFiscalRepository.consultarTipoNotaFiscal(filtro);
-
 	}
 
 	@Override
@@ -161,5 +159,4 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 		return listaItensNotasFiscais;
 
 	}
-
 }

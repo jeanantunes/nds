@@ -1,20 +1,77 @@
 package br.com.abril.nds.service.builders;
 
+import java.io.Serializable;
+
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nfe.model.NotaFiscal;
 
-public abstract class NotaFiscalBuilder {
+public class NotaFiscalBuilder implements Serializable {
 	
-	public NotaFiscal getNotaFiscal (){
+	private static final long serialVersionUID = 176874569807919538L;
+	
+	// builder header Nota fiscal
+	public static NotaFiscal montarHeaderNotaFiscal(Cota cota, NotaFiscal notaFiscal){
 		
+		/** -- Natureza da Operação -- PROT. DE AUTORIZAÇÃO -- CRT(Codigo Regime Tributario)
+	     * -- Inscricao Estadual -- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO -- CNPJ/CPF
+		 */
+		if (cota.getPessoa() instanceof PessoaJuridica) {
+			
+			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
+			notaFiscal.getEmissor().setNomeFantasia(pessoaJuridica.getNomeFantasia() == null ?  cota.getPessoa().getNome() : pessoaJuridica.getNomeFantasia());
+			notaFiscal.getEmissor().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+			notaFiscal.getEmissor().setCnpj(pessoaJuridica.getCnpj());
+			pessoaJuridica.getNomeFantasia();
+			pessoaJuridica.getRazaoSocial();
+			
+		} else if (cota.getPessoa() instanceof PessoaFisica) {
+			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
+			pessoaFisica.getCpf();
+			pessoaFisica.getRg();
+			pessoaFisica.getEmail();
+		}
+		
+		
+		// metodo responsavel por popular o header da nota
+		cota.getEnderecoPrincipal().getEndereco().getBairro();
+		
+		
+		return notaFiscal;
+	}
+
+
+	// metodo responsavel pelo dados do distribuidor da nota
+	public static NotaFiscal popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor){
+		
+		// Dados do Distribuidor
+		
+		/**
+		 *
+		 * -- Natureza da Operação
+		-- PROT. DE AUTORIZAÇÃO
+		-- CRT(Codigo Regime Tributario)
+		-- Inscricao Estadual
+		-- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO
+		-- CNPJ/CPF
+		 * 
+		 */
+		
+		// Endereço
+		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
+		notaFiscal.getEmissor().getNotaFicalEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());
+		notaFiscal.getEmissor().getNotaFicalEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
+		notaFiscal.getEmissor().getNotaFicalEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
+		notaFiscal.getEmissor().getNotaFicalEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		
+		return notaFiscal;
+	}
+	
+	public TipoOperacao tipoOperacaoNotaFiscal (){
 		
 		return null;
 	}
-	
-	public void montaNotaFiscal (){
-		
-		// obter as notas fiscais pelas cotas que estão na tela
-		
-		// builder Header Nota fiscal
-	}
-	
 }

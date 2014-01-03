@@ -185,7 +185,6 @@ public class GeracaoNFeController extends BaseController {
 	@Post("/gerar.json")
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
 	public void gerar(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
-		
 		try {
 			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
 		} catch (IOException ioe){

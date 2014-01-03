@@ -12,11 +12,11 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -36,8 +36,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NotaFiscal> obterListaNotasFiscaisPor(
-			StatusProcessamentoInterno statusProcessamentoInterno) {
+	public List<NotaFiscal> obterListaNotasFiscaisPor(StatusProcessamentoInterno statusProcessamentoInterno) {
 
 		Criteria criteria = getSession().createCriteria(NotaFiscal.class);
 
@@ -53,15 +52,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		sql.append(" SELECT COUNT(*) FROM ( ");	
 
-		sql.append(" SELECT NOTA_FISCAL_NOVO.ID "); 
-		sql.append(" FROM NOTA_FISCAL_NOVO 		");
-
-		sql.append(" LEFT JOIN PESSOA AS PESSOA_DESTINATARIO ON ");
-		sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_DESTINATARIO_ID_REFERENCIA = PESSOA_DESTINATARIO.ID )  ");
-
-		sql.append(" LEFT JOIN PESSOA AS PESSOA_REMETENTE ON ");
-		sql.append(" ( NOTA_FISCAL_NOVO.PESSOA_EMITENTE_ID_REFERENCIADA = PESSOA_REMETENTE.ID )  ");
-
+		sql.append(" SELECT NOTA_FISCAL.ID "); 
+		sql.append(" FROM NOTA_FISCAL 		");
+		
 		boolean indAnd = false;
 
 		if(filtro.getBox()!=null ) {
@@ -585,18 +578,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		return query.list();
 	}
-
-	@Override
-	public List<NotaFiscal> obterNotaFiscal(ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscal) {
-		
-		// OBTER COTA EXEMPLARES SUMARIZADOS
-		StringBuilder hql = new StringBuilder("select ");
-		// hql.append(queryUnicaNotafiscal());
-		Query query = getSession().createQuery(hql.toString());
-		query.list();
-				
-		return null;
-	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -611,7 +592,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto"); 	
 		
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, false, false, false), filtro);
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, false, false, false, false), filtro);
 				
 		if(filtro.getPaginacaoVO()!=null) {
 			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
@@ -634,35 +615,47 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mec.cota.id) ");
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro);
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, false, false), filtro);
 		
-		return (Long) query.uniqueResult();
+		return (long) query.list().size();
 	}
-
+	
+	/**
+	 * Obter conjunto de cotas
+	 * @param FiltroViewNotaFiscalDTO
+	 * @return List ids
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Cota> obterConjuntoCotasNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+		
+		// OBTER ID DE TODAS AS COTAS DA TELA
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" mec.cota ");
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, false, false, false, false), filtro);				
+		return query.list();
+	}
+	
 	/**
 	 * Obter os itens da nota com base nos movimentos de estoque cota
 	 * 
-	 * @param listaMovimentoEstoqueCota
+	 * @param filtro
 	 * @return
 	 */
-	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, List<Long> numeroCota) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, Long idCota) {
 	
 		// ITENS DA NOTA FISCAL
 		StringBuilder hql = new StringBuilder("SELECT mec");
 		
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro); 
-		 
-		query.setParameter("numeroCota", numeroCota);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoEstoqueCota.class));
-		
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true, true), filtro); 
+		query.setParameter("idCota", idCota);
+				
 		return query.list();
 	}
 	
-	private StringBuilder queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
+	private StringBuilder queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup, boolean isIdCota) {
 		
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
@@ -716,7 +709,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() !=null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
-				
+		
+		if(isIdCota){
+			hql.append(" AND cota.id =:idCota ");
+		}
+		
 		if(!isGroup){
 			hql.append(" GROUP BY mec.cota.numeroCota ");
 		}
@@ -751,6 +748,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
+		
 		return query;	
 	}
 }

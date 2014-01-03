@@ -20,7 +20,9 @@ import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -28,9 +30,11 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
+import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.builders.NotaFiscalBuilder;
 import br.com.abril.nds.util.Intervalo;
 
 @Service
@@ -53,7 +57,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-
+	
+	@Autowired 
+	private SerieRepository serieRepository;
+	
 	@Override
 	@Transactional
 	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
@@ -122,8 +129,26 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	public void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
 		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
+		br.com.abril.nfe.model.NotaFiscal notaFiscal = null;
+		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		
+		// obter as cotas que estão na tela pelo id das cotas
+		List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
 		
+		for (Cota cota : cotas) {
+			notaFiscal = new br.com.abril.nfe.model.NotaFiscal();
+			
+			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor);
+			NotaFiscalBuilder.montarHeaderNotaFiscal(cota, notaFiscal);
+			
+			// obter os movimentos de cada cota
+			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalRepository.obterMovimentoEstoqueCota(filtro, cota.getId());
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoquesCotas) {
+				
+			}
+			
+		}
 		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
@@ -137,10 +162,16 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	}
 
 	@Override
-	public Long consultaCotaExemplareSumarizadoQtd(
-			FiltroViewNotaFiscalDTO filtro) {
-		
+	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
 		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);
 	}
 	
+	// metodo responsavel pelo dados do distribuidor da nota
+	public Distribuidor obterInformacaoDistribuidor(){
+		return distribuidorRepository.obter();
+	}
+	
+	public Long serieNotaFiscal (br.com.abril.nfe.model.NotaFiscal notaFiscal){
+		return serieRepository.obterNumeroSerieNota();
+	}
 }

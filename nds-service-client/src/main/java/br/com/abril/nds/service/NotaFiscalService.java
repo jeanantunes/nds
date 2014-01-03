@@ -152,8 +152,6 @@ public interface NotaFiscalService {
 	public abstract void exportarNotasFiscais(Long... idNotaFiscals)
 			throws FileNotFoundException, IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException;
 
-	List<br.com.abril.nds.model.fiscal.NotaFiscal> obterNotaFiscal(ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscalDTO);
-
 	List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro);
 
 	Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);

@@ -2,11 +2,11 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -28,11 +28,14 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	List<Long> obterNumerosNFePorLancamento(Long idLancamento);
 
+	/**
+	 * Metodos para nota fiscal
+	 */
 	public abstract List<CotaExemplaresDTO> consultaCotaExemplaresSumarizados(FiltroViewNotaFiscalDTO filtro);
 	
-	public abstract List<NotaFiscal> obterNotaFiscal(ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscal);
+	public abstract List<Cota> obterConjuntoCotasNotafiscal(FiltroViewNotaFiscalDTO filtro);
 
 	public abstract Long consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
 	
-	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, List<Long> numeroCota);
+	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, Long idCota);
 }

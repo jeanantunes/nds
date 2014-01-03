@@ -422,27 +422,46 @@ var geracaoNFeController = $.extend({
 				params.push({name : "filtro.listIdFornecedor[]", value : v});
 			});
 		}
+		_this.gerar();
 		
-		$.postJSON(this.path + 'hasCotasSuspensas.json', params, function(data) {
-			var tipoMensagem = data.tipoMensagem;
-			var listaMensagens = data.listaMensagens;
+		// $.postJSON(this.path + 'hasCotasSuspensas.json', params, function(data) {
+		// 	var tipoMensagem = data.tipoMensagem;
+		// 	var listaMensagens = data.listaMensagens;
 
-			if (tipoMensagem && listaMensagens) {
-				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
-			}
-			if (data.cotasSuspensas) {
-				_this.$dialogCotasSuspensas.dialog("open");
-				_this.gridReaload(_this.$gridCotasSuspensas,
-						'buscaCotasSuspensas.json');
-			} else {
-				_this.gerar();
-			}
+		// 	if (tipoMensagem && listaMensagens) {
+		// exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+		// 	}
+		// 	if (data.cotasSuspensas) {
+		// 		_this.$dialogCotasSuspensas.dialog("open");
+		// 		_this.gridReaload(_this.$gridCotasSuspensas,
+		// 				'buscaCotasSuspensas.json');
+		// 	} else {
+		//}
 
-		});
+		//});
 	},
 	
 	gerar : function() {
-		var params = this.getParams();
+
+		var params = [];
+		
+		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
+		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
+		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
+		params.push({name:"filtro.intervaloBoxFinal" , value: $("#geracaoNfe-filtro-inputIntervaloBoxAte").val()});
+		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
+		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
+		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
+		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
+		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
+		
+		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
+			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
+				params.push({name : "filtro.listIdFornecedor[]", value : v});
+			});
+		}
 		var todas = $('#checkboxCheckAllCotasSuspensas', this.workspace).checked;
 		
 		var cotasSuspensas = $(".checkboxCheckCotasSuspensas", this.workspace);
