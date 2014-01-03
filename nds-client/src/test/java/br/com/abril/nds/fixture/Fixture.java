@@ -185,7 +185,7 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
@@ -1506,7 +1506,7 @@ public class Fixture {
 		
 	}
 
-	public static TipoNotaFiscal tipoNotaFiscal(
+	public static NaturezaOperacao tipoNotaFiscal(
 			boolean contribuinte
 			, String descricao
 			, TipoUsuarioNotaFiscal destinatario
@@ -1520,20 +1520,20 @@ public class Fixture {
 			, CFOP cfopEstado
 			, CFOP cfopOutrosEstados) {
 		
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		
 		tipoNotaFiscal.setContribuinte(contribuinte);
 		tipoNotaFiscal.setDescricao(descricao);
-		tipoNotaFiscal.setDestinatario(destinatario);
-		tipoNotaFiscal.setEmitente(emitente);
-		tipoNotaFiscal.setGrupoNotaFiscal(grupoNotaFiscal);
-		tipoNotaFiscal.setNopCodigo(nopCodigo);
-		tipoNotaFiscal.setNopDescricao(nopDescricao);
-		tipoNotaFiscal.setSerieNotaFiscal(serieNotaFiscal);
+//		tipoNotaFiscal.setDestinatario(destinatario);
+//		tipoNotaFiscal.setEmitente(emitente);
+//		tipoNotaFiscal.setGrupoNotaFiscal(grupoNotaFiscal);
+//		tipoNotaFiscal.setNopCodigo(nopCodigo);
+//		tipoNotaFiscal.setNopDescricao(nopDescricao);
+//		tipoNotaFiscal.setSerieNotaFiscal(serieNotaFiscal);
 		tipoNotaFiscal.setTipoAtividade(tipoAtividade);
 		tipoNotaFiscal.setTipoOperacao(tipoOperacao);	
-		tipoNotaFiscal.setCfopEstado(cfopEstado);
-		tipoNotaFiscal.setCfopOutrosEstados(cfopOutrosEstados);
+		tipoNotaFiscal.setCfopEstado("");
+		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
 	}
@@ -1568,26 +1568,26 @@ public class Fixture {
 		
 	}
 
-	public static TipoNotaFiscal tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
+	public static NaturezaOperacao tipoNotaFiscalRecebimentoMercadoriasEncalhe() {
 		
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
-		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+//		tipoNotaFiscal.setNopDescricao("NF-e de Devolução de Remessa para Distruibuição");
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setContribuinte(false);
-		tipoNotaFiscal.setNopCodigo(0L);
+//		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-		tipoNotaFiscal.setSerieNotaFiscal(4);
+//		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
 		return tipoNotaFiscal;
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(CFOP cfop,
-			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, NaturezaOperacao tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = new NotaFiscalEntradaFornecedor();
 		notaFiscalFornecedor.setFornecedor(fornecedor);
@@ -1609,7 +1609,7 @@ public class Fixture {
 	}
 	
 	public static NotaFiscalEntradaFornecedor notaFiscalEntradaFornecedor(Long numeroNF, String serie, String chaveAcesso, CFOP cfop,
-			Fornecedor fornecedor, TipoNotaFiscal tipoNotaFiscal,
+			Fornecedor fornecedor, NaturezaOperacao tipoNotaFiscal,
 			Usuario usuario, BigDecimal valorBruto, BigDecimal valorDesconto, BigDecimal valorLiquido) {
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = notaFiscalEntradaFornecedor(cfop, fornecedor, tipoNotaFiscal, usuario, valorBruto, valorDesconto, valorLiquido);
@@ -1629,7 +1629,7 @@ public class Fixture {
 			Cota cota,
 			StatusEmissaoNfe statusEmissaoNfe,
 			TipoEmissaoNfe tipoEmissaoNfe,
-			TipoNotaFiscal tipoNotaFiscal,
+			NaturezaOperacao tipoNotaFiscal,
 			Usuario usuario, 
 			BigDecimal valorBruto, 
 			BigDecimal valorDesconto, 
@@ -1751,7 +1751,7 @@ public class Fixture {
 			Fornecedor fornecedor,
 			StatusEmissaoNfe statusEmissaoNfe,
 			TipoEmissaoNfe tipoEmissaoNfe,
-			TipoNotaFiscal tipoNotaFiscal,
+			NaturezaOperacao tipoNotaFiscal,
 			Usuario usuario, 
 			BigDecimal valorBruto, 
 			BigDecimal valorDesconto, 
@@ -1872,7 +1872,7 @@ public class Fixture {
 			Fornecedor fornecedor,
 			StatusEmissaoNfe statusEmissaoNfe,
 			TipoEmissaoNfe tipoEmissaoNfe,
-			TipoNotaFiscal tipoNotaFiscal,
+			NaturezaOperacao tipoNotaFiscal,
 			Usuario usuario, 
 			BigDecimal valorBruto, 
 			BigDecimal valorDesconto, 
@@ -4368,23 +4368,23 @@ public class Fixture {
 		return cfop;
 	}
 	
-	public static TipoNotaFiscal tipoNotaFiscalRecebimento(CFOP cfop) {
+	public static NaturezaOperacao tipoNotaFiscalRecebimento(CFOP cfop) {
 		
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		
 		tipoNotaFiscal.setDescricao("RECEBIMENTO DE MERCADORIAS ENCALHE");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
-		tipoNotaFiscal.setNopDescricao("NF-e de DevoluÃ§Ã£o de Remessa para DistruibuiÃ§Ã£o");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+//		tipoNotaFiscal.setNopDescricao("NF-e de DevoluÃ§Ã£o de Remessa para DistruibuiÃ§Ã£o");
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
 		tipoNotaFiscal.setContribuinte(false);
-		tipoNotaFiscal.setNopCodigo(0L);
+//		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.ENTRADA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-		tipoNotaFiscal.setSerieNotaFiscal(4);
+//		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("");
+		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
 
@@ -4404,23 +4404,23 @@ public class Fixture {
 		return cfop;
 	}
 	
-	public static TipoNotaFiscal tipoNotaFiscalDevolucao(CFOP cfop) {
-		TipoNotaFiscal tipoNotaFiscal = new TipoNotaFiscal();
+	public static NaturezaOperacao tipoNotaFiscalDevolucao(CFOP cfop) {
+		NaturezaOperacao tipoNotaFiscal = new NaturezaOperacao();
 		
 		tipoNotaFiscal.setDescricao("DEVOLUCAO");
-		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
-		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
-		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
-		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
+//		tipoNotaFiscal.setGrupoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
+//		tipoNotaFiscal.setNopDescricao("NF-e de Remessa em Consignação (NECE / DANFE)");
+//		tipoNotaFiscal.setEmitente(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+//		tipoNotaFiscal.setDestinatario(TipoUsuarioNotaFiscal.COTA);
 		tipoNotaFiscal.setContribuinte(true);
-		tipoNotaFiscal.setNopCodigo(0L);
+//		tipoNotaFiscal.setNopCodigo(0L);
 		tipoNotaFiscal.setTipoOperacao(TipoOperacao.SAIDA);
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.MERCANTIL);
-		tipoNotaFiscal.setSerieNotaFiscal(3);
+//		tipoNotaFiscal.setSerieNotaFiscal(3);
 		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
 		
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("");
+		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
 	}

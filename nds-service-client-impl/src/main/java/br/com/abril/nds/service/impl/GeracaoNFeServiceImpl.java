@@ -23,15 +23,15 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.builders.NotaFiscalBuilder;
@@ -44,7 +44,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	private NotaFiscalService notaFiscalService;
 
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private CotaRepository cotaRepository;
@@ -69,7 +69,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
 		
-		Set<TipoNotaFiscal> tiposNota = new HashSet<TipoNotaFiscal>();
+		Set<NaturezaOperacao> tiposNota = new HashSet<NaturezaOperacao>();
 		
 		if (idTipoNotaFiscal == null){
 			
@@ -149,7 +149,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			}
 			
 		}
-		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
 		

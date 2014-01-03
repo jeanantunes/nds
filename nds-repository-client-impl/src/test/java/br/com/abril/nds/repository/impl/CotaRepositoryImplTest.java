@@ -70,7 +70,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -1392,7 +1392,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		save(cfop);
 
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
+		NaturezaOperacao tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
 
 		save(tipoNotaFiscal);
 

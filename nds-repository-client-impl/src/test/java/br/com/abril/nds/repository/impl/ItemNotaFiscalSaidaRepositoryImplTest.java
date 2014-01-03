@@ -30,7 +30,7 @@ import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 
@@ -52,7 +52,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		CFOP cfop5102 = Fixture.cfop5102();
 		save(cfop5102);
 		
-		TipoNotaFiscal tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop5102);
+		NaturezaOperacao tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop5102);
 		save(tipoNotaFiscal);
 		
 		box1 = Fixture.criarBox(1, "BX-001", TipoBox.LANCAMENTO);
@@ -126,7 +126,7 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 			CFOP cfop5102,
 			Cota cota,
 			Fornecedor fornecedorDinap, 
-			TipoNotaFiscal tipoNotaFiscal, 
+			NaturezaOperacao tipoNotaFiscal, 
 			Usuario usuarioJoao,
 			ProdutoEdicao produtoEdicaoCE, 
 			ProdutoEdicao produtoEdicaoCE_2,

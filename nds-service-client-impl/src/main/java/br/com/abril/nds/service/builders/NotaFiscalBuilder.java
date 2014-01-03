@@ -60,6 +60,8 @@ public class NotaFiscalBuilder implements Serializable {
 		 * 
 		 */
 		
+		
+		
 		// Endereço
 		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
 		notaFiscal.getEmissor().getNotaFicalEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());

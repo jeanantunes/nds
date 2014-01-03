@@ -45,7 +45,7 @@ import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -176,7 +176,7 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		CFOP cfop5102 = Fixture.cfop5102();
 		save(cfop5102);
 		
-		TipoNotaFiscal tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento(cfop5102);
+		NaturezaOperacao tipoNotaFiscalRecebimento = Fixture.tipoNotaFiscalRecebimento(cfop5102);
 		save(tipoNotaFiscalRecebimento);
 		
 		NotaFiscalEntradaFornecedor notaFiscalFornecedor = Fixture

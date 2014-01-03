@@ -135,7 +135,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 				cei.setNumeroItem(icef.getNumeroItem());
 				cei.setDataEmissaoNotaEnvio(nfsf.getDataEmissao());
 				cei.setNumeroAcessoNotaEnvio(nfsf.getChaveAcesso());
-				cei.setSerieNotaEnvio(nfsf.getTipoNotaFiscal().getSerieNotaFiscal());
+				//cei.setSerieNotaEnvio(nfsf.getTipoNotaFiscal().getSerieNotaFiscal()); FIXME: 
 				//cei.setTipoModeloNotaEnvio(nfsf.getTipoNotaFiscal().getNopCodigo()); FIXME: Verificar o valor do tipomodelo
 				cei.setQuantidadeDevolucaoInformada(icef.getQtdeDevolucaoInformada());
 				cei.setQuantidadeEnviada(icef.getQtdeEnviada());

@@ -39,7 +39,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusRecebimento;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -1257,7 +1257,7 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarComboTipoNotaFiscal() {
 		
-		List<TipoNotaFiscal> listaTipoNotaFiscal = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
+		List<NaturezaOperacao> listaTipoNotaFiscal = recebimentoFisicoService.obterTiposNotasFiscais(TipoOperacao.ENTRADA);
 		
 		if (listaTipoNotaFiscal != null) {
 			result.include("listaTipoNotaFiscal", listaTipoNotaFiscal);

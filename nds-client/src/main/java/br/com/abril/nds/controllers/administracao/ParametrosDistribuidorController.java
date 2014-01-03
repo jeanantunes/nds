@@ -509,7 +509,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	 */
 	@Post
 	public void obterGrupos(String sortname, String sortorder) {
-			
+
 		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos(sortname, sortorder);
 		
 		result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();

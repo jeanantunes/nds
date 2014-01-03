@@ -34,7 +34,7 @@ import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
@@ -49,7 +49,7 @@ import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ParciaisService;
@@ -88,7 +88,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private CFOPRepository cFOPRepository;
 	
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
@@ -330,7 +330,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Override
 	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterTiposNotasFiscais(TipoOperacao tipoOperacao) {
 		
 		return tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
 		
@@ -347,7 +347,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	@Transactional
-	public List<TipoNotaFiscal> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
+	public List<NaturezaOperacao> obterListaTipoNotaFiscal(TipoOperacao tipoOperacao) {
 		return tipoNotaFiscalRepository.obterTiposNotasFiscais();
 	}
 	

@@ -69,7 +69,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -102,7 +102,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
@@ -202,7 +202,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
 
 	@Autowired
-	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
 	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
@@ -1939,7 +1939,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 			}
 			
-			TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
+			NaturezaOperacao tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 
 			if(tipoNF == null) {
 				throw new IllegalStateException("TipoNotaFiscal não parametrizada");

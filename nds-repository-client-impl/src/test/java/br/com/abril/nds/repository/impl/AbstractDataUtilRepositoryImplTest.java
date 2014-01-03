@@ -42,13 +42,11 @@ import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -94,7 +92,7 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
     protected CFOP cfop5949;
     protected CFOP cfop6949;
     
-    protected TipoNotaFiscal tipoNotaFiscalRemessaDistribuicao;
+    protected NaturezaOperacao tipoNotaFiscalRemessaDistribuicao;
     
     protected NotaFiscalEntradaFornecedor notaFiscalFornecedor;
     
@@ -502,25 +500,21 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
         cfop6949.setDescricao("Outra saída de mercadoria ou prestação de serviço não especificado");
         save(cfop6949);
     
-        tipoNotaFiscalRemessaDistribuicao = new TipoNotaFiscal();
-        tipoNotaFiscalRemessaDistribuicao.setCfopEstado(cfop5949);
-        tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados(cfop6949);
-        tipoNotaFiscalRemessaDistribuicao
-                .setNopDescricao("NF-E Remessa para Distribuição");
-        tipoNotaFiscalRemessaDistribuicao
-                .setEmitente(TipoUsuarioNotaFiscal.TREELOG);
-        tipoNotaFiscalRemessaDistribuicao
-                .setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
+        tipoNotaFiscalRemessaDistribuicao = new NaturezaOperacao();
+        tipoNotaFiscalRemessaDistribuicao.setCfopEstado("5949");
+        tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados("6949");
+//        tipoNotaFiscalRemessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
+//        tipoNotaFiscalRemessaDistribuicao .setEmitente(TipoUsuarioNotaFiscal.TREELOG);
+//        tipoNotaFiscalRemessaDistribuicao .setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);
         tipoNotaFiscalRemessaDistribuicao.setContribuinte(false);
         tipoNotaFiscalRemessaDistribuicao
                 .setDescricao("NF-E Remessa para Distribuição");
-        tipoNotaFiscalRemessaDistribuicao.setNopCodigo(0L);
+//        tipoNotaFiscalRemessaDistribuicao.setNopCodigo(0L);
         tipoNotaFiscalRemessaDistribuicao.setTipoOperacao(TipoOperacao.SAIDA);
-        tipoNotaFiscalRemessaDistribuicao
-                .setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_DISTRIBUICAO);
+//        tipoNotaFiscalRemessaDistribuicao.setGrupoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_DISTRIBUICAO);
         tipoNotaFiscalRemessaDistribuicao
                 .setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
-        tipoNotaFiscalRemessaDistribuicao.setSerieNotaFiscal(17);
+//        tipoNotaFiscalRemessaDistribuicao.setSerieNotaFiscal(17);
         tipoNotaFiscalRemessaDistribuicao.setProcesso(new HashSet<Processo>());
         tipoNotaFiscalRemessaDistribuicao.getProcesso().add(
                 Processo.CONSIGNACAO_REPARTE_NORMAL);

@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -315,9 +314,9 @@ public class ControleConferenciaEncalheCota {
 		if (notaFiscalEntradaCota != null && !notaFiscalEntradaCota.isEmpty()) {
 			for (NotaFiscalEntradaCota notaFiscal : notaFiscalEntradaCota) {
 				if (notaFiscal != null
-						&& notaFiscal.getTipoNotaFiscal() != null
-						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
-						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
+						&& notaFiscal.getTipoNotaFiscal() != null) {
+//						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != null
+//						&& notaFiscal.getTipoNotaFiscal().getGrupoNotaFiscal() != GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR) {
 
 					return notaFiscal;
 
