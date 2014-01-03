@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -612,8 +613,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto"); 	
 		
-		Query query = queryConsultaNfe(filtro, hql, false);
-		
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, false, false, false), filtro);
+				
 		if(filtro.getPaginacaoVO()!=null) {
 			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
 				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
@@ -628,8 +629,42 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		return query.list();
 	}
+	
+	@Override
+	public Long consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+		
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" COUNT(mec.cota.id) ");
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro);
+		
+		return (Long) query.uniqueResult();
+	}
 
-	private Query queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount) {
+	/**
+	 * Obter os itens da nota com base nos movimentos de estoque cota
+	 * 
+	 * @param listaMovimentoEstoqueCota
+	 * @return
+	 */
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, List<Long> numeroCota) {
+	
+		// ITENS DA NOTA FISCAL
+		StringBuilder hql = new StringBuilder("SELECT mec");
+		
+		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro); 
+		 
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoEstoqueCota.class));
+		
+		return query.list();
+	}
+	
+	private StringBuilder queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
 		
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
@@ -684,13 +719,22 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 				
-		hql.append(" GROUP BY mec.cota.numeroCota ");
-
-		if(!isCount){
+		if(!isGroup){
+			hql.append(" GROUP BY mec.cota.numeroCota ");
+		}
+		
+		if(!isCount && !isPagination){
 			if(filtro.getPaginacaoVO()!=null && filtro.getPaginacaoVO().getSortOrder() != null && filtro.getPaginacaoVO().getSortColumn() != null) {
 				hql.append(" ORDER BY  ").append(filtro.getPaginacaoVO().getSortColumn()).append(" ").append(filtro.getPaginacaoVO().getSortOrder());
 			}
 		}
+		
+		return hql;
+	}
+	
+	public Query prepararCreateQuery(StringBuilder hql, FiltroViewNotaFiscalDTO filtro) {
+		
+
 		// Realizar a consulta e converter ao objeto cota exemplares.
 		Query query = this.getSession().createQuery(hql.toString());		
 		
@@ -709,19 +753,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
-		return query;
-	}
-
-	@Override
-	public Integer consultaCotaExemplaresSumarizadosQtd(
-			FiltroViewNotaFiscalDTO filtro) {
-		
-		// OBTER COTA EXEMPLARES SUMARIZADOS
-		StringBuilder hql = new StringBuilder("SELECT ");
-		hql.append(" COUNT(mec.cota.id) ");
-		Query query = queryConsultaNfe(filtro, hql, true);
-		
-		return (Integer) query.list().size();
+		return query;	
 	}
 
 	@SuppressWarnings("unchecked")

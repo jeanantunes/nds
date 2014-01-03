@@ -657,6 +657,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					
 					for(MovimentoEstoqueCota mec : itemNotaEnvio.getMovimentosProdutoSemEstudo()) {
 						
+						
 						mec.setItemNotaEnvio(itemNotaEnvio);
 						
 						if (mec.getLancamento() != null){

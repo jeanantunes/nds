@@ -1743,7 +1743,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	@Override
-	public Integer consultaCotaExemplareSumarizadoQtd(
+	public Long consultaCotaExemplareSumarizadoQtd(
 			FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}

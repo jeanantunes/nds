@@ -20,15 +20,10 @@ import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
-import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -124,79 +119,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 */
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public void gerarNotaFiscal(Intervalo<Integer> intervaloBox,
-			Intervalo<Integer> intervalorCota,
-			Intervalo<Date> intervaloDateMovimento,
-			List<Long> listIdFornecedor, List<Long> listIdProduto,
-			Long idTipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
-		
-		List<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, null, null, null, null, null, null, null);
-		
-		List<NaturezaOperacao> tiposNotaFiscal = new ArrayList<NaturezaOperacao>();
-		
-		if (idTipoNotaFiscal == null){
-			
-			tiposNotaFiscal.addAll(
-					this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
-							this.distribuidorRepository.tipoAtividade()));
-		} else {
-			
-			tiposNotaFiscal.add(this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal));
-		}
+	public void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
 		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
-		
-		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
-				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
-		
-		for (Long idCota : listaIdCota) {
-			//TRY adicionado para em caso de erro em alguma nota, não parar o fluxo das demais nos testes.
-			//Remove-lo ou trata-lo com Logs
-//			try {
-				
-				Cota cota = this.cotaRepository.buscarPorId(idCota);
-				
-				if (SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
-					
-					if (idCotasSuspensas != null && !idCotasSuspensas.isEmpty()) {
-						if (!idCotasSuspensas.contains(cota.getId())) {
-							continue;
-						}
-					} else {
-						continue;
-					}
-				}
-				
-				for (NaturezaOperacao tipoNota : tiposNotaFiscal){
-					
-					List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
-							parametrosRecolhimentoDistribuidor, 
-							cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNota);
-					
-					if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
-						continue;
-					
-					List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
-					
-					InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
-					
-					Set<Processo> processos = new HashSet<Processo>();
-					processos.add(Processo.GERACAO_NF_E);
-					
-					Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNota.getId(), dataEmissao, cota, 
-							listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, condicao);
-					
-					NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
-					
-					this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
-					
-					listaNotaFiscal.add(notaFiscal);
-				}
-//			} catch (Exception exception) {
-//				LOGGER.warn(exception.getLocalizedMessage(), exception);
-//				continue;
-//			}
-		}
 		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
@@ -210,7 +135,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	}
 
 	@Override
-	public Integer consultaCotaExemplareSumarizadoQtd(
+	public Long consultaCotaExemplareSumarizadoQtd(
 			FiltroViewNotaFiscalDTO filtro) {
 		
 		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);

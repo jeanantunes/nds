@@ -91,6 +91,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
+	@Column(name = "NOTA_FISCAL_EMITIDA")
+	private boolean notaFiscalEmitida;
+	
 	@ManyToOne(optional=true)
 	@JoinColumns({
 		@JoinColumn(name="NOTA_ENVIO_ITEM_NOTA_ENVIO_ID", referencedColumnName="NOTA_ENVIO_ID"),
@@ -98,9 +101,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	})
 	private ItemNotaEnvio itemNotaEnvio;
 	
-	@Column(name = "NOTA_FISCAL_EMITIDA")
-	private boolean notaFiscalEmitida;
-		
+	
 	public Object clone() {
 
 		MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
@@ -253,14 +254,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.movimentoEstoqueCotaEstorno = movimentoEstoqueCotaEstorno;
 	}
 
-	public ItemNotaEnvio getItemNotaEnvio() {
-		return itemNotaEnvio;
-	}
-
-	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
-		this.itemNotaEnvio = itemNotaEnvio;
-	}
-
 	public boolean isNotaFiscalEmitida() {
 		return notaFiscalEmitida;
 	}
@@ -269,4 +262,11 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.notaFiscalEmitida = notaFiscalEmitida;
 	}
 	
+	public ItemNotaEnvio getItemNotaEnvio() {
+		return itemNotaEnvio;
+	}
+
+	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
+		this.itemNotaEnvio = itemNotaEnvio;
+	}
 }

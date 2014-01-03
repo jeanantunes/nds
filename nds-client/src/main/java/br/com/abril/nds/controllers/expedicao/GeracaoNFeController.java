@@ -144,13 +144,13 @@ public class GeracaoNFeController extends BaseController {
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);
 		
-		Integer totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
+		Long totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
 		
 		if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros).serialize();
+		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();
 	}
 
 	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,
@@ -165,16 +165,14 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/buscaCotasSuspensas.json")
-	public void buscaCotasSuspensas(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
+	public void buscaCotasSuspensas(FiltroViewNotaFiscalDTO filtro, List<Long> listIdFornecedor, Long tipoNotaFiscal, String sortname,
 			String sortorder, int rp, int page) {
 		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
+		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(filtro.getIntervaloBoxInicial(), filtro.getIntervaloBoxFinal());
 		
-		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
+		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(filtro.getIntervalorCotaInicial(), filtro.getIntervalorCotaInicial());
 		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
+		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(filtro.getDataInicial(), filtro.getDataFinal());
 		
 		List<CotaExemplaresDTO> cotaExemplaresDTOs = 
 				geracaoNFeService.busca(intervaloBox, intervaloCota, intervaloDateMovimento, listIdFornecedor, 
@@ -204,21 +202,10 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Post("/gerar.json")
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
-	public void gerar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
-			Integer intervaloCotaDe, Integer intervaloCotaAte,
-			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, 
-			Long tipoNotaFiscal, Date dataEmissao, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
-		
-		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
-		
-		Intervalo<Integer> intervalorCota = new Intervalo<Integer>(intervaloCotaDe, intervaloCotaAte);
-		
-		Intervalo<Date> intervaloDateMovimento = new Intervalo<Date>(intervaloDateMovimentoDe, intervaloDateMovimentoAte);
+	public void gerar(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		
 		try {
-			this.geracaoNFeService.gerarNotaFiscal(intervaloBox, intervalorCota, intervaloDateMovimento, 
-					listIdFornecedor, null, tipoNotaFiscal, dataEmissao, idCotasSuspensas, null);
-			
+			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 

@@ -428,7 +428,27 @@ var geracaoNFeController = $.extend({
 		
 		$('#geracaoNfe-checkboxCheckAllCotasSuspensas', this.workspace).attr('checked', false);
 		var _this = this;
-		var params = this.getParams();
+		
+		var params = [];
+		
+		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
+		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
+		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
+		params.push({name:"filtro.intervaloBoxFinal" , value: $("#geracaoNfe-filtro-inputIntervaloBoxAte").val()});
+		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
+		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
+		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
+		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
+		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
+		
+		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
+			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
+				params.push({name : "filtro.listIdFornecedor[]", value : v});
+			});
+		}
+		
 		$.postJSON(this.path + 'hasCotasSuspensas.json', params, function(data) {
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
@@ -444,6 +464,39 @@ var geracaoNFeController = $.extend({
 				_this.gerar();
 			}
 
+		});
+	},
+	
+	gerar : function() {
+		var params = this.getParams();
+		var todas = $('#checkboxCheckAllCotasSuspensas', this.workspace).checked;
+		
+		var cotasSuspensas = $(".checkboxCheckCotasSuspensas", this.workspace);
+		
+		var listaCotasSuspensas = new Array;
+		
+		for (var index in cotasSuspensas) {
+			if (cotasSuspensas[index].checked) {
+				listaCotasSuspensas.push(cotasSuspensas[index].value);
+			}
+		}
+		
+		params = serializeArrayToPost('idCotasSuspensas', listaCotasSuspensas, params);
+		params['dataEmissao'] = $("#datepickerEmissao", this.workspace).val();
+		params['todasCotasSuspensa'] = todas;
+		
+		var _this = this;
+		
+		$.postJSON(this.path + 'gerar.json', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
+			_this.gridReaload(_this.$gridNFe,'busca.json');
+			
 		});
 	},
 	
@@ -485,6 +538,7 @@ var geracaoNFeController = $.extend({
 		);
 	},
 	
+<<<<<<< HEAD
 	verificarTipoDestinatario : function(element) {
 		if(element.value != "FORNECEDOR") {
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
@@ -517,5 +571,7 @@ var geracaoNFeController = $.extend({
 	}
 	
 	
+=======
+>>>>>>> DGBti/nfe
 }, BaseController);
 //@ sourceURL=geracaoNFe.js
