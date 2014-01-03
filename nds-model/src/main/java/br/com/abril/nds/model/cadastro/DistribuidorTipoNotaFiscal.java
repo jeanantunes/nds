@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
@@ -49,12 +50,12 @@ public class DistribuidorTipoNotaFiscal {
 	
 	@OneToMany
 	@JoinTable(
-	            name="TIPO_NOTA_TIPO_MOVIMENTO",
+	            name="TIPO_NOTA_NATUREZA_OPERACAO",
 	            joinColumns={
 	            		@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPOS", name="TIPO_NOTA_ID", referencedColumnName="id", nullable=false)
 	                    },
-	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO",name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
-	private List<TipoMovimento> tipoMovimento;
+	            inverseJoinColumns=@JoinColumn(table="NATUREZA_OPERACAO",name="NATUREZA_OPERACAO_ID", referencedColumnName="id"))
+	private List<NaturezaOperacao> naturezaOperacao;
 	
 	public Long getId() {
 		return id;
@@ -105,11 +106,12 @@ public class DistribuidorTipoNotaFiscal {
 		this.tipoEmissaoDisponiveis = tipoEmissaoDisponiveis;
 	}
 
-	public List<TipoMovimento> getTipoMovimento() {
-		return tipoMovimento;
+	public List<NaturezaOperacao> getNaturezaOperacao() {
+		return naturezaOperacao;
 	}
 
-	public void setTipoMovimento(List<TipoMovimento> tipoMovimento) {
-		this.tipoMovimento = tipoMovimento;
+	public void setNaturezaOperacao(List<NaturezaOperacao> naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
 	}
+
 }

@@ -103,7 +103,7 @@ var geracaoNFeController = $.extend({
 					$(this).dialog("close");
 					$('#geracaoNfe-dialog-cotasSuspensas').dialog("open");
 				}
-			}
+			},
 		});
 		
 		$("#geracaoNfe-dialog-cotasSuspensas").dialog({
@@ -538,7 +538,6 @@ var geracaoNFeController = $.extend({
 		);
 	},
 	
-<<<<<<< HEAD
 	verificarTipoDestinatario : function(element) {
 		if(element.value != "FORNECEDOR") {
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
@@ -570,8 +569,5 @@ var geracaoNFeController = $.extend({
 		
 	}
 	
-	
-=======
->>>>>>> DGBti/nfe
 }, BaseController);
 //@ sourceURL=geracaoNFe.js

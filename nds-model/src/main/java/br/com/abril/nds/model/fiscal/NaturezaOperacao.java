@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -13,10 +14,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 /**
  * @author francisco.garcia
@@ -66,6 +70,15 @@ public class NaturezaOperacao implements Serializable {
 	
 	@Column(name = "CONTRIBUINTE", nullable = false)
 	private boolean contribuinte;
+	
+	@OneToMany
+	@JoinTable(
+	            name="NATUREZA_OPERACAO_TIPO_MOVIMENTO",
+	            joinColumns={
+	            		@JoinColumn(table="NATUREZA_OPERACAO", name="NATUREZA_OPERACAO_ID", referencedColumnName="id", nullable=false)
+	                    },
+	            inverseJoinColumns=@JoinColumn(table="TIPO_MOVIMENTO",name="TIPO_MOVIMENTO_ID", referencedColumnName="id"))
+	private List<TipoMovimento> tipoMovimento;
 	
 	public Long getId() {
 		return id;

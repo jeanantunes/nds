@@ -613,7 +613,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto"); 	
 		
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, false, false, false), filtro);
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
 				
 		if(filtro.getPaginacaoVO()!=null) {
 			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
@@ -636,9 +636,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mec.cota.id) ");
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro);
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, false), filtro);
 		
-		return (Long) query.uniqueResult();
+		return (long) query.list().size();
 	}
 
 	/**
@@ -647,7 +647,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	 * @param listaMovimentoEstoqueCota
 	 * @return
 	 */
-	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, List<Long> numeroCota) {
@@ -655,8 +654,26 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// ITENS DA NOTA FISCAL
 		StringBuilder hql = new StringBuilder("SELECT mec");
 		
-		Query query = prepararCreateQuery(queryConsultaNfe(filtro, hql, true, true, true), filtro); 
-		 
+		// Roteiro:
+		if(filtro.getIdRoteiro() != null) {
+			hql.append(" AND roteiro.id = :roteiroId ");
+		}
+		
+		// Rota:		
+		if(filtro.getIdRota() != null) {
+			hql.append(" AND rota.id = :rotaId ");
+		}
+		
+		// Cota de:	 Até   
+		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
+			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
+		}
+		
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+		
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, true), filtro);
 		query.setParameter("numeroCota", numeroCota);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoEstoqueCota.class));
@@ -672,50 +689,43 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN mec.cota cota ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" LEFT JOIN cota.box box ")
+		.append(" LEFT JOIN box.roteirizacao roteirizacao ")
+		.append(" LEFT JOIN roteirizacao.roteiros roteiro ")
+		.append(" LEFT JOIN roteiro.rotas rota ")
 		.append(" JOIN mec.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ");
 		
 		// Tipo de Nota:		
-		if(filtro.getIdTipoNotaFiscal() !=null) {
+		if(filtro.getIdTipoNotaFiscal() != null) {
 			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
-			hql.append("FROM DistribuidorTipoNotaFiscal dtp ");
-			hql.append("JOIN dtp.tipoMovimento tm ");
-			hql.append("WHERE dtp.id in(:tipoNota)) ");
+			hql.append("FROM NaturezaOperacao no ");
+			hql.append("JOIN no.tipoMovimento tm ");
+			hql.append("WHERE no.id in(:tipoNota)) ");
 		}
 		
 		// Data Emissão:	...		
-		if(filtro.getDataEmissao() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
 		}
 		
 		// Roteiro:
-		if(filtro.getIdRoteiro() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
+		if(filtro.getIdRoteiro() != null) {
+			hql.append(" AND roteiro.id = :roteiroId ");
 		}
 		
 		// Rota:		
-		if(filtro.getIdRota() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
+		if(filtro.getIdRota() != null) {
+			hql.append(" AND rota.id = :rotaId ");
 		}
 		
 		// Cota de:	 Até   
-		if(filtro.getIntervaloBoxInicial() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
+		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
+			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
 		}
 		
-		// Intervalo Box:	 Até		
-		if(filtro.getIntervaloBoxInicial() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
-		}
-		
-		if(filtro.getIntervaloBoxInicial() !=null) {
-			hql.append(" AND BOX.CODIGO = :codigoBox ");
-		}
-		 
-		
-		if(filtro.getListIdFornecedor() !=null) {
+		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 				
@@ -732,7 +742,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return hql;
 	}
 	
-	public Query prepararCreateQuery(StringBuilder hql, FiltroViewNotaFiscalDTO filtro) {
+	public Query queryConsultaNfeParameters(StringBuilder hql, FiltroViewNotaFiscalDTO filtro) {
 		
 
 		// Realizar a consulta e converter ao objeto cota exemplares.
@@ -753,6 +763,32 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getListIdFornecedor() !=null && !filtro.getListIdFornecedor().isEmpty()) {
 			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
 		}
+		
+		// Data Emissão:	...		
+		/*if(filtro.getDataEmissao() != null) {
+			
+		}*/
+		
+		// Roteiro:
+		if(filtro.getIdRoteiro() != null) {
+			query.setParameter("roteiroId", filtro.getIdRoteiro());
+		}
+		
+		// Rota:		
+		if(filtro.getIdRota() != null) {
+			query.setParameter("rotaId", filtro.getIdRota());
+		}
+		
+		// Cota de:	 Até   
+		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
+			query.setParameter("codigoBoxInicial", filtro.getIntervaloBoxInicial());
+			query.setParameter("codigoBoxFinal", filtro.getIntervaloBoxFinal());
+		}
+		
+		if(filtro.getListIdFornecedor() != null) {
+			query.setParameterList("fornecedor", filtro.getListIdFornecedor());
+		}
+		
 		return query;	
 	}
 

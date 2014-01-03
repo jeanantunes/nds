@@ -130,13 +130,14 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	}
 
 	@Override
+	@Transactional
 	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		return notaFiscalService.consultaCotaExemplareSumarizado(filtro);
 	}
 
 	@Override
-	public Long consultaCotaExemplareSumarizadoQtd(
-			FiltroViewNotaFiscalDTO filtro) {
+	@Transactional
+	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
 		
 		return notaFiscalService.consultaCotaExemplareSumarizadoQtd(filtro);
 	}
