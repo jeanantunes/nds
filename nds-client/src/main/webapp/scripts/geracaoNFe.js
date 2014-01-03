@@ -103,7 +103,7 @@ var geracaoNFeController = $.extend({
 					$(this).dialog("close");
 					$('#geracaoNfe-dialog-cotasSuspensas').dialog("open");
 				}
-			}
+			},
 		});
 		
 		$("#geracaoNfe-dialog-cotasSuspensas").dialog({
