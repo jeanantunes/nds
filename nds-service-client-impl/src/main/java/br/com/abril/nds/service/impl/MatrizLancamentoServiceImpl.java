@@ -679,6 +679,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 			}else{
 			
+				//balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
 				balanceamentoLancamento.addMatrizLancamento(matrizLancamento);
 			
 			}
