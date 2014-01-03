@@ -216,4 +216,11 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 	List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota,
 			Long idConsolildado, List<Long> tiposMovimento, Date data);
+
+	/**
+	 * Verifica existência de MovimentoFinanceiroCota Consolidado por id
+	 * @param idMovimentoFinanceiroCota
+	 * @return boolean
+	 */
+	boolean isMovimentoFinanceiroCotaConsolidado(Long idMovimentoFinanceiroCota);
 }

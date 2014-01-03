@@ -113,7 +113,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Verifica permissão de emissão de Boleto para a Cota
+	 * Verifica permissão de emissão de Boleto/Cobrança para a Cota
 	 * 
 	 * @param cota
 	 * @return boolean
@@ -135,30 +135,9 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 
 		return emissaoBoletoCota;
 	}
-
-    /**
-     * Verifica permissão de emissão de Recibo da Cobrança para a Cota
-     * 
-     * @param cota
-     * @return boolean
-     */
-    private boolean isEmiteRecibo(Cota cota){
-    	
-        boolean emissaoReciboDistribuidor = this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
-        
-        if ((cota.getParametroDistribuicao() == null) || 
-		    (cota.getParametroDistribuicao().getReciboEmail() == null)){
-			
-			return emissaoReciboDistribuidor;
-		}
-		
-		boolean emissaoSlipCota = cota.getParametroDistribuicao().getReciboEmail()!=null?cota.getParametroDistribuicao().getReciboEmail():false;
-		
-		return emissaoSlipCota;
-    }
 	
     /**
-     * Obtem anexos do email de cobrança conforme parâmetros de Cobrança
+     * Obtem anexos do email de cobrança conforme parâmetros de Cobrança da Cota ou do Distribuidor
      * 
      * @param cota
      * @param nossoNumero
@@ -187,16 +166,6 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	    		anexosEmail.add(new AnexoEmail("Cobranca",anexoBoleto,TipoAnexo.PDF));
 	    	}
 	    }	
-
-	    if (this.isEmiteRecibo(cota)){
-	       
-	    	byte[] anexoRecibo = this.documentoCobrancaService.gerarReciboCobranca(nossoNumero);
-	    
-	    	if (anexoRecibo!=null){
-	        
-	    		anexosEmail.add(new AnexoEmail("Recibo",anexoRecibo,TipoAnexo.PDF));
-	    	}	
-	    }
 
 		return anexosEmail;
 	}
