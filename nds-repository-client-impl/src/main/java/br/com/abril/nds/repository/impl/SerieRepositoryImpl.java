@@ -31,4 +31,14 @@ public class SerieRepositoryImpl extends AbstractRepositoryModel<Serie, Integer>
 		merge(serie);		
 		return serie.getCurrentValue();		
 	}
+
+	@Override
+	public Long obterNumeroSerieNota() {
+		
+		/**
+		 * TODO
+		 * adicionar a regra obtenção da serie da nota fiscal
+		 */
+		return 1L;
+	}
 }
