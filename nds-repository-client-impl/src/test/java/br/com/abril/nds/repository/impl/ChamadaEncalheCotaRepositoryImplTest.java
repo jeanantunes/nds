@@ -37,8 +37,8 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NCM;
-import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -138,8 +138,8 @@ public class ChamadaEncalheCotaRepositoryImplTest extends
 		save(cfop);
 
 		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("5102");
+		tipoNotaFiscal.setCfopOutrosEstados("6102");
 		save(tipoNotaFiscal);
 
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture

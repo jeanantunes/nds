@@ -54,6 +54,10 @@ public class NaturezaOperacao implements Serializable {
 	@Column(name = "TIPO_ATIVIDADE", nullable = false)
 	private TipoAtividade tipoAtividade;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_DESTINATARIO", nullable = false)
+	private TipoDestinatario tipoDestinatario;
+	
 	@ElementCollection(targetClass = Processo.class,fetch=FetchType.EAGER) 
 	@CollectionTable(name = "PROCESSO_NFE",
 	    joinColumns = @JoinColumn(name = "PROCESSO_NFE_ID"))
@@ -113,6 +117,14 @@ public class NaturezaOperacao implements Serializable {
 
 	public void setTipoAtividade(TipoAtividade tipoAtividade) {
 		this.tipoAtividade = tipoAtividade;
+	}
+
+	public TipoDestinatario getTipoDestinatario() {
+		return tipoDestinatario;
+	}
+
+	public void setTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		this.tipoDestinatario = tipoDestinatario;
 	}
 
 	public boolean isContribuinte() {

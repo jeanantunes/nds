@@ -31,6 +31,28 @@ var geracaoNFeController = $.extend({
 		this.initDialog();
 		this.initButtons();
 		this.initFlexiGrids();
+		
+		params = [];
+		params.push({name: 'tipoDestinatario', value: 'COTA'});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#geracaoNfe-filtro-tipoNotaFiscal").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#geracaoNfe-filtro-tipoNotaFiscal').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+		
 	},
 	
 	
@@ -471,6 +493,26 @@ var geracaoNFeController = $.extend({
 			$("#geracaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
 		}
 		
+		params = [];
+		params.push({name: 'tipoDestinatario', value: element.value});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#geracaoNfe-filtro-tipoNotaFiscal").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#geracaoNfe-filtro-tipoNotaFiscal').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
 		
 	}
 	

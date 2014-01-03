@@ -201,8 +201,8 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(cfop);
 		
 		tipoNotaFiscal = Fixture.tipoNotaFiscalRecebimento(cfop);
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("5102");
+		tipoNotaFiscal.setCfopOutrosEstados("5102");
 		save(tipoNotaFiscal);
 		
 		NotaFiscalEntradaFornecedor notaFiscal1Veja = Fixture

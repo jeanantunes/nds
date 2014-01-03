@@ -4,9 +4,11 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 
@@ -33,4 +35,10 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	public abstract Integer consultaCotaExemplaresSumarizadosQtd(
 			FiltroViewNotaFiscalDTO filtro);
+
+	/**
+	 * Obtem naturezas de operacao pelo tipo de destinatario
+	 * @param tipoDestinatario
+	 */
+	public abstract List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
 }

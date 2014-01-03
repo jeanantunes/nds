@@ -21,12 +21,14 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNFeService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -54,6 +56,9 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Autowired 
 	private GeracaoNFeService geracaoNFeService;
+	
+	@Autowired 
+	private NotaFiscalService notaFiscalService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
@@ -93,7 +98,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 
 	private void iniciarComboRoteiro() {
-		result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
+		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
 		
 		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
 		
@@ -118,6 +123,14 @@ public class GeracaoNFeController extends BaseController {
 		}
 		
 		result.include("rotas", listRota);
+	}
+	
+	@Post
+	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		
+		List<ItemDTO<Long, String>> naturezasOperacoes = notaFiscalService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+	
+		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
 	
 	@Post("/busca.json")

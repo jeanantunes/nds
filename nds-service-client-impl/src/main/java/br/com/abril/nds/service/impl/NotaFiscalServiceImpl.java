@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
@@ -56,6 +57,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
@@ -88,6 +90,7 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EncargoFinanceiroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -97,7 +100,6 @@ import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
-import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -944,7 +946,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 								+ idTipoNotaFiscal + " não encontrada!");
 			}
 
-			cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado().getCodigo());
+			cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado());
 		} else {
 
 			if (tipoNotaFiscal.getCfopOutrosEstados() == null) {
@@ -952,8 +954,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						"CFOP para outros estados para tipo nota fiscal "
 								+ idTipoNotaFiscal + " não encontrada!");
 			}
-			cfop = Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados()
-					.getCodigo());
+			cfop = Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados());
 		}
 
 		InformacaoValoresTotais informacaoValoresTotais = new InformacaoValoresTotais();
@@ -1085,7 +1086,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 								+ idTipoNotaFiscal + " não encontrada!");
 			}
 
-			cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado().getCodigo());
+			cfop = Integer.valueOf(tipoNotaFiscal.getCfopEstado());
 		} else {
 
 			if (tipoNotaFiscal.getCfopOutrosEstados() == null) {
@@ -1093,8 +1094,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						"CFOP para outros estados para tipo nota fiscal "
 								+ idTipoNotaFiscal + " não encontrada!");
 			}
-			cfop = Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados()
-					.getCodigo());
+			cfop = Integer.valueOf(tipoNotaFiscal.getCfopOutrosEstados());
 		}
 
 		InformacaoValoresTotais informacaoValoresTotais = new InformacaoValoresTotais();
@@ -1746,6 +1746,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	public Integer consultaCotaExemplareSumarizadoQtd(
 			FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
+	}
+
+	@Override
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		
+		return notaFiscalRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		
 	}
 
 }

@@ -501,8 +501,8 @@ public class AbstractDataUtilRepositoryImplTest extends AbstractRepositoryImplTe
         save(cfop6949);
     
         tipoNotaFiscalRemessaDistribuicao = new NaturezaOperacao();
-        tipoNotaFiscalRemessaDistribuicao.setCfopEstado(cfop5949);
-        tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados(cfop6949);
+        tipoNotaFiscalRemessaDistribuicao.setCfopEstado("5949");
+        tipoNotaFiscalRemessaDistribuicao.setCfopOutrosEstados("6949");
 //        tipoNotaFiscalRemessaDistribuicao.setNopDescricao("NF-E Remessa para Distribuição");
 //        tipoNotaFiscalRemessaDistribuicao .setEmitente(TipoUsuarioNotaFiscal.TREELOG);
 //        tipoNotaFiscalRemessaDistribuicao .setDestinatario(TipoUsuarioNotaFiscal.DISTRIBUIDOR);

@@ -9,16 +9,16 @@ import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.LongType;
-import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NfeDTO;
-import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -722,5 +722,31 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		Query query = queryConsultaNfe(filtro, hql, true);
 		
 		return (Integer) query.list().size();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		
+		
+		StringBuilder sql = new StringBuilder("")
+			.append("SELECT id as `key`, descricao as value ") 
+			.append("FROM natureza_operacao no ")
+			.append("WHERE no.TIPO_ATIVIDADE = (select TIPO_ATIVIDADE from distribuidor) ");
+		
+		if(tipoDestinatario != null) {
+			sql.append("AND no.TIPO_DESTINATARIO = :tipoDestinatario ");
+		}
+
+		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
+		
+		if(tipoDestinatario != null) {
+			sqlQuery.setParameter("tipoDestinatario", tipoDestinatario.name());
+		}
+		
+		sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+
+		return sqlQuery.list();
+		
 	}
 }

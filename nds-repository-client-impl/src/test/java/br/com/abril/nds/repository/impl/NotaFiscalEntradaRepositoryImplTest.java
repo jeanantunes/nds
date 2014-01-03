@@ -369,8 +369,8 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		tipoNotaFiscal.setContribuinte(false);
 //		tipoNotaFiscal.setSerieNotaFiscal(1);
 		
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("5102");
+		tipoNotaFiscal.setCfopOutrosEstados("5102");
 		
 		save(tipoNotaFiscal);
 		

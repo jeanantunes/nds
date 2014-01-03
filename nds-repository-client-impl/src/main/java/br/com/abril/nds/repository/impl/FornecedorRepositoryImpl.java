@@ -591,31 +591,6 @@ public class FornecedorRepositoryImpl extends
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		
 		return  criteria.list();
-		
-		/*
-		StringBuilder hql = new StringBuilder("")
-		.append("select f.id as `key`, coalesce(p.nome, p.razao_social, p.nome_fantasia) as value ")
-		.append("from fornecedor f ")
-		.append("inner join pessoa p on p.id = f.juridica_id ")
-		.append("where f.fornecedor_unificador_id is null ");
-		
-		if(situacao != null) {
-			hql.append("and f.situacao_cadastro = :situacaoCadastro ");
-		}
-		
-		
-		SQLQuery query = getSession().createSQLQuery(hql.toString());
-		
-		if(situacao != null) {
-			query.setParameter("situacaoCadastro", situacao.name());
-		}
-		
-		query.addScalar("id", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("nome", StandardBasicTypes.STRING);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
-		
-		return query.list();*/
 
 	}
 }

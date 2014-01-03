@@ -1532,8 +1532,8 @@ public class Fixture {
 //		tipoNotaFiscal.setSerieNotaFiscal(serieNotaFiscal);
 		tipoNotaFiscal.setTipoAtividade(tipoAtividade);
 		tipoNotaFiscal.setTipoOperacao(tipoOperacao);	
-		tipoNotaFiscal.setCfopEstado(cfopEstado);
-		tipoNotaFiscal.setCfopOutrosEstados(cfopOutrosEstados);
+		tipoNotaFiscal.setCfopEstado("");
+		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
 	}
@@ -4383,8 +4383,8 @@ public class Fixture {
 		tipoNotaFiscal.setTipoAtividade(TipoAtividade.PRESTADOR_SERVICO);
 //		tipoNotaFiscal.setSerieNotaFiscal(4);
 		
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("");
+		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
 
@@ -4419,8 +4419,8 @@ public class Fixture {
 //		tipoNotaFiscal.setSerieNotaFiscal(3);
 		tipoNotaFiscal.setProcesso(new HashSet<Processo>());
 		
-		tipoNotaFiscal.setCfopEstado(cfop);
-		tipoNotaFiscal.setCfopOutrosEstados(cfop);
+		tipoNotaFiscal.setCfopEstado("");
+		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
 	}

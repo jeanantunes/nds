@@ -177,8 +177,8 @@ public class CadastroTipoNotaController extends BaseController {
 			
 			resultado = new RegistroTipoNotaFiscalVO();
 			resultado.setNopDescricao(tipoNotaFiscal.getDescricao());
-			resultado.setCfopEstado( (tipoNotaFiscal.getCfopEstado()!= null)?tipoNotaFiscal.getCfopEstado().getCodigo():"");
-			resultado.setCfopOutrosEstados((tipoNotaFiscal.getCfopOutrosEstados()!=null)?tipoNotaFiscal.getCfopOutrosEstados().getCodigo():"");
+			resultado.setCfopEstado( (tipoNotaFiscal.getCfopEstado()!= null) ? tipoNotaFiscal.getCfopEstado() : "");
+			resultado.setCfopOutrosEstados((tipoNotaFiscal.getCfopOutrosEstados()!=null) ? tipoNotaFiscal.getCfopOutrosEstados() : "");
 			resultado.setTipoAtividade(tipoNotaFiscal.getTipoAtividade().getDescricao());
 			
 			String processo = "";
