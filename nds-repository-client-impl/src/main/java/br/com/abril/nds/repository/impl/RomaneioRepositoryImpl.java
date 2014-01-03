@@ -75,10 +75,12 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 //		hql.append(", cota.id as idCota ");
 //		hql.append(", rotaPDV.id as idRota ");
 		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
-		hql.append(", concat(endereco.tipoLogradouro, ' ' , endereco.logradouro, ', ' , endereco.numero) as logradouro ");
-//		hql.append(", endereco.bairro as bairro ");		
-//		hql.append(", endereco.cidade as cidade ");
-//		hql.append(", endereco.uf as uf ");
+		hql.append(", concat(endereco.tipoLogradouro, ' ' , endereco.logradouro, ', ' , endereco.numero ");
+		hql.append(", ', ', endereco.bairro ");
+		hql.append(", ', ', endereco.cidade ");
+		hql.append(", ', ', endereco.uf ");
+		hql.append(" ) as logradouro, ");
+		hql.append(" endereco.cep as cep ");
 		
 		//if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			//hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");

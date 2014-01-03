@@ -2104,7 +2104,7 @@ public class BoletoServiceImpl implements BoletoService {
 																	            Date dataRecolhimentoCEDe, 
 																	            Date dataRecolhimentoCEAte) {
 		
-        List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.EM_ABERTO, StatusDivida.QUITADA);
+        List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, StatusDivida.QUITADA);
 		
 		BoletoAntecipado boletoAntecipado = this.boletoAntecipadoRepository.obterBoletoAntecipadoPorCECotaEPeriodoRecolhimento(idCE, 
 				                                                                                                               dataRecolhimentoCEDe, 
@@ -2194,7 +2194,7 @@ public class BoletoServiceImpl implements BoletoService {
     	boletoAntecipado.getEmissaoBoletoAntecipado().setDataRecolhimentoCEDe(bbDTO.getDataRecolhimentoCEDe());
     	boletoAntecipado.getEmissaoBoletoAntecipado().setDataRecolhimentoCEAte(bbDTO.getDataRecolhimentoCEAte());
     	boletoAntecipado.setValor(bbDTO.getValorTotalLiquido().add(bbDTO.getValorTotalDebitos().subtract(bbDTO.getValorTotalCreditos())));
-    	boletoAntecipado.setStatus(StatusDivida.EM_ABERTO);
+    	boletoAntecipado.setStatus(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO);
     	boletoAntecipado.setTipoCobranca(TipoCobranca.BOLETO_EM_BRANCO);
     	
     	if (boletoAntecipado.getId()==null){
@@ -2251,7 +2251,9 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	/**
-	 * Verifica se existe boleto antecipado para a cota na data de recolhimento
+	 * Verifica se existe boleto antecipado para a cota
+	 * Data de recolhimento dentro do periodo de emissao CE do Boleto antecipado
+	 * Boletos em Branco sem reimpressão
 	 * @param idCota
 	 * @param dataRecolhimento
 	 * @return boolean
@@ -2260,11 +2262,24 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	public boolean existeBoletoAntecipadoCotaDataRecolhimento(Long idCota, Date dataRecolhimento){
 		
-		List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.EM_ABERTO, StatusDivida.QUITADA);
+		List<StatusDivida> listaStatusDivida = Arrays.asList(StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO, StatusDivida.QUITADA);
 		
-		BoletoAntecipado ba = this.boletoAntecipadoRepository.obterBoletoAntecipadoPorDataRecolhimentoECota(idCota, dataRecolhimento, listaStatusDivida);
+		List<BoletoAntecipado> bas = this.boletoAntecipadoRepository.obterBoletosAntecipadosPorDataRecolhimentoECota(idCota, dataRecolhimento, listaStatusDivida);
 		
-		return (ba !=null);
+		if (bas==null || bas.isEmpty()){
+			
+			return false;
+		}
+		
+		for (BoletoAntecipado ba : bas){
+			
+			if (ba.getEmissaoBoletoAntecipado().getBoletoAntecipadoReimpresso() == null){
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -2282,6 +2297,7 @@ public class BoletoServiceImpl implements BoletoService {
 			                                                   Date dataRecolhimentoAte){
 		
 		List<BoletoAntecipado> bas = this.boletoAntecipadoRepository.obterBoletosAntecipadosPorPeriodoRecolhimentoECota(numeroCota,
+				                                                                                                        numeroCota,  
 				                                                                                                        dataRecolhimentoDe, 
 				                                                                                                        dataRecolhimentoAte);
 		
@@ -2294,5 +2310,28 @@ public class BoletoServiceImpl implements BoletoService {
     		    this.boletoAntecipadoRepository.merge(ba);
         	}
         }
+	}
+	
+	/**
+	 * Verifica se existe Boleto Antecipado emitido para a faixa de cotas no periodo de recolhimento
+	 * @param numeroCotaDe
+	 * @param numeroCotaAte
+	 * @param dataRecolhimentoDe
+	 * @param dataRecolhimentoAte
+	 * @return boolean
+	 */
+	@Transactional(readOnly=true)
+	@Override
+	public boolean existeBoletoAntecipadoPeriodoRecolhimentoECota(Integer numeroCotaDe,
+																  Integer numeroCotaAte,
+														          Date dataRecolhimentoDe,
+														          Date dataRecolhimentoAte){
+		
+		List<BoletoAntecipado> bas = this.boletoAntecipadoRepository.obterBoletosAntecipadosPorPeriodoRecolhimentoECota(numeroCotaDe,
+				                                                                                                        numeroCotaAte,
+																										                dataRecolhimentoDe, 
+																										                dataRecolhimentoAte);
+		
+		return (bas!=null && bas.size()>0);
 	}
 }

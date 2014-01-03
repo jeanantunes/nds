@@ -69,6 +69,7 @@ import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoReposit
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
@@ -145,6 +146,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
+	
+	@Autowired
+	private BoletoEmailService boletoEmailService;
 	
 	@Autowired
 	private NegociacaoDividaRepository negociacaoRepository;
@@ -288,6 +292,40 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				               new HashMap<String, Boolean>(),
         		               true);
 	}
+	
+	/**
+	 * Obtém lista de nosso numero para envio de documento de cobrança por email
+	 * @param nossoNumeroEnvioEmail
+	 * @return List<String>
+	 */
+    private List<String> obterListaNossoNumeroEnvioEmail(Map<String, Boolean> nossoNumeroEnvioEmail){
+		
+		List<String> listaNossoNumero = new ArrayList<String>();
+
+		for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+			
+			if (nossoNumeroEnvioEmail.get(nossoNumero)){
+				
+				listaNossoNumero.add(nossoNumero);
+			}
+		}
+        
+        return listaNossoNumero;
+	}
+    
+    /**
+     * Salva informações pendência de envio de documento de cobrança por email
+     * @param nossoNumeroEnvioEmail
+     */
+    private void salvarBoletoEmailPendenteEnvio(Map<String, Boolean> nossoNumeroEnvioEmail){
+    	
+        List<String> listaNossoNumero = this.obterListaNossoNumeroEnvioEmail(nossoNumeroEnvioEmail);
+		
+		if (listaNossoNumero!=null && !listaNossoNumero.isEmpty()){
+		
+		    this.boletoEmailService.salvarBoletoEmail(listaNossoNumero);
+		}
+    }
 	
 	/**
 	 * Gera Cobraça para uma ou todas as cotas com pendências financeiras
@@ -485,6 +523,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 		}
 		
+        this.salvarBoletoEmailPendenteEnvio(setNossoNumero);
+		
 		if (!msgs.isEmpty()){
 			
 			throw new GerarCobrancaValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msgs));
@@ -678,6 +718,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case LANCAMENTO_CAUCAO_LIQUIDA:
 				case RESGATE_CAUCAO_LIQUIDA:
 				case VENDA_TOTAL:
+				case NEGOCIACAO_COMISSAO:
 					
 					vlMovFinanDebitoCredito = 
 						this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
@@ -1172,13 +1213,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				consolidado.setMovimentos(null);
 				
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
-								
-				if (excluiFinanceiro){
+				
+                if (excluiFinanceiro && mfcs!=null && !mfcs.isEmpty()){
 					
-	                if (mfcs!=null && !mfcs.isEmpty()){
-						
-				    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
-					}
+			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
 				}
                               				                        
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
