@@ -1720,16 +1720,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return null;
 
 	}
-
-	@Override
-	public List<br.com.abril.nds.model.fiscal.NotaFiscal> obterNotaFiscal(
-			ConsultaLoteNotaFiscalDTO dadoConsultaLoteNotaFiscal) {
-		
-		this.notaFiscalRepository.obterNotaFiscal(dadoConsultaLoteNotaFiscal);
-		
-		return null;
-	}
-
+	
 	@Override
 	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		
@@ -1743,8 +1734,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	@Override
-	public Long consultaCotaExemplareSumarizadoQtd(
-			FiltroViewNotaFiscalDTO filtro) {
+	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
