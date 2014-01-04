@@ -24,7 +24,7 @@ public class FiltroViewNotaFiscalDTO {
 	
 	private Date dataEmissao; 
 	
-	private Long idTipoNotaFiscal;
+	private Long idNaturezaOperacao;
 	
 	private Long idRoteiro; 
 	
@@ -83,15 +83,7 @@ public class FiltroViewNotaFiscalDTO {
 	public void setDataFinal(Date dataFinal) {
 		this.dataFinal = dataFinal;
 	}
-
-	public Long getIdTipoNotaFiscal() {
-		return idTipoNotaFiscal;
-	}
-
-	public void setIdTipoNotaFiscal(Long idTipoNotaFiscal) {
-		this.idTipoNotaFiscal = idTipoNotaFiscal;
-	}
-
+	
 	public Long getIdRoteiro() {
 		return idRoteiro;
 	}
@@ -132,6 +124,14 @@ public class FiltroViewNotaFiscalDTO {
 		this.dataEmissao = dataEmissao;
 	}
 
+	public Long getIdNaturezaOperacao() {
+		return idNaturezaOperacao;
+	}
+
+	public void setIdNaturezaOperacao(Long idNaturezaOperacao) {
+		this.idNaturezaOperacao = idNaturezaOperacao;
+	}
+	
 	public PaginacaoVO getPaginacaoVO() {
 		return paginacaoVO;
 	}

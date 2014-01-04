@@ -1,12 +1,11 @@
 package br.com.abril.nfe.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,8 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import br.com.abril.nfe.enums.NotaFiscalTipoOperacao;
 
 @Entity
 @Table(name = "NOTA_FISCAL")
@@ -46,6 +43,9 @@ public class NotaFiscal implements Serializable {
 	@Column(name = "CHAVE_ACESSO")
 	protected String chaveAcesso;
 	
+	@Column(name = "DATA_EMISSAO", nullable = false)
+	private Date dataEmissao;
+	
 	@ManyToOne
 	@JoinColumn(name = "NOTA_FISCAL_EMISSOR_PESSOA_ID")
 	private NotaFiscalPessoaJuridica emissor;
@@ -54,9 +54,9 @@ public class NotaFiscal implements Serializable {
 	@JoinColumn(name="EMITENTE_DESTINARIO_PESSOA_ID", unique=true)
 	private NotaFiscalPessoa emitenteDestinario;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "NOTA_FISCAL_TIPO_OPERACAO")
-	private NotaFiscalTipoOperacao notaFiscalTipoOperacao;	
+	@OneToOne(mappedBy="naturezaOperacao")
+	@JoinColumn(name="NATUREZA_OPERACAO_ID", unique=true)
+	private NaturezaOperacao naturezaOperacao;	
 	
 	@ManyToOne
 	private List<NotaFiscalFatura> notaFiscalFatura;
@@ -154,14 +154,13 @@ public class NotaFiscal implements Serializable {
 	public void setInformacoesComplementares(String informacoesComplementares) {
 		this.informacoesComplementares = informacoesComplementares;
 	}
-
-	public NotaFiscalTipoOperacao getNotaFiscalTipoOperacao() {
-		return notaFiscalTipoOperacao;
+	
+	public NaturezaOperacao getNaturezaOperacao() {
+		return naturezaOperacao;
 	}
 
-	public void setNotaFiscalTipoOperacao(
-			NotaFiscalTipoOperacao notaFiscalTipoOperacao) {
-		this.notaFiscalTipoOperacao = notaFiscalTipoOperacao;
+	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
 	}
 
 	public List<NotaFiscalFatura> getNotaFiscalFatura() {
@@ -196,5 +195,12 @@ public class NotaFiscal implements Serializable {
 	public void setNotaFiscalitens(List<NotaFiscalItem> notaFiscalitens) {
 		this.notaFiscalitens = notaFiscalitens;
 	}
-	
+
+	public Date getDataEmissao() {
+		return dataEmissao;
+	}
+
+	public void setDataEmissao(Date dataEmissao) {
+		this.dataEmissao = dataEmissao;
+	}
 }
