@@ -9,9 +9,9 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
  * @created 14-fev-2012 11:35:33
  */
 public enum TipoOperacao implements NotaFiscalEnum {
+	
 	ENTRADA("Entrada","E"),
 	SAIDA("Saída","S");
-	
 	
 	TipoOperacao(String descricao, String simpleValue) {
 		this.descricao = descricao;

@@ -692,7 +692,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" JOIN mec.produtoEdicao produtoEdicao")
 		.append(" JOIN produtoEdicao.produto produto ")
 		.append(" JOIN produto.fornecedores fornecedor")
-		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ");
+		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ")
+		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
+		.append(" AND mec.movimentoEstoqueCotaFuro is null ");
 		
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {
@@ -705,6 +707,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// Data Emissão:	...		
 		if(filtro.getDataEmissao() != null) {
 			hql.append(" ");
+		}
+		
+		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+			hql.append(" AND cota.numeroCota BETWEEN :numeroCotaInicial AND :numeroCotaFinal ");
 		}
 		
 		// Roteiro:
@@ -768,6 +774,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		/*if(filtro.getDataEmissao() != null) {
 			
 		}*/
+		
+		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
+			query.setParameter("numeroCotaInicial", filtro.getIntervalorCotaInicial());
+			query.setParameter("numeroCotaFinal", filtro.getIntervalorCotaFinal());
+		}
 		
 		// Roteiro:
 		if(filtro.getIdRoteiro() != null) {

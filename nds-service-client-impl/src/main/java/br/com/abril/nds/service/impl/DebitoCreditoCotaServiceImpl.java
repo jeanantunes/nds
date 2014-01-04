@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -58,6 +60,9 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Override
 	@Transactional
@@ -415,4 +420,41 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		return listaDebitoCredito;
  	}
+	
+	/**
+	 * Verifica se o Movimento Financeiro pode ser Editado
+	 * Nao consolidado
+	 * Lancamento automatico
+	 * Data do movimento maior que a data de operação
+	 * 
+	 * @param movimentoFinanceiroCota
+	 * @return boolean
+	 */
+	@Override
+	@Transactional(readOnly = true)
+    public boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota) {
+		
+		boolean movimentoEditavel = true;
+		
+		if (this.movimentoFinanceiroCotaRepository.isMovimentoFinanceiroCotaConsolidado(movimentoFinanceiroCota.getId())) {
+			
+			movimentoEditavel = false;
+		}
+		
+		if (!movimentoFinanceiroCota.isLancamentoManual()) {
+			
+			movimentoEditavel = false;
+		}
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
+		
+		if (dataOperacao.compareTo(movimentoFinanceiroCota.getData()) >= 0) {
+			
+			movimentoEditavel = false;
+		}
+		
+		return movimentoEditavel;
+	}
 }

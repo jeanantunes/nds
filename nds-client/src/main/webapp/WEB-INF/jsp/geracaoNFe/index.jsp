@@ -56,9 +56,9 @@ $(function(){
 				<tr>
 					<td width="91">Destinatário:</td>
     				<td width="204">
-    					<input type="radio" name="tipoDestinatario" id="tipoDestinatario1" value="COTA" checked="checked" onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> Cota
-    					<input type="radio" name="tipoDestinatario" id="tipoDestinatario2" value="DISTRIBUIDOR" onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> Distribuidor
-    					<input type="radio" name="tipoDestinatario" id="tipoDestinatario3" value="FORNECEDOR" onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> Fornecedor
+    					<c:forEach items="${tiposDestinatarios}" var="tipoDestinatario" varStatus="status" >
+    						<input type="radio" name="tipoDestinatario" id="tipoDestinatario${status.index}" value="${tipoDestinatario}" <c:if test="${status.index == 0}">checked="checked"</c:if> onchange="geracaoNFeController.verificarTipoDestinatario(this);" /> ${tipoDestinatario.descricao}
+    					</c:forEach>
 					</td>
     				<td colspan=2>
     					<select id="geracaoNfe-filtro-selectFornecedoresDestinatarios" name="selectFornecedores" multiple="multiple" style="width:300px">
@@ -93,7 +93,7 @@ $(function(){
 				<tr>
 					<td>Roteiro:</td>
 					<td>
-						<select id="geracaoNfe-filtro-listRoteiro" name="listRoteiro" style="width:200px; font-size:11px!important">
+						<select id="geracaoNfe-filtro-selectRoteiro" onchange="geracaoNFeController.changeRoteiro();" style="width:200px; font-size:11px!important">
       						<option value="">Selecione...</option>
       						<c:forEach items="${roteiros}" var="roteiro">
 								<option value="${roteiro.key }">${roteiro.value }</option>
@@ -102,9 +102,9 @@ $(function(){
     				</td>
 					<td>Rota:</td>
     				<td>
-    					<select id="geracaoNfe-filtro-listRota" name="listRota" style="width:200px; font-size:11px!important">
-    						<option value="">Selecione...</option>
-    						<c:forEach items="${rotas}" var="rota">
+    					<select id="geracaoNfe-filtro-selectRota" onchange="geracaoNFeController.changeRota();" style="width:150px; font-size:11px!important">
+      						<option value="">Selecione...</option>
+      						<c:forEach items="${rotas}" var="rota">
 								<option value="${rota.key }">${rota.value }</option>
 							</c:forEach>
     					</select>
@@ -118,8 +118,21 @@ $(function(){
 				<tr>
 					<td>Intervalo Box:</td>
     				<td>
-    					<input type="text" id="geracaoNfe-filtro-inputIntervaloBoxDe" name="inputIntervaloBoxDe" style="width:76px;"/>&nbsp;At&eacute; &nbsp;
-				  		<input type="text" id="geracaoNfe-filtro-inputIntervaloBoxAte" name="inputIntervaloBoxAte" style="width:76px;"/>
+    					<select name="geracaoNfe-filtro-boxDe" id="geracaoNfe-filtro-inputIntervaloBoxDe" onchange="geracaoNFeController.changeBox();" style="width: 100px;">
+							<option value="" selected="selected">Selecione...</option>
+							<c:forEach var="box" items="${listaBox}">
+								<option value="${box.key}">${box.value}</option>
+							</c:forEach>
+					    </select>
+
+						&nbsp;Até &nbsp;
+	
+						<select name="geracaoNfe-filtro-boxAte" id="geracaoNfe-filtro-inputIntervaloBoxAte" onchange="geracaoNFeController.changeBox();" style="width: 100px;">
+							<option value="" selected="selected">Selecione...</option>
+							<c:forEach var="box" items="${listaBox}">
+								<option value="${box.key}">${box.value}</option>
+							</c:forEach>
+					    </select>
 					</td>
     				<td>Fornecedor:</td>
     				<td colspan="3">
@@ -145,9 +158,16 @@ $(function(){
 		</form>
 	</fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-       <fieldset class="fieldGrid">
-       	  <legend>Gera&ccedil;&atilde;o NF-e</legend>
-          <div class="grids" style="display:none;">
-		  <table id="geracaoNfe-gridNFe"></table>
-		</div>
-      </fieldset>
+<fieldset class="fieldGrid">
+	<legend>Gera&ccedil;&atilde;o NF-e</legend>
+	<!--
+	<div class="grids" style="display: none;">
+		<table id="geracaoNfe-gridNFe"></table>
+	</div>
+	-->
+
+	<div id="geracaoNfe-gridNFe" style="display: none;" class="grids">
+		<div id="geracaoNfe-flexigrid-pesquisa" />
+	</div>
+
+</fieldset>
