@@ -302,5 +302,16 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		return query.list();
 		
 	}
+	
+	@Override
+	public NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao) {
+		String hql = " from NaturezaOperacao no where no.id = : id ";
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameter("id", idNaturezaOperacao);
+		
+		return (br.com.abril.nds.model.fiscal.NaturezaOperacao) query.uniqueResult();
+		
+	}
 
 }

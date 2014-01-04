@@ -697,7 +697,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" AND mec.movimentoEstoqueCotaFuro is null ");
 		
 		// Tipo de Nota:		
-		if(filtro.getIdTipoNotaFiscal() != null) {
+		if(filtro.getIdNaturezaOperacao() != null) {
 			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
 			hql.append("FROM NaturezaOperacao no ");
 			hql.append("JOIN no.tipoMovimento tm ");
@@ -762,8 +762,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 		
 		// tipo da nota fiscal		
-		if(filtro.getIdTipoNotaFiscal() !=null && !"".equals(filtro.getIdTipoNotaFiscal())) {
-			query.setParameter("tipoNota", filtro.getIdTipoNotaFiscal());
+		if(filtro.getIdNaturezaOperacao() !=null && !"".equals(filtro.getIdNaturezaOperacao())) {
+			query.setParameter("tipoNota", filtro.getIdNaturezaOperacao());
 		}
 		
 		// forncedor id		

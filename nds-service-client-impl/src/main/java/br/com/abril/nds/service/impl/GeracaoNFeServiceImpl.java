@@ -34,6 +34,9 @@ import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.builders.EmitenteDestinatarioBuilder;
+import br.com.abril.nds.service.builders.ItemNotaFiscalBuilder;
+import br.com.abril.nds.service.builders.NaturezaOperacaoBuilder;
 import br.com.abril.nds.service.builders.NotaFiscalBuilder;
 import br.com.abril.nds.util.Intervalo;
 
@@ -60,6 +63,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired 
 	private SerieRepository serieRepository;
+	
+	@Autowired 
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 	
 	@Override
 	@Transactional
@@ -134,23 +140,27 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		// obter as cotas que estão na tela pelo id das cotas
 		List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		
 		for (Cota cota : cotas) {
 			notaFiscal = new br.com.abril.nfe.model.NotaFiscal();
-			
-			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor);
+			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			NotaFiscalBuilder.montarHeaderNotaFiscal(cota, notaFiscal);
+			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(cota, notaFiscal);
+			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
+			
 			
 			// obter os movimentos de cada cota
 			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalRepository.obterMovimentoEstoqueCota(filtro, cota.getId());
-			
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoquesCotas) {
-				
+				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
-			
 		}
+		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
+		
+		// this.notaFiscalRepository.merge(notaFiscal);
 		
 		this.notaFiscalService.exportarNotasFiscais(listaNotaFiscal);
 	}

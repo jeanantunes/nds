@@ -50,5 +50,5 @@ public interface NaturezaOperacaoRepository extends Repository<NaturezaOperacao,
 	 */
 	NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoAtividade tipoAtividade, boolean isContribuinte);
 	
-
+	NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao);
 }

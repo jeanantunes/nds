@@ -2,6 +2,7 @@ package br.com.abril.nds.service.builders;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -34,36 +35,19 @@ public class NotaFiscalBuilder implements Serializable {
 			pessoaFisica.getRg();
 			pessoaFisica.getEmail();
 		}
-		
-		
-		// metodo responsavel por popular o header da nota
-		cota.getEnderecoPrincipal().getEndereco().getBairro();
-		
-		
+				
 		return notaFiscal;
 	}
 
 
 	// metodo responsavel pelo dados do distribuidor da nota
-	public static NotaFiscal popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor){
-		
+	public static NotaFiscal popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro){
 		// Dados do Distribuidor
-		
-		/**
-		 *
-		 * -- Natureza da Operação
-		-- PROT. DE AUTORIZAÇÃO
-		-- CRT(Codigo Regime Tributario)
-		-- Inscricao Estadual
-		-- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO
-		-- CNPJ/CPF
-		 * 
-		 */
-		
-		
+		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
+		notaFiscal.getEmissor().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
+		notaFiscal.getEmissor().setCnpj(distribuidor.getJuridica().getCnpj());
 		
 		// Endereço
-		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
 		notaFiscal.getEmissor().getNotaFicalEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());
 		notaFiscal.getEmissor().getNotaFicalEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
 		notaFiscal.getEmissor().getNotaFicalEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
