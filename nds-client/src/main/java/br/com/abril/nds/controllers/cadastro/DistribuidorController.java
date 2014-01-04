@@ -14,6 +14,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
@@ -98,5 +99,11 @@ public class DistribuidorController extends BaseController {
 			return new InputStreamDownload(new ByteArrayInputStream(new byte[0]), null, null);
 		}
 	}	
+	
+	@Post
+    public void obterDataDistribuidor() {
+
+		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
+    }
 	
 }

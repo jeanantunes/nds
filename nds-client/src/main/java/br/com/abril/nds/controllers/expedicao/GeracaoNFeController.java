@@ -87,8 +87,15 @@ public class GeracaoNFeController extends BaseController {
 		this.obterTodosFornecedoresAtivos();
 		this.iniciarComboRoteiro();
 		this.iniciarComboRota();
+		this.obterTiposDestinatarios();
+		this.iniciarComboBox();
+		
 	}
 
+	private void obterTiposDestinatarios() {
+		result.include("tiposDestinatarios", new TipoDestinatario[] {TipoDestinatario.COTA, TipoDestinatario.DISTRIBUIDOR, TipoDestinatario.FORNECEDOR});
+	}
+	
 	private void obterFornecedoresDestinatarios() {
 		result.include("fornecedoresDestinatarios", fornecedorService.obterFornecedoresDestinatarios(SituacaoCadastro.ATIVO));
 	}
@@ -96,6 +103,14 @@ public class GeracaoNFeController extends BaseController {
 	private void obterTodosFornecedoresAtivos() {
 		result.include("fornecedores", fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
 	}
+	
+	/**
+     * Inicia o combo Box
+     */
+    private void iniciarComboBox() {
+
+	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    }
 
 	private void iniciarComboRoteiro() {
 		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
@@ -133,8 +148,8 @@ public class GeracaoNFeController extends BaseController {
 		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
 	}
 	
-	@Post("/busca.json")
-	public void busca(FiltroViewNotaFiscalDTO filtro, String sortname, String sortorder, int rp, int page) {
+	@Post
+	public void pesquisar(FiltroViewNotaFiscalDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
 		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL, filtro);
 		

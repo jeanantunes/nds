@@ -125,12 +125,6 @@ public class GeracaoNotaEnvioController extends BaseController {
     }
 
     @Post
-    public void obterDataDistribuidor(){
-
-	this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
-    }
-
-    @Post
     public void pesquisar(Integer intervaloBoxDe, Integer intervaloBoxAte,
 	    Integer intervaloCotaDe, Integer intervaloCotaAte,
 	    Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,

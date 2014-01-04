@@ -32,7 +32,7 @@ var geracaoNotaEnvioController = $.extend({
 		
 		initFiltroDatas : function(){
 			
-		    $.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/obterDataDistribuidor',
+		    $.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor',
 					null, 
 					function(result) {
 				
