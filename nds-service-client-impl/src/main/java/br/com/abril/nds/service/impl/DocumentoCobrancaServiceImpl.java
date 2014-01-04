@@ -120,7 +120,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	private UsuarioService usuarioService;
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Envia Cobranca por Email
 	 * @param nossoNumero
@@ -152,7 +152,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Gerar documento de Cobranca
 	 * @param dividas
@@ -188,7 +188,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Retorna um grupo de documentos de cobrança. 
 	 * @param listNossoNumero
@@ -216,7 +216,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Retorna uma lista com os nosso número referente as cobranças.
 	 * @param dividas
@@ -234,7 +234,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Envia um tipo de cobrança por email.
 	 * @param cobranca
@@ -261,7 +261,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Retorna o documento de cobrança gerado pelo Ireport
 	 * @param cobrancas
@@ -282,7 +282,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Retorna um grupo de documentos de cobrança gerado pelo Ireport
 	 * @param list
@@ -303,7 +303,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Retorna as informações do distribuidor para montagem dos parâmetros do Ireport
 	 * @return Map<String, Object>
@@ -344,7 +344,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Obtem descrição concatenada do endereço do distribuidor
 	 * @param enderecoDistribuidor
@@ -372,7 +372,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Monta a estrutura do objeto para impressão no Ireport
 	 * @param cobranca 
@@ -402,7 +402,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Atribui os dados da cota para a impressão
 	 * @param razaoSocialDistribuidor
@@ -454,7 +454,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Atribui os dados do Banco para a impressão
 	 * @param impressaoDTO
@@ -483,7 +483,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	}
 	
 	/**
-	 * BOLETO
+	 * BOLETO/COBRANCA
 	 * 
 	 * Gera documento de cobrança
 	 * @param nossoNumero
@@ -499,15 +499,20 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		try {
 			
 			switch (cobranca.getTipoCobranca()) {
+			
 				case BOLETO:
+					
 					retorno = boletoService.gerarImpressaoBoleto(nossoNumero);
+					
 					break;
 					
 				default:
+					
 					retorno = getDocumentoCobranca(cobranca);
 			}
 			
 		}catch (Exception e) {
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}
 		
@@ -677,7 +682,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * SLIP
      * 
 	 * Retorna a data de operação do controle confernecia encalhe junto com o horario da data de finalização de controle conferencia encalhe.
-	 * 
 	 * @param dataFimConferencia - data de finalização de controle conferencia encalhe cota
 	 * @param dataOperacaoConferenia - data de operação de controle conferencia encalhe cota
 	 * @return Date - data de operação de controle conferencia encalhe cota com horario de finalização da conferencia 
