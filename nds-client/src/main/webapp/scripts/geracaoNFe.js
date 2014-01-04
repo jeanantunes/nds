@@ -31,6 +31,7 @@ var geracaoNFeController = $.extend({
 		this.initDialog();
 		this.initButtons();
 		this.initFlexiGrids();
+		this.initFiltroDatas();
 		
 		params = [];
 		params.push({name: 'tipoDestinatario', value: 'COTA'});
@@ -55,6 +56,18 @@ var geracaoNFeController = $.extend({
 		
 	},
 	
+	initFiltroDatas : function(){
+		
+	    $.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor',
+				null, 
+				function(result) {
+			
+					$("#geracaoNfe-filtro-movimentoDe", this.workspace).val(result);
+					
+					$("#geracaoNfe-filtro-movimentoAte", this.workspace).val(result);
+		        }
+		); 
+	},
 	
 	/**
 	 * inicializa os inputs com mascaras e formatações e valores iniciais.
@@ -209,7 +222,7 @@ var geracaoNFeController = $.extend({
 	initFlexiGrids : function() {
 		var _this = this;
 		
-		$("#geracaoNfe-gridNFe").flexigrid({
+		$("#geracaoNfe-flexigrid-pesquisa").flexigrid({
 			preProcess : _this.preProcessGridPesquisa,
 			colModel : _this.colunasGridPesquisa,
 			dataType : 'json',
@@ -252,7 +265,7 @@ var geracaoNFeController = $.extend({
 		if (typeof data.mensagens == "object") {
 		
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
-			$("#geracaoNfe-pesquisa", geracaoNFeController.workspace).hide();
+			$("#geracaoNfe-pesquisa", geracaoNFeController.workspace).empty();
 		
 		} else {
 			
@@ -274,6 +287,9 @@ var geracaoNFeController = $.extend({
 				} else {
 					data.rows[index].cell["situacaoCadastro"] = "";
 				}
+				data.rows[index].cell["total"] = floatToPrice(data.rows[index].cell["total"]);
+				data.rows[index].cell["totalDesconto"] = floatToPrice(data.rows[index].cell["totalDesconto"]);
+				
 			}
 			return data;
 		}
@@ -311,7 +327,7 @@ var geracaoNFeController = $.extend({
 		name : 'totalDesconto',
 		width : 100,
 		sortable : true,
-		align : 'center',
+		align : 'right',
 	}, {
 		display : 'Suspensa',
 		name : 'situacaoCadastro',
@@ -324,7 +340,7 @@ var geracaoNFeController = $.extend({
 	 * Realiza pesquisa de acordo com os dado do filtro 
 	 * e popula a grid de pesquisa:"geracaoNfe-pesquisa"
 	 */
-	pesquisar:function() {
+	pesquisar : function() {
 		
 		var params = [];
 		
@@ -337,8 +353,8 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
 		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
-		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
-		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
+		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-selectRoteiro").val()});
+		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-selectRota").val()});
 		
 		if ($('#geracaoNfe-filtro-selectFornecedores').val()) {
 			$.each($("#geracaoNfe-filtro-selectFornecedores").val(), function(index, v) {
@@ -346,9 +362,9 @@ var geracaoNFeController = $.extend({
 			});
 		}
 		
-		var grid = $("#geracaoNfe-gridNFe");
+		var grid = $("#geracaoNfe-flexigrid-pesquisa");
 		
-		var uri = "busca.json";
+		var uri = "pesquisar";
 		
 		grid.flexOptions({
 			"url" : this.path + uri,
@@ -522,15 +538,15 @@ var geracaoNFeController = $.extend({
 	/**
 	 * funcao responsavel por carregar o combos por Roteiro
 	 */
-	changeRoteiro : function(){
+	changeRoteiro : function() {
     	
-        var boxDe = $("#geracaoNotaEnvio-filtro-boxDe").val();
+        var boxDe = $("#geracaoNfe-filtro-inputIntervaloBoxDe").val();
     	
-    	var boxAte = $("#geracaoNotaEnvio-filtro-boxAte").val();
+    	var boxAte = $("#geracaoNfe-filtro-inputIntervaloBoxAte").val();
     	
-    	var idRota = $("#geracaoNotaEnvio-filtro-selectRota").val();
+    	var idRota = $("#geracaoNfe-filtro-selectRota").val();
     	
-    	var idRoteiro = $("#geracaoNotaEnvio-filtro-selectRoteiro").val();
+    	var idRoteiro = $("#geracaoNfe-filtro-selectRoteiro").val();
      	
      	var params = [{
 				            name : "idRoteiro",
@@ -546,13 +562,13 @@ var geracaoNFeController = $.extend({
     		    
     		    var listaRoteiro = result[2];
  		    
-    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);  
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRota", geracaoNFeController.workspace), listaRota ,idRota);  
     		    
-    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-inputIntervaloBoxDe", geracaoNFeController.workspace), listaBox ,boxDe);
      		    
-    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-inputIntervaloBoxAte", geracaoNFeController.workspace), listaBox ,boxAte);
     		    
-    		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRoteiro", geracaoNFeController.workspace), listaRoteiro ,idRoteiro); 
     	    }    
 		);
 	},
@@ -586,6 +602,147 @@ var geracaoNFeController = $.extend({
 			
 		});
 		
-	}
+	},
+	
+	/**
+	 * Recarregar combos por Box
+	 */
+    changeBox : function() {
+		
+    	var boxDe = $("#geracaoNfe-filtro-inputIntervaloBoxDe").val();
+    	
+    	var boxAte = $("#geracaoNfe-filtro-inputIntervaloBoxAte").val();
+    	
+    	var idRota = $("#geracaoNfe-filtro-selectRota").val();
+    	
+    	var idRoteiro = $("#geracaoNfe-filtro-selectRoteiro").val();
+    	
+    	var params = [{
+			            name : "codigoBoxDe",
+			            value : boxDe	
+					  },{
+						name : "codigoBoxAte",
+						value : boxAte
+					  }];
+    	
+    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
+			function(result) {
+    		
+    		    var listaRota = result[0];
+    		    
+    		    var listaRoteiro = result[1];
+    		    
+    		    var listaBox = result[2];
+    		
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRota", geracaoNFeController.workspace), listaRota ,idRota);
+ 		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRoteiro", geracaoNFeController.workspace), listaRoteiro ,idRoteiro); 
+    		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-inputIntervaloBoxDe", geracaoNFeController.workspace), listaBox ,boxDe);
+     		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-inputIntervaloBoxAte", geracaoNFeController.workspace), listaBox ,boxAte);
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combos por Rota
+	 */
+    changeRota : function() {
+    	
+        var boxDe = $("#geracaoNfe-filtro-boxDe").val();
+    	
+    	var boxAte = $("#geracaoNfe-filtro-boxAte").val();
+    	
+    	var idRota = $("#geracaoNfe-filtro-selectRota").val();
+    	
+    	var idRoteiro = $("#geracaoNfe-filtro-selectRoteiro").val();
+    	
+    	var params = [{
+			            name : "idRota",
+			            value : idRota	
+					  }];
+	    
+    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRota', params, 
+			function(result) {
+    		
+    		    var listaRoteiro = result[0];
+    		 
+    		    var listaBox = result[1];
+    		    
+    		    var listaRota = result[2];
+
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-boxDe", geracaoNFeController.workspace), listaBox, boxDe);
+ 		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-boxAte", geracaoNFeController.workspace), listaBox, boxAte);
+ 		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRoteiro", geracaoNFeController.workspace), listaRoteiro, idRoteiro); 
+    		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRota", geracaoNFeController.workspace), listaRota, idRota);
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combos por Roteiro
+	 */
+    changeRoteiro : function() {
+    	
+        var boxDe = $("#geracaoNfe-filtro-inputIntervaloBoxDe").val();
+    	
+    	var boxAte = $("#geracaoNfe-filtro-inputIntervaloBoxAte").val();
+    	
+    	var idRota = $("#geracaoNfe-filtro-selectRota").val();
+    	
+    	var idRoteiro = $("#geracaoNfe-filtro-selectRoteiro").val();
+     	
+     	var params = [{
+				            name : "idRoteiro",
+				            value : idRoteiro	
+						  }];
+     	
+     	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
+			function(result) {
+    		
+    		    var listaRota = result[0];
+    		 
+    		    var listaBox = result[1];
+    		    
+    		    var listaRoteiro = result[2];
+ 		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRota", geracaoNFeController.workspace), listaRota, idRota);  
+    		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-inputIntervaloBoxDe", geracaoNFeController.workspace), listaBox, boxDe);
+     		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-inputIntervaloBoxAte", geracaoNFeController.workspace), listaBox, boxAte);
+    		    
+    		    geracaoNFeController.recarregarCombo($("#geracaoNfe-filtro-selectRoteiro", geracaoNFeController.workspace), listaRoteiro, idRoteiro); 
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combo
+	 */
+	recarregarCombo : function (comboNameComponent, content, valSelected) {
+		
+		comboNameComponent.empty();
+
+		comboNameComponent.append(new Option('Selecione...', '', true, true));
+		
+	    $.each(content, function(index, row) {
+		    	
+	    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+		});
+
+	    if (valSelected) {
+	    	
+	        $(comboNameComponent).val(valSelected);
+	    } else {
+	    	
+	        $(comboNameComponent).val('');
+	    }
+	},
+	
 }, BaseController);
 //@ sourceURL=geracaoNFe.js

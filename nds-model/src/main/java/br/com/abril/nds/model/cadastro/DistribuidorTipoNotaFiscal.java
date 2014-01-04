@@ -14,7 +14,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
 @Table(name="DISTRIBUIDOR_NOTA_FISCAL_TIPOS")

@@ -345,16 +345,28 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 						              quantidade, 
 							          tipoMovimento);
 
-				listaMovimentoCotaEnvio.add(gerarMovimentoCota(data, 
-						                                       movimentoCota.getProdutoEdicao().getId(), 
-							                                   movimentoCota.getCota().getId(), 
-							                                   movimentoCota.getUsuario().getId(),
-							                                   quantidade, 
-								                               tipoMovimentoCota, 
-								                               data, 
-								                               null, 
-								                               movimentoCota.getLancamento()!=null?movimentoCota.getLancamento().getId():null, 
-								                               null));
+				MovimentoEstoqueCota movimentoNovo = gerarMovimentoCota(data, 
+                        movimentoCota.getProdutoEdicao().getId(), 
+                        movimentoCota.getCota().getId(), 
+                        movimentoCota.getUsuario().getId(),
+                        quantidade, 
+                        tipoMovimentoCota, 
+                        data, 
+                        null, 
+                        movimentoCota.getLancamento()!=null?movimentoCota.getLancamento().getId():null, 
+                        null);
+				
+				if(tipoMovimentoCota.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE)
+						|| tipoMovimentoCota.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO)
+						|| tipoMovimentoCota.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR)
+						|| tipoMovimentoCota.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE)
+						|| tipoMovimentoCota.getGrupoMovimentoEstoque().equals(GrupoMovimentoEstoque.ESTORNO_ENVIO_REPARTE)) {
+					
+					movimentoCota.setMovimentoEstoqueCotaEstorno(movimentoNovo);
+					
+				}
+					
+				listaMovimentoCotaEnvio.add(movimentoNovo);
 			}		
 		}
 
