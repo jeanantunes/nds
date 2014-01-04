@@ -30,6 +30,8 @@ public class FiltroViewNotaFiscalDTO {
 	
 	private Long idRota;  
 	
+	private Long idCota;
+	
 	private List<Long> listIdFornecedor; 
 	
 	private SituacaoCadastro situacaoCadastro;
@@ -100,6 +102,14 @@ public class FiltroViewNotaFiscalDTO {
 		this.idRota = idRota;
 	}
 	
+	public Long getIdCota() {
+		return idCota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
 	public List<Long> getListIdFornecedor() {
 		return listIdFornecedor;
 	}

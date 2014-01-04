@@ -5,17 +5,16 @@ import java.math.BigInteger;
 
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nfe.model.NotaFiscal;
-import br.com.abril.nfe.model.NotaFiscalItem;
 
-public class ItemNotaFiscal {
+public class NotaFiscalItem {
 	
-	private NotaFiscalItem notaFiscalItem;
+	private br.com.abril.nfe.model.NotaFiscalItem notaFiscalItem;
 	
 	private OrigemItemNotaFiscal origemItemNotaFiscal;
 	
-	public ItemNotaFiscal() {
+	public NotaFiscalItem() {
 		if(notaFiscalItem == null){
-			this.notaFiscalItem = new NotaFiscalItem();
+			this.notaFiscalItem = new br.com.abril.nfe.model.NotaFiscalItem();
 		}
 	}
 
@@ -106,7 +105,5 @@ public class ItemNotaFiscal {
 	public void setOrigemItemNotaFiscal(OrigemItemNotaFiscal origemItemNotaFiscal) {
 		this.origemItemNotaFiscal = origemItemNotaFiscal;
 	}
-	
-	
 	
 }

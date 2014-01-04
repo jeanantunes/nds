@@ -305,7 +305,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 	
 	@Override
 	public NaturezaOperacao obterNaturezaOperacao(Long idNaturezaOperacao) {
-		String hql = " from NaturezaOperacao no where no.id = : id ";
+		String hql = " from NaturezaOperacao no where no.id = :id ";
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("id", idNaturezaOperacao);

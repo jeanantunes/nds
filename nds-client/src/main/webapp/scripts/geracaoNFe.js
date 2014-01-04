@@ -9,7 +9,7 @@ var geracaoNFeController = $.extend({
 	 * objeto utilizado para encapsular os dados do filtro de pesquisa
 	 */
 	filtroPesquisa : {
-		tipoNotaFiscal:null,
+		naturezaOperacao:null,
 		intervaloMovimentoDe:null, 
 		intervaloMovimentoAte:null,
 		dataEmissao:null,
@@ -43,10 +43,10 @@ var geracaoNFeController = $.extend({
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			$("#geracaoNfe-filtro-tipoNotaFiscal").empty();
+			$("#geracaoNfe-filtro-naturezaOperacao").empty();
 			
 			$.each(data.rows, function (i, row) {
-			    $('#geracaoNfe-filtro-tipoNotaFiscal').append($('<option>', { 
+			    $('#geracaoNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
 			        text : row.cell.value
 			    }));
@@ -344,7 +344,7 @@ var geracaoNFeController = $.extend({
 		
 		var params = [];
 		
-		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
 		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
 		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
@@ -352,7 +352,6 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
 		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
-		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-selectRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-selectRota").val()});
 		
@@ -418,24 +417,6 @@ var geracaoNFeController = $.extend({
 		}
 	},
 	
-	parametros : function() {
-		var params = {
-			"intervaloBoxDe" : $("#geracaoNfe-filtro-inputIntervaloBoxDe", this.workspace).val(),
-			"intervaloBoxAte" : $("#geracaoNfe-filtro-inputIntervaloBoxAte", this.workspace).val(),
-			"intervaloCotaDe" : $("#geracaoNfe-filtro-inputIntervaloCotaDe", this.workspace).val(),
-			"intervaloCotaAte" : $("#geracaoNfe-filtro-inputIntervaloCotaAte", this.workspace).val(),
-			"intervaloDateMovimentoDe" : $("#geracaoNfe-filtro-movimentoDe", this.workspace).val(),
-			"intervaloDateMovimentoAte" : $("#geracaoNfe-filtro-movimentoAte", this.workspace).val(),
-			"tipoNotaFiscal" : $("#geracaoNfe-filtro-selectTipoNotaFiscal", this.workspace).val()
-		};
-		var listaFornecedores = $("#geracaoNfe-filtro-selectFornecedores", this.workspace).val();
-		if (listaFornecedores) {
-			params = serializeArrayToPost('listIdFornecedor', listaFornecedores, params);
-		}
-		return params;
-	},
-	
-	
 	/**
 	 * Gerar Nfes para resultados da pesquisa e para cotas ausentes selecionadas
 	 */
@@ -447,7 +428,7 @@ var geracaoNFeController = $.extend({
 		
 		var params = [];
 		
-		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
 		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
 		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
@@ -455,7 +436,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
 		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
-		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
 		
@@ -485,9 +466,9 @@ var geracaoNFeController = $.extend({
 	
 	gerar : function() {
 
-		var params = [];
+		var params = new Array();
 		
-		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.dataInicial" , value: $("#geracaoNfe-filtro-movimentoDe").val()});
 		params.push({name:"filtro.dataFinal" , value: $("#geracaoNfe-filtro-movimentoAte").val()});
 		params.push({name:"filtro.intervaloBoxInicial" , value: $("#geracaoNfe-filtro-inputIntervaloBoxDe").val()});
@@ -495,7 +476,7 @@ var geracaoNFeController = $.extend({
 		params.push({name:"filtro.intervalorCotaInicial" , value: $("#geracaoNfe-filtro-inputIntervaloCotaDe").val()});
 		params.push({name:"filtro.intervalorCotaFinal" , value: $("#geracaoNfe-filtro-inputIntervaloCotaAte").val()});
 		params.push({name:"filtro.dataEmissao" , value: $("#geracaoNfe-filtro-dataEmissao").val()});
-		params.push({name:"filtro.idTipoNotaFiscal" , value: $("#geracaoNfe-filtro-tipoNotaFiscal").val()});
+		params.push({name:"filtro.idNaturezaOperacao" , value: $("#geracaoNfe-filtro-naturezaOperacao").val()});
 		params.push({name:"filtro.idRoteiro" , value: $("#geracaoNfe-filtro-listRoteiro").val()});
 		params.push({name:"filtro.idRota" , value: $("#geracaoNfe-filtro-listRota").val()});
 		
@@ -591,10 +572,10 @@ var geracaoNFeController = $.extend({
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			$("#geracaoNfe-filtro-tipoNotaFiscal").empty();
+			$("#geracaoNfe-filtro-naturezaOperacao").empty();
 			
 			$.each(data.rows, function (i, row) {
-			    $('#geracaoNfe-filtro-tipoNotaFiscal').append($('<option>', { 
+			    $('#geracaoNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
 			        text : row.cell.value
 			    }));
