@@ -73,11 +73,9 @@ $(function(){
 				<tr>
 					<td width="91">Tipo de Nota:</td>
     				<td width="204">
-						<select id="geracaoNfe-filtro-tipoNotaFiscal" name="tipoNotaFiscal" style="width:250px; font-size:11px!important">
+						<select id="geracaoNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:250px; font-size:11px!important">
 							<option value="">Todos</option>
-							<c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
-								<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
-							</c:forEach>
+							
 						</select>
 					</td>
     				<td width="95">Data Movimento:</td>

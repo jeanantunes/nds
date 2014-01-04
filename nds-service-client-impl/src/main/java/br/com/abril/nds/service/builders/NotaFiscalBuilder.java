@@ -3,19 +3,19 @@ package br.com.abril.nds.service.builders;
 import java.io.Serializable;
 
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
+import br.com.abril.nds.fiscal.nfe.NotaFiscal;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nfe.model.NotaFiscal;
 
 public class NotaFiscalBuilder implements Serializable {
 	
 	private static final long serialVersionUID = 176874569807919538L;
 	
 	// builder header Nota fiscal
-	public static NotaFiscal montarHeaderNotaFiscal(Cota cota, NotaFiscal notaFiscal){
+	public static NotaFiscal montarHeaderNotaFiscal(NotaFiscal notaFiscal, Cota cota){
 		
 		/** -- Natureza da Operação -- PROT. DE AUTORIZAÇÃO -- CRT(Codigo Regime Tributario)
 	     * -- Inscricao Estadual -- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO -- CNPJ/CPF
@@ -42,6 +42,7 @@ public class NotaFiscalBuilder implements Serializable {
 
 	// metodo responsavel pelo dados do distribuidor da nota
 	public static NotaFiscal popularDadosDistribuidor(NotaFiscal notaFiscal, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro){
+		
 		// Dados do Distribuidor
 		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
 		notaFiscal.getEmissor().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());

@@ -594,7 +594,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		hql.append(" SUM(mec.valoresAplicados.precoVenda * mec.qtde) as total, "); 
 		hql.append(" SUM(mec.valoresAplicados.precoComDesconto * mec.qtde) as totalDesconto"); 	
 		
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false, false), filtro);
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
 				
 		if(filtro.getPaginacaoVO()!=null) {
 			if(filtro.getPaginacaoVO().getPosicaoInicial()!=null) {
@@ -617,7 +617,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" COUNT(mec.cota.id) ");
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, false, false), filtro);
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, false), filtro);
 		
 		return (long) query.list().size();
 	}
@@ -634,7 +634,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		// OBTER ID DE TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" mec.cota ");
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false, false), filtro);				
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);				
 		return query.list();
 	}
 	
@@ -646,39 +646,16 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, Long idCota) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro) {
 	
 		// ITENS DA NOTA FISCAL
 		StringBuilder hql = new StringBuilder("SELECT mec");
-
-		// Roteiro:
-		if(filtro.getIdRoteiro() != null) {
-			hql.append(" AND roteiro.id = :roteiroId ");
-		}
-		
-		// Rota:		
-		if(filtro.getIdRota() != null) {
-			hql.append(" AND rota.id = :rotaId ");
-		}
-		
-		// Cota de:	 Até   
-		if(filtro.getIntervaloBoxInicial() != null && filtro.getIntervaloBoxFinal() != null) {
-			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
-		}
-		
-		if(filtro.getListIdFornecedor() != null) {
-			hql.append(" AND fornecedor.id in (:fornecedor) ");
-		}
-		
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, true, true), filtro);
-		query.setParameter("idCota", idCota);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoEstoqueCota.class));
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, true), filtro);
 		
 		return query.list();
 	}
 	
-	private StringBuilder queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup, boolean isIdCota) {
+	private StringBuilder queryConsultaNfe(FiltroViewNotaFiscalDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup) {
 		
 		hql.append(" FROM MovimentoEstoqueCota mec ")
 		.append(" JOIN mec.tipoMovimento tipoMovimento ")
@@ -709,6 +686,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			hql.append(" ");
 		}
 		
+		// Cota:		
+		if(filtro.getIdCota() != null) {
+			hql.append(" AND cota.id = :cotaId ");
+		}
+		
+		// Intervalo de Cota:
 		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
 			hql.append(" AND cota.numeroCota BETWEEN :numeroCotaInicial AND :numeroCotaFinal ");
 		}
@@ -730,10 +713,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		if(filtro.getListIdFornecedor() != null) {
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
-		}
-		
-		if(isIdCota){
-			hql.append(" AND cota.id =:idCota ");
 		}
 		
 		if(!isGroup){
@@ -774,6 +753,10 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		/*if(filtro.getDataEmissao() != null) {
 			
 		}*/
+		
+		if(filtro.getIdCota() != null) {
+			query.setParameter("cotaId", filtro.getIdCota());
+		}
 		
 		if(filtro.getIntervalorCotaInicial() != null && filtro.getIntervalorCotaFinal() != null) {
 			query.setParameter("numeroCotaInicial", filtro.getIntervalorCotaInicial());

@@ -5,11 +5,11 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nfe.model.NotaFiscal;
+import br.com.abril.nds.fiscal.nfe.NotaFiscal;
 
 public class EmitenteDestinatarioBuilder {
 	
-	public static NotaFiscal montarEnderecoEmitenteDestinatario (Cota cota, NotaFiscal notaFiscal){
+	public static NotaFiscal montarEnderecoEmitenteDestinatario (NotaFiscal notaFiscal, Cota cota){
 		
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();

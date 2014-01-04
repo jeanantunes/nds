@@ -45,5 +45,5 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 
 	public abstract Long consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
 	
-	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro, Long idCota);
+	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro);
 }
