@@ -450,6 +450,15 @@ var analiseParcialController = $.extend(true, {
                             }).toArray().reduce(function(a,b){
                                     return a+b;
                                 }));
+
+                    if (typeof histogramaPosEstudoController != 'undefined') {
+                        //tenta atualizar os valores da tela de histograma pré analise
+                        try{
+                            histogramaPosEstudoController.popularFieldsetResumoEstudo();
+                        }catch(e){
+                            exibirMensagem('WARNING', [e.message]);
+                        }
+                    }
                 },
                 error: function() {
                     analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
