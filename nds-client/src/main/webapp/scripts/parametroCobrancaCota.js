@@ -987,8 +987,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	obterFormaCobranca : function(idFormaCobranca){
+		
+		//hidden
+		$("#_idFormaCobranca", this.workspace).val(idFormaCobranca);
+		
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}, 
 		            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value }];
+		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterFormaCobranca",
 				   data,
 				   parametroCobrancaCotaController.sucessCallbackFormaCobranca, 
@@ -997,9 +1002,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	sucessCallbackFormaCobranca : function(resultado) {
-		
-		//hidden
-		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 		
 		parametroCobrancaCotaController.carregarComboTipoCobranca(resultado.tipoCobranca);
 		
