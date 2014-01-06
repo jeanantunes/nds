@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -325,12 +326,16 @@ public class FeriadoRepositoryImpl extends
 	public boolean isFeriado(Date data){
 		
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" count(f.id) from Feriado f ")
-		   .append(" where f.data = :data");
+		hql.append(" count(f.ID) from FERIADO f ")
+		   .append(" where f.DATA = :data")
+		   .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) ")
+		   .append(" and f.IND_REPETE_ANUALMENTE = :repeteAnual)");
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		Query query = this.getSession().createSQLQuery(hql.toString());
 		query.setParameter("data", data);
 		
-		return (Long)query.uniqueResult() > 0;
+		query.setParameter("repeteAnual", true);
+		
+		return ((BigInteger)query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
 	}
 }

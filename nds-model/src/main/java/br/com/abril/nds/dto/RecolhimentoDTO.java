@@ -26,6 +26,8 @@ public class RecolhimentoDTO implements Serializable {
 	
 	private long mediaRecolhimentoDistribuidor = 0L;
 	
+	private long count = 0L;
+	
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
 	private boolean forcarBalanceamento;
@@ -60,14 +62,9 @@ public class RecolhimentoDTO implements Serializable {
 	 * @return the capacidadeRecolhimentoDistribuidor
 	 */
 	public long getMediaRecolhimentoDistribuidor() {
-		
-		if (((mediaRecolhimentoDistribuidor /100)*50)<=500){
-		   return 500;
-		}
-		else{
-			return ((mediaRecolhimentoDistribuidor /100)*50);
-		}
-		
+
+ 	 return mediaRecolhimentoDistribuidor+((mediaRecolhimentoDistribuidor/100)*1);
+
 	}
 
 	/**
@@ -84,6 +81,7 @@ public class RecolhimentoDTO implements Serializable {
 	public void addMediaRecolhimentoDistribuidor(
 			long mediaRecolhimentoDistribuidor) {
 		this.mediaRecolhimentoDistribuidor = this.mediaRecolhimentoDistribuidor+mediaRecolhimentoDistribuidor;
+		count = count+1;
 	}
 	
 	/**

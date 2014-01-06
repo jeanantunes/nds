@@ -60,7 +60,7 @@ public interface ConferenciaEncalheService {
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
-	public void validarQtdeEncalheExcedeQtdeReparte(
+	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, 
@@ -224,13 +224,15 @@ public interface ConferenciaEncalheService {
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
 	 * @param indConferenciaContingencia
+	 * @param reparte
 	 */
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException;
+			boolean indConferenciaContingencia,
+			BigDecimal reparte) throws GerarCobrancaValidacaoException;
 	
 	/**
 	 * Obtem valor total para geração de crédito na C.E.

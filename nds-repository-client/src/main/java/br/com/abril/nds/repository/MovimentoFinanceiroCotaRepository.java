@@ -30,10 +30,11 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * 
 	 * @param numeroCota
+	 * @param dataOperacao
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota);
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota, Date dataOperacao);
 	
 	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
 
@@ -213,4 +214,14 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * @return BigDecimal
 	 */
 	BigDecimal obterTotalCreditoCota(Integer numeroCota, Date dataOperacao);
+
+	List<MovimentoFinanceiroDTO> obterDetalhesVendaDia(Integer numeroCota,
+			Long idConsolildado, List<Long> tiposMovimento, Date data);
+
+	/**
+	 * Verifica existência de MovimentoFinanceiroCota Consolidado por id
+	 * @param idMovimentoFinanceiroCota
+	 * @return boolean
+	 */
+	boolean isMovimentoFinanceiroCotaConsolidado(Long idMovimentoFinanceiroCota);
 }

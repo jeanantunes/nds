@@ -453,13 +453,13 @@ public class BaixaFinanceiraController extends BaseController {
 		}
 		
 		//Valida se o valor financeiro foi informado
-		if (valorFinanceiro == null || valorFinanceiro.equals(BigDecimal.ZERO)) {
+		if (valorFinanceiro == null) {
 			
 			listaMensagens.add("O preenchimento do campo [Valor Financeiro] é obrigatório!");
 		} else {
 			
 			//Valida se o valor financeiro é maior que 0
-			if (valorFinanceiro.compareTo(BigDecimal.ZERO) == 0) {
+			if (valorFinanceiro.compareTo(BigDecimal.ZERO) <= 0) {
 			
 				listaMensagens.add("O campo [Valor Financeiro] deve ser maior que 0!");
 			}

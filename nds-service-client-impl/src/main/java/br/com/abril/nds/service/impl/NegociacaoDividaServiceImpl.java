@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
-import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoDTO;
 import br.com.abril.nds.dto.ImpressaoNegociacaoParecelaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
@@ -34,6 +33,7 @@ import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNegociacaoDivida;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -62,6 +62,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
+import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DividaRepository;
@@ -144,6 +145,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
 	
+	@Autowired
+	private ConcentracaoCobrancaCotaRepository concentracaoCobrancaCotaRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -302,10 +305,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				Fornecedor fornecedor = 
 						cota.getParametroCobranca() != null 
 						? cota.getParametroCobranca().getFornecedorPadrao()
-						: null;
+						: this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca().getFornecedorPadrao();
 				
 				if (fornecedor == null){
-
+					
 					throw new ValidacaoException(
 							new ValidacaoVO(
 									TipoMensagem.WARNING, 
@@ -451,6 +454,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			}
 
 			this.formaCobrancaRepository.adicionar(formaCobranca);
+			
+			if (formaCobranca.getConcentracaoCobrancaCota() != null){
+				for (ConcentracaoCobrancaCota c : formaCobranca.getConcentracaoCobrancaCota()){
+					
+					this.concentracaoCobrancaCotaRepository.adicionar(c);
+				}
+			}
 		}
 
 		// cria registro da negociação
@@ -463,6 +473,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		negociacao.setFormaCobranca(formaCobranca);
 		negociacao.setParcelas(parcelas);
 		negociacao.setValorDividaPagaComissao(valorDividaParaComissao);
+		negociacao.setDataCriacao(new Date());
 
 		if (negociacao.getParcelas() != null) {
 
@@ -746,8 +757,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			case SEMANAL:
 				for (ConcentracaoCobrancaCota concen : negociacao
 						.getFormaCobranca().getConcentracaoCobrancaCota()) {
-
-					aux = aux + concen.getDiaSemana().getDescricaoDiaSemana();
+					
+					if (!aux.isEmpty()){
+						aux += ", ";
+					}
+					
+					aux += concen.getDiaSemana().getDescricaoDiaSemana();
 				}
 				break;
 			}
@@ -1117,7 +1132,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 	}
 
 	private Date getDataParcela(Date dataBase, TipoFormaCobranca periodicidade,
-			List<DiaSemanaDTO> semanalDias, Integer quinzenalDia1,
+			List<DiaSemana> semanalDias, Integer quinzenalDia1,
 			Integer quinzenalDia2, Integer diaMensal) {
 
 		Calendar proximoDia = DateUtil.toCalendar(dataBase);
@@ -1142,9 +1157,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 				proximoDia = DateUtil.adicionarDias(proximoDia, 1);
 
-				for (DiaSemanaDTO dia : semanalDias) {
+				for (DiaSemana dia : semanalDias) {
 
-					if (proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia())
+					if (proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getCodigoDiaSemana())
 
 						return proximoDia.getTime();
 				}

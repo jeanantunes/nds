@@ -75,13 +75,8 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private Long peb;
 
 	public Long getPeb() {
-		
-		//TODO REMOVER APOS VALIDAR
-		if(peb !=null && peb!=0){
-		 return peb;
-		}else{
-			return 123L;
-		}
+
+      return peb;
 	}
 
 	public void setPeb(Long peb) {

@@ -389,7 +389,10 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" m.valor as valor, c.dataEmissao as data, case when m.observacao is null then '' else m.observacao end as observacao")
+		hql.append(" m.valor as valor, c.dataEmissao as data, ")
+		   .append(" m.tipoMovimento.descricao || ")
+		   .append(" (case when m.observacao is null then '' else (' - ' || m.observacao) end) as observacao, ")
+		   .append(" m.tipoMovimento as tipoMovimentoFinanceiro ")
 		   .append(" from Cobranca c ")
 		   .append(" join c.divida.consolidado.movimentos m ")
 		   .append(" where c.id = :idCobranca ");

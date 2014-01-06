@@ -21,12 +21,14 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
@@ -1239,7 +1241,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException {
+			boolean indConferenciaContingencia, 
+			BigDecimal reparte) throws GerarCobrancaValidacaoException {
 		
 		this.resetarDadosFinalizacaoConferencia(controleConfEncalheCota);
 		
@@ -1259,7 +1262,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			valorTotalEncalheOperacaoConferenciaEncalhe = valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getValorTotal());
 		}
 		
-		this.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
+		reparte = reparte == null ? BigDecimal.ZERO : reparte;
+		
+		valorTotalEncalheOperacaoConferenciaEncalhe = reparte.subtract(valorTotalEncalheOperacaoConferenciaEncalhe);
+		
+		this.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
 		
 		Map<String, Boolean> nossoNumeroCollection = new LinkedHashMap<String, Boolean>();
 		
@@ -1334,7 +1341,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	//caso haja negociação por comissão da cota será abatida aqui
 	private void abaterNegociacaoPorComissao(Long idCota,
-			BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe) {
+			BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe,
+			Usuario usuario) {
 		
 		//verifica se existe valor para abater das negociações
 		if (valorTotalEncalheOperacaoConferenciaEncalhe != null &&
@@ -1344,41 +1352,83 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<Negociacao> negociacoes = 
 					this.negociacaoDividaRepository.obterNegociacaoPorComissaoCota(idCota);
 			
-			BigDecimal valorCem = new BigDecimal(100);
+			if (negociacoes != null && !negociacoes.isEmpty()){
 			
-			for (Negociacao negociacao : negociacoes){
+				Cota cota = this.cotaRepository.buscarPorId(idCota);
 				
-				//caso todo o valor da conferencia tenha sido usado para quitação das negociações
-				if  (valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(BigDecimal.ZERO) <= 0){
+				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+				
+				Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+				
+				BigDecimal valorCem = new BigDecimal(100);
+				
+				for (Negociacao negociacao : negociacoes){
 					
-					valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
-					break;
-				}
-				
-				BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
-				
-				BigDecimal valorDescontar = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(comissao).divide(valorCem);
-				
-				valorTotalEncalheOperacaoConferenciaEncalhe = 
-						valorTotalEncalheOperacaoConferenciaEncalhe.subtract(valorDescontar);
-				
-				BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
-				
-				//se o valor resultante não quita a negociação
-				if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0){
+					//caso todo o valor da conferencia tenha sido usado para quitação das negociações
+					if  (valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(BigDecimal.ZERO) <= 0){
+						
+						valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
+						break;
+					}
 					
-					negociacao.setValorDividaPagaComissao(valorRestanteNegociacao);
+					BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
 					
-				} else {
+					BigDecimal valorDescontar = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(comissao).divide(valorCem);
 					
-					negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
-					
-					//gera crédito para cota caso a comissão gere sobra na quitação
 					valorTotalEncalheOperacaoConferenciaEncalhe = 
-							valorTotalEncalheOperacaoConferenciaEncalhe.add(valorRestanteNegociacao.negate());
+							valorTotalEncalheOperacaoConferenciaEncalhe.subtract(valorDescontar);
+					
+					BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
+					
+					//se o valor resultante não quita a negociação
+					if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0){
+						
+						negociacao.setValorDividaPagaComissao(valorRestanteNegociacao);
+					} else {
+						
+						negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
+						
+						//gera crédito para cota caso a comissão gere sobra na quitação
+						valorTotalEncalheOperacaoConferenciaEncalhe = 
+								valorTotalEncalheOperacaoConferenciaEncalhe.add(valorRestanteNegociacao.negate());
+					}
+					
+					MovimentoFinanceiroCotaDTO movDTO = new MovimentoFinanceiroCotaDTO();
+					movDTO.setAprovacaoAutomatica(true);
+					movDTO.setCota(cota);
+					movDTO.setDataAprovacao(dataOperacao);
+					movDTO.setDataCriacao(dataOperacao);
+					movDTO.setDataOperacao(dataOperacao);
+					movDTO.setDataVencimento(movDTO.getDataAprovacao());
+					movDTO.setObservacao("Oriundo de negociação por comissão");
+					movDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+					movDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+					movDTO.setUsuario(usuario);
+					
+					if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0){
+						
+						movDTO.setValor(valorDescontar);
+					} else {
+						
+						movDTO.setValor(valorRestanteNegociacao);
+					}
+					
+					MovimentoFinanceiroCota m = 
+						this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(movDTO, null);
+					
+					this.movimentoFinanceiroCotaRepository.adicionar(m);
+					
+					if (negociacao.getMovimentosFinanceiroCota() == null){
+						
+						negociacao.setMovimentosFinanceiroCota(new ArrayList<MovimentoFinanceiroCota>());
+					}
+					
+					negociacao.getMovimentosFinanceiroCota().add(m);
+					
+					this.negociacaoDividaRepository.alterar(negociacao);
 				}
-				
-				this.negociacaoDividaRepository.alterar(negociacao);
 			}
 		}
 	}
@@ -1414,8 +1464,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																			 controleConferenciaEncalheCota.getUsuario(),
 																			 controleConferenciaEncalheCota.getId());
 		
-			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoNaoVencidoOuPagoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
-					                                                                                                        controleConferenciaEncalheCota.getDataOperacao());
+			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
+					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
 			
 			if (existeBoletoAntecipado){
 				
@@ -2085,7 +2135,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param indConferenciaContingencia
 	 */
 	@Transactional(readOnly=true)
-	public void validarQtdeEncalheExcedeQtdeReparte(
+	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, boolean indConferenciaContingencia) {
@@ -2111,7 +2161,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				return true;
 			}
 			
 		} else {
@@ -2120,11 +2171,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo( qtdeOld.add(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) ) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				return true;
 			}
 			
 		}
 		
+		return false;
 	}
 	
 	/**
@@ -2738,6 +2791,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			) {
 		
 		Cobranca cobranca = null;
+		
 		TipoCobranca tipoCobranca = null;
 		
 		if (nossoNumero != null) {
@@ -2752,39 +2806,40 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		switch(tipoDocumentoConferenciaEncalhe) {
 		
-		case SLIP_PDF :
-			
-			return this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
-		
-		case BOLETO:
-			
-			if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
-			
-				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+			case SLIP_PDF :
 				
-			} else {
+				return this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
+			
+			case BOLETO:
+				
+				if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
+				
+					return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+					
+				} else {
+					
+					return null;
+				}
+				
+			case RECIBO:
+				
+				if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
+					
+					return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+					
+				} else {
+					
+					return null;
+				}
+				
+			case SLIP_TXT:
+				
+				return this.documentoCobrancaService.gerarSlipCobrancaMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
+				
+			default:
 				
 				return null;
-			}
-			
-		case RECIBO:
-			
-			if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
 				
-				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
-				
-			} else {
-				
-				return null;
-			}
-			
-		case SLIP_TXT:
-			
-			return this.documentoCobrancaService.gerarSlipCobrancaMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
-			
-		default:
-			
-			return null;
 		}	
 	}
 	

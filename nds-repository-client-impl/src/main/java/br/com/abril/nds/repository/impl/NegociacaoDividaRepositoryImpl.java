@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.NonUniqueResultException;
@@ -85,7 +86,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" JOIN cobranca.cota ");
 		hql.append(" JOIN cobranca.divida divida ");
 		hql.append(" WHERE cobranca.cota.numeroCota = :numCota ");
-		hql.append(" AND cobranca.statusCobranca = :status ");	
+		hql.append(" AND cobranca.statusCobranca = :status ");
+		hql.append(" AND divida.status != :statusDivida ");
 		
 		if(!filtro.isLancamento()){
 			hql.append(" AND divida.data < (select dataOperacao from Distribuidor)");
@@ -97,6 +99,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		query.setParameter("numCota", filtro.getNumeroCota());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
+		query.setParameter("statusDivida", StatusDivida.PENDENTE_INADIMPLENCIA);
 	}
 
 	@Override
@@ -115,7 +118,8 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		   .append(" where cota.id = :idCota ")
 		   .append(" and ne.comissaoParaSaldoDivida is not null ")
 		   .append(" and ne.valorDividaPagaComissao is not null ")
-		   .append(" and ne.valorDividaPagaComissao > 0 ");
+		   .append(" and ne.valorDividaPagaComissao > 0 ")
+		   .append(" order by ne.dataCriacao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
@@ -441,5 +445,31 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			return null;
 		}
 	}
-	
+
+	@Override
+	public Negociacao obterNegociacaoPorMovFinanceiroId(Long movFinanId) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select n from Negociacao n join n.movimentosFinanceiroCota m where m.id = :movFinanId");
+		
+		query.setParameter("movFinanId", movFinanId);
+		
+		return (Negociacao) query.uniqueResult();
+	}
+
+	@Override
+	public BigDecimal obterValorPagoDividaNegociadaComissao(Long negociacaoId) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" sum (m.valor) from ")
+		   .append(" Negociacao n ")
+		   .append(" join n.movimentosFinanceiroCota m ")
+		   .append(" where n.id = :negociacaoId ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("negociacaoId", negociacaoId);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }
