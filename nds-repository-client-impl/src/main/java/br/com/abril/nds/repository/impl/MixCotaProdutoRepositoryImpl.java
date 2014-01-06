@@ -98,7 +98,7 @@ public class MixCotaProdutoRepositoryImpl extends
 //		   .append(" )")
 		
 		   sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ")
-		   .append(" group by codigoICD ");
+		   .append(" group by id ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		//query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
