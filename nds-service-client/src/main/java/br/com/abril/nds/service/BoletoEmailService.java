@@ -15,19 +15,22 @@ import br.com.abril.nds.model.financeiro.BoletoEmail;
 public interface BoletoEmailService {
 
 	/**
-	 * Salva controle de emissao de boletos por email
+	 * Salva controle de emissao de boletos/cobrancas por email
+	 * 
 	 * @param listaNossoNumeroEnvioEmail
 	 */
 	void salvarBoletoEmail(List<String> listaNossoNumeroEnvioEmail);
 
 	/**
-	 * Obtem todos os boletos pendentes de envio por email
+	 * Obtem todos os boletos/cobrancas pendentes de envio por email
+	 * 
 	 * @return List<BoletoEmail>
 	 */
 	List<BoletoEmail> buscarTodos();
 
 	/**
-	 * Envia Cobrança por email - Controle de Envio de Boletos
+	 * Envia Cobrança por email - Controle de Envio de boletos/cobrancas
+	 * 
 	 * @param boletoEmail
 	 */
 	void enviarBoletoEmail(BoletoEmail boletoEmail);

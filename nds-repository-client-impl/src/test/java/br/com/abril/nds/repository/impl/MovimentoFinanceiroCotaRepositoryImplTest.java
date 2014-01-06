@@ -860,7 +860,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	@Test
 	public void test() {
 		
-		movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cotaManoel.getNumeroCota());
+		movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cotaManoel.getNumeroCota(), new Date());
 		
 	}
 }

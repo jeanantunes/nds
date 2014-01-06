@@ -253,6 +253,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
     private void adicionarDebitoCreditoDeConsolidado(List<DebitoCreditoCotaDTO> listaDebitoCredito, BigDecimal valor, String descricaoCredito, String descricaoDebito, Date dataVencimento, Date dataLancamento) {
 		
 		if(valor == null || BigDecimal.ZERO.compareTo(valor) == 0) {
+			
 			return;
 		}
 		
@@ -295,10 +296,22 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
+		
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+		
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacao);
+		
+		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacaoComissao);
 		
 
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
@@ -311,7 +324,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		//NEGOCIACOES AVULSAS DA COTA
 		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
-				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota());
+				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota(), dataOperacao);
 		
 		if(listaDebitoNegociacaoNaoAvulsaMaisEncargos != null && !listaDebitoNegociacaoNaoAvulsaMaisEncargos.isEmpty()) {
 			
@@ -413,7 +426,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
-				consolidado.getVendaEncalhe(),
+				consolidado.getVendaEncalhe().negate(),
 				"Venda Encalhe", "Venda Encalhe",
 				consolidado.getDataConsolidado(), 
 				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
