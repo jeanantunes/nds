@@ -708,7 +708,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			null, 
 			function(result){
 				
-				if (result && result != ""){
+				if (result && result.result != ""){
 					
 					$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result);
 					
