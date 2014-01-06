@@ -14,7 +14,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		var sizeNomeProduto = 110;
 		
-		if($("#permissaoColExemplDevolucao").val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			sizeNomeProduto = 465;
 		}
 		
@@ -177,13 +177,17 @@ var fechamentoEncalheController = $.extend(true, {
 			singleSelect : true
 		});
 		
-		if($("#permissaoColExemplDevolucao").val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(7,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(9,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(11,false);
-			$("#btnEncerrarOperacaoEncalhe", fechamentoEncalheController.workspace).hide();
 			$('.bt_sellAll', fechamentoEncalheController.workspace).hide();
+		}
+		
+		if($("#permissaoBtnConfirmar", fechamentoEncalheController.workspace).val() != "true"){
+			$("#btnEncerrarOperacaoEncalhe", fechamentoEncalheController.workspace).hide();
+			$("#bt_cotas_ausentes", fechamentoEncalheController.workspace).hide();
 		}
 	},
 	
@@ -235,7 +239,11 @@ var fechamentoEncalheController = $.extend(true, {
         } 
 		
 		if (resultado.rows && resultado.rows.length > 0) {
-			$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
+			
+			if($("#permissaoBtnConfirmar", fechamentoEncalheController.workspace).val() == "true"){
+				$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
+			}
+			
 			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
 			$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).show();
 		}
@@ -675,7 +683,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 		};
 		
-		if($("#permissaoColExemplDevolucao").val() != "true"){
+		if($("#permissaoColExemplDevolucao", fechamentoEncalheController.workspace).val() != "true"){
 			delete buttons.Postergar;
 			delete buttons.Cobrar;
 		}

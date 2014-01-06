@@ -14,10 +14,12 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
-import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoEmail;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.repository.BoletoEmailRepository;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -43,6 +45,9 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 
 	@Autowired
 	protected BoletoService boletoService;
+	
+	@Autowired
+	protected CobrancaRepository cobrancaRepository;
 	
 	@Autowired
 	protected DocumentoCobrancaService documentoCobrancaService;
@@ -187,7 +192,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Salva controle de emissao de boletos por email
+	 * Salva controle de emissao de boletos/cobrancas por email
 	 * 
 	 * @param listaNossoNumeroEnvioEmail
 	 */
@@ -201,16 +206,18 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 		}
 			
 		for (String nossoNumero : listaNossoNumeroEnvioEmail){
-				
-			Boleto boleto = this.boletoService.obterBoletoPorNossoNumero(nossoNumero, null);
 			
-			if (boleto!=null){
+			Cobranca cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+			
+			if (cobranca!=null && 
+				(cobranca.getTipoCobranca().equals(TipoCobranca.BOLETO) || 
+				 cobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))){
 				
-				BoletoEmail bm = this.boletoEmailRepository.obterBoletoEmailPorCobranca(boleto.getId());
+				BoletoEmail bm = this.boletoEmailRepository.obterBoletoEmailPorCobranca(cobranca.getId());
 				
 				if (bm==null){
 
-					Cota cota = boleto.getCota();
+					Cota cota = cobranca.getCota();
 					
 					String email = cota.getPessoa().getEmail();
 						
@@ -226,7 +233,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 
 				    bm = new BoletoEmail();
 				
-				    bm.setCobranca(boleto);
+				    bm.setCobranca(cobranca);
 				
 				    this.boletoEmailRepository.merge(bm);
 			    }
@@ -235,7 +242,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 
 	/**
-	 * Obtem todos os boletos pendentes de envio por email
+	 * Obtem todos os boletos/cobrancas pendentes de envio por email
 	 * 
 	 * @return List<BoletoEmail>
 	 */
@@ -256,7 +263,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Envia Cobrança por email - Controle de Envio de Boletos
+	 * Envia Cobrança por email - Controle de Envio de boletos/cobrancas
 	 * 
 	 * @param boletoEmail
 	 */
