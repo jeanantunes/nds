@@ -1,8 +1,6 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -187,7 +185,7 @@ public class GruposAcessoController extends BaseController {
 		
 		addPais(grupoPermissaoDTO.getPermissoes());
 		
-		grupoPermissao.setPermissoes(new HashSet(grupoPermissaoDTO.getPermissoes()));
+		grupoPermissao.setPermissoes(new HashSet<Permissao>(grupoPermissaoDTO.getPermissoes()));
 		
 		grupoPermissaoService.salvar(grupoPermissao);
 		
@@ -441,14 +439,9 @@ public class GruposAcessoController extends BaseController {
 		String senhaEncriptada = null;
 		if (usuarioDTO.getId() == null || usuarioDTO.getId() == 0) {
 			
-			try {
-				
-				byte[] bytesSenha = usuarioDTO.getSenha().getBytes("UTF-8");
-
-				MessageDigest md = MessageDigest.getInstance("MD5");
-				
-				//Converte o valor da mensagem digest em base 16 (hex) 
-				senhaEncriptada = new BigInteger(1, md.digest(bytesSenha)).toString(16);
+			try{
+			
+				senhaEncriptada = Util.encriptar(usuarioDTO.getSenha());
 				
 			} catch (NoSuchAlgorithmException e) {
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
@@ -457,13 +450,14 @@ public class GruposAcessoController extends BaseController {
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
 				throw new ValidacaoException(validacaoVO);
 			}
-			 
-			usuario = new Usuario();
 			
 			if(senhaEncriptada == null) {
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
 				throw new ValidacaoException(validacaoVO);
 			}
+			
+			usuario = new Usuario();
+			
 			usuario.setSenha(senhaEncriptada);
 			usuario.setLembreteSenha(usuarioDTO.getLembreteSenha());
 		} else {
@@ -485,8 +479,10 @@ public class GruposAcessoController extends BaseController {
 		} else {
 			usuario.setContaAtiva(false);
 		}
-		return usuario;
 		
+		usuario.setSupervisor(usuarioDTO.isSupervisor());
+		
+		return usuario;
 	}
 	
 	/**
@@ -524,6 +520,8 @@ public class GruposAcessoController extends BaseController {
 			grupos.add(grupo);
 		}
 		dto.setGruposSelecionadosList(grupos);
+		dto.setSupervisor(usuario.isSupervisor());
+		
 		return dto;
 	}
 	
