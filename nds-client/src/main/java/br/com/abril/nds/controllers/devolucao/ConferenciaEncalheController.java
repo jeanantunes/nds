@@ -2146,7 +2146,6 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
 		}
-		
 	}
 	
 	/**
