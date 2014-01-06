@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -30,10 +29,6 @@ public class NotaFiscalFatura implements Serializable {
 	
 	@Column(name="VENCIMENTO")
 	private Date vencimento;
-	
-	@Column(name="NOTA_FISCAL_ID")
-	@OneToMany(mappedBy="notaFiscal")
-	private NotaFiscal notaFiscal;
 	
 	public Long getId() {
 		return id;
@@ -64,14 +59,6 @@ public class NotaFiscalFatura implements Serializable {
 
 	public void setVencimento(Date vencimento) {
 		this.vencimento = vencimento;
-	}
-
-	public NotaFiscal getNotaFiscal() {
-		return notaFiscal;
-	}
-
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
-		this.notaFiscal = notaFiscal;
 	}
 
 	@Override

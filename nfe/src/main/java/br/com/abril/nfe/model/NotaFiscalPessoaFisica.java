@@ -22,7 +22,7 @@ public class NotaFiscalPessoaFisica extends NotaFiscalPessoa implements Serializ
 	@Column(name="RG")
 	private String rg;
 	
-	@OneToOne(mappedBy="notaFicalEndereco")
+	@OneToOne
 	@JoinColumn(name="NOTA_FICAL_ENDERECO_ID", unique=true)
 	private NotaFicalEndereco notaFicalEndereco;
 

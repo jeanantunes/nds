@@ -91,6 +91,7 @@ import br.com.abril.nds.repository.EncargoFinanceiroRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
+import br.com.abril.nds.repository.NotaFiscalNdsRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -185,6 +186,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Autowired
 	private TelefoneFornecedorRepository telefoneFornecedorRepository;
 
+	@Autowired
+	private NotaFiscalNdsRepository notaFiscalNdsRepository;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1730,18 +1734,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O intervalo de datas não pode ser nula!");
 		}
 		
-		return this.notaFiscalRepository.consultaCotaExemplaresSumarizados(filtro);
+		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizados(filtro);
 	}
 
 	@Override
 	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
-		return this.notaFiscalRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
+		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
 	@Override
 	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		
-		return notaFiscalRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+		return notaFiscalNdsRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 		
 	}
 

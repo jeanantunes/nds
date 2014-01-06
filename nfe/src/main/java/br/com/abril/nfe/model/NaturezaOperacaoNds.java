@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "NATUREZA_OPERACAO")
-public class NaturezaOperacao {
+public class NaturezaOperacaoNds {
 	
 	@Id
 	@GeneratedValue

@@ -5,25 +5,16 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "NOTA_FISCAL")
-public class NotaFiscal implements Serializable {
+@Embeddable
+public class NotaFiscalBase implements Serializable {
 
 	private static final long serialVersionUID = 2732018921335153522L;
-	
-	@Id
-	@GeneratedValue()
-	@Column(name="ID")
-	private Long id;
 	
 	@Column(name = "AMBIENTE")
 	private	String ambiente;
@@ -56,7 +47,7 @@ public class NotaFiscal implements Serializable {
 	
 	@OneToOne(mappedBy="naturezaOperacao")
 	@JoinColumn(name="NATUREZA_OPERACAO_ID", unique=true)
-	private NaturezaOperacao naturezaOperacao;	
+	private NaturezaOperacaoNds naturezaOperacao;	
 	
 	@ManyToOne
 	private List<NotaFiscalFatura> notaFiscalFatura;
@@ -74,14 +65,6 @@ public class NotaFiscal implements Serializable {
 	
 	@Column(name = "INFORMACOES_COMPLEMENTARES")
 	private	String informacoesComplementares;
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getAmbiente() {
 		return ambiente;
@@ -155,11 +138,11 @@ public class NotaFiscal implements Serializable {
 		this.informacoesComplementares = informacoesComplementares;
 	}
 	
-	public NaturezaOperacao getNaturezaOperacao() {
+	public NaturezaOperacaoNds getNaturezaOperacao() {
 		return naturezaOperacao;
 	}
 
-	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+	public void setNaturezaOperacao(NaturezaOperacaoNds naturezaOperacao) {
 		this.naturezaOperacao = naturezaOperacao;
 	}
 
@@ -203,4 +186,5 @@ public class NotaFiscal implements Serializable {
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
+	
 }
