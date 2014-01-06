@@ -2791,6 +2791,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			) {
 		
 		Cobranca cobranca = null;
+		
 		TipoCobranca tipoCobranca = null;
 		
 		if (nossoNumero != null) {
@@ -2805,39 +2806,40 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		switch(tipoDocumentoConferenciaEncalhe) {
 		
-		case SLIP_PDF :
-			
-			return this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
-		
-		case BOLETO:
-			
-			if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
-			
-				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+			case SLIP_PDF :
 				
-			} else {
+				return this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
+			
+			case BOLETO:
+				
+				if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
+				
+					return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+					
+				} else {
+					
+					return null;
+				}
+				
+			case RECIBO:
+				
+				if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
+					
+					return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+					
+				} else {
+					
+					return null;
+				}
+				
+			case SLIP_TXT:
+				
+				return this.documentoCobrancaService.gerarSlipCobrancaMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
+				
+			default:
 				
 				return null;
-			}
-			
-		case RECIBO:
-			
-			if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
 				
-				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
-				
-			} else {
-				
-				return null;
-			}
-			
-		case SLIP_TXT:
-			
-			return this.documentoCobrancaService.gerarSlipCobrancaMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
-			
-		default:
-			
-			return null;
 		}	
 	}
 	

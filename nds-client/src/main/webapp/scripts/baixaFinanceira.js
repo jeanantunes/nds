@@ -1613,18 +1613,13 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 					"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
 			);
 		}
-		
 
 		$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
 		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
 	},
 	
 	limparCamposBaixaAutomatica : function(keepDadosAposBaixa) {
-
-		$("#uploadedFile", baixaFinanceiraController.workspace).replaceWith(
-			"<input name='uploadedFile' type='file' id='uploadedFile' size='25' " 
-				+ "onchange='baixaFinanceiraController.habilitarIntegracao();' />"
-		);
+		$("#uploadedFile", baixaFinanceiraController.workspace).val("");
 		
 		if(!keepDadosAposBaixa) {
 			$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
