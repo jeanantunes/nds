@@ -1124,7 +1124,7 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 		}
 		
-		this.result.use(Results.json()).from("").serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 
 	@Post
