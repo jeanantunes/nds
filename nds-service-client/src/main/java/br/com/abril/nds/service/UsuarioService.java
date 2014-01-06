@@ -35,5 +35,6 @@ public interface UsuarioService {
 	public boolean existeUsuario(String login);
 
 	public void alterarSenha(Usuario usuario);
-	
+
+	public boolean verificarUsuarioSupervisor(String usuario, String senha);
 }

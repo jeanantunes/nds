@@ -2135,7 +2135,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param indConferenciaContingencia
 	 */
 	@Transactional(readOnly=true)
-	public void validarQtdeEncalheExcedeQtdeReparte(
+	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, boolean indConferenciaContingencia) {
@@ -2161,7 +2161,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				return true;
 			}
 			
 		} else {
@@ -2170,11 +2171,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo( qtdeOld.add(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) ) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				return true;
 			}
 			
 		}
 		
+		return false;
 	}
 	
 	/**

@@ -60,7 +60,7 @@ public interface ConferenciaEncalheService {
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
-	public void validarQtdeEncalheExcedeQtdeReparte(
+	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, 

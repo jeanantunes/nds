@@ -121,7 +121,15 @@ public class FechamentoEncalheController extends BaseController {
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
 		
-		result.include("permissaoColExemplDevolucao", usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO));
+		boolean confCega = !usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA);
+		
+		boolean permissaoVisualiza = usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE);
+		
+		result.include("permissaoColExemplDevolucao", permissaoVisualiza && confCega);
+		
+		boolean permissaoEdicao = usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO);
+		
+		result.include("permissaoBtnConfirmar", permissaoEdicao && confCega);
 	}
 	
 	@Path("/pesquisar")
