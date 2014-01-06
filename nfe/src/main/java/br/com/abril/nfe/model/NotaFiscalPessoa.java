@@ -60,4 +60,29 @@ public abstract class NotaFiscalPessoa implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NotaFiscalPessoa other = (NotaFiscalPessoa) obj;
+		if (this.getId() == null) {
+			if (other.id != null)
+				return false;
+		} else if (!this.getId().equals(other.id))
+			return false;
+		return true;
+	}
 }

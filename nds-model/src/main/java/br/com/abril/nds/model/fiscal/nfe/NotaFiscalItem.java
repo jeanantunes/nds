@@ -1,13 +1,20 @@
-package br.com.abril.nds.fiscal.nfe;
+package br.com.abril.nds.model.fiscal.nfe;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
-import br.com.abril.nfe.model.NotaFiscal;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nfe.model.NotaFiscalBase;
+
+@Entity
+@Table(name="NOTA_FISCAL_ITEM")
 public class NotaFiscalItem {
-	
+	@Embedded
 	private br.com.abril.nfe.model.NotaFiscalItem notaFiscalItem;
 	
 	private OrigemItemNotaFiscal origemItemNotaFiscal;
@@ -18,6 +25,7 @@ public class NotaFiscalItem {
 		}
 	}
 
+	@Id
 	public Long getId() {
 		return notaFiscalItem.getId();
 	}
@@ -90,11 +98,11 @@ public class NotaFiscalItem {
 		this.notaFiscalItem.setValorUnitario(valorUnitario);
 	}
 
-	public NotaFiscal getNotaFiscal() {
+	public NotaFiscalBase getNotaFiscal() {
 		return notaFiscalItem.getNotaFiscal();
 	}
 
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
+	public void setNotaFiscal(NotaFiscalBase notaFiscal) {
 		this.notaFiscalItem.setNotaFiscal(notaFiscal);
 	}
 

@@ -42,8 +42,14 @@
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="br.com.abril.nds.model" />
+		<property name="packagesToScan"> 
+			<list>
+		    	<value>br.com.abril.nds.model</value>
+		      	<value>br.com.abril.nfe.model</value>
+		    </list>
 		
+		</property>
+				
 		<property name="hibernateProperties">
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>

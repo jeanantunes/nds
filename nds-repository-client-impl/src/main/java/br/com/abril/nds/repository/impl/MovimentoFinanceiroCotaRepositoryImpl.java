@@ -66,7 +66,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota) {
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota, Date dataOperacao) {
 		
 		StringBuilder sql = new StringBuilder("");
 		
@@ -104,7 +104,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("    WHERE ");
 		sql.append("        N.NEGOCIACAO_AVULSA = false  ");
 		sql.append("        AND       COTA.NUMERO_COTA = :numeroCota  ");
-		sql.append("        AND    CFC.ID IS NULL");
+		sql.append("        AND    CFC.ID IS NULL AND MFC.DATA = :dataOperacao ");
 		sql.append("    GROUP BY ");
 		sql.append("        PN.ID, ");
 		sql.append("        MFC.ID ");
@@ -113,6 +113,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
 		parameters.put("numeroCota", numeroCota);
+		
+		parameters.put("dataOperacao", dataOperacao);
 		
 		@SuppressWarnings("rawtypes")
 		RowMapper cotaRowMapper = new RowMapper() {

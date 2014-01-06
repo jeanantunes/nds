@@ -32,11 +32,13 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -224,7 +226,7 @@ public class GeracaoNFeController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(CustomJson.class).from(true).serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Geração de NFE com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")

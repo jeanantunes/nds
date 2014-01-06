@@ -19,22 +19,24 @@ import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.fiscal.nfe.NotaFiscal;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
+import br.com.abril.nds.repository.NotaFiscalNdsRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.builders.EmitenteDestinatarioBuilder;
+import br.com.abril.nds.service.builders.FaturaBuilder;
 import br.com.abril.nds.service.builders.ItemNotaFiscalBuilder;
 import br.com.abril.nds.service.builders.NaturezaOperacaoBuilder;
 import br.com.abril.nds.service.builders.NotaFiscalBuilder;
@@ -66,6 +68,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired 
 	private NaturezaOperacaoRepository naturezaOperacaoRepository;
+	
+	@Autowired 
+	private NotaFiscalNdsRepository notaFiscalNdsRepository; 
 	
 	@Override
 	@Transactional
@@ -134,7 +139,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Transactional(rollbackFor=Exception.class)
 	public void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
-		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
+		List<NotaFiscalNds> listaNotaFiscal = new ArrayList<NotaFiscalNds>();
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		
@@ -158,35 +163,38 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
 		
-		// this.notaFiscalRepository.merge(notaFiscal);
+		this.notaFiscalNdsRepository.salvarNotasFiscais(listaNotaFiscal);
 		
 		// this.notaFiscalService.exportarNotasFiscais(listaNotaFiscal);
 	}
 
 	private void gerarNotasFiscaisCotas(FiltroViewNotaFiscalDTO filtro,
-			List<NotaFiscal> listaNotaFiscal, Distribuidor distribuidor,
+			List<NotaFiscalNds> listaNotaFiscal, Distribuidor distribuidor,
 			NaturezaOperacao naturezaOperacao) {
-		NotaFiscal notaFiscal;
+		NotaFiscalNds notaFiscal;
 		// obter as cotas que estão na tela pelo id das cotas
-		List<Cota> cotas = this.notaFiscalRepository.obterConjuntoCotasNotafiscal(filtro);
+		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
 		
 		for (Cota cota : cotas) {
-			notaFiscal = new NotaFiscal();
+			notaFiscal = new NotaFiscalNds();
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
-			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalRepository.obterMovimentoEstoqueCota(filtro);
+			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalNdsRepository.obterMovimentoEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoquesCotas) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
 			
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoquesCotas);
+			
 			listaNotaFiscal.add(notaFiscal);
 		}
+		
+		
 	}
 
 	@Override
@@ -206,7 +214,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		return distribuidorRepository.obter();
 	}
 	
-	public Long serieNotaFiscal (br.com.abril.nfe.model.NotaFiscal notaFiscal){
+	public Long serieNotaFiscal (br.com.abril.nfe.model.NotaFiscalBase notaFiscal){
 		return serieRepository.obterNumeroSerieNota();
 	}
 }
