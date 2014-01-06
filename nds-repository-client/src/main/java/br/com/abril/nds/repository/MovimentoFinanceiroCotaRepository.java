@@ -30,10 +30,11 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * 
 	 * @param numeroCota
+	 * @param dataOperacao
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota);
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota, Date dataOperacao);
 	
 	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
 

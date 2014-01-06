@@ -139,6 +139,10 @@
               <td>CEP:</td>
               <td><input type="text" name="usuarioDTO.cep" id="usuarioCep" style="width:220px;"/></td>
             </tr>
+            <tr>
+            	<td>Supervisor</td>
+            	<td><input type="checkbox" name="usuarioDTO.supervisor" id="supervisor"/></td>
+            </tr>
           </table>
           </fieldset>
          <br clear="all" />
