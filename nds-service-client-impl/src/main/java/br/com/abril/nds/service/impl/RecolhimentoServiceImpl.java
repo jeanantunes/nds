@@ -687,8 +687,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			media = media.add(bigDecimal);
 		}
 		
-		dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.divide(new BigDecimal(""+dadosRecolhimento.getDatasRecolhimentoFornecedor().size())).longValue());
-		
+		//dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.divide(new BigDecimal(""+dadosRecolhimento.getDatasRecolhimentoFornecedor().size())).longValue());
+		dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.longValue()/dadosRecolhimento.getDatasRecolhimentoFornecedor().size());
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
 		
