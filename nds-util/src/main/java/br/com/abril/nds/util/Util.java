@@ -2,6 +2,7 @@ package br.com.abril.nds.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -754,4 +755,15 @@ public abstract class Util {
         }
     }
 
+	public static String encriptar(String info) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+		
+		byte[] bytesSenha = info.getBytes("UTF-8");
+		
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		
+		//Converte o valor da mensagem digest em base 16 (hex) 
+		info = new BigInteger(1, md.digest(bytesSenha)).toString(16);
+		
+		return info;
+	} 
 }

@@ -76,6 +76,14 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 				
 				todosProdutosRecolhimentoNaoBalanceados.addAll(produtosRecolhimentoNaoBalanceados);
 			}
+			/*
+			if(!datasRecolhimento.contains(dataRecolhimentoPrevista)){
+				if(matrizRecolhimentoBalanceada.containsKey(dataRecolhimentoPrevista)){
+				 todosProdutosRecolhimentoNaoBalanceados.addAll(matrizRecolhimentoBalanceada.get(dataRecolhimentoPrevista));
+				 matrizRecolhimentoBalanceada.remove(dataRecolhimentoPrevista);
+				}
+			}
+			*/
 		}
 		
 		if (!datasRecolhimento.isEmpty()) {
@@ -133,6 +141,12 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			expectativaEncalheElegivel = 
 				expectativaEncalheElegivel.add(produtoRecolhimentoBalanceavel.getExpectativaEncalhe());
 			
+			if(expectativaEncalheElegivel.compareTo(produtoRecolhimentoBalanceavel.getExpectativaEncalhe())==0 && produtoRecolhimentoBalanceavel.getExpectativaEncalhe().longValue()> capacidadeManuseio.longValue()){
+				
+				produtosRecolhimentoElegiveis.add(produtoRecolhimentoBalanceavel);
+				produtosRecolhimentoBalanceaveis.remove(indice--);
+			}else {
+			
 			if (!permiteExcederCapacidadeManuseio
 					&& (expectativaEncalheElegivel.doubleValue() > expectativaEncalheASerPreenchida.doubleValue())) {
 				
@@ -141,6 +155,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 			produtosRecolhimentoElegiveis.add(produtoRecolhimentoBalanceavel);
 			produtosRecolhimentoBalanceaveis.remove(indice--);
+			}
 		}
 		
 		super.atualizarMatrizRecolhimento(
@@ -162,9 +177,6 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados = null;
 
-		//BigInteger capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
-		//TODO
-		//dadosRecolhimento.addMediaRecolhimentoDistribuidor(dadosRecolhimento.getProdutosRecolhimento().size());
 		BigInteger capacidadeManuseio = new BigInteger(""+dadosRecolhimento.getMediaRecolhimentoDistribuidor());
 		
 
@@ -182,23 +194,10 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		BigDecimal expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
 		
 		BigDecimal excessoExpectativaEncalhe = 
-			super.calcularExcessoExpectativaEncalhe(
-				expectativaEncalheTotalAtualNaData, capacidadeManuseio, expectativaEncalheABalancear);
+			super.calcularExcessoExpectativaEncalhe(expectativaEncalheTotalAtualNaData, capacidadeManuseio, expectativaEncalheABalancear);
 
 		if (super.validarLimiteCapacidadeRecolhimentoDistribuidor(excessoExpectativaEncalhe)) {
 
-			//TODO
-			//List lista;
-			/*Montar lista de produtos para serem recolhidos na dada
-			for(int i= 0;i < produtosRecolhimentoBalanceaveis.size();i++){
-				
-				lista = new LinkedList<Long>();
-				lista.add(produtosRecolhimentoBalanceaveis.get(i).getIdFornecedor());
-				//Remove 
-				recolhimentoService.obterDatasRecolhimentoFornecedor(dataBalanceamento, lista);
-				if(produtosRecolhimentoBalanceaveis.get(i).getIdFornecedor())
-			}
-			*/
 			super.atualizarMatrizRecolhimento(
 				matrizRecolhimentoBalanceada, produtosRecolhimentoNaData,
 				produtosRecolhimentoBalanceaveis, dataBalanceamento);
@@ -223,10 +222,12 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 															 RecolhimentoDTO dadosRecolhimento) {
 		
 		//TODO: tratar produtos
-		
+		/*
 		BigInteger capacidadeRecolhimentoExcedente =
 			this.obterCapacidadeRecolhimentoExcedente(
 				produtosRecolhimentoBalanceaveis, datasRecolhimento, dadosRecolhimento);
+		*/
+		BigInteger capacidadeRecolhimentoExcedente = new BigInteger(""+dadosRecolhimento.getMediaRecolhimentoDistribuidor());
 		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaAtual = null;
 		
@@ -316,9 +317,13 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			}
 			
 			BigDecimal expectativaEncalheTotalAtualNaData = entryExpectativaEncalheTotalDiariaAtual.getValue();
-			
+				
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimento.get(dataBalanceamento);
 			
+			long media = dadosRecolhimento.getMediaRecolhimentoDistribuidor();
+			media = media-100;
+
+			if(expectativaEncalheTotalAtualNaData.longValue() < media){
 			
 			produtosRecolhimentoBalanceaveis =
 				this.alocarProdutosMatrizRecolhimento(
@@ -326,7 +331,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 						produtosRecolhimentoBalanceaveis, produtosRecolhimentoNaData, 
 							expectativaEncalheTotalAtualNaData, dataBalanceamento, 
 								permiteExcederCapacidadeManuseioDistribuidor);
+			}
 		}
+		
 		
 		return produtosRecolhimentoBalanceaveis;
 	}

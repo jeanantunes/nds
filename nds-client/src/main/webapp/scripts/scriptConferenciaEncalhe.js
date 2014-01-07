@@ -459,7 +459,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.veificarCobrancaGerada);
+					ConferenciaEncalhe.atualizarValoresGridInteira(ConferenciaEncalhe.verificarPermissaoSuperVisor);
 				}, 1000);
 				
 			}
@@ -1211,6 +1211,86 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		
 		);
+	},
+	
+	verificarPermissaoSuperVisor : function(){
+		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
+			null, 
+			function(result){
+				
+				if (result && result.result != ""){
+					
+					$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result);
+					
+					$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog({
+						resizable: false,
+						height:'auto',
+						width:400,
+						modal: true,
+						buttons: {
+							"Ok": function() {
+								
+								ConferenciaEncalhe.autenticarSupervisor();
+								
+							},
+							"Cancelar": function() {
+								$(this).dialog("close");
+							}
+						},
+						form: $("#dialog-autenticar-supervisor", this.workspace).parents("form")
+					});
+					
+				} else {
+					
+					ConferenciaEncalhe.veificarCobrancaGerada();
+				}
+			}
+		);
+	},
+	
+	autenticarSupervisor : function(evento){
+		
+		if (!evento || evento.keyCode == 13){
+		
+			var paramUsuario = {
+				usuario:$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val(),
+				senha:$("#inputSenha", ConferenciaEncalhe.workspace).val()
+			};
+			
+			if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
+				
+				exibirMensagem(
+					'WARNING', 
+					['Usuário e senha são obrigatórios.']
+				);
+				
+				return;
+			}
+			
+			$.postJSON(
+				contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
+				paramUsuario,
+				function(result) {
+					
+					$("#inputUsuarioSup", ConferenciaEncalhe.workspace).val("");
+					$("#inputSenha", ConferenciaEncalhe.workspace).val("");
+					
+					if (result.tipoMensagem){
+						
+						exibirMensagem(
+							result.tipoMensagem, 
+							result.listaMensagens
+						);
+					}
+					
+					ConferenciaEncalhe.veificarCobrancaGerada();
+					
+					$("#dialog-autenticar-supervisor", ConferenciaEncalhe.workspace).dialog("close");
+					return;
+				}
+			);
+		}
 	},
 	
 	recalcularValoresFinalizar : function(index){

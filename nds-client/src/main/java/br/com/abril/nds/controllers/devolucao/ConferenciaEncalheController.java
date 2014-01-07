@@ -981,7 +981,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param qtdExemplares
 	 * @param dto
 	 */
-	private void validarExcedeReparte(Long qtdExemplares, ConferenciaEncalheDTO dto, boolean indConferenciaContingencia){
+	private boolean validarExcedeReparte(Long qtdExemplares, ConferenciaEncalheDTO dto, boolean indConferenciaContingencia){
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
 		
@@ -995,7 +995,7 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
 		} 
 		
-		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
+		return conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
 				conferenciaEncalheDTONaoValidado, getCotaFromSession(), null, indConferenciaContingencia);
 	}
 	
@@ -1094,6 +1094,37 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularTotais(dados);
 		
 		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
+	}
+	
+	@Post
+	public void verificarPermissaoSupervisor(String usuario, String senha, boolean indConferenciaContingencia){
+		
+		if (usuario != null){
+			
+			boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
+			
+			if (permitir){
+				
+				this.result.use(Results.json()).from("").serialize();
+				return;
+			}
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
+		} else {
+			
+			List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+			
+			for (ConferenciaEncalheDTO dto : listaConferencia){
+				
+				if (this.validarExcedeReparte(dto.getQtdInformada().longValue(), dto, indConferenciaContingencia)){
+					
+					this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
+					return;
+				}
+			}
+		}
+		
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
 
 	@Post
@@ -2146,7 +2177,6 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
 		}
-		
 	}
 	
 	/**

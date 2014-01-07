@@ -451,7 +451,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		Query query = 
 			this.getSession().createQuery(
-				"select n from Negociacao n where n.movimentoFinanceiroCota.id = :movFinanId");
+				"select n from Negociacao n join n.movimentosFinanceiroCota m where m.id = :movFinanId");
 		
 		query.setParameter("movFinanId", movFinanId);
 		
