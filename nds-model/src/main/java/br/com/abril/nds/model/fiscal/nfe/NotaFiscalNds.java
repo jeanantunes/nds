@@ -3,18 +3,16 @@ package br.com.abril.nds.model.fiscal.nfe;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nfe.model.NaturezaOperacaoNds;
 import br.com.abril.nfe.model.NotaFicalEndereco;
-import br.com.abril.nfe.model.NotaFiscalFatura;
 import br.com.abril.nfe.model.NotaFiscalPessoa;
 import br.com.abril.nfe.model.NotaFiscalPessoaJuridica;
 
@@ -26,18 +24,20 @@ public class NotaFiscalNds {
 	private br.com.abril.nfe.model.NotaFiscalBase notaFiscal;
 	
 	@Id
-	@GeneratedValue()
-	@Column(name="ID")
+	@GeneratedValue
 	private Long id;
 	
-	@OneToOne
-	private NaturezaOperacaoNds naturezaOperacao;
+	@Column(name = "HORA_SAIDA")
+	private	String horaSaida;
+
+	@Column(name = "DATA_EXPEDICAO", nullable = true)
+	private Date dataEntradaSaida;
 	
-	@OneToMany
+	@OneToMany(cascade=CascadeType.MERGE)
 	private List<NotaFiscalItem> notaFiscalItens; 
 	
-	@OneToMany
-	private List<NotaFiscalFatura> notaFiscalFatura; 
+	//@OneToMany
+	//private List<NotaFiscalFatura> notaFiscalFatura; 
 	
 	public NotaFiscalNds() {
 		if(notaFiscal == null){
@@ -53,9 +53,8 @@ public class NotaFiscalNds {
 		}
 	}
 	
-	@Id
 	public Long getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setId(Long id) {
@@ -141,32 +140,6 @@ public class NotaFiscalNds {
 	public void setInformacoesComplementares(String informacoesComplementares) {
 		this.setInformacoesComplementares(informacoesComplementares);
 	}
-
-	public NaturezaOperacaoNds getNaturezaOperacao() {
-		return this.naturezaOperacao;
-	}
-
-	public void setNaturezaOperacao(NaturezaOperacaoNds naturezaOperacao) {
-		this.naturezaOperacao = naturezaOperacao;
-	}
-	
-	
-	public List<NotaFiscalItem> getNotaFiscalItens() {
-		return notaFiscalItens;
-	}
-
-	public void setNotaFiscalItens(List<NotaFiscalItem> notaFiscalItens) {
-		this.notaFiscalItens = notaFiscalItens;
-	}
-	
-	public List<NotaFiscalFatura> getNotaFiscalFatura() {
-		return notaFiscalFatura;
-	}
-
-	public void setNotaFiscalFatura(List<NotaFiscalFatura> notaFiscalFatura) {
-		this.notaFiscalFatura = notaFiscalFatura;
-	}
-	
 	
 	public NotaFiscalPessoa getNotaFiscalTransportador() {
 		return this.notaFiscal.getNotaFiscalTransportador();
@@ -174,6 +147,14 @@ public class NotaFiscalNds {
 
 	public void setNotaFiscalTransportador(NotaFiscalPessoa notaFiscalTransportador) {
 		this.notaFiscal.setNotaFiscalTransportador(notaFiscalTransportador);
+	}
+
+	public List<NotaFiscalItem> getNotaFiscalItens() {
+		return notaFiscalItens;
+	}
+
+	public void setNotaFiscalItens(List<NotaFiscalItem> notaFiscalItens) {
+		this.notaFiscalItens = notaFiscalItens;
 	}
 
 }

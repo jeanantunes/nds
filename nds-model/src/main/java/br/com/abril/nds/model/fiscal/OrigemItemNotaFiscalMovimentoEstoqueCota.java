@@ -27,8 +27,8 @@ public class OrigemItemNotaFiscalMovimentoEstoqueCota extends OrigemItemNotaFisc
 		return origem;
 	}
 
-	public OrigemItemNotaFiscal obterOrigemItemNotaFiscal() {
-		return this;
+	public String obterOrigemItemNotaFiscal() {
+		return this.getClass().getName();
 	};
 	
 }

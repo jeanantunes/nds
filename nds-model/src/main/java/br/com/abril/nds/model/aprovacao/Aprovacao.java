@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.aprovacao;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,8 +15,13 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @MappedSuperclass
-public abstract class Aprovacao {
+public abstract class Aprovacao implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -225924432753902717L;
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "APROVADOR_ID")
 	private Usuario aprovador;

@@ -33,6 +33,8 @@ public class ItemNotaFiscalBuilder  {
 			notaFiscalItem.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 			notaFiscalItem.setValorTotal(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
 			notaFiscalItem.setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+			notaFiscalItem.setCST(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTributacaoFiscal().getCST());
+			movimentoEstoqueCota.setNotaFiscalEmitida(true);
 			notaFiscalItem.setOrigemItemNotaFiscal(new OrigemItemNotaFiscalMovimentoEstoqueCota());
 			
 			if(((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas() == null) {
@@ -56,6 +58,7 @@ public class ItemNotaFiscalBuilder  {
 						notaFiscalItem.setNCM(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getDescricao());
 						notaFiscalItem.setQuantidade(notaFiscalItem.getQuantidade().add(movimentoEstoqueCota.getQtde()));
 						notaFiscalItem.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+						notaFiscalItem.setCST(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTributacaoFiscal().getCST());
 						
 						BigDecimal valorTotalTemp = notaFiscalItem.getValorTotal();
 						BigDecimal valorTotalNovoMec = movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde()));
@@ -63,6 +66,8 @@ public class ItemNotaFiscalBuilder  {
 						notaFiscalItem.setValorTotal(valorTotalTemp.add(valorTotalNovoMec));
 						
 						notaFiscalItem.setValorUnitario(notaFiscalItem.getValorTotal().divide(new BigDecimal(notaFiscalItem.getQuantidade())));
+						
+						mec.setNotaFiscalEmitida(true);
 						
 					}
 					
@@ -74,9 +79,12 @@ public class ItemNotaFiscalBuilder  {
 					notaFiscalItem.setNCM(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getDescricao());
 					notaFiscalItem.setQuantidade(movimentoEstoqueCota.getQtde());
 					notaFiscalItem.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+					notaFiscalItem.setCST(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTributacaoFiscal().getCST());
 					notaFiscalItem.setValorTotal(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
 					notaFiscalItem.setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 					notaFiscalItem.setOrigemItemNotaFiscal(new OrigemItemNotaFiscalMovimentoEstoqueCota());
+					
+					movimentoEstoqueCota.setNotaFiscalEmitida(true);
 					
 					if(((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas() == null) {
 						((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).setListaMovimentoEstoqueCotas(new ArrayList<MovimentoEstoqueCota>());

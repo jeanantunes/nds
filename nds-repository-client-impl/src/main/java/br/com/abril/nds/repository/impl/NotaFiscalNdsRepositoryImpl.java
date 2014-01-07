@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -84,16 +83,12 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	@SuppressWarnings("unchecked")
 	public List<Cota> obterConjuntoCotasNotafiscal(FiltroViewNotaFiscalDTO filtro) {
 		
-		List<Cota> cotas = new ArrayList<Cota>();
-		
 		// OBTER ID DE TODAS AS COTAS DA TELA
 		StringBuilder hql = new StringBuilder("SELECT ");
 		hql.append(" mec.cota ");
 		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, false, false, false), filtro);
 		
-		cotas.add((Cota) query.list().get(0)); 
-		
-		return cotas;
+		return query.list();
 	}
 	
 	/**
@@ -129,7 +124,9 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		.append(" JOIN produto.fornecedores fornecedor")
 		.append(" WHERE mec.data BETWEEN :dataInicial AND :dataFinal ")
 		.append(" AND mec.movimentoEstoqueCotaEstorno is null ")
-		.append(" AND mec.movimentoEstoqueCotaFuro is null ");
+		.append(" AND mec.movimentoEstoqueCotaFuro is null ")
+		.append(" AND mec.notaFiscalEmitida = false ")
+		;
 		
 		// Tipo de Nota:		
 		if(filtro.getIdNaturezaOperacao() != null) {

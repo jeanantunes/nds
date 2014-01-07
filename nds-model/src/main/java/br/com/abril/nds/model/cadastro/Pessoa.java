@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -41,10 +42,10 @@ public abstract class Pessoa implements Serializable {
 	@Column(name = "EMAIL")
 	private String email;
 	
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany(mappedBy = "pessoa", cascade=CascadeType.MERGE)
 	public List<Endereco> enderecos = new ArrayList<Endereco>();
 	
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany(mappedBy = "pessoa", cascade=CascadeType.MERGE)
 	public List<Telefone> telefones = new ArrayList<Telefone>();
 	
 	public Long getId() {

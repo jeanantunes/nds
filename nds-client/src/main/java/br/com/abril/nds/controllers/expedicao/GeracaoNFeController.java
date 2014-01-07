@@ -226,7 +226,7 @@ public class GeracaoNFeController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Geração de NFE com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Geração de NFE com sucesso."),Constantes.PARAM_MSGS).serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")

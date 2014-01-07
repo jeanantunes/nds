@@ -6,12 +6,16 @@ public abstract class OrigemItemNotaFiscal implements Serializable {
 	
 	private static final long serialVersionUID = 4968512055654760321L;
 	
-	public OrigemItemNotaFiscal obterOrigemItemNotaFiscal() {
+	public String obterOrigemItemNotaFiscal() {
 		return null;
 	};
 	
 	public OrigemItem getOrigem() {
 		return null;
+	}
+	
+	public String toString() {
+		return this.getClass().getSimpleName();
 	}
 	
 }

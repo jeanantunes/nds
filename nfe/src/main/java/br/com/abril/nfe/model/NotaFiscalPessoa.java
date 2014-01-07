@@ -30,15 +30,6 @@ public abstract class NotaFiscalPessoa implements Serializable {
 	@Column(name="EMAIL")
 	private String email;
 	
-	@Column(name = "HORA_SAIDA")
-	private	String horaSaida;
-
-	@Column(name = "DATA_EMISSAO", nullable = false)
-	private Date dataEmissao;
-	
-	@Column(name = "DATA_EXPEDICAO", nullable = false)
-	private Date dataEntradaSaida;
-	
 	@Embedded
 	private Telefone telefone;
 	
