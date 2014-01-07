@@ -5,14 +5,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-@Entity
-@Table(name="NOTA_FISCAL_ITEM")
+@Embeddable
 public class NotaFiscalItem implements Serializable {
 
 	private static final long serialVersionUID = -6124932093852972727L;
@@ -48,7 +46,7 @@ public class NotaFiscalItem implements Serializable {
 
 	@Column(name="NOTA_FISCAL_ID")
 	@OneToMany(mappedBy="notaFiscal")
-	private NotaFiscal notaFiscal;
+	private NotaFiscalBase notaFiscal;
 	
 	public Long getId() {
 		return id;
@@ -122,11 +120,11 @@ public class NotaFiscalItem implements Serializable {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public NotaFiscal getNotaFiscal() {
+	public NotaFiscalBase getNotaFiscal() {
 		return notaFiscal;
 	}
 
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
+	public void setNotaFiscal(NotaFiscalBase notaFiscal) {
 		this.notaFiscal = notaFiscal;
 	}
 

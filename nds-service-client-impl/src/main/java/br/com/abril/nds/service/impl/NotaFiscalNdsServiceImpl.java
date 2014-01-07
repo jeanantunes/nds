@@ -3,12 +3,12 @@ package br.com.abril.nds.service.impl;
 import java.util.List;
 
 import br.com.abril.nds.service.NotaFiscalNdsService;
-import br.com.abril.nfe.model.NotaFiscal;
+import br.com.abril.nfe.model.NotaFiscalBase;
 
 public class NotaFiscalNdsServiceImpl implements NotaFiscalNdsService {
 
 	@SuppressWarnings("unused")
-	private List<NotaFiscal> obterDadosNotaFiscal(){
+	private List<NotaFiscalBase> obterDadosNotaFiscal(){
 		
 		StringBuffer sql = new StringBuffer("");
 

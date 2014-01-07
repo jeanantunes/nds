@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.fiscal.nfe.NotaFiscal;
-import br.com.abril.nds.fiscal.nfe.NotaFiscalItem;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nfe.NotaFiscalItem;
 
 public class ItemNotaFiscalBuilder  {
 	
-	public static NotaFiscal montaItemNotaFiscal(NotaFiscal nota, MovimentoEstoqueCota movimentoEstoqueCota){
+	public static NotaFiscalNds montaItemNotaFiscal(NotaFiscalNds nota, MovimentoEstoqueCota movimentoEstoqueCota){
 		
 		NotaFiscalItem notaFiscalItem = new NotaFiscalItem();
 		

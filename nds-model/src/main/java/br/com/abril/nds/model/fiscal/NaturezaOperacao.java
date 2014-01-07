@@ -170,7 +170,7 @@ public class NaturezaOperacao implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
 		return result;
 	}
 
@@ -183,10 +183,10 @@ public class NaturezaOperacao implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		NaturezaOperacao other = (NaturezaOperacao) obj;
-		if (id == null) {
+		if (this.getId() == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getId().equals(other.id))
 			return false;
 		return true;
 	}

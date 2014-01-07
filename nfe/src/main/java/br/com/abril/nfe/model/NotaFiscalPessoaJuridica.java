@@ -28,7 +28,7 @@ public class NotaFiscalPessoaJuridica extends NotaFiscalPessoa implements Serial
 	@Column(name="INSCRICAO_ESTADUAL")
 	private String inscricaoEstadual;
 	
-	@OneToOne(mappedBy="notaFicalEndereco")
+	@OneToOne
 	@JoinColumn(name="NOTA_FICAL_ENDERECO_ID", unique=true)
 	private NotaFicalEndereco notaFicalEndereco;
 
