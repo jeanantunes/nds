@@ -43,6 +43,7 @@ import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -176,7 +177,7 @@ public class NegociacaoDividaController extends BaseController {
 		
 		Object[] dados = new Object[2];
 		dados[0] = tableModel;
-		dados[1] = total;
+		dados[1] = MathUtil.round(total, 2);
 		
 		result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}

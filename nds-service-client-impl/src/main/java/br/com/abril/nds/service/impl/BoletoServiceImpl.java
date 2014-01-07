@@ -441,7 +441,7 @@ public class BoletoServiceImpl implements BoletoService {
 						dataVencimento,
 						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
 						tipoMovimentoFinanceiroPendente,
-						"Oriundo de cobrança não paga");
+						"Cobrança não paga");
 				
 				MovimentoFinanceiroCota movimentoJuros = null;
 				
@@ -464,7 +464,7 @@ public class BoletoServiceImpl implements BoletoService {
 							dataVencimento,
 							valor,
 							tipoMovimentoFinanceiroJuros,
-							"Oriundos de cobrança não paga");
+							"Cobrança não paga");
 				}
 				
 				valor = this.cobrancaService.calcularMulta(
@@ -483,7 +483,7 @@ public class BoletoServiceImpl implements BoletoService {
 							dataVencimento,
 							valor,
 							tipoMovimentoFinanceiroMulta,
-							"Oriunda de cobrança não paga");
+							"Cobrança não paga");
 				}
 
 				this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
