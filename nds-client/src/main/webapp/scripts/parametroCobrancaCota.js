@@ -393,6 +393,22 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 	},
 	
+	opcaoPagtoBoletoEmBranco : function(isBoletoEmBranco){
+		
+		if (isBoletoEmBranco){
+		
+		    parametroCobrancaCotaController.opcaoTipoFormaCobranca('DIARIA');
+		}
+		
+		$("#semanal", this.workspace).prop('disabled', isBoletoEmBranco);
+		
+		$("#quinzenal", this.workspace).prop('disabled', isBoletoEmBranco);
+		
+		$("#mensal", this.workspace).prop('disabled', isBoletoEmBranco);
+		
+		return isBoletoEmBranco;
+	},
+	
 	opcaoPagto : function(op){
 				
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
@@ -410,6 +426,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).show();
 		}    
+		else if (op=='DINHEIRO'){
+			$('#divRecebeEmail', this.workspace).show();
+			$('#divComboBanco', this.workspace).hide();
+			$('#divDadosBancarios', this.workspace).hide();
+		}    
 		else{
 			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).hide();
@@ -420,6 +441,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	obterParametrosDistribuidor : function (op) {
 		
 		this.opcaoPagto(op);
+		
+		var isOpBoletoEmBranco = parametroCobrancaCotaController.opcaoPagtoBoletoEmBranco(op=='BOLETO_EM_BRANCO');
+		
+		if(isOpBoletoEmBranco){
+		    
+			return;
+		}
 		
 		var data = [{name: 'op', value: op}];
 		
@@ -982,8 +1010,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	obterFormaCobranca : function(idFormaCobranca){
+		
+		//hidden
+		$("#_idFormaCobranca", this.workspace).val(idFormaCobranca);
+		
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}, 
 		            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value }];
+		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterFormaCobranca",
 				   data,
 				   parametroCobrancaCotaController.sucessCallbackFormaCobranca, 
@@ -992,9 +1025,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	sucessCallbackFormaCobranca : function(resultado) {
-		
-		//hidden
-		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 		
 		parametroCobrancaCotaController.carregarComboTipoCobranca(resultado.tipoCobranca);
 		

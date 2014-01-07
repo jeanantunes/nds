@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 
 public interface DebitoCreditoCotaService {
 
@@ -81,4 +82,15 @@ public interface DebitoCreditoCotaService {
 	void carregarDadosDebitoCreditoDaCota(
 			InfoConferenciaEncalheCota infoConfereciaEncalheCota, Cota cota,
 			Date dataOperacao);
+
+	/**
+	 * Verifica se o Movimento Financeiro pode ser Editado
+	 * Nao consolidado
+	 * Lancamento automatico
+	 * Data do movimento maior que a data de operação
+	 * 
+	 * @param movimentoFinanceiroCota
+	 * @return boolean
+	 */
+	boolean isMovimentoEditavel(MovimentoFinanceiroCota movimentoFinanceiroCota);
 }

@@ -9,11 +9,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -120,4 +123,17 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuarioRepository.alterarSenha(usuario);
 	}
 
+	@Override
+	public boolean verificarUsuarioSupervisor(String usuario, String senha) {
+		
+		try {
+			senha = Util.encriptar(senha);
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Houve problema com a senha informada. Tente novamente.");
+		}
+		
+		return this.usuarioRepository.verificarUsuarioSupervisor(usuario, senha);
+	}
 }

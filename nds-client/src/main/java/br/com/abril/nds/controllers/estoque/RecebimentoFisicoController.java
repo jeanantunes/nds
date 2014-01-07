@@ -127,26 +127,26 @@ public class RecebimentoFisicoController extends BaseController {
 		preencherCombos();
 		
 		preencherDataEmissao();
+		
+		boolean confCega = !usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_CONF_CEGA);
+		
+		boolean permiteVisualizacao = usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)  && confCega;
 
 		result.include(
 			"permissaoBotaoConfirmacao", 
-			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO));
+			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO) && confCega);
 		
 		result.include(
-			"permissaoGridColRepartePrevisto", 
-			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO));
+			"permissaoGridColRepartePrevisto", permiteVisualizacao);
 		
 		result.include(
-			"permissaoGridColDiferenca", 
-			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA));
+			"permissaoGridColDiferenca", permiteVisualizacao);
 		
 		result.include(
-			"permissaoColValorTotal",
-			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL));
+			"permissaoColValorTotal", permiteVisualizacao);
 		
 		result.include(
-				"permissaoColValorTotalDesconto",
-				usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL_DESCONTO));
+				"permissaoColValorTotalDesconto", permiteVisualizacao);
 		
 		result.include("indConferenciaCega", this.distribuidorService.isConferenciaCegaRecebimentoFisico());
 	}
@@ -1382,7 +1382,7 @@ public class RecebimentoFisicoController extends BaseController {
 	 * @param itensRecebimento
 	 */
 	@Post
-	@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO)
+	@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO)
 	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
 		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
