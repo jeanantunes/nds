@@ -2,6 +2,7 @@ package br.com.abril.nfe.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,7 +29,7 @@ public class NotaFiscalPessoaJuridica extends NotaFiscalPessoa implements Serial
 	@Column(name="INSCRICAO_ESTADUAL")
 	private String inscricaoEstadual;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name="NOTA_FICAL_ENDERECO_ID", unique=true)
 	private NotaFicalEndereco notaFicalEndereco;
 

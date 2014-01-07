@@ -12,6 +12,11 @@ import br.com.abril.nds.model.movimentacao.TipoMovimento;
 @DiscriminatorValue(value = "ESTOQUE")
 public class TipoMovimentoEstoque extends TipoMovimento {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -747736389896930758L;
+
 	@Column(name = "INCIDE_DIVIDA")
 	private boolean incideDivida;
 	

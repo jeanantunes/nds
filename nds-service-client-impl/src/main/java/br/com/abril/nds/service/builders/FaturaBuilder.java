@@ -7,8 +7,6 @@ import java.util.List;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
-import br.com.abril.nds.model.fiscal.nfe.NotaFiscalItem;
 import br.com.abril.nfe.model.NotaFiscalFatura;
 
 
@@ -23,9 +21,9 @@ public class FaturaBuilder {
 		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
-			if(notaFiscal.getNotaFiscalItens() == null) {
+			/*if(notaFiscal.getNotaFiscalItens() == null) {
 				notaFiscal.setNotaFiscalFatura(new ArrayList<NotaFiscalFatura>());
-			}
+			}*/
 		}
 		
 		for(MovimentoEstoqueCota moviemnto : movimentosEstoqueCota) {
@@ -36,7 +34,7 @@ public class FaturaBuilder {
 		}
 		
 		// popular os itens das notas fiscais
-		notaFiscal.setNotaFiscalFatura(faturas);
+		//notaFiscal.setNotaFiscalFatura(faturas);
 	}
 	
 }

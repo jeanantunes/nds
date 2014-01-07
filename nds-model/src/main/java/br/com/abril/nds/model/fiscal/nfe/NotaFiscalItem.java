@@ -3,20 +3,37 @@ package br.com.abril.nds.model.fiscal.nfe;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
-import br.com.abril.nfe.model.NotaFiscalBase;
 
 @Entity
 @Table(name="NOTA_FISCAL_ITEM")
 public class NotaFiscalItem {
+	
+	@Id
+	@GeneratedValue()
+	@Column(name="ID")
+	private Long id;
+	
+	@ManyToOne
+	@JoinColumn(name="NOTA_FISCAL_ID")
+	private NotaFiscalNds notaFiscal;
+	
 	@Embedded
 	private br.com.abril.nfe.model.NotaFiscalItem notaFiscalItem;
 	
+	@Column(name="ORIGEM_ITEM_NOTA_FISCAL")
 	private OrigemItemNotaFiscal origemItemNotaFiscal;
 	
 	public NotaFiscalItem() {
@@ -25,13 +42,20 @@ public class NotaFiscalItem {
 		}
 	}
 
-	@Id
 	public Long getId() {
-		return notaFiscalItem.getId();
+		return id;
 	}
 
 	public void setId(Long id) {
-		this.notaFiscalItem.setId(id);
+		this.id = id;
+	}
+
+	public NotaFiscalNds getNotaFiscal() {
+		return notaFiscal;
+	}
+
+	public void setNotaFiscal(NotaFiscalNds notaFiscal) {
+		this.notaFiscal = notaFiscal;
 	}
 
 	public Long getCodigoItem() {
@@ -96,14 +120,6 @@ public class NotaFiscalItem {
 
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.notaFiscalItem.setValorUnitario(valorUnitario);
-	}
-
-	public NotaFiscalBase getNotaFiscal() {
-		return notaFiscalItem.getNotaFiscal();
-	}
-
-	public void setNotaFiscal(NotaFiscalBase notaFiscal) {
-		this.notaFiscalItem.setNotaFiscal(notaFiscal);
 	}
 
 	public OrigemItemNotaFiscal getOrigemItemNotaFiscal() {

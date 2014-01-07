@@ -18,7 +18,7 @@ public class NotaFiscalBuilder implements Serializable {
 	public static NotaFiscalNds montarHeaderNotaFiscal(NotaFiscalNds notaFiscal, Cota cota){
 		
 		/** -- Natureza da Operação -- PROT. DE AUTORIZAÇÃO -- CRT(Codigo Regime Tributario)
-	     * -- Inscricao Estadual -- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO -- CNPJ/CPF
+	     *  -- Inscricao Estadual   -- INSCRIÇÃO ESTADUAL DO SUBSTITUTO TRIBUTÁRIO -- CNPJ/CPF
 		 */
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			
@@ -27,7 +27,7 @@ public class NotaFiscalBuilder implements Serializable {
 			notaFiscal.getEmissor().setNomeFantasia(pessoaJuridica.getNomeFantasia() == null ?  cota.getPessoa().getNome() : pessoaJuridica.getNomeFantasia());
 			notaFiscal.getEmissor().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
 			notaFiscal.getEmissor().setCnpj(pessoaJuridica.getCnpj());
-
+			notaFiscal.getEmissor().setEmail(pessoaJuridica.getEmail());
 			
 		} else if (cota.getPessoa() instanceof PessoaFisica) {
 			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();

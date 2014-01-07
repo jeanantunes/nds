@@ -402,44 +402,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return ((BigInteger) query.uniqueResult()).intValue();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
-		/*
+		
 		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
 		
 		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
 		
 		return !criteria.list().isEmpty();
-		*/
-		
-		StringBuilder sql = new StringBuilder()
-		.append("select ")
-		.append("	((select count(data_recolhimento) ")
-		.append("		from chamada_encalhe ")
-		.append("		where data_recolhimento = :dataOperacao) > 0) countCeGtZero ")
-		.append(", 	((select count(data_encalhe) ")
-		.append("		from fechamento_encalhe ")
-		.append("		where data_encalhe = :dataOperacao) > 0) countFeGtZero ");
-		
-		SQLQuery query = getSession().createSQLQuery(sql.toString());
-		query.setParameter("dataOperacao", dataEncalhe);
-		query.addScalar("countCeGtZero", StandardBasicTypes.BOOLEAN);
-		query.addScalar("countFeGtZero", StandardBasicTypes.BOOLEAN);
-		
-		List<Object> result = query.list();
-		
-		if(result == null || result.isEmpty()) {
-			return false;
-		}
-		
-		Object[] obj = (Object[]) result.get(0);
-		
-		if((Boolean) obj[0] ^ (Boolean) obj[1]) {
-			return false;
-		} else { 
-			return true;
-		}
 		
 	}
 	
@@ -1364,6 +1334,40 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		BigInteger qtde = (BigInteger) query.uniqueResult();
 		
 		return ( qtde != null ) ? qtde.intValue() : 0;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean validarEncerramentoOperacaoEncalhe(Date data) {
+
+		StringBuilder sql = new StringBuilder()
+		.append("select ")
+		.append("	((select count(data_recolhimento) ")
+		.append("		from chamada_encalhe ")
+		.append("		where data_recolhimento = :dataOperacao) > 0) countCeGtZero ")
+		.append(", 	((select count(data_encalhe) ")
+		.append("		from fechamento_encalhe ")
+		.append("		where data_encalhe = :dataOperacao) > 0) countFeGtZero ");
+		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
+		query.setParameter("dataOperacao", data);
+		query.addScalar("countCeGtZero", StandardBasicTypes.BOOLEAN);
+		query.addScalar("countFeGtZero", StandardBasicTypes.BOOLEAN);
+		
+		List<Object> result = query.list();
+		
+		if(result == null || result.isEmpty()) {
+			return false;
+		}
+		
+		Object[] obj = (Object[]) result.get(0);
+		
+		if((Boolean) obj[0] ^ (Boolean) obj[1]) {
+			return false;
+		} else { 
+			return true;
+		}
 		
 	}
 }

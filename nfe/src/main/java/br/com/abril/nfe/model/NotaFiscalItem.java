@@ -6,20 +6,12 @@ import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Embeddable
 public class NotaFiscalItem implements Serializable {
 
 	private static final long serialVersionUID = -6124932093852972727L;
 
-	@Id
-	@GeneratedValue()
-	@Column(name="ID")
-	private Long id;
-	
 	@Column(name="CODIGO_ITEM")
 	private Long codigoItem;
 	
@@ -44,17 +36,6 @@ public class NotaFiscalItem implements Serializable {
 	@Column(name="VALOR_UNITARIO")
 	private BigDecimal valorUnitario;
 
-	@Column(name="NOTA_FISCAL_ID")
-	@OneToMany(mappedBy="notaFiscal")
-	private NotaFiscalBase notaFiscal;
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public Long getCodigoItem() {
 		return codigoItem;
@@ -118,23 +99,6 @@ public class NotaFiscalItem implements Serializable {
 
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
-	}
-
-	public NotaFiscalBase getNotaFiscal() {
-		return notaFiscal;
-	}
-
-	public void setNotaFiscal(NotaFiscalBase notaFiscal) {
-		this.notaFiscal = notaFiscal;
-	}
-
-	@Override
-	public String toString() {
-		return "NotaFiscalItem [id=" + id + ", codigoItem=" + codigoItem
-				+ ", descricao=" + descricao + ", NCM=" + NCM + ", CST=" + CST
-				+ ", unidade=" + unidade + ", valorTotal=" + valorTotal
-				+ ", quantidade=" + quantidade + ", valorUnitario="
-				+ valorUnitario + "]";
 	}
 
 }

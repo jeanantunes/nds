@@ -103,6 +103,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -2125,6 +2126,49 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	/**
+	 * Obtem valor inicial da faixa de número reservada para a geração de Nosso Numero de boletos antecipados (Em Branco)
+	 * Somado ao atributo idBoletoAntecipado para a composição do Nosso Número
+	 * Considera o tamanho aceitável para cada banco
+	 * @param numeroBanco
+	 * @return long
+	 */
+	private long obterInicioNumeroReservadoNossoNumeroBoletoAntecipado(String numeroBanco){
+		
+		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
+		
+		switch (nomeBanco) {
+		
+		    case BANCO_BRADESCO: 
+		    case BANCO_ITAU:
+		    case HSBC:
+		    	
+				return 99000000;
+			
+			case BANCO_ABN_AMRO_REAL:
+			case BANCO_DO_BRASIL:
+			case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
+			case BANCO_DO_ESTADO_DO_RIO_GRANDE_DO_SUL:
+			case BANCO_DO_NORDESTE_DO_BRASIL:
+			case BANCO_INTEMEDIUM:
+			case BANCO_RURAL:
+			case BANCO_SAFRA:
+			case BANCO_SANTANDER:
+			case BANCO_SICREDI:	
+			case BANCOOB:
+			case CAIXA_ECONOMICA_FEDERAL:
+			case MERCANTIL_DO_BRASIL:
+			case NOSSA_CAIXA:	
+			case UNIBANCO:
+	
+				return 990000;
+	
+			default:
+	
+				return 99000000;
+		}
+	}
+	
+	/**
 	 * Atualiza os campos Nosso Número e Dígito Nosso Número em BoletoEmBrancoDTO conforme BoletoAntecipado persistido
 	 * @param bbDTO
 	 * @param cota
@@ -2142,11 +2186,13 @@ public class BoletoServiceImpl implements BoletoService {
 									               Banco banco,
 									               BigDecimal valor){
 		
+		long numeroBancoBoletoAntecipado = this.obterInicioNumeroReservadoNossoNumeroBoletoAntecipado(banco.getNumeroBanco());
+		
 		String nossoNumero = Util.gerarNossoNumero(cota.getNumeroCota(), 
                                                    dataEmissao, 
                                                    banco!=null?banco.getNumeroBanco():"0",
 									               fornecedor != null ? fornecedor.getId() : null,
-									               99000000+bbDTO.getIdBoletoAntecipado(),
+									               numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
 									               banco!=null?banco.getAgencia():0,
 									               banco!=null?banco.getConta():0,
 									               banco!=null?banco.getCarteira():0);

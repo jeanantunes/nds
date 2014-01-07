@@ -1,14 +1,12 @@
 package br.com.abril.nfe.model;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "NATUREZA_OPERACAO")
-public class NaturezaOperacaoNds {
+@Embeddable
+public class NaturezaOperacao {
 	
 	@Id
 	@GeneratedValue
@@ -21,8 +19,8 @@ public class NaturezaOperacaoNds {
 	@Column(name="CFOP_ESTADO")
 	private String cfopEstado;
 
-	@Column(name="CFOP_FORA_ESTADO")
-	private String cfopForaEstado;
+	@Column(name="CFOP_OUTROS_ESTADO")
+	private String cfopOutrosEstado;
 
 	public Long getId() {
 		return id;
@@ -50,18 +48,18 @@ public class NaturezaOperacaoNds {
 	}
 
 	public String getCfopForaEstado() {
-		return cfopForaEstado;
+		return cfopOutrosEstado;
 	}
 
 
 	public void setCfopForaEstado(String cfopForaEstado) {
-		this.cfopForaEstado = cfopForaEstado;
+		this.cfopOutrosEstado = cfopForaEstado;
 	}
 
 	@Override
 	public String toString() {
 		return "NaturezaOperacao [id=" + id + ", descricao=" + descricao
-				+ ", cfopForaEstado=" + cfopForaEstado + ", cfopEstado=" + cfopEstado + "]";
+				+ ", cfopForaEstado=" + cfopOutrosEstado + ", cfopEstado=" + cfopEstado + "]";
 	}
 	
 }
