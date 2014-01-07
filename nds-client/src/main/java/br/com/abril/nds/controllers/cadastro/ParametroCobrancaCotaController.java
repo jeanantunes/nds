@@ -1040,16 +1040,16 @@ public class ParametroCobrancaCotaController extends BaseController {
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO SEMANAL
 			if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
-						formaCobranca.getIdCota(),
-						formaCobranca.getFornecedoresId(),
-						formaCobranca.getTipoFormaCobranca(),
-						formaCobranca.isDomingo(),
-						formaCobranca.isSegunda(),
-						formaCobranca.isTerca(),
-						formaCobranca.isQuarta(),
-						formaCobranca.isQuinta(),
-						formaCobranca.isSexta(),
-						formaCobranca.isSabado())){
+																		   formaCobranca.getIdCota(),
+																		   formaCobranca.getFornecedoresId(),
+																		   formaCobranca.getTipoFormaCobranca(),
+																		   formaCobranca.isDomingo(),
+																		   formaCobranca.isSegunda(),
+																		   formaCobranca.isTerca(),
+																		   formaCobranca.isQuarta(),
+																		   formaCobranca.isQuinta(),
+																		   formaCobranca.isSexta(),
+																		   formaCobranca.isSabado())){
 
 					throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 				}
@@ -1058,12 +1058,12 @@ public class ParametroCobrancaCotaController extends BaseController {
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO MENSAL
 			else{
 				if (!this.formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
-						formaCobranca.getIdCota(),
-						formaCobranca.getFornecedoresId(),
-						formaCobranca.getTipoFormaCobranca(),
-						Arrays.asList(formaCobranca.getDiaDoMes(),
-								formaCobranca.getPrimeiroDiaQuinzenal(),
-								formaCobranca.getSegundoDiaQuinzenal()))){
+																		  formaCobranca.getIdCota(),
+																		  formaCobranca.getFornecedoresId(),
+																		  formaCobranca.getTipoFormaCobranca(),
+																		  Arrays.asList(formaCobranca.getDiaDoMes(),
+																				        formaCobranca.getPrimeiroDiaQuinzenal(),
+																				        formaCobranca.getSegundoDiaQuinzenal()))){
 
 					throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 				}

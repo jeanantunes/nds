@@ -103,6 +103,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.GeradorBoleto;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.NomeBanco;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -1311,7 +1312,8 @@ public class BoletoServiceImpl implements BoletoService {
 				               endereco, 
 				               boleto.getTipoCobranca(),
 				               boleto.getCota().getNumeroCota(),
-				               aceitaPagamentoVencido);
+				               aceitaPagamentoVencido,
+				               false);
 		
 	}
 	
@@ -1352,7 +1354,8 @@ public class BoletoServiceImpl implements BoletoService {
 				               endereco,
 				               boleto.getTipoCobranca(),
 				               null,
-				               aceitaPagamentoVencido);
+				               aceitaPagamentoVencido,
+				               false);
 	}
 
 	/**
@@ -1461,7 +1464,8 @@ public class BoletoServiceImpl implements BoletoService {
 				                                       enderecoSacado, 
 				                                       tipoCobranca, 
 				                                       cota.getNumeroCota(), 
-				                                       aceitaPagamentoVencido);
+				                                       aceitaPagamentoVencido, 
+				                                       true);
 		
 		return corpoBoleto;
 	}
@@ -1482,6 +1486,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param tipoCobranca
 	 * @param numeroCota
 	 * @param aceitaPagamentoVencido
+	 * @param boletoEmBranco
 	 * @return GeradorBoleto: corpo do boleto carregado
 	 */
 	private CorpoBoleto geraCorpoBoleto(String nossoNumero,
@@ -1497,9 +1502,8 @@ public class BoletoServiceImpl implements BoletoService {
 										Endereco enderecoSacado,
 										TipoCobranca tipoCobranca, 
 										Integer numeroCota,
-										boolean aceitaPagamentoVencido
-			
-			){
+										boolean aceitaPagamentoVencido,
+										boolean boletoEmBranco){
 
 		valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
 		
@@ -1634,6 +1638,13 @@ public class BoletoServiceImpl implements BoletoService {
         	
         	valorAcrescimo = BigDecimal.ZERO;
         } 
+        
+        if (boletoEmBranco){
+        	
+        	valorDesconto = valorDesconto.compareTo(BigDecimal.ZERO)>0?valorDesconto:null;
+        	
+        	valorAcrescimo = valorAcrescimo.compareTo(BigDecimal.ZERO)>0?valorAcrescimo:null;
+        }
         
         corpoBoleto.setTituloDesconto(valorDesconto);
         corpoBoleto.setTituloDeducao(valorParaPagamentosVencidos);
@@ -2046,13 +2057,13 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido()).setScale(2, RoundingMode.HALF_UP);
 		
-		BigDecimal valorDebitos =  null;//this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
+		BigDecimal valorDebitos = null;//this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
 		
-		BigDecimal valorCreditos =  null;//this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
+		BigDecimal valorCreditos = null;//this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
 		
-		valorDebitos = (valorDebitos!=null?valorDebitos:BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+		valorDebitos = (valorDebitos!=null?valorDebitos.setScale(2, RoundingMode.HALF_UP):BigDecimal.ZERO);
 		
-		valorCreditos = (valorCreditos!=null?valorCreditos:BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+		valorCreditos = (valorCreditos!=null?valorCreditos.setScale(2, RoundingMode.HALF_UP):BigDecimal.ZERO);
 		
 		BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos)).setScale(2, RoundingMode.HALF_UP);
 		
@@ -2115,6 +2126,49 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	/**
+	 * Obtem valor inicial da faixa de número reservada para a geração de Nosso Numero de boletos antecipados (Em Branco)
+	 * Somado ao atributo idBoletoAntecipado para a composição do Nosso Número
+	 * Considera o tamanho aceitável para cada banco
+	 * @param numeroBanco
+	 * @return long
+	 */
+	private long obterInicioNumeroReservadoNossoNumeroBoletoAntecipado(String numeroBanco){
+		
+		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
+		
+		switch (nomeBanco) {
+		
+		    case BANCO_BRADESCO: 
+		    case BANCO_ITAU:
+		    case HSBC:
+		    	
+				return 99000000;
+			
+			case BANCO_ABN_AMRO_REAL:
+			case BANCO_DO_BRASIL:
+			case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
+			case BANCO_DO_ESTADO_DO_RIO_GRANDE_DO_SUL:
+			case BANCO_DO_NORDESTE_DO_BRASIL:
+			case BANCO_INTEMEDIUM:
+			case BANCO_RURAL:
+			case BANCO_SAFRA:
+			case BANCO_SANTANDER:
+			case BANCO_SICREDI:	
+			case BANCOOB:
+			case CAIXA_ECONOMICA_FEDERAL:
+			case MERCANTIL_DO_BRASIL:
+			case NOSSA_CAIXA:	
+			case UNIBANCO:
+	
+				return 990000;
+	
+			default:
+	
+				return 99000000;
+		}
+	}
+	
+	/**
 	 * Atualiza os campos Nosso Número e Dígito Nosso Número em BoletoEmBrancoDTO conforme BoletoAntecipado persistido
 	 * @param bbDTO
 	 * @param cota
@@ -2132,11 +2186,13 @@ public class BoletoServiceImpl implements BoletoService {
 									               Banco banco,
 									               BigDecimal valor){
 		
+		long numeroBancoBoletoAntecipado = this.obterInicioNumeroReservadoNossoNumeroBoletoAntecipado(banco.getNumeroBanco());
+		
 		String nossoNumero = Util.gerarNossoNumero(cota.getNumeroCota(), 
                                                    dataEmissao, 
                                                    banco!=null?banco.getNumeroBanco():"0",
 									               fornecedor != null ? fornecedor.getId() : null,
-									               99000000+bbDTO.getIdBoletoAntecipado(),
+									               numeroBancoBoletoAntecipado + bbDTO.getIdBoletoAntecipado(),
 									               banco!=null?banco.getAgencia():0,
 									               banco!=null?banco.getConta():0,
 									               banco!=null?banco.getCarteira():0);
