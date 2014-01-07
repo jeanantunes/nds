@@ -563,4 +563,15 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		return this.formaCobrancaRepository.obterFormaCobranca();
 	}
+
+	@Override
+	public FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota) {
+		
+		Long idCota = this.cotaRepository.obterIdPorNumeroCota(numeroCota);
+		
+		FormaCobranca formaCobranca = this.formaCobrancaRepository
+				.obterFormaCobranca(idCota);
+
+		return formaCobranca;
+	}
 }

@@ -124,4 +124,6 @@ public interface FormaCobrancaService {
      * @return FormaCobranca
      */
     FormaCobranca obterFormaCobrancaPrincipalDistribuidor();
+
+	FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota);
 }
