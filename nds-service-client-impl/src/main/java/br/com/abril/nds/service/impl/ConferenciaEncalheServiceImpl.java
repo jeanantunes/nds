@@ -1402,7 +1402,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					movDTO.setDataCriacao(dataOperacao);
 					movDTO.setDataOperacao(dataOperacao);
 					movDTO.setDataVencimento(movDTO.getDataAprovacao());
-					movDTO.setObservacao("Oriundo de negociação por comissão");
+					movDTO.setObservacao("Negociação por comissão");
 					movDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 					movDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 					movDTO.setUsuario(usuario);
