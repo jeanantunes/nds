@@ -40,6 +40,7 @@ import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -90,6 +91,9 @@ public class NegociacaoDividaController extends BaseController {
 	private DescontoService descontoService;
 	
 	private Result result;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	public NegociacaoDividaController(Result result) {
 		super();
@@ -307,9 +311,20 @@ public class NegociacaoDividaController extends BaseController {
 			this.result.use(Results.json()).from("", "result").serialize();
 		} else {
 			
-			List<BigDecimal> valoresDesconto = new ArrayList<BigDecimal>();
+			List<Object> valoresDesconto = new ArrayList<Object>();
 			valoresDesconto.add(comissao);
 			valoresDesconto.add(comissaoCota.setScale(2, RoundingMode.HALF_EVEN));
+			
+			//forma cobrança 'default' da cota
+			FormaCobranca formaDefault = 
+				this.formaCobrancaService.obterFormaCobrancaPrincipalCota(numeroCota);
+			
+			if (formaDefault == null){
+				
+				formaDefault = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+			}
+			
+			valoresDesconto.add(formaDefault.getTipoCobranca());
 			
 			this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
 		}
