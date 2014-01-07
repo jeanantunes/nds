@@ -269,7 +269,7 @@ public class EmissaoCEController extends BaseController {
 	
 	@Post
 	@Path("/obterDadosImpressaoBoletosEmBranco")
-	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) {
+	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) { 
 		
 		session.setAttribute(BOLETOS_EM_BRANCO, null);
 		
