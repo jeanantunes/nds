@@ -45,7 +45,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
         sql.append("       pdv_qtd.quantidade npdv, ");
         sql.append("       ec.qtde_efetiva reparteEstudo, ");
-        sql.append("       (select coalesce(qtde_efetiva, 0) ");
+        sql.append("       (select coalesce(reparte, 0) ");
         sql.append("          from estudo_cota ");
         sql.append("         where estudo_id = e.estudo_origem_copia ");
         sql.append("           and cota_id = ec.cota_id) reparteEstudoOrigemCopia, ");
@@ -659,5 +659,21 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             listNumeroCota.add(cota.getNumeroCota());
         }
         return listNumeroCota.toArray(new Integer[listNumeroCota.size()-1]);
+    }
+
+    @Override
+    @Transactional
+    public void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("update estudo ");
+        sql.append("   set sobra = sobra - (qtde_reparte - ?), ");
+        sql.append("       qtde_reparte = ? ");
+        sql.append(" where id = ? ");
+
+        SQLQuery query = getSession().createSQLQuery(sql.toString());
+        query.setLong(0, reparteTotal);
+        query.setLong(1, reparteTotal);
+        query.setLong(2, idEstudo);
+        query.executeUpdate();
     }
 }

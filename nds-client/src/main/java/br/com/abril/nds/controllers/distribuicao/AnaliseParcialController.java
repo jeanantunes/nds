@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.converters.IntegerConverter;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
@@ -288,5 +289,12 @@ public class AnaliseParcialController extends BaseController {
     public void tipoDistribuicaoCotaFiltro(TipoDistribuicaoCota tipo) {
         Integer[] cotas = analiseParcialService.buscarCotasPorTipoDistribuicao(tipo);
         result.use(Results.json()).withoutRoot().from(cotas).recursive().serialize();
+    }
+
+    @Post
+    public void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
+        result.use(Results.json()).withoutRoot()
+                .from(analiseParcialService.atualizaReparteTotalESaldo(idEstudo, reparteTotal))
+                .recursive().serialize();
     }
 }

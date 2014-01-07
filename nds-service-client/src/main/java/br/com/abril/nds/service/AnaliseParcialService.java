@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
@@ -36,4 +37,6 @@ public interface AnaliseParcialService {
     List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> idsProdutoEdicao);
 
     Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo);
+
+    BigInteger atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal);
 }

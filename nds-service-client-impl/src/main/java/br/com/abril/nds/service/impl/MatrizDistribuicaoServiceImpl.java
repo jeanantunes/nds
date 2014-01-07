@@ -114,41 +114,37 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
     @Transactional
     public void duplicarLinhas(ProdutoDistribuicaoVO prodDistribVO) {
 
-		if (obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(prodDistribVO) > MAX_DUPLICACOES_PERMITIDA) {
-	
-		    throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações");
-		}
-	
-		Usuario usuario = usuarioRepository.buscarPorId(prodDistribVO.getIdUsuario());
-	
-		Long idLancamento = prodDistribVO.getIdLancamento().longValue();
-	
-		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
-	
-		Lancamento lancamentoCopy = cloneLancamento(lancamento, usuario);
-	
-		//ProdutoEdicao produtoEdicaoCopy = cloneProdutoEdicao(lancamentoCopy.getProdutoEdicao());
-	
-		//lancamentoCopy.setProdutoEdicao(produtoEdicaoCopy);
-		idLancamento = lancamentoRepository.adicionar(lancamentoCopy);
-	
-		gravarHistoricoLancamento(usuario, lancamentoCopy);
+	if (obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(prodDistribVO) > MAX_DUPLICACOES_PERMITIDA) {
+
+	    throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações");
+	}
+
+	Long idLancamento = prodDistribVO.getIdLancamento().longValue();
+
+	Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
+
+	Lancamento lancamentoCopy = cloneLancamento(lancamento);
+
+	//ProdutoEdicao produtoEdicaoCopy = cloneProdutoEdicao(lancamentoCopy.getProdutoEdicao());
+
+	//lancamentoCopy.setProdutoEdicao(produtoEdicaoCopy);
+	idLancamento = lancamentoRepository.adicionar(lancamentoCopy);
+
+	gravarHistoricoLancamento(prodDistribVO.getIdUsuario().longValue(), lancamentoCopy);
     }
 
 
-    private Lancamento cloneLancamento(Lancamento lancamento, Usuario usuario) {
+    private Lancamento cloneLancamento(Lancamento lancamento) {
 
-		Lancamento lancamentoCopy = new Lancamento();
-		BeanUtils.copyProperties(lancamento, lancamentoCopy);
-		lancamentoCopy.setId(null);
-		lancamentoCopy.setChamadaEncalhe(null);
-		lancamentoCopy.setHistoricos(null);
-		lancamentoCopy.setMovimentoEstoqueCotas(null);
-		lancamentoCopy.setRecebimentos(null);
-		lancamentoCopy.setUsuario(usuario);
+	Lancamento lancamentoCopy = new Lancamento();
+	BeanUtils.copyProperties(lancamento, lancamentoCopy);
+	lancamentoCopy.setId(null);
+	lancamentoCopy.setChamadaEncalhe(null);
+	lancamentoCopy.setHistoricos(null);
+	lancamentoCopy.setMovimentoEstoqueCotas(null);
+	lancamentoCopy.setRecebimentos(null);
 
-
-		return lancamentoCopy;	 
+	return lancamentoCopy;	 
     }
 
     //    private ProdutoEdicao cloneProdutoEdicao(ProdutoEdicao produtoEdicao) {
@@ -167,14 +163,15 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
     //	return produtoEdicaoCopy;	 
     //    }
 
-    private void gravarHistoricoLancamento(Usuario usuario, Lancamento lancamento) {
+    private void gravarHistoricoLancamento(Long idUsuario,  Lancamento lancamento) {
 
-		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
-		historicoLancamento.setDataEdicao(new Date());
-		historicoLancamento.setLancamento(lancamento);
-		historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
-		historicoLancamento.setStatusNovo(StatusLancamento.CONFIRMADO);
-		historicoLancamento.setResponsavel(usuario);
+	HistoricoLancamento historicoLancamento = new HistoricoLancamento();
+	historicoLancamento.setDataEdicao(new Date());
+	historicoLancamento.setLancamento(lancamento);
+	historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
+	historicoLancamento.setStatusNovo(StatusLancamento.CONFIRMADO); // Confirmar!! Alteração feita pela F1
+	Usuario user = usuarioRepository.buscarPorId(idUsuario);
+	historicoLancamento.setResponsavel(user);
     }
 
 
@@ -257,7 +254,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	    if (vo.getIdLancamento() != null && vo.isItemFinalizado()) {
 
-		reabrirItemDistribuicao(vo.getIdLancamento().longValue(), vo.getIdUsuario());
+		reabrirItemDistribuicao(vo.getIdLancamento().longValue());
 	    }
 	}
 
@@ -421,7 +418,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	for (ProdutoDistribuicaoVO prodDistribVO:produtoDistribuicaoVOs) {
 
-	    reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue(), prodDistribVO.getIdUsuario());
+	    reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
 	}
     }
 
@@ -440,7 +437,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
 
-	    reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue(), prodDistribVO.getIdUsuario());
+	    reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
 	}
     }
 
@@ -455,7 +452,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(prodDistribVO.getIdLancamento().longValue());
 	lanc.setDataFinMatDistrib(new Date());
-	lanc.setUsuario(this.usuarioRepository.buscarPorId(prodDistribVO.getIdUsuario()));
 	distribuicaoRepository.alterar(lanc);
 
 	BigInteger idEstudo = prodDistribVO.getIdEstudo();
@@ -490,11 +486,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	return map;
     }
 
-    private void reabrirItemDistribuicao(Long idLancamento, Long idUsuario) {
+    private void reabrirItemDistribuicao(Long idLancamento) {
 
 	Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(idLancamento);
 	lanc.setDataFinMatDistrib(null);
-	lanc.setUsuario(this.usuarioRepository.buscarPorId(idUsuario));
 	distribuicaoRepository.alterar(lanc);
     }
 
@@ -591,7 +586,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    cota.setReparte(null);
 		    continue;
 		}
-		cotas.add(cota);
+            if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaNaoRecebeDesseFornecedor)) {
+                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getCodigo());
+                cota.setReparte(null);
+                continue;
+            }
+            cotas.add(cota);
 	    }
 	}
 	// separando as cotas que passaram na validacao acima das cotas que por algum motivo nao entraram no estudo
