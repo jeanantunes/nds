@@ -1561,7 +1561,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if(media.compareTo(BigInteger.ZERO)!=0){
 		 dadosBalanceamentoLancamento.addMediaDistribuicao(media.divide(diasRecolhimentoFornecedor));
 		}
-		dadosBalanceamentoLancamento.addProdutosLancamento(produtosLancamento);
+		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 		
 		Set<Date> datasExpectativaReparte = new LinkedHashSet<Date>();
 		
