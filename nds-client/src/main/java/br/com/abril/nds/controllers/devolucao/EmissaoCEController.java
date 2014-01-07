@@ -97,6 +97,10 @@ public class EmissaoCEController extends BaseController {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 		
+		session.setAttribute(BOLETOS_EM_BRANCO, null);
+		
+		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
+		
 		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 		result.include("data",data);		
 		result.include("listaBoxes",carregarBoxes(boxService.buscarTodos(TipoBox.LANCAMENTO)));
@@ -109,6 +113,10 @@ public class EmissaoCEController extends BaseController {
 
 	@Post
 	public void pesquisar(FiltroEmissaoCE filtro, String sortname, String sortorder) {
+		
+        session.setAttribute(BOLETOS_EM_BRANCO, null);
+		
+		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
 		
 		filtro.setOrdenacao(sortorder);
 		
@@ -230,10 +238,6 @@ public class EmissaoCEController extends BaseController {
 	}
 
 	private DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoCE(FiltroEmissaoCE filtro){
-	
-        session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, null);
-		
-		session.setAttribute(BOLETOS_EM_BRANCO, null);
 		
 		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
 		
@@ -250,10 +254,15 @@ public class EmissaoCEController extends BaseController {
 			filtro.setQtdCapasPorPagina(49);
 			filtro.setQtdMaximaProdutosComTotalizacao(20);
 		}
-		
-		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 
-		session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
+		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
+		
+		if (dados == null){
+
+		    dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);
+		    
+		    session.setAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE, dados);
+		}    
 		
 		return dados;
 	}
@@ -261,6 +270,8 @@ public class EmissaoCEController extends BaseController {
 	@Post
 	@Path("/obterDadosImpressaoBoletosEmBranco")
 	public void obterDadosImpressaoBoletosEmBranco(boolean verificarReemissao) {
+		
+		session.setAttribute(BOLETOS_EM_BRANCO, null);
 		
 		boolean existemBoletosEmBranco = false;
 		
@@ -273,12 +284,7 @@ public class EmissaoCEController extends BaseController {
 
 		if (!verificarReemissao || !boletosEmitidosNoPeriodo){
 			
-			DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
-			
-			if (dados == null){
-
-			    dados = this.obterDadosImpressaoCE(filtro);
-			}    
+			DadosImpressaoEmissaoChamadaEncalhe dados = this.obterDadosImpressaoCE(filtro);
 			
 			if (dados == null){
 				
@@ -351,13 +357,11 @@ public class EmissaoCEController extends BaseController {
 
 		FiltroEmissaoCE filtro = getFiltroSessao();
 		
-        this.obterDadosImpressaoCE(filtro);
+		DadosImpressaoEmissaoChamadaEncalhe dados = this.obterDadosImpressaoCE(filtro);
 
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
-		
-		DadosImpressaoEmissaoChamadaEncalhe dados = (DadosImpressaoEmissaoChamadaEncalhe) session.getAttribute(DADOS_IMPRESSAO_CHAMADA_ENCALHE);
 		
 		if (dados == null){
 		    
