@@ -79,9 +79,10 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
 
 	// excluindo cotas que nao recebem o segmento, ou nao recebem a classificacao ou sao alternativas e nao possuem mix
+    // ou nao recebem do fornecedor
 	for (CotaEstudo cota : cotas) {
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaNaoRecebeEsseSegmento,
-		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaSuspensa) ||
+		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaSuspensa, ClassificacaoCota.CotaNaoRecebeDesseFornecedor) ||
 		    cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }

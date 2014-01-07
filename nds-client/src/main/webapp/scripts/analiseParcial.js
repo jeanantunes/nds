@@ -450,6 +450,15 @@ var analiseParcialController = $.extend(true, {
                             }).toArray().reduce(function(a,b){
                                     return a+b;
                                 }));
+
+                    if (typeof histogramaPosEstudoController != 'undefined') {
+                        //tenta atualizar os valores da tela de histograma pré analise
+                        try{
+                            histogramaPosEstudoController.popularFieldsetResumoEstudo();
+                        }catch(e){
+                            exibirMensagem('WARNING', [e.message]);
+                        }
+                    }
                 },
                 error: function() {
                     analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
@@ -796,10 +805,27 @@ var analiseParcialController = $.extend(true, {
 
         $('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
+        $("#cotasQueNaoEntraramNoEstudo_cota").change(function(){
+            var numeroCota = this.value;
+            if (numeroCota != '') {
+                $.ajax({
+                    url: analiseParcialController.path + '/cadastro/cota/pesquisarPorNumero',
+                    data: [{name: 'numeroCota', value: numeroCota}],
+                    type: 'POST',
+                    success: function(result) {
+                        if (result.mensagens) {
+                            analiseParcialController.exibirMsg(result.mensagens);
+                        } else {
+                            $('#cotasQueNaoEntraramNoEstudo_nome').val(result.result.nome);
+                        }
+                    }});
+            }
+        });
+
         $('#cotasQueNaoEntraramNoEstudo_nome').autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: 'cadastro/cota/autoCompletarPorNome',
+                    url: analiseParcialController.path + '/cadastro/cota/autoCompletarPorNome',
                     data: [{name: 'nomeCota', value: request.term}],
                     type: 'POST',
                     global: false,
@@ -809,6 +835,7 @@ var analiseParcialController = $.extend(true, {
             },
             minLength: 3,
             select: function( event, ui ) {
+                $("#cotasQueNaoEntraramNoEstudo_cota").val(ui.item.chave.numero);
 //                event.preventDefault();
 //                event.stopPropagation();
             }
@@ -1017,7 +1044,7 @@ var analiseParcialController = $.extend(true, {
                 value.cell.quantidade = '';
             }
 
-            var isReadOnly = value.cell.motivo === 'CL' ? 'readonly' : '';
+            var isReadOnly = (value.cell.motivo === 'CL' || value.cell.motivo === 'FN') ? 'readonly' : '';
 
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" style="width: 50px;" value="'+
             value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
@@ -1157,6 +1184,12 @@ var analiseParcialController = $.extend(true, {
     exibirCotasQueNaoEntraramNoEstudo : function() {
         $('#password').val('');
         $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
+
+        //limpa os campos ao abrir o pop-up
+        $("#cotasQueNaoEntraramNoEstudo_cota").val('');
+        $("#cotasQueNaoEntraramNoEstudo_nome").val('');
+        $("#cotasQueNaoEntraramNoEstudo_motivo").val('');
+        $("#cotasQueNaoEntraramNoEstudo_elementos").val('');
 
         analiseParcialController.cotasQueNaoEntraramNoEstudo();
 

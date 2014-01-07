@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
@@ -65,7 +64,8 @@ public class MixCotaProdutoRepositoryImpl extends
 	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
 		StringBuilder sql = new StringBuilder("");
 		
-		sql.append(" select ") 
+		sql.append("select * from ( ")
+        .append(" select ")
 		.append(" mix_cota_produto.ID id,  ")
 		.append(" produto.codigo as codigoProduto, ")
 		.append(" produto.CODIGO_ICD as codigoICD, ")
@@ -96,8 +96,8 @@ public class MixCotaProdutoRepositoryImpl extends
 //		   .append(" 		and produto_id = (produto.id)")
 //		   .append(" )")
 		
-		   sql.append(" group by produto.codigo_icd ")
-		   .append(" order by produto.codigo ");
+		   sql.append(" order by CHAR_LENGTH(produto.nome) asc) temp_mix ")
+		   .append(" group by id ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		//query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -454,4 +454,3 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		
 }
-

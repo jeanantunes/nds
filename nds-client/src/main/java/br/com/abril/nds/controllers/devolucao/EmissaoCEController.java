@@ -424,6 +424,7 @@ public class EmissaoCEController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
+	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		

@@ -112,11 +112,18 @@ public class ProdutoServiceImpl implements ProdutoService {
 		if (StringUtils.isBlank(codigoProduto)){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
-        Produto produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
+        Produto produto;
+        switch (codigoProduto.length()) {
+            case 6:
+                produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto.concat("01"));
+                break;
+            default:
+                produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
+        }
         if (produto == null) {
-            produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
+            produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
         } if (produto == null) {
-            produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
+            produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
         } if (produto == null) {
             produto = produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
         }
@@ -342,6 +349,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 		return produtoRepository.buscarProdutosBalanceadosOrdenadosNome(dataLancamento);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	public List<Produto> obterProdutoLikeCodigo(String codigo) {
 			if (codigo == null || codigo.isEmpty()){

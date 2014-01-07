@@ -351,4 +351,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo) {
         return analiseParcialRepository.buscarCotasPorTipoDistribuicao(tipo);
     }
+
+    @Override
+    public BigInteger atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
+        analiseParcialRepository.atualizaReparteTotalESaldo(idEstudo, reparteTotal);
+        return estudoRepository.buscarPorId(idEstudo).getSobra();
+    }
 }

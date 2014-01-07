@@ -1311,7 +1311,8 @@ public class BoletoServiceImpl implements BoletoService {
 				               endereco, 
 				               boleto.getTipoCobranca(),
 				               boleto.getCota().getNumeroCota(),
-				               aceitaPagamentoVencido);
+				               aceitaPagamentoVencido,
+				               false);
 		
 	}
 	
@@ -1352,7 +1353,8 @@ public class BoletoServiceImpl implements BoletoService {
 				               endereco,
 				               boleto.getTipoCobranca(),
 				               null,
-				               aceitaPagamentoVencido);
+				               aceitaPagamentoVencido,
+				               false);
 	}
 
 	/**
@@ -1461,7 +1463,8 @@ public class BoletoServiceImpl implements BoletoService {
 				                                       enderecoSacado, 
 				                                       tipoCobranca, 
 				                                       cota.getNumeroCota(), 
-				                                       aceitaPagamentoVencido);
+				                                       aceitaPagamentoVencido, 
+				                                       true);
 		
 		return corpoBoleto;
 	}
@@ -1482,6 +1485,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param tipoCobranca
 	 * @param numeroCota
 	 * @param aceitaPagamentoVencido
+	 * @param boletoEmBranco
 	 * @return GeradorBoleto: corpo do boleto carregado
 	 */
 	private CorpoBoleto geraCorpoBoleto(String nossoNumero,
@@ -1497,9 +1501,8 @@ public class BoletoServiceImpl implements BoletoService {
 										Endereco enderecoSacado,
 										TipoCobranca tipoCobranca, 
 										Integer numeroCota,
-										boolean aceitaPagamentoVencido
-			
-			){
+										boolean aceitaPagamentoVencido,
+										boolean boletoEmBranco){
 
 		valorDocumento = (valorDocumento == null) ? BigDecimal.ZERO : valorDocumento.abs();
 		
@@ -1634,6 +1637,13 @@ public class BoletoServiceImpl implements BoletoService {
         	
         	valorAcrescimo = BigDecimal.ZERO;
         } 
+        
+        if (boletoEmBranco){
+        	
+        	valorDesconto = valorDesconto.compareTo(BigDecimal.ZERO)>0?valorDesconto:null;
+        	
+        	valorAcrescimo = valorAcrescimo.compareTo(BigDecimal.ZERO)>0?valorAcrescimo:null;
+        }
         
         corpoBoleto.setTituloDesconto(valorDesconto);
         corpoBoleto.setTituloDeducao(valorParaPagamentosVencidos);
@@ -2046,13 +2056,13 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BigDecimal valorTotalLiquidoCE = CurrencyUtil.getBigDecimal(ceDTO.getVlrTotalLiquido()).setScale(2, RoundingMode.HALF_UP);
 		
-		BigDecimal valorDebitos =  null;//this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
+		BigDecimal valorDebitos = null;//this.debitoCreditoCotaService.obterTotalDebitoCota(ceDTO.getNumCota(), dataEmissao);
 		
-		BigDecimal valorCreditos =  null;//this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
+		BigDecimal valorCreditos = null;//this.debitoCreditoCotaService.obterTotalCreditoCota(ceDTO.getNumCota(), dataEmissao);
 		
-		valorDebitos = (valorDebitos!=null?valorDebitos:BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+		valorDebitos = (valorDebitos!=null?valorDebitos.setScale(2, RoundingMode.HALF_UP):BigDecimal.ZERO);
 		
-		valorCreditos = (valorCreditos!=null?valorCreditos:BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+		valorCreditos = (valorCreditos!=null?valorCreditos.setScale(2, RoundingMode.HALF_UP):BigDecimal.ZERO);
 		
 		BigDecimal valorTotalBoletoEmBranco = valorTotalLiquidoCE.add(valorDebitos.subtract(valorCreditos)).setScale(2, RoundingMode.HALF_UP);
 		

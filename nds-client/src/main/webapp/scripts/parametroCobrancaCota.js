@@ -410,6 +410,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).show();
 		}    
+		else if (op=='DINHEIRO'){
+			$('#divRecebeEmail', this.workspace).show();
+			$('#divComboBanco', this.workspace).hide();
+			$('#divDadosBancarios', this.workspace).hide();
+		}    
 		else{
 			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).hide();
@@ -982,8 +987,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	obterFormaCobranca : function(idFormaCobranca){
+		
+		//hidden
+		$("#_idFormaCobranca", this.workspace).val(idFormaCobranca);
+		
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}, 
 		            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value }];
+		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterFormaCobranca",
 				   data,
 				   parametroCobrancaCotaController.sucessCallbackFormaCobranca, 
@@ -992,9 +1002,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	sucessCallbackFormaCobranca : function(resultado) {
-		
-		//hidden
-		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 		
 		parametroCobrancaCotaController.carregarComboTipoCobranca(resultado.tipoCobranca);
 		
