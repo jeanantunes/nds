@@ -40,8 +40,7 @@ public interface NotaFiscalNdsRepository extends Repository<NotaFiscalNds, Long>
 
 	public abstract List<Cota> obterConjuntoFornecedorNotafiscal(FiltroViewNotaFiscalDTO filtro);
 
-	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(
-			FiltroViewNotaFiscalDTO filtro);
+	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro);
 
 	public abstract List<MovimentoEstoque> obterMovimentosEstoque(FiltroViewNotaFiscalDTO filtro);
 }

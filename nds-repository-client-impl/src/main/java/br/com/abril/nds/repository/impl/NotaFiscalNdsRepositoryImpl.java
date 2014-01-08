@@ -358,8 +358,6 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoque> obterMovimentosEstoque(FiltroViewNotaFiscalDTO filtro) {
-		
-
 		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
 		.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
 		.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
@@ -372,7 +370,6 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		query.setParameter("idTipoMovimento", filtro.getListIdFornecedor());
 		query.setParameter("dataOperacao", filtro.getDataEmissao());
 		return query.list();
-		
 	}
 	
 	/*
