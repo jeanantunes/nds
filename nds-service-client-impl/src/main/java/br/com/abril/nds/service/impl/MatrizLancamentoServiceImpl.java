@@ -1479,9 +1479,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 					&& isDataNoPeriodo)) {
 			
 			return false;
+		}else if(produtoLancamento.getPeb()!=null && produtoLancamento.getPeb()<21){
+			return false;
+		}else{
+		    return true;
 		}
-		
-		return true;
 	}
 	
 	/**
@@ -1559,7 +1561,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		if(media.compareTo(BigInteger.ZERO)!=0){
-		 dadosBalanceamentoLancamento.addMediaDistribuicao(media.divide(diasRecolhimentoFornecedor));
+		 dadosBalanceamentoLancamento.setMediaDistribuicao(new BigInteger(""+media.longValue()/diasRecolhimentoFornecedor.longValue()));
 		}
 		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 		

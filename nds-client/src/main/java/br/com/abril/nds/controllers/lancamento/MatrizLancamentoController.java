@@ -873,6 +873,8 @@ public class MatrizLancamentoController extends BaseController {
 			produtoBalanceamentoVO.setDestacarLinha(true);
 		}
 				
+		produtoBalanceamentoVO.setPeb(produtoLancamentoDTO.getPeb());
+		
 		return produtoBalanceamentoVO;
 	}	
 	

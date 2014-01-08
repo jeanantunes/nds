@@ -1198,7 +1198,9 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" estudo.QTDE_REPARTE as distribuicao, ");
 		
-		sql.append(" fornecedor.id as idFornecedor ");
+		sql.append(" fornecedor.id as idFornecedor, ");
+		
+		sql.append(" produtoEdicao.PEB as peb ");
 		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		

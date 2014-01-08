@@ -80,6 +80,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private BigInteger distribuicao;
   	
   	private Integer sequenciaMatriz;
+  	
+  	private Long peb;
 	
 	/**
 	 * Construtor padrão.
@@ -543,6 +545,14 @@ public class ProdutoLancamentoDTO implements Serializable {
 		} else if (!idLancamento.equals(other.idLancamento))
 			return false;
 		return true;
+	}
+
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
 	}
 	
 }
