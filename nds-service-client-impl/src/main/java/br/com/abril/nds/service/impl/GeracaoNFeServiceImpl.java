@@ -193,14 +193,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
 			
-<<<<<<< HEAD
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoquesCotas);
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
 			notaFiscal.setInformacoesComplementares("ssss");
-=======
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
-			
->>>>>>> DGBti/nfe
 			listaNotaFiscal.add(notaFiscal);
 		}
 		
@@ -229,7 +224,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalNdsRepository.obterMovimentoEstoqueCota(filtro);
+			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoquesCotas) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
