@@ -337,6 +337,42 @@ var geracaoNFeController = $.extend({
 	}],
 	
 	/**
+	 * objeto utilizado para encapsular as colunas da grid de Pesquisas
+	 */
+	colunasGridPesquisaForncedor:[ {
+		display : 'Fornecedor',
+		name : 'numeroFornecedor',
+		width : 100,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Nome',
+		name : 'nomeFornecedor',
+		width : 385,
+		sortable : true,
+		align : 'left',
+	}, {
+		display : 'Total Exemplares',
+		name : 'exemplares',
+		width : 110,
+		sortable : true,
+		align : 'center',
+	}, {
+		display : 'Total R$',
+		name : 'total',
+		width : 120,
+		sortable : true,
+		align : 'right',
+	},  {
+		display : 'Total Desconto R$',
+		name : 'totalDesconto',
+		width : 100,
+		sortable : true,
+		align : 'right',
+	}],
+	
+	
+	/**
 	 * Realiza pesquisa de acordo com os dado do filtro 
 	 * e popula a grid de pesquisa:"geracaoNfe-pesquisa"
 	 */
