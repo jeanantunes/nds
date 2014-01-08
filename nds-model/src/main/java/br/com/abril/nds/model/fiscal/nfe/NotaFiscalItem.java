@@ -2,17 +2,18 @@ package br.com.abril.nds.model.fiscal.nfe;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
@@ -33,8 +34,12 @@ public class NotaFiscalItem {
 	@Embedded
 	private br.com.abril.nfe.model.NotaFiscalItem notaFiscalItem;
 	
-	@Column(name="ORIGEM_ITEM_NOTA_FISCAL")
-	private OrigemItemNotaFiscal origemItemNotaFiscal;
+	@OneToMany(targetEntity=OrigemItemNotaFiscal.class, cascade=CascadeType.MERGE)
+	@JoinTable(name = "NOTA_FISCAL_ITEM_NOTA_FISCAL_ORIGEM_ITEM", 
+			joinColumns = {@JoinColumn(name = "NOTA_FISCAL_ITEM_ID")}, 
+			inverseJoinColumns = {@JoinColumn(name = "ORIGEM_ITEM_NOTA_FISCAL_ID")}
+	)
+	private List<OrigemItemNotaFiscal> origemItemNotaFiscal;
 	
 	public NotaFiscalItem() {
 		if(notaFiscalItem == null){
@@ -122,11 +127,11 @@ public class NotaFiscalItem {
 		this.notaFiscalItem.setValorUnitario(valorUnitario);
 	}
 
-	public OrigemItemNotaFiscal getOrigemItemNotaFiscal() {
+	public List<OrigemItemNotaFiscal> getOrigemItemNotaFiscal() {
 		return origemItemNotaFiscal;
 	}
 
-	public void setOrigemItemNotaFiscal(OrigemItemNotaFiscal origemItemNotaFiscal) {
+	public void setOrigemItemNotaFiscal(List<OrigemItemNotaFiscal> origemItemNotaFiscal) {
 		this.origemItemNotaFiscal = origemItemNotaFiscal;
 	}
 	

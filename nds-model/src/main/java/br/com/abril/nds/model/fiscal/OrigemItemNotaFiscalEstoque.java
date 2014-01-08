@@ -1,7 +1,12 @@
 package br.com.abril.nds.model.fiscal;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
+@Entity
+@DiscriminatorValue(value = "ESTOQUE")
 public class OrigemItemNotaFiscalEstoque extends OrigemItemNotaFiscal {
 	
 	/**

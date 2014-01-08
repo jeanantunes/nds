@@ -48,7 +48,7 @@ public class NotaFiscalBase implements Serializable {
 	private NotaFiscalPessoa notaFiscalTransportador;
 
 	@OneToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="VALORES_CALCULADOS_ID", unique=true)
+	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique=true, insertable=false, updatable=false)
 	private NotaFiscalValorCalculado notaFiscalValoresCalculados;
 	
 	@Column(name = "INFORMACOES_COMPLEMENTARES")
