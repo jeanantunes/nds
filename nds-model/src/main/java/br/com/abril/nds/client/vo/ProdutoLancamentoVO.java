@@ -36,13 +36,16 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="Total R$", exhibitionOrder = 7, widthPercent = 8)
 	private String valorTotal;
 	
-	@Export(label="Físico", exhibitionOrder = 8)
+	@Export(label="PEB", exhibitionOrder = 8)
+	private Long peb;
+	
+	@Export(label="Físico", exhibitionOrder = 9)
 	private String reparteFisico;
 	
-	@Export(label="Distribuição", exhibitionOrder = 9)
+	@Export(label="Distribuição", exhibitionOrder = 10)
 	private String distribuicao;
 	
-	@Export(label="Previsto", exhibitionOrder = 10, widthPercent = 9)
+	@Export(label="Previsto", exhibitionOrder = 11, widthPercent = 9)
 	private String dataLancamentoPrevista;
 	
 	private String novaDataLancamento;
@@ -54,6 +57,7 @@ public class ProdutoLancamentoVO  implements Serializable {
 	private boolean destacarLinha;
 	
 	private boolean possuiFuro;
+	
 	
 	/**
 	 * @return the id
@@ -298,6 +302,14 @@ public class ProdutoLancamentoVO  implements Serializable {
 	 */
 	public void setPossuiFuro(boolean possuiFuro) {
 		this.possuiFuro = possuiFuro;
+	}
+
+	public Long getPeb() {
+		return peb;
+	}
+
+	public void setPeb(Long peb) {
+		this.peb = peb;
 	}
 
 }
