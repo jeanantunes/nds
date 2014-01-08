@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -21,8 +22,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
@@ -79,6 +82,10 @@ public class GeracaoNFeController extends BaseController {
 	
 	@Autowired
 	private HttpServletRequest request;
+	
+	
+	@Autowired
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 	
 	private static final String FILTRO_SESSION_NOTA_FISCAL = "filtroNotaFiscal";
 	
@@ -153,21 +160,50 @@ public class GeracaoNFeController extends BaseController {
 	@Post
 	public void pesquisar(FiltroViewNotaFiscalDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
+		List<CotaExemplaresDTO> cotaExemplaresDTOs = null;
+		List<FornecedorExemplaresDTO> fornecedorExemplaresDTOs = null;
+		
+		Long totalRegistros = 0L;
 		request.getSession().setAttribute(FILTRO_SESSION_NOTA_FISCAL, filtro);
 		
 		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
 		
 		filtro.setPaginacaoVO(paginacao);
 		
-		List<CotaExemplaresDTO> cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);
+
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		
-		Long totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
-		
-		if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		switch (naturezaOperacao.getTipoDestinatario()) {
+		case COTA:
+			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);			
+			totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
+			
+			break;
+			
+		case DISTRIBUIDOR:
+			
+			
+			break;
+			
+		case FORNECEDOR:			
+			
+			fornecedorExemplaresDTOs = geracaoNFeService.consultaFornecedorExemplarSumarizado(filtro);
+			
+			System.out.println("Chegou aqui ahahahahah");
+			break;
+
+
 		}
 		
-		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();
+		//if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty() || fornecedorExemplaresDTOs == null || fornecedorExemplaresDTOs.isEmpty()){
+			//throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		//}
+		
+		if(naturezaOperacao.getTipoDestinatario().getDescricao().equals("Fornecedor")){
+			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();			
+		}else{
+			result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();
+		}
 	}
 
 	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,

@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
@@ -1744,9 +1745,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Override
 	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
-		
 		return notaFiscalNdsRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
-		
+	}
+
+	@Override
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
+		LOGGER.info("obter informações dos forncedores sumarizados...");
+		return this.notaFiscalNdsRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 }

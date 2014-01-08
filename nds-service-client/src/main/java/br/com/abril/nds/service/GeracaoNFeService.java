@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
@@ -41,5 +42,8 @@ public interface GeracaoNFeService {
 
 
 	public abstract Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro);
+
+
+	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro);
 
 }

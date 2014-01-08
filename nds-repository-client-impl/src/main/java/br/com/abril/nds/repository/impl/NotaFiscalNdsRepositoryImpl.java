@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -284,15 +285,12 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
 		.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
 		.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
-
-		.append(" where produtoEdicao.id = :idProdutoEdicao ")
-		.append(" and tipoMovimento.id = :idTipoMovimento ")
+		.append(" where tipoMovimento.id = :idTipoMovimento")
 		.append(" and movimentoEstoque.data =:dataOperacao ")
 		.append(" order by movimentoEstoque.data desc ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 
-		query.setParameter("idProdutoEdicao", filtro.getIdNaturezaOperacao());
 		query.setParameter("idTipoMovimento", filtro.getListIdFornecedor());
 		query.setParameter("dataOperacao", filtro.getDataEmissao());
 		return query.list();
@@ -316,4 +314,74 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		
 		return query.list();
 	}
+
+
+	@Override
+	public List<Cota> obterConjuntoFornecedorNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+		// TODO Auto-generated method stub
+		
+		
+		
+		return null;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("select ")
+		.append(" fornecedor.id AS idFornecedor, ")
+		.append(" fornecedor.codigoInterface AS numeroFornecedor, ")
+		.append(" pj.razaoSocial AS nomeFornecedor, ")
+		.append(" SUM(estoqueProduto.qtdeDevolucaoEncalhe) AS exemplares, ")
+		.append(" SUM(estoqueProduto.qtde) AS total, ")
+		.append(" SUM(estoqueProduto.qtde) AS totalDesconto ")
+		.append(" from EstoqueProduto as estoqueProduto ")
+		.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao")
+		.append(" JOIN produtoEdicao.produto as produto ")
+		.append(" JOIN produto.fornecedores as fornecedor ")
+		.append(" JOIN fornecedor.juridica pj ")
+		.append(" where fornecedor.id in (:idFornecedor) ");
+		
+		hql.append("GROUP BY fornecedor.id");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameterList("idFornecedor", filtro.getListIdFornecedor());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(FornecedorExemplaresDTO.class));
+		
+		return query.list();
+	}
+
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoque> obterMovimentosEstoque(FiltroViewNotaFiscalDTO filtro) {
+		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
+		.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
+		.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
+		.append(" where tipoMovimento.id = :idTipoMovimento")
+		.append(" and movimentoEstoque.data =:dataOperacao ")
+		.append(" order by movimentoEstoque.data desc ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("idTipoMovimento", filtro.getListIdFornecedor());
+		query.setParameter("dataOperacao", filtro.getDataEmissao());
+		return query.list();
+	}
+	
+	/*
+	@Override
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+		
+		// OBTER COTA EXEMPLARES SUMARIZADOS
+		StringBuilder hql = new StringBuilder("SELECT ");
+		hql.append(" COUNT(fornecedor.id AS idFornecedor, ");
+		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, false), filtro);
+		
+		return (long) query.list().size();
+	}
+	*/
 }

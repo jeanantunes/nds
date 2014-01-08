@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
+import br.com.abril.nds.dto.FornecedorExemplaresDTO;
+import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -148,15 +150,16 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		case COTA:
-			gerarNotasFiscaisCotas(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
+			this.gerarNotasFiscaisCotas(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
 			break;
 			
 		case DISTRIBUIDOR:
+			this.gerarNotasFiscaisDistribuidor(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
 			
 			break;
 			
-		case FORNECEDOR:
-			
+		case FORNECEDOR:			
+			this.gerarNotasFiscaisFornecedor(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
 			break;
 
 		default:
@@ -212,7 +215,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	private void gerarNotasFiscaisFornecedor(FiltroViewNotaFiscalDTO filtro, List<NotaFiscalNds> listaNotaFiscal, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
 		NotaFiscalNds notaFiscal;
 		// obter as cotas que estão na tela pelo id das cotas
-		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
+		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoFornecedorNotafiscal(filtro);
 		
 		for (Cota cota : cotas) {
 			notaFiscal = new NotaFiscalNds();
@@ -224,13 +227,17 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
-			List<MovimentoEstoqueCota> movimentosEstoquesCotas = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
+			List<MovimentoEstoque> movimentoEstoque = this.notaFiscalNdsRepository.obterMovimentosEstoque(filtro);
+			
+			/**
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoquesCotas) {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
 			
-			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoquesCotas);
+			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentoEstoques);
+			*/
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
+			
 			notaFiscal.setInformacoesComplementares("ssss");
 			listaNotaFiscal.add(notaFiscal);
 		}	
@@ -264,5 +271,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		List<NotaFiscalBase> movimentoEstoques = this.notaFiscalNdsRepository.obterNotafiscal(filtro);
 		
 		
+	}
+
+	@Override
+	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
+		return notaFiscalService.consultaFornecedorExemplarSumarizado(filtro);
 	}
 }
