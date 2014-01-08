@@ -35,11 +35,11 @@ public class ExcecaoProdutoCota implements Serializable {
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
+	@JoinColumn(name = "COTA_ID", nullable = true)
 	private Cota cota;
 
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "PRODUTO_ID")
+	@JoinColumn(name = "PRODUTO_ID", nullable = true)
 	private Produto produto;
 
 	@ManyToOne(optional = false)
