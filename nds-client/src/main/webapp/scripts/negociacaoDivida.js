@@ -342,6 +342,8 @@ var negociacaoDividaController = $.extend(true, {
 					negociacaoDividaController.utilizarAlterado();
 				}
 				
+				$("#selectPagamento", negociacaoDividaController.workspace).val(result[2]);
+				
 				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html()+' - <strong>Status: </strong>'+ $('#negociacaoDivida_statusCota').html());
 				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
 				$('#valorSelecionado',negociacaoDividaController.workspace).val(priceToFloat($('#totalSelecionado',negociacaoDividaController.workspace).html()));
