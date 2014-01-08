@@ -6,7 +6,6 @@ import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,18 +14,19 @@ import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalNdsRepository;
+import br.com.abril.nfe.model.NotaFiscalBase;
 
 @Repository
 public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFiscalNds, Long> implements NotaFiscalNdsRepository {
 
 	@Autowired
 	private DataSource dataSource;
-	private Session session;
 	
 	public NotaFiscalNdsRepositoryImpl() {
 		super(NotaFiscalNds.class);
@@ -270,12 +270,50 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	@Override
 	public void salvarNotasFiscais(final List<br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds> notasFiscais) {
 		
-		session = getSession();
-		
 		for (br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds notaFiscal : notasFiscais) {
 			merge(notaFiscal);
 		}
 		
 	}
-	
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoque> obterConjuntoDistribuidorNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
+		.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
+		.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
+
+		.append(" where produtoEdicao.id = :idProdutoEdicao ")
+		.append(" and tipoMovimento.id = :idTipoMovimento ")
+		.append(" and movimentoEstoque.data =:dataOperacao ")
+		.append(" order by movimentoEstoque.data desc ");
+
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("idProdutoEdicao", filtro.getIdNaturezaOperacao());
+		query.setParameter("idTipoMovimento", filtro.getListIdFornecedor());
+		query.setParameter("dataOperacao", filtro.getDataEmissao());
+		return query.list();
+		
+	}
+
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscalBase> obterNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("select nfe")
+		.append(" FROM NOTA_FISCAL 		");
+		
+		if(filtro.getDataInicial()!=null) {
+			hql.append(" AND nfe.DATA_EMISSAO >= :dataEmissao ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataEmissao", filtro.getDataEmissao());
+		
+		return query.list();
+	}
 }

@@ -3,9 +3,9 @@ package br.com.abril.nds.service.builders;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 
-public class NaturezaOperacaoBuilder {
+public class NotaFiscalTransportadorBuilder {
 	
-	public static NotaFiscalNds montarNaturezaOperacao(NotaFiscalNds notaFiscal, NaturezaOperacao naturezaOperacao){
+	public static NotaFiscalNds montarTransportador(NotaFiscalNds notaFiscal, NaturezaOperacao naturezaOperacao){
 		
 		NaturezaOperacao naOperacao = new NaturezaOperacao();
 		

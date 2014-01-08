@@ -6,6 +6,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.caelum.vraptor.Get;
 
 public class EmitenteDestinatarioBuilder {
 	
@@ -13,23 +14,16 @@ public class EmitenteDestinatarioBuilder {
 		
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			notaFiscal.getEmissor().setRazaoSocial(pessoaJuridica.getRazaoSocial());
-			notaFiscal.getEmissor().setCnpj(pessoaJuridica.getCnpj());
+			notaFiscal.getEmitenteDestinario().setNome(pessoaJuridica.getRazaoSocial());
+			notaFiscal.getEmitenteDestinario().setEmail(pessoaJuridica.getEmail());
 			
 		} else if (cota.getPessoa() instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
-			notaFiscal.getEmissor().setRazaoSocial(pessoaFisica.getNome());
-			notaFiscal.getEmissor().setCnpj(pessoaFisica.getCpf());
+			notaFiscal.getEmitenteDestinario().setNome(pessoaFisica.getNome());
+			notaFiscal.getEmitenteDestinario().setEmail(pessoaFisica.getEmail());
 		}
 		
 		notaFiscal.setDataEmissao(new Date());			
-		notaFiscal.getEmissor().getNotaFicalEndereco().setBairro(cota.getEnderecoPrincipal().getEndereco().getBairro());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setCidade(cota.getEnderecoPrincipal().getEndereco().getCidade());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setUf(cota.getEnderecoPrincipal().getEndereco().getUf());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setCEP(cota.getEnderecoPrincipal().getEndereco().getCep());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
 		
 		return notaFiscal;
 
