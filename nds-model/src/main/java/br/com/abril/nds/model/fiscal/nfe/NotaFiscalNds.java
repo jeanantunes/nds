@@ -10,11 +10,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nfe.model.NotaFicalEndereco;
 import br.com.abril.nfe.model.NotaFiscalPessoa;
+import br.com.abril.nfe.model.NotaFiscalPessoaFisica;
 import br.com.abril.nfe.model.NotaFiscalPessoaJuridica;
+import br.com.abril.nfe.model.NotaFiscalValorCalculado;
 
 @Entity
 @Table(name = "NOTA_FISCAL")
@@ -39,17 +42,29 @@ public class NotaFiscalNds {
 	//@OneToMany
 	//private List<NotaFiscalFatura> notaFiscalFatura; 
 	
+	@OneToOne(cascade=CascadeType.MERGE)
+	private NotaFiscalValorCalculado notaFiscalValoresCalculados;
+	
 	public NotaFiscalNds() {
 		if(notaFiscal == null){
 			this.notaFiscal = new br.com.abril.nfe.model.NotaFiscalBase();
+		}
+		
+		if(notaFiscal.getEmitenteDestinario() == null) {
+			notaFiscal.setEmitenteDestinario(new NotaFiscalPessoaFisica());
 		}
 		
 		if(notaFiscal.getEmissor() == null) {
 			notaFiscal.setEmissor(new NotaFiscalPessoaJuridica());
 		}
 		
+		
 		if(notaFiscal.getEmissor().getNotaFicalEndereco() == null) {
 			notaFiscal.getEmissor().setNotaFicalEndereco(new NotaFicalEndereco());
+		}
+		
+		if(notaFiscal.getNotaFiscalValoresCalculados() == null) {
+			notaFiscal.setNotaFiscalValoresCalculados(new NotaFiscalValorCalculado());
 		}
 	}
 	
@@ -134,11 +149,11 @@ public class NotaFiscalNds {
 	}
 
 	public String getInformacoesComplementares() {
-		return this.getInformacoesComplementares();
+		return this.notaFiscal.getInformacoesComplementares();
 	}
 
 	public void setInformacoesComplementares(String informacoesComplementares) {
-		this.setInformacoesComplementares(informacoesComplementares);
+		this.notaFiscal.setInformacoesComplementares(informacoesComplementares);
 	}
 	
 	public NotaFiscalPessoa getNotaFiscalTransportador() {
@@ -157,4 +172,12 @@ public class NotaFiscalNds {
 		this.notaFiscalItens = notaFiscalItens;
 	}
 
+	public NotaFiscalValorCalculado getNotaFiscalValoresCalculados() {
+		return notaFiscalValoresCalculados;
+	}
+
+	public void setNotaFiscalValoresCalculados(
+			NotaFiscalValorCalculado notaFiscalValoresCalculados) {
+		this.notaFiscalValoresCalculados = notaFiscalValoresCalculados;
+	}
 }

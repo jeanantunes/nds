@@ -11,9 +11,9 @@ public class NaturezaOperacaoBuilder {
 		
 		naOperacao.setId(naturezaOperacao.getId());
 		naOperacao.setCfopEstado(naturezaOperacao.getCfopEstado());
-		// naOperacao.setCfopOutrosEstados(naturezaOperacao.getCfopOutrosEstados());
+		naOperacao.setCfopOutrosEstados(naturezaOperacao.getCfopOutrosEstados());
 		naOperacao.setDescricao(naturezaOperacao.getDescricao());
-//		notaFiscal.setNaturezaOperacao(naOperacao);
+		// notaFiscal.setNaturezaOperacao(naOperacao);
 		
 		return notaFiscal;
 	}
