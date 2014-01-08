@@ -1227,7 +1227,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly = true)
 	public Boolean validarEncerramentoOperacaoEncalhe(Date data) {
 		
-		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+		return this.fechamentoEncalheRepository.validarEncerramentoOperacaoEncalhe(data);
 	}
 
 	@Override
