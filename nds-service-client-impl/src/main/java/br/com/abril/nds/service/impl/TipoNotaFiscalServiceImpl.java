@@ -138,10 +138,6 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente,
 			GrupoNotaFiscal[] grupoNotaFiscal) {
 
-		if(this.distribuidorRepository.obrigacaoFiscal() == null){
-			return null;
-		}
-
 		List<NaturezaOperacao> listaTipoNotaFiscal = this.naturezaOperacaoRepository.obterTiposNotasFiscais(tipoOperacao, tipoDestinatario, tipoEmitente, grupoNotaFiscal);
 
 		List<ItemDTO<Long, String>> listaItensNotasFiscais = new ArrayList<ItemDTO<Long,String>>();

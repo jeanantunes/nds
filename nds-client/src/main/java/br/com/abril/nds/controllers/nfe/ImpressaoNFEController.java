@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.nfe;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,21 +22,20 @@ import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.RotaService;
+import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -86,6 +84,9 @@ public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
 	private RoteiroService roteiroService;
+	
+	@Autowired
+	private RoteirizacaoService roteirizacaoService;
 
 	@Autowired
 	private RotaService rotaService;
@@ -96,18 +97,65 @@ public class ImpressaoNFEController extends BaseController {
 	@Path("/")
 	public void index() {
 
-		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
-
-		GrupoNotaFiscal[] gnf = {GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, GrupoNotaFiscal.NF_VENDA};
-		this.result.include("tipoNotas", tipoNotaFiscalService.carregarComboTiposNotasFiscais(TipoOperacao.SAIDA, TipoUsuarioNotaFiscal.COTA, TipoUsuarioNotaFiscal.DISTRIBUIDOR, gnf));
-		this.result.include("fornecedores", fornecedores);
-		this.result.include("roteiros", roteiroService.obterRoteiros());
-		this.result.include("rotas", rotaService.obterRotas());
+		this.obterFornecedoresDestinatarios();
+		this.obterTodosFornecedoresAtivos();
+		this.iniciarComboRoteiro();
+		this.iniciarComboRota();
+		this.obterTiposDestinatarios();
+		this.iniciarComboBox();
+		
 		this.result.include("tipoEmissao", TipoEmissaoNfe.values());
-		this.result.include("dataAtual", new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-
+		
 	}
 
+	private void obterTiposDestinatarios() {
+		result.include("tiposDestinatarios", new TipoDestinatario[] {TipoDestinatario.COTA, TipoDestinatario.DISTRIBUIDOR, TipoDestinatario.FORNECEDOR});
+	}
+	
+	private void obterFornecedoresDestinatarios() {
+		result.include("fornecedoresDestinatarios", fornecedorService.obterFornecedoresDestinatarios(SituacaoCadastro.ATIVO));
+	}
+
+	private void obterTodosFornecedoresAtivos() {
+		result.include("fornecedores", fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+	}
+	
+	/**
+     * Inicia o combo Box
+     */
+    private void iniciarComboBox() {
+
+	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    }
+
+	private void iniciarComboRoteiro() {
+		//result.include("listaTipoNotaFiscal", this.carregarTipoNotaFiscal());
+		
+		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
+		
+		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Roteiro roteiro : roteiros){
+			
+			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
+		}
+		
+		result.include("roteiros", listRoteiro);
+	}
+
+	private void iniciarComboRota() {
+		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
+		
+		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Rota rota : rotas){
+			
+			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
+		}
+		
+		result.include("rotas", listRota);
+	}
+		
 	@Post
 	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp){
 
