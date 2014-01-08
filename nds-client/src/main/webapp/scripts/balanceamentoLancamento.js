@@ -827,6 +827,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				sortable : true,
 				align : 'center'
 			},{
+				display : 'PEB',
+				name : 'peb',
+				width : 20,
+				sortable : true,
+				align : 'center'
+			},{
 				display : 'Total R$',
 				name : 'valorTotal',
 				width : 42,
