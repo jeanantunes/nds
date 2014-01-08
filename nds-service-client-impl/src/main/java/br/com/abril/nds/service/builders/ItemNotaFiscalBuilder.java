@@ -2,13 +2,15 @@ package br.com.abril.nds.service.builders;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
-import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalItem;
+import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 
 public class ItemNotaFiscalBuilder  {
 	
@@ -35,20 +37,23 @@ public class ItemNotaFiscalBuilder  {
 			notaFiscalItem.setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 			notaFiscalItem.setCST(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTributacaoFiscal().getCST());
 			movimentoEstoqueCota.setNotaFiscalEmitida(true);
-			notaFiscalItem.setOrigemItemNotaFiscal(new OrigemItemNotaFiscalMovimentoEstoqueCota());
 			
-			if(((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas() == null) {
-				((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).setListaMovimentoEstoqueCotas(new ArrayList<MovimentoEstoqueCota>());
-				((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas().add(movimentoEstoqueCota);
-			}
+			List<OrigemItemNotaFiscal> origemItens = notaFiscalItem.getOrigemItemNotaFiscal() != null ? notaFiscalItem.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
+			
+			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
+			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota(movimentoEstoqueCota);
+			origemItens.add(oinf);
+			notaFiscalItem.setOrigemItemNotaFiscal(origemItens);
 			
 		} else {
 			
 			for(NotaFiscalItem nfi : notaFiscal.getNotaFiscalItens()) {
 				
 				boolean notFound = true;
-				//if(nfi.getOrigemItemNotaFiscal().getOrigem().equals(OrigemItem.MOVIMENTO_ESTOQUE_COTA)) {
-				for(MovimentoEstoqueCota mec : ((OrigemItemNotaFiscalMovimentoEstoqueCota) nfi.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas()) {
+
+				for(OrigemItemNotaFiscal oinf : nfi.getOrigemItemNotaFiscal()) {
+					
+					MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
 					if(mec.getProdutoEdicao().getId().equals(movimentoEstoqueCota.getProdutoEdicao().getId())) {
 						
 						notFound = false;
@@ -82,14 +87,15 @@ public class ItemNotaFiscalBuilder  {
 					notaFiscalItem.setCST(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTributacaoFiscal().getCST());
 					notaFiscalItem.setValorTotal(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
 					notaFiscalItem.setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
-					notaFiscalItem.setOrigemItemNotaFiscal(new OrigemItemNotaFiscalMovimentoEstoqueCota());
 					
 					movimentoEstoqueCota.setNotaFiscalEmitida(true);
 					
-					if(((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas() == null) {
-						((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).setListaMovimentoEstoqueCotas(new ArrayList<MovimentoEstoqueCota>());
-						((OrigemItemNotaFiscalMovimentoEstoqueCota) notaFiscalItem.getOrigemItemNotaFiscal()).getListaMovimentoEstoqueCotas().add(movimentoEstoqueCota);
-					}
+					List<OrigemItemNotaFiscal> origemItens = notaFiscalItem.getOrigemItemNotaFiscal() != null ? notaFiscalItem.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
+					
+					OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
+					((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota(movimentoEstoqueCota);
+					origemItens.add(oinf);
+					notaFiscalItem.setOrigemItemNotaFiscal(origemItens);
 				}
 			}
 		}

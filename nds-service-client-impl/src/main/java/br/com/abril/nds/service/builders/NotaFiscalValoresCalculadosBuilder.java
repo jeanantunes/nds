@@ -24,10 +24,6 @@ public class NotaFiscalValoresCalculadosBuilder {
 		notaFiscal.getNotaFiscalValoresCalculados().setValorProdutos(new BigDecimal("10"));
 		notaFiscal.getNotaFiscalValoresCalculados().setValorSeguro(new BigDecimal("10"));
 		
-		
-		
-		
-		
 		return notaFiscal;
 	}
 	
