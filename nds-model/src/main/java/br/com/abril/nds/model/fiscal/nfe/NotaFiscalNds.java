@@ -9,6 +9,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -36,13 +37,14 @@ public class NotaFiscalNds {
 	@Column(name = "DATA_EXPEDICAO", nullable = true)
 	private Date dataEntradaSaida;
 	
-	@OneToMany(cascade=CascadeType.MERGE)
+	@OneToMany(cascade=CascadeType.MERGE, mappedBy="notaFiscal")
 	private List<NotaFiscalItem> notaFiscalItens; 
 	
 	//@OneToMany
 	//private List<NotaFiscalFatura> notaFiscalFatura; 
 	
 	@OneToOne(cascade=CascadeType.MERGE)
+	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID")
 	private NotaFiscalValorCalculado notaFiscalValoresCalculados;
 	
 	public NotaFiscalNds() {
@@ -63,8 +65,8 @@ public class NotaFiscalNds {
 			notaFiscal.getEmissor().setNotaFicalEndereco(new NotaFicalEndereco());
 		}
 		
-		if(notaFiscal.getNotaFiscalValoresCalculados() == null) {
-			notaFiscal.setNotaFiscalValoresCalculados(new NotaFiscalValorCalculado());
+		if(notaFiscalValoresCalculados == null) {
+			notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
 		}
 	}
 	
