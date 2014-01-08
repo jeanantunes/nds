@@ -395,7 +395,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		   .append(" m.tipoMovimento as tipoMovimentoFinanceiro ")
 		   .append(" from Cobranca c ")
 		   .append(" join c.divida.consolidado.movimentos m ")
-		   .append(" where c.id = :idCobranca ");
+		   .append(" where c.id = :idCobranca ")
+		   .append(" order by m.dataCriacao desc ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idCobranca", idCobranca);

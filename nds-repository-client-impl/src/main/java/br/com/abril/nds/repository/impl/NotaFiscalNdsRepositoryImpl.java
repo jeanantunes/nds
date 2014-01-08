@@ -99,7 +99,7 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro) {
+	public List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroViewNotaFiscalDTO filtro) {
 	
 		// ITENS DA NOTA FISCAL
 		StringBuilder hql = new StringBuilder("SELECT mec");

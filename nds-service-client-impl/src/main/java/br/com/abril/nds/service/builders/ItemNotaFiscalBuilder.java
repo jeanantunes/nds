@@ -12,19 +12,19 @@ import br.com.abril.nds.model.fiscal.nfe.NotaFiscalItem;
 
 public class ItemNotaFiscalBuilder  {
 	
-	public static NotaFiscalNds montaItemNotaFiscal(NotaFiscalNds nota, MovimentoEstoqueCota movimentoEstoqueCota){
+	public static NotaFiscalNds montaItemNotaFiscal(NotaFiscalNds notaFiscal, MovimentoEstoqueCota movimentoEstoqueCota){
 		
 		NotaFiscalItem notaFiscalItem = new NotaFiscalItem();
 		
-		if(nota == null) {
+		if(notaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
-			if(nota.getNotaFiscalItens() == null) {
-				nota.setNotaFiscalItens(new ArrayList<NotaFiscalItem>());
+			if(notaFiscal.getNotaFiscalItens() == null) {
+				notaFiscal.setNotaFiscalItens(new ArrayList<NotaFiscalItem>());
 			}
 		}
 		
-		if(nota.getNotaFiscalItens().size() == 0) {
+		if(notaFiscal.getNotaFiscalItens().size() == 0) {
 		
 			notaFiscalItem.setCodigoItem(Long.valueOf(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo()));
 			notaFiscalItem.setDescricao(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
@@ -44,7 +44,7 @@ public class ItemNotaFiscalBuilder  {
 			
 		} else {
 			
-			for(NotaFiscalItem nfi : nota.getNotaFiscalItens()) {
+			for(NotaFiscalItem nfi : notaFiscal.getNotaFiscalItens()) {
 				
 				boolean notFound = true;
 				//if(nfi.getOrigemItemNotaFiscal().getOrigem().equals(OrigemItem.MOVIMENTO_ESTOQUE_COTA)) {
@@ -95,9 +95,10 @@ public class ItemNotaFiscalBuilder  {
 		}
 		
 		// popular os itens das notas fiscais
-		nota.getNotaFiscalItens().add(notaFiscalItem);
+		notaFiscalItem.setNotaFiscal(notaFiscal);
+		notaFiscal.getNotaFiscalItens().add(notaFiscalItem);
 		
-		return nota;
+		return notaFiscal;
 	}
 	
 }
