@@ -27,7 +27,7 @@ public interface NotaFiscalNdsRepository extends Repository<NotaFiscalNds, Long>
 
 	public abstract Long consultaCotaExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
 	
-	public abstract List<MovimentoEstoqueCota> obterMovimentoEstoqueCota(FiltroViewNotaFiscalDTO filtro);
+	public abstract List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroViewNotaFiscalDTO filtro);
 
 	void salvarNotasFiscais(List<NotaFiscalNds> notasFiscais);
 }
