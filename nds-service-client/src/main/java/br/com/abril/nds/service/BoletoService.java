@@ -9,6 +9,7 @@ import javax.xml.bind.ValidationException;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
+import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.BoletoEmBrancoDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
@@ -18,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.TipoBaixaCobranca;
@@ -33,7 +35,7 @@ public interface BoletoService {
     
 	byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException, ValidationException;
 	
-	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
+	List<BoletoCotaDTO> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 	
 	Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada);
 
@@ -167,7 +169,7 @@ public interface BoletoService {
 	 */
 	public Long obterQuantidadeTotalBancario(FiltroDetalheBaixaBoletoDTO filtro);
 
-	public List<Boleto> verificaEnvioDeEmail(List<Boleto> boletos);
+	public List<BoletoCotaDTO> verificaEnvioDeEmail(List<BoletoCotaDTO> boletosDTO);
 
 	/**
 	 * Gera movimentos para a próxima data, a partir dos boletos não pagos no dia.
@@ -186,6 +188,15 @@ public interface BoletoService {
 	 * @return BoletoEmBrancoDTO
 	 */
 	BoletoEmBrancoDTO obterDadosBoletoEmBrancoPorCE(CotaEmissaoDTO ceDTO,Date dataRecolhimentoCEDe, Date dataRecolhimentoCEAte);
+	
+	/**
+	 * Método responsável por gerar impressao de Boleto Antecipado (Em Branco) em formato PDF
+	 * @param nossoNumero
+	 * @return b: Boleto PDF em Array de bytes
+	 * @throws IOException
+	 * @throws ValidationException 
+	 */
+	byte[] gerarImpressaoBoletoEmBranco(String nossoNumero) throws IOException, ValidationException;
 
 	/**
 	 * Gera Impressão de Boletos em Branco apenas para a impressão -  Sem Cobrança e Sem Financeiro Cadastrado
@@ -229,4 +240,10 @@ public interface BoletoService {
 			                                               Integer numeroCotaAte,
 			                                               Date dataRecolhimentoDe, 
 			                                               Date dataRecolhimentoAte);
+	/**
+	 * Método responsável por obter boleto Antecipado (Em Branco) por nossoNumero
+	 * @param nossoNumero
+	 * @return Boletos encontrado
+	 */
+	BoletoAntecipado obterBoletoEmBrancoPorNossoNumero(String nossoNumero);
 }
