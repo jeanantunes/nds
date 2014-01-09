@@ -167,5 +167,8 @@ $(function(){
 	<div id="geracaoNfe-gridNFe" style="display: none;" class="grids">
 		<div id="geracaoNfe-flexigrid-pesquisa" />
 	</div>
+	<div id="geracaoNfe-gridNFe" style="display: none;" class="grids-forn">
+		<div id="geracaoNfe-flexigrid-fornecedor-pesquisa" />
+	</div>
 
 </fieldset>

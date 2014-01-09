@@ -237,6 +237,21 @@ var geracaoNFeController = $.extend({
 			
 		});
 		
+		$("#geracaoNfe-flexigrid-fornecedor-pesquisa").flexigrid({
+			preProcess : _this.preProcessGridPesquisa,
+			colModel : _this.colunasGridForncedorPesquisa,
+			dataType : 'json',
+			sortname : "idFornecedor",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180
+			
+		});
+		
 		$("#geracaoNfe-gridCotasSuspensas").flexigrid({
 			preProcess : _this.preProcessGridPesquisa,
 			colModel : _this.colunasGridPesquisa,
@@ -339,7 +354,7 @@ var geracaoNFeController = $.extend({
 	/**
 	 * objeto utilizado para encapsular as colunas da grid de Pesquisas
 	 */
-	colunasGridPesquisaForncedor:[ {
+	colunasGridForncedorPesquisa:[ {
 		display : 'Fornecedor',
 		name : 'numeroFornecedor',
 		width : 100,
@@ -397,7 +412,14 @@ var geracaoNFeController = $.extend({
 			});
 		}
 		
-		var grid = $("#geracaoNfe-flexigrid-pesquisa");
+		var grid;
+		
+		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR'){
+			grid = $("#geracaoNfe-flexigrid-fornecedor-pesquisa");
+		}else{
+			
+			grid = $("#geracaoNfe-flexigrid-pesquisa");
+		}
 		
 		var uri = "pesquisar";
 		
@@ -409,7 +431,11 @@ var geracaoNFeController = $.extend({
 		
 		grid.flexReload();
 		
-		$(".grids").show();
+		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR') {
+			$(".grids-forn").show();
+		} else {
+			$(".grids").show();
+		}
 	
 	},
 	

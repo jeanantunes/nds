@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nfe.model.NotaFiscalFatura;
 import br.com.abril.nfe.model.NotaFiscalPessoa;
 import br.com.abril.nfe.model.NotaFiscalPessoaFisica;
 import br.com.abril.nfe.model.NotaFiscalPessoaJuridica;
@@ -40,8 +41,8 @@ public class NotaFiscalNds {
 	@OneToMany(cascade=CascadeType.MERGE, mappedBy="notaFiscal")
 	private List<NotaFiscalItem> notaFiscalItens; 
 	
-	//@OneToMany
-	//private List<NotaFiscalFatura> notaFiscalFatura; 
+	@OneToMany(cascade=CascadeType.MERGE)
+	private List<NotaFiscalFatura> notaFiscalFatura; 
 	
 	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID")
@@ -182,4 +183,40 @@ public class NotaFiscalNds {
 			NotaFiscalValorCalculado notaFiscalValoresCalculados) {
 		this.notaFiscalValoresCalculados = notaFiscalValoresCalculados;
 	}
+	
+	public List<NotaFiscalFatura> getNotaFiscalFatura() {
+		return notaFiscalFatura;
+	}
+
+	public void setNotaFiscalFatura(List<NotaFiscalFatura> notaFiscalFatura) {
+		this.notaFiscalFatura = notaFiscalFatura;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NotaFiscalNds other = (NotaFiscalNds) obj;
+		if (this.getId() == null) {
+			if (other.id != null)
+				return false;
+		} else if (!this.getId().equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
+	
 }
