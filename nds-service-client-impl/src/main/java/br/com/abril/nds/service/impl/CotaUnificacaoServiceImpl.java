@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,9 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	 * @param cotaUnificacaoId
 	 * @param numeroCota
 	 */
-	private void validaAlteracaoUnificacaoCota(Long cotaUnificacaoId,
+	@Transactional
+	@Override
+	public void validaAlteracaoUnificacaoCota(Long cotaUnificacaoId,
             							       Integer numeroCota){
 		
 		CotaUnificacao cotaUnificacao = this.obterCotaUnificacaoPorCotaCentralizadora(numeroCota);
@@ -60,7 +63,9 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	 * 
 	 * @param numeroCota
 	 */
-	private void validaNovaUnificacaoCota(Integer numeroCota){
+	@Transactional
+	@Override
+	public void validaNovaUnificacaoCota(Integer numeroCota){
 		
         if (this.isCotaCentralizadora(numeroCota)){
 			
@@ -74,7 +79,7 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	}
 	
 	/**
-	 * Salva/Altera Unificação de Cotas
+	 * Salva/Altera Unificação de Cota
 	 * 
 	 * @param cotaUnificacaoId
 	 * @param numeroCotaCentralizadora
@@ -114,6 +119,27 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		cotaUnificacao.setDataUnificacao(new Date());
 		
 		this.cotaUnificacaoRepository.merge(cotaUnificacao);
+	}
+	
+	/**
+	 * Salva/Altera Unificação de Cotas
+	 * 
+	 * @param cotaUnificacaoId
+	 * @param numeroCotaCentralizadora
+	 * @param numeroCotasCentralizadas
+	 */
+	@Transactional
+	@Override
+	public void salvarCotaUnificacao(Long cotaUnificacaoId,
+			                         Integer numeroCotaCentralizadora, 
+			                         List<Integer> numeroCotasCentralizadas){
+		
+        for (Integer numeroCotaCentralizada : numeroCotasCentralizadas){
+        	
+        	this.salvarCotaUnificacao(cotaUnificacaoId, 
+        			                  numeroCotaCentralizadora, 
+        			                  numeroCotaCentralizada);
+        }
 	}
 
 	/**
