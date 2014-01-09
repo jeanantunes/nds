@@ -2686,13 +2686,17 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			hql.append(")");
 		}
 		
-		hql.append(" GROUP BY cota.numeroCota ");
 		
 		if (qtdReparteInicial != null && qtdReparteInicial.intValue() >= 0 && qtdReparteFinal != null && qtdReparteFinal.intValue() >= 0 ) {
-			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
-			parameters.put("reparteInicial", qtdReparteInicial.doubleValue());
-			parameters.put("reparteFinal", qtdReparteFinal.doubleValue());
+			//hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
+			
+			hql.append("and estoqueProdutoCota.qtdeRecebida >= :reparteInicial and estoqueProdutoCota.qtdeRecebida <= :reparteFinal");
+			
+			parameters.put("reparteInicial", qtdReparteInicial);
+			parameters.put("reparteFinal", qtdReparteFinal);
 		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -3667,16 +3671,29 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
     		hql.append(" produto.codigo in (:produtoCodigoList) and ");
     		hql.append(" produtoEdicao.numeroEdicao in (:produtoEdicaoNumeroList)");
     		
-    		parameters.put("produtoCodigoList", ListUtils.getValuePathList("codigoProduto", listProdutoEdicaoDto));
-    		parameters.put("produtoEdicaoNumeroList", ListUtils.getValuePathList("numeroEdicao", listProdutoEdicaoDto));
+    	//	parameters.put("produtoCodigoList", ListUtils.getValuePathList("codigoProduto", listProdutoEdicaoDto));
+    	//	parameters.put("produtoEdicaoNumeroList", ListUtils.getValuePathList("numeroEdicao", listProdutoEdicaoDto));
     		
     	 }
 
     	hql.append(" GROUP BY cota.numeroCota ");
 
     	Query query = super.getSession().createQuery(hql.toString());
-
+    	
     	this.setParameters(query, parameters);
+    	
+    	if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+    		List<String> listCodProduto = new ArrayList<>();
+    		List<Long> listNumEdicao = new ArrayList<>();
+    		
+    		for (ProdutoEdicaoDTO listProduto : listProdutoEdicaoDto) {
+				listCodProduto.add(listProduto.getCodigoProduto());
+				listNumEdicao.add(listProduto.getNumeroEdicao());
+			}
+    		
+    		query.setParameterList("produtoCodigoList", listCodProduto);
+    		query.setParameterList("produtoEdicaoNumeroList", listNumEdicao);
+    	}
 
     	query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 
