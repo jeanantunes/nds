@@ -346,7 +346,7 @@
 				</tr>
 				<tr>
 					<td>Senha:</td>
-					<td><input type="password" id="inputSenha" onkeydown="ConferenciaEncalhe.autenticarSupervisor(event);" /></td>
+					<td><input type="password" id="inputSenha" /></td>
 				</tr>
 			</table>
 		</div>

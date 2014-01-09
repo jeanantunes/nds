@@ -244,7 +244,9 @@ var recebimentoFisicoController = $.extend(true, {
 	    		
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
 				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(12,true);
-				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,true);
+				
+				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,
+					$("#permissaoGridColRepartePrevisto").val() == "true");
 	    	}
 			
 			if(result.validacao.listaMensagens.length>0){
@@ -678,16 +680,12 @@ var recebimentoFisicoController = $.extend(true, {
 		if($("#permissaoGridColRepartePrevisto").val() != "true"){
 			
 			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(6,false);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,false);
 		}
 		
 		if($("#permissaoGridColDiferenca").val() != "true"){
 			
 			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,false);
-		}
-		
-		if($("#permissaoGridColRepartePrevisto").val() != "true"){
-			
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(6,false);
 		}
 	},
 	
@@ -1390,8 +1388,10 @@ var recebimentoFisicoController = $.extend(true, {
 			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,false);
 			$(".bt_sellAll", recebimentoFisicoController.workspace).hide();
 		/*} else {*/
-			
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,true);
+		
+		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,
+				$("#permissaoGridColRepartePrevisto").val() == "true");
+		
 			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
 		//}
 		

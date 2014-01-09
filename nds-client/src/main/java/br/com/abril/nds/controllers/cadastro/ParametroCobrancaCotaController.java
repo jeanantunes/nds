@@ -493,13 +493,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setConta(null);
 			formaCobranca.setContaDigito("");
 		}
-		else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.CHEQUE))||(formaCobranca.getTipoCobranca().equals(TipoCobranca.TRANSFERENCIA_BANCARIA))){
-			
-			formaCobranca.setRecebeEmail(false);
-		}
 		else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DEPOSITO)){
 			
-			formaCobranca.setRecebeEmail(false);
 			formaCobranca.setNumBanco("");
 			formaCobranca.setNomeBanco("");
 			formaCobranca.setAgencia(null);
@@ -507,19 +502,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setConta(null);
 			formaCobranca.setContaDigito("");
 		}
-		else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO)){
+		else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))||((formaCobranca.getTipoCobranca().equals(TipoCobranca.OUTROS)))){
 			
-			formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-			formaCobranca.setContaDigito("");
-			formaCobranca.setIdBanco(null);
-		}
-		else{
-			
-			formaCobranca.setRecebeEmail(false);
 			formaCobranca.setNumBanco("");
 			formaCobranca.setNomeBanco("");
 			formaCobranca.setAgencia(null);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.BoletoEmail;
 import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
@@ -55,6 +56,10 @@ public class BoletoEmailController extends BaseController {
 	public void emitirBoletosFechamentoEncalhe(){
 
 		List<String> mensagensBoletosNaoEmitidos = new ArrayList<String>();
+		
+		mensagensBoletosNaoEmitidos.add("Boletos/Recibos não enviados:");
+		
+		boolean boletosNaoEmitidos = false;
 			
 		List<BoletoEmail> listaBoletoEmail = this.boletoEmailService.buscarTodos();
 		
@@ -78,20 +83,24 @@ public class BoletoEmailController extends BaseController {
             catch(Exception e){
             	
             	e.printStackTrace();
+            	
+            	Cota cota = bm.getCobranca().getCota();
         	
-        	    mensagensBoletosNaoEmitidos.add("Boleto "+boletosEmitidos+" de "+totalBoletosEmitir+" não enviado. Nosso Numero: "+bm.getCobranca().getNossoNumero());
+        	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome());
+        	    
+        	    boletosNaoEmitidos = true;
             }
 		}
 		
 		this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, STATUS_ENVIO_FINALIZADO);
 		
-		if (mensagensBoletosNaoEmitidos.isEmpty()){
-		
-		    this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boletos pendentes emitidos com sucesso!"), "result").recursive().serialize();
+		if (boletosNaoEmitidos){
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, mensagensBoletosNaoEmitidos), "result").recursive().serialize();
 		}
 		else{
 			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, mensagensBoletosNaoEmitidos), "result").recursive().serialize();
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boletos pendentes emitidos com sucesso!"), "result").recursive().serialize();
 		}
 	}
 	
