@@ -49,7 +49,9 @@ public class CotaUnificacaoController extends BaseController {
 	 * @param httpSession
 	 * @param httpResponse
 	 */
-	public CotaUnificacaoController(Result result, HttpSession httpSession, HttpServletResponse httpResponse) {
+	public CotaUnificacaoController(Result result, 
+			                        HttpSession httpSession, 
+			                        HttpServletResponse httpResponse) {
 		
 		this.result = result;
 		

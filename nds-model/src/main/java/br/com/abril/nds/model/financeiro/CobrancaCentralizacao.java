@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,10 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -38,14 +34,13 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
  * @created 06-mar-2012 11:07:00
  */
 @Entity
-@Table(name = "COBRANCA")
-@SequenceGenerator(name="COBRANCA_SEQ", initialValue = 1, allocationSize = 1)
+@Table(name = "COBRANCA_CENTRALIZACAO")
+@SequenceGenerator(name="COBRANCA_CENTRALIZACAO_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TIPO_DOCUMENTO", discriminatorType = DiscriminatorType.STRING)
-public abstract class Cobranca {
+public abstract class CobrancaCentralizacao {
 	
 	@Id
-	@GeneratedValue(generator = "COBRANCA_SEQ")
+	@GeneratedValue(generator = "COBRANCA_CENTRALIZACAO_SEQ")
 	@Column(name = "ID")
 	protected Long id;
 	
@@ -79,62 +74,63 @@ public abstract class Cobranca {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_BAIXA", nullable = true)
 	protected TipoBaixaCobranca tipoBaixa;
-	
-	@Column(name = "CONTEMPLACAO", nullable = true)
-	protected boolean contemplacao;
-	
-	@ManyToOne
-	@JoinColumn(name = "COTA_ID")
-	protected Cota cota;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COBRANCA", nullable = false)
+	protected TipoCobranca tipoCobranca;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_COBRANCA", nullable = false)
 	protected StatusCobranca statusCobranca;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COBRANCA", nullable = false)
-	protected TipoCobranca tipoCobranca;
-	
-	@OneToOne(optional = false)
-	@JoinColumn(name = "DIVIDA_ID")
-	protected Divida divida;
-	
-	@OneToMany(mappedBy = "cobranca")
-	protected List<BaixaCobranca> baixasCobranca = new ArrayList<BaixaCobranca>();
-	
 	@Column(name="VIAS")
 	protected Integer vias;
-
-	@ManyToOne
-	@JoinColumn(name = "BANCO_ID")
-	private Banco banco;
 	
-	@ManyToOne
-	@JoinColumn(name="FORNECEDOR_ID")
-	private Fornecedor fornecedor;
-    
-	@ManyToMany(mappedBy="cobrancasOriginarias")
-	private List<Negociacao> negociacao;
+	@Column(name = "CONTEMPLACAO", nullable = true)
+	protected boolean contemplacao;
 	
 	@Column(name="ENVIAR_POR_EMAIL")
 	private boolean enviarPorEmail;
 	
 	@ManyToOne
-	@JoinColumn(name="COBRANCA_CENTRALIZACAO_ID")
-	private CobrancaCentralizacao cobrancaCentralizacao;
+	@JoinColumn(name = "BANCO_ID")
+	private Banco banco;
 	
+	@ManyToOne
+	@JoinColumn(name = "COTA_ID")
+	protected Cota cota;
+	
+	@ManyToOne
+	@JoinColumn(name="FORNECEDOR_ID")
+	private Fornecedor fornecedor;
+	
+	@OneToMany(mappedBy = "cobrancaCentralizacao")
+	protected List<Cobranca> cobrancasCentralizadas = new ArrayList<Cobranca>();
+
+	/**
+	 * @return the id
+	 */
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * @param id the id to set
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	/**
+	 * @return the nossoNumero
+	 */
 	public String getNossoNumero() {
 		return nossoNumero;
 	}
 
+	/**
+	 * @param nossoNumero the nossoNumero to set
+	 */
 	public void setNossoNumero(String nossoNumero) {
 		this.nossoNumero = nossoNumero;
 	}
@@ -167,138 +163,144 @@ public abstract class Cobranca {
 		this.nossoNumeroCompleto = nossoNumeroCompleto;
 	}
 
+	/**
+	 * @return the dataEmissao
+	 */
 	public Date getDataEmissao() {
 		return dataEmissao;
 	}
 
+	/**
+	 * @param dataEmissao the dataEmissao to set
+	 */
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
 
+	/**
+	 * @return the dataVencimento
+	 */
 	public Date getDataVencimento() {
 		return dataVencimento;
 	}
 
+	/**
+	 * @param dataVencimento the dataVencimento to set
+	 */
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
 
+	/**
+	 * @return the dataPagamento
+	 */
 	public Date getDataPagamento() {
 		return dataPagamento;
 	}
 
+	/**
+	 * @param dataPagamento the dataPagamento to set
+	 */
 	public void setDataPagamento(Date dataPagamento) {
 		this.dataPagamento = dataPagamento;
 	}
 
+	/**
+	 * @return the encargos
+	 */
 	public BigDecimal getEncargos() {
 		return encargos;
 	}
 
+	/**
+	 * @param encargos the encargos to set
+	 */
 	public void setEncargos(BigDecimal encargos) {
 		this.encargos = encargos;
 	}
 
+	/**
+	 * @return the valor
+	 */
 	public BigDecimal getValor() {
 		return valor;
 	}
 
+	/**
+	 * @param valor the valor to set
+	 */
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 
+	/**
+	 * @return the tipoBaixa
+	 */
 	public TipoBaixaCobranca getTipoBaixa() {
 		return tipoBaixa;
 	}
 
+	/**
+	 * @param tipoBaixa the tipoBaixa to set
+	 */
 	public void setTipoBaixa(TipoBaixaCobranca tipoBaixa) {
 		this.tipoBaixa = tipoBaixa;
 	}
 
-	public boolean isContemplacao() {
-		return contemplacao;
+	/**
+	 * @return the tipoCobranca
+	 */
+	public TipoCobranca getTipoCobranca() {
+		return tipoCobranca;
 	}
 
-	public void setContemplacao(boolean contemplacao) {
-		this.contemplacao = contemplacao;
-	}
-    
-	public Cota getCota() {
-		return cota;
-	}
-
-	public void setCota(Cota cota) {
-		this.cota = cota;
+	/**
+	 * @param tipoCobranca the tipoCobranca to set
+	 */
+	public void setTipoCobranca(TipoCobranca tipoCobranca) {
+		this.tipoCobranca = tipoCobranca;
 	}
 
+	/**
+	 * @return the statusCobranca
+	 */
 	public StatusCobranca getStatusCobranca() {
 		return statusCobranca;
 	}
 
+	/**
+	 * @param statusCobranca the statusCobranca to set
+	 */
 	public void setStatusCobranca(StatusCobranca statusCobranca) {
 		this.statusCobranca = statusCobranca;
 	}
-	
-	public TipoCobranca getTipoCobranca() {
-		return tipoCobranca;
-	}
-	
-	public void setTipoCobranca(TipoCobranca tipoCobranca) {
-		this.tipoCobranca = tipoCobranca;
-	}
-	
-	public Divida getDivida() {
-		return divida;
-	}
-	
-	public void setDivida(Divida divida) {
-		this.divida = divida;
-	}
-	
-	public List<BaixaCobranca> getBaixasCobranca() {
-		return baixasCobranca;
-	}
-	
-	public void setBaixasCobranca(List<BaixaCobranca> baixasCobranca) {
-		this.baixasCobranca = baixasCobranca;
-	}
 
+	/**
+	 * @return the vias
+	 */
 	public Integer getVias() {
 		return vias;
 	}
 
+	/**
+	 * @param vias the vias to set
+	 */
 	public void setVias(Integer vias) {
 		this.vias = vias;
 	}
 
-	public Banco getBanco() {
-		return banco;
-	}
-
-	public void setBanco(Banco banco) {
-		this.banco = banco;
-	}
-
-	public Fornecedor getFornecedor() {
-		return fornecedor;
-	}
-
-	public void setFornecedor(Fornecedor fornecedor) {
-		this.fornecedor = fornecedor;
+	/**
+	 * @return the contemplacao
+	 */
+	public boolean isContemplacao() {
+		return contemplacao;
 	}
 
 	/**
-	 * @return the negociacao
+	 * @param contemplacao the contemplacao to set
 	 */
-	public List<Negociacao> getNegociacao() {
-		return negociacao;
-	}
-
-	/**
-	 * @param negociacao the negociacao to set
-	 */
-	public void setNegociacao(List<Negociacao> negociacao) {
-		this.negociacao = negociacao;
+	public void setContemplacao(boolean contemplacao) {
+		this.contemplacao = contemplacao;
 	}
 
 	/**
@@ -316,16 +318,58 @@ public abstract class Cobranca {
 	}
 
 	/**
-	 * @return the cobrancaCentralizacao
+	 * @return the banco
 	 */
-	public CobrancaCentralizacao getCobrancaCentralizacao() {
-		return cobrancaCentralizacao;
+	public Banco getBanco() {
+		return banco;
 	}
 
 	/**
-	 * @param cobrancaCentralizacao the cobrancaCentralizacao to set
+	 * @param banco the banco to set
 	 */
-	public void setCobrancaCentralizacao(CobrancaCentralizacao cobrancaCentralizacao) {
-		this.cobrancaCentralizacao = cobrancaCentralizacao;
-	}	
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}
+
+	/**
+	 * @return the cota
+	 */
+	public Cota getCota() {
+		return cota;
+	}
+
+	/**
+	 * @param cota the cota to set
+	 */
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+
+	/**
+	 * @return the fornecedor
+	 */
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
+	/**
+	 * @return the cobrancasCentralizadas
+	 */
+	public List<Cobranca> getCobrancasCentralizadas() {
+		return cobrancasCentralizadas;
+	}
+
+	/**
+	 * @param cobrancasCentralizadas the cobrancasCentralizadas to set
+	 */
+	public void setCobrancasCentralizadas(List<Cobranca> cobrancasCentralizadas) {
+		this.cobrancasCentralizadas = cobrancasCentralizadas;
+	}
 }

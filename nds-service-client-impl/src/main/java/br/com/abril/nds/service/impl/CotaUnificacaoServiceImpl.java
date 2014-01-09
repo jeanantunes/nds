@@ -41,7 +41,7 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	@Transactional
 	@Override
 	public void validaAlteracaoUnificacaoCota(Long cotaUnificacaoId,
-            							       Integer numeroCota){
+            							      Integer numeroCota){
 		
 		CotaUnificacao cotaUnificacao = this.obterCotaUnificacaoPorCotaCentralizadora(numeroCota);
 		
