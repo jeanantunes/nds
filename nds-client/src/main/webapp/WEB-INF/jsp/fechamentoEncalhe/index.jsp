@@ -1,5 +1,3 @@
-<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
-<input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	
@@ -37,7 +35,10 @@
 </head>
 
 <body>
-
+	<input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}" />
+	<input id="permissaoBtnConfirmar" type="hidden" value="${permissaoBtnConfirmar}" />
+	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+	
 	<form id="form-confirm">
 	<div id="dialog-confirm" title="Encerrar Opera&ccedil;&atilde;o" style="display:none;">
 		<p>Confirma o encerramento da opera&ccedil;&atilde;o do dia <span id="dataConfirma"></span>:</p>
@@ -89,7 +90,11 @@
 			<div class="divBotoesPrincipais" style="display:none; float:left;">
 	            <span class="bt_novos"><a isEdicao="true" href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
 			</div>
-			<span class="bt_novos" style="display:none;" id="bt_cotas_ausentes" ><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
+			<span class="bt_novos" style="display:none;" id="bt_cotas_ausentes" >
+				<a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes">
+					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" />
+				</a>
+			</span>
 			<span id="btAnaliticoEncalhe" class="bt_novos" style="display: none;">
 				<a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" 
 				   rel="tipsy" title="Anal&iacute;tico Encalhe">

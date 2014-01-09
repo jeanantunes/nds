@@ -76,12 +76,14 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 				
 				todosProdutosRecolhimentoNaoBalanceados.addAll(produtosRecolhimentoNaoBalanceados);
 			}
+			/*
 			if(!datasRecolhimento.contains(dataRecolhimentoPrevista)){
 				if(matrizRecolhimentoBalanceada.containsKey(dataRecolhimentoPrevista)){
 				 todosProdutosRecolhimentoNaoBalanceados.addAll(matrizRecolhimentoBalanceada.get(dataRecolhimentoPrevista));
 				 matrizRecolhimentoBalanceada.remove(dataRecolhimentoPrevista);
 				}
 			}
+			*/
 		}
 		
 		if (!datasRecolhimento.isEmpty()) {

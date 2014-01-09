@@ -172,7 +172,6 @@
 						<td width="133"><strong class="pgtos">Tipo de Pagamento:</strong></td>
 						<td width="198"><select name="filtro.tipoPagamento" id="selectPagamento"
 							onchange="negociacaoDividaController.opcaoFormasPagto(this.value); negociacaoDividaController.calcularParcelas();"  class="pgtos">
-								<option value="">Selecione</option>
 								<c:forEach items="${tipoPagamento}" var="pagamento">
 									<option value="${pagamento}" >${pagamento.descricao}</option>
 								</c:forEach>

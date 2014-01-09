@@ -5,6 +5,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 	modalAberta: false,
 	
 	idProdutoEdicaoNovoEncalhe: "",
+	
+	valorAnteriorInput : undefined,
+	
+	resetValue : true,
 
 	init : function() {
 		
@@ -523,7 +527,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+ valorExemplares +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
+					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + 
+						'" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + 
+						'" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" '+
+						' onchange="ConferenciaEncalheCont.valorAnteriorInput = this.defaultValue;ConferenciaEncalheCont.verificarPermissaoSuperVisor('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -537,7 +544,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						if(parcial == true) {
 							
 							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
-							+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
+							+ ' onchange="ConferenciaEncalheCont.valorAnteriorInput = this.defaultValue;ConferenciaEncalheCont.verificarPermissaoSuperVisor('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
 							
 							
 						} else {
@@ -659,11 +666,14 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 	},
 	
-	atualizarValores: function(index, valorReal) {
+	atualizarValores: function(index) {
 		
 		if(ConferenciaEncalheCont.processandoConferenciaEncalhe){
 			return;
 		}
+		
+		$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).prop("defaultValue",
+				$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val());
 		
 		var juramentado = false;
 		
@@ -696,10 +706,125 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 				if (result.mensagens){
 
-					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(valorReal);
+					$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
 				}
 			}
 		);
+	},
+	
+	verificarPermissaoSuperVisor : function(index){
+		
+		if(ConferenciaEncalheCont.processandoConferenciaEncalhe){
+			return;
+		}
+		
+		var data = [
+            {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalheCont.workspace).val()},
+            {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val()},
+            {name: 'indConferenciaContingencia', value: true}
+		];
+		
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
+			data, 
+			function(result){
+				
+				if (result && result.result != ""){
+					
+					ConferenciaEncalheCont.resetValue = true;
+					
+					$("#msgSupervisor", ConferenciaEncalhe.workspace).text(result);
+					
+					$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog({
+						resizable: false,
+						height:'auto',
+						width:400,
+						modal: true,
+						buttons: {
+							"Ok": function() {
+								
+								ConferenciaEncalheCont.resetValue = false;
+								ConferenciaEncalheCont.autenticarSupervisor(index);
+								
+							},
+							"Cancelar": function() {
+								$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+								$(this).dialog("close");
+							}
+						},
+						form: $("#dialog-autenticar-supervisor", this.workspace).parents("form"),
+						close: function(){
+							
+							if (ConferenciaEncalheCont.resetValue){
+								
+								$("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val(ConferenciaEncalheCont.valorAnteriorInput);
+							}
+						}
+					});
+					
+				} else {
+					
+					ConferenciaEncalheCont.atualizarValores(index);
+				}
+			}
+		);
+	},
+	
+	autenticarSupervisor : function(index){
+		
+		var paramUsuario = {
+			usuario:$("#inputUsuarioSup", ConferenciaEncalheCont.workspace).val(),
+			senha:$("#inputSenha", ConferenciaEncalheCont.workspace).val()
+		};
+		
+		if (paramUsuario.usuario == '' || paramUsuario.senha == ''){
+			
+			exibirMensagem(
+				'WARNING', 
+				['Usuário e senha são obrigatórios.']
+			);
+			
+			ConferenciaEncalheCont.resetValue = true;
+			
+			return;
+		}
+		
+		$.postJSON(
+			contextPath + "/devolucao/conferenciaEncalhe/verificarPermissaoSupervisor", 
+			paramUsuario,
+			function(result) {
+				
+				$("#inputUsuarioSup", ConferenciaEncalheCont.workspace).val("");
+				$("#inputSenha", ConferenciaEncalheCont.workspace).val("");
+				
+				if (result.tipoMensagem){
+					
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+					
+					ConferenciaEncalheCont.resetValue = true;
+					
+					return;
+				}
+				
+				ConferenciaEncalheCont.atualizarValores(index);
+				
+				$("#dialog-autenticar-supervisor", ConferenciaEncalheCont.workspace).dialog("close");
+				return;
+			},
+			function (){
+				ConferenciaEncalheCont.resetValue = true;
+			}
+		);
+	},
+	
+	enterOnSupervisorModal : function(event){
+		
+		if (event && event.keyCode == 13){
+			
+			$(".ui-dialog-buttonpane button:contains('Ok')", ConferenciaEncalhe.workspace).click();
+		}
 	},
 	
 	numeroCotaEditavel : function(r){

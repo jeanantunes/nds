@@ -352,38 +352,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		return  hql.toString();
 	}
-
-	/**
-     * Obtem SQL de total de Boletos Antecipados Inadimplentes
-     * 
-     * @param filtro
-     * @return StringBuilder
-     */
-	private StringBuilder getSqlBoletosAntecipadosAcumulados(FiltroCotaInadimplenteDTO filtro){
-		
-        StringBuilder sql = new StringBuilder();
-		
-		sql.append(" ( ");
-		
-		sql.append("  SELECT SUM(BA.VALOR) ");
-		
-		sql.append("  FROM BOLETO_ANTECIPADO AS BA  ");
-		
-		sql.append("  JOIN CHAMADA_ENCALHE_COTA AS CHAMADA_ENCALHE_COTA_ ON (CHAMADA_ENCALHE_COTA_.ID = BA.CHAMADA_ENCALHE_COTA_ID) ");
-		
-	    sql.append("  JOIN COTA AS C ON(C.ID=CHAMADA_ENCALHE_COTA_.COTA_ID) ");
-	    
-		sql.append("  WHERE BA.STATUS IN (:statusDivida) ");
-		
-		if(filtro.getNumCota() != null) {
-			
-		    sql.append("  AND C.NUMERO_COTA = :numCota ");
-		}    
-		
-		sql.append(" ) ");
-		
-		return sql;
-	}
 	
 	/**
      * Obtem SQL da consulta de Boletos Antecipados Inadimplentes
@@ -397,7 +365,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		sql.append(" SELECT ");
 		
-		sql.append(  this.getSqlBoletosAntecipadosAcumulados(filtro)+" as dividaAcumulada, ");
+		sql.append(" BOLETO_ANTECIPADO_.VALOR as dividaAcumulada, ");
 		
 		sql.append(" BOLETO_ANTECIPADO_.ID as idDivida, ");
 		

@@ -438,13 +438,15 @@ public class ParametroCobrancaCotaController extends BaseController {
 	 */
 	private FormaCobrancaDTO formatarFormaCobranca(FormaCobrancaDTO formaCobranca){
 
-		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.SEMANAL)){
+			
 			formaCobranca.setDiaDoMes(null);
 			formaCobranca.setPrimeiroDiaQuinzenal(null);
 			formaCobranca.setSegundoDiaQuinzenal(null);
 		}
 
-		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.MENSAL)){
+			
 			formaCobranca.setDomingo(false);
 			formaCobranca.setSegunda(false);
 			formaCobranca.setTerca(false);
@@ -456,7 +458,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setSegundoDiaQuinzenal(null);
 		}
 
-		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.DIARIA){
+		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+			
 			formaCobranca.setDomingo(false);
 			formaCobranca.setSegunda(false);
 			formaCobranca.setTerca(false);
@@ -469,7 +472,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setSegundoDiaQuinzenal(null);
 		}
 
-		if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.QUINZENAL)){
+			
 			formaCobranca.setDomingo(false);
 			formaCobranca.setSegunda(false);
 			formaCobranca.setTerca(false);
@@ -480,7 +484,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setDiaDoMes(null);
 		}
 
-		if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)){
+		if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.BOLETO))||(formaCobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO))){
+			
 			formaCobranca.setNumBanco("");
 			formaCobranca.setNomeBanco("");
 			formaCobranca.setAgencia(null);
@@ -488,11 +493,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setConta(null);
 			formaCobranca.setContaDigito("");
 		}
-		else if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
-			formaCobranca.setRecebeEmail(false);
-		}
-		else if (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO){
-			formaCobranca.setRecebeEmail(false);
+		else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DEPOSITO)){
+			
 			formaCobranca.setNumBanco("");
 			formaCobranca.setNomeBanco("");
 			formaCobranca.setAgencia(null);
@@ -500,8 +502,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setConta(null);
 			formaCobranca.setContaDigito("");
 		}
-		else{
-			formaCobranca.setRecebeEmail(false);
+		else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))||((formaCobranca.getTipoCobranca().equals(TipoCobranca.OUTROS)))){
+			
 			formaCobranca.setNumBanco("");
 			formaCobranca.setNomeBanco("");
 			formaCobranca.setAgencia(null);
@@ -510,6 +512,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setContaDigito("");
 			formaCobranca.setIdBanco(null);
 		}
+		
 		return formaCobranca;
 	}
 
@@ -1021,16 +1024,16 @@ public class ParametroCobrancaCotaController extends BaseController {
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO SEMANAL
 			if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
-						formaCobranca.getIdCota(),
-						formaCobranca.getFornecedoresId(),
-						formaCobranca.getTipoFormaCobranca(),
-						formaCobranca.isDomingo(),
-						formaCobranca.isSegunda(),
-						formaCobranca.isTerca(),
-						formaCobranca.isQuarta(),
-						formaCobranca.isQuinta(),
-						formaCobranca.isSexta(),
-						formaCobranca.isSabado())){
+																		   formaCobranca.getIdCota(),
+																		   formaCobranca.getFornecedoresId(),
+																		   formaCobranca.getTipoFormaCobranca(),
+																		   formaCobranca.isDomingo(),
+																		   formaCobranca.isSegunda(),
+																		   formaCobranca.isTerca(),
+																		   formaCobranca.isQuarta(),
+																		   formaCobranca.isQuinta(),
+																		   formaCobranca.isSexta(),
+																		   formaCobranca.isSabado())){
 
 					throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 				}
@@ -1039,12 +1042,12 @@ public class ParametroCobrancaCotaController extends BaseController {
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO MENSAL
 			else{
 				if (!this.formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
-						formaCobranca.getIdCota(),
-						formaCobranca.getFornecedoresId(),
-						formaCobranca.getTipoFormaCobranca(),
-						Arrays.asList(formaCobranca.getDiaDoMes(),
-								formaCobranca.getPrimeiroDiaQuinzenal(),
-								formaCobranca.getSegundoDiaQuinzenal()))){
+																		  formaCobranca.getIdCota(),
+																		  formaCobranca.getFornecedoresId(),
+																		  formaCobranca.getTipoFormaCobranca(),
+																		  Arrays.asList(formaCobranca.getDiaDoMes(),
+																				        formaCobranca.getPrimeiroDiaQuinzenal(),
+																				        formaCobranca.getSegundoDiaQuinzenal()))){
 
 					throw new ValidacaoException(TipoMensagem.WARNING, "Esta forma de cobrança já está configurada para a Cota.");
 				}
