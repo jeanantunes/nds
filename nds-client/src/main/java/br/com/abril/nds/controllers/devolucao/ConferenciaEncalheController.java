@@ -1097,7 +1097,9 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void verificarPermissaoSupervisor(String usuario, String senha, boolean indConferenciaContingencia){
+	public void verificarPermissaoSupervisor(Long idConferencia, Long qtdExemplares, 
+			String usuario, String senha, boolean indConferenciaContingencia,
+			Long produtoEdicaoId){
 		
 		if (usuario != null){
 			
@@ -1116,10 +1118,26 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			for (ConferenciaEncalheDTO dto : listaConferencia){
 				
-				if (this.validarExcedeReparte(dto.getQtdInformada().longValue(), dto, indConferenciaContingencia)){
+				if (produtoEdicaoId != null){
 					
-					this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
-					return;
+					if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())){
+						
+						if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)){
+							
+							this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
+							return;
+						}
+					}
+				} else {
+					
+					if (idConferencia.equals(dto.getIdConferenciaEncalhe())){
+						
+						if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)){
+							
+							this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
+							return;
+						}
+					}
 				}
 			}
 		}
