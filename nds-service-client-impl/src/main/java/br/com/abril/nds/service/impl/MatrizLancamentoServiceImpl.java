@@ -881,12 +881,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			} else {
 				
-				if(produtoLancamento.getPeb()!=null && produtoLancamento.getPeb()!=0 && produtoLancamento.getPeb()<21 && produtoLancamento.getDataLancamentoPrevista().equals(dataLancamentoDistribuidor)){
-					this.adicionarProdutoLancamentoNaMatriz(
-							matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
-				}else{
-				    produtosLancamentoNaoProcessados.add(produtoLancamento);
-				}
+			     produtosLancamentoNaoProcessados.add(produtoLancamento);
 			}
 		}
 		
@@ -1483,6 +1478,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 					|| produtoLancamento.isStatusLancamentoFuro()
 					&& isDataNoPeriodo)) {
 			
+			return false;
+		}else if(produtoLancamento.getPeb()!=null && produtoLancamento.getPeb()!=0 && produtoLancamento.getPeb()<21 && isDataNoPeriodo){
 			return false;
 		}else{
 		    return true;
