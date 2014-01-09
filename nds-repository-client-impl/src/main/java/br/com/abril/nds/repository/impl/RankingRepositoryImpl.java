@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
@@ -25,17 +26,30 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 
 		sql.append(" select	");
 		
-		sql.append(" subRnkg.idProdutoEdicao as idProdutoEdicao, 	");
-		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ");
+		sql.append(" subRnkg.idProdutoEdicao as chave, 	");
+		sql.append(" subRnkg.valor as valor, 			");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado,	");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
 		sql.append(" from ( ");
 		
 		sql.append(" select ");
 		
 		sql.append(" consolidado.PRODUTO_EDICAO_ID as idProdutoEdicao, ");
-		sql.append(" consolidado.valor as valor ");
+		sql.append(" consolidado.valor as valor,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" consolidado.reparte as reparte,	");
+		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
 		sql.append(" from ");
 		
@@ -43,21 +57,31 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(" where consolidado.COTA_ID = :idCota 	");
 		
+		sql.append(" group by consolidado.PRODUTO_EDICAO_ID ");
+		
 		sql.append(" order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
-		
-		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("chave", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
+		query.addScalar("valorAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		
 		
 		query.setParameter("idCota", idCota);
 		
 		getFiltroRanking(filtro, query);
 		
-		List<Object[]> resultList = query.list();
+		query.setResultTransformer(new AliasToBeanResultTransformer(RankingDTO.class));
+		
+		List<RankingDTO> resultList = query.list();
 		
 		return popularMapRanking(resultList);
 	}
@@ -70,57 +94,70 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(" select	");
 		
-		sql.append(" subRnkg.idCota as idCota, 	");
+		sql.append(" subRnkg.idCota as chave, 	");
 		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado,	");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
 		sql.append(" from ( ");
 		
 		sql.append(" select ");
 
 		sql.append(" consolidado.COTA_ID as idCota,	");
-		sql.append(" consolidado.valor as valor 	");
+		sql.append(" consolidado.valor as valor,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" consolidado.reparte as reparte,	");
+		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
 		sql.append(" from ");
 		
 		sql.append(obterSQLRanking(filtro))
 	
 		.append("    group by consolidado.COTA_ID ")
-	
 		.append("    order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
-		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("chave", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
+		query.addScalar("valorAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		
 		
 		getFiltroRanking(filtro, query);
 		
-		List<Object[]> resultList = query.list();
+		query.setResultTransformer(new AliasToBeanResultTransformer(RankingDTO.class));
+		
+		List<RankingDTO> resultList = query.list();
 		
 		return popularMapRanking(resultList);
 	}
 	
-	private Map<Long, RankingDTO> popularMapRanking(List<Object[]> resultList){
+	private Map<Long, RankingDTO> popularMapRanking(List<RankingDTO> resultList){
 		
 		Map<Long, RankingDTO> mapRanking = new HashMap<>();
 		
-		for (Object[] result : resultList) {
+		for (RankingDTO result : resultList) {
 			
-			long chave = (long) result[0];
+			Long chave = result.getChave();
 			
-			BigDecimal valor = (BigDecimal) result[1];
-			
-			BigDecimal valorAcumulado = (BigDecimal) result[2];
-			
-			Long posicaoRanking = (Long) result[3];
-			
-			RankingDTO ranking = new RankingDTO(posicaoRanking, valor, valorAcumulado);
-			
-			mapRanking.put(chave, ranking);
+			mapRanking.put(chave, result);
 		}
 		
 		return mapRanking;
@@ -142,25 +179,67 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append(" movimento_estoque_cota.DATA AS DATA_MOVIMENTO, ");
 		sql.append(" produto_edicao.PRECO_VENDA AS PRECO_VENDA,		");
 		
-		sql.append("	sum(( ");
-		sql.append("		( ");
-		sql.append("			coalesce(( ");
-		sql.append("			select sum(mov_sub.QTDE) AS valor_venda ");
-		sql.append("			from ((movimento_estoque_cota mov_sub join produto_edicao prod_sub on((mov_sub.PRODUTO_EDICAO_ID = prod_sub.ID))) ");
-		sql.append("			join tipo_movimento tipo_mov_sub on((mov_sub.TIPO_MOVIMENTO_ID = tipo_mov_sub.ID))) ");
-		sql.append("			where ((tipo_mov_sub.OPERACAO_ESTOQUE = 'ENTRADA') and (mov_sub.COTA_ID = movimento_estoque_cota.COTA_ID)         ");
-		sql.append("			and (mov_sub.ID = movimento_estoque_cota.ID) ");
-		sql.append("			and (prod_sub.ID = produto_edicao.ID))),0) - ");
+		//valor venda com desconto
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append(" * (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO,0)) / 100)) ");
+		sql.append(" ) as valor, ");
+
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append(" ) as vendaExemplares, ");
+
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append(" * produto_edicao.PRECO_VENDA  ");
+		sql.append(" ) as faturamentoCapa, ");
+
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end");
+		sql.append(" ) as reparte, ");
+
+		sql.append(" sum( ");
+		sql.append(" 	( ");
+		sql.append(" 		case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("		(movimento_estoque_cota.qtde*-1) end ");
+		sql.append("  	) * 100 / ");
 		
-		sql.append("			coalesce(( ");
-		sql.append("			select sum(mov_sub_sd.QTDE) AS valor_venda ");
-		sql.append("			from ((movimento_estoque_cota mov_sub_sd join produto_edicao prod_sub_sd on((mov_sub_sd.PRODUTO_EDICAO_ID = prod_sub_sd.ID)))           ");              
-		sql.append("			join tipo_movimento tipo_mov_sub_sd on((mov_sub_sd.TIPO_MOVIMENTO_ID = tipo_mov_sub_sd.ID))) ");
-		sql.append("			where ((tipo_mov_sub_sd.OPERACAO_ESTOQUE = 'SAIDA')                                                                                     ");
-		sql.append("			and (mov_sub_sd.COTA_ID = movimento_estoque_cota.COTA_ID)                                                                               ");
-		sql.append("			and (mov_sub_sd.ID = movimento_estoque_cota.ID) and (prod_sub_sd.ID = produto_edicao.ID))),0)                                           ");
-		sql.append("		) * (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO,0)) / 100))                 ");
-		sql.append("		)) AS valor                                                                                                        ");
+		sql.append(" 	( ");
+		sql.append(" 		case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end ");
+		sql.append(" 	)  	");
+		sql.append(" ) as porcentagemVendaExemplares, ");
+		
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		
+		sql.append(" 	 * (movimento_estoque_cota.PRECO_COM_DESCONTO - (produto_edicao.PRECO_VENDA ");
+		sql.append(" 	  		- (produto_edicao.PRECO_VENDA * COALESCE(descontologistica.PERCENTUAL_DESCONTO, 0) / 100) ) ");
+		sql.append(" 			) ");
+		
+		sql.append(" ) as valorMargemDistribuidor, ");
+
+		sql.append(" sum( ");
+
+		sql.append(" (	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		
+		sql.append(" 	* (movimento_estoque_cota.PRECO_COM_DESCONTO - (produto_edicao.PRECO_VENDA ");
+		sql.append(" 	  		- (produto_edicao.PRECO_VENDA * COALESCE(descontologistica.PERCENTUAL_DESCONTO, 0) / 100) ) ");
+		sql.append(" 	  ) ");
+		
+		sql.append(" ) ");
+		
+		sql.append(" / ");
+		
+		sql.append(" (	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append(" * produto_edicao.PRECO_VENDA )  ");
+		
+		sql.append(" ) as porcentagemMargemDistribuidor ");
 		
 		sql.append("	from   ");
 		
@@ -303,10 +382,16 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(" select ");
 		
-		sql.append(" subRnkg.idEditor as idEditor, 	");
+		sql.append(" subRnkg.idEditor as chave, ");
 		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ")
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	")
 		
 		.append(" from ")
 		
@@ -315,7 +400,13 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		.append(" select ")
 
 		.append(" consolidado.EDITOR_ID as idEditor, ")
-		.append(" consolidado.valor as valor ")
+		.append(" consolidado.valor as valor,	")
+		.append(" consolidado.vendaExemplares as vendaExemplares,	")
+		.append(" consolidado.faturamentoCapa as faturamentoCapa,	")
+		.append(" consolidado.reparte as reparte,	")
+		.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		")
+		.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			")
+		.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	")
 		
 		.append(" from ")
 		
@@ -327,14 +418,22 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
-		query.addScalar("idEditor", StandardBasicTypes.LONG);
+		query.addScalar("chave", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
+		query.addScalar("valorAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		
 		getFiltroRanking(filtro, query);
 		
-		List<Object[]> resultList = query.list();
+		query.setResultTransformer(new AliasToBeanResultTransformer(RankingDTO.class));
+		
+		List<RankingDTO> resultList = query.list();
 		
 		return popularMapRanking(resultList);
 	}
@@ -346,18 +445,33 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(" select ");
 
-		sql.append(" subRnkg.idProduto as idProduto, 	");
-		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ")
+		sql.append(" subRnkg.idProduto as chave, ");
+		sql.append(" subRnkg.valor as valor, 	 ");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	")
 		
 		.append(" from ")
 		
 		.append(" ( ");
 		
-		sql.append(" select consolidado.PRODUTO_ID as idProduto, consolidado.valor as valor ")
+		sql.append(" select ");
 		
-		.append(" from ")
+		sql.append(" consolidado.PRODUTO_ID as idProduto,	");
+		sql.append(" consolidado.valor as valor,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" consolidado.reparte as reparte,	");
+		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
+		
+		sql.append(" from ")
 		
 		.append(obterSQLRanking(filtro))
 		
@@ -367,14 +481,22 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
-		query.addScalar("idProduto", StandardBasicTypes.LONG);
+		query.addScalar("chave", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
+		query.addScalar("valorAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		
 		getFiltroRanking(filtro, query);
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(RankingDTO.class));
 		
-		List<Object[]> resultList = query.list();
+		List<RankingDTO> resultList = query.list();
 		
 		return popularMapRanking(resultList);
 
@@ -387,18 +509,33 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(" select ");
 
-		sql.append(" subRnkg.idCota as idCota, 	");
+		sql.append(" subRnkg.idCota as chave, 	");
 		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as vlrAcumulado, ");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as posicaoRanking ");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
 		sql.append(" from ");
 		
 		sql.append(" ( ");
 		
-		sql.append(" select  consolidado.COTA_ID as idCota, consolidado.valor as valor ")
+		sql.append(" select	");
 		
-		.append(" from ")
+		sql.append(" consolidado.COTA_ID as idCota,	");
+		sql.append(" consolidado.valor as valor,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" consolidado.reparte as reparte,	");
+		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
+		
+		sql.append(" from ")
 		
 		.append(obterSQLRanking(filtro))
 
@@ -411,17 +548,24 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
-		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("chave", StandardBasicTypes.LONG);
 		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("vlrAcumulado", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("posicaoRanking", StandardBasicTypes.LONG);
-	
+		query.addScalar("valorAcumulado", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("ranking", StandardBasicTypes.LONG);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		
 		query.setParameter("idProduto", idProduto);
 		
 		getFiltroRanking(filtro, query);
 		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RankingDTO.class));
 		
-		List<Object[]> resultList = query.list();
+		List<RankingDTO> resultList = query.list();
 		
 		return popularMapRanking(resultList);
 

@@ -506,29 +506,12 @@ public class RelatorioVendasController extends BaseController {
 					"Nenhum registro encontrado.");
 		} else {
 
-			int qtdeTotalRegistros = resultadoCurvaABCDistribuidor.size();
-
-			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado =
-				PaginacaoUtil.paginarEOrdenarEmMemoria(
-					resultadoCurvaABCDistribuidor, filtro.getPaginacao(), 
-					filtro.getOrdenacaoColuna().toString().replace("Formatado", ""));
-			
-			for (int index = 0 ; index < resultadoPaginado.size() ; index++){
-				
-				BigDecimal participacao = resultadoPaginado.get(index).getParticipacao();
-				
-				if (index > 0){
-					participacao = participacao.add(resultadoPaginado.get(index-1).getParticipacaoAcumulada());
-				}
-				
-				resultadoPaginado.get(index).setParticipacaoAcumulada(participacao);
-			
-			}
+			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCDistribuidor(filtro);
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
 				new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCDistribuidor));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
@@ -625,24 +608,11 @@ public class RelatorioVendasController extends BaseController {
 					"Nenhum registro encontrado.");
 		} else {
 
-			int qtdeTotalRegistros = resultadoCurvaABCEditor.size();
-			
-			List<RegistroCurvaABCEditorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao(), sortname);
-			
-			for (int index = 0 ; index < resultadoPaginado.size() ; index++){
-				
-				BigDecimal participacao = resultadoPaginado.get(index).getParticipacao();
-				
-				if (index > 0){
-					participacao = participacao.add(resultadoPaginado.get(index-1).getParticipacaoAcumulada());
-				}
-				
-				resultadoPaginado.get(index).setParticipacaoAcumulada(participacao);
-			}
+			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCEditor(filtroCurvaABCEditorDTO);
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
@@ -793,16 +763,12 @@ public class RelatorioVendasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
-			int qtdeTotalRegistros = resultadoCurvaABCCota.size();
-
-			List<RegistroCurvaABCCotaDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(
-					resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao(), 
-					filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString());
+			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCCota(filtroCurvaABCCotaDTO);
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel = 
 					new TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCCota));
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			

@@ -1,12 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,22 +23,17 @@ public class RankingRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	FiltroCurvaABCDistribuidorDTO filtro;
 	
-	
-	@Test
-	public void obterRankingCota() {
-		
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		
-		filtro.setDataDe(Fixture.criarData(1, Calendar.OCTOBER, 2013));
-		filtro.setDataAte(Fixture.criarData(30, Calendar.OCTOBER, 2013));
-		
-		Map<Long, RankingDTO> mapaRnkg = rankingRepository.obterRankingCota(filtro);
-		
-		List<RankingDTO> rankings = new ArrayList<>(mapaRnkg.values());
+	private void validarValoresDeRankingObtidos(List<RankingDTO> rankings) {
 		
 		Collections.sort(rankings);
 		
 		int count = 0;
+		
+		Long rankingAnterior = null;
+		
+		BigDecimal valorAnterior = null;
+		
+		BigDecimal valorAcumuladoAnterior = null;
 		
 		for(RankingDTO r : rankings) {
 		
@@ -51,8 +45,45 @@ public class RankingRepositoryImplTest extends AbstractRepositoryImplTest {
 			System.out.println(" valor " + r.getValor());
 			System.out.println(" valorAcumulado " + r.getValorAcumulado());
 			
+			if(rankingAnterior == null) {
+				rankingAnterior = r.getRanking();
+			} else {
+				Assert.assertTrue("Ranking não ordenado de forma crescente", rankingAnterior <= r.getRanking());
+				rankingAnterior = r.getRanking();
+			}
+			
+			if(valorAnterior == null) {
+				valorAnterior = r.getValor();
+			} else {
+				Assert.assertTrue("Valor não ordenado de forma crescente", valorAnterior.compareTo(r.getValor()) >= 0 );
+				valorAnterior = r.getValor();
+			}
+			
+			if(valorAcumuladoAnterior == null) {
+				valorAcumuladoAnterior = r.getValorAcumulado();
+			} else {
+				Assert.assertTrue("Valor Acumulado não ordenado de forma crescente", valorAcumuladoAnterior.compareTo(r.getValorAcumulado()) <= 0 );
+				valorAcumuladoAnterior = r.getValorAcumulado();
+			}
+			
+			
 		}
 		
+		
+	}
+	
+	@Test
+	public void obterRankingCota() {
+		
+		filtro = new FiltroCurvaABCDistribuidorDTO(); 
+		
+		filtro.setDataDe(Fixture.criarData(1, Calendar.OCTOBER, 2013));
+		filtro.setDataAte(Fixture.criarData(30, Calendar.OCTOBER, 2013));
+		
+		Map<Long, RankingDTO> mapaRnkg = rankingRepository.obterRankingCota(filtro);
+		
+		validarValoresDeRankingObtidos(new ArrayList<>(mapaRnkg.values()));
+	
 		Assert.assertNotNull(mapaRnkg);
 		
 	}
@@ -68,22 +99,7 @@ public class RankingRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Map<Long, RankingDTO> mapaRnkg = rankingRepository.obterRankingCotaPorProduto(filtro, idProduto);
 		
-		Set<Long> chaves = mapaRnkg.keySet();
-		
-		int count = 0;
-		
-		for(Long c : chaves) {
-		
-			if(count++ > 10) {
-				break;
-			}
-			
-			System.out.println("Chave" + c);
-			System.out.println(" rnkg " + mapaRnkg.get(c).getRanking());
-			System.out.println(" valor " + mapaRnkg.get(c).getValor());
-			System.out.println(" valorAcumulado " + mapaRnkg.get(c).getValorAcumulado());
-			
-		}
+		validarValoresDeRankingObtidos(new ArrayList<>(mapaRnkg.values()));
 		
 		Assert.assertNotNull(mapaRnkg);
 		
@@ -96,26 +112,9 @@ public class RankingRepositoryImplTest extends AbstractRepositoryImplTest {
 		filtro.setDataDe(Fixture.criarData(1, Calendar.OCTOBER, 2013));
 		filtro.setDataAte(Fixture.criarData(30, Calendar.OCTOBER, 2013));
 		
-		Long idProduto = 1L;
-		
 		Map<Long, RankingDTO> mapaRnkg = rankingRepository.obterRankingEditor(filtro);
 		
-		Set<Long> chaves = mapaRnkg.keySet();
-		
-		int count = 0;
-		
-		for(Long c : chaves) {
-		
-			if(count++ > 10) {
-				break;
-			}
-			
-			System.out.println("Chave" + c);
-			System.out.println(" rnkg " + mapaRnkg.get(c).getRanking());
-			System.out.println(" valor " + mapaRnkg.get(c).getValor());
-			System.out.println(" valorAcumulado " + mapaRnkg.get(c).getValorAcumulado());
-			
-		}
+		validarValoresDeRankingObtidos(new ArrayList<>(mapaRnkg.values()));
 		
 		Assert.assertNotNull(mapaRnkg);
 		
@@ -131,22 +130,8 @@ public class RankingRepositoryImplTest extends AbstractRepositoryImplTest {
 		Long idCota = 1L;
 		
 		Map<Long, RankingDTO> mapaRnkg = rankingRepository.obterRankingProdutoPorCota(filtro, idCota);
-		Set<Long> chaves = mapaRnkg.keySet();
 		
-		int count = 0;
-		
-		for(Long c : chaves) {
-		
-			if(count++ > 10) {
-				break;
-			}
-			
-			System.out.println("Chave" + c);
-			System.out.println(" rnkg " + mapaRnkg.get(c).getRanking());
-			System.out.println(" valor " + mapaRnkg.get(c).getValor());
-			System.out.println(" valorAcumulado " + mapaRnkg.get(c).getValorAcumulado());
-			
-		}
+		validarValoresDeRankingObtidos(new ArrayList<>(mapaRnkg.values()));
 		
 		Assert.assertNotNull(mapaRnkg);
 		
@@ -160,22 +145,8 @@ public class RankingRepositoryImplTest extends AbstractRepositoryImplTest {
 		filtro.setDataAte(Fixture.criarData(30, Calendar.OCTOBER, 2013));
 		
 		Map<Long, RankingDTO> mapaRnkg = rankingRepository.obterRankingProdutoPorProduto(filtro);
-		Set<Long> chaves = mapaRnkg.keySet();
-		
-		int count = 0;
-		
-		for(Long c : chaves) {
-		
-			if(count++ > 10) {
-				break;
-			}
-			
-			System.out.println("Chave" + c);
-			System.out.println(" rnkg " + mapaRnkg.get(c).getRanking());
-			System.out.println(" valor " + mapaRnkg.get(c).getValor());
-			System.out.println(" valorAcumulado " + mapaRnkg.get(c).getValorAcumulado());
-			
-		}
+
+		validarValoresDeRankingObtidos(new ArrayList<>(mapaRnkg.values()));
 		
 		Assert.assertNotNull(mapaRnkg);
 		

@@ -16,4 +16,11 @@ public interface RelatorioVendasRepository {
 	List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro);
 
 	List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
+	
+	Integer obterQtdRegistrosCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro);
+		
+	Integer obterQtdRegistrosCurvaABCEditor(FiltroCurvaABCEditorDTO filtro);
+	
+	Integer obterQtdRegistrosCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
+	
 }
