@@ -5,6 +5,7 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.caelum.vraptor.Get;
 
@@ -27,6 +28,15 @@ public class EmitenteDestinatarioBuilder {
 		
 		return notaFiscal;
 
+	}
+
+	public static NotaFiscalNds montarEnderecoEmitenteDestinatarioEstoqueProduto(NotaFiscalNds notaFiscal, EstoqueProduto estoque) {
+		
+		notaFiscal.getEmitenteDestinario().setNome("XXXXXXXXX");
+		notaFiscal.getEmitenteDestinario().setEmail("XXXXXXXX");
+		
+		return notaFiscal;
+		
 	}
 	
 }

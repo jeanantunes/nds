@@ -15,6 +15,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @MappedSuperclass
 public abstract class AbstractMovimentoEstoque extends Movimento {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8276793750364718688L;
+
 	@Column(name = "QTDE", nullable = false)
 	protected BigInteger qtde;
 	
