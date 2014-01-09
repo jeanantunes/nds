@@ -641,8 +641,8 @@ public class ProdutoEdicao implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
-		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
+				+ ((this.getNumeroEdicao() == null) ? 0 : this.getNumeroEdicao().hashCode());
+		result = prime * result + ((this.getProduto() == null) ? 0 : this.getProduto().hashCode());
 		return result;
 	}
 
@@ -655,15 +655,15 @@ public class ProdutoEdicao implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoEdicao other = (ProdutoEdicao) obj;
-		if (numeroEdicao == null) {
+		if (this.getNumeroEdicao() == null) {
 			if (other.numeroEdicao != null)
 				return false;
-		} else if (!numeroEdicao.equals(other.numeroEdicao))
+		} else if (!this.getNumeroEdicao().equals(other.numeroEdicao))
 			return false;
-		if (produto == null) {
+		if (this.getProduto() == null) {
 			if (other.produto != null)
 				return false;
-		} else if (!produto.equals(other.produto))
+		} else if (!this.getProduto().equals(other.produto))
 			return false;
 		return true;
 	}

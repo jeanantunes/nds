@@ -150,5 +150,15 @@ public class NotaFiscalBase implements Serializable {
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "NotaFiscalBase [ambiente=" + ambiente + ", protocolo="
+				+ protocolo + ", versao=" + versao + ", numero=" + numero
+				+ ", serie=" + serie + ", chaveAcesso=" + chaveAcesso
+				+ ", dataEmissao=" + dataEmissao + ", emissor=" + emissor
+				+ ", emitenteDestinario=" + emitenteDestinario
+				+ ", informacoesComplementares=" + informacoesComplementares
+				+ "]";
+	}
 }

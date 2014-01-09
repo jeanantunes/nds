@@ -27,6 +27,11 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @TableGenerator(name="SEQ_GENERATOR", table="SEQ_GENERATOR", initialValue = 1, allocationSize = 1)
 public abstract class Movimento extends Aprovacao {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SEQ_GENERATOR")
 	@Column(name = "ID")

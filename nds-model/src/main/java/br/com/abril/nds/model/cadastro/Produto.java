@@ -272,36 +272,6 @@ public class Produto implements Serializable {
 			return fornecedor;
 		}
 	}
-	
-	@Override
-	public String toString() {
-		return new StringBuilder(codigo).append("-").append(nome).toString();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Produto other = (Produto) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
-				return false;
-		} else if (!codigo.equals(other.codigo))
-			return false;
-		return true;
-	}
 
 	/**
 	 * @return the slogan
@@ -613,6 +583,41 @@ public class Produto implements Serializable {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return new StringBuilder(codigo).append("-").append(nome).toString();
+	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCodigo() == null) ? 0 : this.getCodigo().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Produto other = (Produto) obj;
+		if (this.getCodigo() == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!this.getCodigo().equals(other.codigo))
+			return false;
+		if (this.getId() == null) {
+			if (other.id != null)
+				return false;
+		} else if (!this.getId().equals(other.id))
+			return false;
+		return true;
+	}
+
+	
 }

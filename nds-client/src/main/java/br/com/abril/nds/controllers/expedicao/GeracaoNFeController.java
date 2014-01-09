@@ -200,7 +200,7 @@ public class GeracaoNFeController extends BaseController {
 		//}
 		
 		if(naturezaOperacao.getTipoDestinatario().getDescricao().equals("Fornecedor")){
-			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();			
+			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(1).serialize();			
 		}else{
 			result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();
 		}

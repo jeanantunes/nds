@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
@@ -317,12 +318,24 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 
 	@Override
-	public List<Cota> obterConjuntoFornecedorNotafiscal(FiltroViewNotaFiscalDTO filtro) {
-		// TODO Auto-generated method stub
+	@SuppressWarnings("unchecked")	
+	public List<EstoqueProduto> obterConjuntoFornecedorNotafiscal(FiltroViewNotaFiscalDTO filtro) {
+
+		StringBuilder hql = new StringBuilder("select ")
+		.append(" estoqueProduto")
+		.append(" from EstoqueProduto estoqueProduto ")
+		.append(" JOIN estoqueProduto.produtoEdicao produtoEdicao")
+		.append(" JOIN produtoEdicao.produto produto ")
+		.append(" JOIN produto.fornecedores fornecedor ")
+		.append(" JOIN fornecedor.juridica pj ")
+		.append(" where fornecedor.id in (:idFornecedor) ");
 		
+		hql.append("GROUP BY fornecedor.id");
 		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameterList("idFornecedor", filtro.getListIdFornecedor());
 		
-		return null;
+		return query.list();
 	}
 
 
@@ -332,16 +345,16 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		
 		StringBuilder hql = new StringBuilder("select ")
 		.append(" fornecedor.id AS idFornecedor, ")
-		.append(" fornecedor.codigoInterface AS numeroFornecedor, ")
-		.append(" pj.razaoSocial AS nomeFornecedor, ")
-		.append(" SUM(estoqueProduto.qtdeDevolucaoEncalhe) AS exemplares, ")
-		.append(" SUM(estoqueProduto.qtde) AS total, ")
-		.append(" SUM(estoqueProduto.qtde) AS totalDesconto ")
+		.append(" fornecedor.codigoInterface as numeroFornecedor, ")
+		.append(" pj.razaoSocial as nomeFornecedor, ")
+		.append(" SUM(estoqueProduto.qtdeDevolucaoEncalhe) as exemplares, ")
+		.append(" SUM(estoqueProduto.qtde) as total, ")
+		.append(" SUM(estoqueProduto.qtde) as totalDesconto ")
 		.append(" from EstoqueProduto as estoqueProduto ")
 		.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao")
 		.append(" JOIN produtoEdicao.produto as produto ")
 		.append(" JOIN produto.fornecedores as fornecedor ")
-		.append(" JOIN fornecedor.juridica pj ")
+		.append(" JOIN fornecedor.juridica as pj ")
 		.append(" where fornecedor.id in (:idFornecedor) ");
 		
 		hql.append("GROUP BY fornecedor.id");
@@ -357,18 +370,19 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoque> obterMovimentosEstoque(FiltroViewNotaFiscalDTO filtro) {
-		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
-		.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
-		.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
-		.append(" where tipoMovimento.id = :idTipoMovimento")
-		.append(" and movimentoEstoque.data =:dataOperacao ")
-		.append(" order by movimentoEstoque.data desc ");
-
+	public List<EstoqueProduto> obterEstoques(FiltroViewNotaFiscalDTO filtro) {
+		StringBuilder hql = new StringBuilder("select estoqueProduto ")
+		.append(" from EstoqueProduto as estoqueProduto ")
+		.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao")
+		.append(" JOIN produtoEdicao.produto as produto ")
+		.append(" JOIN produto.fornecedores as fornecedor ")
+		.append(" JOIN fornecedor.juridica pj ")
+		.append(" where fornecedor.id in (:idFornecedor) ");
+		
+		hql.append("GROUP BY fornecedor.id");
 		Query query = this.getSession().createQuery(hql.toString());
-
-		query.setParameter("idTipoMovimento", filtro.getListIdFornecedor());
-		query.setParameter("dataOperacao", filtro.getDataEmissao());
+		query.setParameterList("idFornecedor", filtro.getListIdFornecedor());
+		
 		return query.list();
 	}
 	
