@@ -539,7 +539,8 @@ var geracaoNFeController = $.extend({
 		
 		var _this = this;
 		
-		$.postJSON(this.path + 'gerar.json', params, function(data) {
+		$.postJSON(this.path + 'gerarNotasFiscais', params, function(data) {
+			
 			var tipoMensagem = data.tipoMensagem;
 			var listaMensagens = data.listaMensagens;
 
@@ -547,7 +548,7 @@ var geracaoNFeController = $.extend({
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
-			_this.gridReaload(_this.$gridNFe,'busca.json');
+			_this.gridReaload(_this.$gridNFe, 'pesquisar');
 			
 		});
 	},

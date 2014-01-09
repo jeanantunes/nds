@@ -253,16 +253,16 @@ public class GeracaoNFeController extends BaseController {
 		result.use(CustomJson.class).from(hasCotasSuspensas).serialize();
 	}
 	
-	@Post("/gerar.json")
+	@Post
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
-	public void gerar(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
+	public void gerarNotasFiscais(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		try {
 			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Geração de NFE com sucesso."),Constantes.PARAM_MSGS).serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "NF-e(s) gerada(s) com sucesso."), Constantes.PARAM_MSGS).serialize();
 	}
 	
 	@Post("/transferirSuplementar.json")
