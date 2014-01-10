@@ -20,8 +20,10 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalNdsRepository;
+import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nfe.model.NotaFiscalBase;
 
 @Repository
@@ -29,6 +31,9 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 
 	@Autowired
 	private DataSource dataSource;
+	
+	@Autowired
+	private NotaFiscalRepository notaFiscalRepository;
 	
 	public NotaFiscalNdsRepositoryImpl() {
 		super(NotaFiscalNds.class);
@@ -269,11 +274,14 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		
 	}
 
-	@Override
-	public void salvarNotasFiscais(final List<br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds> notasFiscais) {
+	public void salvarNotasFiscais(final List<br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds> notasFiscais, List<NotaFiscal> notasFiscais2) {
 		
 		for (br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds notaFiscal : notasFiscais) {
 			merge(notaFiscal);
+		}
+		
+		for (NotaFiscal notaFiscal : notasFiscais2) {
+			notaFiscalRepository.adicionar(notaFiscal);
 		}
 		
 	}

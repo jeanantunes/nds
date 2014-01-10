@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -160,6 +162,16 @@ public class ProdutoServico implements Serializable {
 	})
 	@Cascade(value = {CascadeType.ALL})
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
+	
+	@OneToMany//(targetEntity=OrigemItemNotaFiscal.class)
+	@JoinTable(name = "NOTA_FISCAL_ITEM_NOTA_FISCAL_ORIGEM_ITEM", 
+			joinColumns = {
+				@JoinColumn(name = "PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA"),
+				@JoinColumn(name = "NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID")
+			}, 
+			inverseJoinColumns = {@JoinColumn(name = "ORIGEM_ITEM_NOTA_FISCAL_ID")}
+	)
+	private List<OrigemItemNotaFiscal> origemItemNotaFiscal;
 	
 	/**
 	 * @return the encargoFinanceiro
@@ -412,6 +424,20 @@ public class ProdutoServico implements Serializable {
 	public void setListaMovimentoEstoqueCota(
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
 		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<OrigemItemNotaFiscal> getOrigemItemNotaFiscal() {
+		return origemItemNotaFiscal;
+	}
+
+	/**
+	 * @param origemItemNotaFiscal
+	 */
+	public void setOrigemItemNotaFiscal(List<OrigemItemNotaFiscal> origemItemNotaFiscal) {
+		this.origemItemNotaFiscal = origemItemNotaFiscal;
 	}
 
 	/**
