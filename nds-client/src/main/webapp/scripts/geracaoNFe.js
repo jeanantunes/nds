@@ -285,13 +285,6 @@ var geracaoNFeController = $.extend({
 		} else {
 			
 			for(var index in data.rows) {
-				
-				if(data.rows[index].cell["notaImpressa"]) {
-					data.rows[index].cell["notaImpressa"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_check.gif" border="0" />';
-		
-				}else {
-					data.rows[index].cell["notaImpressa"] = "";
-				}
 			
 				if(data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
 					data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';

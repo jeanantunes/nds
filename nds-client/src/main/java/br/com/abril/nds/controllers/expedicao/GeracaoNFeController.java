@@ -181,27 +181,27 @@ public class GeracaoNFeController extends BaseController {
 			break;
 			
 		case DISTRIBUIDOR:
-			
-			
+			cotaExemplaresDTOs = geracaoNFeService.consultaCotaExemplareSumarizado(filtro);			
+			totalRegistros = geracaoNFeService.consultaCotaExemplareSumarizadoQtd(filtro);
 			break;
 			
 		case FORNECEDOR:			
-			
 			fornecedorExemplaresDTOs = geracaoNFeService.consultaFornecedorExemplarSumarizado(filtro);
-			
 			System.out.println("Chegou aqui ahahahahah");
 			break;
 
 
 		}
 		
-		//if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty() || fornecedorExemplaresDTOs == null || fornecedorExemplaresDTOs.isEmpty()){
-			//throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		//}
-		
 		if(naturezaOperacao.getTipoDestinatario().getDescricao().equals("Fornecedor")){
+			if (fornecedorExemplaresDTOs == null || fornecedorExemplaresDTOs.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
 			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(1).serialize();			
 		}else{
+			if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
 			result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();
 		}
 	}

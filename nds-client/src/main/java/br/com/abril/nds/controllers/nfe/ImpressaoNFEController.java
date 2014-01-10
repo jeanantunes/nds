@@ -31,9 +31,11 @@ import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
 import br.com.abril.nds.service.NFeService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.RoteiroService;
@@ -94,6 +96,9 @@ public class ImpressaoNFEController extends BaseController {
 	@Autowired
 	private Result result;
 
+	@Autowired 
+	private NotaFiscalService notaFiscalService;
+	
 	@Path("/")
 	public void index() {
 
@@ -108,6 +113,14 @@ public class ImpressaoNFEController extends BaseController {
 		
 	}
 
+	@Post
+	public void obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
+		
+		List<ItemDTO<Long, String>> naturezasOperacoes = notaFiscalService.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
+	
+		result.use(FlexiGridJson.class).from(naturezasOperacoes).serialize();
+	}
+	
 	private void obterTiposDestinatarios() {
 		result.include("tiposDestinatarios", new TipoDestinatario[] {TipoDestinatario.COTA, TipoDestinatario.DISTRIBUIDOR, TipoDestinatario.FORNECEDOR});
 	}
@@ -125,7 +138,7 @@ public class ImpressaoNFEController extends BaseController {
      */
     private void iniciarComboBox() {
 
-	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
     }
 
 	private void iniciarComboRoteiro() {
@@ -161,6 +174,23 @@ public class ImpressaoNFEController extends BaseController {
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
+		verificarFiltro(filtro);
+
+		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
+
+		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
+
+		tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
+
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
+	}
+
+	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
 		if(!filtro.isFiltroValido()) {
 
 			List<String> listaMensagemValidacao = new ArrayList<String>();
@@ -177,21 +207,6 @@ public class ImpressaoNFEController extends BaseController {
 
 			result.use(Results.nothing());
 		}
-
-		session.setAttribute("filtroPesquisaNFe", filtro);
-
-		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
-
-		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.buscarCotasParaImpressaoNFe(filtro);
-
-		tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
-
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-
 	}
 
 	@Post
@@ -231,6 +246,7 @@ public class ImpressaoNFEController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
+	@SuppressWarnings("deprecation")
 	@Post
 	public void exportar(FileType fileType) throws IOException {
 
@@ -250,6 +266,7 @@ public class ImpressaoNFEController extends BaseController {
 	}
 
 	@Post
+	@SuppressWarnings("incomplete-switch")
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 
 

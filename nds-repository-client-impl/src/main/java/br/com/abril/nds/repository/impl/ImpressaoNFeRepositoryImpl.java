@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
@@ -545,4 +547,33 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			return q.list();
 		}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder("SELECT ")
+		.append(" notaFiscal.numero as numeroNota, ")
+		.append(" pj.nome as nomeCota, ")
+		.append(" SUM(item.vlrTotal) as vlrTotal, ")
+		.append(" SUM(item.valorUnitario) as vlrTotalDesconto, ")
+		.append(" SUM(item.quantidade) as totalExemplares ")
+		.append(" FROM NotaFiscalNds as notaFiscal ")
+		.append(" JOIN notaFiscal.notaFiscalItens as item ")
+		.append(" JOIN notaFiscal.emissor as pj ")
+		.append(" WHERE ");
+		
+		if(filtro.getDataEmissao()!=null) {
+			hql.append(" notaFiscal.dataEmissao >= :dataEmissao ");
+		}
+		
+		hql.append("group by notaFiscal ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataEmissao", filtro.getDataEmissao());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(NotasCotasImpressaoNfeDTO.class));
+		
+		return query.list();
+		
+	}
 }

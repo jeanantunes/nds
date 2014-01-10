@@ -50,7 +50,7 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		    criteria.add(Restrictions.ilike("nome", nomeBox, MatchMode.START));
 		}
 		
-		return criteria.list();
+		return criteria.setCacheable(true).list();
 		
 		
 	}

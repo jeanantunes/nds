@@ -18,4 +18,40 @@
     	timeToLiveSeconds="600"
  	/>
 	
+	<cache
+	    name="br.com.abril.nds.model.fiscal.NaturezaOperacao"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="300"
+	    timeToLiveSeconds="600"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Roteiro"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="300"
+	    timeToLiveSeconds="600"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Rota"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="300"
+	    timeToLiveSeconds="600"
+	    overflowToDisk="true"
+	/>
+	
+	<cache
+	    name="br.com.abril.nds.model.cadastro.Fornecedor"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="300"
+	    timeToLiveSeconds="600"
+	    overflowToDisk="true"
+	/>
+	
 </ehcache>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -64,5 +65,7 @@ public interface ImpressaoNFeRepository extends Repository<NotaFiscal, Long>  {
 	 * @return
 	 */
 	public List<Produto> buscarProdutosParaImpressaoNFe(FiltroImpressaoNFEDTO filtro);
+
+	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro);
 	
 }

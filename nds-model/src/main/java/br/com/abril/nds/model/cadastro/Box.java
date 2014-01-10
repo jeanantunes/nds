@@ -18,6 +18,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -28,6 +31,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "BOX")
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Box implements Serializable {
     
     /**

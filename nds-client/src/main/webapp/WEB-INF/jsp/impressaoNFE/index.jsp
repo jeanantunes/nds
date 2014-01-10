@@ -14,11 +14,11 @@
 
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos"><a isEdicao="true" href="javascript:;" id="geracaoNfe-btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
+		<span class="bt_novos"><a isEdicao="true" href="javascript:;" id="impressaoNfe-btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
 
-        <span class="bt_arq"><a href="javascript:;" id="geracaoNfe-btnImprimirXLS" title="Gerar Arquivo" onclick="impressaoNfeController.imprimir('XLS');" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
+        <span class="bt_arq"><a href="javascript:;" id="impressaoNfe-btnImprimirXLS" title="Gerar Arquivo" onclick="impressaoNfeController.imprimir('XLS');" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 
-        <span class="bt_arq"><a href="javascript:;" id="geracaoNfe-btnImprimirPDF" title="Imprimir" onclick="impressaoNfeController.imprimir('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>	
+        <span class="bt_arq"><a href="javascript:;" id="impressaoNfe-btnImprimirPDF" title="Imprimir" onclick="impressaoNfeController.imprimir('PDF');"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" /></a></span>	
 	</div>
 </div>
 
@@ -28,32 +28,51 @@
 		<legend>Pesquisar NF-e</legend>
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
-				
-				<td width="82">Tipo de Nota:</td>
-
-				<td width="209">
-				<select name="tipoNFe" id="tipoNFe" style="width: 200px; font-size: 11px !important">
-						<option value="-1">Selecione...</option>
-				</select>
+				<td width="91">Destinatário:</td>
+   				<td width="180">
+   					<c:forEach items="${tiposDestinatarios}" var="tipoDestinatario" varStatus="status" >
+   						<input type="radio" name="tipoDestinatario" id="tipoDestinatario${status.index}" value="${tipoDestinatario}" <c:if test="${status.index == 0}">checked="checked"</c:if> onchange="impressaoNfeController.verificarTipoDestinatario(this);" /> ${tipoDestinatario.descricao}
+   					</c:forEach>
+				</td>
+   				<td colspan=2>
+   					<select id="impressaoNfe-filtro-selectFornecedoresDestinatarios" name="selectFornecedores" multiple="multiple" style="width:300px">
+						<c:forEach items="${fornecedoresDestinatarios}" var="fornecedor">
+							<option value="${fornecedor.key }">${fornecedor.value }</option>
+						</c:forEach>
+					</select>
+   				</td>
+				<td width="80"></td>
+				<td width="212"></td>
+			</tr>
+			<tr>
+				<td width="91">Tipo de Nota:</td>
+   				<td width="204">
+					<select id="impressaoNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:250px; font-size:11px!important">
+						<option value="">Todos</option>
+						
+					</select>
 				</td>
 				<td width="97">Data Movimento:</td>
-
-				<td width="238"><input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
-					&nbsp;&nbsp;Até&nbsp; <input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" /></td>
+				<td width="238">
+					<input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
+					&nbsp;&nbsp;Até&nbsp; 
+					<input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" />
+				</td>
 				<td width="83">Data Emissão:</td>
-				<td width="210"><input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;"
-					value="${dataAtual}" maxlength="10" /></td>
-
+				<td width="210">
+					<input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;" value="${dataAtual}" maxlength="10" />
+				</td>
 			</tr>
 			<tr>
 				<td>Roteiro:</td>
-				<td><select name="idRoteiro" id="idRoteiro" style="width: 200px; font-size: 11px !important"
-					onchange="impressaoNfeController.carregarRotas();">
+				<td>
+					<select name="idRoteiro" id="idRoteiro" style="width: 200px; font-size: 11px !important" onchange="impressaoNfeController.carregarRotas();">
 						<option value="-1">Selecione...</option>
 						<c:forEach items="${roteiros}" var="roteiro">
-								<option value="${roteiro.key }">${roteiro.value }</option>
-							</c:forEach>
-				</select></td>
+							<option value="${roteiro.key }">${roteiro.value }</option>
+						</c:forEach>
+					</select>
+				</td>
 				<td>Rota:</td>
 				<td>
 					<div id="rotaContainer">
@@ -89,10 +108,11 @@
 				<td>Produtos:</td>
 				<td><a href="javascript:;" id="selProdutos">Clique e Selecione os Produtos</a>
 					<div id="menuProdutos" class="menu_produtos" style="display: none;">
-						<span class="bt_sellAll"> <input type="checkbox" name="selecionarTodosProd" id="selecionarTodosProd"
-							onclick="impressaoNfeController.checkTodosProdutos();" style="float: left;" /> <label for="sel">Selecionar
-								Todos</label>
-						</span> <br clear="all" />
+						<span class="bt_sellAll"> 
+							<input type="checkbox" name="selecionarTodosProd" id="selecionarTodosProd" onclick="impressaoNfeController.checkTodosProdutos();" style="float: left;" />
+							<label for="sel">Selecionar Todos</label>
+						</span> 
+						<br clear="all" />
 						<c:forEach items="${produtos}" var="produto">
 							<input id="produto_${produto.codigoProduto}" value="${produto.codigoProduto}" name="codigosProdutos"
 								onclick="verifyCheck($('#checkBoxSelecionarTodosProduto'));" type="checkbox" />
@@ -103,8 +123,11 @@
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
-				<td><span class="bt_pesquisar"> <a href="javascript:;" onclick="impressaoNfeController.pesquisar();">Pesquisar</a>
-				</span></td>
+				<td>
+					<span class="bt_pesquisar"> 
+						<a href="javascript:;" onclick="impressaoNfeController.pesquisar();">Pesquisar</a>
+					</span>
+				</td>
 			</tr>
 		</table>
 	</fieldset>
@@ -161,8 +184,6 @@
 		
 	</div>
 	</div>
-
 </div>
-
 </body>
 </html>

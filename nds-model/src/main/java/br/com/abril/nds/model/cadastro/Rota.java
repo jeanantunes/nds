@@ -18,6 +18,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 @Entity
 @Table(name = "ROTA")
 @SequenceGenerator(name = "ROTA_SEQ", initialValue = 1, allocationSize = 1)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Rota implements Serializable {
 
 	/**
