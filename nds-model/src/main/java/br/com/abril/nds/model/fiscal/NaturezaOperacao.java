@@ -18,6 +18,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -29,6 +32,7 @@ import br.com.abril.nds.model.movimentacao.TipoMovimento;
  */
 @Entity
 @Table(name = "NATUREZA_OPERACAO")
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="naturezaOperacao")
 public class NaturezaOperacao implements Serializable {
 
 	private static final long serialVersionUID = -5552879848986513495L;

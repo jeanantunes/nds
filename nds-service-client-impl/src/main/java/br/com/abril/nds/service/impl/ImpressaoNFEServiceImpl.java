@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -85,7 +86,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				
 		return cotas;
 	}
-
+	
 	@Transactional
 	public Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro) {
 		
@@ -109,5 +110,10 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		return impressaoNFeRepository.buscarNotasEnvioParaImpressaoNFe(filtro);
 	}
 
-
+	@Override
+	@Transactional
+	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro) {
+		return this.impressaoNFeRepository.obterNotafiscalImpressao(filtro);
+	}
+	
 }

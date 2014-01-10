@@ -60,7 +60,7 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		}else if(Ordenacao.DESC ==  ordenacao){
 			criteria.addOrder(Order.desc(sortname));
 		}
-		return criteria.list();
+		return criteria.setCacheable(true).list();
 	}
 	
 

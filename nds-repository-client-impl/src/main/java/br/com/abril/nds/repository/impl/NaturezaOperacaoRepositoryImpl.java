@@ -45,7 +45,7 @@ public class NaturezaOperacaoRepositoryImpl extends AbstractRepositoryModel<Natu
 		
 		hql.append("order by tipoNotaFiscal.descricao ");
 		
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString()).setCacheable(true);
 		
 		if(tipoOperacao != null)
 			query.setParameter("tipoOperacao", tipoOperacao);

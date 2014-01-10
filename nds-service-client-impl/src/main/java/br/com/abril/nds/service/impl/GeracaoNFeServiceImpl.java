@@ -160,7 +160,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			break;
 			
 		case DISTRIBUIDOR:
-			this.gerarNotasFiscaisDistribuidor(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
+			this.gerarNotasFiscaisCotas(filtro, listaNotaFiscal, notas, distribuidor, naturezaOperacao);
 			
 			break;
 			
@@ -225,14 +225,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		}
 		
 	}
-
-	private void gerarNotasFiscaisDistribuidor(FiltroViewNotaFiscalDTO filtro, List<NotaFiscalNds> listaNotaFiscal, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
-		NotaFiscalNds notaFiscal;
-		// obter as cotas que estão na tela pelo id das cotas
-		List<MovimentoEstoque> movimentoEstoques = this.notaFiscalNdsRepository.obterConjuntoDistribuidorNotafiscal(filtro);
-		
-		
-	}
 	
 	private void gerarNotasFiscaisFornecedor(FiltroViewNotaFiscalDTO filtro, List<NotaFiscalNds> listaNotaFiscal, Distribuidor distribuidor, NaturezaOperacao naturezaOperacao) {
 		NotaFiscalNds notaFiscal;
@@ -282,15 +274,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	public Long serieNotaFiscal (br.com.abril.nfe.model.NotaFiscalBase notaFiscal){
 		return serieRepository.obterNumeroSerieNota();
-	}
-	
-	
-	private void obterNotaFiscal(FiltroViewNotaFiscalDTO filtro) {
-		NotaFiscalNds notaFiscal;
-		// obter as cotas que estão na tela pelo id das cotas
-		List<NotaFiscalBase> notasFiscais = this.notaFiscalNdsRepository.obterNotafiscal(filtro);
-		
-		
 	}
 
 	@Override

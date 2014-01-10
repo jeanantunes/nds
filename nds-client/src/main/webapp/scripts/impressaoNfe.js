@@ -7,7 +7,7 @@ Array.prototype.removeByValue = function(){
         }
     }
     return this;
-}
+};
 
 var impressaoNfeController = $.extend(true, {
 
@@ -18,187 +18,40 @@ var impressaoNfeController = $.extend(true, {
 	paginaAtualPesquisarGrid : 1,
 	
 	totalRegistros : 0,
-
+	
+	/**
+	 * path de geração de nfe
+	 */
+	path : contextPath + '/nfe/impressaoNFE/',
+	
 	init : function() {
-		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
 		
-		$( "#dataEmissao", impressaoNfeController.workspace ).mask("99/99/9999");
-		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).mask("99/99/9999");
-		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).mask("99/99/9999");
+		params = [];
+		params.push({name: 'tipoDestinatario', value: 'COTA'});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
 
-		$(".produtosPesqGrid", impressaoNfeController.workspace).flexigrid({
-			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
-			//url : contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE",
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 80,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 340,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : false,
-				align : 'center',
-			}],
-			showToggleBtn : false,
-			sortname : "codigoProduto",
-			sortorder : "asc",
-			usepager : false,
-			useRp : true,
-			rp : 15,
-			width : 500,
-			height : 130
-		});
-
-		$(".produtosAdicionadosPesqGrid", impressaoNfeController.workspace).flexigrid({
-			preProcess : impressaoNfeController.prepararJSONPesquisaProdutosFiltrados,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 80,
-				sortable : false,
-				align : 'left',
-			}, {
-				display : 'Produto',
-				name : 'nomeProduto',
-				width : 340,
-				sortable : false,
-				align : 'left',
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : false,
-				align : 'center',
-			}],
-			showToggleBtn : false,
-			showTableToggleBtn : false,
-			onChangeSort: true,
-			sortname : "codigoProduto",
-			sortorder : "asc",
-			usepager : false,
-			useRp : false,
-			rp : 15,
-			width : 500,
-			height : 100,
-			onChangeSort: function(name, order) {
-				impressaoNfeController.sortGrid(".produtosAdicionadosPesqGrid", order); 
-			},
-		});
-
-		$(".impressaoGrid", impressaoNfeController.workspace).flexigrid({
-			preProcess : null,
-			dataType : 'json',
-			colModel : [ {
-				display : 'Nota',
-				name : 'numeroNota',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Cota',
-				name : 'idCota',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeCota',
-				width : 340,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Total Exemplares',
-				name : 'totalExemplares',
-				width : 100,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Total R$',
-				name : 'vlrTotal',
-				width : 80,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Total Desc. R$',
-				name : 'vlrTotalDesconto',
-				width : 80,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Impressão',
-				name : 'notaImpressa',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "idCota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rpOptions: [10, 15, 20, 30, 50],
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 180,
-			//TODO: Sérgio - Sobrescrever o changePage do Flexigrid
-			/*onChangePage : function(ctype) {
-				impressaoNfeController.filtroNotasImprimirNFe = [];
-			},*/
-		});
-		
-		$("#selFornecedor", impressaoNfeController.workspace).click(function() {
-			$(".menu_fornecedor", impressaoNfeController.workspace).show().fadeIn("fast");
-		})
-
-		$(".menu_fornecedor", impressaoNfeController.workspace).mouseleave(function() {
-			$(".menu_fornecedor", impressaoNfeController.workspace).hide();
-		});
-
-		$("#selProdutos", impressaoNfeController.workspace).click(function() {
-			if( $('#dataMovimentoInicial', impressaoNfeController.workspace).val() == ''
-					|| $('#dataMovimentoFinal', impressaoNfeController.workspace).val() == '') {
-				$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog( "open" );
-				return;
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			params = [ 	
-		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()}
-		           	]
-			$(".produtosPesqGrid").flexOptions({params : params}).flexReload();
-			$("#dialog-pesqProdutos", this.workspace).dialog( "open" );
-		})
+			$("#impressaoNfe-filtro-naturezaOperacao").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+		
+
+		this.initInputs();
+		this.initFlexiGrids();
+		this.initFiltroDatas();
+		
 		
 		$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog({
 			autoOpen: false,
@@ -215,7 +68,38 @@ var impressaoNfeController = $.extend(true, {
 		
 		$(".areaBts", impressaoNfeController.workspace).hide();
 	},
+	
+	verificarTipoDestinatario : function(element) {
+		if(element.value != "FORNECEDOR") {
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		} else {
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+		}
+		
+		params = [];
+		params.push({name: 'tipoDestinatario', value: element.value});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
 
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#impressaoNfe-filtro-naturezaOperacao").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+		
+	},
+	
 	criarDialogPesquisarProdutos : function() {		
 
 		$("#dialog-pesqProdutos", this.workspace).dialog({
@@ -238,7 +122,7 @@ var impressaoNfeController = $.extend(true, {
 
 		$.each(data.rows, function() {
 			checked = false;
-			for(i=0; i < impressaoNfeController.filtroProdutos.length; i++) {
+			for(i= 0; i < impressaoNfeController.filtroProdutos.length; i++) {
 				if(impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto'] == this.cell.codigoProduto) {
 					checked = true;
 				}
@@ -478,7 +362,7 @@ var impressaoNfeController = $.extend(true, {
 				page:1,
 				total: impressaoNfeController.filtroProdutos.length,
 				rows: impressaoNfeController.filtroProdutos
-		}
+		};
 
 		impressaoNfeController.atualizarProdutosFiltrados( data );
 
@@ -489,13 +373,13 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
 		           	{name:'filtro.nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
-		           	]
+		           	];
 		$(".produtosPesqGrid").flexOptions({params: params, url: contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE"}).flexReload();
 	},
 
 	adicionarAosProdutosFiltradosERecarregar : function(check, codigoProduto, nomeProduto) {
 
-		impressaoNfeController.atualizarProdutosFiltrados( impressaoNfeController.adicionarAosProdutosFiltrados(check, codigoProduto, nomeProduto) )
+		impressaoNfeController.atualizarProdutosFiltrados( impressaoNfeController.adicionarAosProdutosFiltrados(check, codigoProduto, nomeProduto));
 
 	},
 
@@ -519,7 +403,7 @@ var impressaoNfeController = $.extend(true, {
 				page:1,
 				total: impressaoNfeController.filtroProdutos.length,
 				rows: impressaoNfeController.filtroProdutos
-		}
+		};
 
 		return data;
 	},
@@ -536,7 +420,7 @@ var impressaoNfeController = $.extend(true, {
 				page:1,
 				total: impressaoNfeController.filtroProdutos.length,
 				rows: impressaoNfeController.filtroProdutos
-		}
+		};
 
 		var inputs = $(".produtosPesqGrid :checkbox");
 		var values = [];
@@ -575,17 +459,214 @@ var impressaoNfeController = $.extend(true, {
 				    }
 				}
 				if(inserirIdCota)
-					impressaoNfeController.filtroNotasImprimirNFe.push(numeroNota)
+					impressaoNfeController.filtroNotasImprimirNFe.push(numeroNota);
 			} else {
-				if(impressaoNfeController.filtroNotasImprimirNFe[0] != numeroNota)
-					impressaoNfeController.filtroNotasImprimirNFe.push(numeroNota)
+				if(impressaoNfeController.filtroNotasImprimirNFe[0] != numeroNota);
+					impressaoNfeController.filtroNotasImprimirNFe.push(numeroNota);
 			}
 			
 		} else {
-			impressaoNfeController.filtroNotasImprimirNFe.removeByValue(numeroNota)
+			impressaoNfeController.filtroNotasImprimirNFe.removeByValue(numeroNota);
 		}
 		
 		impressaoNfeController.filtroNotasImprimirNFe.sort();
+	},
+	
+
+	initFlexiGrids : function() {
+		$(".produtosPesqGrid", impressaoNfeController.workspace).flexigrid({
+			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
+			//url : contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE",
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 80,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 340,
+				sortable : true,
+				align : 'left',
+			}, {
+				display : '',
+				name : 'sel',
+				width : 20,
+				sortable : false,
+				align : 'center',
+			}],
+			showToggleBtn : false,
+			sortname : "codigoProduto",
+			sortorder : "asc",
+			usepager : false,
+			useRp : true,
+			rp : 15,
+			width : 500,
+			height : 130
+		});
+
+		$(".produtosAdicionadosPesqGrid", impressaoNfeController.workspace).flexigrid({
+			preProcess : impressaoNfeController.prepararJSONPesquisaProdutosFiltrados,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 80,
+				sortable : false,
+				align : 'left',
+			}, {
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 340,
+				sortable : false,
+				align : 'left',
+			}, {
+				display : '',
+				name : 'sel',
+				width : 20,
+				sortable : false,
+				align : 'center',
+			}],
+			showToggleBtn : false,
+			showTableToggleBtn : false,
+			onChangeSort: true,
+			sortname : "codigoProduto",
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
+			rp : 15,
+			width : 500,
+			height : 100,
+			onChangeSort: function(name, order) {
+				impressaoNfeController.sortGrid(".produtosAdicionadosPesqGrid", order); 
+			},
+		});
+
+		$(".impressaoGrid", impressaoNfeController.workspace).flexigrid({
+			preProcess : null,
+			dataType : 'json',
+			colModel : [ {
+				display : 'Nota',
+				name : 'numeroNota',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Cota',
+				name : 'idCota',
+				width : 70,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeCota',
+				width : 340,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Total Exemplares',
+				name : 'totalExemplares',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Total R$',
+				name : 'vlrTotal',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Total Desc. R$',
+				name : 'vlrTotalDesconto',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Impressão',
+				name : 'notaImpressa',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : '',
+				name : 'sel',
+				width : 30,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "idCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rpOptions: [10, 15, 20, 30, 50],
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 180,
+			//TODO: Sérgio - Sobrescrever o changePage do Flexigrid
+			/*onChangePage : function(ctype) {
+				impressaoNfeController.filtroNotasImprimirNFe = [];
+			},*/
+		});
+	},
+	
+	initFiltroDatas : function() {
+		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#dataMovimentoInicial", impressaoNfeController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		$( "#dataMovimentoFinal", impressaoNfeController.workspace ).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+	},
+	
+	initInputs : function() {
+		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		
+		$("#impressaoNfe-filtro-selectFornecedores").multiselect({
+			selectedList : 6
+		}).multiselect("checkAll");
+		
+
+		
+		$("#selFornecedor", impressaoNfeController.workspace).click(function() {
+			$(".menu_fornecedor", impressaoNfeController.workspace).show().fadeIn("fast");
+		});
+
+		$(".menu_fornecedor", impressaoNfeController.workspace).mouseleave(function() {
+			$(".menu_fornecedor", impressaoNfeController.workspace).hide();
+		});
+		
+	},
+	
+	initDialog : function(){
+		$("#selProdutos", impressaoNfeController.workspace).click(function() {
+			if( $('#dataMovimentoInicial', impressaoNfeController.workspace).val() == ''
+					|| $('#dataMovimentoFinal', impressaoNfeController.workspace).val() == '') {
+				$( "#msgBoxDataMovimentoInvalida", this.workspace ).dialog( "open" );
+				return;
+			}
+			
+			params = [ 	
+		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()}
+		           	];
+			$(".produtosPesqGrid").flexOptions({params : params}).flexReload();
+			$("#dialog-pesqProdutos", this.workspace).dialog( "open" );
+		});
 	},
 	
 }, BaseController);
