@@ -23,7 +23,6 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalNdsRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
-import br.com.abril.nfe.model.NotaFiscalBase;
 
 @Repository
 public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFiscalNds, Long> implements NotaFiscalNdsRepository {

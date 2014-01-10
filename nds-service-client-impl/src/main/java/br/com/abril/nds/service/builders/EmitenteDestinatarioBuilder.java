@@ -66,4 +66,18 @@ public class EmitenteDestinatarioBuilder {
 		
 	}
 	
+	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, EstoqueProduto estoque) {
+		
+		if(notaFiscal2.getIdentificacaoDestinatario() == null) {
+			notaFiscal2.setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		}
+		
+		if(notaFiscal2.getIdentificacaoDestinatario().getEndereco() == null) {
+			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new Endereco());
+		}
+		
+		
+		
+	}
+	
 }

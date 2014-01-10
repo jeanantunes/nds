@@ -557,9 +557,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		.append(" SUM(item.vlrTotal) as vlrTotal, ")
 		.append(" SUM(item.valorUnitario) as vlrTotalDesconto, ")
 		.append(" SUM(item.quantidade) as totalExemplares ")
-		.append(" FROM NotaFiscalNds as notaFiscal ")
-		.append(" JOIN notaFiscal.notaFiscalItens as item ")
-		.append(" JOIN notaFiscal.emissor as pj ")
+		.append(" FROM NotaFiscal as notaFiscal ")
+		.append(" JOIN notaFiscal.produtosServicos as item ")
+		.append(" JOIN notaFiscal.identificacaoEmitente as pj ")
 		.append(" WHERE ");
 		
 		if(filtro.getDataEmissao()!=null) {
