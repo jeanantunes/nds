@@ -820,7 +820,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 							$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
 							$("#produtoEdicaoController-nomePublicacao").val(result.nomeProduto);
-							$("#produtoEdicaoController-comboClassificacao").val(result.idTipoClassificacaoProduto);
+							$("#produtoEdicaoController-comboClassificacao").val(result.classificacao);
 							$("#produtoEdicaoController-nomeComercialProduto").val(result.nomeComercialProduto);
 							$("#produtoEdicaoController-nomeFornecedor").val(result.nomeFornecedor);
 							$("#produtoEdicaoController-situacao").val(result.statusSituacao);

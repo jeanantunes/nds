@@ -363,11 +363,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		return this.statusLancamento;
 	}
 	
-	public void setStatusLancamento(TipoLancamento statusLancamento) {
-		this.statusLancamento = "";
-		if (null != statusLancamento) {
-			this.statusLancamento = statusLancamento.getDescricao();
-		}
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = statusLancamento;
 	}
 	
 	/**

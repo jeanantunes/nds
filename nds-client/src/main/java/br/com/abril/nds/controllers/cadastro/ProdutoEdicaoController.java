@@ -270,9 +270,7 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	@Post
-	public void salvar(UploadedFile imagemCapa,
-			 String codigoProduto,
-             ProdutoEdicaoDTO produtoEdicaoDTO, Localization localization, ModoTela modoTela) {
+	public void salvar(UploadedFile imagemCapa, String codigoProduto, ProdutoEdicaoDTO produtoEdicaoDTO, Localization localization, ModoTela modoTela) {
 		
 		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoPrevisto());
 		
@@ -557,6 +555,9 @@ public class ProdutoEdicaoController extends BaseController {
 			}
 			if (dto.getDesconto() == null){
 				listaMensagens.add("Por favor, digite um valor válido para o 'Desconto %'!");
+			}
+			if (dto.getTipoClassificacaoProduto().getId() == null){
+				listaMensagens.add("Por favor, selecione um valor válido para a 'Classificação'");
 			}
 			
 			//Essa validação só será feita na terceira fase do projeto.
