@@ -753,8 +753,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	}
 
 	@Override
-	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(
-			SituacaoCadastro situacaoCadastro) {
+	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacaoCadastro) {
 		return this.fornecedorRepository.obterFornecedoresDestinatarios(situacaoCadastro);
 	}
 }

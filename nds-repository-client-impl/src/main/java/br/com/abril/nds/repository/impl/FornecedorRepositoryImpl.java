@@ -575,8 +575,7 @@ public class FornecedorRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(
-			SituacaoCadastro situacao) {
+	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacao) {
 
 		Criteria criteria = getSession().createCriteria(Fornecedor.class);
 		
@@ -590,7 +589,7 @@ public class FornecedorRepositoryImpl extends
 		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		
-		return  criteria.list();
+		return  criteria.setCacheable(true).list();
 
 	}
 }

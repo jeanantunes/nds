@@ -82,6 +82,7 @@ public class HistogramaVendasController extends BaseController {
 		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
 	@Path("/carregarElementos")
 	public void carregarElementos(String componente){
