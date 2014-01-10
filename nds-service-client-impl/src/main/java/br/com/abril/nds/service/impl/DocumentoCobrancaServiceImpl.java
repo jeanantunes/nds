@@ -506,12 +506,17 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 					
 					break;
 					
+				case BOLETO_EM_BRANCO:
+					
+					return null;
+					
 				default:
 					
 					retorno = getDocumentoCobranca(cobranca);
 			}
 			
-		}catch (Exception e) {
+		}
+		catch (Exception e) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}

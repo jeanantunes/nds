@@ -11,6 +11,8 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nfe.model.NotaFiscalBase;
 
 public interface NotaFiscalNdsRepository extends Repository<NotaFiscalNds, Long>  {
 
@@ -31,7 +33,7 @@ public interface NotaFiscalNdsRepository extends Repository<NotaFiscalNds, Long>
 	
 	public abstract List<MovimentoEstoqueCota> obterMovimentosEstoqueCota(FiltroViewNotaFiscalDTO filtro);
 
-	void salvarNotasFiscais(List<NotaFiscalNds> notasFiscais);
+	void salvarNotasFiscais(List<NotaFiscalNds> notasFiscais, List<NotaFiscal> notasFiscais2);
 
 	public abstract List<EstoqueProduto> obterConjuntoFornecedorNotafiscal(FiltroViewNotaFiscalDTO filtro);
 

@@ -14,7 +14,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.financeiro.BoletoEmail;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -209,9 +208,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 			
 			Cobranca cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
 			
-			if (cobranca!=null && 
-				(cobranca.getTipoCobranca().equals(TipoCobranca.BOLETO) || 
-				 cobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))){
+			if (cobranca!=null){
 				
 				BoletoEmail bm = this.boletoEmailRepository.obterBoletoEmailPorCobranca(cobranca.getId());
 				

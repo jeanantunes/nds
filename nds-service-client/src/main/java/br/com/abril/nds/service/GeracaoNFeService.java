@@ -25,6 +25,7 @@ public interface GeracaoNFeService {
 	 * @param idTipoNotaFiscal
 	 * @param dataEmissao
 	 * @param idCotasSuspensas cotas suspensas que vao emitir nota
+	 * @return 
 	 *  
 	 */
 	public abstract void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException;
