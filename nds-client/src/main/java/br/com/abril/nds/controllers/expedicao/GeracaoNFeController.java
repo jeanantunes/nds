@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -257,7 +258,9 @@ public class GeracaoNFeController extends BaseController {
 	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
 	public void gerarNotasFiscais(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		try {
+
 			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
+			
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());
 		} 
