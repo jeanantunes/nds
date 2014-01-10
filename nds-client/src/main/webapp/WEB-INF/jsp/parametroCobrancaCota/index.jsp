@@ -491,7 +491,7 @@ $(function(){
 						<tr>
 							<td align="right"><input type="checkbox" id="recebeEmail"
 								name="recebeEmail" /></td>
-							<td>Receber por E-mail?</td>
+							<td>Receber Cobrança/Recibo por E-mail?</td>
 						</tr>
 
 					</table>
