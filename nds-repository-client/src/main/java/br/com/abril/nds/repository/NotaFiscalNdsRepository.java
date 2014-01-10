@@ -12,7 +12,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nfe.model.NotaFiscalBase;
 
 public interface NotaFiscalNdsRepository extends Repository<NotaFiscalNds, Long>  {
 
