@@ -153,21 +153,19 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
-		case COTA:
-			this.gerarNotasFiscaisCotas(filtro, listaNotaFiscal, notas, distribuidor, naturezaOperacao);
-			break;
-			
-		case DISTRIBUIDOR:
-			this.gerarNotasFiscaisCotas(filtro, listaNotaFiscal, notas, distribuidor, naturezaOperacao);
-			
-			break;
-			
-		case FORNECEDOR:			
-			this.gerarNotasFiscaisFornecedor(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
-			break;
-
-		default:
-			break;
+		
+			case COTA:
+			case DISTRIBUIDOR:
+				this.gerarNotasFiscaisCotas(filtro, listaNotaFiscal, notas, distribuidor, naturezaOperacao);
+				break;
+				
+			case FORNECEDOR:			
+				this.gerarNotasFiscaisFornecedor(filtro, listaNotaFiscal, distribuidor, naturezaOperacao);
+				break;
+	
+			default:
+				throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Destinatário não especificado");
+				
 		}
 		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())
