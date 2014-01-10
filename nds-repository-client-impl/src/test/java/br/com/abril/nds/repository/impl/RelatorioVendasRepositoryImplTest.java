@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +37,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
+import br.com.abril.nds.repository.RelatorioVendasRepository.TipoPesquisaRanking;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -132,7 +132,7 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		
 		List<RegistroCurvaABCDistribuidorVO> registroCurvaABCDistribuidorVOs =  
-					relatorioVendasRepository.obterCurvaABCDistribuidor(filtro);
+					relatorioVendasRepository.obterCurvaABCDistribuidor(filtro, TipoPesquisaRanking.RankingCota);
 		
 		Assert.assertNotNull(registroCurvaABCDistribuidorVOs);
 		
@@ -147,7 +147,7 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 		
 		
 		List<RegistroCurvaABCDistribuidorVO> registroCurvaABCDistribuidorVOs =  
-					relatorioVendasRepository.obterCurvaABCDistribuidor(filtro);
+					relatorioVendasRepository.obterCurvaABCDistribuidor(filtro, TipoPesquisaRanking.RankingCota);
 		
 		Assert.assertNotNull(registroCurvaABCDistribuidorVOs);
 		

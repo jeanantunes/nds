@@ -95,31 +95,57 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		BigInteger qtde = (BigInteger) query.uniqueResult(); 
 		
-		return (qtde == null) ? 0 : qtde.intValue(); 	}
-
+		return (qtde == null) ? 0 : qtde.intValue(); 	
+	}
+	
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro) {
+	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtro, TipoPesquisaRanking tipoPesquisa) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT ");
+		sql.append(" select	");
 		
-		sql.append("   consolidado.PRODUTO_ID AS idProduto, 	");
-		sql.append("   consolidado.COTA_ID AS idCota, 			");
-		sql.append("   consolidado.NUMERO_COTA AS numeroCota, 	");
-		sql.append("   COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
-		sql.append("   consolidado.CIDADE_COTA AS municipio, 	");
-		sql.append("   consolidado.valor as faturamentoCapa 	");
+		sql.append(" subRnkg.idProduto as idProduto, 	");
+		sql.append(" subRnkg.idCota as idCota, 			");
+		sql.append(" subRnkg.numeroCota as numeroCota,	");
+		sql.append(" subRnkg.nomeCota as nomeCota,		");
+		sql.append(" subRnkg.municipio as municipio,	");
+		
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.participacao as participacaoAcumulada,	");
+		
+		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
+			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkCota, ");
+		} else {
+			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
+		}
+		
+		
+		sql.append(" subRnkg.participacao as participacao,	");
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa	");
+		
+		sql.append(" from ( ");
+		
+		sql.append(" select ");
+		
+		sql.append(" consolidado.PRODUTO_ID AS idProduto, 	");
+		sql.append(" consolidado.COTA_ID AS idCota, 			");
+		sql.append(" consolidado.NUMERO_COTA AS numeroCota, 	");
+		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
+		sql.append(" consolidado.CIDADE_COTA AS municipio, 	");
+		
+		sql.append(" consolidado.valor as participacao,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa	");
 		
 		sql.append("   from ");
 		
 		sql.append(obterFromWhereObterCurvaABC(filtro));
 		
 		sql.append(" GROUP BY consolidado.COTA_ID ");
-
-		sql.append(" ORDER BY consolidado.valor desc ");
+		sql.append(" ORDER BY consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
@@ -129,23 +155,22 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
 		query.addScalar("municipio", StandardBasicTypes.STRING);
+		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+		
+		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
+			query.addScalar("rkCota", StandardBasicTypes.LONG);
+		} else {
+			query.addScalar("rkProduto", StandardBasicTypes.LONG);
+		}
+		
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		
 
 		this.getFiltroCurvaABC(filtro, query);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
-		
-		if(filtro.getPaginacao()!=null) {
-			
-			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-			
-		}
 		
 		return query.list();
 	}
@@ -155,12 +180,34 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select ");
 		
-		sql.append(" SELECT ");
+		sql.append(" subRnkg.codigoEditor as codigoEditor, 	");
+		sql.append(" subRnkg.nomeEditor AS nomeEditor, 		");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.participacao as participacaoAcumulada, ");
 		
-		sql.append(" consolidado.EDITOR_ID AS codigoEditor, 		");
-		sql.append(" consolidado.RAZAO_SOCIAL_EDITOR AS nomeEditor, ");
-		sql.append(" consolidado.valor AS faturamentoCapa			");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkEditor,	");
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,			");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,			");
+		sql.append(" subRnkg.participacao as participacao, 					");
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
+		sql.append(" from ");
+		
+		
+		sql.append("( SELECT ");
+		sql.append(" consolidado.EDITOR_ID AS codigoEditor, 			");
+		sql.append(" consolidado.RAZAO_SOCIAL_EDITOR AS nomeEditor, 	");
+		sql.append(" consolidado.faturamentoCapa AS faturamentoCapa,	");
+		sql.append(" consolidado.valor AS participacao,						");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.reparte as reparte,					");
+		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 
 		sql.append(" from ");
 		
@@ -168,29 +215,26 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" GROUP BY consolidado.EDITOR_ID ");
 		
-		sql.append(" ORDER BY consolidado.valor desc ");
+		sql.append(" ORDER BY consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("codigoEditor", StandardBasicTypes.LONG);
 		query.addScalar("nomeEditor", StandardBasicTypes.STRING);
 		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
-
+		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("rkEditor", StandardBasicTypes.LONG);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		
 		this.getFiltroCurvaABC(filtro, query);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCEditorVO.class));
-		
-		if(filtro.getPaginacao()!=null) {
-			
-			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-			
-		}
 		
 		return query.list();
 	}
@@ -200,14 +244,39 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append(" SELECT ");
+
+		sql.append(" subRnkg.idProdutoEdicao AS idProdutoEdicao, 	");
+		sql.append(" subRnkg.codigoProduto AS codigoProduto, 		");
+		sql.append(" subRnkg.nomeProduto AS nomeProduto, 			");
+		sql.append(" subRnkg.edicaoProduto AS edicaoProduto, 		");
+		
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.participacao as participacaoAcumulada,	");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
+
+		sql.append(" subRnkg.participacao as participacao, 			");
+		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
+		sql.append(" subRnkg.faturamentoCapa as faturamento, 			");
+
+		sql.append(" subRnkg.reparte as reparte,	");
+		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVenda		");
+		
+		sql.append(" from ( ");
+		
+		sql.append(" select ");
 		
 		sql.append(" consolidado.PRODUTO_EDICAO_ID AS idProdutoEdicao, 	");
 		sql.append(" consolidado.CODIGO_PRODUTO AS codigoProduto, 		");
 		sql.append(" consolidado.NOME_PRODUTO AS nomeProduto, 			");
 		sql.append(" consolidado.NUMERO_EDICAO AS edicaoProduto, 		");
-		sql.append(" consolidado.valor AS faturamento					");
+		
+		sql.append(" consolidado.valor as participacao,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
+		
+		sql.append(" consolidado.reparte as reparte,	");
+		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares		");
 		
 		sql.append(" from ");
 		
@@ -215,7 +284,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" GROUP BY consolidado.PRODUTO_EDICAO_ID ");
 		
-		sql.append(" ORDER BY consolidado.valor desc ");
+		sql.append(" ORDER BY consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -223,23 +292,20 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
 		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
 		query.addScalar("edicaoProduto", StandardBasicTypes.LONG);
+
+		query.addScalar("participacaoAcumulada", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("rkProduto", StandardBasicTypes.LONG);
+		
+		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
+		
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVenda", StandardBasicTypes.BIG_DECIMAL);
 		
 		this.getFiltroCurvaABC(filtro, query);
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCCotaDTO.class));
-		
-		if(filtro.getPaginacao()!=null) {
-			
-			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-			}
-			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-			
-		}
 		
 		return query.list();
 	}
@@ -461,12 +527,5 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		return null;
 	}
 	
-
-	
-	private List<String> obterTiposLancamentosRelatorioVenda(){
-		
-		return Arrays.asList(StatusLancamento.EM_RECOLHIMENTO.name(),
-				StatusLancamento.RECOLHIDO.name(), StatusLancamento.FECHADO.name());
-	}
 	
 }

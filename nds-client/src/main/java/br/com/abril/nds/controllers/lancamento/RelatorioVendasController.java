@@ -508,10 +508,12 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCDistribuidor(filtro);
 			
+            List<RegistroCurvaABCDistribuidorVO> resultadoPaginado = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCDistribuidor, filtro.getPaginacao());
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
 				new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCDistribuidor));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
@@ -609,10 +611,12 @@ public class RelatorioVendasController extends BaseController {
 		} else {
 
 			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCEditor(filtroCurvaABCEditorDTO);
+			  
+            List<RegistroCurvaABCEditorVO> resultadoPaginado = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao());
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCEditor));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
@@ -765,10 +769,12 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = relatorioVendasService.obterQtdeRegistrosCurvaABCCota(filtroCurvaABCCotaDTO);
 			
+            List<RegistroCurvaABCCotaDTO> resultadoPaginado = PaginacaoUtil.paginarEmMemoria(resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao());
+			
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel = 
 					new TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>>();
 	
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoCurvaABCCota));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			

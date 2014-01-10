@@ -11,7 +11,12 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 
 public interface RelatorioVendasRepository {
 
-	List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
+	public enum TipoPesquisaRanking {
+		RankingCota,
+		RankingProduto
+	}
+	
+	List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking tipoPesquisa);
 
 	List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro);
 

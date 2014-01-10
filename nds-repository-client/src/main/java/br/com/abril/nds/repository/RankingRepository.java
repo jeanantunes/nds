@@ -12,14 +12,6 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
  */
 public interface RankingRepository {
 	
-	Map<Long, RankingDTO> obterRankingProdutoPorCota(FiltroCurvaABCDTO filtro, Long idCota);
-	
 	Map<Long, RankingDTO> obterRankingCota(FiltroCurvaABCDTO filtro);
-	
-	Map<Long, RankingDTO> obterRankingEditor(FiltroCurvaABCDTO filtro);
-	
-	Map<Long, RankingDTO> obterRankingProdutoPorProduto(FiltroCurvaABCDTO filtro);
-	
-	Map<Long, RankingDTO> obterRankingCotaPorProduto(FiltroCurvaABCDTO filtro, Long idProduto);
 	
 }
