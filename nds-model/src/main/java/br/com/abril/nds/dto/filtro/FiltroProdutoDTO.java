@@ -59,7 +59,8 @@ public class FiltroProdutoDTO implements Serializable {
 	}
 
 	public void setCodigo(String codigo) {
-		this.codigo = StringUtils.leftPad(codigo, 8, '0');
+		//this.codigo = StringUtils.leftPad(codigo, 8, '0');
+		this.codigo = codigo;
 	}
 
 	public String getNome() {

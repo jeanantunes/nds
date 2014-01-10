@@ -1042,6 +1042,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setPrecoPrevisto(produtoEdicao.getPrecoPrevisto());
 			dto.setTipoSegmentoProdutoId(produtoEdicao.getTipoSegmentoProduto() == null ? null : produtoEdicao.getTipoSegmentoProduto().getId());
 			
+			dto.setClassificacao(produtoEdicao.getTipoClassificacaoProduto() == null ? null : produtoEdicao.getTipoClassificacaoProduto().getId().toString());
+			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             dto.setPrecoVenda(precoVenda);
 			dto.setExpectativaVenda(produtoEdicao.getExpectativaVenda());

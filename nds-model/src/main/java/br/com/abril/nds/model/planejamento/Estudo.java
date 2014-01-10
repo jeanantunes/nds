@@ -51,7 +51,7 @@ public class Estudo implements Serializable {
 	@Column(name = "QTDE_REPARTE", nullable = false)
 	private BigInteger qtdeReparte;
 
-	@Column(name = "DATA_LANCAMENTO", nullable = false)
+	@Column(name = "DATA_LANCAMENTO")
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
 
