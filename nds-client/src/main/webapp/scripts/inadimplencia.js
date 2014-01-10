@@ -179,7 +179,7 @@ var inadimplenciaController = $.extend(true, {
 			}
 			else{
 				
-				row.cell.detalhe = "<img src=\"" + contextPath + "/images/bt_financeiro.png\" border=\"0\" hspace=\"5\" title=\"Boleto em Branco Inadimplente\" />";
+				row.cell.detalhe = "<img src=\"" + contextPath + "/images/bt_financeiro.png\" border=\"0\" hspace=\"5\" title=\"Boleto em Branco\" />";
 			}
 	  	});
 		

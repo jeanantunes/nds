@@ -701,15 +701,20 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					
 					this.historicoMovimentoFinanceiroCotaRepository.removerPorId(idHmfc);
 				}
-				
-				if (tmf.equals(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO)){
+
+				if (tmf.equals(GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO) || tmf.equals(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO)){
 					
 					Negociacao negociacao = this.negociacaoDividaRepository.obterNegociacaoPorMovFinanceiroId(mfc.getId());
 					
-					if (negociacao != null && 
-						(negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty())){
+					if (negociacao != null && (negociacao.getParcelas() == null || negociacao.getParcelas().isEmpty())){
 						
 						negociacao.setValorDividaPagaComissao(negociacao.getValorDividaPagaComissao().add(mfc.getValor()));
+						
+						List<MovimentoFinanceiroCota> mfcsNegociacao = negociacao.getMovimentosFinanceiroCota();
+						
+						mfcsNegociacao.remove(mfc);
+						
+						negociacao.setMovimentosFinanceiroCota(mfcsNegociacao);
 						
 						this.negociacaoDividaRepository.alterar(negociacao);
 					}

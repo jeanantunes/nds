@@ -140,5 +140,19 @@ public class UsuarioRepositoryImpl extends AbstractRepositoryModel<Usuario, Long
 		query.executeUpdate();
 		
 	}
-	
+
+
+	@Override
+	public boolean verificarUsuarioSupervisor(String usuario, String senha) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select count(id) from Usuario where login = :usuario and senha = :senha and supervisor = :indTrue");
+		
+		query.setParameter("usuario", usuario);
+		query.setParameter("senha", senha);
+		query.setParameter("indTrue", true);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
 }

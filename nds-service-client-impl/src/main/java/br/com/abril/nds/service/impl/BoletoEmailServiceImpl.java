@@ -15,9 +15,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
-import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoEmail;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.repository.BoletoEmailRepository;
+import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -43,6 +44,9 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 
 	@Autowired
 	protected BoletoService boletoService;
+	
+	@Autowired
+	protected CobrancaRepository cobrancaRepository;
 	
 	@Autowired
 	protected DocumentoCobrancaService documentoCobrancaService;
@@ -113,7 +117,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Verifica permissão de emissão de Boleto para a Cota
+	 * Verifica permissão de emissão de Boleto/Cobrança para a Cota
 	 * 
 	 * @param cota
 	 * @return boolean
@@ -135,30 +139,9 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 
 		return emissaoBoletoCota;
 	}
-
-    /**
-     * Verifica permissão de emissão de Recibo da Cobrança para a Cota
-     * 
-     * @param cota
-     * @return boolean
-     */
-    private boolean isEmiteRecibo(Cota cota){
-    	
-        boolean emissaoReciboDistribuidor = this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
-        
-        if ((cota.getParametroDistribuicao() == null) || 
-		    (cota.getParametroDistribuicao().getReciboEmail() == null)){
-			
-			return emissaoReciboDistribuidor;
-		}
-		
-		boolean emissaoSlipCota = cota.getParametroDistribuicao().getReciboEmail()!=null?cota.getParametroDistribuicao().getReciboEmail():false;
-		
-		return emissaoSlipCota;
-    }
 	
     /**
-     * Obtem anexos do email de cobrança conforme parâmetros de Cobrança
+     * Obtem anexos do email de cobrança conforme parâmetros de Cobrança da Cota ou do Distribuidor
      * 
      * @param cota
      * @param nossoNumero
@@ -188,16 +171,6 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	    	}
 	    }	
 
-	    if (this.isEmiteRecibo(cota)){
-	       
-	    	byte[] anexoRecibo = this.documentoCobrancaService.gerarReciboCobranca(nossoNumero);
-	    
-	    	if (anexoRecibo!=null){
-	        
-	    		anexosEmail.add(new AnexoEmail("Recibo",anexoRecibo,TipoAnexo.PDF));
-	    	}	
-	    }
-
 		return anexosEmail;
 	}
 
@@ -218,7 +191,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Salva controle de emissao de boletos por email
+	 * Salva controle de emissao de boletos/cobrancas por email
 	 * 
 	 * @param listaNossoNumeroEnvioEmail
 	 */
@@ -232,16 +205,16 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 		}
 			
 		for (String nossoNumero : listaNossoNumeroEnvioEmail){
-				
-			Boleto boleto = this.boletoService.obterBoletoPorNossoNumero(nossoNumero, null);
 			
-			if (boleto!=null){
+			Cobranca cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+			
+			if (cobranca!=null){
 				
-				BoletoEmail bm = this.boletoEmailRepository.obterBoletoEmailPorCobranca(boleto.getId());
+				BoletoEmail bm = this.boletoEmailRepository.obterBoletoEmailPorCobranca(cobranca.getId());
 				
 				if (bm==null){
 
-					Cota cota = boleto.getCota();
+					Cota cota = cobranca.getCota();
 					
 					String email = cota.getPessoa().getEmail();
 						
@@ -257,7 +230,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 
 				    bm = new BoletoEmail();
 				
-				    bm.setCobranca(boleto);
+				    bm.setCobranca(cobranca);
 				
 				    this.boletoEmailRepository.merge(bm);
 			    }
@@ -266,7 +239,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 
 	/**
-	 * Obtem todos os boletos pendentes de envio por email
+	 * Obtem todos os boletos/cobrancas pendentes de envio por email
 	 * 
 	 * @return List<BoletoEmail>
 	 */
@@ -287,7 +260,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Envia Cobrança por email - Controle de Envio de Boletos
+	 * Envia Cobrança por email - Controle de Envio de boletos/cobrancas
 	 * 
 	 * @param boletoEmail
 	 */

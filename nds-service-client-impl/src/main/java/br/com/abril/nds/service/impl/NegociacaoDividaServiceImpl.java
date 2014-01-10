@@ -305,10 +305,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				Fornecedor fornecedor = 
 						cota.getParametroCobranca() != null 
 						? cota.getParametroCobranca().getFornecedorPadrao()
-						: null;
+						: this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().getPoliticaCobranca().getFornecedorPadrao();
 				
 				if (fornecedor == null){
-
+					
 					throw new ValidacaoException(
 							new ValidacaoVO(
 									TipoMensagem.WARNING, 

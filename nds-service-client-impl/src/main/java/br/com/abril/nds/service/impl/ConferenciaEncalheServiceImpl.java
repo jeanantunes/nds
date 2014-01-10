@@ -1402,7 +1402,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					movDTO.setDataCriacao(dataOperacao);
 					movDTO.setDataOperacao(dataOperacao);
 					movDTO.setDataVencimento(movDTO.getDataAprovacao());
-					movDTO.setObservacao("Oriundo de negociação por comissão");
+					movDTO.setObservacao("Negociação por comissão");
 					movDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 					movDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 					movDTO.setUsuario(usuario);
@@ -2135,7 +2135,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param indConferenciaContingencia
 	 */
 	@Transactional(readOnly=true)
-	public void validarQtdeEncalheExcedeQtdeReparte(
+	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Cota cota, 
 			Date dataOperacao, boolean indConferenciaContingencia) {
@@ -2161,7 +2161,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				return true;
 			}
 			
 		} else {
@@ -2170,11 +2171,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo( qtdeOld.add(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) ) > 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+				return true;
 			}
 			
 		}
 		
+		return false;
 	}
 	
 	/**
@@ -2788,6 +2791,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			) {
 		
 		Cobranca cobranca = null;
+		
 		TipoCobranca tipoCobranca = null;
 		
 		if (nossoNumero != null) {
@@ -2802,39 +2806,40 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		switch(tipoDocumentoConferenciaEncalhe) {
 		
-		case SLIP_PDF :
-			
-			return this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
-		
-		case BOLETO:
-			
-			if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
-			
-				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+			case SLIP_PDF :
 				
-			} else {
+				return this.documentoCobrancaService.gerarSlipCobranca(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
+			
+			case BOLETO:
+				
+				if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
+				
+					return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+					
+				} else {
+					
+					return null;
+				}
+				
+			case RECIBO:
+				
+				if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
+					
+					return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+					
+				} else {
+					
+					return null;
+				}
+				
+			case SLIP_TXT:
+				
+				return this.documentoCobrancaService.gerarSlipCobrancaMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
+				
+			default:
 				
 				return null;
-			}
-			
-		case RECIBO:
-			
-			if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
 				
-				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
-				
-			} else {
-				
-				return null;
-			}
-			
-		case SLIP_TXT:
-			
-			return this.documentoCobrancaService.gerarSlipCobrancaMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
-			
-		default:
-			
-			return null;
 		}	
 	}
 	
