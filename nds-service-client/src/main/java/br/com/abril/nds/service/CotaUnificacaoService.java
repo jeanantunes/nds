@@ -1,5 +1,7 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
 import br.com.abril.nds.model.cadastro.CotaUnificacao;
 
 
@@ -10,9 +12,24 @@ import br.com.abril.nds.model.cadastro.CotaUnificacao;
  * @author Discover Technology
  */
 public interface CotaUnificacaoService {
+	
+	/**
+	 * Valida na alteração se Cota já está em outra Centralização como Cota Centralizada ou Centralizadora
+	 * 
+	 * @param cotaUnificacaoId
+	 * @param numeroCota
+	 */
+	void validaAlteracaoUnificacaoCota(Long cotaUnificacaoId, Integer numeroCota);
+	
+	/**
+	 * Valida na inclusão se Cota já está em outra Centralização como Cota Centralizada ou Centralizadora
+	 * 
+	 * @param numeroCota
+	 */
+	void validaNovaUnificacaoCota(Integer numeroCota);
 
 	/**
-	 * Salva/Altera Unificação de Cotas
+	 * Salva/Altera Unificação de Cota
 	 * 
 	 * @param cotaUnificacaoId
 	 * @param numeroCotaCentralizadora
@@ -21,6 +38,17 @@ public interface CotaUnificacaoService {
 	public void salvarCotaUnificacao(Long cotaUnificacaoId,
 			                         Integer numeroCotaCentralizadora, 
 			                         Integer numeroCotaCentralizada);
+	
+	/**
+	 * Salva/Altera Unificação de Cotas
+	 * 
+	 * @param cotaUnificacaoId
+	 * @param numeroCotaCentralizadora
+	 * @param numeroCotasCentralizadas
+	 */
+	void salvarCotaUnificacao(Long cotaUnificacaoId,
+							  Integer numeroCotaCentralizadora,
+			                  List<Integer> numeroCotasCentralizadas);
 	
 	/**
 	 * Remove Unificação de Cotas

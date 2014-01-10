@@ -227,6 +227,13 @@ var gruposPermissaoController = $.extend(true, {
 				else	
 					linha.cell.descricao = '<div style="font-weight: bolder;padding: 0px">' + linha.cell.descricao + '</div>'; 
 				
+				if (linha.cell.observacao){
+					
+					linha.cell.descricao = '<span><a title="' + linha.cell.observacao + '"/>'+
+						linha.cell.descricao
+						+'</span>';
+				}
+				
 				var alteracao = linha.cell.alteracao;
 				
 				var visualizacao = linha.cell.visualizacao;
@@ -336,3 +343,5 @@ var gruposPermissaoController = $.extend(true, {
 		}
 		
 }, BaseController);
+
+//@ sourceURL=gruposPermissao.js

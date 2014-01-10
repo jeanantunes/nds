@@ -238,13 +238,12 @@
 									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 								</a>
 							</span>
-						</c:if>
-						
-						<span class="bt_novos"> 
+							<span class="bt_novos"> 
 							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.exibirConfirmacaoExclusaoNota()" rel="tipsy" title="Excluir">
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
 							</a> 
 						</span>
+						</c:if>
 						
 					</div>	
 
@@ -267,14 +266,13 @@
 								<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento Físico"> 
 									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
 								</a>
-							</span>				
-						</c:if>		
-						
-						<span class="bt_novos"> 
+							</span>
+							<span class="bt_novos"> 
 							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.exibirConfirmacaoExclusaoNota()" rel="tipsy" title="Excluir">
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
 							</a> 
-						</span>
+						</span>			
+						</c:if>		
 
 					</div>
 		</div>
@@ -364,12 +362,14 @@
 							<table class="itemNotaGrid"></table>
 	
 						</div>
-	
-						<span class="bt_sellAll" style="float:right; margin-right:40px;">
-							<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
-							<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" 
-								onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
-						</span>
+						
+						<c:if test="${permissaoGridColRepartePrevisto eq true}">
+							<span class="bt_sellAll" style="float:right; margin-right:40px;">
+								<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
+								<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" 
+									onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+							</span>
+						</c:if>
 						
 						<span style="float:right; margin-right:40px;" id="spanTotalComDescontoLbl">
 							<label>Total com desconto: </label>

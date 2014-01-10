@@ -405,12 +405,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@Override
 	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
 		
-		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		StringBuilder hql = new StringBuilder("select count(cfe.id) ");
+		hql.append(" from ControleFechamentoEncalhe cfe ")
+		   .append(" where cfe.dataEncalhe = :dataEncalhe ");
 		
-		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataEncalhe", dataEncalhe);
 		
-		return !criteria.list().isEmpty();
-		
+		return (Long)query.uniqueResult() != 0;
 	}
 	
 	@Override
