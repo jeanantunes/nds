@@ -880,8 +880,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 					matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
 			
 			} else {
-			
-				produtosLancamentoNaoProcessados.add(produtoLancamento);
+				
+			     produtosLancamentoNaoProcessados.add(produtoLancamento);
 			}
 		}
 		

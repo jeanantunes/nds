@@ -53,7 +53,7 @@
 				<textElement>
 					<font fontName="Calibri" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rota/Roteiro:]]></text>
+				<text><![CDATA[Roteiro/Rota:]]></text>
 			</staticText>
 			<textField>
 				<reportElement uuid="56e4a884-0927-48a7-8a14-49ad6ed85c48" x="259" y="0" width="296" height="20"/>
@@ -74,7 +74,7 @@
 				<textElement>
 					<font fontName="Calibri" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rota} + " " + $F{roteiro}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{roteiro} + " " + $F{rota}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="2c1699dd-4913-489e-97ca-3ab7e037d867" x="0" y="90" width="555" height="20"/>
