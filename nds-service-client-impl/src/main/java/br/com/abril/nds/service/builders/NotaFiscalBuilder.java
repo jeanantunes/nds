@@ -6,17 +6,17 @@ import java.util.Date;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
+import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 public class NotaFiscalBuilder implements Serializable {
 	
@@ -79,7 +79,7 @@ public class NotaFiscalBuilder implements Serializable {
 		}
 		
 		if(notaFiscal2.getIdentificacaoEmitente().getEndereco() == null) {
-			notaFiscal2.getIdentificacaoEmitente().setEndereco(new Endereco());
+			notaFiscal2.getIdentificacaoEmitente().setEndereco(new NotaFicalEndereco());
 		}
 		
 		// Dados do Distribuidor

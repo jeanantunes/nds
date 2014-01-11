@@ -246,6 +246,7 @@ import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 public class DataLoader {
     
@@ -12295,8 +12296,8 @@ public class DataLoader {
 		String documento 	= "";
 		String email 		= "";
 		
-		Endereco enderecoDestinatario 	= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", "4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ",3543402);
+		NotaFicalEndereco enderecoDestinatario 	= 
+				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", "4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ",3543402);
 		
 		session.save(enderecoDestinatario);
 		
@@ -12322,8 +12323,8 @@ public class DataLoader {
 		String cnae = "";
 		String documentoEmitente = "";
 		
-		Endereco enderecoEmitente= 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585", "Jrd Brasil", "Santana do Livramento", "RJ",6);
+		NotaFicalEndereco enderecoEmitente= 
+				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585", "Jrd Brasil", "Santana do Livramento", "RJ",6);
 		
 		session.save(enderecoEmitente);
 		
