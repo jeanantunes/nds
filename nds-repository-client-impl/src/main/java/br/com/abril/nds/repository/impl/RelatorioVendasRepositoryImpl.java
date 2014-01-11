@@ -1,8 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -19,9 +17,6 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 
@@ -122,9 +117,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 		
 		
-		sql.append(" subRnkg.participacao as participacao,	");
+		sql.append(" subRnkg.participacao as participacao,			");
 		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
-		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa	");
+		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa		");
 		
 		sql.append(" from ( ");
 		
@@ -136,16 +131,16 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
 		sql.append(" consolidado.CIDADE_COTA AS municipio, 	");
 		
-		sql.append(" consolidado.valor as participacao,	");
-		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
-		sql.append(" consolidado.faturamentoCapa as faturamentoCapa	");
+		sql.append(" sum(consolidado.valor) as participacao,	");
+		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
+		sql.append(" sum(consolidado.faturamentoCapa) as faturamentoCapa	");
 		
 		sql.append("   from ");
 		
 		sql.append(obterFromWhereObterCurvaABC(filtro));
 		
 		sql.append(" GROUP BY consolidado.COTA_ID ");
-		sql.append(" ORDER BY consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
@@ -201,13 +196,13 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("( SELECT ");
 		sql.append(" consolidado.EDITOR_ID AS codigoEditor, 			");
 		sql.append(" consolidado.RAZAO_SOCIAL_EDITOR AS nomeEditor, 	");
-		sql.append(" consolidado.faturamentoCapa AS faturamentoCapa,	");
-		sql.append(" consolidado.valor AS participacao,						");
-		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
-		sql.append(" consolidado.reparte as reparte,					");
-		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
-		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
-		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
+		sql.append(" sum(consolidado.faturamentoCapa) AS faturamentoCapa,	");
+		sql.append(" sum(consolidado.valor) AS participacao,						");
+		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
+		sql.append(" sum(consolidado.reparte) as reparte,					");
+		sql.append(" sum(consolidado.porcentagemVendaExemplares) as porcentagemVendaExemplares,		");
+		sql.append(" sum(consolidado.valorMargemDistribuidor) as valorMargemDistribuidor, 			");
+		sql.append(" sum(consolidado.porcentagemMargemDistribuidor) as porcentagemMargemDistribuidor	");
 
 		sql.append(" from ");
 		
@@ -215,7 +210,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" GROUP BY consolidado.EDITOR_ID ");
 		
-		sql.append(" ORDER BY consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -271,12 +266,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" consolidado.NOME_PRODUTO AS nomeProduto, 			");
 		sql.append(" consolidado.NUMERO_EDICAO AS edicaoProduto, 		");
 		
-		sql.append(" consolidado.valor as participacao,	");
-		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
-		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
-		
-		sql.append(" consolidado.reparte as reparte,	");
-		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares		");
+		sql.append(" sum(consolidado.valor) as participacao,				");
+		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
+		sql.append(" sum(consolidado.faturamentoCapa) as faturamentoCapa,	");
+		sql.append(" sum(consolidado.reparte) as reparte,	");
+		sql.append(" sum(consolidado.porcentagemVendaExemplares) as porcentagemVendaExemplares		");
 		
 		sql.append(" from ");
 		
@@ -284,7 +278,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" GROUP BY consolidado.PRODUTO_EDICAO_ID ");
 		
-		sql.append(" ORDER BY consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -330,7 +324,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" produto.nome as NOME_PRODUTO,				");
 		sql.append(" movimento_estoque_cota.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID, ");
 		sql.append(" produto_edicao.NUMERO_EDICAO AS NUMERO_EDICAO, ");
-		sql.append(" movimento_estoque_cota.DATA AS DATA_MOVIMENTO, ");
 		sql.append(" produto_edicao.PRECO_VENDA AS PRECO_VENDA,		");
 		
 		//valor venda com desconto
@@ -411,19 +404,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("	inner join editor on editor.id = produto.editor_id                                                               ");
 		sql.append("	inner join pessoa pessoaeditor on editor.juridica_id = pessoaeditor.id                                           ");
 		sql.append("	left join desconto_logistica descontologistica on descontologistica.id = produto_edicao.desconto_logistica_id    ");
-		sql.append("	inner join lancamento on lancamento.id =                                                                         ");
-		sql.append("	(                                                                                                                ");
-		sql.append("		case when (produto_edicao.parcial)                                                                           ");
-		sql.append("				then (select id from lancamento where produto_edicao_id = produto_edicao.id                          ");
-		sql.append("							order by id asc limit 1)                                                                 ");
-		sql.append("				else (select id from lancamento where produto_edicao_id = produto_edicao.id                          ");
-		sql.append("							order by id desc limit 1)                                                                ");
-		sql.append("			end                                                                                                      ");
-		sql.append("	)                                                                                                                ");
-	    sql.append("                                                                                                                     ");
+		sql.append("	inner join lancamento on lancamento.produto_edicao_id = produto_edicao.id										 ");
 		sql.append("	left join fechamento_encalhe fechamentoencalhe on                                                                ");
-		sql.append("		(fechamentoencalhe.data_encalhe = lancamento.data_rec_distrib                                                ");
-		sql.append("		and fechamentoencalhe.produto_edicao_id = produto_edicao.id)                                                 ");
+		sql.append("	(fechamentoencalhe.data_encalhe = lancamento.data_rec_distrib                                                ");
+		sql.append("	and fechamentoencalhe.produto_edicao_id = produto_edicao.id)                                                 ");
 		
 		sql.append("	WHERE	");
 		
@@ -431,11 +415,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(this.getFiltroCurvaABC(filtro, null));
 		
-		sql.append("		group by movimento_estoque_cota.PRODUTO_EDICAO_ID,   ");
-		sql.append("		movimento_estoque_cota.COTA_ID, ");
-		sql.append("		movimento_estoque_cota.DATA     ");
-		
-		sql.append("		order by movimento_estoque_cota.DATA desc ) as consolidado ");
+		sql.append("	group by    ");
+		sql.append("	movimento_estoque_cota.PRODUTO_EDICAO_ID,			");
+		sql.append("	movimento_estoque_cota.COTA_ID	) as consolidado	");
 		
 		return sql;
 	}
