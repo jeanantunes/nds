@@ -8,12 +8,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -70,7 +70,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	@OneToOne(optional=false)
 	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	@NFEExportType
-	private Endereco endereco;
+	private NotaFicalEndereco endereco;
 	
 	@OneToOne(optional=true)
 	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
@@ -195,7 +195,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @return the endereco
 	 */
-	public Endereco getEndereco() {
+	public NotaFicalEndereco getEndereco() {
 		return endereco;
 	}
 
@@ -203,7 +203,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @param endereco the endereco to set
 	 */
-	public void setEndereco(Endereco endereco) {
+	public void setEndereco(NotaFicalEndereco endereco) {
 		this.endereco = endereco;
 	}
 

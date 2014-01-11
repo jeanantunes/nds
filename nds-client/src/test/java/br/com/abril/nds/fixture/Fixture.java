@@ -176,6 +176,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
@@ -185,7 +186,6 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNfe;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
@@ -254,6 +254,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCo
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 
 public class Fixture {
@@ -2375,6 +2376,23 @@ public class Fixture {
 		return endereco;
 	}
 	
+	public static NotaFicalEndereco criarEnderecoNotaFiscal(TipoEndereco tipoEndereco, String cep,
+			 String logradouro, String numero, 
+			 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
+
+		NotaFicalEndereco endereco = new NotaFicalEndereco();
+		
+		endereco.setBairro(bairro);
+		// endereco.setCep(cep);
+		endereco.setCidade(cidade);
+		endereco.setLogradouro(logradouro);
+		endereco.setNumero(numero);
+		endereco.setUf(uf);
+		// endereco.setCodigoCidadeIBGE(codigoCidadeIBGE);
+		
+		return endereco;
+	}
+	
 	public static ParametroSistema[] criarParametrosEmail() {
 		
 		ParametroSistema[] parametrosEmail = new ParametroSistema[5];
@@ -3514,7 +3532,7 @@ public class Fixture {
 	public static IdentificacaoEmitente identificacaoEmitente(
 			String cnae,
 			String documento,
-			Endereco endereco,
+			br.com.abril.nfe.model.NotaFicalEndereco endereco,
 			String inscricaoEstadual,
 			String inscricaoEstadualSubstituto,
 			String inscricaoMunicipal,
@@ -3546,7 +3564,7 @@ public class Fixture {
 	public static IdentificacaoDestinatario identificacaoDestinatario(
 			String documento,
 			String email,
-			Endereco endereco,
+			br.com.abril.nfe.model.NotaFicalEndereco endereco,
 			String inscricaoEstadual,
 			String inscricaoSuframa,
 			String nome,

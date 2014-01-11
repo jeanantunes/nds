@@ -57,6 +57,7 @@ import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 @Service
 public class MonitorNFEServiceImpl implements MonitorNFEService {
@@ -269,7 +270,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		} 
 		
 		String documento 	= identificacaoEmitente.getDocumento();
-		Endereco endereco 	= identificacaoEmitente.getEndereco();
+		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
 		Telefone telefone 	= identificacaoEmitente.getTelefone();
 	
 		String emissorNome 							 = identificacaoEmitente.getNome();
@@ -299,7 +300,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			emissorBairro 		= endereco.getBairro();
 			emissorMunicipio 	= endereco.getCidade();
 			emissorUF 			= endereco.getUf();
-			emissorCEP 			= endereco.getCep();
+			// emissorCEP 			= endereco.getCep();
 			
 		}
 		
@@ -391,7 +392,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String documento 			= identificacaoDestinatario.getDocumento();
 		Pessoa pessoaDestinatario 	= identificacaoDestinatario.getPessoaDestinatarioReferencia();
 		
-		Endereco endereco = identificacaoDestinatario.getEndereco();
+		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
 		boolean indPessoaJuridica = false;
@@ -425,7 +426,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			destinatarioBairro	=	endereco.getBairro();
 			destinatarioMunicipio	=	 endereco.getCidade();
 			destinatarioUF	=	endereco.getUf();
-			destinatarioCEP	=	endereco.getCep();
+			// destinatarioCEP	=	endereco.getCep();
 			
 		}
 		

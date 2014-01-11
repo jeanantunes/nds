@@ -3,13 +3,13 @@ package br.com.abril.nds.service.builders;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 public class EmitenteDestinatarioBuilder {
 	
@@ -48,7 +48,7 @@ public class EmitenteDestinatarioBuilder {
 		}
 		
 		if(notaFiscal2.getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new Endereco());
+			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
 		}
 		
 		if (cota.getPessoa() instanceof PessoaJuridica) {
@@ -73,7 +73,7 @@ public class EmitenteDestinatarioBuilder {
 		}
 		
 		if(notaFiscal2.getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new Endereco());
+			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
 		}
 		
 		
