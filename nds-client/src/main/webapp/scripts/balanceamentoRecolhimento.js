@@ -1242,7 +1242,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	obterDatasConfirmadasParaReabertura: function() {
 		$.getJSON(
-			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadas", 
+			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReabertura", 
 			null,
 			function(result) {
 				

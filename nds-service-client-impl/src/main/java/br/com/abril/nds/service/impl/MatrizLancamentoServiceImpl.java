@@ -1479,8 +1479,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 					&& isDataNoPeriodo)) {
 			
 			return false;
-		}else if(produtoLancamento.getPeb()!=null && produtoLancamento.getPeb()<21 && isDataNoPeriodo){
-			return false;
 		}else{
 		    return true;
 		}

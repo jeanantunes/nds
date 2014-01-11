@@ -150,6 +150,12 @@ balanceamentoLancamento.inicializar();
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						    </a>
 						</span>
+						
+						<span class="bt_novos" >
+				            <a isEdicao="true" id="linkReabrirMatriz" href="javascript:;" title="Reabrir Matriz">
+					             <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				           </a>
+			            </span>
 			  		</div>
 			  </div>
 			  <div class="linha_separa_fields">&nbsp;</div>

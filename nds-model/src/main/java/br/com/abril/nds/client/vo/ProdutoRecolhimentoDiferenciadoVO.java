@@ -13,7 +13,7 @@ import br.com.abril.nds.util.export.Exportable;
  * @author Discover Technology
  */
 @Exportable
-public class ProdutoRecolhimentoVO {
+public class ProdutoRecolhimentoDiferenciadoVO {
 
 	private String idLancamento;
 	
@@ -56,8 +56,10 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Rcto")
 	private Date dataRecolhimento;
 	
+	@Export(label="Sede")
 	private String encalheSedeFormatado;
 	
+	@Export(label="Atendida")
 	private String encalheAtendidaFormatado;
 	
 	@Export(label="Exemplar")
