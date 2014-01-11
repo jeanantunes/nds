@@ -1283,8 +1283,7 @@ public class MatrizLancamentoController extends BaseController {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
 		}
-		
-		//this.recolhimentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
+		this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
 
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();

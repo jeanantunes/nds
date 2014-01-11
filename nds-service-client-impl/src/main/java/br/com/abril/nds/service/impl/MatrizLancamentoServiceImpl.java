@@ -44,6 +44,7 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -61,6 +62,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
@@ -1828,6 +1832,65 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		SALVAR,
 		CONFIRMAR;
+	}
+	
+	@Transactional
+	public void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario) {
+		
+		this.validarReaberturaMatriz(
+			datasConfirmadas, this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		List<Lancamento> lancamentos = 
+			this.lancamentoRepository.obterMatrizLancamentosConfirmados(datasConfirmadas);
+		
+		for(Lancamento lancamento: lancamentos) {
+			
+			this.validarLancamentoParaReabertura(lancamento);
+			
+			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
+			
+			lancamento.setUsuario(usuario);
+			
+			this.lancamentoRepository.alterar(lancamento);
+			
+		}
+	}
+	
+	private void validarLancamentoParaReabertura(Lancamento lancamento) {
+		
+		if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Existem lançamentos que já se econtram em processo de lançamento!");
+		}
+		
+	}
+	
+    
+	private void validarReaberturaMatriz(List<Date> datasConfirmadas, Date dataOperacao) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (datasConfirmadas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data foi informada!");
+		}
+		
+		for (Date dataConfirmada : datasConfirmadas) {
+			
+			if (dataConfirmada.compareTo(dataOperacao) <= 0) {
+				
+				String dataFormatada = DateUtil.formatarDataPTBR(dataConfirmada);
+				
+				mensagens.add("Para reabrir a matriz, a data (" + dataFormatada
+					+ ") deve ser maior que a data de operação!");
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
 	}
 	
 }
