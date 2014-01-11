@@ -35,18 +35,10 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
-import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
-import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
-import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
-import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -60,22 +52,14 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.nota.COFINS;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
-import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
-import br.com.abril.nds.model.fiscal.nota.ICMS;
-import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
-import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
-import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
-import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
-import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
@@ -84,7 +68,6 @@ import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
-import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -108,10 +91,8 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
-import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -604,6 +585,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * 
 	 * @return
 	 */
+	/*
+
 	private IdentificacaoEmitente carregaEmitente() {
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 
@@ -652,6 +635,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return identificacaoEmitente;
 	}
+	 */
 	
 	/**
 	 * Grupo de identificação do Destinatário da NF-e
@@ -659,6 +643,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param cota
 	 * @return
 	 */
+	
+	/**
+	 
 	private IdentificacaoDestinatario carregaDestinatario(Cota cota) {
 		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
 		if (cota == null) {
@@ -708,7 +695,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
         
 		return destinatario;
 	}
-
+	 */
 
 	/**
 	 * Grupo de identificação do Destinatário da NF-e
@@ -716,6 +703,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param cota
 	 * @return
 	 */
+	/*
+	 
 	private IdentificacaoDestinatario carregaDestinatario(Fornecedor fornecedor) {
 		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
 		if (fornecedor == null) {
@@ -759,7 +748,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return destinatario;
 	}
-
+* 
+	*/
+	
 	/**
 	 * Grupo do detalhamento de Produtos e Serviços da NF-e
 	 * 
@@ -913,6 +904,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return produtoServico;
 	}
 
+	/* 
+	
 	@Override
 	@Transactional
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
@@ -979,14 +972,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 
-			ProdutoServico produtoServico = null; /*carregaProdutoServico(fornecedor,
-					itemNotaFiscal.getIdProdutoEdicao(),
-					itemNotaFiscal.getQuantidade(), cfop,
-					tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino,
-					tipoNotaFiscal.getNopCodigo().intValue(),
-					tipoNotaFiscal.getNopDescricao(), dataEmissao,
-					itemNotaFiscal.getValorUnitario(), raizCNPJ,
-					itemNotaFiscal.getCstICMS());*/
+			ProdutoServico produtoServico = null; 
+				//carregaProdutoServico(fornecedor,
+				//	itemNotaFiscal.getIdProdutoEdicao(),
+				//	itemNotaFiscal.getQuantidade(), cfop,
+				//	tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino,
+				//	tipoNotaFiscal.getNopCodigo().intValue(),
+				//	tipoNotaFiscal.getNopDescricao(), dataEmissao,
+				//	itemNotaFiscal.getValorUnitario(), raizCNPJ,
+				//	itemNotaFiscal.getCstICMS());
 
 			produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
 					sequencia++));
@@ -1045,9 +1039,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaFiscal.getId();
 
 	}
+	*/
 
-
-
+	/*
+	  
+	 
 	@Override
 	@Transactional(readOnly=true)
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
@@ -1139,14 +1135,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		int sequencia = 1;
 		for (ItemNotaFiscalSaida itemNotaFiscal : listItemNotaFiscal) {
 
-			ProdutoServico produtoServico = null; /*carregaProdutoServico(cota,
-					itemNotaFiscal.getIdProdutoEdicao(),
-					itemNotaFiscal.getQuantidade(), cfop,
-					tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino,
-					tipoNotaFiscal.getNopCodigo().intValue(),
-					tipoNotaFiscal.getNopDescricao(), dataEmissao,
-					itemNotaFiscal.getValorUnitario(), raizCNPJ,
-					itemNotaFiscal.getCstICMS(), descontos);*/
+			ProdutoServico produtoServico = null; 
+				// carregaProdutoServico(cota,
+				//	itemNotaFiscal.getIdProdutoEdicao(),
+				//	itemNotaFiscal.getQuantidade(), cfop,
+				//	tipoNotaFiscal.getTipoOperacao(), ufOrigem, ufDestino,
+				//	tipoNotaFiscal.getNopCodigo().intValue(),
+				//	tipoNotaFiscal.getNopDescricao(), dataEmissao,
+				//	itemNotaFiscal.getValorUnitario(), raizCNPJ,
+				//	itemNotaFiscal.getCstICMS(), descontos);
 
 			produtoServico.setProdutoServicoPK(new ProdutoServicoPK(notaFiscal,
 					sequencia++));
@@ -1194,8 +1191,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return notaFiscal.getId();
 
 	}
-
-	/*
+	 */
+	
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see

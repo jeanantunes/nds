@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 @Embeddable
 public class IdentificacaoEmitente implements Serializable {
@@ -109,7 +110,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@OneToOne(optional=false)
 	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	@NFEExportType
-	private Endereco endereco;
+	private NotaFicalEndereco endereco;
 	
 	@OneToOne(optional=true)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE")
@@ -291,7 +292,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @return the endereco
 	 */
-	public Endereco getEndereco() {
+	public NotaFicalEndereco getEndereco() {
 		return endereco;
 	}
 
@@ -300,7 +301,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @param endereco the endereco to set
 	 */
-	public void setEndereco(Endereco endereco) {
+	public void setEndereco(NotaFicalEndereco endereco) {
 		this.endereco = endereco;
 	}
 

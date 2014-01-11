@@ -889,8 +889,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					Set<Processo> processos = new HashSet<Processo>();
 					processos.add(Processo.GERACAO_NF_E);
 					
-					Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, 
-							listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, null);
+					
+					Long idNotaFiscal = null;
+					
+					/**
+					 * TODO
+					 * 
+					 * Gerar Nota Fiscal no fechamento de encalhe 
+					 *  
+					 */
+					
+					// this.notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, null);
 				
 					NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 
@@ -927,7 +936,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return tipoNotaFiscal;
 	}
 
-	@SuppressWarnings("unused")
 	@Transactional
 	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
 		

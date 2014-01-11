@@ -703,7 +703,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		processos.add(Processo.DEVOLUCAO_AO_FORNECEDOR);
 		
-		Long idNota = notaFiscalService.emitiNotaFiscal(
+		Long idNota = null; 
+		
+		/*
+		notaFiscalService.emitiNotaFiscal(
 				tipoNotaFiscal.getId(), 
 				new Date(), 
 				fornecedor, 
@@ -713,7 +716,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				null, 
 				processos, 
 				Condicao.DEVOLUCAO_ENCALHE);
-
+		*/
+		
 		this.gerarMovimentoEstoque(listaAgrupadaContagemDevolucao);
 		
 		List<NotaFiscal> listaNotas = new ArrayList<NotaFiscal>();

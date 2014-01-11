@@ -64,6 +64,7 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nfe.model.NotaFicalEndereco;
 
 @Service
 public class NFeServiceImpl implements NFeService {
@@ -301,7 +302,7 @@ public class NFeServiceImpl implements NFeService {
 		} 
 
 		String documento 	= identificacaoEmitente.getDocumento();
-		Endereco endereco 	= identificacaoEmitente.getEndereco();
+		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
 		Telefone telefone 	= identificacaoEmitente.getTelefone();
 
 		String emissorNome 							 = identificacaoEmitente.getNome();
@@ -331,7 +332,7 @@ public class NFeServiceImpl implements NFeService {
 			emissorBairro 		= endereco.getBairro();
 			emissorMunicipio 	= endereco.getCidade();
 			emissorUF 			= endereco.getUf();
-			emissorCEP 			= endereco.getCep();
+			// emissorCEP 			= endereco.getCep();
 
 		}
 
@@ -423,7 +424,7 @@ public class NFeServiceImpl implements NFeService {
 		String documento 			= identificacaoDestinatario.getDocumento();
 		Pessoa pessoaDestinatario 	= identificacaoDestinatario.getPessoaDestinatarioReferencia();
 
-		Endereco endereco = identificacaoDestinatario.getEndereco();
+		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 
 		boolean indPessoaJuridica = false;
@@ -457,7 +458,7 @@ public class NFeServiceImpl implements NFeService {
 			destinatarioBairro	=	endereco.getBairro();
 			destinatarioMunicipio	=	 endereco.getCidade();
 			destinatarioUF	=	endereco.getUf();
-			destinatarioCEP	=	endereco.getCep();
+			// destinatarioCEP	=	endereco.getCep();
 
 		}
 
