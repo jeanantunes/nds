@@ -37,7 +37,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			}
 		);
-	},
+	}, 
 
 	confirmacaoConfiguracaoInicial : function(funcao) {
 		

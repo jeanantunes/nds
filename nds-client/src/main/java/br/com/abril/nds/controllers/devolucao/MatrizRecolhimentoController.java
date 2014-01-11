@@ -1764,7 +1764,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.result.use(Results.json()).from(datasConfirmadas, "result").serialize();
 	}
 	
-	@Get
+	@Get 
 	public void obterDatasConfirmadasReabertura() {
 		
 		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();

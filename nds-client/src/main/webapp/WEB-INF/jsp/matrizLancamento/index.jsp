@@ -154,7 +154,7 @@ balanceamentoLancamento.inicializar();
 						<span class="bt_novos" >
 				            <a isEdicao="true" id="linkReabrirMatriz" href="javascript:;" title="Reabrir Matriz">
 					             <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
-				           </a>
+				           </a> 
 			            </span>
 			  		</div>
 			  </div>

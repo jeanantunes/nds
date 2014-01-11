@@ -1249,7 +1249,7 @@ public class MatrizLancamentoController extends BaseController {
 
 		List<String> datasConfirmadasReabertura = new ArrayList<>();
 		
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy"); 
 		Date data = new Date();
 		
 		

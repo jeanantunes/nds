@@ -10,7 +10,7 @@ import br.com.abril.nds.util.export.Exportable;
 /**
  * Value Object para os produtos da matriz de recolhimento.
  * 
- * @author Discover Technology
+ * @author Discover Technology 
  */
 @Exportable
 public class ProdutoRecolhimentoVO {

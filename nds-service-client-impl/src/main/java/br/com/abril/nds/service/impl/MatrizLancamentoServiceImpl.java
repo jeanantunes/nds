@@ -54,7 +54,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
-	DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento;
+	DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento; 
 	
 	@Autowired
 	protected LancamentoRepository lancamentoRepository;

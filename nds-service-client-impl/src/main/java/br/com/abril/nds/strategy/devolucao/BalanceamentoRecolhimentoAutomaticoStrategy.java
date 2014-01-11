@@ -25,7 +25,7 @@ import br.com.abril.nds.service.RecolhimentoService;
 /**
  * Estratégia de balanceamento de recolhimento automático.
  * 
- * @author Discover Technology
+ * @author Discover Technology 
  *
  */
 public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalanceamentoRecolhimentoStrategy {
