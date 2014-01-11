@@ -54,7 +54,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
-	DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento;
+	DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento; 
 	
 	@Autowired
 	protected LancamentoRepository lancamentoRepository;
@@ -1478,8 +1478,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 					|| produtoLancamento.isStatusLancamentoFuro()
 					&& isDataNoPeriodo)) {
 			
-			return false;
-		}else if(produtoLancamento.getPeb()!=null && produtoLancamento.getPeb()!=0 && produtoLancamento.getPeb()<21 && isDataNoPeriodo){
 			return false;
 		}else{
 		    return true;
