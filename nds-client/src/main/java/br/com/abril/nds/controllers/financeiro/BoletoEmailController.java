@@ -50,6 +50,7 @@ public class BoletoEmailController extends BaseController {
 	@Path("/")
 	public void index() {
 		
+		this.session.removeAttribute(STATUS_BOLETO_EMAIL_SESSION);
 	}
 	
 	@Post
@@ -75,7 +76,7 @@ public class BoletoEmailController extends BaseController {
 		for(BoletoEmail bm : listaBoletoEmail){
 			
 			this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir);
-
+			
 		    try{
 
 				this.boletoEmailService.enviarBoletoEmail(bm);
