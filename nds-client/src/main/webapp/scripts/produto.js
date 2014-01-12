@@ -23,6 +23,10 @@ var produtoController = $.extend(true, {
 			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
 		});
 		
+		$('#nomeProduto', produtoController.workspace).focus(function (){
+			produtoController.atualizaICD();
+		});
+		
 		$('#produto', produtoController.workspace).keyup(function(event){
 			if (event.keyCode !== 9)
 				produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
@@ -521,6 +525,7 @@ var produtoController = $.extend(true, {
 			},
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
+				$("#comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
 			},
 			form: $("#dialog-excluir", this.workspace).parents("form")
 		});

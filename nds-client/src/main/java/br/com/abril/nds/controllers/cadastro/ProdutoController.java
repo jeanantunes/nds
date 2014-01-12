@@ -919,7 +919,7 @@ public class ProdutoController extends BaseController {
 			
 			listaProdutos =
 					this.produtoService.pesquisarProdutos(filtro.getCodigo(), filtro.getNome(), filtro.getFornecedor(), filtro.getEditor(), 
-						filtro.getTipoProduto().getCodigo(), null, null, 0, 0, null);
+						filtro.getTipoProduto().getCodigo(), null, null, 0, 0, filtro.getIsGeracaoAutomatica());
 		}
 		
 		if (listaProdutos == null || listaProdutos.isEmpty()){
@@ -927,7 +927,12 @@ public class ProdutoController extends BaseController {
 			listaProdutos = new ArrayList<ConsultaProdutoDTO>();
 		}
 		
+		/*
 		FileExporter.to("produtos", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaProdutos, ConsultaProdutoDTO.class, this.response);
+		*/
+		
+		FileExporter.to("produtos", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaProdutos, ConsultaProdutoDTO.class, this.response);
 		
 		result.nothing();
