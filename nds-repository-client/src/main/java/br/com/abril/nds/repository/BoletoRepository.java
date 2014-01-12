@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.BoletoCotaDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
@@ -24,9 +25,9 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * 
 	 * @param filtro - parametros de busca
 	 * 
-	 * @return {@link List<Boleto>}
+	 * @return {@link List<BoletoCotaDTO>}
 	 */
-	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
+	List<BoletoCotaDTO> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 	
 	/**
 	 * Obtém a quantidade de Boletos para os parametros passados.
@@ -195,6 +196,6 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 
 	List<Cobranca> obterBoletosNaoPagos(Date data);
 	
-	Long verificaEnvioDeEmail(Boleto boleto);
+	Long verificaEnvioDeEmail(String nossoNumero);
 	
 }

@@ -347,6 +347,8 @@ var desenglobacaoController = $.extend(true, {
 
     },
     popup: function popup(alterando) {
+    	
+    	$('#formInserirEnglobada').show();
 
         desenglobacaoController.res=alterando;
 

@@ -90,7 +90,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		});
 		
 		$("#numBanco", this.workspace).numeric();
-		$("#nomeBanco", this.workspace).numeric();
 		$("#agencia", this.workspace).numeric();
 		$("#agenciaDigito", this.workspace).numeric();
 		$("#conta", this.workspace).numeric();
@@ -410,29 +409,22 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	opcaoPagto : function(op){
-				
+		
+		$('#divRecebeEmail', this.workspace).show();
+		
 		if ((op=='BOLETO')||(op=='BOLETO_EM_BRANCO')){
 			$('#divComboBanco', this.workspace).show();
-			$('#divRecebeEmail', this.workspace).show();
 			$('#divDadosBancarios', this.workspace).hide();
 	    }
 		else if ((op=='CHEQUE')||(op=='TRANSFERENCIA_BANCARIA')){
 			$('#divComboBanco', this.workspace).show();
 			$('#divDadosBancarios', this.workspace).show();
-			$('#divRecebeEmail', this.workspace).hide();
 		}    
 		else if (op=='DEPOSITO'){
 			$('#divDadosBancarios', this.workspace).hide();
-			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).show();
 		}    
-		else if (op=='DINHEIRO'){
-			$('#divRecebeEmail', this.workspace).show();
-			$('#divComboBanco', this.workspace).hide();
-			$('#divDadosBancarios', this.workspace).hide();
-		}    
 		else{
-			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).hide();
 			$('#divDadosBancarios', this.workspace).hide();
 		}	

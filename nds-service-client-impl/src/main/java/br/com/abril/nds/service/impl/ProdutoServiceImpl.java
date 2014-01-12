@@ -124,7 +124,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
         } if (produto == null) {
             produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
-        } if (produto == null) {
+        } if ((produto == null) && (codigoProduto.length() <=8)) {
             produto = produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
         }
         return produto;

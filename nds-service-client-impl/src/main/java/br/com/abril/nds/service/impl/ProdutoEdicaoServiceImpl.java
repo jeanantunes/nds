@@ -344,15 +344,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde,
-			String sortorder, String sortname, int page, int maxResults) {
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco, StatusLancamento statusLancamento, 
+												   String codigoDeBarras, boolean brinde, String sortorder, String sortname, int page, int maxResults) {
 
 		final int initialResult = ((page * maxResults) - maxResults);
 
-        Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-        List<ProdutoEdicaoDTO> edicoes = this.produtoEdicaoRepository.pesquisarEdicoes(produto.getCodigoICD(), nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+        List<ProdutoEdicaoDTO> edicoes = this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 
 		return edicoes;
 	}
@@ -360,12 +357,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	//Parse por conta do merge.
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nome,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
-			String codigoDeBarras, boolean brinde) {
-        Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-        Integer count = this.produtoEdicaoRepository.countPesquisarEdicoes(produto.getCodigoICD(), nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
-        return Long.valueOf(count);
+	public Long countPesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco, 
+									  StatusLancamento statusLancamento, String codigoDeBarras, boolean brinde) {
+
+		Integer count = this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+		
+		return Long.valueOf(count);
     }
 
 	/**

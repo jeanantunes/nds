@@ -92,6 +92,7 @@ public class GruposAcessoController extends BaseController {
 				dto.setAlteracao(p);
 				dto.setDescricao(p.getDescricao());
 				dto.setPai(p.getPermissaoPai());
+				dto.setObservacao(p.getObservacao());
 				permissoes.add(dto);
 			}
 		}		

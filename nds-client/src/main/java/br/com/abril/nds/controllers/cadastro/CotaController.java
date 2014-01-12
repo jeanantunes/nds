@@ -360,12 +360,14 @@ public class CotaController extends BaseController {
 			}
 			
 			cotaVO.setSituacaoCadastro(cota.getSituacaoCadastro());
+
 			if (cota.getSituacaoCadastro() != null) {
-
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
-
 			}
-
+			
+			if (cota.getTipoDistribuicaoCota() != null){
+				cotaVO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota());
+			}
 
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 		}		

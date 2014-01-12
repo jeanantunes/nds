@@ -23,23 +23,25 @@ function porExcessao(){
 	$('#fixacaoReparte_porCota').hide();
 	$('#fixacaoReparte_fixacaoProduto').show();
 }
-function filtroPorCota(){
+
+function filtroPorCotaFixacao(){
 	$('#fixaxaoReparte_filtroPorCota').show();
 	$('#fixacaoReparte_filtroPorProduto').hide();
 	$('#fixacaoReparte_fixacaoProduto').hide();
-	$("#codigoProduto").val("");
-	$("#nomeProduto").val("");
+	$("#codigoProdutoFixacao").val("");
+	$("#nomeProdutoFixacao").val("");
 	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
 	
 }
-function filtroPorProduto(){
+
+function filtroPorProdutoFixacao(){
 	$('#fixaxaoReparte_filtroPorCota').hide();
 	$('#fixacaoReparte_filtroPorProduto').show();
 	$('#fixacaoReparte_porCota').hide();
-	$("#codigoCota").val("");
-	$("#nomeCota").val("");
+	$("#codigoCotaFixacao").val("");
+	$("#nomeCotaFixacao").val("");
 	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
@@ -171,16 +173,16 @@ function mostraIntervalo(){
    	    <legend> Pesquisar Fixação</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
-            <td width="22" align="right"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCota();" /></td>
-            <td width="50"><label for="radio">Cota</label></td>
-            <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
-            <td width="49"><label for="radio2">Produto</label></td>
+            <td width="22" align="right"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCotaFixacao();" /></td>
+            <td width="50"><label >Cota</label></td>
+            <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProdutoFixacao()" /></td>
+            <td width="49"><label >Produto</label></td>
             <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" id="fixacaoReparte_filtroPorProduto" style="display:none;">
           <tr>
             <td width="52">Código:</td>
-            <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
+            <td width="86"><input type="text" name="codigoProdutoFixacao" id="codigoProdutoFixacao"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProdutoFixacao','#nomeProdutoFixacao',false,undefined,undefined )"/></td>
             <td width="48">Produto:</td>
-            <td width="206"><input type="text" name="nomeProduto" id="nomeProduto" style="width:200px;"/></td>
+            <td width="206"><input type="text" name="nomeProdutoFixacao" id="nomeProdutoFixacao" style="width:200px;"/></td>
             <td width="75">Classificação:</td>
             <td width="167">
             	<select name="select" id="filtroClassificacaoFixacao" style="width:160px;">
@@ -200,9 +202,9 @@ function mostraIntervalo(){
            	  <td width="30" >Cota:</td>
                 <td width="91">
                 <!-- pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined) -->
-                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="fixacaoReparteController.autoCompleteNumeroCota('#codigoCota','#nomeCota')"/></td>
+                <input type="text" name="codigoCotaFixacao" id="codigoCotaFixacao" style="width:80px;" onchange="fixacaoReparteController.autoCompleteNumeroCota('#codigoCotaFixacao','#nomeCotaFixacao')"/></td>
                 <td width="37" >Nome:</td>
-                <td width="470"><input type="text" name="nomeCota" id="nomeCota" style="width:200px;"/></td>
+                <td width="470"><input type="text" name="nomeCotaFixacao" id="nomeCotaFixacao" style="width:200px;"/></td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="fixacaoReparteController.pesquisarPorCota();">Pesquisar</a></span></td>
             </tr>
           </table>
@@ -255,10 +257,10 @@ function mostraIntervalo(){
 		    <table width="588" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		        <tr>
 		          <td width="41" id="label1">Cota:</td>
-		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;"/></td>
+		          <td width="66"><input type="text" name="codigoModalFixacao" id="codigoModalFixacao" style="width:60px;"/></td>
 		          <td width="41" id="label2">Nome:</td>
 		          <td width="119">
-		          	<input type="text" name="nomeModal" id="nomeModal" style="width:110px;" onkeyup="fixacaoReparteController.autoCompleteNomeModal();"/>
+		          	<input type="text" name="nomeModalFixacao" id="nomeModalFixacao" style="width:110px;" onkeyup="fixacaoReparteController.autoCompleteNomeModal();"/>
 			       </td>
 			       <td width="119">
 			       		<select name="selectModal" id="selectModal" style="width:160px;display:none;">

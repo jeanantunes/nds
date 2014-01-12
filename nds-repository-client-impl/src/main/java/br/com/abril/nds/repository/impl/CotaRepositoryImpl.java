@@ -48,12 +48,9 @@ import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
-import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -84,7 +81,6 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.ListUtils;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -1257,210 +1253,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		return (numeroCota == null ) ? 0 : numeroCota + 1;
 	}
-
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCota(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT new ").append(RegistroCurvaABCCotaDTO.class.getCanonicalName())
-		.append(" ( estoqueProdutoCota.produtoEdicao.produto.codigo , ")
-		.append("   estoqueProdutoCota.produtoEdicao.produto.nome , ")
-		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
-
-		.append("   (sum(movimentos.qtde)) , ")
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) , ")
-		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id, estoqueProdutoCota.produtoEdicao.id ) ");
-
-		hql.append(getWhereQueryObterCurvaABCCota(filtro));
-		hql.append(getGroupQueryObterCurvaABCCota(filtro));
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		HashMap<String, Object> param = getParametrosObterCurvaABCCota(filtro);
-
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-
-		return complementarCurvaABCCota((List<RegistroCurvaABCCotaDTO>) query.list());
-	}
-
-	/**
-	 * Retorna as tabelas, joins e filtros da Query de seleção do relatório de vendas
-	 * @param filtro
-	 * @return
-	 */
-	private String getWhereQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" FROM EstoqueProdutoCota AS estoqueProdutoCota ")
-		.append(" LEFT JOIN estoqueProdutoCota.movimentos AS movimentos ")
-		.append(" LEFT JOIN movimentos.lancamento as lancamento ")
-		.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao.produto.fornecedores AS fornecedores ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.enderecos AS enderecos ")
-		.append(" LEFT JOIN enderecos.endereco AS endereco ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pdvs AS pdv ")
-		.append(" LEFT JOIN estoqueProdutoCota.cota.pessoa AS pessoa ");
-
-		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
-		hql.append(" AND movimentos.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
-
-		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			hql.append(" AND estoqueProdutoCota.produtoEdicao.produto.codigo = :codigoProduto ");
-		}
-
-		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			hql.append(" AND upper(estoqueProdutoCota.produtoEdicao.produto.nome) like upper ( :nomeProduto ) ");
-		}
-		
-		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
-			hql.append("AND fornecedores.id = :codigoFornecedor ");
-		}
-
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.numeroEdicao in( :edicaoProduto ) ");
-		}
-
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
-			hql.append("AND estoqueProdutoCota.produtoEdicao.produto.editor.codigo = :codigoEditor ");
-		}
-
-		if (filtro.getCodigoCota() != null ) {
-			hql.append("AND estoqueProdutoCota.cota.numeroCota = :codigoCota ");
-		}
-
-		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			hql.append("AND upper(pessoa.nome) like upper( :nomeCota) or upper(pessoa.razaoSocial) like upper(:nomeCota) ");
-		}
-
-		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
-			hql.append("AND endereco.cidade = :municipio ");
-		}
-
-		return hql.toString();
-
-	}
-
-	/**
-	 * Retorna o agrupamento das pesquisas do relatório de vendas
-	 * @param filtro
-	 * @return
-	 */
-	private String getGroupQueryObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" GROUP BY estoqueProdutoCota.produtoEdicao.produto.codigo, ")
-		   .append("   estoqueProdutoCota.produtoEdicao.produto.nome, ")
-		   .append("   estoqueProdutoCota.produtoEdicao.numeroEdicao ");
-
-		return hql.toString();
-	}
-
-	/**
-	 * Popula os parametros da consulta do relatório de vendas.
-	 * @param filtro
-	 * @return HashMap<String,Object>
-	 */
-	private HashMap<String,Object> getParametrosObterCurvaABCCota(FiltroCurvaABCCotaDTO filtro){
-
-		HashMap<String,Object> param = new HashMap<String, Object>();
-
-		param.put("dataDe",  filtro.getDataDe());
-		param.put("dataAte", filtro.getDataAte());
-
-		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		
-		if (filtro.getCodigoCota() != null) {
-			param.put("codigoCota", filtro.getCodigoCota());
-		}
-
-		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
-			param.put("nomeCota", filtro.getNomeCota() +"%");
-		}
-		
-		if (filtro.getCodigoFornecedor() != null && !filtro.getCodigoFornecedor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
-			param.put("codigoFornecedor", Long.parseLong(filtro.getCodigoFornecedor()));
-		}
-
-		if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
-			param.put("codigoProduto", filtro.getCodigoProduto().toString());
-		}
-
-		if (filtro.getNomeProduto() != null && !filtro.getNomeProduto().isEmpty()) {
-			param.put("nomeProduto", filtro.getNomeProduto()+"%");
-		}
-
-		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoFornecedor().equals("0")) {
-			param.put("codigoEditor", Long.parseLong(filtro.getCodigoEditor()));
-		}
-
-		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
-			param.put("municipio", filtro.getMunicipio());
-		}
-		
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			param.put("edicaoProduto", (filtro.getEdicaoProduto()));
-		}
-
-		return param;
-	}
-
-	/**
-	 * Insere os registros de participação e participação acumulada no resultado da consulta HQL
-	 * @param lista
-	 * @return
-	 */
-	private List<RegistroCurvaABCCotaDTO> complementarCurvaABCCota(List<RegistroCurvaABCCotaDTO> lista) {
-
-		BigDecimal participacaoTotal = BigDecimal.ZERO;
-		BigInteger vendaTotal = BigInteger.ZERO;
-
-		// Soma todos os valores de participacao
-		for (RegistroCurvaABCCotaDTO registro : lista) {
-			if (registro.getFaturamento()!=null) {
-				participacaoTotal = participacaoTotal.add(registro.getFaturamento());
-			} 
-			vendaTotal = vendaTotal.add(registro.getVendaExemplares());
-		}
-
-		BigDecimal participacaoRegistro =BigDecimal.ZERO;
-		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
-		BigDecimal porcentagemVendaRegistro = BigDecimal.ZERO;
-		
 	
-		// Verifica o percentual dos valores em relação ao total de participacao
-		for (RegistroCurvaABCCotaDTO registro : lista) {
 
-			if (registro.getFaturamento() != null) {
-				// Partipacao do registro em relacao a participacao total no periodo
-				if ( participacaoTotal.doubleValue() != 0 ) {
-					participacaoRegistro = new BigDecimal((registro.getFaturamento().doubleValue()*100)/participacaoTotal.doubleValue());
-				}
-			} else {
-				participacaoRegistro = BigDecimal.ZERO;
-			}
-			
-			registro.setParticipacao(participacaoRegistro);
-			
-			if (vendaTotal.doubleValue() != 0) {
-				porcentagemVendaRegistro = new BigDecimal(registro.getVendaExemplares().doubleValue()*100/vendaTotal.doubleValue());
-			}
-			
-			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
-			
-			registro.setPorcentagemVenda(porcentagemVendaRegistro);
-			registro.setParticipacaoAcumulada(participacaoAcumulada);
-		}
-
-		return lista;
-	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -3442,36 +3236,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		    cotas.add(cota);
 		}
 		return cotas;
-	}
-
-	@Override
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(
-			FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
-
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) ) ");
-
-		hql.append(getWhereQueryObterCurvaABCCota(filtroCurvaABCCotaDTO));
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		HashMap<String, Object> param = getParametrosObterCurvaABCCota(filtroCurvaABCCotaDTO);
-
-		for(String key : param.keySet()){
-		    query.setParameter(key, param.get(key));
-		}
-
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-
-		if (filtroCurvaABCCotaDTO.getEdicaoProduto() != null && !filtroCurvaABCCotaDTO.getEdicaoProduto().isEmpty()) {
-		    query.setParameterList("edicaoProduto", (filtroCurvaABCCotaDTO.getEdicaoProduto()));
-		}
-
-		return (ResultadoCurvaABCCotaDTO) query.list().get(0);
 	}
 
 	@Override
