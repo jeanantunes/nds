@@ -529,10 +529,10 @@ fieldset {
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Edição"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
+				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Ediï¿½ï¿½o"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
 			</span>
 			<span class="bt_novos" title="Adicionar em Lote">
-				<a href="javascript:;" onclick="produtoEdicaoController.edicaoLote();" rel="tipsy" title="Adicionar Edição em Lote"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" /></a>
+				<a href="javascript:;" onclick="produtoEdicaoController.edicaoLote();" rel="tipsy" title="Adicionar Ediï¿½ï¿½o em Lote"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" /></a>
 			</span>
 		</div>
 	</div>
@@ -570,12 +570,7 @@ fieldset {
 
 					<td width="170">
 
-						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" 
-								style="width:150px;"
-								onkeyup="produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);"
-								onblur="produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
-									undefined,
-									undefined);" />
+						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" style="width:150px;" />
 
 					</td>
 
