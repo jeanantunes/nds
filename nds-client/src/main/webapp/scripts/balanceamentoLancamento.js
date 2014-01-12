@@ -1107,6 +1107,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	click: function() {
 			    
 			    		$(this).dialog("close");
+			    		$("#linkReabrirMatriz", _workspace).show();
 			    	}
 				}
 			],
