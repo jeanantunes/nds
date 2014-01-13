@@ -44,8 +44,6 @@ import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TermoAdesaoDTO;
@@ -53,7 +51,6 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -298,7 +295,7 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional(readOnly = true)
 	public Cota obterPorNumeroDaCotaAtiva(Integer numeroCota) {
 		
-		return this.cotaRepository.obterPorNumerDaCotaAtiva(numeroCota);
+		return this.cotaRepository.obterPorNumerDaCota(numeroCota);
 	}
 
 	@Transactional(readOnly = true)
@@ -2100,38 +2097,6 @@ public class CotaServiceImpl implements CotaService {
 		this.cotaRepository.alterar(cota);
 	}
 	
-	@Override
-	@Transactional(readOnly = true)
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		
-		List<RegistroCurvaABCCotaDTO> lista = this.cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
-		
-		if (lista.isEmpty()) {
-			
-			return lista;
-		}
-		
-		Map<Long, Long> rankingProdutos = 
-			this.rankingRepository.obterRankingProdutoPorCota(
-				Long.valueOf(filtroCurvaABCCotaDTO.getCodigoCota()));
-		
-		if (!rankingProdutos.isEmpty()) {
-
-			for (RegistroCurvaABCCotaDTO dto : lista) {
-				
-				dto.setRkProduto(rankingProdutos.get(dto.getIdProdutoEdicao()));
-			}
-		}
-		
-		return lista;
-	}
-
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.CotaService#obterCotasEntre(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.model.cadastro.SituacaoCadastro)
 	 */

@@ -121,7 +121,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (Cota) query.uniqueResult();
 	}
 	
-	public Cota obterPorNumerDaCotaAtiva(Integer numeroCota) {
+	public Cota obterPorNumerDaCota(Integer numeroCota) {
 
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 
