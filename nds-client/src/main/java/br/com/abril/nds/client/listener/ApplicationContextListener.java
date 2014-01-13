@@ -68,7 +68,6 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-		/*
 		try {
 			
 			final WebApplicationContext springContext = 
@@ -95,7 +94,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			throw new RuntimeException(e);
 		}
-		*/
 		
 	}
 

@@ -59,10 +59,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		if(!lista.isEmpty()){
 			
-			for(RegistroCurvaABCDTO r : lista) {
+			for(RegistroCurvaABCDistribuidorVO r : lista) {
 				if(r.getParticipacao()!=null) {
 					participacaoTotal = participacaoTotal.add(r.getParticipacao());
 				}
+				
+				r.setQuantidadePdvs(this.pdvRepository.obterQntPDV(r.getIdCota(), null));
+				
 			}
 			
 		}
