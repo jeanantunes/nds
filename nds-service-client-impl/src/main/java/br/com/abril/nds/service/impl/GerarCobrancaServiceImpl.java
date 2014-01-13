@@ -1317,7 +1317,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 		
 		if (parametroDistribuicaoCota == null ||
-				(parametroDistribuicaoCota.getSlipImpresso() == null 				|| parametroDistribuicaoCota.getSlipImpresso() == false) &&
+				(parametroDistribuicaoCota.getSlipImpresso() == null 			|| parametroDistribuicaoCota.getSlipImpresso() == false) &&
 				(parametroDistribuicaoCota.getSlipEmail() == null 				|| parametroDistribuicaoCota.getSlipEmail() == false) &&
 				(parametroDistribuicaoCota.getBoletoImpresso() == null 			|| parametroDistribuicaoCota.getBoletoImpresso() == false) &&
 				(parametroDistribuicaoCota.getBoletoEmail() == null 			|| parametroDistribuicaoCota.getBoletoEmail() == false) &&

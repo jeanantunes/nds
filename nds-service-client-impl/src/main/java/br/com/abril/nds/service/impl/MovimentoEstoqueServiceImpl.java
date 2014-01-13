@@ -67,11 +67,13 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.importacao.input.HistoricoVendaInput;
 import br.com.abril.nds.util.MathUtil;
 
+
+
 @Service
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Autowired
-	private EstoqueProdutoRespository estoqueProdutoRespository;
+	private EstoqueProdutoRespository estoqueProdutoRespository; 
 
 	@Autowired
 	private ItemRecebimentoFisicoRepository itemRecebimentoFisicoRepository;
