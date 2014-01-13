@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +27,7 @@ import org.springframework.util.SerializationUtils;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.FiltroPesquisaMatrizRecolhimentoVO;
+import br.com.abril.nds.client.vo.ProdutoRecolhimentoDiferenciadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoFormatadoVO;
 import br.com.abril.nds.client.vo.ProdutoRecolhimentoVO;
 import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
@@ -57,6 +60,7 @@ import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -369,15 +373,53 @@ public class MatrizRecolhimentoController extends BaseController {
 		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = 
 				obterListaProdutoRecolhimentoDTO(DateUtil.formatarDataPTBR(filtro.getDataPesquisa()));
 
-		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO = 
-				obterListaProdutoRecolhimentoVO(listaProdutoRecolhimentoDTO);
 		
-		PaginacaoUtil.ordenarEmMemoria(listaProdutoRecolhimentoVO, 
-				filtro.getPaginacaoVO().getOrdenacao(), filtro.getPaginacaoVO().getSortColumn());
-
-		FileExporter.to("matriz_recolhimento", fileType)
+		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO;
+		List<ProdutoRecolhimentoDiferenciadoVO> listaProdutoRecolhimentoDiferenciadoVO;
+		
+		//Contem Operação Diferenciada 
+		boolean isDiferenciada = false;
+		
+		//Verifica se 0s para sede e atendida. Se sim não é uma operação diferenciada
+		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
+			
+			if((produtoRecolhimentoDTO.getExpectativaEncalheSede()!=null && produtoRecolhimentoDTO.getExpectativaEncalheSede().compareTo(BigDecimal.ZERO)!=0) || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida()!=null && produtoRecolhimentoDTO.getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO)!=0)){
+				isDiferenciada = true;
+				break;
+			}
+		 
+		}
+		
+		if(!isDiferenciada) {
+		
+		    listaProdutoRecolhimentoVO = 
+				obterListaProdutoRecolhimentoVO(listaProdutoRecolhimentoDTO);
+		    
+		    PaginacaoUtil.ordenarEmMemoria(listaProdutoRecolhimentoVO, 
+					filtro.getPaginacaoVO().getOrdenacao(), filtro.getPaginacaoVO().getSortColumn());
+		    
+			FileExporter.to("matriz_recolhimento", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null,
 					listaProdutoRecolhimentoVO, ProdutoRecolhimentoVO.class, this.response);
+		    
+		}else{
+			
+		    listaProdutoRecolhimentoDiferenciadoVO = 
+				obterListaProdutoRecolhimentoDiferenciadoVO(listaProdutoRecolhimentoDTO);
+		    
+		    PaginacaoUtil.ordenarEmMemoria(listaProdutoRecolhimentoDiferenciadoVO, 
+					filtro.getPaginacaoVO().getOrdenacao(), filtro.getPaginacaoVO().getSortColumn());
+		    
+		    
+			FileExporter.to("matriz_recolhimento", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null,
+					listaProdutoRecolhimentoDiferenciadoVO, ProdutoRecolhimentoDiferenciadoVO.class, this.response);
+			
+		}
+		
+		
+
+
 	}
 
 	@Post
@@ -1028,22 +1070,101 @@ public class MatrizRecolhimentoController extends BaseController {
 		BigDecimal precoDesconto = BigDecimal.ZERO;
 		BigDecimal precoVenda = BigDecimal.ZERO;
 		BigDecimal valorDesconto = BigDecimal.ZERO;
+			
+		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimento) {
+				
+				produtoRecolhimentoVO = new ProdutoRecolhimentoVO();
+				
+				produtoRecolhimentoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
+				
+				produtoRecolhimentoVO.setIdProdutoEdicao(produtoRecolhimentoDTO.getIdProdutoEdicao());
+					
+				produtoRecolhimentoVO.setCodigoProduto(produtoRecolhimentoDTO.getCodigoProduto());
+				
+				produtoRecolhimentoVO.setNomeProduto(produtoRecolhimentoDTO.getNomeProduto());
+				
+				produtoRecolhimentoVO.setNumeroEdicao(produtoRecolhimentoDTO.getNumeroEdicao());
+				
+				produtoRecolhimentoVO.setPrecoVenda(produtoRecolhimentoDTO.getPrecoVenda());
+				
+				precoVenda = produtoRecolhimentoDTO.getPrecoVenda() != null ? produtoRecolhimentoDTO.getPrecoVenda() : BigDecimal.ZERO;
+				
+				valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
+				
+				precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
+				
+				produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
+				
+				produtoRecolhimentoVO.setIdFornecedor(produtoRecolhimentoDTO.getIdFornecedor());
+				
+				produtoRecolhimentoVO.setNomeFornecedor(produtoRecolhimentoDTO.getNomeFornecedor());
+				
+				produtoRecolhimentoVO.setNomeEditor(produtoRecolhimentoDTO.getNomeEditor());
+				
+				if (produtoRecolhimentoDTO.getParcial() != null) {
+					produtoRecolhimentoVO.setParcial(produtoRecolhimentoDTO.getParcial().getDescricao());
+				} else {
+					produtoRecolhimentoVO.setParcial("Não");
+				}
+					
+				produtoRecolhimentoVO.setBrinde(
+					(produtoRecolhimentoDTO.isPossuiBrinde()) ? "Sim" : "Não");
+
+				produtoRecolhimentoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
+
+				produtoRecolhimentoVO.setDataRecolhimento(
+					produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
+				
+				produtoRecolhimentoVO.setEncalheSede(
+					produtoRecolhimentoDTO.getExpectativaEncalheSede());
+				
+				produtoRecolhimentoVO.setEncalheAtendida(
+					produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
+				
+				produtoRecolhimentoVO.setEncalhe(
+					produtoRecolhimentoDTO.getExpectativaEncalhe());
+				
+				produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
+				
+				produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
+				
+				produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
+					produtoRecolhimentoDTO.isBalanceamentoConfirmado());
+				
+				produtoRecolhimentoVO.setPeb(
+						produtoRecolhimentoDTO.getPeb());
+				
+				listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
+		}
+		return listaProdutoRecolhimentoVO;
+	}
+	
+	private List<ProdutoRecolhimentoDiferenciadoVO> obterListaProdutoRecolhimentoDiferenciadoVO(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento) {
+		
+		List<ProdutoRecolhimentoDiferenciadoVO> listaProdutoRecolhimentoDiferenciadoVO =
+				new LinkedList<ProdutoRecolhimentoDiferenciadoVO>();
+		
+		ProdutoRecolhimentoDiferenciadoVO produtoRecolhimentoDiferenciadoVO = null;
+		
+		BigDecimal precoDesconto = BigDecimal.ZERO;
+		BigDecimal precoVenda = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimento) {
 			
-			produtoRecolhimentoVO = new ProdutoRecolhimentoVO();
+			produtoRecolhimentoDiferenciadoVO = new ProdutoRecolhimentoDiferenciadoVO();
 			
-			produtoRecolhimentoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
+			produtoRecolhimentoDiferenciadoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
 			
-			produtoRecolhimentoVO.setIdProdutoEdicao(produtoRecolhimentoDTO.getIdProdutoEdicao());
+			produtoRecolhimentoDiferenciadoVO.setIdProdutoEdicao(produtoRecolhimentoDTO.getIdProdutoEdicao());
 				
-			produtoRecolhimentoVO.setCodigoProduto(produtoRecolhimentoDTO.getCodigoProduto());
+			produtoRecolhimentoDiferenciadoVO.setCodigoProduto(produtoRecolhimentoDTO.getCodigoProduto());
 			
-			produtoRecolhimentoVO.setNomeProduto(produtoRecolhimentoDTO.getNomeProduto());
+			produtoRecolhimentoDiferenciadoVO.setNomeProduto(produtoRecolhimentoDTO.getNomeProduto());
 			
-			produtoRecolhimentoVO.setNumeroEdicao(produtoRecolhimentoDTO.getNumeroEdicao());
+			produtoRecolhimentoDiferenciadoVO.setNumeroEdicao(produtoRecolhimentoDTO.getNumeroEdicao());
 			
-			produtoRecolhimentoVO.setPrecoVenda(produtoRecolhimentoDTO.getPrecoVenda());
+			produtoRecolhimentoDiferenciadoVO.setPrecoVenda(produtoRecolhimentoDTO.getPrecoVenda());
 			
 			precoVenda = produtoRecolhimentoDTO.getPrecoVenda() != null ? produtoRecolhimentoDTO.getPrecoVenda() : BigDecimal.ZERO;
 			
@@ -1051,51 +1172,51 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
 			
-			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
+			produtoRecolhimentoDiferenciadoVO.setPrecoDesconto(precoDesconto);
 			
-			produtoRecolhimentoVO.setIdFornecedor(produtoRecolhimentoDTO.getIdFornecedor());
+			produtoRecolhimentoDiferenciadoVO.setIdFornecedor(produtoRecolhimentoDTO.getIdFornecedor());
 			
-			produtoRecolhimentoVO.setNomeFornecedor(produtoRecolhimentoDTO.getNomeFornecedor());
+			produtoRecolhimentoDiferenciadoVO.setNomeFornecedor(produtoRecolhimentoDTO.getNomeFornecedor());
 			
-			produtoRecolhimentoVO.setNomeEditor(produtoRecolhimentoDTO.getNomeEditor());
+			produtoRecolhimentoDiferenciadoVO.setNomeEditor(produtoRecolhimentoDTO.getNomeEditor());
 			
-			if (produtoRecolhimentoDTO.getParcial() != null) {
-				produtoRecolhimentoVO.setParcial(produtoRecolhimentoDTO.getParcial().getDescricao());
+			if (produtoRecolhimentoDiferenciadoVO.getParcial() != null) {
+				produtoRecolhimentoDiferenciadoVO.setParcial(produtoRecolhimentoDTO.getParcial().getDescricao());
 			} else {
-				produtoRecolhimentoVO.setParcial("Não");
+				produtoRecolhimentoDiferenciadoVO.setParcial("Não");
 			}
 				
-			produtoRecolhimentoVO.setBrinde(
+			produtoRecolhimentoDiferenciadoVO.setBrinde(
 				(produtoRecolhimentoDTO.isPossuiBrinde()) ? "Sim" : "Não");
 
-			produtoRecolhimentoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
+			produtoRecolhimentoDiferenciadoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
 
-			produtoRecolhimentoVO.setDataRecolhimento(
+			produtoRecolhimentoDiferenciadoVO.setDataRecolhimento(
 				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
-			produtoRecolhimentoVO.setEncalheSede(
+			produtoRecolhimentoDiferenciadoVO.setEncalheSede(
 				produtoRecolhimentoDTO.getExpectativaEncalheSede());
 			
-			produtoRecolhimentoVO.setEncalheAtendida(
+			produtoRecolhimentoDiferenciadoVO.setEncalheAtendida(
 				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
 			
-			produtoRecolhimentoVO.setEncalhe(
+			produtoRecolhimentoDiferenciadoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
 			
-			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
+			produtoRecolhimentoDiferenciadoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
-			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
+			produtoRecolhimentoDiferenciadoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
 			
-			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
+			produtoRecolhimentoDiferenciadoVO.setBloqueioAlteracaoBalanceamento(
 				produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
-			produtoRecolhimentoVO.setPeb(
+			produtoRecolhimentoDiferenciadoVO.setPeb(
 					produtoRecolhimentoDTO.getPeb());
 			
-			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
+			listaProdutoRecolhimentoDiferenciadoVO.add(produtoRecolhimentoDiferenciadoVO);
 		}		
 		
-		return listaProdutoRecolhimentoVO;
+		return listaProdutoRecolhimentoDiferenciadoVO;
 	}
 	
 	/**
@@ -1641,6 +1762,40 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		this.result.use(Results.json()).from(datasConfirmadas, "result").serialize();
+	}
+	
+	@Get 
+	public void obterDatasConfirmadasReabertura() {
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+
+		List<String> datasConfirmadasReabertura = new ArrayList<>();
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		Date data = new Date();
+		
+		
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			try{
+			 
+				data = format.parse(confirmacaoVO.getMensagem());
+			
+			}catch(ParseException ex){
+				
+			}
+			
+			if (confirmacaoVO.isConfirmado()) {
+				
+				if(this.distribuidorService.obterDataOperacaoDistribuidor().before(data)){
+					
+				  datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
+				}
+			}
+		}
+		
+		this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
 	}
 	
 	@Post

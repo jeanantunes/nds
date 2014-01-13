@@ -12,6 +12,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
@@ -64,6 +65,30 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	protected DistribuidorService distribuidorService;
 	
 	/**
+	 * Verifica se Cota utiliza parametros de Distribuicao do Distribuidor
+	 * Utiliza parametro de Distribuicao do Distribuidor quando todos os parametros proprios da Cota sao nulos
+	 * 
+	 * @param parametroDistribuicaoCota
+	 * @return boolean
+	 */
+	private boolean isCotaUtilizaParametroDistribuicaoDistribuidor(ParametroDistribuicaoCota parametroDistribuicaoCota){
+		
+		return ((parametroDistribuicaoCota == null) || 
+				((parametroDistribuicaoCota.getSlipImpresso() == null) &&
+				 (parametroDistribuicaoCota.getSlipEmail() == null) &&
+				 (parametroDistribuicaoCota.getBoletoImpresso() == null) &&
+				 (parametroDistribuicaoCota.getBoletoEmail() == null) &&
+				 (parametroDistribuicaoCota.getBoletoSlipImpresso() == null) &&
+				 (parametroDistribuicaoCota.getBoletoSlipEmail() == null) &&
+				 (parametroDistribuicaoCota.getReciboImpresso() == null) &&
+				 (parametroDistribuicaoCota.getReciboEmail() == null) &&
+				 (parametroDistribuicaoCota.getChamadaEncalheImpresso() == null) &&
+				 (parametroDistribuicaoCota.getChamadaEncalheEmail() == null) &&
+				 (parametroDistribuicaoCota.getNotaEnvioImpresso() == null) &&
+				 (parametroDistribuicaoCota.getNotaEnvioEmail() == null)));
+	}
+	
+	/**
 	 * Verifica se os parametros do Distribuidor permitem a emissão de documento por email
 	 * 
 	 * @param tipoDocumento
@@ -103,9 +128,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 		boolean emissaoSlipDistribuidor = (this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.SLIP) || 
                                            this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP));
 		
-		if ((cota.getParametroDistribuicao() == null) || 
-		    (cota.getParametroDistribuicao().getSlipEmail() == null && 
-		     cota.getParametroDistribuicao().getBoletoSlipEmail() == null)){
+		if (this.isCotaUtilizaParametroDistribuicaoDistribuidor(cota.getParametroDistribuicao())){	
 			
 			return emissaoSlipDistribuidor;
 		}
@@ -117,7 +140,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 	}
 	
 	/**
-	 * Verifica permissão de emissão de Boleto/Cobrança para a Cota
+	 * Verifica permissão de emissão de Cobrança(Boleto) para a Cota
 	 * 
 	 * @param cota
 	 * @return boolean
@@ -127,9 +150,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
         boolean emissaoBoletoDistribuidor = (this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.BOLETO) || 
         		                             this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP));
         
-        if ((cota.getParametroDistribuicao() == null) || 
-		    (cota.getParametroDistribuicao().getBoletoEmail() == null && 
-		     cota.getParametroDistribuicao().getBoletoSlipEmail() == null)){
+        if (this.isCotaUtilizaParametroDistribuicaoDistribuidor(cota.getParametroDistribuicao())){
 			
 			return emissaoBoletoDistribuidor;
 		}
@@ -138,6 +159,26 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 				                    (cota.getParametroDistribuicao().getBoletoSlipEmail()!=null?cota.getParametroDistribuicao().getBoletoSlipEmail():false);
 
 		return emissaoBoletoCota;
+	}
+    
+    /**
+	 * Verifica permissão de emissão de Cobrança(Recibo) para a Cota
+	 * 
+	 * @param cota
+	 * @return boolean
+	 */
+    private boolean isEmiteRecibo(Cota cota){
+    	
+        boolean emissaoReciboDistribuidor = (this.isEmiteDocumentoDistribuidor(TipoParametrosDistribuidorEmissaoDocumento.RECIBO));
+        
+        if (this.isCotaUtilizaParametroDistribuicaoDistribuidor(cota.getParametroDistribuicao())){
+			
+			return emissaoReciboDistribuidor;
+		}
+		
+		boolean emissaoReciboCota = (cota.getParametroDistribuicao().getReciboEmail()!=null?cota.getParametroDistribuicao().getReciboEmail():false);
+
+		return emissaoReciboCota;
 	}
 	
     /**
@@ -161,7 +202,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
             }
 	    }
 	
-	    if (this.isEmiteBoleto(cota)){
+	    if (this.isEmiteBoleto(cota) || this.isEmiteRecibo(cota)){
 		    
 	    	byte[] anexoBoleto = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
         
@@ -225,6 +266,11 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 				    
 				    if (!this.gerarCobrancaService.aceitaEnvioEmail(cota, nossoNumero)) {
 
+				    	continue;
+				    }
+				    
+				    if (!(this.isEmiteBoleto(cota) || this.isEmiteRecibo(cota)) && !this.isEmiteSlip(cota)){
+				    	
 				    	continue;
 				    }
 

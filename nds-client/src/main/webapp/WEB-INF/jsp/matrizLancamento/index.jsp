@@ -150,6 +150,12 @@ balanceamentoLancamento.inicializar();
 							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						    </a>
 						</span>
+						
+						<span class="bt_novos" style="display: none;">
+				            <a id="linkReabrirMatriz" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" title="Reabrir Matriz" >
+					             <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				           </a> 
+			            </span>
 			  		</div>
 			  </div>
 			  <div class="linha_separa_fields">&nbsp;</div>
@@ -228,6 +234,23 @@ balanceamentoLancamento.inicializar();
 		    	<legend>Confirmar Balanceamento</legend>
 
 		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamento">
+		        </table>
+
+		    </fieldset>
+		</div>
+		</form>
+		
+		<form id="form-reabrir-matriz">
+		<div id="dialog-reabrir-matriz" title="Balanceamento" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-reabertura" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Reabrir Matrizes Confirmadas</legend>
+
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableReaberturaMatrizConfirmada">
 		        </table>
 
 		    </fieldset>
