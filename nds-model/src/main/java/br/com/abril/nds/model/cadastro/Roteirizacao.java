@@ -26,7 +26,7 @@ import org.hibernate.annotations.CascadeType;
 @Entity
 @Table(name = "ROTEIRIZACAO")
 @SequenceGenerator(name="ROTEIRIZACAO_SEQ", initialValue = 1, allocationSize = 1)
-@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Roteirizacao implements Serializable{
 
 

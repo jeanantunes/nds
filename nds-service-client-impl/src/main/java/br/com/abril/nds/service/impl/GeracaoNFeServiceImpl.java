@@ -284,5 +284,10 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplarSumarizado(filtro);
 	}
+
+	@Override
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+	}
 	
 }

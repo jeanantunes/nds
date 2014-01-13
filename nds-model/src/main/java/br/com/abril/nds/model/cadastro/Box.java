@@ -31,7 +31,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 @Entity
 @Table(name = "BOX")
 @SequenceGenerator(name="BOX_SEQ", initialValue = 1, allocationSize = 1)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Box implements Serializable {
     
     /**

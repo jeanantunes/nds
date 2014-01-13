@@ -159,5 +159,7 @@ public interface NotaFiscalService {
 	List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario);
 
 	List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro);
+	
+	Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
 		
 }

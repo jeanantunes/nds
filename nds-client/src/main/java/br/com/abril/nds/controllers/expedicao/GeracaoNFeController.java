@@ -24,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
@@ -119,7 +118,7 @@ public class GeracaoNFeController extends BaseController {
      */
     private void iniciarComboBox() {
 
-	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+    	result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
     }
 
 	private void iniciarComboRoteiro() {
@@ -188,7 +187,7 @@ public class GeracaoNFeController extends BaseController {
 			
 		case FORNECEDOR:			
 			fornecedorExemplaresDTOs = geracaoNFeService.consultaFornecedorExemplarSumarizado(filtro);
-			System.out.println("Chegou aqui ahahahahah");
+			totalRegistros = geracaoNFeService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 			break;
 
 
@@ -198,7 +197,7 @@ public class GeracaoNFeController extends BaseController {
 			if (fornecedorExemplaresDTOs == null || fornecedorExemplaresDTOs.isEmpty()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			}
-			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(1).serialize();			
+			result.use(FlexiGridJson.class).from(fornecedorExemplaresDTOs).page(page).total(totalRegistros.intValue()).serialize();			
 		}else{
 			if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
