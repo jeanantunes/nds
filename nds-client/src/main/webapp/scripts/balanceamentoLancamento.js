@@ -1145,4 +1145,4 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 
 
 
-//@ sourceURL=balanceamentoLancamento.js
+//@ sourceURL=balanceamentoLancamento.js  
