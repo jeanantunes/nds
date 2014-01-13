@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.lancamento;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -34,6 +36,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
@@ -1239,4 +1242,51 @@ public class MatrizLancamentoController extends BaseController {
 		}
 	}
 	
+	@Get
+	public void obterDatasConfirmadasReabertura() {
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+
+		List<String> datasConfirmadasReabertura = new ArrayList<>();
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date data = new Date();
+		
+		
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			try{
+			 
+				data = format.parse(confirmacaoVO.getMensagem());
+			
+			}catch(ParseException ex){
+				
+			}
+			
+			if (confirmacaoVO.isConfirmado()) {
+				
+				if(this.distribuidorService.obterDataOperacaoDistribuidor().before(data)){
+					
+				  datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
+				}
+			}
+		}
+		
+		this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
+	}
+	
+	@Post
+	public void reabrirMatriz(List<Date> datasReabertura) {
+
+		if (datasReabertura == null || datasReabertura.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
+		}
+		this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
+
+		this.result.use(PlainJSONSerialization.class).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
+	}
+
 }

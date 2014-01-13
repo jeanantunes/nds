@@ -25,7 +25,7 @@ import br.com.abril.nds.service.RecolhimentoService;
 /**
  * Estratégia de balanceamento de recolhimento automático.
  * 
- * @author Discover Technology
+ * @author Discover Technology 
  *
  */
 public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalanceamentoRecolhimentoStrategy {
@@ -331,6 +331,20 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 						produtosRecolhimentoBalanceaveis, produtosRecolhimentoNaData, 
 							expectativaEncalheTotalAtualNaData, dataBalanceamento, 
 								permiteExcederCapacidadeManuseioDistribuidor);
+			}else{
+				
+			    // Se existir somente 1 produto e ele or que a media 
+				if(produtosRecolhimentoNaData!=null && produtosRecolhimentoNaData.size()==1) {
+					
+					produtosRecolhimentoBalanceaveis =
+							this.alocarProdutosMatrizRecolhimento(
+								matrizRecolhimento, capacidadeRecolhimento,
+									produtosRecolhimentoBalanceaveis, produtosRecolhimentoNaData, 
+										expectativaEncalheTotalAtualNaData, dataBalanceamento, 
+											permiteExcederCapacidadeManuseioDistribuidor);
+					
+				dadosRecolhimento.setMediaRecolhimentoDistribuidor(dadosRecolhimento.getMediaRecolhimentoDistribuidor()-(expectativaEncalheTotalAtualNaData.longValue()-dadosRecolhimento.getMediaRecolhimentoDistribuidor()));
+				}
 			}
 		}
 		
