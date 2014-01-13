@@ -19,13 +19,10 @@ import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
@@ -245,20 +242,6 @@ public interface CotaService {
 	void alterarCota(Cota cota);
 	
 	public EnderecoCota obterEnderecoPrincipal(long idCota);
-	
-	/**
-	 * Método responsável por obter o total do relatório de vendas ABC por cota
-	 * @param filtroCurvaABCCotaDTO
-	 * @return
-	 */
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
-	
-	/**
-	 * Método responsável por obter o relatório de vendas ABC por cota
-	 * @param filtroCurvaABCCotaDTO
-	 * @return
-	 */
-	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 	
 	/**
 	 * Retorna todas as cotas que estão entre o itervalo de cotas parametrizado;

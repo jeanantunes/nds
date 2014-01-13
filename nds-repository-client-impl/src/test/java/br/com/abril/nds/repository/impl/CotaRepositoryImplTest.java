@@ -321,9 +321,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
-	public void obterPorNumerDaCotaAtiva() {
+	public void obterPorNumerDaCota() {
 
-		Cota cota = this.cotaRepository.obterPorNumerDaCotaAtiva(NUMERO_COTA);
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
 
 		Assert.assertNotNull(cota);
 

@@ -209,7 +209,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      *            - número da cota
      * @return Cota
      */
-    Cota obterPorNumerDaCotaAtiva(Integer numeroCota);
+    Cota obterPorNumerDaCota(Integer numeroCota);
 
     /**
      * Retorna um telefone associado a uma cota
