@@ -59,7 +59,7 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
-import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 public class ProdutoServicoRepositoryImplTest extends
 		AbstractRepositoryImplTest {

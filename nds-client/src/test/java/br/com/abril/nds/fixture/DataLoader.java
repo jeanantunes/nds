@@ -246,7 +246,7 @@ import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
-import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 public class DataLoader {
     

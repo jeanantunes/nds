@@ -250,7 +250,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCo
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
-import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 
 public class Fixture {

@@ -14,19 +14,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nfe.model.NotaFicalEndereco;
-import br.com.abril.nfe.model.NotaFiscalFatura;
-import br.com.abril.nfe.model.NotaFiscalPessoa;
-import br.com.abril.nfe.model.NotaFiscalPessoaFisica;
-import br.com.abril.nfe.model.NotaFiscalPessoaJuridica;
-import br.com.abril.nfe.model.NotaFiscalValorCalculado;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaFisica;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalValorCalculado;
 
 @Entity
 @Table(name = "NOTA_FISCAL")
 public class NotaFiscalNds {
 
 	@Embedded
-	private br.com.abril.nfe.model.NotaFiscalBase notaFiscal;
+	private NotaFiscalBase notaFiscal;
 	
 	@Id
 	@GeneratedValue
@@ -50,7 +51,7 @@ public class NotaFiscalNds {
 	
 	public NotaFiscalNds() {
 		if(notaFiscal == null){
-			this.notaFiscal = new br.com.abril.nfe.model.NotaFiscalBase();
+			this.notaFiscal = new NotaFiscalBase();
 		}
 		
 		if(notaFiscal.getEmitenteDestinario() == null) {

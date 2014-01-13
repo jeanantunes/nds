@@ -57,7 +57,7 @@ import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
-import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 @Service
 public class MonitorNFEServiceImpl implements MonitorNFEService {

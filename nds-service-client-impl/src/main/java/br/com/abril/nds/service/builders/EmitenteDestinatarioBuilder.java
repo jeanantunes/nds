@@ -9,7 +9,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 public class EmitenteDestinatarioBuilder {
 	
