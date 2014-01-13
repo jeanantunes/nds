@@ -1285,6 +1285,8 @@ public class MatrizLancamentoController extends BaseController {
 		}
 		this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
 
+		obterDatasConfirmadasReabertura();
+		
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
 	}
