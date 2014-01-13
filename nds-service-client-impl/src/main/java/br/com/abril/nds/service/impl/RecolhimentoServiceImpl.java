@@ -1410,6 +1410,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.lancamentoRepository.alterar(lancamento);
 			
 			this.removerChamadaEncalhe(lancamento.getChamadaEncalhe());
+			
+			if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Existem lançamentos que já possuem conferência de encalhe!");
+			}
 		}
 	}
 
@@ -1421,11 +1427,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				"Existem lançamentos que já se econtram em processo de recolhimento!");
 		}
 		
-		if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Existem lançamentos que já possuem conferência de encalhe!");
-		}
+
 	}
 
 	private void validarReaberturaMatriz(List<Date> datasConfirmadas, Date dataOperacao) {
