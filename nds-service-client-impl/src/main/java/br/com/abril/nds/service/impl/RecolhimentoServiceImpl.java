@@ -1414,7 +1414,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Existem lançamentos que já possuem conferência de encalhe!");
+					"A chamada de encalhe da data selecionadjá foi gerada. Realizar a reimpressão do documento.");
 			}
 		}
 	}
