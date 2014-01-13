@@ -94,6 +94,10 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String DATA_ATUAL_SELECIONADA = "dataAtualSelecionada";
 	
+	private Date dataLancamentoAux;
+	
+	private List<Long> idsFornecedoresAux;
+	
 	@Path("/")
 	public void index() {
 		
@@ -109,6 +113,9 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
+		
+		dataLancamentoAux = dataLancamento;
+		idsFornecedoresAux = idsFornecedoresAux;
 		
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
 		
@@ -1285,7 +1292,7 @@ public class MatrizLancamentoController extends BaseController {
 		}
 		this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
 
-		obterDatasConfirmadasReabertura();
+		obterMatrizLancamento(dataLancamentoAux, idsFornecedoresAux);
 		
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
