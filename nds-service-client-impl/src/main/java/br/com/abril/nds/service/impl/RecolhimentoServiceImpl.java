@@ -1460,7 +1460,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
 			
-			this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			if(chamadaEncalhe.getTipoChamadaEncalhe() == TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO){
+			  this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}
 	}
 	
