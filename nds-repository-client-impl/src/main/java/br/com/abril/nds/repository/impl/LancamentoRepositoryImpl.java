@@ -2139,6 +2139,29 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterMatrizLancamentosConfirmados(List<Date> datasConfirmadas) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+		
+		statusLancamento.add(StatusLancamento.BALANCEADO);
+		
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+		
+		return query.list();
+	}
+	
 	@Override
 	public boolean existeConferenciaEncalheParaLancamento(Long idLancamento) {
 		

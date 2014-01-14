@@ -1044,7 +1044,106 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			   T.atualizarResumoBalanceamento();
             }
 		);
+	},
+	
+	this.obterDatasConfirmadasParaReabertura= function() {
+	 	
+	 	$.getJSON(
+	 			contextPath + "/matrizLancamento/obterDatasConfirmadasReabertura", 
+	 			null,
+	 			function(result) {
+	 				
+	 				if (result.length == 0) {
+	 		
+	 					$("#linkReabrirMatriz", _workspace).show();
+	 					
+	 				} else {
+	 					this.popularPopupReaberturaMatrizes(result);
+	 					$("#linkReabrirMatriz", _workspace).hide();
+
+	 				}
+	 			}
+	 		);		
+	},
+	
+
+	popularPopupReaberturaMatrizes= function(result) {
+			
+			var conteudo = '';
+			
+			$(result).each(function(index, value) {
+				conteudo += '<tr class="class_linha_1"><td name=dataReabertura_'+index+' >';
+				conteudo += value;
+				conteudo += '</td>';
+				conteudo += '<td align="center"><input name=checkMatrizReabertura type="checkbox" value="' + value + '" /></td>';
+				conteudo += '</tr>';
+			});
+			
+			//console.log(conteudo);
+			$("#tableReaberturaMatrizConfirmada", _workspace).html(conteudo);
+			abrirPopupReabrirMatriz();
+			//$("#dialog-reabrir-matriz", _workspace).show();
+		},
+		
+	abrirPopupReabrirMatriz= function() {
+			
+		$( "#dialog-reabrir-matriz", _workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogReaberturaBtnConfirmar",
+			    	text: "Reabrir",
+			    	click: function() {
+					
+			    		reabrirMatriz();
+			    	}
+			    },
+			    {
+			    	id: "dialogReaberturaBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    		$("#linkReabrirMatriz", _workspace).show();
+			    	}
+				}
+			],
+			beforeClose: function() {
+				$("input[name='checkMatrizReabertura']:checked", _workspace).attr("checked", false);
+				balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
+		    },
+		    form: $("#form-reabrir-matriz", _workspace)
+		});
+	},
+	
+	reabrirMatriz= function() {
+
+		var params = new Array();
+		
+		$("input[name='checkMatrizReabertura']:checked").each(function(index, value) {
+			
+			params.push({name: 'datasReabertura['+index+']', value: value.value});
+		});
+		
+		$.postJSON(
+			contextPath + "/matrizLancamento/reabrirMatriz",
+			params,
+			function(result) {
+				$("#dialog-reabrir-matriz").dialog("close");
+				exibirMensagem(
+					result.tipoMensagem, 
+					result.listaMensagens
+				);
+			}
+		);
 	};
+	
 }
 
-//@ sourceURL=balanceamentoLancamento.js
+
+
+
+//@ sourceURL=balanceamentoLancamento.js  

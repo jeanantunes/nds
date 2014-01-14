@@ -44,6 +44,7 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -61,6 +62,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	protected DistribuidorRepository distribuidorRepository;
@@ -923,7 +927,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		produtosLancamentoNaoBalanceados =
 			this.balancearProdutosLancamento(
 				matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
-				expectativaReparteDataEscolhida, dataLancamentoEscolhida,
+				expectativaReparteDataEscolhida, dataLancamentoEscolhida,false,
 				dadosBalanceamentoLancamento.getMediaDistribuicao(), false, idFornecedor);
 		
 		return produtosLancamentoNaoBalanceados;
@@ -1054,6 +1058,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 											BigInteger expectativaReparteDataAtual,
 											Date dataLancamento,
+											boolean permiteForaDaData,
 											BigInteger capacidadeDistribuicao,
 											boolean permiteExcederCapacidadeDistribuicao,
 											Long idFornecedor) {
@@ -1082,6 +1087,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			boolean existeLancamentoNaData =
 				this.existeLancamentoNaData(matrizLancamento, produtoLancamento, dataLancamento);
+			
+			if(permiteForaDaData){
+				existeLancamentoNaData = false;
+				excedeLimiteDataReprogramacao = false;
+			}
 			
 			if (!existeLancamentoNaData
 					&& fornecedorCompativelParaDistribuicao
@@ -1188,6 +1198,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											 	  mapaExpectativaReparteTotalDiariaAtual,
 											 	  dadosBalanceamentoLancamento,
 											 	  dadosBalanceamentoLancamento.getMediaDistribuicao(),
+											 	  true,
 											 	  false,
 											 	  idFornecedor);
 			
@@ -1198,7 +1209,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	/**
-	 * Processa os produtos que não puderam ser balanceados
+	 * Processa os produtos que não puderam ser balanceados  ,
 	 * pois estes excederam a capacidade de distribuição.
 	 */
 	private void processarProdutosLancamentoNaoBalanceados(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
@@ -1228,12 +1239,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			this.ordenarProdutosLancamentoPorPeriodicidadeExpectativaReparte(produtosLancamentoBalancear);
 			
-			produtosLancamentoBalancear =
+			produtosLancamentoBalancear = 
 				this.alocarSobrasMatrizLancamento(matrizLancamento,
 											 	  produtosLancamentoBalancear,
 											 	  mapaExpectativaReparteTotalDiariaAtual,
 											 	  dadosBalanceamentoLancamento,
-											 	  capacidadeDistribuicaoExcedenteMedia,
+											 	  dadosBalanceamentoLancamento.getMediaDistribuicao(),
+											 	  true,
 											 	  false,
 											 	  idFornecedor);
 			
@@ -1250,7 +1262,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 									 	  produtosLancamentoBalancear,
 									 	  mapaExpectativaReparteTotalDiariaAtual,
 									 	  dadosBalanceamentoLancamento,
-									 	  capacidadeDistribuicaoExcedenteMedia,
+									 	  dadosBalanceamentoLancamento.getMediaDistribuicao(),
+									 	  true,
 									 	  true,
 									 	  idFornecedor);
 	}
@@ -1319,6 +1332,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual,
 											DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 											BigInteger capacidadeDistribuicao,
+											boolean permiteForaDaData,
 											boolean permiteExcederCapacidadeDistribuicao,
 											Long idFornecedor) {
 		
@@ -1337,7 +1351,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			produtosLancamentoBalanceaveis =
 				this.balancearProdutosLancamento(
 					matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
-						expectativaReparteDataAtual, dataLancamento, 
+						expectativaReparteDataAtual, dataLancamento, permiteForaDaData,
 							capacidadeDistribuicao, permiteExcederCapacidadeDistribuicao, idFornecedor);
 		}
 		
@@ -1473,6 +1487,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		boolean isDataNoPeriodo =
 			DateUtil.validarDataEntrePeriodo(dataLancamentoDistribuidor, dataInicial, dataFinal);
 		
+		//Para fins de testes de balanceamente, comente esse bloco
 		if (this.isProdutoConfirmado(produtoLancamento)
 				|| (produtoLancamento.isStatusLancamentoEmBalanceamento()
 					|| produtoLancamento.isStatusLancamentoFuro()
@@ -1482,6 +1497,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}else{
 		    return true;
 		}
+
 	}
 	
 	/**
@@ -1828,6 +1844,65 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		SALVAR,
 		CONFIRMAR;
+	}
+	
+	@Transactional
+	public void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario) {
+		
+		this.validarReaberturaMatriz(
+			datasConfirmadas, this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		List<Lancamento> lancamentos = 
+			this.lancamentoRepository.obterMatrizLancamentosConfirmados(datasConfirmadas);
+		
+		for(Lancamento lancamento: lancamentos) {
+			
+			this.validarLancamentoParaReabertura(lancamento);
+			
+			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
+			
+			lancamento.setUsuario(usuario);
+			
+			this.lancamentoRepository.alterar(lancamento);
+			
+		}
+	}
+	
+	private void validarLancamentoParaReabertura(Lancamento lancamento) {
+		
+		if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Existem lançamentos que já se econtram em processo de lançamento!");
+		}
+		
+	}
+	
+    
+	private void validarReaberturaMatriz(List<Date> datasConfirmadas, Date dataOperacao) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (datasConfirmadas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma data foi informada!");
+		}
+		
+		for (Date dataConfirmada : datasConfirmadas) {
+			
+			if (dataConfirmada.compareTo(dataOperacao) <= 0) {
+				
+				String dataFormatada = DateUtil.formatarDataPTBR(dataConfirmada);
+				
+				mensagens.add("Para reabrir a matriz, a data (" + dataFormatada
+					+ ") deve ser maior que a data de operação!");
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
 	}
 	
 }
