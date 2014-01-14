@@ -153,7 +153,7 @@ balanceamentoLancamento.inicializar();
 						
 						<span class="bt_novos" style="display: none;">
 				            <a id="linkReabrirMatriz" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" title="Reabrir Matriz" >
-					             <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+					             <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reopen.gif">
 				           </a> 
 			            </span>
 			  		</div>

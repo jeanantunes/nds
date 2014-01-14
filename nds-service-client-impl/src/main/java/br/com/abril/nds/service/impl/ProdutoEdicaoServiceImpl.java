@@ -923,7 +923,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
 					|| lancamento.getStatus().equals(StatusLancamento.FURO)) ) {
 								
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição não pode ser excluida pois possui lançamento expedido!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Produto balanceado, é necessário realizar o furo da publicação para realizar a exclusão!");
 				
 			}
 			

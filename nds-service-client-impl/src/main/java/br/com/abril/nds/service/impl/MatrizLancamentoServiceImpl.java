@@ -934,7 +934,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		produtosLancamentoNaoBalanceados =
 			this.balancearProdutosLancamento(
 				matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
-				expectativaReparteDataEscolhida, dataLancamentoEscolhida,
+				expectativaReparteDataEscolhida, dataLancamentoEscolhida,false,
 				dadosBalanceamentoLancamento.getMediaDistribuicao(), false, idFornecedor);
 		
 		return produtosLancamentoNaoBalanceados;
@@ -1065,6 +1065,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 											BigInteger expectativaReparteDataAtual,
 											Date dataLancamento,
+											boolean permiteForaDaData,
 											BigInteger capacidadeDistribuicao,
 											boolean permiteExcederCapacidadeDistribuicao,
 											Long idFornecedor) {
@@ -1093,6 +1094,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			boolean existeLancamentoNaData =
 				this.existeLancamentoNaData(matrizLancamento, produtoLancamento, dataLancamento);
+			
+			if(permiteForaDaData){
+				existeLancamentoNaData = false;
+				excedeLimiteDataReprogramacao = false;
+			}
 			
 			if (!existeLancamentoNaData
 					&& fornecedorCompativelParaDistribuicao
@@ -1199,6 +1205,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											 	  mapaExpectativaReparteTotalDiariaAtual,
 											 	  dadosBalanceamentoLancamento,
 											 	  dadosBalanceamentoLancamento.getMediaDistribuicao(),
+											 	  true,
 											 	  false,
 											 	  idFornecedor);
 			
@@ -1209,7 +1216,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	/**
-	 * Processa os produtos que não puderam ser balanceados
+	 * Processa os produtos que não puderam ser balanceados  ,
 	 * pois estes excederam a capacidade de distribuição.
 	 */
 	private void processarProdutosLancamentoNaoBalanceados(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
@@ -1239,12 +1246,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			this.ordenarProdutosLancamentoPorPeriodicidadeExpectativaReparte(produtosLancamentoBalancear);
 			
-			produtosLancamentoBalancear =
+			produtosLancamentoBalancear = 
 				this.alocarSobrasMatrizLancamento(matrizLancamento,
 											 	  produtosLancamentoBalancear,
 											 	  mapaExpectativaReparteTotalDiariaAtual,
 											 	  dadosBalanceamentoLancamento,
-											 	  capacidadeDistribuicaoExcedenteMedia,
+											 	  dadosBalanceamentoLancamento.getMediaDistribuicao(),
+											 	  true,
 											 	  false,
 											 	  idFornecedor);
 			
@@ -1261,7 +1269,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 									 	  produtosLancamentoBalancear,
 									 	  mapaExpectativaReparteTotalDiariaAtual,
 									 	  dadosBalanceamentoLancamento,
-									 	  capacidadeDistribuicaoExcedenteMedia,
+									 	  dadosBalanceamentoLancamento.getMediaDistribuicao(),
+									 	  true,
 									 	  true,
 									 	  idFornecedor);
 	}
@@ -1330,6 +1339,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual,
 											DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 											BigInteger capacidadeDistribuicao,
+											boolean permiteForaDaData,
 											boolean permiteExcederCapacidadeDistribuicao,
 											Long idFornecedor) {
 		
@@ -1348,7 +1358,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			produtosLancamentoBalanceaveis =
 				this.balancearProdutosLancamento(
 					matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
-						expectativaReparteDataAtual, dataLancamento, 
+						expectativaReparteDataAtual, dataLancamento, permiteForaDaData,
 							capacidadeDistribuicao, permiteExcederCapacidadeDistribuicao, idFornecedor);
 		}
 		
@@ -1484,6 +1494,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		boolean isDataNoPeriodo =
 			DateUtil.validarDataEntrePeriodo(dataLancamentoDistribuidor, dataInicial, dataFinal);
 		
+		//Para fins de testes de balanceamente, comente esse bloco
 		if (this.isProdutoConfirmado(produtoLancamento)
 				|| (produtoLancamento.isStatusLancamentoEmBalanceamento()
 					|| produtoLancamento.isStatusLancamentoFuro()
@@ -1493,6 +1504,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}else{
 		    return true;
 		}
+
 	}
 	
 	/**

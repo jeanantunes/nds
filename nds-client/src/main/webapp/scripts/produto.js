@@ -338,6 +338,7 @@ var produtoController = $.extend(true, {
 	editarProduto : function(id) {
 		
 		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).show();
+		
 
 		$("#dialog-novo", this.workspace).dialog({
 			resizable: false,
@@ -415,13 +416,13 @@ var produtoController = $.extend(true, {
 						$("#pacotePadrao", produtoController.workspace).val(result.pacotePadrao);
 						$("#comboPeriodicidade", produtoController.workspace).val(result.periodicidade);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
-						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
 						$("#selGeracaoAuto", produtoController.workspace).attr('checked', result.isGeracaoAutomatica);
 						$("#comboTipoSegmento", produtoController.workspace).val(result.idTipoSegmentoProduto);
 						$("#comboClassifProd", produtoController.workspace).val(result.idTipoClassifProduto);
 
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
 						
+						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor).disable();
 						$("#comboTipoDesconto", produtoController.workspace).val(result.tipoDesconto);
 						$("#comboTipoProdutoCadastro", produtoController.workspace).val(result.codigoTipoProduto);
 						$("#segmentacaoClasseSocial", produtoController.workspace).val(result.classeSocial);
@@ -617,6 +618,7 @@ var produtoController = $.extend(true, {
 		$("#pacotePadrao", this.workspace).val("");
 		$("#comboPeriodicidade", this.workspace).val("");
 		$("#tipoDescontoManual", this.workspace).val("");
+		$("#comboFornecedoresCadastro", produtoController.workspace).val(0).enable();
 
 		$("#formaComercializacaoContaFirme", this.workspace).attr('checked', false);
 		$("#formaComercializacaoConsignado", this.workspace).attr('checked', false);
