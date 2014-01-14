@@ -67,7 +67,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" left join PERIODO_LANCAMENTO_PARCIAL plp ON lancamento_parcial.ID = plp.LANCAMENTO_PARCIAL_ID ")
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
-		.append(" and lanc.status = 'BALANCEADO'")
+		.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null");
 		
