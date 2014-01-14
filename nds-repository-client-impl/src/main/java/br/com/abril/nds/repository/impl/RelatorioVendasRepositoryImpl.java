@@ -35,7 +35,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" select consolidado.COTA_ID from ");
 
-		sql.append(obterFromWhereObterCurvaABC(filtro));
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
 		
 		sql.append(" GROUP BY consolidado.COTA_ID ) AS curvaDistribuidor");
 		
@@ -57,7 +57,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" SELECT consolidado.EDITOR_ID FROM ");
 		
-		sql.append(obterFromWhereObterCurvaABC(filtro));
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.EDITOR));
 		
 		sql.append(" GROUP BY consolidado.EDITOR_ID ) as curvaABCEditor ");
 		
@@ -78,7 +78,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" SELECT consolidado.PRODUTO_EDICAO_ID FROM ");
 		
-		sql.append(obterFromWhereObterCurvaABC(filtro));
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.PRODUTO_EDICAO));
 		
 		sql.append(" GROUP BY consolidado.PRODUTO_EDICAO_ID ");
 		
@@ -102,7 +102,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" select	");
 		
-		sql.append(" subRnkg.idProduto as idProduto, 	");
 		sql.append(" subRnkg.idCota as idCota, 			");
 		sql.append(" subRnkg.numeroCota as numeroCota,	");
 		sql.append(" subRnkg.nomeCota as nomeCota,		");
@@ -125,7 +124,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(" select ");
 		
-		sql.append(" consolidado.PRODUTO_ID AS idProduto, 	");
 		sql.append(" consolidado.COTA_ID AS idCota, 			");
 		sql.append(" consolidado.NUMERO_COTA AS numeroCota, 	");
 		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
@@ -137,7 +135,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append("   from ");
 		
-		sql.append(obterFromWhereObterCurvaABC(filtro));
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
 		
 		sql.append(" GROUP BY consolidado.COTA_ID ");
 		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
@@ -187,7 +185,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,			");
 		sql.append(" subRnkg.participacao as participacao, 					");
 		sql.append(" subRnkg.reparte as reparte,	");
-		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
 		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
 		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		sql.append(" from ");
@@ -200,13 +197,12 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" sum(consolidado.valor) AS participacao,						");
 		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
 		sql.append(" sum(consolidado.reparte) as reparte,					");
-		sql.append(" sum(consolidado.porcentagemVendaExemplares) as porcentagemVendaExemplares,		");
 		sql.append(" sum(consolidado.valorMargemDistribuidor) as valorMargemDistribuidor, 			");
 		sql.append(" sum(consolidado.porcentagemMargemDistribuidor) as porcentagemMargemDistribuidor	");
 
 		sql.append(" from ");
 		
-		sql.append(obterFromWhereObterCurvaABC(filtro));
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.EDITOR));
 		
 		sql.append(" GROUP BY consolidado.EDITOR_ID ");
 		
@@ -223,7 +219,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("participacao", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		
@@ -254,8 +249,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
 		sql.append(" subRnkg.faturamentoCapa as faturamento, 			");
 
-		sql.append(" subRnkg.reparte as reparte,	");
-		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVenda		");
+		sql.append(" subRnkg.reparte as reparte	");
 		
 		sql.append(" from ( ");
 		
@@ -269,12 +263,11 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" sum(consolidado.valor) as participacao,				");
 		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
 		sql.append(" sum(consolidado.faturamentoCapa) as faturamentoCapa,	");
-		sql.append(" sum(consolidado.reparte) as reparte,	");
-		sql.append(" sum(consolidado.porcentagemVendaExemplares) as porcentagemVendaExemplares		");
+		sql.append(" sum(consolidado.reparte) as reparte	");
 		
 		sql.append(" from ");
 		
-		sql.append(obterFromWhereObterCurvaABC(filtro));
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.PRODUTO_EDICAO));
 		
 		sql.append(" GROUP BY consolidado.PRODUTO_EDICAO_ID ");
 		
@@ -295,7 +288,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
 		
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("porcentagemVenda", StandardBasicTypes.BIG_DECIMAL);
 		
 		this.getFiltroCurvaABC(filtro, query);
 		
@@ -306,7 +298,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	
 	
 	@SuppressWarnings("unchecked")
-	public StringBuilder obterFromWhereObterCurvaABC(FiltroCurvaABCDTO filtro) {
+	public StringBuilder obterFromWhereObterCurvaABC(FiltroCurvaABCDTO filtro, AgrupamentoCurvaABC agrupamento) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -317,7 +309,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" pessoa.NOME AS NOME_COTA,");
 		sql.append(" pessoa.RAZAO_SOCIAL AS RAZAO_SOCIAL_COTA,");
 		sql.append(" endereco.CIDADE AS CIDADE_COTA, ");
-		sql.append(" produto_edicao.PRODUTO_ID AS PRODUTO_ID, 	");
 		sql.append(" produto.EDITOR_ID AS EDITOR_ID, 			");
 		sql.append(" pessoaeditor.RAZAO_SOCIAL as RAZAO_SOCIAL_EDITOR,");
 		sql.append(" produto.CODIGO as CODIGO_PRODUTO,			");
@@ -347,17 +338,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" sum( ");
 		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end");
 		sql.append(" ) as reparte, ");
-
-		sql.append(" sum( ");
-		sql.append(" 	( ");
-		sql.append(" 		case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
-		sql.append("		(movimento_estoque_cota.qtde*-1) end ");
-		sql.append("  	) * 100 / ");
-		
-		sql.append(" 	( ");
-		sql.append(" 		case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end ");
-		sql.append(" 	)  	");
-		sql.append(" ) as porcentagemVendaExemplares, ");
 		
 		sql.append(" sum( ");
 		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
@@ -415,9 +395,26 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		sql.append(this.getFiltroCurvaABC(filtro, null));
 		
-		sql.append("	group by    ");
-		sql.append("	movimento_estoque_cota.PRODUTO_EDICAO_ID,			");
-		sql.append("	movimento_estoque_cota.COTA_ID	) as consolidado	");
+		switch(agrupamento) {
+		
+			case COTA:
+			sql.append("	group by movimento_estoque_cota.COTA_ID	");
+			break;
+			
+	
+			case PRODUTO_EDICAO:
+			sql.append("	group by movimento_estoque_cota.PRODUTO_EDICAO_ID ");
+			
+			break;
+			
+			case EDITOR:
+			sql.append("	group by editor.id ");
+			break;
+		
+		}
+		
+		
+		sql.append("	) as consolidado	");
 		
 		return sql;
 	}

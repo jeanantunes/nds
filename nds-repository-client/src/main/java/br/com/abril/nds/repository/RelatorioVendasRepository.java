@@ -12,9 +12,20 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 public interface RelatorioVendasRepository {
 
 	public enum TipoPesquisaRanking {
+		//Ranking das cotas independente de produto edição
 		RankingCota,
+		
+		//Ranking das cota independente de produto edição 
+		//relacionado a um produto especifico
 		RankingProduto
 	}
+	
+	public enum AgrupamentoCurvaABC {
+		COTA,
+		EDITOR,
+		PRODUTO_EDICAO
+	}
+	
 	
 	List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO, TipoPesquisaRanking tipoPesquisa);
 
