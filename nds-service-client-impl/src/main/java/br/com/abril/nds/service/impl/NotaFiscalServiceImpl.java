@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -541,12 +545,29 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 
+			JAXBContext jc;
+			try {
+				jc = JAXBContext.newInstance(NotaFiscal.class);
+			 
+		        Marshaller marshaller = jc.createMarshaller();
+		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		        marshaller.marshal(notaFiscal, System.out);
+			
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			/*
+			JAXBContext jc = JAXBContext.newInstance(Root.class);
+            Marshaller marshaller = jc.createMarshaller();
+            marshaller.marshal(root, System.out);
+			
 			nfeExporter.clear();
 
 			nfeExporter.execute(notaFiscal);
 
 			String s = nfeExporter.gerarArquivo();
-			sBuilder.append(s);
+			sBuilder.append(s);*/
 		}
 
 		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n"

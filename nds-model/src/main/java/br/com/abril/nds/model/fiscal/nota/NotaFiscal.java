@@ -17,6 +17,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.util.TipoSecao;
@@ -26,6 +29,8 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
 @SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
+@XmlRootElement(name="Nfe", namespace="http://www.portalfiscal.inf.br/nfe") 
+@XmlType(name="NotaFiscalNds")
 public class NotaFiscal implements Serializable {
 	
 	/**

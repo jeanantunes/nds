@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -16,6 +17,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 import br.com.abril.nfe.model.NotaFicalEndereco;
 
 @Embeddable
+@XmlType(name="NotaFiscalIdentificacaoDestinatario")
 public class IdentificacaoDestinatario implements Serializable {
 
 	/**

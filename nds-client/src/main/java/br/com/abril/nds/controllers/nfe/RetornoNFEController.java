@@ -67,8 +67,7 @@ public class RetornoNFEController extends BaseController {
 	@Post("/pesquisarArquivos.json")
 	public void pesquisarArquivosDeRetorno(Date dataReferencia) {
 		
-		ParametroSistema pathNFEImportacao = 
-				this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
+		ParametroSistema pathNFEImportacao = this.parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.PATH_INTERFACE_NFE_IMPORTACAO);
 		
 		this.limparSessao();
 		
