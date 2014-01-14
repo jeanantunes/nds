@@ -1113,6 +1113,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			],
 			beforeClose: function() {
 				$("input[name='checkMatrizReabertura']:checked", _workspace).attr("checked", false);
+				balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
 		    },
 		    form: $("#form-reabrir-matriz", _workspace)
 		});
@@ -1145,4 +1146,4 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 
 
 
-//@ sourceURL=balanceamentoLancamento.js
+//@ sourceURL=balanceamentoLancamento.js  

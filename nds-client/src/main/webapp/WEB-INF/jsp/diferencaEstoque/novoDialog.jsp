@@ -21,34 +21,118 @@
 						</c:forEach>
 					</select>
     			</td>
-    			<td width="20">
+    			<td width="20" class="lctoPorCota">
     				<input type="checkbox" name="checkbox" id="checkboxLancCota" onclick="lancamentoNovoController.lanctoPorCotaProduto();" />
     			</td>
-    			<td width="181">Lançamento por Cota</td>
+    			<td width="181" class="lctoPorCota">Lançamento por Cota</td>
+    			<td width="201" class="alteracaoReparte"></td>
   			</tr>
 		</table>
 	</fieldset>
 	
 	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 	
-	<fieldset style="width:650px!important;">
-    		<legend>Direcionar para:</legend>
-        	
-        	<table width="220" border="0" cellspacing="1" cellpadding="1">
-				<tr>
-					<td width="20" class="view-estouque">
-						<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
+	<div class="alteracaoReparte" style="display:none;">
+		
+		<fieldset style="width:650px!important;">
+			<div style="overflow: auto; height: 50px;">
+    			<table border="0" cellspacing="1" cellpadding="1" style="width:650px;" id="gridAlteracaoReparteCota">
+					<tr>
+						<td width="64" bgcolor="#F5F5F5">
+							<strong>Cota</strong>
+						</td>
+						<td width="300" bgcolor="#F5F5F5">
+							<strong>Nome</strong>
+						</td>
+					</tr>
+					<tr id="trCota1">
+						<td>
+							<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="10"
+								onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, null,lancamentoNovoController.erroPesquisaCota,1);"/>
+							
+							<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
+							
+						</td>
+						<td>
+							<input type="text" name="nomeInput" id="nomeInput1" style="width:300px;" maxlength="255"
+								onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
+								onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1,null,lancamentoNovoController.erroPesquisaCota,1);"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</fieldset>
+		
+		<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+		
+		<fieldset style="width:650px!important;">
+    		<legend>Produto</legend>
+    		<table class="lanctoFaltasSobras_2Grid" border="0" cellspacing="1" cellpadding="1" style="width:650px;">
+	    		<tr>
+					<td width="55" bgcolor="#F5F5F5">
+						<strong>Código</strong>
 					</td>
-					<td width="72" class="view-estouque">Estoque</td>
-					<td width="20" class="view-cota">
-						<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
+					<td width="130" bgcolor="#F5F5F5">
+						<strong>Produto</strong>
 					</td>
-					<td width="95" class="view-cota">Cota</td>
+					<td width="96" align="center" bgcolor="#F5F5F5">
+						<strong>Edição</strong>
+					</td>
+					<td bgcolor="#F5F5F5" align="center">
+						<strong>Reparte</strong>
+					</td>
+					<td bgcolor="#F5F5F5" align="center">
+						<strong>Reparte Devolvido</strong>
+					</td>
+					<td bgcolor="#F5F5F5" align="center">
+						<strong>Saldo Consignado</strong>
+					</td>
 				</tr>
-			</table>
-     	</fieldset>
+				<tr>
+					<td>
+						<input type="text" id="codigoProdutoInput" style="width:75px;" maxlength="30"
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+					</td>
+					<td>
+						<input type="text" id="nomeProdutoInput" style="width:130px;" maxlength="60"
+							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+					</td>
+					<td align="center">
+						<input type="text" id="edicaoProdutoInput" onblur="lancamentoNovoController.buscarReparteCotaProduto();" style="width:80px;" maxlength="255" />
+					</td>
+					<td align="right" id="alteracaoReparteProduto"></td>
+					<td align="center">
+						<input id="diferencaProdutoInput" onblur="lancamentoNovoController.atualizarSaldoConsignado();" style="width: 60px; text-align: center;" maxlength="10" />
+					</td>
+					<td align="center" id="saldoConsignado"></td>
+				</tr>
+    		</table>
+    	</fieldset> 
+	</div>
 	
 	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
+	
+	<fieldset style="width:650px!important;">
+   		<legend>Direcionar para:</legend>
+       	
+       	<table width="220" border="0" cellspacing="1" cellpadding="1">
+			<tr>
+				<td width="20" class="view-estouque">
+					<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
+				</td>
+				<td width="72" class="view-estouque">Estoque</td>
+				<td width="20" class="view-cota">
+					<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
+				</td>
+				<td width="95" class="view-cota">Cota</td>
+				<td width="72" class="alteracaoReparte">Estoque:</td>
+				<td class="alteracaoReparte">
+		    		 <select id="selectTipoEstoqueAlteracaoReparte" size="1"></select>
+		    	</td>
+			</tr>
+		</table>
+    </fieldset>
 	
 	<div class="prodSemCota" style="display:block;">
     	

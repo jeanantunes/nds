@@ -567,6 +567,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	private boolean verificarRecolhimentoProdutoEdicao(Lancamento lancamento, Date data) {
 		
+		if (lancamento == null || data == null) {
+			
+			return false;
+		}
+		
 		return (lancamento.getDataRecolhimentoDistribuidor().compareTo(data) < 0);
 	}
 	
