@@ -29,7 +29,7 @@ import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 @Entity
 @Table(name = "ROTA")
 @SequenceGenerator(name = "ROTA_SEQ", initialValue = 1, allocationSize = 1)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Rota implements Serializable {
 
 	/**

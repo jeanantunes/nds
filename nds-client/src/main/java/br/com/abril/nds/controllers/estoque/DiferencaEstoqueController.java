@@ -852,7 +852,13 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 	}
 	
-	private DiferencaVO obterDiferencaVO(TipoDiferenca tipoDiferenca,String codigoProduto,Integer edicaoProduto, BigInteger diferenca, BigInteger reparteAtual,TipoEstoque tipoEstoque, String pacotePadrao) {
+	private DiferencaVO obterDiferencaVO(TipoDiferenca tipoDiferenca, 
+										 String codigoProduto, 
+										 Integer edicaoProduto, 
+										 BigInteger diferenca, 
+										 BigInteger reparteAtual, 
+										 TipoEstoque tipoEstoque, 
+										 String pacotePadrao) {
 		
 		DiferencaVO diferencaVO =  new DiferencaVO();
 		
@@ -860,16 +866,55 @@ public class DiferencaEstoqueController extends BaseController {
 		diferencaVO.setNumeroEdicao(Util.nvl(edicaoProduto,"").toString());
 		diferencaVO.setQuantidade(diferenca);
 		diferencaVO.setQtdeEstoqueAtual(reparteAtual);
-		diferencaVO.setTipoDiferenca(tipoDiferenca);
+
+		diferencaVO.setTipoDiferenca(
+			this.obterTipoDiferenca(
+				tipoDiferenca, tipoEstoque));
+
 		diferencaVO.setTipoEstoque(tipoEstoque);
 		diferencaVO.setCadastrado(true);
 		diferencaVO.setPacotePadrao(pacotePadrao);
 		
-		diferencaVO.setDataLancamento(DateUtil.formatarDataPTBR( this.distribuidorService.obterDataOperacaoDistribuidor() ));
+		diferencaVO.setDataLancamento(
+			DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		return diferencaVO;
 	}
 
+	private TipoDiferenca obterTipoDiferenca(TipoDiferenca tipoDiferenca, 
+											 TipoEstoque tipoEstoque) {
+		
+		if (!tipoDiferenca.isAlteracaoReparte()) {
+			
+			return tipoDiferenca;
+		}
+		
+		switch (tipoEstoque) {
+
+			case LANCAMENTO:
+				
+				return TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO;
+	
+			case RECOLHIMENTO:
+				
+				return TipoDiferenca.ALTERACAO_REPARTE_PARA_RECOLHIMENTO;
+				
+			case SUPLEMENTAR:
+				
+				return TipoDiferenca.ALTERACAO_REPARTE_PARA_SUPLEMENTAR;
+				
+			case PRODUTOS_DANIFICADOS:
+				
+				return TipoDiferenca.ALTERACAO_REPARTE_PARA_PRODUTOS_DANIFICADOS;
+				
+			default:
+				break;
+		}
+		
+		throw new ValidacaoException(
+			TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
+	}
 
 	@SuppressWarnings("unchecked")
 	private Long incluirDiferencaEstoque(DiferencaVO diferencaVO, TipoDiferenca tipoDiferenca) {
@@ -1488,6 +1533,12 @@ public class DiferencaEstoqueController extends BaseController {
 			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.SOBRA_EM, TipoDiferenca.SOBRA_EM.getDescricao())
 		);
 		
+		listaTiposDiferenca.add(
+			new ItemDTO<TipoDiferenca, String>(
+				TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO, 
+				TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.getDescricao())
+		);
+		
 		result.include("listaTiposDiferenca", listaTiposDiferenca);
 	}
 	
@@ -1769,14 +1820,11 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			Date dataLancamento = null;
 			
-			String motivo = null;
-			
 			if (diferenca.getLancamentoDiferenca() != null && 
 					diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null) {
 				
 				dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
-				
-				motivo = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getMotivo();
+
 			} else {
 				
 				if(diferenca.getLancamentoDiferenca()!= null 
@@ -1784,8 +1832,6 @@ public class DiferencaEstoqueController extends BaseController {
 						&& !diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().isEmpty()){
 					
 					dataLancamento = diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getData();
-					
-					motivo = diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getMotivo();
 				}
 			}
 			
@@ -2594,7 +2640,7 @@ public class DiferencaEstoqueController extends BaseController {
 				break;
 		}
 		
-		return quantidadeEstoque;
+		return (quantidadeEstoque == null) ? BigInteger.ZERO : quantidadeEstoque;
 	}
 	
 	@Post
@@ -2614,6 +2660,26 @@ public class DiferencaEstoqueController extends BaseController {
 		dados[1] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
 		
 		result.use(Results.json()).from(dados, "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/buscarReparteCotaProduto")
+	public void buscarReparteCotaProduto(String codigoProduto, String numeroEdicao, Integer numeroCota) {
+
+		if(numeroCota == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota deve ser informada."));
+		
+		if(codigoProduto == null || numeroEdicao == null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto deve ser informado."));
+		
+		ProdutoEdicao produtoEdicao = 
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				codigoProduto, numeroEdicao);
+		
+		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(
+			produtoEdicao.getId(), numeroCota);
+		
+		result.use(Results.json()).withoutRoot().from(qtde).serialize();
 	}
 	
 	@Post
@@ -2648,6 +2714,47 @@ public class DiferencaEstoqueController extends BaseController {
 		dados[3] = estoques;  	
 		
 		result.use(Results.json()).from(dados, "result").serialize();
+	}
+	
+	@Post
+	@Path("/lancamento/buscarEstoquesAlteracaoReparte")
+	public void buscarEstoquesAlteracaoReparte() {
+		
+		List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
+		
+		estoques.add(
+			new EstoqueDTO(
+				TipoEstoque.LANCAMENTO.name(), 
+				TipoEstoque.LANCAMENTO.getDescricao(),
+				null
+			) 
+		);
+		
+		estoques.add(
+			new EstoqueDTO(
+				TipoEstoque.RECOLHIMENTO.name(), 
+				TipoEstoque.RECOLHIMENTO.getDescricao(),
+				null
+			) 
+		); 
+		
+		estoques.add(
+			new EstoqueDTO(
+				TipoEstoque.SUPLEMENTAR.name(), 
+				TipoEstoque.SUPLEMENTAR.getDescricao(),
+				null
+			) 
+		);
+		
+		estoques.add(
+			new EstoqueDTO(
+				TipoEstoque.PRODUTOS_DANIFICADOS.name(), 
+				TipoEstoque.PRODUTOS_DANIFICADOS.getDescricao(),
+				null
+			) 
+		);
+		
+		this.result.use(Results.json()).from(estoques, "result").serialize();
 	}
 		
 	private List<EstoqueDTO> gerarEstoques(EstoqueProduto estoque,String codigoPrduto,Long numeroEdicao) {

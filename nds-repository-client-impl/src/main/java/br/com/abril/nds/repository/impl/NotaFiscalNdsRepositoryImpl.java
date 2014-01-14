@@ -347,18 +347,17 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		return query.list();
 	}
 	
-	/*
+	
 	@Override
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
 		
 		// OBTER COTA EXEMPLARES SUMARIZADOS
 		StringBuilder hql = new StringBuilder("SELECT ");
-		hql.append(" COUNT(fornecedor.id AS idFornecedor, ");
-		Query query = queryConsultaNfeParameters(queryConsultaNfe(filtro, hql, true, true, false), filtro);
+		hql.append(" COUNT(fornecedor.id) ");
+		Query query = queryConsultaNfeEstoqueParameters(queryConsultaNfeEstoque(filtro, hql, true, true, false), filtro);
 		
 		return (long) query.list().size();
 	}
-	*/
 	
 	public Query queryConsultaNfeEstoqueParameters(StringBuilder hql, FiltroViewNotaFiscalDTO filtro) {
 

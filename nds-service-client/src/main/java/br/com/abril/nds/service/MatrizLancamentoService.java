@@ -75,5 +75,7 @@ public interface MatrizLancamentoService {
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuario);
 	
 	void validarDiaSemanaDistribuicaoFornecedores(Date dataDistribuicao);
+	
+	void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario);
 
 }

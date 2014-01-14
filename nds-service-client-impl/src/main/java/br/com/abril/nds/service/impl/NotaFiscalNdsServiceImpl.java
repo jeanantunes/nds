@@ -3,7 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.List;
 
 import br.com.abril.nds.service.NotaFiscalNdsService;
-import br.com.abril.nfe.model.NotaFiscalBase;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;;
 
 public class NotaFiscalNdsServiceImpl implements NotaFiscalNdsService {
 

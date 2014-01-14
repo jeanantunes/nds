@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
@@ -551,25 +554,29 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@SuppressWarnings("unchecked")
 	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro) {
 		
+		//Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
 		StringBuilder hql = new StringBuilder("SELECT ")
-		.append(" notaFiscal.numero as numeroNota, ")
-		.append(" pj.nome as nomeCota, ")
-		.append(" SUM(item.vlrTotal) as vlrTotal, ")
-		.append(" SUM(item.valorUnitario) as vlrTotalDesconto, ")
-		.append(" SUM(item.quantidade) as totalExemplares ")
-		.append(" FROM NotaFiscal as notaFiscal ")
-		.append(" JOIN notaFiscal.produtosServicos as item ")
-		.append(" JOIN notaFiscal.identificacaoEmitente as pj ")
-		.append(" WHERE ");
+		.append(" notaFiscal.id, ")
+		.append(" false, ")
+		.append(" cota, ")
+		.append(" SUM(item.quantidade), ")
+		.append(" SUM(item.valorTotalBruto), ")
+		.append(" SUM(item.valorDesconto) ")		
+		.append(" FROM Cota c, NotaFiscal notaFiscal ")
+		.append(" JOIN notaFiscal.produtosServicos item ")
+		.append(" JOIN notaFiscal.identificacaoEmitente.pessoaEmitenteReferencia pj ")
+		.append(" WHERE c.pessoa.id = pj.id ");
+		//.append(" pj.nome as nomeCota, ")
+		// .append(" WHERE ");
 		
 		if(filtro.getDataEmissao()!=null) {
 			hql.append(" notaFiscal.dataEmissao >= :dataEmissao ");
 		}
 		
-		hql.append("group by notaFiscal ");
+		hql.append("group by notaFiscal.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("dataEmissao", filtro.getDataEmissao());
+		// query.setParameter("dataEmissao", filtro.getDataEmissao());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NotasCotasImpressaoNfeDTO.class));
 		

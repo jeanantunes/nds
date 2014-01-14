@@ -29,6 +29,7 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.NaturezaOperacaoRepository;
@@ -275,13 +276,18 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		return distribuidorRepository.obter();
 	}
 	
-	public Long serieNotaFiscal (br.com.abril.nfe.model.NotaFiscalBase notaFiscal){
+	public Long serieNotaFiscal (NotaFiscalBase notaFiscal){
 		return serieRepository.obterNumeroSerieNota();
 	}
 
 	@Override
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		return notaFiscalService.consultaFornecedorExemplarSumarizado(filtro);
+	}
+
+	@Override
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+		return notaFiscalService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
 	
 }

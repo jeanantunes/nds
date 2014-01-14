@@ -10,7 +10,7 @@ import br.com.abril.nds.util.export.Exportable;
 /**
  * Value Object para os produtos da matriz de recolhimento.
  * 
- * @author Discover Technology
+ * @author Discover Technology 
  */
 @Exportable
 public class ProdutoRecolhimentoVO {
@@ -56,10 +56,8 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Rcto")
 	private Date dataRecolhimento;
 	
-	@Export(label="Sede")
 	private String encalheSedeFormatado;
 	
-	@Export(label="Atendida")
 	private String encalheAtendidaFormatado;
 	
 	@Export(label="Exemplar")

@@ -15,7 +15,9 @@ import br.com.abril.nds.model.movimentacao.TipoMovimento;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DiscriminatorValue(value = "FINANCEIRO")
 public class TipoMovimentoFinanceiro extends TipoMovimento {
-	
+
+	private static final long serialVersionUID = -6127568503693464740L;
+
 	@Column(name = "GRUPO_MOVIMENTO_FINANCEIRO")
 	@Enumerated(EnumType.STRING)
 	private GrupoMovimentoFinaceiro grupoMovimentoFinaceiro;

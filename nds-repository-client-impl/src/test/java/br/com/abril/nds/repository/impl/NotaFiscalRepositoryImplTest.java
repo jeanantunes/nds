@@ -59,7 +59,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
-import br.com.abril.nfe.model.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 
 public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
