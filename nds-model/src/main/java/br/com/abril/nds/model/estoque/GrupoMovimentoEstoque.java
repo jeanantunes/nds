@@ -319,7 +319,16 @@ public enum GrupoMovimentoEstoque  {
 	 * Entrada de estoque suplementar rollout do sistema
 	 * Criado em conjunto com Cesar Marracho
 	 */
-	ENTRADA_ESTOQUE_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR);
+	ENTRADA_ESTOQUE_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+
+	/**
+	 * Grupos de movimento de estoque para alterações de reparte das cotas (lançamento de faltas e sobras).
+	 */
+	ALTERACAO_REPARTE_COTA(OperacaoEstoque.SAIDA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.RECOLHIMENTO),
+	ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
+	ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS);
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

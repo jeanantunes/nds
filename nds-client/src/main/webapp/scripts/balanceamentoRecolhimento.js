@@ -1289,6 +1289,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			],
 			beforeClose: function() {
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
+				balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
 		    },
 		    form: $("#form-reabrir-matriz", balanceamentoRecolhimentoController.workspace)
 		});
@@ -1373,6 +1374,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			],
 			beforeClose: function() {
 				clearMessageDialogTimeout("dialog-confirmar");
+				balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
 		    },
 		    form: $("#dialog-confirm-balanceamento", balanceamentoRecolhimentoController.workspace).parents("form")
 		});

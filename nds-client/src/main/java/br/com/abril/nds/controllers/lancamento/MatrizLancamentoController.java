@@ -94,9 +94,6 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String DATA_ATUAL_SELECIONADA = "dataAtualSelecionada";
 	
-	private Date dataLancamentoAux;
-	
-	private List<Long> idsFornecedoresAux;
 	
 	@Path("/")
 	public void index() {
@@ -113,9 +110,6 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
-		
-		dataLancamentoAux = dataLancamento;
-		idsFornecedoresAux = idsFornecedoresAux;
 		
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
 		
@@ -1165,10 +1159,34 @@ public class MatrizLancamentoController extends BaseController {
 	public void obterAgrupamentoDiarioBalanceamento() {
 
 		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
-
-		if (confirmacoesVO != null) {
+		List<ConfirmacaoVO> confirmacoesAuxVO =  new ArrayList<>();
 		
-			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date data = new Date();
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			try{
+			 
+				data = format.parse(confirmacaoVO.getMensagem());
+			
+			}catch(ParseException ex){
+				
+			}
+			
+			if (!confirmacaoVO.isConfirmado()) {
+				
+				if(this.distribuidorService.obterDataOperacaoDistribuidor().before(data)){
+					
+					confirmacoesAuxVO.add(confirmacaoVO);
+				}
+			}
+		}
+		
+		if (confirmacoesAuxVO != null) {
+		
+			result.use(Results.json()).from(confirmacoesAuxVO, "result").serialize();
 		}
 	}
 
@@ -1291,8 +1309,6 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
 		}
 		this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
-
-		obterMatrizLancamento(dataLancamentoAux, idsFornecedoresAux);
 		
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
