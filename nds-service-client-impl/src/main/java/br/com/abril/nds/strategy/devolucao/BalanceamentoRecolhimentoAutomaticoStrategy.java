@@ -321,7 +321,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimento.get(dataBalanceamento);
 			
 			long media = dadosRecolhimento.getMediaRecolhimentoDistribuidor();
-			media = media-100;
+			media = media+100;
 
 			if(expectativaEncalheTotalAtualNaData.longValue() < media){
 			
@@ -343,7 +343,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 										expectativaEncalheTotalAtualNaData, dataBalanceamento, 
 											permiteExcederCapacidadeManuseioDistribuidor);
 					
-				dadosRecolhimento.setMediaRecolhimentoDistribuidor(dadosRecolhimento.getMediaRecolhimentoDistribuidor()-(expectativaEncalheTotalAtualNaData.longValue()-dadosRecolhimento.getMediaRecolhimentoDistribuidor()));
+				dadosRecolhimento.setMediaRecolhimentoDistribuidor(dadosRecolhimento.getMediaRecolhimentoDistribuidor()-(((expectativaEncalheTotalAtualNaData.longValue()-dadosRecolhimento.getMediaRecolhimentoDistribuidor())/dadosRecolhimento.getDatasRecolhimentoFornecedor().size())));
 				}
 			}
 		}
