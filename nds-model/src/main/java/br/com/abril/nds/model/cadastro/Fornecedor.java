@@ -41,7 +41,7 @@ import br.com.abril.nds.model.cadastro.desconto.Desconto;
 @Entity
 @Table(name = "FORNECEDOR")
 @SequenceGenerator(name="FORNECEDOR_SEQ", initialValue = 1, allocationSize = 1)
-@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class Fornecedor implements Serializable {
 
 	private static final long serialVersionUID = -1534481069627822217L;

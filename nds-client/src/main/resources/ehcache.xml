@@ -54,4 +54,13 @@
 	    overflowToDisk="true"
 	/>
 	
+	<cache
+	    name="br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="300"
+	    timeToLiveSeconds="600"
+	    overflowToDisk="true"
+	/>
+	
 </ehcache>

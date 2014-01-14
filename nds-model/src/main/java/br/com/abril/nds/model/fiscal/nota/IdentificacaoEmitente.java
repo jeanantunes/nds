@@ -13,10 +13,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
-import br.com.abril.nfe.model.NotaFicalEndereco;
 
 @Embeddable
 @XmlType(name="NotaFiscalIdentificacaoEmitente")

@@ -32,7 +32,7 @@ public class NotaFiscalItem {
 	private NotaFiscalNds notaFiscal;
 	
 	@Embedded
-	private br.com.abril.nfe.model.NotaFiscalItem notaFiscalItem;
+	private br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalItem notaFiscalItem;
 	
 	@OneToMany(targetEntity=OrigemItemNotaFiscal.class, cascade=CascadeType.MERGE)
 	@JoinTable(name = "NOTA_FISCAL_ITEM_NOTA_FISCAL_ORIGEM_ITEM", 
@@ -43,7 +43,7 @@ public class NotaFiscalItem {
 	
 	public NotaFiscalItem() {
 		if(notaFiscalItem == null){
-			this.notaFiscalItem = new br.com.abril.nfe.model.NotaFiscalItem();
+			this.notaFiscalItem = new br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalItem();
 		}
 	}
 

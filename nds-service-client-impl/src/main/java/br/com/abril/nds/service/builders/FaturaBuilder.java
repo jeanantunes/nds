@@ -7,7 +7,7 @@ import java.util.List;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nfe.model.NotaFiscalFatura;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;;
 
 
 public class FaturaBuilder {

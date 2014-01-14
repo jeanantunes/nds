@@ -47,4 +47,7 @@ public interface GeracaoNFeService {
 
 	public abstract List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro);
 
+	public abstract Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro);
+
+	
 }

@@ -1773,4 +1773,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
+	@Override
+	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
+		return this.notaFiscalNdsRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
+	}
+
+	
 }
