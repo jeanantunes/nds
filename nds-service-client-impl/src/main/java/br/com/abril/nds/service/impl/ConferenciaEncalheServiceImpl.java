@@ -84,6 +84,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -236,6 +237,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private CotaUnificacaoRepository cotaUnificacaoRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -1467,16 +1471,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
 					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
 			
-			if (existeBoletoAntecipado){
-				
-				gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
-												           controleConferenciaEncalheCota.getUsuario().getId());
-			}
-			else{
+			//se a cota for unificadora ou unificada não pode gerar cobrança nesse ponto
+			boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), null),
+					
+					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
+							controleConferenciaEncalheCota.getCota().getNumeroCota(), null);
 			
-				gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
-												   controleConferenciaEncalheCota.getUsuario().getId(), 
-												   nossoNumeroCollection);
+			if (!cotaUnificadora && !cotaUnificada){
+			
+				if (existeBoletoAntecipado){
+					
+					gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
+													           controleConferenciaEncalheCota.getUsuario().getId());
+				}
+				else{
+				
+					gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
+													   controleConferenciaEncalheCota.getUsuario().getId(), 
+													   nossoNumeroCollection);
+				}
 			}
 	    }
 		else if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)){
