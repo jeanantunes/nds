@@ -16,8 +16,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -45,6 +47,10 @@ public class ProdutoServico implements Serializable {
 	 */
 	private static final long serialVersionUID = 6402390731085431454L;
 
+	@Transient
+	@XmlAttribute(name="nItem")
+	private Long sequencia;
+	
 	@EmbeddedId
 	@NFEExportType
 	private ProdutoServicoPK produtoServicoPK;
@@ -189,6 +195,14 @@ public class ProdutoServico implements Serializable {
 	@XmlTransient
 	private List<OrigemItemNotaFiscal> origemItemNotaFiscal;
 	
+	public Long getSequencia() {
+		return sequencia;
+	}
+
+	public void setSequencia(Long sequencia) {
+		this.sequencia = sequencia;
+	}
+
 	/**
 	 * @return the encargoFinanceiro
 	 */

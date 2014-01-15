@@ -555,6 +555,12 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			JAXBContext jc;
 			try {
 				
+				long index = 1;
+				for(ProdutoServico ps : notaFiscal.getProdutosServicos()) {
+					ps.setSequencia(index++);
+				}
+				
+				/*
 				TNFe nfe = TNFe.Factory.newInstance();
 				InfNFe infNfe = InfNFe.Factory.newInstance();
 				Dest dest = Dest.Factory.newInstance();
@@ -562,11 +568,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				infNfe.setDest(dest);
 				nfe.setInfNFe(infNfe);
 				
-				jc = JAXBContext.newInstance(TNFeImpl.class);
+				jc = JAXBContext.newInstance(TNFe.class);
 			 
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		        marshaller.marshal(nfe, System.out);
+		        */
+				
+				jc = JAXBContext.newInstance(NotaFiscal.class);
+				 
+		        Marshaller marshaller = jc.createMarshaller();
+		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		        marshaller.marshal(notaFiscal, System.out);
 			
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
