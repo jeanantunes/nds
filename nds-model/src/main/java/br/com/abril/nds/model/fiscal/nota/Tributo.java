@@ -1,11 +1,16 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,7 +26,10 @@ public class Tributo implements Serializable {
 	
 	@Column(name="DESCRICAO")
 	private String descricao;
-
+	
+	@OneToMany(fetch=FetchType.LAZY, mappedBy="pk.tributo", cascade=CascadeType.ALL)
+	Set<GrupoTributoAliquota> grupoTributos = new HashSet<GrupoTributoAliquota>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -38,28 +46,11 @@ public class Tributo implements Serializable {
 		this.descricao = descricao;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		return result;
+	public Set<GrupoTributoAliquota> getGrupoTributos() {
+		return grupoTributos;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Tributo other = (Tributo) obj;
-		if (this.getId()== null) {
-			if (other.id != null)
-				return false;
-		} else if (!this.getId().equals(other.id))
-			return false;
-		return true;
+	public void setGrupoTributos(Set<GrupoTributoAliquota> grupoTributos) {
+		this.grupoTributos = grupoTributos;
 	}
 }

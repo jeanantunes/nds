@@ -220,6 +220,7 @@ public class PainelMonitorNFEController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
+	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 
@@ -229,8 +230,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		List<NfeVO> listaNfeVO =  getListaNfeVO(infoNfe.getListaNfeDTO());
 		
-		FileExporter.to("nfe", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), 
+		FileExporter.to("nfe", fileType).inHTTPResponse(this.getNDSFileHeader(), 
 				filtroMonitorNfeDTO, 
 				null, 
 				listaNfeVO,
@@ -267,6 +267,7 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void imprimirDanfes(boolean indEmissaoDepec) {
 		

@@ -189,8 +189,6 @@ public class GeracaoNFeController extends BaseController {
 			fornecedorExemplaresDTOs = geracaoNFeService.consultaFornecedorExemplarSumarizado(filtro);
 			totalRegistros = geracaoNFeService.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 			break;
-
-
 		}
 		
 		if(naturezaOperacao.getTipoDestinatario().getDescricao().equals("Fornecedor")){

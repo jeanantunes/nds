@@ -57,9 +57,10 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 public class ProdutoServicoRepositoryImplTest extends
 		AbstractRepositoryImplTest {
@@ -243,7 +244,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		String inscricaoSuframa = "";
 		String nome = "";
 		String nomeFantasia = "";
-		Pessoa pessoaDestinatarioReferencia = null;
+		NotaFiscalPessoa pessoaDestinatarioReferencia = null;
 		Telefone telefone = null;
 
 		IdentificacaoDestinatario identificacaoDestinatario = Fixture
@@ -266,7 +267,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
-		Pessoa pessoaEmitenteReferencia = null;
+		NotaFiscalPessoa pessoaEmitenteReferencia = null;
 		RegimeTributario regimeTributario = null;
 		Telefone telefoneEmitente = null;
 

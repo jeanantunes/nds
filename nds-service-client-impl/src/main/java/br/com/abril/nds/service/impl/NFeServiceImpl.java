@@ -54,6 +54,8 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
@@ -64,7 +66,6 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 @Service
 public class NFeServiceImpl implements NFeService {
@@ -291,15 +292,6 @@ public class NFeServiceImpl implements NFeService {
 	private void carregarDanfeDadosEmissor(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 
 		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getIdentificacaoEmitente();
-		Pessoa pessoaEmitente = notaFiscal.getIdentificacaoEmitente().getPessoaEmitenteReferencia();
-
-		boolean indPessoaJuridica = false;
-
-		if(pessoaEmitente instanceof PessoaJuridica) {
-
-			indPessoaJuridica = true;
-
-		} 
 
 		String documento 	= identificacaoEmitente.getDocumento();
 		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
@@ -314,9 +306,7 @@ public class NFeServiceImpl implements NFeService {
 
 		String emissorCNPJ 							 = "";
 
-		if(indPessoaJuridica) {
-			emissorCNPJ = documento;
-		} 
+		emissorCNPJ = documento;
 
 		String emissorLogradouro 	=	"";
 		String emissorNumero 		=   "";
@@ -422,16 +412,10 @@ public class NFeServiceImpl implements NFeService {
 		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getIdentificacaoDestinatario();
 
 		String documento 			= identificacaoDestinatario.getDocumento();
-		Pessoa pessoaDestinatario 	= identificacaoDestinatario.getPessoaDestinatarioReferencia();
-
 		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 
 		boolean indPessoaJuridica = false;
-
-		if(pessoaDestinatario instanceof PessoaJuridica) {
-			indPessoaJuridica = true;
-		} 
 
 		String destinatarioCNPJ 				= "";
 		String destinatarioNome 				= identificacaoDestinatario.getNome();

@@ -1,15 +1,21 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ALIQUOTA")
+@Table(name="aliquota")
 public class Aliquota implements Serializable {
 
 	private static final long serialVersionUID = 5392503333835977858L;
@@ -19,9 +25,12 @@ public class Aliquota implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@Column(name="DESCRICAO")
-	private String descricao;
-
+	@Column(name="VALOR")
+	private BigDecimal valor;
+	
+	@OneToMany(fetch=FetchType.LAZY, mappedBy = "pk.aliquota", cascade=CascadeType.ALL)
+	Set<GrupoTributoAliquota> aliquotas = new HashSet<GrupoTributoAliquota>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -30,36 +39,19 @@ public class Aliquota implements Serializable {
 		this.id = id;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public BigDecimal getValor() {
+		return valor;
+	}
+	
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+	
+	public Set<GrupoTributoAliquota> getAliquotas() {
+		return aliquotas;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Aliquota other = (Aliquota) obj;
-		if (this.getId()== null) {
-			if (other.id != null)
-				return false;
-		} else if (!this.getId().equals(other.id))
-			return false;
-		return true;
+	public void setAliquotas(Set<GrupoTributoAliquota> aliquotas) {
+		this.aliquotas = aliquotas;
 	}
 }

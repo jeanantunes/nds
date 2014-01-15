@@ -34,8 +34,6 @@ import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
@@ -52,12 +50,12 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 @Service
 public class MonitorNFEServiceImpl implements MonitorNFEService {
@@ -259,15 +257,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	private void carregarDanfeDadosEmissor(DanfeDTO danfe, NotaFiscal notaFiscal) {
 	
 		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getIdentificacaoEmitente();
-		Pessoa pessoaEmitente = notaFiscal.getIdentificacaoEmitente().getPessoaEmitenteReferencia();
-		
-		boolean indPessoaJuridica = false;
-		
-		if(pessoaEmitente instanceof PessoaJuridica) {
-			
-			indPessoaJuridica = true;
-			
-		} 
 		
 		String documento 	= identificacaoEmitente.getDocumento();
 		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
@@ -281,10 +270,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String emissorInscricaoMunicipal 			 = identificacaoEmitente.getInscricaoMunicipal();
 
 		String emissorCNPJ 							 = "";
-		
-		if(indPessoaJuridica) {
-			emissorCNPJ = documento;
-		} 
+		emissorCNPJ = documento;
 		
 		String emissorLogradouro 	=	"";
 		String emissorNumero 		=   "";
@@ -390,16 +376,11 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getIdentificacaoDestinatario();
 		
 		String documento 			= identificacaoDestinatario.getDocumento();
-		Pessoa pessoaDestinatario 	= identificacaoDestinatario.getPessoaDestinatarioReferencia();
 		
 		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
 		boolean indPessoaJuridica = false;
-		
-		if(pessoaDestinatario instanceof PessoaJuridica) {
-			indPessoaJuridica = true;
-		} 
 		
 		String destinatarioCNPJ 				= "";
 		String destinatarioNome 				= identificacaoDestinatario.getNome();
