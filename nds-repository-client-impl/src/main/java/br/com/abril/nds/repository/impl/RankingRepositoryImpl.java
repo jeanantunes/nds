@@ -25,37 +25,23 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select	");
-		
-		sql.append(" subRnkg.idCota as chave, 	");
-		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado,	");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
-		
-		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
-		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
-		sql.append(" subRnkg.reparte as reparte,	");
-		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
-		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
-		
-		sql.append(" from ( ");
-		
 		sql.append(" select ");
-
-		sql.append(" consolidado.COTA_ID as idCota,	");
-		sql.append(" sum(consolidado.valor) as valor,	");
-		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
-		sql.append(" sum(consolidado.faturamentoCapa) as faturamentoCapa,	");
-		sql.append(" sum(consolidado.reparte) as reparte,	");
-		sql.append(" sum(consolidado.valorMargemDistribuidor) as valorMargemDistribuidor, 			");
-		sql.append(" sum(consolidado.porcentagemMargemDistribuidor) as porcentagemMargemDistribuidor	");
+		
+		sql.append(" consolidado.COTA_ID as chave,	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as valorAcumulado,	");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		sql.append(" consolidado.valor as valor,						");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
+		sql.append(" consolidado.reparte as reparte,	");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
 		sql.append(" from ");
 		
 		sql.append(obterSQLRanking(filtro))
 	
-		.append("    group by consolidado.COTA_ID ")
-		.append("    order by valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
@@ -203,10 +189,9 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(this.getFiltroRanking(filtro, null));
 		
-		sql.append("		group by movimento_estoque_cota.PRODUTO_EDICAO_ID,   ");
-		sql.append("		movimento_estoque_cota.COTA_ID ");
+		sql.append("	group by movimento_estoque_cota.COTA_ID	");
 		
-		sql.append("		order by movimento_estoque_cota.DATA desc ) as consolidado ");
+		sql.append("	) as consolidado ");
 		
 		return sql;
 	}

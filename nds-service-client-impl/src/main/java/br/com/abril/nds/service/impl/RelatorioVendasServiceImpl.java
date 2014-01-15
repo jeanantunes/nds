@@ -229,8 +229,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		}
 		
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
-		//BigDecimal participacaoAcumulada = BigDecimal.ZERO;
-
+		
+		
 		// Partipacao do registro em relacao a participacao total no periodo
 		if ( participacaoTotal.compareTo(BigDecimal.ZERO) != 0) {
 		
@@ -249,25 +249,41 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				registro.setDataDe(filtro.getDataDe());
 				registro.setDataAte(filtro.getDataAte());
 
+				registro.setPorcentagemMargemDistribuidor(
+						obterPercentualMargemDistribuidor(registro.getValorMargemDistribuidor(), registro.getFaturamentoCapa())
+				);
+				
 				registro.setPorcentagemVendaExemplares(obterPercentualVendaExemplares(registro.getVendaExemplares(), registro.getReparte()));
 				
 			}
 		}
-
 	}
+	
+	private BigDecimal obterPercentualMargemDistribuidor(BigDecimal margemDistribuidor, BigDecimal faturamentoCapa) {
+		
+		margemDistribuidor = (margemDistribuidor!=null) ? margemDistribuidor : BigDecimal.ZERO;
+		faturamentoCapa = (faturamentoCapa!=null) ? faturamentoCapa : BigDecimal.ZERO;
+		
+		if( BigDecimal.ZERO.compareTo(margemDistribuidor) != 0 &&
+		   	BigDecimal.ZERO.compareTo(faturamentoCapa) !=0	) {
+			
+			return margemDistribuidor.multiply(CEM).divide(faturamentoCapa, RoundingMode.HALF_EVEN);
+			
+		}
+		
+		return BigDecimal.ZERO;
+	}
+	
+	
 	
 	private BigDecimal obterPercentualVendaExemplares(BigInteger vendaExemplares, BigInteger reparte) {
 		
 		vendaExemplares = (vendaExemplares != null) ? vendaExemplares : BigInteger.ZERO; 
-		
 		reparte = (reparte != null) ? reparte: BigInteger.ZERO;
-
+		
 		if(BigInteger.ZERO.compareTo(vendaExemplares)!=0 &&
 				BigInteger.ZERO.compareTo(reparte)!=0) {
-			
-			
 			return MathUtil.divide(CEM.multiply(new BigDecimal(vendaExemplares)), new BigDecimal(reparte));
-		
 		}
 		
 		return BigDecimal.ZERO;

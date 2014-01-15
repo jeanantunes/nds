@@ -100,14 +100,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select	");
+		sql.append(" select ");
+		sql.append(" consolidado.COTA_ID AS idCota, ");
 		
-		sql.append(" subRnkg.idCota as idCota, 			");
-		sql.append(" subRnkg.numeroCota as numeroCota,	");
-		sql.append(" subRnkg.nomeCota as nomeCota,		");
-		sql.append(" subRnkg.municipio as municipio,	");
-		
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.participacao as participacaoAcumulada,	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada,	");
 		
 		if(TipoPesquisaRanking.RankingCota.equals(tipoPesquisa)){
 			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkCota, ");
@@ -115,36 +111,23 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
 		}
 		
-		
-		sql.append(" subRnkg.participacao as participacao,			");
-		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
-		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa		");
-		
-		sql.append(" from ( ");
-		
-		sql.append(" select ");
-		
-		sql.append(" consolidado.COTA_ID AS idCota, 			");
 		sql.append(" consolidado.NUMERO_COTA AS numeroCota, 	");
 		sql.append(" COALESCE(consolidado.NOME_COTA, consolidado.RAZAO_SOCIAL_COTA) AS nomeCota, ");
 		sql.append(" consolidado.CIDADE_COTA AS municipio, 	");
-		
-		sql.append(" sum(consolidado.valor) as participacao,	");
-		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
-		sql.append(" sum(consolidado.faturamentoCapa) as faturamentoCapa	");
+		sql.append(" consolidado.valor as participacao,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamentoCapa		");
 		
 		sql.append("   from ");
 		
 		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.COTA));
 		
-		sql.append(" GROUP BY consolidado.COTA_ID ");
-		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc ");
 
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
-		query.addScalar("idProduto", StandardBasicTypes.LONG);
 		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
 		query.addScalar("nomeCota", StandardBasicTypes.STRING);
 		query.addScalar("municipio", StandardBasicTypes.STRING);
@@ -173,40 +156,24 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
-
-		sql.append(" select ");
 		
-		sql.append(" subRnkg.codigoEditor as codigoEditor, 	");
-		sql.append(" subRnkg.nomeEditor AS nomeEditor, 		");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.participacao as participacaoAcumulada, ");
-		
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkEditor,	");
-		sql.append(" subRnkg.vendaExemplares as vendaExemplares,			");
-		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,			");
-		sql.append(" subRnkg.participacao as participacao, 					");
-		sql.append(" subRnkg.reparte as reparte,	");
-		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
-		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
-		sql.append(" from ");
-		
-		
-		sql.append("( SELECT ");
+		sql.append(" SELECT ");
 		sql.append(" consolidado.EDITOR_ID AS codigoEditor, 			");
 		sql.append(" consolidado.RAZAO_SOCIAL_EDITOR AS nomeEditor, 	");
-		sql.append(" sum(consolidado.faturamentoCapa) AS faturamentoCapa,	");
-		sql.append(" sum(consolidado.valor) AS participacao,						");
-		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
-		sql.append(" sum(consolidado.reparte) as reparte,					");
-		sql.append(" sum(consolidado.valorMargemDistribuidor) as valorMargemDistribuidor, 			");
-		sql.append(" sum(consolidado.porcentagemMargemDistribuidor) as porcentagemMargemDistribuidor	");
+		sql.append(" consolidado.faturamentoCapa AS faturamentoCapa,	");
+		sql.append(" consolidado.valor AS participacao,						");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada, ");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkEditor,	");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.reparte as reparte,					");
+		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
+		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 
 		sql.append(" from ");
 		
 		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.EDITOR));
 		
-		sql.append(" GROUP BY consolidado.EDITOR_ID ");
-		
-		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -234,24 +201,6 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro) {
 		
 		StringBuilder sql = new StringBuilder();
-
-		sql.append(" SELECT ");
-
-		sql.append(" subRnkg.idProdutoEdicao AS idProdutoEdicao, 	");
-		sql.append(" subRnkg.codigoProduto AS codigoProduto, 		");
-		sql.append(" subRnkg.nomeProduto AS nomeProduto, 			");
-		sql.append(" subRnkg.edicaoProduto AS edicaoProduto, 		");
-		
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.participacao as participacaoAcumulada,	");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
-
-		sql.append(" subRnkg.participacao as participacao, 			");
-		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
-		sql.append(" subRnkg.faturamentoCapa as faturamento, 			");
-
-		sql.append(" subRnkg.reparte as reparte	");
-		
-		sql.append(" from ( ");
 		
 		sql.append(" select ");
 		
@@ -260,18 +209,19 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" consolidado.NOME_PRODUTO AS nomeProduto, 			");
 		sql.append(" consolidado.NUMERO_EDICAO AS edicaoProduto, 		");
 		
-		sql.append(" sum(consolidado.valor) as participacao,				");
-		sql.append(" sum(consolidado.vendaExemplares) as vendaExemplares,	");
-		sql.append(" sum(consolidado.faturamentoCapa) as faturamentoCapa,	");
-		sql.append(" sum(consolidado.reparte) as reparte	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as participacaoAcumulada,	");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as rkProduto, ");
+		
+		sql.append(" consolidado.valor as participacao,				");
+		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
+		sql.append(" consolidado.faturamentoCapa as faturamento,	");
+		sql.append(" consolidado.reparte as reparte	");
 		
 		sql.append(" from ");
 		
 		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.PRODUTO_EDICAO));
 		
-		sql.append(" GROUP BY consolidado.PRODUTO_EDICAO_ID ");
-		
-		sql.append(" ORDER BY participacao desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		sql.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamento desc   ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -340,31 +290,32 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" ) as reparte, ");
 		
 		sql.append(" sum( ");
-		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append(" (	");
+		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO,0)) / 100)) ");
+		sql.append(" )	");
 		
-		sql.append(" 	 * (movimento_estoque_cota.PRECO_COM_DESCONTO - (produto_edicao.PRECO_VENDA ");
-		sql.append(" 	  		- (produto_edicao.PRECO_VENDA * COALESCE(descontologistica.PERCENTUAL_DESCONTO, 0) / 100) ) ");
-		sql.append(" 			) ");
+		sql.append(" - ");
 		
+		sql.append(" (	");
+		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(descontologistica.PERCENTUAL_DESCONTO,0)) / 100)) ");
+		sql.append(" )	");
 		sql.append(" ) as valorMargemDistribuidor, ");
 
 		sql.append(" sum( ");
 
-		sql.append(" (	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
-		
-		sql.append(" 	* (movimento_estoque_cota.PRECO_COM_DESCONTO - (produto_edicao.PRECO_VENDA ");
-		sql.append(" 	  		- (produto_edicao.PRECO_VENDA * COALESCE(descontologistica.PERCENTUAL_DESCONTO, 0) / 100) ) ");
-		sql.append(" 	  ) ");
-		
-		sql.append(" ) ");
+		sql.append(" 	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(descontologistica.PERCENTUAL_DESCONTO,0)) / 100)) ");
 		
 		sql.append(" / ");
 		
 		sql.append(" (	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
-		sql.append(" * produto_edicao.PRECO_VENDA )  ");
+		sql.append(" * produto_edicao.PRECO_VENDA ) * 100  ");
 		
 		sql.append(" ) as porcentagemMargemDistribuidor ");
 		
