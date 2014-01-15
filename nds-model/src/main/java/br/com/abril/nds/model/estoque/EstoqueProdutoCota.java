@@ -46,7 +46,7 @@ public class EstoqueProdutoCota implements Serializable {
 	private BigInteger qtdeDevolvida;
 	
 	@OneToMany(mappedBy = "estoqueProdutoCota")
-	List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
+	private List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
 	
 	public EstoqueProdutoCota() {
 	}
