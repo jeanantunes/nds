@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -15,6 +16,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
  *
  */
 @Embeddable
+@XmlType(name="NotaFiscalVeiculo")
 public class Veiculo implements Serializable {
 
 	/**

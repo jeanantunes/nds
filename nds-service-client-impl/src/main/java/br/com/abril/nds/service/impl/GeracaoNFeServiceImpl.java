@@ -144,7 +144,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 * @see br.com.abril.nds.service.GeracaoNFeService#gerarNotaFiscal(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, java.util.List, java.util.List, java.lang.Long)
 	 */
 	@Override
-	@Transactional(rollbackFor=Exception.class)
+	@Transactional(rollbackFor=Throwable.class)
 	public void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
 		
