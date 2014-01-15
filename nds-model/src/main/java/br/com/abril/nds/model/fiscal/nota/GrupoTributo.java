@@ -1,15 +1,17 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ALIQUOTA")
+@Table(name="GRUPO_TRIBUTO")
 public class GrupoTributo implements Serializable {
 
 	private static final long serialVersionUID = 5392503333835977858L;
@@ -21,6 +23,9 @@ public class GrupoTributo implements Serializable {
 	
 	@Column(name="DESCRICAO")
 	private String descricao;
+	
+	@OneToMany
+	private List<Aliquota> aliquotas;
 
 	public Long getId() {
 		return id;
@@ -36,6 +41,14 @@ public class GrupoTributo implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public List<Aliquota> getAliquotas() {
+		return aliquotas;
+	}
+
+	public void setAliquotas(List<Aliquota> aliquotas) {
+		this.aliquotas = aliquotas;
 	}
 
 	@Override

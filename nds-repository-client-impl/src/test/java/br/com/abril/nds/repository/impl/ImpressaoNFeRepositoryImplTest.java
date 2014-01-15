@@ -24,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -63,10 +62,11 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.ImpressaoNFeRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 
 public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest {
@@ -154,7 +154,8 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 		String inscricaoSuframa 	= "";
 		String nome 		= "";
 		String nomeFantasia = "";
-		Pessoa pessoaDestinatarioReferencia = jose;
+		NotaFiscalPessoa pessoaDestinatarioReferencia = new NotaFiscalPessoa() {
+		};
 		Telefone telefone = null;
 		
 		IdentificacaoDestinatario identificacaoDestinatario = 
@@ -183,7 +184,7 @@ public class ImpressaoNFeRepositoryImplTest  extends AbstractRepositoryImplTest 
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
-		Pessoa pessoaEmitenteReferencia = null;
+		NotaFiscalPessoa pessoaEmitenteReferencia = null;
 		RegimeTributario regimeTributario = null;
 		Telefone telefoneEmitente = null;
 		

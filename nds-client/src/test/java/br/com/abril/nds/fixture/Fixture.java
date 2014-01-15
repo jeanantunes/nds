@@ -208,6 +208,8 @@ import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.ParametroSistema;
@@ -254,7 +256,6 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCo
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 
 public class Fixture {
@@ -3538,7 +3539,7 @@ public class Fixture {
 			String inscricaoMunicipal,
 			String nome,
 			String nomeFantasia,
-			Pessoa pessoaEmitenteReferencia,
+			NotaFiscalPessoa pessoaEmitenteReferencia,
 			RegimeTributario regimeTributario,
 			Telefone telefone) {
 		
@@ -3569,7 +3570,7 @@ public class Fixture {
 			String inscricaoSuframa,
 			String nome,
 			String nomeFantasia,
-			Pessoa pessoaDestinatarioReferencia,
+			NotaFiscalPessoa pessoaDestinatarioReferencia,
 			Telefone telefone) {
 		
 		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();

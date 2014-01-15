@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -56,7 +56,7 @@ public class IdentificacaoEmitente implements Serializable {
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PESSOA_EMITENTE_ID_REFERENCIADA")
-	private Pessoa pessoaEmitenteReferencia;
+	private NotaFiscalPessoa pessoaEmitenteReferencia;
 	
 	/**
 	 * CNPJ CPF
@@ -144,7 +144,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @return the pessoaEmitenteReferencia
 	 */
-	public Pessoa getPessoaEmitenteReferencia() {
+	public NotaFiscalPessoa getPessoaEmitenteReferencia() {
 		return pessoaEmitenteReferencia;
 	}
 
@@ -153,7 +153,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @param pessoaEmitenteReferencia the pessoaEmitenteReferencia to set
 	 */
-	public void setPessoaEmitenteReferencia(Pessoa pessoaEmitenteReferencia) {
+	public void setPessoaEmitenteReferencia(NotaFiscalPessoa pessoaEmitenteReferencia) {
 		this.pessoaEmitenteReferencia = pessoaEmitenteReferencia;
 	}
 
