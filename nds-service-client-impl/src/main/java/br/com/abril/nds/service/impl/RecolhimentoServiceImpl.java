@@ -1411,11 +1411,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			this.removerChamadaEncalhe(lancamento.getChamadaEncalhe());
 			
-			//if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
+			if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
 				
-				//throw new ValidacaoException(TipoMensagem.WARNING,
-					//"A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
-			//}
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
+			}
 		}
 	}
 
