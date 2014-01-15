@@ -128,7 +128,7 @@
 				<td width="95" class="view-cota">Cota</td>
 				<td width="72" class="alteracaoReparte">Estoque:</td>
 				<td class="alteracaoReparte">
-		    		 <select id="selectTipoEstoqueAlteracaoReparte" size="1"></select>
+		    		 <select id="selectTipoEstoqueAlteracaoReparte" size="1" onchange="lancamentoNovoController.atualizarTipoEstoqueSelecionado();"></select>
 		    	</td>
 			</tr>
 		</table>
