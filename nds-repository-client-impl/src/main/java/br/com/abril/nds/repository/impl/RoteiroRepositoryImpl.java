@@ -36,7 +36,10 @@ public class RoteiroRepositoryImpl extends
 		} else if (Ordenacao.DESC == ordenacao) {
 			criteria.addOrder(Order.desc(sortname));
 		}
-		return criteria.setCacheable(true).list();
+		
+		criteria.setCacheable(true);
+		
+		return criteria.list();
 	}
 
 	@SuppressWarnings("unchecked")
