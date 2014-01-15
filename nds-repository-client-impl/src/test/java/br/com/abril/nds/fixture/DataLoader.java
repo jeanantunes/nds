@@ -209,6 +209,8 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
@@ -246,7 +248,6 @@ import br.com.abril.nds.util.EntityUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 public class DataLoader {
     
@@ -12426,7 +12427,7 @@ public class DataLoader {
 		String inscricaoSuframa 	= "";
 		String nome 		= "";
 		String nomeFantasia = "";
-		Pessoa pessoaDestinatarioReferencia = null;
+		NotaFiscalPessoa pessoaDestinatarioReferencia = null;
 		Telefone telefone = null;
 		
 		IdentificacaoDestinatario identificacaoDestinatario = 
@@ -12455,7 +12456,7 @@ public class DataLoader {
 		String inscricaoMunicipalEmitente = "";
 		String nomEmitente = "";
 		String nomeFantasiaEmitente = "";
-		Pessoa pessoaEmitenteReferencia = null;
+		NotaFiscalPessoa pessoaEmitenteReferencia = null;
 		RegimeTributario regimeTributario = null;
 		Telefone telefoneEmitente = null;
 		

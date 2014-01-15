@@ -8,12 +8,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
 
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -25,7 +25,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
-	private Pessoa pessoaDestinatarioReferencia;
+	private NotaFiscalPessoa pessoaDestinatarioReferencia;
 	
 	
 	/**
@@ -86,12 +86,12 @@ public class IdentificacaoDestinatario implements Serializable {
 	}
 
 	
-	public Pessoa getPessoaDestinatarioReferencia() {
+	public NotaFiscalPessoa getPessoaDestinatarioReferencia() {
 		return pessoaDestinatarioReferencia;
 	}
 
 	
-	public void setPessoaDestinatarioReferencia(Pessoa pessoaDestinatarioReferencia) {
+	public void setPessoaDestinatarioReferencia(NotaFiscalPessoa pessoaDestinatarioReferencia) {
 		this.pessoaDestinatarioReferencia = pessoaDestinatarioReferencia;
 	}
 

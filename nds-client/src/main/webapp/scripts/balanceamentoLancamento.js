@@ -652,6 +652,38 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		}
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexReload();
+
+		$.getJSON(
+	 			contextPath + "/matrizLancamento/obterDatasConfirmadasReabertura", 
+	 			null,
+	 			function(result) {
+	 				
+	 				if (result.length == 0) {
+	 		
+	 					$("#linkReabrirMatriz", _workspace).hide();
+	 					
+	 				} else {
+	 					$("#linkReabrirMatriz", _workspace).show();
+
+	 				}
+	 			}
+	 		);		
+		
+		$.postJSON(
+	 			contextPath + "/matrizLancamento/obterAgrupamentoDiarioBalanceamento", 
+	 			null,
+	 			function(result) {
+	 				
+	 				if (result.length == 0) {
+	 		
+	 					$("#linkConfirmar", _workspace).hide();
+	 					
+	 				} else {
+	 					$("#linkConfirmar", _workspace).show();
+
+	 				}
+	 			}
+	 		);	
 	},
 	
 	this.mostrarGrid = function() {
@@ -1055,11 +1087,11 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	 				
 	 				if (result.length == 0) {
 	 		
-	 					$("#linkReabrirMatriz", _workspace).show();
+	 					$("#linkReabrirMatriz", _workspace).hide();
 	 					
 	 				} else {
 	 					this.popularPopupReaberturaMatrizes(result);
-	 					$("#linkReabrirMatriz", _workspace).hide();
+	 					$("#linkReabrirMatriz", _workspace).show();
 
 	 				}
 	 			}
@@ -1113,6 +1145,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			],
 			beforeClose: function() {
 				$("input[name='checkMatrizReabertura']:checked", _workspace).attr("checked", false);
+				balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
 		    },
 		    form: $("#form-reabrir-matriz", _workspace)
 		});
