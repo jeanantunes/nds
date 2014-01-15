@@ -500,7 +500,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
 					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
-
+				
+				List<EstoqueProdutoCota> estoqueProdutoCotaCompraSuplementar = 
+						this.estoqueProdutoCotaRepository.buscarEstoqueProdutoCotaCompraSuplementar(idLancamento);
+				
+				listaEstoqueProdutoCota.addAll(estoqueProdutoCotaCompraSuplementar);
+				
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
 					throw new ValidacaoException(TipoMensagem.WARNING,
@@ -1460,7 +1465,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
 			
-			this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			if(chamadaEncalhe.getTipoChamadaEncalhe() == TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO){
+			  this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}
 	}
 	
