@@ -268,7 +268,7 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroHistoricoEditorVO> lista = editorService.obterHistoricoEditor(filtroSessao);
+		List<RegistroHistoricoEditorVO> lista = relatorioVendasService.obterHistoricoEditor(filtroSessao);
 		
 		FileExporter.to("consulta-historico-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, RegistroHistoricoEditorVO.class, this.httpServletResponse);
 		
@@ -378,14 +378,16 @@ public class RelatorioVendasController extends BaseController {
 			String sortorder, String sortname, int page, int rp) throws Exception {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-
+		
 		FiltroPesquisarHistoricoEditorDTO filtro = 
 				carregarFiltroHistoricoEditor(sortorder, sortname, page, rp, 
 						sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);	
 
+		
+		
 		List<RegistroHistoricoEditorVO> resultado = null;
 		try {
-			resultado = editorService.obterHistoricoEditor(filtro);
+			resultado = relatorioVendasService.obterHistoricoEditor(filtro);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {

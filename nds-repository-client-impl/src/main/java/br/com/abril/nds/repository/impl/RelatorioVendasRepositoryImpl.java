@@ -11,11 +11,13 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
@@ -93,6 +95,50 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		return (qtde == null) ? 0 : qtde.intValue(); 	
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroCurvaABCDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT ");
+		
+		sql.append(" consolidado.CODIGO_PRODUTO AS codigoProduto, 		");
+		sql.append(" consolidado.NOME_PRODUTO AS nomeProduto,			");
+		sql.append(" consolidado.NUMERO_EDICAO AS edicaoProduto,		");
+		sql.append(" consolidado.reparte AS reparte,					");
+		sql.append(" consolidado.vendaExemplares AS vendaExemplares,	");
+		sql.append(" consolidado.porcentagemVenda AS porcentagemVenda,	");
+		
+		sql.append(" consolidado.faturamentoCapa AS faturamento,		");
+		sql.append(" consolidado.valorMargemCota AS valorMargemCota,	");
+		sql.append(" consolidado.valorMargemDistribuidor AS valorMargemDistribuidor	");
+
+		sql.append(" from ");
+		
+		sql.append(obterFromWhereObterCurvaABC(filtro, AgrupamentoCurvaABC.PRODUTO_EDICAO));
+		
+		sql.append(" ORDER BY faturamento desc ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("codigoProduto", StandardBasicTypes.STRING);
+		query.addScalar("nomeProduto", StandardBasicTypes.STRING);
+		query.addScalar("edicaoProduto", StandardBasicTypes.LONG);
+		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("porcentagemVenda", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemCota", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
+		
+		this.getFiltroCurvaABC(filtro, query);
+		
+		query.setResultTransformer(Transformers.aliasToBean(RegistroHistoricoEditorVO.class));
+		
+		return query.list();
+		
+	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -278,7 +324,16 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
 		sql.append(" ) as vendaExemplares, ");
+		
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append(" ) / ");
 
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end");
+		sql.append(" ) * 100 as porcentagemVenda, ");
+		
 		sql.append(" sum( ");
 		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
@@ -293,7 +348,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" (	");
 		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
-		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO,0)) / 100)) ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO, 0)) / 100)) ");
 		sql.append(" )	");
 		
 		sql.append(" - ");
@@ -301,23 +356,49 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append(" (	");
 		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
-		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(descontologistica.PERCENTUAL_DESCONTO,0)) / 100)) ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(descontologistica.PERCENTUAL_DESCONTO, descontologisticaproduto.PERCENTUAL_DESCONTO, 0)) / 100)) ");
 		sql.append(" )	");
 		sql.append(" ) as valorMargemDistribuidor, ");
 
+		
 		sql.append(" sum( ");
-
-		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append(" (	");
+		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
-		sql.append(" 	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(descontologistica.PERCENTUAL_DESCONTO,0)) / 100)) ");
+		sql.append("	* produto_edicao.PRECO_VENDA ");
+		sql.append(" )	");
+		
+		sql.append(" - ");
+		
+		sql.append(" (	");
+		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO, 0)) / 100)) ");
+		sql.append(" )	");
+		sql.append(" ) as valorMargemCota, ");
+		
+		
+		sql.append(" sum( ");
+		sql.append(" (	");
+		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(movimento_estoque_cota.VALOR_DESCONTO,0)) / 100)) ");
+		sql.append(" )	");
+		sql.append(" - ");
+		sql.append(" (	");
+		sql.append("	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
+		sql.append("	* (produto_edicao.PRECO_VENDA - ((produto_edicao.PRECO_VENDA * coalesce(descontologistica.PERCENTUAL_DESCONTO, descontologisticaproduto.PERCENTUAL_DESCONTO, 0)) / 100)) ");
+		sql.append(" )	");
+		sql.append(" )  ");
 		
 		sql.append(" / ");
 		
-		sql.append(" (	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
 		sql.append("	(movimento_estoque_cota.qtde*-1) end ");
-		sql.append(" * produto_edicao.PRECO_VENDA ) * 100  ");
-		
-		sql.append(" ) as porcentagemMargemDistribuidor ");
+		sql.append(" * produto_edicao.PRECO_VENDA  ");
+		sql.append(" ) * 100 as porcentagemMargemDistribuidor ");
 		
 		sql.append("	from   ");
 		
@@ -334,7 +415,10 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		sql.append("	inner join endereco endereco on enderecocota.endereco_id = endereco.id                                           ");
 		sql.append("	inner join editor on editor.id = produto.editor_id                                                               ");
 		sql.append("	inner join pessoa pessoaeditor on editor.juridica_id = pessoaeditor.id                                           ");
-		sql.append("	left join desconto_logistica descontologistica on descontologistica.id = produto_edicao.desconto_logistica_id    ");
+		
+		sql.append("	left join desconto_logistica descontologistica on descontologistica.id = produto_edicao.desconto_logistica_id    		");
+		sql.append("	left join desconto_logistica descontologisticaproduto on descontologisticaproduto.id = produto.desconto_logistica_id	");
+		
 		sql.append("	inner join lancamento on lancamento.produto_edicao_id = produto_edicao.id										 ");
 		sql.append("	left join fechamento_encalhe fechamentoencalhe on                                                                ");
 		sql.append("	(fechamentoencalhe.data_encalhe = lancamento.data_rec_distrib                                                ");
@@ -351,11 +435,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			case COTA:
 			sql.append("	group by movimento_estoque_cota.COTA_ID	");
 			break;
-			
 	
 			case PRODUTO_EDICAO:
 			sql.append("	group by movimento_estoque_cota.PRODUTO_EDICAO_ID ");
-			
 			break;
 			
 			case EDITOR:

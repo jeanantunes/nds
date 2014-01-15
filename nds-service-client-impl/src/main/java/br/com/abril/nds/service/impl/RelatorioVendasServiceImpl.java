@@ -3,8 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -14,16 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.dto.RankingDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
@@ -32,7 +30,6 @@ import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository.TipoPesquisaRanking;
 import br.com.abril.nds.service.RelatorioVendasService;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class RelatorioVendasServiceImpl implements RelatorioVendasService {
@@ -103,6 +100,22 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		return lista;
 	}
+	
+	@Override
+	@Transactional
+	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtroCurvaABCEditorDTO) {
+		
+		FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO();
+		
+		filtro.setCodigoEditor(filtroCurvaABCEditorDTO.getNumeroEditor());
+		filtro.setDataDe(filtroCurvaABCEditorDTO.getDataDe());
+		filtro.setDataAte(filtroCurvaABCEditorDTO.getDataAte());
+		
+		return this.relatorioVendasRepository.obterHistoricoEditor(filtro);
+		
+	}
+	
+	
 	
 	@Override
 	@Transactional
@@ -248,33 +261,12 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				
 				registro.setDataDe(filtro.getDataDe());
 				registro.setDataAte(filtro.getDataAte());
-
-				registro.setPorcentagemMargemDistribuidor(
-						obterPercentualMargemDistribuidor(registro.getValorMargemDistribuidor(), registro.getFaturamentoCapa())
-				);
 				
 				registro.setPorcentagemVendaExemplares(obterPercentualVendaExemplares(registro.getVendaExemplares(), registro.getReparte()));
 				
 			}
 		}
 	}
-	
-	private BigDecimal obterPercentualMargemDistribuidor(BigDecimal margemDistribuidor, BigDecimal faturamentoCapa) {
-		
-		margemDistribuidor = (margemDistribuidor!=null) ? margemDistribuidor : BigDecimal.ZERO;
-		faturamentoCapa = (faturamentoCapa!=null) ? faturamentoCapa : BigDecimal.ZERO;
-		
-		if( BigDecimal.ZERO.compareTo(margemDistribuidor) != 0 &&
-		   	BigDecimal.ZERO.compareTo(faturamentoCapa) !=0	) {
-			
-			return margemDistribuidor.multiply(CEM).divide(faturamentoCapa, RoundingMode.HALF_EVEN);
-			
-		}
-		
-		return BigDecimal.ZERO;
-	}
-	
-	
 	
 	private BigDecimal obterPercentualVendaExemplares(BigInteger vendaExemplares, BigInteger reparte) {
 		
