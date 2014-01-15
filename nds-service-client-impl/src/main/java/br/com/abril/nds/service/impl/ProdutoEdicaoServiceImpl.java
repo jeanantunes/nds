@@ -855,7 +855,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
 					|| lancamento.getStatus().equals(StatusLancamento.FURO)) ) {
 								
-				validacaoMap.put("edicaoExpedida", "Esta edição não pode ser excluida pois possui lançamento expedido!");
+				validacaoMap.put("edicaoExpedida", "Produto balanceado, é necessário realizar o furo da publicação para realizar a exclusão!");
 				
 				return validacaoMap;
 			}
