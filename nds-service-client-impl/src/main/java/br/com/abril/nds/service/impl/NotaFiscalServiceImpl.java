@@ -21,6 +21,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.xmlbeans.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -554,14 +555,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			JAXBContext jc;
 			try {
 				
-				TNFe nfe = new TNFeImpl(null);
-				InfNFe infNfe = new InfNFeImpl(null);
-				Dest dest = new DestImpl(null);
+				TNFe nfe = TNFe.Factory.newInstance();
+				InfNFe infNfe = InfNFe.Factory.newInstance();
+				Dest dest = Dest.Factory.newInstance();
 				dest.setCNPJ("123654");
 				infNfe.setDest(dest);
 				nfe.setInfNFe(infNfe);
 				
-				jc = JAXBContext.newInstance(TNFe.class);
+				jc = JAXBContext.newInstance(TNFeImpl.class);
 			 
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

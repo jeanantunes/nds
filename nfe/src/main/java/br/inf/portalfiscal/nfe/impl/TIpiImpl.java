@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TIpi
 {
-    private static final long serialVersionUID = 1L;
     
     public TIpiImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -626,7 +625,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class ClEnqImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TIpi.ClEnq
     {
-        private static final long serialVersionUID = 1L;
         
         public ClEnqImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -645,7 +643,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class CSeloImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TIpi.CSelo
     {
-        private static final long serialVersionUID = 1L;
         
         public CSeloImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -664,7 +661,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class QSeloImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TIpi.QSelo
     {
-        private static final long serialVersionUID = 1L;
         
         public QSeloImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -683,7 +679,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class CEnqImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TIpi.CEnq
     {
-        private static final long serialVersionUID = 1L;
         
         public CEnqImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -702,7 +697,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class IPITribImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TIpi.IPITrib
     {
-        private static final long serialVersionUID = 1L;
         
         public IPITribImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -1233,7 +1227,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TIpi.IPITrib.CST
         {
-            private static final long serialVersionUID = 1L;
             
             public CSTImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -1253,7 +1246,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class IPINTImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TIpi.IPINT
     {
-        private static final long serialVersionUID = 1L;
         
         public IPINTImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -1338,7 +1330,6 @@ public class TIpiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TIpi.IPINT.CST
         {
-            private static final long serialVersionUID = 1L;
             
             public CSTImpl(org.apache.xmlbeans.SchemaType sType)
             {

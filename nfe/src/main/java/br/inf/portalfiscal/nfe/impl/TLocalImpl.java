@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TLocalImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TLocal
 {
-    private static final long serialVersionUID = 1L;
     
     public TLocalImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -730,7 +729,6 @@ public class TLocalImpl extends org.apache.xmlbeans.impl.values.XmlComplexConten
      */
     public static class XLgrImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TLocal.XLgr
     {
-        private static final long serialVersionUID = 1L;
         
         public XLgrImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -749,7 +747,6 @@ public class TLocalImpl extends org.apache.xmlbeans.impl.values.XmlComplexConten
      */
     public static class NroImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TLocal.Nro
     {
-        private static final long serialVersionUID = 1L;
         
         public NroImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -768,7 +765,6 @@ public class TLocalImpl extends org.apache.xmlbeans.impl.values.XmlComplexConten
      */
     public static class XCplImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TLocal.XCpl
     {
-        private static final long serialVersionUID = 1L;
         
         public XCplImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -787,7 +783,6 @@ public class TLocalImpl extends org.apache.xmlbeans.impl.values.XmlComplexConten
      */
     public static class XBairroImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TLocal.XBairro
     {
-        private static final long serialVersionUID = 1L;
         
         public XBairroImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -806,7 +801,6 @@ public class TLocalImpl extends org.apache.xmlbeans.impl.values.XmlComplexConten
      */
     public static class XMunImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TLocal.XMun
     {
-        private static final long serialVersionUID = 1L;
         
         public XMunImpl(org.apache.xmlbeans.SchemaType sType)
         {

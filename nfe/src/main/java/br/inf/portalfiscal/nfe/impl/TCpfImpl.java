@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TCpfImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TCpf
 {
-    private static final long serialVersionUID = 1L;
     
     public TCpfImpl(org.apache.xmlbeans.SchemaType sType)
     {

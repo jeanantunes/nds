@@ -13,7 +13,6 @@ package org.w3.x2000.x09.xmldsig.impl;
  */
 public class TTransformURIImpl extends org.apache.xmlbeans.impl.values.JavaUriHolderEx implements org.w3.x2000.x09.xmldsig.TTransformURI
 {
-    private static final long serialVersionUID = 1L;
     
     public TTransformURIImpl(org.apache.xmlbeans.SchemaType sType)
     {

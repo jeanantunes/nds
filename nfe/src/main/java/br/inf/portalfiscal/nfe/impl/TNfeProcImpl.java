@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TNfeProcImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNfeProc
 {
-    private static final long serialVersionUID = 1L;
     
     public TNfeProcImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TRetEnviNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TRetEnviNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TRetEnviNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -670,7 +669,6 @@ public class TRetEnviNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexC
      */
     public static class InfRecImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TRetEnviNFe.InfRec
     {
-        private static final long serialVersionUID = 1L;
         
         public InfRecImpl(org.apache.xmlbeans.SchemaType sType)
         {

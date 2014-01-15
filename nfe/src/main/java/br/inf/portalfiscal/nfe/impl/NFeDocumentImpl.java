@@ -14,7 +14,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class NFeDocumentImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.NFeDocument
 {
-    private static final long serialVersionUID = 1L;
     
     public NFeDocumentImpl(org.apache.xmlbeans.SchemaType sType)
     {

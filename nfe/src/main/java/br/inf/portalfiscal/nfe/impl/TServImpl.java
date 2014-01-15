@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TServImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TServ
 {
-    private static final long serialVersionUID = 1L;
     
     public TServImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TCListServImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TCListServ
 {
-    private static final long serialVersionUID = 1L;
     
     public TCListServImpl(org.apache.xmlbeans.SchemaType sType)
     {

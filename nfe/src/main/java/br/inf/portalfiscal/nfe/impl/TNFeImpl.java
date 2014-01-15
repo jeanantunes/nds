@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -132,7 +131,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
      */
     public static class InfNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe
     {
-        private static final long serialVersionUID = 1L;
         
         public InfNFeImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -1533,7 +1531,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class IdeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide
         {
-            private static final long serialVersionUID = 1L;
             
             public IdeImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -3348,7 +3345,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class CNFImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.CNF
             {
-                private static final long serialVersionUID = 1L;
                 
                 public CNFImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3367,7 +3363,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class NatOpImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NatOp
             {
-                private static final long serialVersionUID = 1L;
                 
                 public NatOpImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3386,7 +3381,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IndPagImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.IndPag
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IndPagImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3405,7 +3399,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class TpNFImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.TpNF
             {
-                private static final long serialVersionUID = 1L;
                 
                 public TpNFImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3424,7 +3417,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IdDestImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.IdDest
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IdDestImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3443,7 +3435,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class TpImpImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.TpImp
             {
-                private static final long serialVersionUID = 1L;
                 
                 public TpImpImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3462,7 +3453,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class TpEmisImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.TpEmis
             {
-                private static final long serialVersionUID = 1L;
                 
                 public TpEmisImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3481,7 +3471,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class CDVImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.CDV
             {
-                private static final long serialVersionUID = 1L;
                 
                 public CDVImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3500,7 +3489,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IndFinalImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.IndFinal
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IndFinalImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3519,7 +3507,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IndPresImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.IndPres
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IndPresImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3538,7 +3525,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class VerProcImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.VerProc
             {
-                private static final long serialVersionUID = 1L;
                 
                 public VerProcImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3557,7 +3543,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XJustImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.XJust
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XJustImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -3576,7 +3561,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class NFrefImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref
             {
-                private static final long serialVersionUID = 1L;
                 
                 public NFrefImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -4007,7 +3991,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class RefNFImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefNF
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public RefNFImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -4442,7 +4425,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class AAMMImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefNF.AAMM
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public AAMMImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -4461,7 +4443,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ModImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefNF.Mod
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ModImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -4481,7 +4462,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class RefNFPImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefNFP
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public RefNFPImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -5104,7 +5084,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class AAMMImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefNFP.AAMM
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public AAMMImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -5123,7 +5102,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ModImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefNFP.Mod
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ModImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -5143,7 +5121,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class RefECFImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefECF
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public RefECFImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -5368,7 +5345,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ModImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefECF.Mod
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ModImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -5387,7 +5363,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NECFImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefECF.NECF
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NECFImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -5406,7 +5381,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NCOOImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Ide.NFref.RefECF.NCOO
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NCOOImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -5428,7 +5402,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class EmitImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Emit
         {
-            private static final long serialVersionUID = 1L;
             
             public EmitImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -6269,7 +6242,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XNomeImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Emit.XNome
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XNomeImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -6288,7 +6260,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XFantImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Emit.XFant
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XFantImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -6307,7 +6278,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IMImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Emit.IM
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IMImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -6326,7 +6296,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class CNAEImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Emit.CNAE
             {
-                private static final long serialVersionUID = 1L;
                 
                 public CNAEImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -6345,7 +6314,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class CRTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Emit.CRT
             {
-                private static final long serialVersionUID = 1L;
                 
                 public CRTImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -6365,7 +6333,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class AvulsaImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa
         {
-            private static final long serialVersionUID = 1L;
             
             public AvulsaImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -7270,7 +7237,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XOrgaoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa.XOrgao
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XOrgaoImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -7289,7 +7255,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class MatrImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa.Matr
             {
-                private static final long serialVersionUID = 1L;
                 
                 public MatrImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -7308,7 +7273,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XAgenteImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa.XAgente
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XAgenteImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -7327,7 +7291,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class FoneImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa.Fone
             {
-                private static final long serialVersionUID = 1L;
                 
                 public FoneImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -7346,7 +7309,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class NDARImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa.NDAR
             {
-                private static final long serialVersionUID = 1L;
                 
                 public NDARImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -7365,7 +7327,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class RepEmiImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Avulsa.RepEmi
             {
-                private static final long serialVersionUID = 1L;
                 
                 public RepEmiImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -7385,7 +7346,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class DestImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest
         {
-            private static final long serialVersionUID = 1L;
             
             public DestImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -8298,7 +8258,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IdEstrangeiroImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest.IdEstrangeiro
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IdEstrangeiroImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -8317,7 +8276,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XNomeImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest.XNome
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XNomeImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -8336,7 +8294,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IndIEDestImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest.IndIEDest
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IndIEDestImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -8355,7 +8312,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ISUFImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest.ISUF
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ISUFImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -8374,7 +8330,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class IMImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest.IM
             {
-                private static final long serialVersionUID = 1L;
                 
                 public IMImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -8393,7 +8348,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class EmailImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest.Email
             {
-                private static final long serialVersionUID = 1L;
                 
                 public EmailImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -8413,7 +8367,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class AutXMLImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.AutXML
         {
-            private static final long serialVersionUID = 1L;
             
             public AutXMLImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -8617,7 +8570,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class DetImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det
         {
-            private static final long serialVersionUID = 1L;
             
             public DetImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -8976,7 +8928,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ProdImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ProdImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -11652,7 +11603,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class CProdImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.CProd
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public CProdImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11671,7 +11621,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class CEANImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.CEAN
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public CEANImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11690,7 +11639,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XProdImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.XProd
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XProdImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11709,7 +11657,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NCMImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.NCM
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NCMImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11728,7 +11675,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NVEImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.NVE
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NVEImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11747,7 +11693,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class EXTIPIImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.EXTIPI
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public EXTIPIImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11766,7 +11711,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class UComImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.UCom
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public UComImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11785,7 +11729,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class CEANTribImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.CEANTrib
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public CEANTribImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11804,7 +11747,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class UTribImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.UTrib
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public UTribImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11823,7 +11765,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class IndTotImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.IndTot
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public IndTotImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -11842,7 +11783,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class DIImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public DIImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -12817,7 +12757,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NDIImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.NDI
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NDIImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -12836,7 +12775,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class XLocDesembImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.XLocDesemb
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public XLocDesembImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -12855,7 +12793,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpViaTranspImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.TpViaTransp
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpViaTranspImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -12874,7 +12811,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpIntermedioImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.TpIntermedio
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpIntermedioImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -12893,7 +12829,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CExportadorImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.CExportador
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CExportadorImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -12912,7 +12847,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class AdiImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.Adi
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public AdiImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -13325,7 +13259,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class NAdicaoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.Adi.NAdicao
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public NAdicaoImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -13344,7 +13277,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class NSeqAdicImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.Adi.NSeqAdic
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public NSeqAdicImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -13363,7 +13295,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CFabricanteImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.Adi.CFabricante
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CFabricanteImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -13382,7 +13313,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class NDrawImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DI.Adi.NDraw
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public NDrawImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -13403,7 +13333,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class DetExportImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DetExport
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public DetExportImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -13588,7 +13517,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NDrawImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DetExport.NDraw
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NDrawImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -13607,7 +13535,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ExportIndImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DetExport.ExportInd
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ExportIndImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -13832,7 +13759,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class NREImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.DetExport.ExportInd.NRE
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public NREImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -13853,7 +13779,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XPedImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.XPed
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XPedImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -13872,7 +13797,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NItemPedImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.NItemPed
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NItemPedImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -13891,7 +13815,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class VeicProdImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public VeicProdImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -15586,7 +15509,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpOpImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.TpOp
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpOpImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15605,7 +15527,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ChassiImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.Chassi
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ChassiImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15624,7 +15545,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CCorImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.CCor
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CCorImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15643,7 +15563,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class XCorImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.XCor
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public XCorImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15662,7 +15581,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PotImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.Pot
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PotImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15681,7 +15599,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CilinImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.Cilin
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CilinImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15700,7 +15617,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PesoLImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.PesoL
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PesoLImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15719,7 +15635,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PesoBImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.PesoB
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PesoBImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15738,7 +15653,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NSerieImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.NSerie
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NSerieImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15757,7 +15671,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpCombImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.TpComb
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpCombImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15776,7 +15689,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NMotorImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.NMotor
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NMotorImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15795,7 +15707,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CMTImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.CMT
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CMTImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15814,7 +15725,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class DistImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.Dist
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public DistImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15833,7 +15743,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class AnoModImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.AnoMod
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public AnoModImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15852,7 +15761,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class AnoFabImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.AnoFab
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public AnoFabImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15871,7 +15779,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpPintImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.TpPint
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpPintImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15890,7 +15797,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpVeicImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.TpVeic
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpVeicImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15909,7 +15815,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class EspVeicImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.EspVeic
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public EspVeicImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15928,7 +15833,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class VINImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.VIN
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public VINImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15947,7 +15851,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CondVeicImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.CondVeic
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CondVeicImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15966,7 +15869,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CModImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.CMod
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CModImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -15985,7 +15887,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CCorDENATRANImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.CCorDENATRAN
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CCorDENATRANImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16004,7 +15905,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class LotaImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.Lota
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public LotaImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16023,7 +15923,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpRestImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.VeicProd.TpRest
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpRestImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16043,7 +15942,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class MedImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Med
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public MedImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -16408,7 +16306,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NLoteImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Med.NLote
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NLoteImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16428,7 +16325,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class ArmaImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Arma
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public ArmaImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -16723,7 +16619,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class TpArmaImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Arma.TpArma
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public TpArmaImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16742,7 +16637,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NSerieImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Arma.NSerie
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NSerieImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16761,7 +16655,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NCanoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Arma.NCano
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NCanoImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16780,7 +16673,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class DescrImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Arma.Descr
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public DescrImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -16800,7 +16692,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class CombImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Comb
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public CombImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -17313,7 +17204,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CODIFImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Comb.CODIF
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CODIFImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -17332,7 +17222,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CIDEImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.Comb.CIDE
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CIDEImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -17559,7 +17448,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NRECOPIImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Prod.NRECOPI
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NRECOPIImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -17579,7 +17467,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ImpostoImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ImpostoImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -18296,7 +18183,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class ICMSImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public ICMSImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -19603,7 +19489,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS00Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS00
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS00Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -20038,7 +19923,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS00.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -20057,7 +19941,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS00.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -20077,7 +19960,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS10Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS10
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS10Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -20980,7 +20862,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS10.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -20999,7 +20880,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS10.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -21018,7 +20898,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS10.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -21038,7 +20917,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS20Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS20
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS20Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -21731,7 +21609,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS20.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -21750,7 +21627,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS20.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -21769,7 +21645,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class MotDesICMSImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS20.MotDesICMS
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public MotDesICMSImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -21789,7 +21664,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS30Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS30
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS30Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -22600,7 +22474,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS30.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -22619,7 +22492,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS30.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -22638,7 +22510,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class MotDesICMSImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS30.MotDesICMS
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public MotDesICMSImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -22658,7 +22529,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS40Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS40
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS40Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -23001,7 +22871,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS40.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -23020,7 +22889,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class MotDesICMSImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS40.MotDesICMS
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public MotDesICMSImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -23040,7 +22908,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS51Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS51
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS51Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -23947,7 +23814,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS51.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -23966,7 +23832,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS51.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -23986,7 +23851,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS60Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS60
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS60Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -24329,7 +24193,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS60.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -24349,7 +24212,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS70Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS70
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS70Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -25510,7 +25372,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS70.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -25529,7 +25390,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS70.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -25548,7 +25408,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS70.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -25567,7 +25426,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class MotDesICMSImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS70.MotDesICMS
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public MotDesICMSImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -25587,7 +25445,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMS90Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS90
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMS90Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -26964,7 +26821,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS90.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -26983,7 +26839,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS90.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -27002,7 +26857,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS90.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -27021,7 +26875,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class MotDesICMSImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS90.MotDesICMS
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public MotDesICMSImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -27041,7 +26894,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSPartImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSPartImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -28178,7 +28030,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -28197,7 +28048,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -28216,7 +28066,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -28236,7 +28085,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSTImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSST
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSTImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -28671,7 +28519,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSST.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -28691,7 +28538,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSN101Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSN101Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -28986,7 +28832,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSOSNImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101.CSOSN
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSOSNImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -29006,7 +28851,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSN102Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSN102Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -29161,7 +29005,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSOSNImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102.CSOSN
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSOSNImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -29181,7 +29024,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSN201Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSN201Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -29944,7 +29786,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSOSNImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201.CSOSN
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSOSNImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -29963,7 +29804,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -29983,7 +29823,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSN202Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSN202Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -30606,7 +30445,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSOSNImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202.CSOSN
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSOSNImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -30625,7 +30463,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -30645,7 +30482,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSN500Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSN500Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -30988,7 +30824,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSOSNImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500.CSOSN
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSOSNImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -31008,7 +30843,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class ICMSSN900Impl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public ICMSSN900Impl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -32385,7 +32219,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSOSNImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900.CSOSN
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSOSNImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -32404,7 +32237,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900.ModBC
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -32423,7 +32255,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class ModBCSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900.ModBCST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public ModBCSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -32444,7 +32275,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class IIImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.II
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public IIImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -32740,7 +32570,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class ISSQNImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ISSQN
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public ISSQNImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -34091,7 +33920,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class IndISSImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ISSQN.IndISS
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public IndISSImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -34110,7 +33938,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class CServicoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ISSQN.CServico
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public CServicoImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -34129,7 +33956,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NProcessoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ISSQN.NProcesso
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NProcessoImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -34148,7 +33974,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class IndIncentivoImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.ISSQN.IndIncentivo
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public IndIncentivoImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -34168,7 +33993,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class PISImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public PISImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -34487,7 +34311,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PISAliqImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISAliq
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PISAliqImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -34782,7 +34605,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISAliq.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -34802,7 +34624,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PISQtdeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISQtde
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PISQtdeImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -35097,7 +34918,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISQtde.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -35117,7 +34937,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PISNTImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISNT
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PISNTImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -35202,7 +35021,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISNT.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -35222,7 +35040,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class PISOutrImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISOutr
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public PISOutrImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -35753,7 +35570,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PIS.PISOutr.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -35774,7 +35590,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class PISSTImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.PISST
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public PISSTImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -36236,7 +36051,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class COFINSImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public COFINSImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -36555,7 +36369,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class COFINSAliqImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public COFINSAliqImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -36850,7 +36663,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -36870,7 +36682,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class COFINSQtdeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public COFINSQtdeImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -37165,7 +36976,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -37185,7 +36995,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class COFINSNTImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public COFINSNTImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -37270,7 +37079,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -37290,7 +37098,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class COFINSOutrImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public COFINSOutrImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -37821,7 +37628,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                        */
                       public static class CSTImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr.CST
                       {
-                        private static final long serialVersionUID = 1L;
                         
                         public CSTImpl(org.apache.xmlbeans.SchemaType sType)
                         {
@@ -37842,7 +37648,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class COFINSSTImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.Imposto.COFINSST
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public COFINSSTImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -38305,7 +38110,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ImpostoDevolImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.ImpostoDevol
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ImpostoDevolImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -38442,7 +38246,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class IPIImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.ImpostoDevol.IPI
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public IPIImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -38529,7 +38332,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class InfAdProdImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.InfAdProd
             {
-                private static final long serialVersionUID = 1L;
                 
                 public InfAdProdImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -38548,7 +38350,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class NItemImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Det.NItem
             {
-                private static final long serialVersionUID = 1L;
                 
                 public NItemImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -38568,7 +38369,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class TotalImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Total
         {
-            private static final long serialVersionUID = 1L;
             
             public TotalImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -38787,7 +38587,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ICMSTotImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Total.ICMSTot
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ICMSTotImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -39947,7 +39746,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ISSQNtotImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Total.ISSQNtot
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ISSQNtotImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -41066,7 +40864,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class CRegTribImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Total.ISSQNtot.CRegTrib
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public CRegTribImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -41086,7 +40883,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class RetTribImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Total.RetTrib
             {
-                private static final long serialVersionUID = 1L;
                 
                 public RetTribImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -41761,7 +41557,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class TranspImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp
         {
-            private static final long serialVersionUID = 1L;
             
             public TranspImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -42498,7 +42293,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ModFreteImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.ModFrete
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ModFreteImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -42517,7 +42311,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class TransportaImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Transporta
             {
-                private static final long serialVersionUID = 1L;
                 
                 public TransportaImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -43190,7 +42983,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XNomeImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Transporta.XNome
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XNomeImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -43209,7 +43001,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XEnderImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Transporta.XEnder
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XEnderImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -43228,7 +43019,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XMunImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Transporta.XMun
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XMunImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -43248,7 +43038,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class RetTranspImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.RetTransp
             {
-                private static final long serialVersionUID = 1L;
                 
                 public RetTranspImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -43684,7 +43473,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class VagaoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vagao
             {
-                private static final long serialVersionUID = 1L;
                 
                 public VagaoImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -43703,7 +43491,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class BalsaImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Balsa
             {
-                private static final long serialVersionUID = 1L;
                 
                 public BalsaImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -43722,7 +43509,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class VolImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol
             {
-                private static final long serialVersionUID = 1L;
                 
                 public VolImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -44419,7 +44205,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class QVolImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol.QVol
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public QVolImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -44438,7 +44223,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class EspImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol.Esp
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public EspImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -44457,7 +44241,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class MarcaImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol.Marca
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public MarcaImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -44476,7 +44259,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NVolImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol.NVol
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NVolImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -44495,7 +44277,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class LacresImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol.Lacres
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public LacresImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -44580,7 +44361,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                      */
                     public static class NLacreImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Transp.Vol.Lacres.NLacre
                     {
-                      private static final long serialVersionUID = 1L;
                       
                       public NLacreImpl(org.apache.xmlbeans.SchemaType sType)
                       {
@@ -44602,7 +44382,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class CobrImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cobr
         {
-            private static final long serialVersionUID = 1L;
             
             public CobrImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -44811,7 +44590,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class FatImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cobr.Fat
             {
-                private static final long serialVersionUID = 1L;
                 
                 public FatImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -45202,7 +44980,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NFatImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cobr.Fat.NFat
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NFatImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -45222,7 +44999,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class DupImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cobr.Dup
             {
-                private static final long serialVersionUID = 1L;
                 
                 public DupImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -45495,7 +45271,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NDupImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cobr.Dup.NDup
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NDupImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -45516,7 +45291,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class PagImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Pag
         {
-            private static final long serialVersionUID = 1L;
             
             public PagImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -45747,7 +45521,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class TPagImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Pag.TPag
             {
-                private static final long serialVersionUID = 1L;
                 
                 public TPagImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -45766,7 +45539,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class CardImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Pag.Card
             {
-                private static final long serialVersionUID = 1L;
                 
                 public CardImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -45991,7 +45763,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class TBandImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Pag.Card.TBand
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public TBandImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -46010,7 +45781,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class CAutImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Pag.Card.CAut
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public CAutImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -46031,7 +45801,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class InfAdicImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic
         {
-            private static final long serialVersionUID = 1L;
             
             public InfAdicImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -46588,7 +46357,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class InfAdFiscoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.InfAdFisco
             {
-                private static final long serialVersionUID = 1L;
                 
                 public InfAdFiscoImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -46607,7 +46375,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class InfCplImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.InfCpl
             {
-                private static final long serialVersionUID = 1L;
                 
                 public InfCplImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -46626,7 +46393,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ObsContImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ObsCont
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ObsContImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -46781,7 +46547,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XTextoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ObsCont.XTexto
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XTextoImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -46800,7 +46565,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XCampoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ObsCont.XCampo
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XCampoImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -46820,7 +46584,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ObsFiscoImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ObsFisco
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ObsFiscoImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -46975,7 +46738,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XTextoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ObsFisco.XTexto
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XTextoImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -46994,7 +46756,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XCampoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ObsFisco.XCampo
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XCampoImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -47014,7 +46775,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ProcRefImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ProcRef
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ProcRefImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -47169,7 +46929,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class NProcImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ProcRef.NProc
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public NProcImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -47188,7 +46947,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class IndProcImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.InfAdic.ProcRef.IndProc
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public IndProcImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -47209,7 +46967,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class ExportaImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Exporta
         {
-            private static final long serialVersionUID = 1L;
             
             public ExportaImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -47458,7 +47215,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XLocExportaImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Exporta.XLocExporta
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XLocExportaImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -47477,7 +47233,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XLocDespachoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Exporta.XLocDespacho
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XLocDespachoImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -47497,7 +47252,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class CompraImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Compra
         {
-            private static final long serialVersionUID = 1L;
             
             public CompraImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -47794,7 +47548,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XNEmpImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Compra.XNEmp
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XNEmpImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -47813,7 +47566,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XPedImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Compra.XPed
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XPedImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -47832,7 +47584,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class XContImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Compra.XCont
             {
-                private static final long serialVersionUID = 1L;
                 
                 public XContImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -47852,7 +47603,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class CanaImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana
         {
-            private static final long serialVersionUID = 1L;
             
             public CanaImpl(org.apache.xmlbeans.SchemaType sType)
             {
@@ -48663,7 +48413,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class SafraImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana.Safra
             {
-                private static final long serialVersionUID = 1L;
                 
                 public SafraImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -48682,7 +48431,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class RefImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana.Ref
             {
-                private static final long serialVersionUID = 1L;
                 
                 public RefImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -48701,7 +48449,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class ForDiaImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana.ForDia
             {
-                private static final long serialVersionUID = 1L;
                 
                 public ForDiaImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -48856,7 +48603,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class DiaImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana.ForDia.Dia
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public DiaImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -48876,7 +48622,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
              */
             public static class DeducImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana.Deduc
             {
-                private static final long serialVersionUID = 1L;
                 
                 public DeducImpl(org.apache.xmlbeans.SchemaType sType)
                 {
@@ -49031,7 +48776,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
                  */
                 public static class XDedImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Cana.Deduc.XDed
                 {
-                    private static final long serialVersionUID = 1L;
                     
                     public XDedImpl(org.apache.xmlbeans.SchemaType sType)
                     {
@@ -49052,7 +48796,6 @@ public class TNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentI
          */
         public static class IdImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TNFe.InfNFe.Id
         {
-            private static final long serialVersionUID = 1L;
             
             public IdImpl(org.apache.xmlbeans.SchemaType sType)
             {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TpaisImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.Tpais
 {
-    private static final long serialVersionUID = 1L;
     
     public TpaisImpl(org.apache.xmlbeans.SchemaType sType)
     {

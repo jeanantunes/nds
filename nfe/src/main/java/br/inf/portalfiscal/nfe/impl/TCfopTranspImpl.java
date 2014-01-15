@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TCfopTranspImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TCfopTransp
 {
-    private static final long serialVersionUID = 1L;
     
     public TCfopTranspImpl(org.apache.xmlbeans.SchemaType sType)
     {

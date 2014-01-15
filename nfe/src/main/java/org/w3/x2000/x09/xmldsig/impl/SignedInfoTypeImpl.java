@@ -13,7 +13,6 @@ package org.w3.x2000.x09.xmldsig.impl;
  */
 public class SignedInfoTypeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.SignedInfoType
 {
-    private static final long serialVersionUID = 1L;
     
     public SignedInfoTypeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -278,7 +277,6 @@ public class SignedInfoTypeImpl extends org.apache.xmlbeans.impl.values.XmlCompl
      */
     public static class CanonicalizationMethodImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.SignedInfoType.CanonicalizationMethod
     {
-        private static final long serialVersionUID = 1L;
         
         public CanonicalizationMethodImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -372,7 +370,6 @@ public class SignedInfoTypeImpl extends org.apache.xmlbeans.impl.values.XmlCompl
      */
     public static class SignatureMethodImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.SignedInfoType.SignatureMethod
     {
-        private static final long serialVersionUID = 1L;
         
         public SignatureMethodImpl(org.apache.xmlbeans.SchemaType sType)
         {

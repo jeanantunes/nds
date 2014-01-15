@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TMotivoImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TMotivo
 {
-    private static final long serialVersionUID = 1L;
     
     public TMotivoImpl(org.apache.xmlbeans.SchemaType sType)
     {

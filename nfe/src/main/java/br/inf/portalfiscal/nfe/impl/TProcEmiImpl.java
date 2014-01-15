@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TProcEmiImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TProcEmi
 {
-    private static final long serialVersionUID = 1L;
     
     public TProcEmiImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TCodUfIBGEImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TCodUfIBGE
 {
-    private static final long serialVersionUID = 1L;
     
     public TCodUfIBGEImpl(org.apache.xmlbeans.SchemaType sType)
     {

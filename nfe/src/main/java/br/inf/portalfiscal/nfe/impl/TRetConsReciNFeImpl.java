@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TRetConsReciNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TRetConsReciNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TRetConsReciNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -894,7 +893,6 @@ public class TRetConsReciNFeImpl extends org.apache.xmlbeans.impl.values.XmlComp
      */
     public static class CMsgImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TRetConsReciNFe.CMsg
     {
-        private static final long serialVersionUID = 1L;
         
         public CMsgImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -913,7 +911,6 @@ public class TRetConsReciNFeImpl extends org.apache.xmlbeans.impl.values.XmlComp
      */
     public static class XMsgImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TRetConsReciNFe.XMsg
     {
-        private static final long serialVersionUID = 1L;
         
         public XMsgImpl(org.apache.xmlbeans.SchemaType sType)
         {

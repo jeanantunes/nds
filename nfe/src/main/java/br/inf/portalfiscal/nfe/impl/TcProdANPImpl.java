@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TcProdANPImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TcProdANP
 {
-    private static final long serialVersionUID = 1L;
     
     public TcProdANPImpl(org.apache.xmlbeans.SchemaType sType)
     {

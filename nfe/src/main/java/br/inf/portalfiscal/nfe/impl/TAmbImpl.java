@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TAmbImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TAmb
 {
-    private static final long serialVersionUID = 1L;
     
     public TAmbImpl(org.apache.xmlbeans.SchemaType sType)
     {

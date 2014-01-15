@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TCnpjImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TCnpj
 {
-    private static final long serialVersionUID = 1L;
     
     public TCnpjImpl(org.apache.xmlbeans.SchemaType sType)
     {

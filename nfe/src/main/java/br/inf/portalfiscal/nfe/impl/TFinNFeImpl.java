@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TFinNFeImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TFinNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TFinNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {

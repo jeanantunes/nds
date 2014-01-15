@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TUfEmiImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TUfEmi
 {
-    private static final long serialVersionUID = 1L;
     
     public TUfEmiImpl(org.apache.xmlbeans.SchemaType sType)
     {

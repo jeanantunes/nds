@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TProtNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TProtNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TProtNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -226,7 +225,6 @@ public class TProtNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexCont
      */
     public static class InfProtImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TProtNFe.InfProt
     {
-        private static final long serialVersionUID = 1L;
         
         public InfProtImpl(org.apache.xmlbeans.SchemaType sType)
         {

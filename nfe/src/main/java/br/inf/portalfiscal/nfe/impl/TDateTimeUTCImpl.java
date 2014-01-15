@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TDateTimeUTCImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TDateTimeUTC
 {
-    private static final long serialVersionUID = 1L;
     
     public TDateTimeUTCImpl(org.apache.xmlbeans.SchemaType sType)
     {

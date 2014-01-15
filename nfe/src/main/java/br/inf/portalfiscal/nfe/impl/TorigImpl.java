@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TorigImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.Torig
 {
-    private static final long serialVersionUID = 1L;
     
     public TorigImpl(org.apache.xmlbeans.SchemaType sType)
     {

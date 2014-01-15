@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TEnviNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TEnviNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TEnviNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -356,7 +355,6 @@ public class TEnviNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexCont
      */
     public static class IndSincImpl extends org.apache.xmlbeans.impl.values.JavaStringEnumerationHolderEx implements br.inf.portalfiscal.nfe.TEnviNFe.IndSinc
     {
-        private static final long serialVersionUID = 1L;
         
         public IndSincImpl(org.apache.xmlbeans.SchemaType sType)
         {

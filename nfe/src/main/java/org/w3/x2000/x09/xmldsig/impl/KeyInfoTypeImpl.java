@@ -13,7 +13,6 @@ package org.w3.x2000.x09.xmldsig.impl;
  */
 public class KeyInfoTypeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.KeyInfoType
 {
-    private static final long serialVersionUID = 1L;
     
     public KeyInfoTypeImpl(org.apache.xmlbeans.SchemaType sType)
     {

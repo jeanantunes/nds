@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TEndereco
 {
-    private static final long serialVersionUID = 1L;
     
     public TEnderecoImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -918,7 +917,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class XLgrImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.XLgr
     {
-        private static final long serialVersionUID = 1L;
         
         public XLgrImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -937,7 +935,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class NroImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.Nro
     {
-        private static final long serialVersionUID = 1L;
         
         public NroImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -956,7 +953,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class XCplImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.XCpl
     {
-        private static final long serialVersionUID = 1L;
         
         public XCplImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -975,7 +971,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class XBairroImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.XBairro
     {
-        private static final long serialVersionUID = 1L;
         
         public XBairroImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -994,7 +989,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class XMunImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.XMun
     {
-        private static final long serialVersionUID = 1L;
         
         public XMunImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -1013,7 +1007,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class CEPImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.CEP
     {
-        private static final long serialVersionUID = 1L;
         
         public CEPImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -1032,7 +1025,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class XPaisImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.XPais
     {
-        private static final long serialVersionUID = 1L;
         
         public XPaisImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -1051,7 +1043,6 @@ public class TEnderecoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCon
      */
     public static class FoneImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TEndereco.Fone
     {
-        private static final long serialVersionUID = 1L;
         
         public FoneImpl(org.apache.xmlbeans.SchemaType sType)
         {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TMedImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TMed
 {
-    private static final long serialVersionUID = 1L;
     
     public TMedImpl(org.apache.xmlbeans.SchemaType sType)
     {

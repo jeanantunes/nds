@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TIeDestImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TIeDest
 {
-    private static final long serialVersionUID = 1L;
     
     public TIeDestImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TGuidImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TGuid
 {
-    private static final long serialVersionUID = 1L;
     
     public TGuidImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -14,7 +14,6 @@ package org.w3.x2000.x09.xmldsig.impl;
  */
 public class SignatureDocumentImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.SignatureDocument
 {
-    private static final long serialVersionUID = 1L;
     
     public SignatureDocumentImpl(org.apache.xmlbeans.SchemaType sType)
     {

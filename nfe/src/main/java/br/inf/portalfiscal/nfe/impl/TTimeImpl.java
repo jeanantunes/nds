@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TTimeImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TTime
 {
-    private static final long serialVersionUID = 1L;
     
     public TTimeImpl(org.apache.xmlbeans.SchemaType sType)
     {

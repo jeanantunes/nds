@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TProtImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TProt
 {
-    private static final long serialVersionUID = 1L;
     
     public TProtImpl(org.apache.xmlbeans.SchemaType sType)
     {

@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TRecImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TRec
 {
-    private static final long serialVersionUID = 1L;
     
     public TRecImpl(org.apache.xmlbeans.SchemaType sType)
     {

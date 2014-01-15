@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TVeiculoImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TVeiculo
 {
-    private static final long serialVersionUID = 1L;
     
     public TVeiculoImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -262,7 +261,6 @@ public class TVeiculoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCont
      */
     public static class PlacaImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TVeiculo.Placa
     {
-        private static final long serialVersionUID = 1L;
         
         public PlacaImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -281,7 +279,6 @@ public class TVeiculoImpl extends org.apache.xmlbeans.impl.values.XmlComplexCont
      */
     public static class RNTCImpl extends org.apache.xmlbeans.impl.values.JavaStringHolderEx implements br.inf.portalfiscal.nfe.TVeiculo.RNTC
     {
-        private static final long serialVersionUID = 1L;
         
         public RNTCImpl(org.apache.xmlbeans.SchemaType sType)
         {

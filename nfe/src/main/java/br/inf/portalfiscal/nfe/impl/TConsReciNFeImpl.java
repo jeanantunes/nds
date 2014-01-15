@@ -13,7 +13,6 @@ package br.inf.portalfiscal.nfe.impl;
  */
 public class TConsReciNFeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements br.inf.portalfiscal.nfe.TConsReciNFe
 {
-    private static final long serialVersionUID = 1L;
     
     public TConsReciNFeImpl(org.apache.xmlbeans.SchemaType sType)
     {

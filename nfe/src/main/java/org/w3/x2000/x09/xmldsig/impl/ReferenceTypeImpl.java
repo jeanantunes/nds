@@ -13,7 +13,6 @@ package org.w3.x2000.x09.xmldsig.impl;
  */
 public class ReferenceTypeImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.ReferenceType
 {
-    private static final long serialVersionUID = 1L;
     
     public ReferenceTypeImpl(org.apache.xmlbeans.SchemaType sType)
     {
@@ -460,7 +459,6 @@ public class ReferenceTypeImpl extends org.apache.xmlbeans.impl.values.XmlComple
      */
     public static class DigestMethodImpl extends org.apache.xmlbeans.impl.values.XmlComplexContentImpl implements org.w3.x2000.x09.xmldsig.ReferenceType.DigestMethod
     {
-        private static final long serialVersionUID = 1L;
         
         public DigestMethodImpl(org.apache.xmlbeans.SchemaType sType)
         {
@@ -554,7 +552,6 @@ public class ReferenceTypeImpl extends org.apache.xmlbeans.impl.values.XmlComple
      */
     public static class URIImpl extends org.apache.xmlbeans.impl.values.JavaUriHolderEx implements org.w3.x2000.x09.xmldsig.ReferenceType.URI
     {
-        private static final long serialVersionUID = 1L;
         
         public URIImpl(org.apache.xmlbeans.SchemaType sType)
         {
