@@ -9,7 +9,6 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	private Lancamento lancamentoVeja1;
 	private Lancamento lancamentoCaras1;
 	
-	@Before
+
 	public void setup() {
 		
 		bancoHSBC = Fixture.banco(10L, true, 1, "1010",
@@ -244,7 +243,7 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 	}
 	@Ignore
 	@Test
-	public void buscarEstoqueProdutoCotaPorIdProdutEdicao() {
+	public void testBuscarEstoqueProdutoCotaPorIdProdutEdicao() {
 		
 		List<EstoqueProdutoCota> listaEstoqueProdutoCota = 
 			this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(lancamentoVeja1.getId());
@@ -284,12 +283,25 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		List<EstoqueProdutoCota> listaEstoqueProduto;
 		
-		Long idLancamento = 1L;
+		Long idLancamento = 145764L;
 		
 		listaEstoqueProduto = estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
 		
 		Assert.assertNotNull(listaEstoqueProduto);
+	}
+	
+	@Test
+	public void testBuscaEstoqueProdutoCotaCompraSuplementar() {
 		
+		List<EstoqueProdutoCota> listaEstoqueProduto;
+		
+		Long idLancamento = 145764L;
+		
+		listaEstoqueProduto = 
+				estoqueProdutoCotaRepository.
+				buscarEstoqueProdutoCotaCompraSuplementar(idLancamento);
+		
+		Assert.assertNotNull(listaEstoqueProduto);
 	}
 	
 	@Test

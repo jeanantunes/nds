@@ -31,13 +31,12 @@ balanceamentoLancamento.inicializar();
 .dialog-confirm-balanceamento { display:none; }
 
 .gridLinhaDestacada {
-  background:#888; 
-  font-weight:bold; 
-  color:#fff;
+  background:#ffffff; 
+  color:#000000;
 }
 
 .gridLinhaDestacada:hover {
-   color:#000;
+   color:#000000;
 }
 
 .gridLinhaDestacada a {
@@ -117,13 +116,6 @@ balanceamentoLancamento.inicializar();
 			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
-		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
-		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
-		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
-		                    </a>
-		                </span>
-		                
 		                <span class="bt_novos" style="display: none;">
 							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
 								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
@@ -151,9 +143,16 @@ balanceamentoLancamento.inicializar();
 						    </a>
 						</span>
 						
+						<span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
+		                    <!-- CONFIRMAR -->	
+		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
+		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
+		                    </a>
+		                </span>
+		                
 						<span class="bt_novos" style="display: none;">
-				            <a id="linkReabrirMatriz" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" title="Reabrir Matriz" >
-					             <img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				            <a id="linkReabrirMatriz" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" rel="tipsy" title="Reabrir Matriz" >
+					             <img src="<c:url value='images/ico_reopen.gif'/>"  hspace="5" border="0" />
 				           </a> 
 			            </span>
 			  		</div>
