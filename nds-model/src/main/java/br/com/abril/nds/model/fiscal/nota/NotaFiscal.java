@@ -17,8 +17,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Processo;
@@ -31,6 +36,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
 @XmlRootElement(name="Nfe", namespace="http://www.portalfiscal.inf.br/nfe") 
 @XmlType(name="NotaFiscalNds")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class NotaFiscal implements Serializable {
 	
 	/**
@@ -44,6 +50,7 @@ public class NotaFiscal implements Serializable {
 	@Id
 	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
 	@NFEExport(secao = TipoSecao.B, posicao = 1, mascara="00000000")
+	@XmlTransient
 	private Long id;
 	
 	/**
@@ -51,6 +58,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Embedded
 	@NFEExportType
+	@XmlElement(name="ide")
 	private Identificacao identificacao;
 	
 	/**
@@ -58,6 +66,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Embedded
 	@NFEExportType
+	@XmlElement(name="emit")
 	private IdentificacaoEmitente identificacaoEmitente;
 	
 	/**
@@ -65,6 +74,7 @@ public class NotaFiscal implements Serializable {
 	 */
 	@Embedded
 	@NFEExportType
+	@XmlElement(name="dest")
 	private IdentificacaoDestinatario identificacaoDestinatario;
 	
 	/**
@@ -72,6 +82,8 @@ public class NotaFiscal implements Serializable {
 	 */
 	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
 	@NFEExportType
+	@XmlElementWrapper(name="det")
+	@XmlElements(value={ @XmlElement(name="prod") })
 	private List<ProdutoServico> produtosServicos;
 	
 	/**

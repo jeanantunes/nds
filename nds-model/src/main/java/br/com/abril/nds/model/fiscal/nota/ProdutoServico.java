@@ -16,6 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -31,6 +36,8 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
 @Entity
 @Table(name = "NOTA_FISCAL_PRODUTO_SERVICO")
+@XmlType(name="prod")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ProdutoServico implements Serializable {
 
 	/**
@@ -59,6 +66,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="CODIGO_PRODUTO", length=60, nullable=false)
 	@NFEExport(secao=TipoSecao.I, posicao=0, tamanho=60)
+	@XmlElement(name="cProd")
 	private String codigoProduto;
 	
 	/**
@@ -73,6 +81,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="DESCRICAO_PRODUTO", length=120, nullable=false)
 	@NFEExport(secao=TipoSecao.I, posicao=2, tamanho=120)
+	@XmlElement(name="xProd")
 	private String descricaoProduto;
 	
 	/**
@@ -80,6 +89,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="NCM", length=8, nullable=false)
 	@NFEExport(secao=TipoSecao.I, posicao=3, tamanho=8)
+	@XmlElement(name="NCM")
 	private Long ncm;
 	
 	/**
@@ -94,6 +104,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="CFOP", length=4, nullable=false)
 	@NFEExport(secao=TipoSecao.I, posicao=5, tamanho=4)
+	@XmlElement(name="CFOP")
 	private Integer cfop;
 	
 	/**
@@ -101,6 +112,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=6, tamanho=6),@NFEExport(secao=TipoSecao.I, posicao=11, tamanho=6)})
+	@XmlElement(name="uCom")
 	private String unidade;
 	
 	/**
@@ -108,6 +120,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="QUANTIDADE_COMERCIAL", precision=15, scale=2 , nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=7, tamanho=12),@NFEExport(secao=TipoSecao.I, posicao=12, tamanho=12)})
+	@XmlElement(name="qCom")
 	private BigInteger quantidade;
 	
 	/**
@@ -115,12 +128,14 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL", precision=18, scale=4, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=16)})
+	@XmlElement(name="vUnCom")
 	private BigDecimal valorUnitario;
 	
 	/**
 	 * vProd
 	 */
 	@Column(name="VALOR_TOTAL_BRUTO", precision=18, scale=4, nullable=false)
+	@XmlElement(name="vProd")
 	private BigDecimal valorTotalBruto;
 	
 	/**
@@ -171,6 +186,7 @@ public class ProdutoServico implements Serializable {
 			}, 
 			inverseJoinColumns = {@JoinColumn(name = "ORIGEM_ITEM_NOTA_FISCAL_ID")}
 	)
+	@XmlTransient
 	private List<OrigemItemNotaFiscal> origemItemNotaFiscal;
 	
 	/**

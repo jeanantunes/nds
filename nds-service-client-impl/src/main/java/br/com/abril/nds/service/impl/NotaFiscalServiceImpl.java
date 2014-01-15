@@ -99,6 +99,12 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.inf.portalfiscal.nfe.TNFe;
+import br.inf.portalfiscal.nfe.TNFe.InfNFe;
+import br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest;
+import br.inf.portalfiscal.nfe.impl.TNFeImpl;
+import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl;
+import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl.DestImpl;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -547,21 +553,25 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			JAXBContext jc;
 			try {
-				jc = JAXBContext.newInstance(NotaFiscal.class);
+				
+				TNFe nfe = new TNFeImpl(null);
+				InfNFe infNfe = new InfNFeImpl(null);
+				Dest dest = new DestImpl(null);
+				dest.setCNPJ("123654");
+				infNfe.setDest(dest);
+				nfe.setInfNFe(infNfe);
+				
+				jc = JAXBContext.newInstance(TNFe.class);
 			 
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        marshaller.marshal(notaFiscal, System.out);
+		        marshaller.marshal(nfe, System.out);
 			
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			/*
-			JAXBContext jc = JAXBContext.newInstance(Root.class);
-            Marshaller marshaller = jc.createMarshaller();
-            marshaller.marshal(root, System.out);
-			
 			nfeExporter.clear();
 
 			nfeExporter.execute(notaFiscal);

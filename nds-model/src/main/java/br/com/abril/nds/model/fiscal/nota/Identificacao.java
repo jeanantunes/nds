@@ -15,6 +15,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -24,6 +26,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name="ide")
 public class Identificacao implements Serializable {
 	
 	public enum FormaPagamento implements NotaFiscalEnum {
@@ -85,6 +88,7 @@ public class Identificacao implements Serializable {
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 10, tamanho = 1)
+	@XmlElement(name="tpNF")
 	private TipoOperacao tipoOperacao;
 
 	/**
@@ -92,6 +96,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false)
 	@NFEExport(secao=TipoSecao.B, posicao=2, tamanho=60)
+	@XmlElement(name="natOp")
 	private String descricaoNaturezaOperacao;
 	
 	
@@ -109,6 +114,7 @@ public class Identificacao implements Serializable {
 	 */
 	@Column(name = "SERIE", length = 3, nullable = false)
 	@NFEExport(secao=TipoSecao.B, posicao=5)
+	@XmlElement(name="serie")
 	private Integer serie;
 	
 	
@@ -125,6 +131,7 @@ public class Identificacao implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_EMISSAO", nullable = false)
 	@NFEExport(secao=TipoSecao.B, posicao=7)
+	@XmlElement(name="dEmi")
 	private Date dataEmissao;
 	
 	
@@ -176,6 +183,14 @@ public class Identificacao implements Serializable {
 	 */
 	@Column(name="JUSTIFICATIVA_ENTRADA_CONTIGENCIA", nullable=true, length=256)
 	private String justificativaEntradaContigencia;
+	
+	@Column(name="NOTA_FISCAL_CODIGO_UF")
+	@XmlElement(name="cUF")
+	private Long codigoUf;
+	
+	@Column(name="NOTA_FISCAL_CODIGO_MUNICIPIO")
+	@XmlElement(name="cMunFG")
+	private Long codigoMunicipio;
 	
 	
 	/**
@@ -381,4 +396,21 @@ public class Identificacao implements Serializable {
 	public void setTipoNotaFiscal(NaturezaOperacao tipoNotaFiscal) {
 		this.tipoNotaFiscal = tipoNotaFiscal;
 	}
+
+	public Long getCodigoUf() {
+		return codigoUf;
+	}
+
+	public void setCodigoUf(Long codigoUf) {
+		this.codigoUf = codigoUf;
+	}
+
+	public Long getCodigoMunicipio() {
+		return codigoMunicipio;
+	}
+
+	public void setCodigoMunicipio(Long codigoMunicipio) {
+		this.codigoMunicipio = codigoMunicipio;
+	}
+	
 }
