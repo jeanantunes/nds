@@ -15,7 +15,7 @@ import javax.persistence.Table;
         @AssociationOverride(name = "pk.tributo", 
             joinColumns = @JoinColumn(name ="TRIBUTO_ID")),
         @AssociationOverride(name = "pk.aliquota", 
-            joinColumns = @JoinColumn(name="ALIQUOTA_ID")) })
+            joinColumns = @JoinColumn(name="ALIQUOTA_ID"))})
 public class GrupoTributoAliquota implements Serializable {
 
 	private static final long serialVersionUID = 5392503333835977858L;

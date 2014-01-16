@@ -589,7 +589,9 @@ public class FornecedorRepositoryImpl extends
 		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		
-		return  criteria.setCacheable(true).list();
+		criteria.setCacheable(true);
+		
+		return  criteria.list();
 
 	}
 }
