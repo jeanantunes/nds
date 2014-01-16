@@ -641,6 +641,8 @@ public class BoletoServiceImpl implements BoletoService {
 		boletoAntecipado.setMovimentoFinanceiroCota(movimentoFinanceiroCota);
 		boletoAntecipado.setStatus(StatusDivida.QUITADA);
 		boletoAntecipado.setValorDesconto(pagamento.getValorDesconto());
+		boletoAntecipado.setValorJuros(pagamento.getValorJuros());
+		boletoAntecipado.setValorMulta(pagamento.getValorMulta());
 		boletoAntecipado.setValorPago(pagamento.getValorPagamento());
 		
 		this.boletoAntecipadoRepository.merge(boletoAntecipado);
