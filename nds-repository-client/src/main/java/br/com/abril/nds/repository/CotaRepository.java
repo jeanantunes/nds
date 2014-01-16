@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
@@ -433,4 +434,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	SituacaoCadastro obterSituacaoCadastroCota(Integer numeroCota);
 	
 	Long obterIdPorNumeroCota(Integer numeroCota);
+
+	CotaVO obterDadosBasicosCota(Integer numeroCota);
 }

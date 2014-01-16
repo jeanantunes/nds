@@ -16,7 +16,7 @@
 </script>
 
 <style type="text/css">
-#dialog-excluir, #dialog-novo{display:none;}
+#dialog-excluir, #dialog-novo, #dialog_cota_unificacao, #dialog_nova_cota_unificacao{display:none;}
 .linha_fornecedor{display:none;}
 </style>
 
@@ -46,7 +46,7 @@
                             <td width="133">Tipo de Pagamento:</td>
                             <td><select name="dTipoCobranca" id="dTipoCobranca"
                                 style="width: 200px;"
-                                onchange="parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
+                                onchange="parametroCobrancaController.botaoUnificaPorCotas(null, this.value);parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
                                     <option value="">Selecione</option>
                                     <c:forEach varStatus="counter" var="tipoCobranca"
                                         items="${listaTiposCobranca}">
@@ -84,20 +84,17 @@
                         </tr>
     
                         <tr>
-                            <td valign="top"><label class="tdValorMinimo" for="banco">Vlr.
-                                    M&iacute;nimo Emiss&atilde;o:</label></td>
-                            <td valign="top"><input class="tdValorMinimo" type="text"
+                            <td valign="top">
+                            	<label class="tdValorMinimo" for="banco">Vlr. M&iacute;nimo Emiss&atilde;o:</label>
+                            </td>
+                            <td valign="top">
+                            	<input class="tdValorMinimo" type="text"
                                 maxlength="16" name="valorMinimo" id="valorMinimo"
-                                style="width: 70px; text-align:right;" /></td>
+                                style="width: 70px; text-align:right;" />
+                            </td>
                             <td>Cobran&ccedil;a Unificada:</td>
-                            <td><select name="unificada" id="unificada" style="width: 80px;" 
-                                onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada();">
-                                    <option value="S">Sim</option>
-                                    <option value="N">N&atilde;o</option>
-                            </select> <br clear="all" /></td>
+                            
                         </tr>
-    
-    
                         <tr>
                             <td><label class="tdMulta" for="taxaMulta">Multa %:</label></td>
     
@@ -115,14 +112,17 @@
                                     </tr>
                                 </table>
                             </td>
-    
-                            <td width="185">Envio por E-mail:</td>
-                            <td colspan="2"><select name="envioEmail" id="envioEmail"
-                                style="width: 80px;">
+                            
+                            <td style="text-align: right;">
+                            	Por Fornecedor:
+                            </td>
+                            <td>
+                            	<select name="unificada" id="unificada" style="width: 80px;" 
+                                	onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada();">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
-                            </select></td>
-    
+                            	</select>
+                            </td>
                         </tr>
     
                         <tr>
@@ -130,9 +130,24 @@
                             <td><input class="tdJuros" type="text"
                                 name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" 
                                 	  readonly="readonly"/></td>
-                            <td>Impress&atilde;o:</td>
+                                	  
+                            <td style="text-align: right;">
+                            	Por Cotas:
+                            </td>
                             <td>
-                                <div id="formasEmissao" />
+                            	<select name="unificadaPorCota" id="unificadaCota" style="width: 80px;"
+                            		onchange="parametroCobrancaController.botaoUnificaPorCotas(this.value);">
+                                    <option value="S">Sim</option>
+                                    <option value="N" selected="selected">N&atilde;o</option>
+                            	</select>
+                            	
+                            	<button type="button" id="botaoTelaUnificacao" onclick="parametroCobrancaController.mostrarUnificacaoCotas();"
+                            		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" 
+                            		role="button" aria-disabled="false" style="display: none;">
+                            		<span class="ui-button-text">Cadastrar</span>
+                            	</button>
+                            	
+                            	<br clear="all" />
                             </td>
                         </tr>
     
@@ -157,18 +172,24 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td align="right" width="15%">
-                            <input type="checkbox" name="principal" id="principal" /></td>
-                            <td ><label for="principal">Principal</label></td>
-                            
+                            <td width="10">Envio por E-mail:</td>
+                            <td colspan="2"><select name="envioEmail" id="envioEmail"
+                                style="width: 80px;">
+                                    <option value="S">Sim</option>
+                                    <option value="N">N&atilde;o</option>
+                            </select></td>
                         </tr>
-    					<tr>
-	    					<td></td>
-	    					<td></td>
-	    					<td align="right"><input type="checkbox" name="cobradoPeloBackoffice" id="cobradoPeloBackoffice" /></td>
-							<td><label for="cobradoPeloBackoffice">Cobrança feita pelo Back Office</label></td>
-    					</tr>
     					
+    					<tr>
+    						<td>Principal</td>
+    						<td align="left">
+                            	<input type="checkbox" name="principal" id="principal" />
+                            </td>
+                            <td>Impress&atilde;o:</td>
+                            <td>
+                                <div id="formasEmissao" />
+                            </td>
+    					</tr>
     					
                         <tr>
                             <td valign="top">Instru&ccedil;&otilde;es:</td>
@@ -326,6 +347,47 @@
 		</div>
 
 	</form>
+	
+	<form id="cota_unificacao_form" name="cota_unificacao_form">
+	   <div id="dialog_cota_unificacao" title="Cotas Centralizadas">
+		  <table class="cotasCentralizadas"></table>
+	   </div>
+    </form>
+	
+    <form id="nova_cota_unificacao_form" name="nova_cota_unificacao_form">
+	   <div id="dialog_nova_cota_unificacao" title="Unifica&ccedil;&atilde;o de Cotas">
+		  <fieldset style="width: 98%;">
+		  	<legend>Cota Centralizadora</legend>
+		  	<table style="width: 100%;">
+		  		<tr>
+		  			<td>Cota:</td>
+		  			<td>Nome:</td>
+		  		</tr>
+		  		<tr>
+		  			<td style="width: 10%;">
+		  				<input type="text" class="numCota" id="numeroCota_" style="width: 40px;"
+		  					onchange="parametroCobrancaController.buscarCotaPorNumero('')"/>
+		  			</td>
+		  			<td>
+		  				<input type="text" id="nomeCota_" style="width: 495px;"/>
+		  			</td>
+		  		</tr>
+		  	</table>
+		  </fieldset>
+		  
+		  <fieldset style="width: 98%;">
+			<legend>Cotas Centralizadas</legend>
+				<div style="overflow: auto; height: 190px;">
+					<table id="cotasCentralizadas">
+				  		<tr>
+				  			<td>Cota</td>
+				  			<td>Nome</td>
+				  		</tr>
+				  	</table>
+				</div>
+			  </fieldset>
+		  </div>
+    </form>
 
 
 		<jsp:include page="../messagesDialog.jsp">

@@ -158,12 +158,12 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		sql.append(" BA.DATA_VENCIMENTO as dataVencimento, ");	
 		
 		sql.append(" BA.DATA_PAGAMENTO as dataPagamento, ");	
-		
-		sql.append(" 0 as encargos, ");	
+
+		sql.append(" COALESCE(BA.VALOR_JUROS,0) + COALESCE(BA.VALOR_MULTA,0) as encargos, ");	
 		
 		sql.append(" BA.VALOR as valor, ");	
 		
-		sql.append(" null as tipoBaixa, ");	
+		sql.append(" BA.TIPO_BAIXA as tipoBaixa, ");	
 		
 		sql.append(" null as statusCobranca, ");	
 		

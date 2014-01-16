@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -48,6 +49,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BaixaCobrancaService;
@@ -482,20 +484,27 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("/buscaBoleto")
-	public void buscaBoleto(String nossoNumero, Date dataPagamento){
+	public void buscaBoleto(String nossoNumero, Date dataPagamento, BigDecimal valor){
 		
 		if ((nossoNumero==null)||("".equals(nossoNumero.trim()))){
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
-		
+
 		CobrancaVO cobranca = this.boletoService.obterDadosBoletoPorNossoNumero(nossoNumero, dataPagamento);
+		
 		if (cobranca==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		} 
-		result.use(Results.json()).from(cobranca,"result").recursive().serialize();
+
+			cobranca = this.cobrancaService.obterDadosCobrancaBoletoAntecipado(nossoNumero, dataPagamento, valor);
+			
+			if (cobranca == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			}
+		}
+
+		this.result.use(Results.json()).from(cobranca,"result").recursive().serialize();
 	}
-	
-	
+
 	/**
 	 * Método responsável pela baixa de boleto individual manualmente.	
 	 * @param nossoNumero
@@ -690,10 +699,19 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("obterDetalhesDivida")
-	public void obterDetalhesDivida(Long idCobranca){
+	public void obterDetalhesDivida(Long idCobranca, boolean isBoletoAntecipado){
 
 		//BUSCA DETALHES DA DIVIDA
-		List<DetalhesDividaVO> detalhes = this.cobrancaService.obterDetalhesDivida(idCobranca);
+		List<DetalhesDividaVO> detalhes = null;
+		
+		if (isBoletoAntecipado) {
+			
+			detalhes = this.obterDetalhesBoletoAntecipado(idCobranca);
+			
+		} else {
+			
+			detalhes = this.cobrancaService.obterDetalhesDivida(idCobranca); 
+		}
 		
 		if ((detalhes.size()==0)||(detalhes==null)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dividas em aberto nesta data para esta Cota.");
@@ -706,6 +724,26 @@ public class BaixaFinanceiraController extends BaseController {
 		tableModel.setTotal(10);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private List<DetalhesDividaVO> obterDetalhesBoletoAntecipado(Long idBoletoAntecipado) {
+		
+		BoletoAntecipado boletoAntecipado = this.boletoService.obterBoletoEmBrancoPorId(idBoletoAntecipado);
+		
+		String dataDe = DateUtil.formatarDataPTBR(boletoAntecipado.getEmissaoBoletoAntecipado().getDataRecolhimentoCEDe());
+		String dataAte = DateUtil.formatarDataPTBR(boletoAntecipado.getEmissaoBoletoAntecipado().getDataRecolhimentoCEAte());
+
+		DetalhesDividaVO detalhesDivida = new DetalhesDividaVO();
+		detalhesDivida.setData(dataDe + " - " + dataAte);
+		detalhesDivida.setTipo("Boleto em Branco");
+		detalhesDivida.setObservacao(StringUtils.EMPTY);
+		detalhesDivida.setValor(CurrencyUtil.formatarValor(boletoAntecipado.getValor()));
+		
+		List<DetalhesDividaVO> detalhes = new ArrayList<>();
+		
+		detalhes.add(detalhesDivida);
+		
+		return detalhes;
 	}
 	
 	

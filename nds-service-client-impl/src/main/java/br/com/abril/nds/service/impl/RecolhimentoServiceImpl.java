@@ -500,7 +500,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
 					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
-
+				
+				List<EstoqueProdutoCota> estoqueProdutoCotaCompraSuplementar = 
+						this.estoqueProdutoCotaRepository.buscarEstoqueProdutoCotaCompraSuplementar(idLancamento);
+				
+				listaEstoqueProdutoCota.addAll(estoqueProdutoCotaCompraSuplementar);
+				
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
 					throw new ValidacaoException(TipoMensagem.WARNING,
@@ -1411,11 +1416,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			this.removerChamadaEncalhe(lancamento.getChamadaEncalhe());
 			
-			if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
+			//if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId())) {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,
-					"A chamada de encalhe da data selecionadjá foi gerada. Realizar a reimpressão do documento.");
-			}
+				//throw new ValidacaoException(TipoMensagem.WARNING,
+					//"A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
+			//}
 		}
 	}
 

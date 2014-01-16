@@ -189,9 +189,8 @@ public class Cota implements Serializable {
 	@Column(name = "ALTERACAO_TIPO_COTA")
 	private Date alteracaoTipoCota;
 	
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "COTA_UNIFICACAO_ID")
-	private CotaUnificacao cotaUnificacao;
+	@ManyToMany(mappedBy = "cotas", fetch = FetchType.LAZY)
+	private Set<CotaUnificacao> cotasUnificacao;
 	
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
 	private Integer recebeRecolheParciais;
@@ -651,12 +650,12 @@ public class Cota implements Serializable {
 		this.alteracaoTipoCota = alteracaoTipoCota;
 	}
 
-	public CotaUnificacao getCotaUnificacao() {
-		return cotaUnificacao;
+	public Set<CotaUnificacao> getCotasUnificacao() {
+		return cotasUnificacao;
 	}
 
-	public void setCotaUnificacao(CotaUnificacao cotaUnificacao) {
-		this.cotaUnificacao = cotaUnificacao;
+	public void setCotasUnificacao(Set<CotaUnificacao> cotasUnificacao) {
+		this.cotasUnificacao = cotasUnificacao;
 	}
 	
 }

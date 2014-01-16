@@ -221,7 +221,7 @@ function mostraIntervalo(){
 		      <fieldset class="classFieldset">
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
- 			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
+ 			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
 			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
@@ -233,7 +233,7 @@ function mostraIntervalo(){
 		       	  <legend>Produtos</legend>
 		        
 		        	<table class="fixacaoCotaGrid"></table> 
-		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
+		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
 		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota"><a href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
@@ -245,7 +245,7 @@ function mostraIntervalo(){
     
    <!-- MODAL NOVA FIXAÇÃO --> 
     
- 	<div id="dialog-novo" title="Nova Fixação">
+ 	<div id="dialog-novoFixacao" title="Nova Fixação" style="display:none;">
  		
 			<fieldset style="width:760px!important; margin-bottom:5px;">
 		    	<legend id="subtitulo1">Produto:</legend>

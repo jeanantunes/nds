@@ -246,4 +246,6 @@ public interface BoletoService {
 	 * @return Boletos encontrado
 	 */
 	BoletoAntecipado obterBoletoEmBrancoPorNossoNumero(String nossoNumero);
+	
+	BoletoAntecipado obterBoletoEmBrancoPorId(Long idBoletoAntecipado);
 }

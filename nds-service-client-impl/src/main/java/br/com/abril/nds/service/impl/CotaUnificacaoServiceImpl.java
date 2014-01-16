@@ -1,19 +1,24 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.dto.CotaUnificacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaUnificacao;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
+import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.CotaUnificacaoService;
 
 /**
@@ -32,94 +37,8 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	@Autowired
 	private CotaRepository cotaRepository;
 	
-	/**
-	 * Valida na alteração se Cota já está em outra Centralização como Cota Centralizada ou Centralizadora
-	 * 
-	 * @param cotaUnificacaoId
-	 * @param numeroCota
-	 */
-	@Transactional
-	@Override
-	public void validaAlteracaoUnificacaoCota(Long cotaUnificacaoId,
-            							      Integer numeroCota){
-		
-		CotaUnificacao cotaUnificacao = this.obterCotaUnificacaoPorCotaCentralizadora(numeroCota);
-		
-        if (cotaUnificacao!=null && !cotaUnificacao.getId().equals(cotaUnificacaoId)){
-			
-	        throw new ValidacaoException(TipoMensagem.WARNING, "Cota "+numeroCota+" já é uma cota Centralizadora !");	
-		}
-		
-        cotaUnificacao = this.obterCotaUnificacaoPorCotaCentralizada(numeroCota);
-        		
-        if (cotaUnificacao!=null && !cotaUnificacao.getId().equals(cotaUnificacaoId)){
-			
-	        throw new ValidacaoException(TipoMensagem.WARNING, "Cota "+numeroCota+" já é uma cota Centralizada !");	
-		}
-	}
-
-	/**
-	 * Valida na inclusão se Cota já está em outra Centralização como Cota Centralizada ou Centralizadora
-	 * 
-	 * @param numeroCota
-	 */
-	@Transactional
-	@Override
-	public void validaNovaUnificacaoCota(Integer numeroCota){
-		
-        if (this.isCotaCentralizadora(numeroCota)){
-			
-	        throw new ValidacaoException(TipoMensagem.WARNING, "Cota "+numeroCota+" já é uma cota Centralizadora !");	
-		}
-		
-        if (this.isCotaCentralizada(numeroCota)){
-			
-	        throw new ValidacaoException(TipoMensagem.WARNING, "Cota "+numeroCota+" já é uma cota Centralizada !");	
-		}
-	}
-	
-	/**
-	 * Salva/Altera Unificação de Cota
-	 * 
-	 * @param cotaUnificacaoId
-	 * @param numeroCotaCentralizadora
-	 * @param numeroCotaCentralizada
-	 */
-	@Transactional
-	@Override
-	public void salvarCotaUnificacao(Long cotaUnificacaoId,
-			                         Integer numeroCotaCentralizadora, 
-			                         Integer numeroCotaCentralizada){
-		
-		CotaUnificacao cotaUnificacao = new CotaUnificacao();
-		
-		if (cotaUnificacaoId!=null){
-			
-			this.validaAlteracaoUnificacaoCota(cotaUnificacaoId, numeroCotaCentralizadora);
-			
-			this.validaAlteracaoUnificacaoCota(cotaUnificacaoId, numeroCotaCentralizada);
-			
-			cotaUnificacao = this.cotaUnificacaoRepository.buscarPorId(cotaUnificacaoId);
-		}
-		else{
-			
-			this.validaNovaUnificacaoCota(numeroCotaCentralizadora);
-			
-			this.validaNovaUnificacaoCota(numeroCotaCentralizada);
-		}
-		
-		Cota cotaCentralizadora = this.cotaRepository.obterPorNumerDaCota(numeroCotaCentralizadora);
-		
-		Cota cotaCentralizada = this.cotaRepository.obterPorNumerDaCota(numeroCotaCentralizada);
-		
-		cotaUnificacao.setCota(cotaCentralizadora);
-		
-		cotaUnificacao.adicionarCota(cotaCentralizada);
-		
-		cotaUnificacao.setDataUnificacao(new Date());
-		
-		this.cotaUnificacaoRepository.merge(cotaUnificacao);
-	}
+	@Autowired
+	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
 	
 	/**
 	 * Salva/Altera Unificação de Cotas
@@ -130,16 +49,99 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	 */
 	@Transactional
 	@Override
-	public void salvarCotaUnificacao(Long cotaUnificacaoId,
-			                         Integer numeroCotaCentralizadora, 
-			                         List<Integer> numeroCotasCentralizadas){
+	public void salvarCotaUnificacao(Integer numeroCotaCentralizadora, 
+			                         List<CotaVO> numeroCotasCentralizadas,
+			                         PoliticaCobranca politicaCobranca){
 		
-        for (Integer numeroCotaCentralizada : numeroCotasCentralizadas){
-        	
-        	this.salvarCotaUnificacao(cotaUnificacaoId, 
-        			                  numeroCotaCentralizadora, 
-        			                  numeroCotaCentralizada);
-        }
+		if (politicaCobranca == null || politicaCobranca.getId() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Poliítica de cobrança é obrigatória.");
+		}
+		
+		this.validarCotasCentralizadas(numeroCotasCentralizadas, numeroCotaCentralizadora, 
+				politicaCobranca.getId());
+		
+		if (numeroCotaCentralizadora == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Infome a cota centralizadora.");
+		}
+		
+		CotaUnificacao cotaUnificacao = this.obterCotaUnificacaoPorCotaCentralizadora(numeroCotaCentralizadora,
+				politicaCobranca.getId());
+		
+		//caso cota já seja unificadora
+		if (cotaUnificacao != null){
+			
+			//remove cotas não centralizadas
+			cotaUnificacao.getCotas().clear();
+		} else {
+			
+			cotaUnificacao = new CotaUnificacao();
+			cotaUnificacao.setCota(this.cotaRepository.obterPorNumerDaCota(numeroCotaCentralizadora));
+			cotaUnificacao.setDataUnificacao(new Date());
+		}
+		
+		cotaUnificacao.setPoliticaCobranca(politicaCobranca);
+		
+		//adiciona novas cotas na centralização
+		for (CotaVO cotaVO : numeroCotasCentralizadas){
+			
+			Cota novaCotaCentralizada = this.cotaRepository.obterPorNumerDaCota(cotaVO.getNumero());
+			
+			cotaUnificacao.adicionarCota(novaCotaCentralizada);
+			
+			//apaga forma de cobrança da cota que acaba de ser unificada
+			ParametroCobrancaCota p = 
+				this.parametroCobrancaCotaRepository.obterParametroCobrancaCotaPorCota(cotaVO.getNumero());
+			
+			if (p != null){
+				
+				p.setCota(null);
+				this.parametroCobrancaCotaRepository.alterar(p);
+			}
+		}
+		
+		if (cotaUnificacao.getId() == null){
+			
+			this.cotaUnificacaoRepository.adicionar(cotaUnificacao);
+		} else {
+			
+			this.cotaUnificacaoRepository.alterar(cotaUnificacao);
+		}
+	}
+
+	private void validarCotasCentralizadas(List<CotaVO> numeroCotasCentralizadas,
+			Integer numeroCotaCentralizadora, Long politicaCobrancaId) {
+		
+		if (numeroCotasCentralizadas != null && !numeroCotasCentralizadas.isEmpty()){
+			
+			List<String> msgs = new ArrayList<String>();
+			
+			CotaUnificacao cotaUnificacao = null;
+			
+			for (CotaVO vo : numeroCotasCentralizadas){
+				
+				cotaUnificacao =
+					this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(vo.getNumero());
+				
+				if (cotaUnificacao != null && 
+						!cotaUnificacao.getCota().getNumeroCota().equals(numeroCotaCentralizadora)){
+					
+					msgs.add("Cota " + vo.getNumero() + " já está centralizada na cota " + 
+					cotaUnificacao.getCota().getNumeroCota());
+				}
+				
+				if (this.cotaUnificacaoRepository.verificarCotaUnificadora(vo.getNumero(), politicaCobrancaId)){
+					
+					msgs.add("Cota " + vo.getNumero() + " já é centralizadora");
+				}
+			}
+			
+			if (!msgs.isEmpty()){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+			}
+		}
 	}
 
 	/**
@@ -149,80 +151,9 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	 */
 	@Transactional
 	@Override
-	public void removerCotaUnificacao(Long cotaUnificacaoId) {
+	public void removerCotaUnificacao(Long politicaCobrancaId) {
 		
-        CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.buscarPorId(cotaUnificacaoId);
-        
-        Set<Cota> cotas = cotaUnificacao.getCotas();
-		
-        for (Cota c: cotas){
-        	
-        	c.setCotaUnificacao(null);
-        	
-        	this.cotaRepository.merge(c);
-        }
-        
-        this.cotaUnificacaoRepository.remover(cotaUnificacao);
-	}
-
-	/**
-	 * Verifica se Cota é Centralizadora
-	 * 
-	 * @param numeroCota
-	 * @return boolean
-	 */
-	@Transactional
-	@Override
-	public boolean isCotaCentralizadora(Integer numeroCota) {
-
-		CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(numeroCota);
-
-		return cotaUnificacao!=null;
-	}
-
-	/**
-	 * Verifica se Cota é Centralizada
-	 * 
-	 * @param numeroCota
-	 * @return boolean
-	 */
-	@Transactional
-	@Override
-	public boolean isCotaCentralizada(Integer numeroCota) {
-		
-		CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(numeroCota);
-		
-		return cotaUnificacao!=null;
-	}
-
-	/**
-	 * Verifica se Cota é Centralizadora
-	 * 
-	 * @param idCota
-	 * @return boolean
-	 */
-	@Transactional
-	@Override
-	public boolean isCotaCentralizadora(Long idCota) {
-		
-		CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(idCota);
-
-		return cotaUnificacao!=null;
-	}
-
-	/**
-	 * Verifica se Cota é Centralizada
-	 * 
-	 * @param idCota
-	 * @return boolean
-	 */
-	@Transactional
-	@Override
-	public boolean isCotaCentralizada(Long idCota) {
-		
-        CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(idCota);
-		
-		return cotaUnificacao!=null;
+        this.cotaUnificacaoRepository.removerCotaUnificacao(politicaCobrancaId);
 	}
 
 	/**
@@ -231,57 +162,75 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	 * @param numeroCota
 	 * @return CotaUnificacao
 	 */
-	@Transactional
-	@Override
-	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(Integer numeroCota) {
+	private CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(Integer numeroCota, Long idPoliticaCobranca) {
 		
-        CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(numeroCota);
+        CotaUnificacao cotaUnificacao = 
+        	this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(
+        		numeroCota, idPoliticaCobranca);
 		
 		return cotaUnificacao;
 	}
 
-	/**
-	 * Obtem Cota Unificacao por Cota Centralizada
-	 * 
-	 * @param numeroCota
-	 * @return CotaUnificacao
-	 */
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
-	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizada(Integer numeroCota) {
+	public List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora,
+			Long politicaCobrancaId) {
 		
-		CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(numeroCota);
+		if (politicaCobrancaId == null){
 			
-		return cotaUnificacao;
+			return new ArrayList<CotaVO>();
+		}
+		
+		return this.cotaUnificacaoRepository.obterCotasCentralizadas(
+				numeroCotaCentralizadora, politicaCobrancaId);
 	}
 
-	/**
-	 * Obtem Cota Unificacao por Cota Centralizadora
-	 * 
-	 * @param idCota
-	 * @return CotaUnificacao
-	 */
-	@Transactional
+	@Transactional(readOnly=true)
 	@Override
-	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(Long idCota) {
+	public List<CotaUnificacaoDTO> obterCotasUnificadas(Long politicaCobrancaId) {
 		
-        CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(idCota);
+		if (politicaCobrancaId == null){
+			
+			return new ArrayList<CotaUnificacaoDTO>();
+		}
 		
-		return cotaUnificacao;
+		List<CotaUnificacaoDTO> ret = new ArrayList<CotaUnificacaoDTO>();
+		
+		List<Integer> numCotas = 
+			this.cotaUnificacaoRepository.buscarNumeroCotasUnificadoras(politicaCobrancaId);
+		
+		for (Integer numeroCota : numCotas){
+			
+			CotaUnificacaoDTO c = new CotaUnificacaoDTO();
+			c.setNumeroCota(numeroCota);
+			ret.add(c);
+			
+			List<CotaVO> cotasUnificadas = 
+				this.cotaUnificacaoRepository.obterCotasCentralizadas(numeroCota, politicaCobrancaId);
+			
+			c.setCotas(cotasUnificadas);
+		}
+		
+		return ret;
 	}
 
-	/**
-	 * Obtem Cota Unificacao por Cota Centralizada
-	 * 
-	 * @param idCota
-	 * @return CotaUnificacao
-	 */
-	@Transactional
+	@Transactional(readOnly=true)
 	@Override
-	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizada(Long idCota) {
+	public CotaVO obterCota(Integer numeroCota, boolean edicao,
+			Long politicaCobrancaId) {
 		
-        CotaUnificacao cotaUnificacao = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(idCota);
+		if (!edicao && politicaCobrancaId != null){
+			if (this.cotaUnificacaoRepository.verificarCotaUnificadora(numeroCota, politicaCobrancaId)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "A cota "+ numeroCota +" já é unificadora.");
+			}
+			
+			if (this.cotaUnificacaoRepository.verificarCotaUnificada(numeroCota, politicaCobrancaId)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "A cota "+ numeroCota +" já está unificada.");
+			}
+		}
 		
-		return cotaUnificacao;
+		return this.cotaRepository.obterDadosBasicosCota(numeroCota);
 	}
 }
