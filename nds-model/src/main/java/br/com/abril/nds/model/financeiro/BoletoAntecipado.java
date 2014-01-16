@@ -87,6 +87,12 @@ public class BoletoAntecipado {
 	@Column(name = "TIPO_BAIXA")
 	protected TipoBaixaCobranca tipoBaixa;
 	
+	@Column(name = "VALOR_JUROS")
+	private BigDecimal valorJuros;
+	
+	@Column(name = "VALOR_MULTA")
+	private BigDecimal valorMulta;
+	
 	@OneToOne(optional = true)
 	@JoinColumn(name="MOVIMENTO_FINANCEIRO_COTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroCota;
@@ -240,6 +246,34 @@ public class BoletoAntecipado {
 	 */
 	public void setTipoBaixa(TipoBaixaCobranca tipoBaixa) {
 		this.tipoBaixa = tipoBaixa;
+	}
+
+	/**
+	 * @return the valorJuros
+	 */
+	public BigDecimal getValorJuros() {
+		return valorJuros;
+	}
+
+	/**
+	 * @param valorJuros the valorJuros to set
+	 */
+	public void setValorJuros(BigDecimal valorJuros) {
+		this.valorJuros = valorJuros;
+	}
+
+	/**
+	 * @return the valorMulta
+	 */
+	public BigDecimal getValorMulta() {
+		return valorMulta;
+	}
+
+	/**
+	 * @param valorMulta the valorMulta to set
+	 */
+	public void setValorMulta(BigDecimal valorMulta) {
+		this.valorMulta = valorMulta;
 	}
 
 	public MovimentoFinanceiroCota getMovimentoFinanceiroCota() {
