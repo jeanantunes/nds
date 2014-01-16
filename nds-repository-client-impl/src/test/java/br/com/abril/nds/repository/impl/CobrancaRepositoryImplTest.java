@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
@@ -71,7 +72,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private BaixaAutomatica baixa3;
 
 	// TAREFAS ANTES DA EXECUCAO DO METODO A SER TESTADO
-	@Before
+//	@Before
 	public void setup() {
 
 		dataAtual = DateUtil.removerTimestamp(new Date());
@@ -344,9 +345,9 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testarObterCobrancasPorCota() {
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
-		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
+		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO(5);
 
 		cobrancas = cobrancaRepository.obterCobrancasPorCota(filtro);
 
@@ -357,7 +358,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testarObterCobrancasPorCotaDataVencimento() {
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		Calendar data = Calendar.getInstance();
@@ -372,7 +373,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void testarObterCobrancasPorCotaStatusCobranca() {
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setStatusCobranca(StatusCobranca.NAO_PAGO);
@@ -388,7 +389,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testarObterCobrancasPorCotaOrdenacaoColunaCODIGO() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "asc", "c.id");
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -405,7 +406,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testarObterCobrancasPorCotaOrdenacaoColunaNOMECOTA() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "asc", "c.id");
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -422,7 +423,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testarObterCobrancasPorCotaOrdenacaoColunaDATAEMISSAO() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "asc", "c.id");
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -439,7 +440,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testarObterCobrancasPorCotaOrdenacaoColunaDATAVENCIMENTO() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "asc", "c.id");
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setPaginacao(paginacao);
@@ -456,7 +457,7 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void testarObterCobrancasPorCotaOrdenacaoColunaVALOR() {
 		PaginacaoVO paginacao = new PaginacaoVO(1, 1, "asc", "c.id");
 
-		List<Cobranca> cobrancas;
+		List<CobrancaVO> cobrancas;
 
 		FiltroConsultaDividasCotaDTO filtro = new FiltroConsultaDividasCotaDTO();
 		filtro.setPaginacao(paginacao);
