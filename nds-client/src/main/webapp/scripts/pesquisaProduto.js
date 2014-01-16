@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 function PesquisaProduto(workspace) {
 
 	var pesquisaProduto = this;
