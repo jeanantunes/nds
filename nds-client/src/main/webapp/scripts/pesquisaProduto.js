@@ -136,7 +136,7 @@ function PesquisaProduto(workspace) {
 		pesquisaProduto.pesquisaRealizada = true;
 		
 		if (successCallBack) {
-			successCallBack();
+			successCallBack(result);
 		}
 	},
 	
