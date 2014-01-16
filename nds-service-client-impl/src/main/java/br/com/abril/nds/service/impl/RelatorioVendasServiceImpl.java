@@ -128,10 +128,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 		if(!lista.isEmpty()){
 			
-			filtroCurvaABCDistribuidorDTO.setCodigoProduto(null);
+			FiltroCurvaABCDistribuidorDTO filtroDistribuidor = new FiltroCurvaABCDistribuidorDTO();
 			
+			filtroDistribuidor.setDataDe(filtroCurvaABCDistribuidorDTO.getDataDe());
+			filtroDistribuidor.setDataAte(filtroCurvaABCDistribuidorDTO.getDataAte());
+		
 			Map<Long, RankingDTO> mapRankingCota =
-                    this.rankingRepository.obterRankingCota(filtroCurvaABCDistribuidorDTO);
+                    this.rankingRepository.obterRankingCota(filtroDistribuidor);
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista){
 				

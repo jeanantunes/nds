@@ -28,6 +28,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append(" select ");
 		
 		sql.append(" consolidado.COTA_ID as chave,	");
+		sql.append(" consolidado.NUMERO_COTA as numeroCota,	");
 		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as valorAcumulado,	");
 		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
 		sql.append(" consolidado.valor as valor,						");
@@ -41,7 +42,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(obterSQLRanking(filtro))
 	
-		.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc ");
+		.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc, numeroCota ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
