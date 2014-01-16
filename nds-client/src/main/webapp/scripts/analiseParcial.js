@@ -454,7 +454,10 @@ var analiseParcialController = $.extend(true, {
                     if (typeof histogramaPosEstudoController != 'undefined') {
                         //tenta atualizar os valores da tela de histograma pré analise
                         try{
-                            histogramaPosEstudoController.popularFieldsetResumoEstudo();
+                            histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
+                                params : [{ name : 'estudoId' , value : $('#estudoId').val()}]
+                            });
+                            //histogramaPosEstudoController.popularFieldsetResumoEstudo();
                         }catch(e){
                             exibirMensagem('WARNING', [e.message]);
                         }
