@@ -401,4 +401,44 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterFormaCobrancaCotaUnificadora(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select c.politicaCobranca.formaCobranca ");
+		hql.append(" from CotaUnificacao c ")
+		   .append(" where c.cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FormaCobranca> obterFormaCobrancaCotaUnificada(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select c.politicaCobranca.formaCobranca ");
+		hql.append(" from CotaUnificacao c ")
+		   .append(" left join c.cotas as cotaUnificada ")
+		   .append(" where cotaUnificada.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+	}
+
+	@Override
+	public void removerFormasCobrancaCota(Integer numeroCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"delete from ParametroCobrancaCota c join c.cota cota where cota.numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.executeUpdate();
+	}
 }
