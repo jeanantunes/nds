@@ -56,7 +56,7 @@ public enum Permissao {
 	ROLE_CADASTRO_ALTERACAO_COTA("Alteração / Cota",			          					 		       	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_ALTERACAO_COTA_ALTERACAO, true, null),
 	
 	ROLE_CADASTRO_VALE_DESCONTO_ALTERACAO("Vale Desconto",			          			   					Permissao.ROLE_CADASTRO, true),
-	ROLE_CADASTRO_VALE_DESCONTO("Vale Desconto",			          					 		       		Permissao.ROLE_CADASTRO, ROLE_CADASTRO_VALE_DESCONTO_ALTERACAO, true),
+	ROLE_CADASTRO_VALE_DESCONTO("Vale Desconto",			          					 		       		Permissao.ROLE_CADASTRO, ROLE_CADASTRO_VALE_DESCONTO_ALTERACAO, true, null),
 	
 	ROLE_CADASTRO_HELP_ALTERACAO("Help",                                                       				Permissao.ROLE_CADASTRO, true),
 	ROLE_CADASTRO_HELP("Help",                                                                     	 	   	Permissao.ROLE_CADASTRO, ROLE_CADASTRO_HELP_ALTERACAO, true, null),
