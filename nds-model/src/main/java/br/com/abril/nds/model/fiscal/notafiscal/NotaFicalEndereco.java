@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -16,6 +19,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @Entity
 @Table(name="NOTA_FISCAL_ENDERECO")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class NotaFicalEndereco implements Serializable {
 	
 	private static final long serialVersionUID = 7384512437561238172L;
@@ -26,6 +30,7 @@ public class NotaFicalEndereco implements Serializable {
 	private Long id;
 	
 	@Column(name = "TIPO_LOGRADOURO", length=60)
+	
 	private String tipoLogradouro;
 	
 	@Column(name = "LOGRADOURO", length=60)
@@ -33,6 +38,7 @@ public class NotaFicalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.C05, posicao = 0, tamanho = 60)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao = TipoSecao.E05, posicao = 0, tamanho = 60))
 	})
+	@XmlElement(name="xLgr")
 	private String logradouro;
 	
 	@Column(name = "NUMERO", nullable = true, length=60)
@@ -40,6 +46,7 @@ public class NotaFicalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=1, tamanho=60)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=1 , tamanho=60))
 	})
+	@XmlElement(name="nro")
 	private String numero;
 
 	@Column(name = "UF", length=2)
@@ -47,7 +54,11 @@ public class NotaFicalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.C05, posicao = 6, tamanho = 2)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao = TipoSecao.E05, posicao = 6, tamanho = 2))
 	})
+	@XmlElement(name="UF")
 	private String uf;
+	
+	@Column(name="CODIGO_UF")
+	private Long codigoUf;
 	
 	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true, length=7)
 	@NFEWhens(value = {
@@ -55,13 +66,15 @@ public class NotaFicalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.C05, posicao = 4)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao = TipoSecao.E05, posicao = 4))
 	})
-	private Integer codigoCidadeIBGE;
+	@XmlElement(name="cMun")
+	private Long codigoCidadeIBGE;
 	
 	@Column(name = "CIDADE", length=60)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=5, tamanho=60)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=5 , tamanho=60))
 	})
+	@XmlElement(name="xMun")
 	private String cidade;
 	
 	@Column(name = "COMPLEMENTO", length=60)
@@ -76,6 +89,7 @@ public class NotaFicalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=3, tamanho=60)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=3 , tamanho=60))
 	})
+	@XmlElement(name="xBairro")
 	private String bairro;
 	
 	@Column(name = "CEP", length=9)
@@ -83,9 +97,11 @@ public class NotaFicalEndereco implements Serializable {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=7, tamanho=8)),
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=7 , tamanho=8))
 	})
+	@XmlElement(name="CEP")
 	private String cep;
 	
 	@Column(name = "PAIS", length=60)
+	@XmlElement(name="xPais")
 	private String pais;
 
 	public Long getId() {
@@ -160,11 +176,19 @@ public class NotaFicalEndereco implements Serializable {
 		this.tipoLogradouro = tipoLogradouro;
 	}
 
-	public Integer getCodigoCidadeIBGE() {
+	public Long getCodigoUf() {
+		return codigoUf;
+	}
+
+	public void setCodigoUf(Long codigoUf) {
+		this.codigoUf = codigoUf;
+	}
+
+	public Long getCodigoCidadeIBGE() {
 		return codigoCidadeIBGE;
 	}
 
-	public void setCodigoCidadeIBGE(Integer codigoCidadeIBGE) {
+	public void setCodigoCidadeIBGE(Long codigoCidadeIBGE) {
 		this.codigoCidadeIBGE = codigoCidadeIBGE;
 	}
 

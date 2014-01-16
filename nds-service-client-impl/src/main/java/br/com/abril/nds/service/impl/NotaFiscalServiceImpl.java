@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.apache.xmlbeans.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +100,12 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.inf.portalfiscal.nfe.TNFe;
+import br.inf.portalfiscal.nfe.TNFe.InfNFe;
+import br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest;
+import br.inf.portalfiscal.nfe.impl.TNFeImpl;
+import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl;
+import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl.DestImpl;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -541,12 +552,46 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 
+			JAXBContext jc;
+			try {
+				
+				long index = 1;
+				for(ProdutoServico ps : notaFiscal.getProdutosServicos()) {
+					ps.setSequencia(index++);
+				}
+				
+				/*
+				TNFe nfe = TNFe.Factory.newInstance();
+				InfNFe infNfe = InfNFe.Factory.newInstance();
+				Dest dest = Dest.Factory.newInstance();
+				dest.setCNPJ("123654");
+				infNfe.setDest(dest);
+				nfe.setInfNFe(infNfe);
+				
+				jc = JAXBContext.newInstance(TNFe.class);
+			 
+		        Marshaller marshaller = jc.createMarshaller();
+		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		        marshaller.marshal(nfe, System.out);
+		        */
+				
+				jc = JAXBContext.newInstance(NotaFiscal.class);
+				 
+		        Marshaller marshaller = jc.createMarshaller();
+		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		        marshaller.marshal(notaFiscal, System.out);
+			
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			/*
 			nfeExporter.clear();
 
 			nfeExporter.execute(notaFiscal);
 
 			String s = nfeExporter.gerarArquivo();
-			sBuilder.append(s);
+			sBuilder.append(s);*/
 		}
 
 		return "NOTA FISCAL|" + notasFiscaisParaExportacao.size() + "|\n"

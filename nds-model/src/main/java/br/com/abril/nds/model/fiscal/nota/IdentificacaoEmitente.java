@@ -9,6 +9,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
@@ -18,6 +23,8 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name="emit")
 public class IdentificacaoEmitente implements Serializable {
 	
 	
@@ -55,6 +62,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
+	@XmlElement(name="CNPJ")
 	private String documento;
 	
 	/**
@@ -62,6 +70,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */	
 	@Column(name="NOME_EMITENTE", nullable=false, length=60)
 	@NFEExport(secao=TipoSecao.C, posicao = 0, tamanho=60)
+	@XmlElement(name="xNome")
 	private String nome;
 	
 	/**
@@ -69,6 +78,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Column(name="NOME_FANTASIA_EMITENTE", nullable=true, length=60)
 	@NFEExport(secao=TipoSecao.C, posicao = 1, tamanho=60)
+	@XmlElement(name="xFant")
 	private String nomeFantasia;
 	
 	/**
@@ -76,6 +86,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Column(name="IE_EMITENTE", nullable=false, length=14)
 	@NFEExport(secao=TipoSecao.C, posicao=2, tamanho=14)
+	@XmlElement(name="IE")
 	private String inscricaoEstadual;
 	
 	/**
@@ -83,6 +94,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Column(name="IE_SUBSTITUTO_TRIBUTARIO_EMITENTE", length=14, nullable=true)
 	@NFEExport(secao=TipoSecao.C, posicao=3, tamanho=14)
+	@XmlTransient
 	private String inscricaoEstadualSubstituto;
 	
 	/**
@@ -90,6 +102,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */	
 	@Column(name="IM_EMITENTE", length=15, nullable=true)
 	@NFEExport(secao=TipoSecao.C, posicao=4, tamanho=14)
+	@XmlElement(name="IM")
 	private String inscricaoMunicipal;
 	
 	/**
@@ -97,6 +110,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Column(name="CNAE_EMITENTE", length=1, nullable=true)
 	@NFEExport(secao=TipoSecao.C, posicao=5, tamanho=7)
+	@XmlElement(name="CNAE")
 	private String cnae;
 	
 	/**
@@ -109,6 +123,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@OneToOne(optional=false)
 	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	@NFEExportType
+	@XmlElement(name="enderEmit")
 	private NotaFicalEndereco endereco;
 	
 	@OneToOne(optional=true)

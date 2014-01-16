@@ -93,6 +93,12 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal2.getIdentificacaoEmitente().getEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
 		notaFiscal2.getIdentificacaoEmitente().getEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
 		notaFiscal2.getIdentificacaoEmitente().getEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		try {
+			notaFiscal2.getIdentificacaoEmitente().getEndereco().setCodigoCidadeIBGE(35L); //distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoCidadeIBGE().longValue());
+			notaFiscal2.getIdentificacaoEmitente().getEndereco().setCodigoUf(50308L); //Long.parseLong(distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoUf()));
+		} catch (Exception e) {
+			//FIXME: Colocar um logger
+		}
 		
 	}
 
@@ -112,6 +118,10 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal2.getIdentificacao().setNumeroDocumentoFiscal(1L);
 		
 		notaFiscal2.getIdentificacao().setDataEmissao(new Date());
+		
+		notaFiscal2.getIdentificacao().setCodigoUf(35L); //notaFiscal2.getIdentificacaoEmitente().getEndereco().getCodigoUf());
+		
+		notaFiscal2.getIdentificacao().setCodigoMunicipio(50308L); //notaFiscal2.getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		
 		notaFiscal2.getIdentificacao().setSerie(1);
 		

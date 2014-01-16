@@ -16,6 +16,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * @author francisco.garcia
@@ -27,6 +29,7 @@ import javax.persistence.Table;
 @SequenceGenerator(name="PESSOA_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Pessoa implements Serializable {
 
 	/**
