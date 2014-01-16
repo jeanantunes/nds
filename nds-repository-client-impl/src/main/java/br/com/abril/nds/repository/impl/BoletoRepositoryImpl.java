@@ -163,7 +163,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		sql.append(" BA.VALOR as valor, ");	
 		
-		sql.append(" null as tipoBaixa, ");	
+		sql.append(" BA.TIPO_BAIXA as tipoBaixa, ");	
 		
 		sql.append(" null as statusCobranca, ");	
 		

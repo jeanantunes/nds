@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Entity
 @Table(name = "BOLETO_ANTECIPADO")
@@ -52,6 +53,9 @@ public class BoletoAntecipado {
 	@Column(name="VALOR_PAGO", nullable = true, precision=18, scale=4)
 	private BigDecimal valorPago;
 
+    @Column(name="VALOR_DESCONTO", nullable = false, precision=18, scale=4)
+	private BigDecimal valorDesconto;
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
@@ -78,6 +82,10 @@ public class BoletoAntecipado {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_COBRANCA", nullable = false)
 	protected TipoCobranca tipoCobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_BAIXA")
+	protected TipoBaixaCobranca tipoBaixa;
 	
 	@OneToOne(optional = true)
 	@JoinColumn(name="MOVIMENTO_FINANCEIRO_COTA_ID")
@@ -150,6 +158,20 @@ public class BoletoAntecipado {
 		this.valorPago = valorPago;
 	}
 
+	/**
+	 * @return the valorDesconto
+	 */
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	/**
+	 * @param valorDesconto the valorDesconto to set
+	 */
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
 	public Usuario getUsuario() {
 		return usuario;
 	}
@@ -204,6 +226,20 @@ public class BoletoAntecipado {
 
 	public void setTipoCobranca(TipoCobranca tipoCobranca) {
 		this.tipoCobranca = tipoCobranca;
+	}
+
+	/**
+	 * @return the tipoBaixa
+	 */
+	public TipoBaixaCobranca getTipoBaixa() {
+		return tipoBaixa;
+	}
+
+	/**
+	 * @param tipoBaixa the tipoBaixa to set
+	 */
+	public void setTipoBaixa(TipoBaixaCobranca tipoBaixa) {
+		this.tipoBaixa = tipoBaixa;
 	}
 
 	public MovimentoFinanceiroCota getMovimentoFinanceiroCota() {
