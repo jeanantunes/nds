@@ -1308,6 +1308,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	abrirPopupReabrirMatriz : function() {
+		
+		var exec = false;
 	
 		$( "#dialog-reabrir-matriz", balanceamentoRecolhimentoController.workspace).dialog({
 			resizable: false,
@@ -1320,6 +1322,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			    	text: "Reabrir",
 			    	click: function() {
 					
+			    		exec =true;
 			    		balanceamentoRecolhimentoController.reabrirMatriz();
 
 			    	}
@@ -1334,8 +1337,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			],
 			beforeClose: function() {
-				balanceamentoRecolhimentoController.verificaDatasConfirmadasParaReaberturaPost();
-				balanceamentoRecolhimentoController.validarLancamentoParaReabertura();	
+				if(exec){
+				  exec =false;
+				  balanceamentoRecolhimentoController.verificaDatasConfirmadasParaReaberturaPost();
+				  balanceamentoRecolhimentoController.validarLancamentoParaReabertura();
+				}
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
 		    },
 		    form: $("#form-reabrir-matriz", balanceamentoRecolhimentoController.workspace)

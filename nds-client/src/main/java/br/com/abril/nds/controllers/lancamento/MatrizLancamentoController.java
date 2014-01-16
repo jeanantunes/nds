@@ -33,6 +33,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -871,8 +872,8 @@ public class MatrizLancamentoController extends BaseController {
 		String reparteFisico = produtoBalanceamentoVO.getReparteFisico();
 		String distribuicao = produtoBalanceamentoVO.getDistribuicao();
 		
-		if(reparteFisico.equals("0") || reparteFisico.equals("")
-				|| distribuicao.equals("0") || distribuicao.equals("")) {
+		if((reparteFisico.equals("0") || reparteFisico.equals("")
+				|| distribuicao.equals("0") || distribuicao.equals(""))&& !produtoLancamentoDTO.getStatus().equals(StatusLancamento.EXPEDIDO)) {
 			
 			produtoBalanceamentoVO.setDestacarLinha(true);
 		}
