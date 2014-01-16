@@ -13,7 +13,7 @@ import br.com.abril.nds.model.fiscal.nota.PIS;
 import br.com.abril.nds.service.NFeCalculator;
 
 /**
- * Implementa��o padrao para calculo de impostos.
+ * Implementacao padrao para calculo de impostos.
  */
 public class NFeCalculatorImpl implements NFeCalculator {
 

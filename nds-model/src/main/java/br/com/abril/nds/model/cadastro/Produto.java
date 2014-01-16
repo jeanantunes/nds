@@ -30,6 +30,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.model.fiscal.nota.GrupoTributo;
 
 
 /**
@@ -176,6 +177,10 @@ public class Produto implements Serializable {
 	@OneToOne(fetch=FetchType.EAGER, optional=true)
 	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	
+	@OneToOne(fetch=FetchType.LAZY , optional=true)
+	@JoinColumn(name="GRUPO_TRIBUTO_ID")
+	private GrupoTributo grupoTributo;
 	
 	public Long getId() {
 		return id;
