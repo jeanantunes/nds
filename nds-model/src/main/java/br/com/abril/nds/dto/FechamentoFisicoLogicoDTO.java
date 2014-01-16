@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
@@ -10,9 +11,9 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
-
 @Exportable
-public class FechamentoFisicoLogicoDTO {
+@SuppressWarnings("serial")
+public class FechamentoFisicoLogicoDTO implements Serializable {
 
 	@Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 2, fontSize=9)
 	private String codigo;
