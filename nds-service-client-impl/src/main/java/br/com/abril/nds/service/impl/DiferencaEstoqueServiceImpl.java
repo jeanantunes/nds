@@ -489,7 +489,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
 				}
 				
-				if (diferenca.getTipoDiferenca().isSobra()) {
+				if (diferenca.getTipoDiferenca().isSobra() 
+						|| diferenca.getTipoDiferenca().isAlteracaoReparte()) {
 					
 					movimentoEstoque = this.gerarMovimentoEstoque(
 						diferenca, diferenca.getResponsavel().getId(), diferenca.isAutomatica(),
@@ -1075,7 +1076,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		StatusIntegracao statusIntegracao = null;
 		
-		if (this.foraDoPrazoDoGFS(diferenca)) {
+		if (tipoDiferenca.isAlteracaoReparte()) {
+			
+			statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+		}
+		
+		if (!tipoDiferenca.isAlteracaoReparte() && this.foraDoPrazoDoGFS(diferenca)) {
 			
 			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
 				statusIntegracao = StatusIntegracao.ENCALHE;

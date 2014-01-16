@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
@@ -3482,5 +3483,25 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setParameter("numeroCota", numeroCota);
 		
 		return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public CotaVO obterDadosBasicosCota(Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" c.numeroCota as numero, ")
+		   .append(" case when p.cnpj is not null then concat(p.razaoSocial, ' (', :siglaPJ, ')') else concat(p.nome, ' (', :siglaPF, ')') end as nome ")
+		   .append(" from Cota c ")
+		   .append(" join c.pessoa p ")
+		   .append(" where c.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("siglaPJ", "PJ");
+		query.setParameter("siglaPF", "PF");
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaVO.class));
+		
+		return (CotaVO) query.uniqueResult();
 	}
 }

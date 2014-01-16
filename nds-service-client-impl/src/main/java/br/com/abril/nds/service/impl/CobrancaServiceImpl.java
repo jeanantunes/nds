@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
+import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -51,6 +52,7 @@ import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.AcumuloDividasService;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FormaCobrancaService;
@@ -98,6 +100,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	private DividaRepository dividaRepository;
+	
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -227,7 +232,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
-		return this.cobrancaRepository.obterCobrancasPorCota(filtro);
+		return null;//this.cobrancaRepository.obterCobrancasPorCota(filtro);TODO
 	}
 	
 	
@@ -252,37 +257,17 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Transactional(readOnly=true)
 	public List<CobrancaVO> obterDadosCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
 		
-		List<CobrancaVO> listaCobrancaVO = null;
-		
-	    Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
+	    Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+	    
+	    List<CobrancaVO> cobrancas = null;
 	    
 	    if (cota!=null){
 	    	
 	    	filtro.setAcumulaDivida(false);
-		    List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasPorCota(filtro);
-		    if ((cobrancas!=null)&&(cobrancas.size() > 0)){
-		    	
-				listaCobrancaVO = new ArrayList<CobrancaVO>();
-				CobrancaVO cobrancaVO;
-				for (Cobranca itemCobranca:cobrancas){
-					
-					cobrancaVO = new CobrancaVO();
-					cobrancaVO.setNumeroCota((itemCobranca.getCota()!= null)? itemCobranca.getCota().getNumeroCota():null);
-					cobrancaVO.setCodigo(itemCobranca.getId()!=null?itemCobranca.getId().toString():"");
-					cobrancaVO.setNome(itemCobranca.getCota()!=null?(itemCobranca.getCota().getPessoa()!=null?itemCobranca.getCota().getPessoa().getNome():""):"");
-					cobrancaVO.setDataEmissao(itemCobranca.getDataEmissao()!=null?DateUtil.formatarData(itemCobranca.getDataEmissao(),"dd/MM/yyyy"):"");
-					cobrancaVO.setDataVencimento(itemCobranca.getDataVencimento()!=null?DateUtil.formatarData(itemCobranca.getDataVencimento(),"dd/MM/yyyy"):"");
-					cobrancaVO.setValor(itemCobranca.getValor()!=null?CurrencyUtil.formatarValor(itemCobranca.getValor()):"");
-					cobrancaVO.setCheck(false);
-					listaCobrancaVO.add(cobrancaVO);
-					
-				}
-				
-		    }
-		    
+		    cobrancas = this.cobrancaRepository.obterCobrancasPorCota(filtro);
 	    }
 	    
-		return listaCobrancaVO;
+		return cobrancas;
 	}
 	
 	
@@ -369,6 +354,84 @@ public class CobrancaServiceImpl implements CobrancaService {
 			cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
 			
 		}
+		return cobranca;
+	}	
+
+	@Override
+	@Transactional(readOnly=true)
+	public CobrancaVO obterDadosCobrancaBoletoAntecipado(String nossoNumero, Date dataPagamento, BigDecimal valor) {
+
+		BoletoAntecipado boleto = this.boletoService.obterBoletoEmBrancoPorNossoNumero(nossoNumero);
+		
+		if (boleto == null || boleto.getStatus().equals(StatusDivida.QUITADA)) {
+			
+			return null;
+		}
+		
+		BigDecimal valorJurosCalculado = BigDecimal.ZERO;
+		BigDecimal valorMultaCalculado = BigDecimal.ZERO;
+		
+		if (valor == null) {
+
+			valor = boleto.getValor();
+		}
+		
+		Date dataVencimento = boleto.getDataVencimento();
+		
+		if (dataPagamento == null) {
+			
+			dataPagamento = dataVencimento;
+		}
+		
+		if (dataVencimento.compareTo(dataPagamento) < 0) {
+
+			FormaCobranca formaCobrancaPrincipal = 
+					this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+			
+			Cota cota = boleto.getChamadaEncalheCota().getCota();
+			
+			valorJurosCalculado =
+					this.calcularJuros(boleto.getBanco(), cota.getId(),
+							           valor, boleto.getDataVencimento(),
+							           dataPagamento, formaCobrancaPrincipal);
+				valorMultaCalculado =
+					this.calcularMulta(boleto.getBanco(), cota,
+									   valor, formaCobrancaPrincipal);
+		}
+		
+		CobrancaVO cobranca = this.parseBoletoAntecipadoToCobrancaVO(boleto);
+
+		cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataPagamento) );
+
+		BigDecimal desconto = boleto.getValor().subtract(valor);
+		
+		cobranca.setDesconto( CurrencyUtil.formatarValor(desconto) );
+		
+		cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
+        cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
+        
+        BigDecimal valorTotal = valor.add(valorJurosCalculado).add(valorMultaCalculado);
+		cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
+		
+		return cobranca;
+	}
+	
+	private CobrancaVO parseBoletoAntecipadoToCobrancaVO(BoletoAntecipado boleto) {
+		
+		CobrancaVO cobranca = new CobrancaVO();
+		
+		cobranca.setBanco(boleto.getBanco().getNome());
+		cobranca.setCodigo(boleto.getId().toString());
+		cobranca.setCota(boleto.getChamadaEncalheCota().getCota().getPessoa().getNome());
+		cobranca.setDataEmissao(DateUtil.formatarDataPTBR(boleto.getData()));
+		cobranca.setDataPagamento(DateUtil.formatarDataPTBR(boleto.getDataPagamento()));
+		cobranca.setDataVencimento(DateUtil.formatarDataPTBR(boleto.getDataVencimento()));
+		cobranca.setDividaTotal(CurrencyUtil.formatarValor(boleto.getValor()));
+		cobranca.setNossoNumero(boleto.getNossoNumero());
+		cobranca.setValor(CurrencyUtil.formatarValor(boleto.getValor()));
+		cobranca.setValorTotal(CurrencyUtil.formatarValor(boleto.getValor()));
+		cobranca.setBoletoAntecipado(true);
+		
 		return cobranca;
 	}
 	

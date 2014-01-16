@@ -2,7 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
@@ -89,18 +90,39 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select estoqueProdutoCota ")
+		hql.append(" select estoqueProdutoCota ")
 		   .append(" from EstudoCota estudoCota ")
 		   .append(" join estudoCota.estudo estudo ")
 		   .append(" join estudo.lancamentos lancamento, EstoqueProdutoCota estoqueProdutoCota ")
 		   
 		   .append(" where estoqueProdutoCota.produtoEdicao = estudo.produtoEdicao ")
 		   .append(" and estoqueProdutoCota.cota = estudoCota.cota")
-		   .append(" and lancamento.id = :idLancamento");
+		   .append(" and lancamento.id = :idLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idLancamento", idLancamento);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<EstoqueProdutoCota> buscarEstoqueProdutoCotaCompraSuplementar(Long idLancamento){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select estoqueProdutoCota ")
+		   .append(" from EstoqueProdutoCota estoqueProdutoCota ")
+		   .append(" join estoqueProdutoCota.movimentos mec ")
+		   .append(" join mec.tipoMovimento tm ")
+		   .append(" join mec.lancamento l ")
+		   .append(" where l.id = :idLancamento ")
+		   .append(" and tm.grupoMovimentoEstoque in ( :gruposMovimento ) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR));
 		
 		return query.list();
 	}

@@ -54,12 +54,6 @@
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 				</a>
 			</span>
-			
-			<span class="bt_novos" >
-				<a isEdicao="true" id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
-					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
-				</a>
-			</span>
 		
 			<span class="bt_novos" >
 				<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoRecolhimentoController.exibirMatrizFornecedor();">
@@ -81,6 +75,12 @@
 			<span class="bt_arq" >
 				<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0"/>
+				</a>
+			</span>
+			
+			<span class="bt_novos" >
+				<a isEdicao="true" id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 				</a>
 			</span>
 			

@@ -56,6 +56,9 @@ public class PoliticaCobranca {
 	@JoinColumn(name = "FORNECEDOR_PADRAO_ID")
 	private Fornecedor fornecedorPadrao;
 	
+	@Column(name="UNIFICA_COBRANCA_POR_COTA")
+	private boolean unificaCobrancaPorCota;
+	
 	public Long getId() {
 		return id;
 	}
@@ -142,5 +145,13 @@ public class PoliticaCobranca {
 
 	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
 		this.fornecedorPadrao = fornecedorPadrao;
+	}
+
+	public boolean isUnificaCobrancaPorCota() {
+		return unificaCobrancaPorCota;
+	}
+
+	public void setUnificaCobrancaPorCota(boolean unificaCobrancaPorCota) {
+		this.unificaCobrancaPorCota = unificaCobrancaPorCota;
 	}
 }

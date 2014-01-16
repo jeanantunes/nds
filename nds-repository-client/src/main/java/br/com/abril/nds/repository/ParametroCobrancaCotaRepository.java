@@ -16,4 +16,5 @@ public interface ParametroCobrancaCotaRepository extends Repository<ParametroCob
 	
 	List<BigDecimal> comboValoresMinimos();
 
+	ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota);
 }

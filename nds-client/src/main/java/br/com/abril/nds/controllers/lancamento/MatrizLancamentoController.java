@@ -1161,10 +1161,34 @@ public class MatrizLancamentoController extends BaseController {
 	public void obterAgrupamentoDiarioBalanceamento() {
 
 		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
-
-		if (confirmacoesVO != null) {
+		List<ConfirmacaoVO> confirmacoesAuxVO =  new ArrayList<>();
 		
-			result.use(Results.json()).from(confirmacoesVO, "result").serialize();
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy"); 
+		Date data = new Date();
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			try{
+			 
+				data = format.parse(confirmacaoVO.getMensagem());
+			
+			}catch(ParseException ex){
+				
+			}
+			
+			if (!confirmacaoVO.isConfirmado()) {
+				
+				if(this.distribuidorService.obterDataOperacaoDistribuidor().before(data)){
+					
+					confirmacoesAuxVO.add(confirmacaoVO);
+				}
+			}
+		}
+		
+		if (confirmacoesAuxVO != null) {
+		
+			result.use(Results.json()).from(confirmacoesAuxVO, "result").serialize();
 		}
 	}
 
