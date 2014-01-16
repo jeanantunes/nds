@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -205,7 +206,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	        try {
 	        
-	            Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+	            Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
 	        
 	            this.gerarCobrancaCota(cota.getId(), 
 	            		               idUsuario, 
@@ -243,7 +244,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, 
 			                  Long idUsuario, 
-			                  Map<String, Boolean> setNossoNumero)
+			                  Set<String> setNossoNumero)
 		throws GerarCobrancaValidacaoException {
 		
 		this.gerarCobrancaCota(idCota, 
@@ -289,40 +290,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		this.gerarCobrancaCota(idCota, 
 				               idUsuario, 
-				               new HashMap<String, Boolean>(),
+				               new HashSet<String>(),
         		               true);
 	}
 	
-	/**
-	 * Obtém lista de nosso numero para envio de documento de cobrança por email
-	 * @param nossoNumeroEnvioEmail
-	 * @return List<String>
-	 */
-    private List<String> obterListaNossoNumeroEnvioEmail(Map<String, Boolean> nossoNumeroEnvioEmail){
-		
-		List<String> listaNossoNumero = new ArrayList<String>();
-
-		for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
-			
-			if (nossoNumeroEnvioEmail.get(nossoNumero)){
-				
-				listaNossoNumero.add(nossoNumero);
-			}
-		}
-        
-        return listaNossoNumero;
-	}
-    
     /**
      * Salva informações pendência de envio de documento de cobrança por email
      * @param nossoNumeroEnvioEmail
      */
-    private void salvarBoletoEmailPendenteEnvio(Map<String, Boolean> nossoNumeroEnvioEmail){
+    private void salvarBoletoEmailPendenteEnvio(Set<String> nossoNumeroEnvioEmail){
     	
-        List<String> listaNossoNumero = this.obterListaNossoNumeroEnvioEmail(nossoNumeroEnvioEmail);
-		
-		if (listaNossoNumero!=null && !listaNossoNumero.isEmpty()){
-		
+		if (nossoNumeroEnvioEmail!=null && !nossoNumeroEnvioEmail.isEmpty()){
+
+	        List<String> listaNossoNumero = new ArrayList<String>(nossoNumeroEnvioEmail);
+			
 		    this.boletoEmailService.salvarBoletoEmail(listaNossoNumero);
 		}
     }
@@ -340,7 +321,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 */
 	private void gerarCobrancaCota(Long idCota, 
 			                       Long idUsuario, 
-			                       Map<String, Boolean> setNossoNumero,
+			                       Set<String> setNossoNumero,
 			                       boolean postergarDividas) 
 			throws GerarCobrancaValidacaoException {
 
@@ -469,9 +450,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					if (nossoNumero != null){
 						
-						setNossoNumero.put(nossoNumero,
-								formaCobrancaClone == null ? false :
-									formaCobrancaClone.isRecebeCobrancaEmail());
+						setNossoNumero.add(nossoNumero);
 					}
 					
 					//Limpa dados para contabilizar próxima cota
@@ -517,9 +496,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (nossoNumero != null){
 				
-				setNossoNumero.put(nossoNumero,
-						formaCobrancaClone == null ? false :
-							formaCobrancaClone.isRecebeCobrancaEmail());
+				setNossoNumero.add(nossoNumero);
 			}
 		}
 		
@@ -1346,6 +1323,53 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public boolean aceitaEmissaoDocumento(Cota cota, TipoEmissaoDocumento tipoEmissaoDocumento) {
+		
+		Boolean aceitaEmissao = this.getMapaEmissaoDocumentos(cota).get(tipoEmissaoDocumento); 
+
+		return aceitaEmissao == null ? false : aceitaEmissao;
+	}
+	
+	private HashMap<TipoEmissaoDocumento, Boolean> getMapaEmissaoDocumentos(Cota cota) {		
+		
+		HashMap<TipoEmissaoDocumento, Boolean> map = new HashMap<TipoEmissaoDocumento, Boolean>();
+
+		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
+		
+		if (parametroDistribuicaoCota == null) {
+			
+			parametroDistribuicaoCota = new ParametroDistribuicaoCota();
+		}
+
+		map.put(TipoEmissaoDocumento.EMAIL_BOLETO_RECIBO, parametroDistribuicaoCota.getBoletoEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_BOLETO_SLIP, parametroDistribuicaoCota.getBoletoSlipEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_CHAMADA_ENCALHE, parametroDistribuicaoCota.getChamadaEncalheEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_NOTA_ENVIO, parametroDistribuicaoCota.getNotaEnvioEmail());
+		map.put(TipoEmissaoDocumento.EMAIL_SLIP, parametroDistribuicaoCota.getSlipEmail());
+		
+		map.put(TipoEmissaoDocumento.IMPRESSAO_BOLETO_RECIBO, parametroDistribuicaoCota.getBoletoImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_BOLETO_SLIP, parametroDistribuicaoCota.getBoletoSlipImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_CHAMADA_ENCALHE, parametroDistribuicaoCota.getChamadaEncalheImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_NOTA_ENVIO, parametroDistribuicaoCota.getNotaEnvioImpresso());
+		map.put(TipoEmissaoDocumento.IMPRESSAO_SLIP, parametroDistribuicaoCota.getSlipImpresso());
+
+		Set<TipoEmissaoDocumento> documentosKeySet = map.keySet();
+
+		for (TipoEmissaoDocumento documento : documentosKeySet) {
+			
+			Boolean value = map.get(documento);
+			
+			if (value == null) {
+
+				map.put(documento, this.parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaEnvioEmail(documento.getParametroEmissao()));
+			}
+		}
+
+		return map;
+	}
 
 	private void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException {
 		
@@ -1364,7 +1388,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 */
 	@Override
 	@Transactional
-	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) {
+	public void enviarDocumentosCobrancaEmail(Cota cota, Set<String> nossoNumeroEnvioEmail) {
 		
         String email = cota.getPessoa().getEmail();
 		
@@ -1373,21 +1397,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return;
 		}
 		
-        for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+        while(nossoNumeroEnvioEmail.iterator().hasNext()){
 			
-			if (nossoNumeroEnvioEmail.get(nossoNumero)){
-
-				if (this.aceitaEnvioEmail(cota, nossoNumero)) {
-					
-					try {
-			            
-						this.enviarDocumentosCobrancaEmail(nossoNumero, email);
-	            
-	                } catch (AutenticacaoEmailException e) {
-	  
-	                    e.printStackTrace();
-	                }
-				}
+        	String nossoNumero = nossoNumeroEnvioEmail.iterator().next();
+        	
+			if (this.aceitaEnvioEmail(cota, nossoNumero)) {
+				
+				try {
+		            
+					this.enviarDocumentosCobrancaEmail(nossoNumero, email);
+            
+                } catch (AutenticacaoEmailException e) {
+  
+                    e.printStackTrace();
+                }
 			}
 		}	
 	}
