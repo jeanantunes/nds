@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -99,7 +100,7 @@ public abstract class Cobranca {
 	@JoinColumn(name = "DIVIDA_ID")
 	protected Divida divida;
 	
-	@OneToMany(mappedBy = "cobranca")
+	@OneToMany(mappedBy = "cobranca", cascade = CascadeType.ALL)
 	protected List<BaixaCobranca> baixasCobranca = new ArrayList<BaixaCobranca>();
 	
 	@Column(name="VIAS")

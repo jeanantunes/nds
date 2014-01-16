@@ -487,7 +487,7 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			for (Long idCota : idsCotas) {
 
-				session.setMaxInactiveInterval(-1);
+				this.session.setMaxInactiveInterval(-1);
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
 
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
@@ -502,9 +502,11 @@ public class FechamentoEncalheController extends BaseController {
 			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
 
 			throw e;
+			
 		} finally {
-			session.setMaxInactiveInterval(maxInactiveIntervalSession);
+			
 			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.session.setMaxInactiveInterval(maxInactiveIntervalSession);
 		}
 
 		if (ex != null){
@@ -529,7 +531,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes){
 
-				session.setMaxInactiveInterval(-1);
+				this.session.setMaxInactiveInterval(-1);
 				
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
 
@@ -544,9 +546,9 @@ public class FechamentoEncalheController extends BaseController {
 			
 		} finally {
 			
-			session.setMaxInactiveInterval(maxInactiveIntervalSession);
-			
 			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			
+			this.session.setMaxInactiveInterval(maxInactiveIntervalSession);			
 		}
 
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
