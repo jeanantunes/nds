@@ -25,6 +25,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -378,6 +379,11 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterMatrizLancamentosConfirmados(List<Date> datasConfirmadas);
 	
+	List<Lancamento> obterRecolhimentosConfirmados(List<Date> datasConfirmadas);
+	
 	boolean existeConferenciaEncalheParaLancamento(Long idLancamento);
+
+	boolean existeConferenciaEncalheParaLancamento(Long id,
+			TipoChamadaEncalhe matrizRecolhimento);
 	
 }
