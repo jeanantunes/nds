@@ -1391,17 +1391,27 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	}
 	
 	@Transactional
-	public void reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario) {
+	public String reabrirMatriz(List<Date> datasConfirmadas, Usuario usuario) {
 		
 		this.validarReaberturaMatriz(
 			datasConfirmadas, this.distribuidorService.obterDataOperacaoDistribuidor());
 		
-		List<Lancamento> lancamentos = 
-			this.lancamentoRepository.obterLancamentosConfirmados(datasConfirmadas);
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterRecolhimentosConfirmados(datasConfirmadas);
+		
+		boolean recolhimento = false;
+		boolean reimpressao = false;
 		
 		for(Lancamento lancamento: lancamentos) {
 			
-			this.validarLancamentoParaReabertura(lancamento);
+            if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
+				
+            	recolhimento = true;
+			}
+            
+            if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+        		
+            	reimpressao = true;
+			}
 			
 			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
 			
@@ -1411,23 +1421,37 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			this.removerChamadaEncalhe(lancamento.getChamadaEncalhe());
 			
-			if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING,
-					"A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
-			}
+		}
+		
+		if(recolhimento && reimpressao){
+			return "Existem lançamentos que já se econtram em processo de recolhimento!  A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
+		}else if(recolhimento){
+			return "Existem lançamentos que já se econtram em processo de recolhimento!";
+		}else if(reimpressao){
+			return "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
+		}else{
+			return "";
 		}
 	}
 
-	private void validarLancamentoParaReabertura(Lancamento lancamento) {
+	public void validarLancamentoParaReabertura(List<Date> datasConfirmadas) {
 		
-		if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterRecolhimentosConfirmados(datasConfirmadas);
+		
+			for(Lancamento lancamento: lancamentos) {
+				
+				if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Existem lançamentos que já se econtram em processo de recolhimento!");
-		}
+					throw new ValidacaoException(TipoMensagem.WARNING,
+							"Existem lançamentos que já se econtram em processo de recolhimento!");
+				}
 		
-
+				if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+			
+					throw new ValidacaoException(TipoMensagem.WARNING,
+							"A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
+				}
+		}
 	}
 
 	private void validarReaberturaMatriz(List<Date> datasConfirmadas, Date dataOperacao) {

@@ -2115,6 +2115,30 @@ public class LancamentoRepositoryImpl extends
 		return (Lancamento) query.uniqueResult();		
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterRecolhimentosConfirmados(List<Date> datasConfirmadas) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+		
+		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+		
+		return query.list();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Lancamento> obterLancamentosConfirmados(List<Date> datasConfirmadas) {
