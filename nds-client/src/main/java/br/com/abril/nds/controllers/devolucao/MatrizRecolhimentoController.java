@@ -114,6 +114,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO = "balanceamentoRecolhimento";
 	
+	private static final String ATRIBUTO_SESSAO_VALIDACAO = "validacao";
+	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
 	@Get
@@ -1798,6 +1800,42 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
 	}
 	
+	
+	@Post 
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
+	public void obterDatasConfirmadasReaberturaPost() {
+		
+		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+
+		List<String> datasConfirmadasReabertura = new ArrayList<>();
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		Date data = new Date();
+		
+		
+		
+		for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+			
+			try{
+			 
+				data = format.parse(confirmacaoVO.getMensagem());
+			
+			}catch(ParseException ex){
+				
+			}
+			
+			if (confirmacaoVO.isConfirmado()) {
+				
+				if(this.distribuidorService.obterDataOperacaoDistribuidor().before(data)){
+					
+				  datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
+				}
+			}
+		}
+		
+		this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
+	}
+	
 	@Post
 	public void reabrirMatriz(List<Date> datasReabertura) {
 
@@ -1806,8 +1844,12 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
 		}
 		
-		this.recolhimentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
-
+		this.httpSession.setAttribute(ATRIBUTO_SESSAO_VALIDACAO,this.recolhimentoService.reabrirMatriz(datasReabertura, getUsuarioLogado()));
+		
+		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
+		
+		obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(), filtro.getListaIdsFornecedores(), TipoBalanceamentoRecolhimento.AUTOMATICO, false);
+		
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
 	}
@@ -1931,6 +1973,27 @@ public class MatrizRecolhimentoController extends BaseController {
 		DATA_DIA_CONFIRMADO,
 		DATA_FORA_SEMANA,
 		DATA_VALIDA
+	}
+
+	@Post 
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
+	public void validarLancamentoParaReabertura() {
+	
+		//this.httpSession.removeAttribute(ATRIBUTO_SESSAO_VALIDACAO);
+		/*
+		if(this.httpSession.getAttribute(ATRIBUTO_SESSAO_VALIDACAO)!=null){
+			
+			String validacao = (String) this.httpSession.getAttribute(ATRIBUTO_SESSAO_VALIDACAO);
+			
+			if(!validacao.equals("")) {
+			  throw new ValidacaoException(TipoMensagem.WARNING, validacao);
+			}
+			
+			this.httpSession.removeAttribute(ATRIBUTO_SESSAO_VALIDACAO);
+		}
+		*/
+		throw new ValidacaoException(TipoMensagem.WARNING, "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
+		//this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
 }
