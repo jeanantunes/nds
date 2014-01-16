@@ -32,30 +32,36 @@ var parametroCobrancaCotaController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},{
-				display : 'Concentração de Pagamento',
+				display : 'Concentração',
 				name : 'concentracaoPagto',
-				width : 220,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Tipo de Pagamento',
+				display : 'Tipo Pagamento',
 				name : 'tipoPagto',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Detalhes - Tipo de Pagamento',
+				display : 'Banco',
 				name : 'detalhesTipoPagto',
-				width : 250,
+				width : 165,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Parâmetro Distribuidora',
+				display : 'P.Dist',
 				name : 'parametroDistribuidor',
-				width : 120,
+				width : 40,
 				sortable : true,
 				align : 'left'
-			},{
+			}, {
+				display : 'Unificação',
+				name : 'unificacao',
+				width : 100,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Ação',
 				name : 'acao',
 				width : 50,
@@ -348,7 +354,14 @@ var parametroCobrancaCotaController = $.extend(true, {
             
             row.cell.principal = row.cell.principal ? '<img src="'+ contextPath +'/images/ico_check.gif" hspace="5" border="0px" title="Forma de cobrança principal">' : '';
             
-			row.cell.acao = linkEditar + linkExcluir;
+            if (!row.cell.unificacao){
+            	
+            	row.cell.unificacao = '';
+            	row.cell.acao = linkEditar + linkExcluir;
+            } else {
+            	
+            	row.cell.acao = '';
+            }
 		});
 			
 		//$(".grids", this.workspace).show();

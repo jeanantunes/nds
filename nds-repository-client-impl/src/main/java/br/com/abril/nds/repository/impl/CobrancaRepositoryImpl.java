@@ -1,17 +1,22 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
@@ -210,19 +215,22 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	 * @param filtro
 	 * @return query.list(): lista de cobrancas
 	 */
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	@Override
-	public List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
+	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {	
 
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select c from Cobranca c ");		
+		hql.append(" select ");
+		hql.append(" c.cota.numeroCota as numeroCota, cast(c.id as string) as codigo, ");
+		hql.append(" c.cota.pessoa.nome as nome, cast(c.dataEmissao as string) as dataEmissao, ");
+		hql.append(" cast(c.dataVencimento as string) as dataVencimento, cast(c.valor as string) as valor ");
+		hql.append(" from Cobranca c ");		
 		hql.append(" left join c.baixasCobranca baixa ");
 		hql.append(" left join c.divida divida ");
 		hql.append(" where c.cota.numeroCota = :ncota ");
 		hql.append(" and baixa.statusAprovacao is null ");
 		hql.append(" and divida.status != :statusPendenteInadimplencia ");
-		
-		
+
 		if (filtro.getDataVencimento()!=null){
 		    hql.append(" and c.dataVencimento <= :vcto ");
 		}
@@ -234,6 +242,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		if (filtro.isAcumulaDivida()){
 		    hql.append(" and ( (c.divida.acumulada = :acumulada) or (c.divida.data = :data) )");
 		}
+	
 
 		if (filtro.getOrdenacaoColuna() != null) {
 			switch (filtro.getOrdenacaoColuna()) {
@@ -259,6 +268,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 				hql.append(filtro.getPaginacao().getOrdenacao().toString());
 			}	
 		}
+		
+//		hql.append(this.continuarQuery(filtro));
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("ncota", filtro.getNumeroCota());
@@ -287,10 +298,126 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
+        //TODO
+        query.setResultTransformer(Transformers.aliasToBean(CobrancaVO.class));
 
-		return (List<Cobranca>)query.list();
+        List<CobrancaVO> cobrancaVO = query.list();
+        
+        cobrancaVO.addAll(continuarQuery(filtro));
+        
+		return cobrancaVO;
+	}*/
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, c.ID as codigo, ");
+		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, c.DT_EMISSAO as dataEmissao, "); 
+		hql.append(" c.DT_VENCIMENTO as dataVencimento, c.VALOR as valor, false as boletoAntecipado ");
+		hql.append(" FROM cobranca c ");
+		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on c.ID = bc.COBRANCA_ID ");
+		hql.append(" LEFT JOIN DIVIDA d on d.ID = c.DIVIDA_ID ");
+		hql.append(" INNER JOIN COTA ct on ct.ID = c.COTA_ID ");
+		hql.append(" INNER JOIN PESSOA p on p.ID = ct.PESSOA_ID ");
+		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
+		hql.append(" AND bc.STATUS_APROVACAO is null ");
+		hql.append(" AND d.STATUS != :statusPendenteInadimplencia ");
+		
+		if (filtro.getDataVencimento()!=null){
+		    hql.append(" AND c.DT_VENCIMENTO <= :vcto ");
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+			hql.append(" AND c.STATUS_COBRANCA = :status ");
+		}
+		
+		if (filtro.isAcumulaDivida()){
+		    hql.append(" AND ( (d.ACUMULADA = :acumulada) OR (d.DATA = :data) )");
+		}
+
+		hql.append(" UNION ALL ");
+		
+		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, ba.ID as codigo, ");
+		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, ba.`DATA` as dataEmissao, "); 
+		hql.append(" ba.DATA_VENCIMENTO as dataVencimento, ba.VALOR as valor, true as boletoAntecipado ");
+		hql.append(" FROM boleto_antecipado ba ");
+		hql.append(" INNER join chamada_encalhe_cota ce on ba.CHAMADA_ENCALHE_COTA_ID = ce.ID ");
+		hql.append(" INNER join cota ct on ct.ID = ce.COTA_ID ");
+		hql.append(" INNER join pessoa p on p.ID = ct.PESSOA_ID ");
+		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
+		hql.append(" AND ba.STATUs != :quitada ");
+
+		if (filtro.getOrdenacaoColuna() != null) {
+			
+			hql.append(" ORDER BY ");
+			hql.append(filtro.getOrdenacaoColuna().toString());
+			hql.append(" ");
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
+
+		Query query = super.getSession().createSQLQuery(hql.toString());
+
+		query.setParameter("ncota", filtro.getNumeroCota());
+		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+		query.setParameter("quitada", StatusDivida.QUITADA.name());
+
+		if (filtro.getDataVencimento()!=null){
+		    query.setDate("vcto", filtro.getDataVencimento());
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+		    query.setParameter("status", filtro.getStatusCobranca().name());
+		}
+		
+		if (filtro.isAcumulaDivida()){
+			query.setParameter("acumulada", filtro.isAcumulaDivida());
+			query.setParameter("data", filtro.getDataVencimento());
+		}
+
+		if (filtro.getPaginacao() != null) {
+        	
+			if (filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+		}
+		
+		((SQLQuery) query).addScalar("codigo", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery) query).addScalar("numeroCota");
+		((SQLQuery) query).addScalar("nome");
+		((SQLQuery) query).addScalar("dataVencimento", StandardBasicTypes.DATE);
+		((SQLQuery) query).addScalar("dataEmissao", StandardBasicTypes.DATE);
+		((SQLQuery) query).addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("boletoAntecipado", StandardBasicTypes.BOOLEAN);
+
+        try {
+        	
+			query.setResultTransformer(new AliasToBeanConstructorResultTransformer(
+				CobrancaVO.class.getConstructor(
+					BigInteger.class, Integer.class, String.class, Date.class, Date.class, BigDecimal.class, boolean.class)
+				)
+			);
+
+		} catch (NoSuchMethodException e) {
+			
+			throw new IllegalArgumentException("Construtor inválido");
+			
+		} catch (SecurityException e) {
+
+			throw new IllegalArgumentException("Construtor inválido");
+		}
+		
+		return ((SQLQuery) query).list();
 	}
-
+	
 	@Override
 	public void excluirCobrancaPorIdDivida(Long idDivida) {
 		
