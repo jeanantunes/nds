@@ -57,6 +57,8 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 		</div>
 	</div>
 
+	<br/><br/>
+
 	<div class="linha_separa_fields">&nbsp;</div>
 
 		<fieldset class="classFieldset">
