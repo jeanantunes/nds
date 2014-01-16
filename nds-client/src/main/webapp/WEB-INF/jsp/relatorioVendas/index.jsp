@@ -22,6 +22,9 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 </script>
 </head>
 <body>
+	
+	<input id="pathExportarRelatorioVendas" type="hidden" value="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?"/>
+
 	<form id="form_dialog-editor">
 		<div id="dialog-editor" title="Histórico de Produtos" style="display:none;">
 		<fieldset style="width:810px;">
@@ -32,7 +35,31 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 		</fieldset>
 		</div>
 	</form>
+	
 	<div class="container">
+
+	<div class="areaBts">
+		<div class="area">
+
+			<span class="bt_arq" title="Gerar Arquivo">
+			<a class="impressaoXLSRelatorioVendas" href="" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png"
+				hspace="5" border="0" />
+			</a> 
+			</span> 
+
+			<span class="bt_arq" title="Imprimir"> 
+			<a class="impressaoPDFRelatorioVendas" href="" rel="tipsy" title="Imprimir">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+				hspace="5" border="0" /> 
+			</a>
+			</span>
+		</div>
+	</div>
+
+	<br/><br/>
+
+	<div class="linha_separa_fields">&nbsp;</div>
 
 		<fieldset class="classFieldset">
 			<legend> Relatório de Vendas</legend>
@@ -161,14 +188,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="441">
-							<span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=1"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-							</span> 
-							<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=1"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-							</span>
-						</td>
+						<td width="441">&nbsp;</td>
 						<td width="121"><strong>Total:</strong></td>
 						<td width="130"><span id="qtdeTotalVendaExemplaresDistribuidor"></span></td>
 						<td width="258"><span id="totalFaturamentoCapaDistribuidor"></span></td>
@@ -181,14 +201,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 				<table class="abcEditorGrid"></table>
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="200">
-							<span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-							</span>
-							<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=2"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-							</span>
-						</td>
+						<td width="200">&nbsp;</td>
 						<td width="80"><strong>Total:</strong></td>
 						<td width="145"><span id="qtdeTotalVendaExemplaresEditor"></span></td>
 						<td width="326"><span id="totalFaturamentoCapaEditor"></span></td>
@@ -201,14 +214,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 				<table class="abcProdutoGrid"></table>
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="441">
-							<span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=3"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-							</span>
-							<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=3"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-							</span>
-						</td>
+						<td width="441">&nbsp;</td>
 						<td width="151"><strong>Total:</strong></td>
 						<td width="114"><span id="qtdeTotalVendaExemplaresProduto"></span></td>
 						<td width="244"><span id="totalFaturamentoCapaProduto"></span></td>
@@ -222,14 +228,7 @@ var pesquisaCotaFiltroConsulta = new PesquisaCota(relatorioVendasController.work
 				<table class="abcCotaGrid"></table>
 				<table width="950" border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td width="432">
-							<span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=XLS&tipoRelatorio=4"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-							</span> 
-							<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/lancamento/relatorioVendas/exportar?fileType=PDF&tipoRelatorio=4"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-							</span>
-						</td>
+						<td width="432">&nbsp;</td>
 						<td width="73"><strong>Total:</strong></td>
 						<td width="205"><span id="qtdeTotalVendaExemplaresCota"></span></td>
 						<td width="240"><span id="totalFaturamentoCapaCota"></td>

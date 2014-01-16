@@ -210,8 +210,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		
 		if (porcentagemMargemDistribuidor != null){
 			this.porcentagemMargemDistribuidorFormatado = 
-					CurrencyUtil.formatarValor(
-						porcentagemMargemDistribuidor.multiply(CEM).setScale(2, RoundingMode.HALF_EVEN));
+					CurrencyUtil.formatarValor(porcentagemMargemDistribuidor);
 		}
 	}
 	
