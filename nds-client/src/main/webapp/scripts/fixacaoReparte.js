@@ -295,6 +295,14 @@ var fixacaoReparteController = $.extend(true, {
 		
 	});
 	
+	$('#btNovoProduto').click(function (){
+		fixacaoReparteController.novo();
+	});
+	
+	$('#btNovoCota').click(function (){
+		fixacaoReparteController.novo();
+	});
+	
 	},
 
 	// remove itens duplicados e vazios de uma array
@@ -859,7 +867,7 @@ var fixacaoReparteController = $.extend(true, {
 		//Abre modal Nova Fixação
 		novo:function () {
 
-			if($("input:radio:checked").val() == 'Produto'){
+			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Produto'){
 
 				if(($("#codigoProdutoFixacao").val()=='' || $("#codigoProdutoFixacao").val() =='undefined' )){
 					exibirMensagem("WARNING", ["Por favor preencha o campo codigo "]);
@@ -869,7 +877,7 @@ var fixacaoReparteController = $.extend(true, {
 				}
 			}
 			
-			if($("input:radio:checked").val() == 'Cota'){
+			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Cota'){
 
 				if(($("#codigoCotaFixacao").val()=='' || $("#codigoCotaFixacao").val() =='undefined' )){
 					exibirMensagem("WARNING", ["Por favor preencha o campo codigo"]);
@@ -878,7 +886,7 @@ var fixacaoReparteController = $.extend(true, {
 						fixacaoReparteController.exibeCodigoNomeCotaSelecionado();
 					}
 			}
-			 $("#dialog-novo").dialog({
+			 $("#dialog-novoFixacao").dialog({
 					resizable: false,
 					height:550,
 					width:810,
@@ -895,7 +903,7 @@ var fixacaoReparteController = $.extend(true, {
 						},
 					}
 			});
-			 $('#dialog-novo').bind('dialogclose', function(event) {
+			 $('#dialog-novoFixacao').bind('dialogclose', function(event) {
 				 fixacaoReparteController.limparCamposAoFechar();
 			 });
 
@@ -906,11 +914,11 @@ var fixacaoReparteController = $.extend(true, {
 			if($('#selectModal').css('display')=='inline-block'){
 				$(".fixacaoCotaGrid",fixacaoReparteController.workspace).flexReload();
 				fixacaoReparteController.limparCamposModalNovo();
-				$("#dialog-novo").dialog('close');
+				$("#dialog-novoFixacao").dialog('close');
 			}else if($('#selectModal').css('display')=='none'){
 				$(".fixacaoProdutoGrid",fixacaoReparteController.workspace).flexReload();
 				fixacaoReparteController.limparCamposModalNovo();
-				$("#dialog-novo").dialog('close');
+				$("#dialog-novoFixacao").dialog('close');
 			}
 
 
@@ -971,8 +979,8 @@ var fixacaoReparteController = $.extend(true, {
 			$('#selectModal').hide();
 			$('#codigoModalFixacao').attr('onchange', 'fixacaoReparteController.autoCompleteNumeroCota("#codigoModalFixacao","#nomeModalFixacao")');
 			$('#pesquisaModal').attr('onClick','fixacaoReparteController.pesquisaHistoricoPorCota();');
-			$('#spanCodigoProduto').text($('#codigoProdutoFixacao').val());
-			$('#spanNomeProduto').text($('#nomeProdutoFixacao').val());
+			$('#spanCodigoProduto', this.wsp).text($('#codigoProdutoFixacao').val());
+			$('#spanNomeProduto',  this.wsp).text($('#nomeProdutoFixacao').val());
 
 		},
 		//Ao abrir o modal novo carrega e exibe dados da cota selecionada para fixação
@@ -984,8 +992,8 @@ var fixacaoReparteController = $.extend(true, {
 			$('#selectModal').show();
 			$('#codigoModalFixacao').attr('onchange','pesquisaProduto.pesquisarPorCodigoProduto("#codigoModalFixacao","#nomeModalFixacao",false,undefined,undefined )');
 			$('#pesquisaModal').attr('onClick','fixacaoReparteController.pesquisaHistoricoPorProduto();');
-			$('#spanCodigoProduto').text($('#codigoCotaFixacao').val());
-			$('#spanNomeProduto').text($('#nomeCotaFixacao').val());
+			$('#spanCodigoProduto', this.wsp).text($('#codigoCotaFixacao').val());
+			$('#spanNomeProduto', this.wsp).text($('#nomeCotaFixacao').val());
 
 		},
 		
@@ -1221,11 +1229,11 @@ var fixacaoReparteController = $.extend(true, {
 		
 		autoCompleteNomeModal:function(){
 			
-			if($("input:radio:checked").val() == 'Produto'){
+			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Produto'){
 				this.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#codigoModalFixacao', '#nomeModalFixacao', "nomeCota", 3);
 			}
 			
-			if($("input:radio:checked").val() == 'Cota'){
+			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Cota'){
 				this.autoCompletarPorNome("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigoModalFixacao', '#nomeModalFixacao', "nome", 3);
 			}
 		},
