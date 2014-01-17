@@ -191,12 +191,35 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.codigoProdutoFormatado = row.cell.codigoProduto;
 		
+		row.cell.cancelado = T.gerarExcluir(row.cell.cancelado, i);
+
 		row.cell.novaDataLancamento = T.gerarInputDataDistrib(row.cell.novaDataLancamento, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
 		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
 		}
+		
+	},
+	
+   this.gerarExcluir = function(isPodeExcluir, index) {
+		
+
+		if(isPodeExcluir){
+
+			return '<span class="bt_excluirLancamentoIco" title="Excluir" ' +
+	            '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
+	            ' onclick="' + T.instancia + '.excluirLancamento(' + index + ');' +
+	            '">&nbsp;</a></span>';
+		}else{
+
+			return '<span class="bt_excluirLancamentoIco" title="Excluir" ' +
+            '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
+            'disabled="disabled' +
+             '">&nbsp;</a></span>';
+			
+		}
+		
 		
 	},
 	
@@ -212,6 +235,22 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		       (bloquearData? '' : ' onclick="' + T.instancia + '.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
+	},
+	
+	this.excluirLancamento = function(index) {
+		
+        var data = [];
+
+        data.push({name : 'produtoLancamento.id', value : T.lancamentosPaginacao[index].id});
+		data.push({name : 'produtoLancamento.numeroEdicao', value : T.lancamentosPaginacao[index].numeroEdicao});
+		data.push({name : 'produtoLancamento.nomeProduto', value : T.lancamentosPaginacao[index].nomeProduto});
+
+		$.postJSON(pathTela + "/matrizLancamento/excluirLancamento",
+				data,
+				function(retorno) {});
+		
+		T.pesquisar();
+
 	},
 	
 	this.reprogramarLancamentoUnico = function(index) {
@@ -902,7 +941,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				align : 'center'
 			},{
 				display : 'Excluir',
-				name : 'excluir',
+				name : 'cancelado',
 				width : 30,
 				sortable : false,
 				align : 'center'
