@@ -40,6 +40,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaUnificacao;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
@@ -70,6 +71,7 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
@@ -164,6 +166,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	protected BoletoEmailService boletoEmailService;
+	
+	@Autowired
+	private CotaUnificacaoRepository cotaUnificacaoRepository;
 	
 	@Override
 	@Transactional
@@ -651,25 +656,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
 		
-		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+		this.gerarMovimentosFinanceiros(cota, dataOperacao, dataOperacaoDistribuidor, usuario, isAlteracaoTipoCotaNaDataAtual);
 		
-			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
-			this.gerarCobrancaService.cancelarDividaCobranca(null, 
-															 cota.getId(), 
-					                                         dataOperacaoDistribuidor, 
-					                                         true);
+		//gera movimentos financeiros para cotas unificadas
+		CotaUnificacao unific = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(cota.getNumeroCota());
+		if (unific != null){
+			
+			for (Cota unificada : unific.getCotas()){
+				
+				this.gerarMovimentosFinanceiros(unificada, dataOperacao, dataOperacaoDistribuidor, usuario, 
+					this.cotaService.isCotaAlteradaNaData(unificada,dataOperacao));
+			}
 		}
-		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
-
-			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
-			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacaoDistribuidor);	
-		}	
-	
-		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
-		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
-																	dataOperacaoDistribuidor,
-																	usuario,
-																	null);
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
 
@@ -709,6 +707,30 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		return nossoNumeroEnvioEmail;
+	}
+
+	private void gerarMovimentosFinanceiros(Cota cota, Date dataOperacao, Date dataOperacaoDistribuidor,
+			Usuario usuario, boolean isAlteracaoTipoCotaNaDataAtual) {
+		
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+		
+			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
+			this.gerarCobrancaService.cancelarDividaCobranca(null, 
+															 cota.getId(), 
+					                                         dataOperacaoDistribuidor, 
+					                                         true);
+		}
+		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
+
+			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacaoDistribuidor);	
+		}	
+	
+		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
+		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
+																	dataOperacaoDistribuidor,
+																	usuario,
+																	null);
 	}
 
 	@Override

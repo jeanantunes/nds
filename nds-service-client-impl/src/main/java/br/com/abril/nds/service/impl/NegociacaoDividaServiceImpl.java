@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -395,7 +396,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 					divida.setValor(parcelaNegociacao
 							.getMovimentoFinanceiroCota().getValor());
 					divida.setStatus(StatusDivida.EM_ABERTO);
-					divida.setConsolidado(consolidado);
+					divida.setConsolidados(Arrays.asList(consolidado));
 					divida.setOrigemNegociacao(true);
 
 					Cobranca cobranca = null;

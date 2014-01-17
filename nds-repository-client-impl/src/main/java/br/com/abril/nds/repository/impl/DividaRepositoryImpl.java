@@ -819,7 +819,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		StringBuilder hql = new StringBuilder("select d ");
 		hql.append(" from Divida d ")
-		   .append(" join d.consolidado cons ")
+		   .append(" join d.consolidados cons ")
 		   .append(" where cons.id = :idConsolidado ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
