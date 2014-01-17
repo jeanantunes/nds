@@ -178,7 +178,6 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 			
 			query.setParameter("dataFim", periodo.getAte());
 		}
-	query.setParameterList("listaStatusLancamento", new StatusLancamento[] { StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO });
 
 	return query.list();
     }
