@@ -240,6 +240,7 @@ public class ProdutoEdicaoController extends BaseController {
 			Long numeroEdicao, int pacotePadrao,
 			TipoLancamento tipoLancamento,
 			String precoPrevisto, String precoVenda,GrupoProduto categoria,
+			Date dataLancamento, Date dataRecolhimento,
 			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
 			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
@@ -247,7 +248,7 @@ public class ProdutoEdicaoController extends BaseController {
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
-            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario, ModoTela modoTela) {
+            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario, ModoTela modoTela,boolean istrac29) {
 			
 		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
 		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
@@ -267,7 +268,9 @@ public class ProdutoEdicaoController extends BaseController {
 		dto.setTipoLancamento(tipoLancamento);
 		dto.setPrecoPrevisto(pPrevisto);
 		dto.setPrecoVenda(pVenda);
+		dto.setDataLancamento(dataLancamento);
 		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
+		dto.setDataRecolhimentoReal(dataRecolhimento); 
 		dto.setDataRecolhimentoPrevisto(dataRecolhimentoPrevisto);
 		dto.setDataRecolhimentoDistribuidor(dataRecolhimentoPrevisto);
 		dto.setRepartePrevisto(repartePrevisto);
@@ -313,7 +316,7 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			produtoEdicaoService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream,istrac29);
 			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 			

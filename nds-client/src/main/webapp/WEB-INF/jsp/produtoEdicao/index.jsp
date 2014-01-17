@@ -56,6 +56,7 @@ fieldset {
 
 <!--  INICIO POPUP CADASTRO EDICAO -->
 <form id="produtoEdicaoController-formUpload" name="formUpload" method="post" enctype="multipart/form-data">
+<input type="hidden" name="istrac29" id="produtoEdicaoController-istrac29" />
 
 <div id="produtoEdicaoController-dialog-novo" title="Incluir Nova Edi&ccedil;&atilde;o">
 	
