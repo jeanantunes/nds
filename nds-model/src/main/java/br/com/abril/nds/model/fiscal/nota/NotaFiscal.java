@@ -19,9 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -35,7 +33,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
 @SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
-@XmlRootElement(name="Nfe", namespace="http://www.portalfiscal.inf.br/nfe") 
+@XmlRootElement(name="NFe", namespace="http://www.portalfiscal.inf.br/nfe") 
 @XmlType(name="NotaFiscalNds")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NotaFiscal implements Serializable {
@@ -83,9 +81,9 @@ public class NotaFiscal implements Serializable {
 	 */
 	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
 	@NFEExportType
-	@XmlElementWrapper(name="det")
-	@XmlElements(value={ @XmlElement(name="prod") })
-	private List<ProdutoServico> produtosServicos;
+	@XmlElements(value={ @XmlElement(name="det") })
+	List<DetalheNotaFiscal> detalhesNotaFiscal;
+	//private List<ProdutoServico> produtosServicos;
 	
 	/**
 	 * TOTAL
@@ -202,17 +200,17 @@ public class NotaFiscal implements Serializable {
 	}
 
 	/**
-	 * @return the produtosServicos
+	 * @return
 	 */
-	public List<ProdutoServico> getProdutosServicos() {
-		return produtosServicos;
+	public List<DetalheNotaFiscal> getDetalhesNotaFiscal() {
+		return detalhesNotaFiscal;
 	}
 
 	/**
-	 * @param produtosServicos the produtosServicos to set
+	 * @param detalhesNotaFiscal
 	 */
-	public void setProdutosServicos(List<ProdutoServico> produtosServicos) {
-		this.produtosServicos = produtosServicos;
+	public void setDetalhesNotaFiscal(List<DetalheNotaFiscal> detalhesNotaFiscal) {
+		this.detalhesNotaFiscal = detalhesNotaFiscal;
 	}
 
 	/**

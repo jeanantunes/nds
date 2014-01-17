@@ -38,6 +38,9 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -1248,16 +1251,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	private void gerarMovimentoCancelamentoNotaFiscal(NotaFiscal notaFiscalCancelada,
 			TipoMovimentoEstoque tipoMovimento) {
-		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
-
+		
 		Long idUsuario = this.usuarioService.getUsuarioLogado().getId();
-
-		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
-
-			this.criarMovimentoEstoque(null,
-					produtoServico.getProdutoEdicao().getId(),
-					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null, null, false,false, true, null);
+		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getDetalhesNotaFiscal()) {
+			
+			for (OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
+				MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
+				this.criarMovimentoEstoque(null,
+						mec.getProdutoEdicao().getId(),
+						idUsuario, dnf.getProdutoServico().getQuantidade(), tipoMovimento, null, null, false, false, true, null);
+			}
+			
 		}
+		
 	}
 	
 	@Override

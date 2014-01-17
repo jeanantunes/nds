@@ -21,12 +21,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.xmlbeans.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
@@ -58,6 +59,7 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
@@ -100,12 +102,6 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.inf.portalfiscal.nfe.TNFe;
-import br.inf.portalfiscal.nfe.TNFe.InfNFe;
-import br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest;
-import br.inf.portalfiscal.nfe.impl.TNFeImpl;
-import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl;
-import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl.DestImpl;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -556,29 +552,20 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			try {
 				
 				long index = 1;
-				for(ProdutoServico ps : notaFiscal.getProdutosServicos()) {
-					ps.setSequencia(index++);
+				for(DetalheNotaFiscal dnf : notaFiscal.getDetalhesNotaFiscal()) {
+					dnf.setSequencia(index++);
 				}
 				
-				/*
-				TNFe nfe = TNFe.Factory.newInstance();
-				InfNFe infNfe = InfNFe.Factory.newInstance();
-				Dest dest = Dest.Factory.newInstance();
-				dest.setCNPJ("123654");
-				infNfe.setDest(dest);
-				nfe.setInfNFe(infNfe);
-				
-				jc = JAXBContext.newInstance(TNFe.class);
-			 
-		        Marshaller marshaller = jc.createMarshaller();
-		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        marshaller.marshal(nfe, System.out);
-		        */
-				
 				jc = JAXBContext.newInstance(NotaFiscal.class);
-				 
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapper() {
+					
+					@Override
+					public String getPreferredPrefix(String arg0, String arg1, boolean arg2) {
+						return "";
+					}
+				});
 		        marshaller.marshal(notaFiscal, System.out);
 			
 			} catch (JAXBException e) {
@@ -878,7 +865,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						.getCodigoNBM(), dataVigencia, cstICMS,
 						valorItem);
 
-		produtoServico.setEncargoFinanceiro(encargoFinanceiroProduto);
+//		produtoServico.setEncargoFinanceiro(encargoFinanceiroProduto);
 
 		return produtoServico;
 	}
@@ -944,7 +931,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						.getCodigoNBM(), dataVigencia, cstICMS,
 						valorItem);
 
-		produtoServico.setEncargoFinanceiro(encargoFinanceiroProduto);
+//		produtoServico.setEncargoFinanceiro(encargoFinanceiroProduto);
 
 		return produtoServico;
 	}
@@ -1672,6 +1659,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		Set<NotaFiscalReferenciada> notaFiscalReferenciada = new HashSet<NotaFiscalReferenciada>();
 
+		//FIXME: Ajustar a busca de nota referenciada
+		/*
 		for (ItemNotaFiscalSaida itemNotaFiscal : listaItensNotaFiscal) {
 
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = itemNotaFiscal
@@ -1683,8 +1672,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 
-				List<ProdutoServico> listaProdutoServicos = movimentoEstoqueCota
-						.getListaProdutoServicos();
+				List<DetalheNotaFiscal> listaProdutoServicos = movimentoEstoqueCota.getListaProdutoServicos();
 
 				if (listaProdutoServicos != null
 						&& !listaProdutoServicos.isEmpty()) {
@@ -1710,6 +1698,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				}
 			}
 		}
+		*/
 
 		return new ArrayList<NotaFiscalReferenciada>(notaFiscalReferenciada);
 	}

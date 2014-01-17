@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -72,6 +73,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	@OneToOne(optional=false)
 	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	@NFEExportType
+	@XmlElement(name="enderDest")
 	private NotaFicalEndereco endereco;
 	
 	@OneToOne(optional=true)

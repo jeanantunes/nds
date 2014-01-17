@@ -3373,12 +3373,12 @@ public class Fixture {
 
 		ProdutoServico produtoServico = new ProdutoServico();
 		
-		produtoServico.setProdutoServicoPK(produtoServicoPK);
+//		produtoServico.setProdutoServicoPK(produtoServicoPK);
 		produtoServico.setCfop(cfop);
 		produtoServico.setCodigoBarras(codigoBarras);
 		produtoServico.setCodigoProduto(codigoProduto);
 		produtoServico.setDescricaoProduto(descricaoProduto);
-		produtoServico.setEncargoFinanceiro(encargoFinanceiro);
+//		produtoServico.setEncargoFinanceiro(encargoFinanceiro);
 		produtoServico.setExtipi(extipi);
 		produtoServico.setNcm(ncm);
 		produtoServico.setProdutoEdicao(produtoEdicao);

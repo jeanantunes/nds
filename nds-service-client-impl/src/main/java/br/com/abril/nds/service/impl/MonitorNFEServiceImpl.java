@@ -35,6 +35,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
@@ -44,7 +45,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -599,7 +599,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		List<ItemDanfe> listaItemDanfe = new ArrayList<ItemDanfe>();
 		
-		List<ProdutoServico> produtosSevicos =  notaFiscal.getProdutosServicos();
+		List<DetalheNotaFiscal> detalhesNotaFiscal =  notaFiscal.getDetalhesNotaFiscal();
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
@@ -616,19 +616,19 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		BigDecimal aliquotaIPIProduto 	= BigDecimal.ZERO;
 		BigDecimal valorIPIProduto 		= BigDecimal.ZERO;
 		
-		for(ProdutoServico produtoServico : produtosSevicos) {
+		for(DetalheNotaFiscal detalheNotaFiscal : detalhesNotaFiscal) {
 			
-			String unidade = produtoServico.getUnidade();
+			String unidade = detalheNotaFiscal.getProdutoServico().getUnidade();
 					
-			codigoProduto 		= produtoServico.getCodigoProduto().toString();
-			descricaoProduto 	= produtoServico.getDescricaoProduto();
+			codigoProduto 		= detalheNotaFiscal.getProdutoServico().getCodigoProduto().toString();
+			descricaoProduto 	= detalheNotaFiscal.getProdutoServico().getDescricaoProduto();
 			
-			NCMProduto 			= produtoServico.getNcm().toString();
-			CFOPProduto 		= produtoServico.getCfop().toString();                            
+			NCMProduto 			= detalheNotaFiscal.getProdutoServico().getNcm().toString();
+			CFOPProduto 		= detalheNotaFiscal.getProdutoServico().getCfop().toString();                            
 			
-			quantidadeProduto 	= produtoServico.getQuantidade();              
-			valorUnitarioProduto = produtoServico.getValorUnitario();
-			valorTotalProduto = produtoServico.getValorTotalBruto();              
+			quantidadeProduto 	= detalheNotaFiscal.getProdutoServico().getQuantidade();              
+			valorUnitarioProduto = detalheNotaFiscal.getProdutoServico().getValorUnitario();
+			valorTotalProduto = detalheNotaFiscal.getProdutoServico().getValorTotalBruto();              
 			
 			CSTProduto 		= ""; //TODO obter campo                                   
 			CSOSNProduto 	= ""; //TODO obter campo                                    
@@ -643,7 +643,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 			item.setCodigoProduto(codigoProduto);
 			item.setDescricaoProduto(descricaoProduto);
-			item.setProdutoEdicao(produtoServico.getProdutoEdicao().getNumeroEdicao());
+			item.setProdutoEdicao(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
 			item.setNCMProduto(NCMProduto);
 			item.setCFOPProduto(CFOPProduto);
 			item.setUnidadeProduto(unidade);
@@ -657,11 +657,11 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			item.setValorICMSProduto(valorICMSProduto);
 			item.setAliquotaIPIProduto(aliquotaIPIProduto);
 			item.setValorIPIProduto(valorIPIProduto);
-			if(produtoServico.getProdutoServicoPK() != null
-					&& produtoServico.getProdutoServicoPK().getNotaFiscal() != null
-					&& produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional() != null) {
+			if(detalheNotaFiscal.getProdutoServicoPK() != null
+					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal() != null
+					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional() != null) {
 				
-				item.setInfoComplementar(produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
+				//item.setInfoComplementar(detalheNotaFiscal.getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
 			}
 			
 			listaItemDanfe.add(item);

@@ -588,6 +588,14 @@ public class Produto implements Serializable {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 	
+	public GrupoTributo getGrupoTributo() {
+		return grupoTributo;
+	}
+
+	public void setGrupoTributo(GrupoTributo grupoTributo) {
+		this.grupoTributo = grupoTributo;
+	}
+
 	@Override
 	public String toString() {
 		return new StringBuilder(codigo).append("-").append(nome).toString();

@@ -23,6 +23,9 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
+import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -117,6 +120,8 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		
 		if (listaMovimentoEstoqueCota != null) {
 			
+			//FIXME: Obter pela flag de nota emitida
+			/*
 			for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCota) {
 				
 				List<ProdutoServico> listaProdutoServico = movimentoEstoqueCota.getListaProdutoServicos();
@@ -144,6 +149,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 					listaMovimentosFiltrados.add(movimentoEstoqueCota);
 				}
 			}
+			*/
 		}
 		
 		return listaMovimentosFiltrados;
@@ -325,19 +331,18 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			this.tipoMovimentoEstoqueRepository.
 				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
 		
-		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
-		
-		for (ProdutoServico produtoServico : listaProdutosServicosNotaCancelada) {
+		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getDetalhesNotaFiscal()) {
 			
-			for (MovimentoEstoqueCota movimentoEstoqueCota : produtoServico.getListaMovimentoEstoqueCota()) {
+			for (OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 				
-				ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
+				MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
+				ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
 				
 				Usuario usuario = this.usuarioService.getUsuarioLogado();
 				
 				this.movimentoEstoqueService.gerarMovimentoEstoque(
 					produtoEdicao.getId(), usuario.getId(), 
-						movimentoEstoqueCota.getQtde(), tipoMovimento);
+						mec.getQtde(), tipoMovimento);
 				
 			}
 			
