@@ -67,7 +67,7 @@
 
               <td width="114">Data de Vencimento:</td>
               <td width="113"><input name="dataDe" id="dataDe" type="text" style="width:80px; float:left; margin-right:5px;" /></td>
-              <td width="26">Até:</td>
+              <td width="26">AtÃ©:</td>
               <td width="113"><input name="dataAte" id="dataAte" type="text" style="width:80px; float:left; margin-right:5px;" /></td>
               <td width="44">Status:</td>
               <td width="128">
