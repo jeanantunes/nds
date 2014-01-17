@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -1397,9 +1398,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return;
 		}
 		
-        while(nossoNumeroEnvioEmail.iterator().hasNext()){
+		Iterator<String> iterator = nossoNumeroEnvioEmail.iterator(); 
+		
+        while(iterator.hasNext()){
 			
-        	String nossoNumero = nossoNumeroEnvioEmail.iterator().next();
+        	String nossoNumero = iterator.next();
         	
 			if (this.aceitaEnvioEmail(cota, nossoNumero)) {
 				
