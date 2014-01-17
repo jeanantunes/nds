@@ -819,6 +819,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		
 		FileExporter.to("chamada-encalhe-antecipada", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, infoChamdaAntecipadaEncalheDTO, 
 					listaChamadaEncalheAntecipadaVO, ChamadaEncalheAntecipadaVO.class, this.httpServletResponse);
+		result.nothing();
 		
 	}
 	
