@@ -280,6 +280,8 @@ public class DiferencaEstoqueController extends BaseController {
 		FileExporter.to("consulta-faltas-sobras", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoDiferencaVO, 
 				listaConsultaDiferenca, DiferencaVO.class, this.httpServletResponse);
+		
+		this.result.nothing();
 	}
 	
 	@Post
@@ -2968,6 +2970,8 @@ public class DiferencaEstoqueController extends BaseController {
 		FileExporter.to("diferenca-detalhe-estoque-cota", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, detalhes, 
 					detalhes.getDetalhesDiferenca(), RateioDiferencaCotaDTO.class, this.httpServletResponse);
+		
+		this.result.nothing();
 	}
 
 	private FiltroDetalheDiferencaCotaDTO prepararFiltroDetalheDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro, 
