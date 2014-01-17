@@ -207,16 +207,14 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 
 		if(isPodeExcluir){
 
-			return '<span class="bt_excluirLancamentoIco" title="Excluir" ' +
-	            '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
-	            ' onclick="' + T.instancia + '.excluirLancamento(' + index + ');' +
-	            '">&nbsp;</a></span>';
+			return '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
+	            ' onclick="' + T.instancia + '.dialogConfirmarExclusaoLancamento(' + index + ');' +
+	            '">' + '<img title="Excluir" src="' + contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" />' + '</a>';
 		}else{
 
-			return '<span class="bt_excluirLancamentoIco" title="Excluir" ' +
-            '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
+			return '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
             'disabled="disabled' +
-             '">&nbsp;</a></span>';
+             '">' + '<img title="Excluir" src="' + contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" />' + '</a>';
 			
 		}
 		
@@ -247,10 +245,43 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 
 		$.postJSON(pathTela + "/matrizLancamento/excluirLancamento",
 				data,
-				function(retorno) {});
+				function(retorno) {
+					T.pesquisar();
+				}
+		);
 		
-		T.pesquisar();
+		
 
+	},
+	
+	this.dialogConfirmarExclusaoLancamento = function(index) {
+		
+		$( "#dialog-excluir-lancamento", _workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: [
+			    {
+			    	text: "Confirmar",
+			    	click: function() {
+			    		
+			    		T.excluirLancamento(index);
+			    		$(this).dialog("close");
+			    	}
+			    }, {
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
+			beforeClose: function() {
+				clearMessageDialogTimeout("#dialog-excluir-lancamento");
+		    },
+		    form: $("#dialog-excluir-lancamento", _workspace).parents("form")
+		});
 	},
 	
 	this.reprogramarLancamentoUnico = function(index) {
