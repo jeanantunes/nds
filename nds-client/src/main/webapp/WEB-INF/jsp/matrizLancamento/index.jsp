@@ -31,12 +31,13 @@ balanceamentoLancamento.inicializar();
 .dialog-confirm-balanceamento { display:none; }
 
 .gridLinhaDestacada {
-  background:#ffffff; 
-  color:#000000;
+  background:#888; 
+  font-weight:bold; 
+  color:#fff;
 }
 
 .gridLinhaDestacada:hover {
-   color:#000000;
+   color:#000;
 }
 
 .gridLinhaDestacada a {

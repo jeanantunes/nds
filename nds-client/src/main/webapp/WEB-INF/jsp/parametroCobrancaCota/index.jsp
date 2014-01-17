@@ -482,23 +482,23 @@ $(function(){
 
 
 
-			<div id="divRecebeEmail" style="display: none;">
+<!-- 			<div id="divRecebeEmail" style="display: none;"> -->
 
-				<div name="formularioDadosBoleto" id="formularioDadosBoleto">
+<!-- 				<div name="formularioDadosBoleto" id="formularioDadosBoleto"> -->
 
-					<table width="417" border="0" cellpadding="2" cellspacing="2">
+<!-- 					<table width="417" border="0" cellpadding="2" cellspacing="2"> -->
 
-						<tr>
-							<td align="right"><input type="checkbox" id="recebeEmail"
-								name="recebeEmail" /></td>
-							<td>Receber Cobrança/Recibo por E-mail?</td>
-						</tr>
+<!-- 						<tr> -->
+<!-- 							<td align="right"><input type="checkbox" id="recebeEmail" -->
+<!-- 								name="recebeEmail" /></td> -->
+<!-- 							<td>Receber Cobrança/Recibo por E-mail?</td> -->
+<!-- 						</tr> -->
 
-					</table>
+<!-- 					</table> -->
 
-				</div>
+<!-- 				</div> -->
 
-			</div>
+<!-- 			</div> -->
 
 			<div id="divDadosBancarios" style="display: none;">
 

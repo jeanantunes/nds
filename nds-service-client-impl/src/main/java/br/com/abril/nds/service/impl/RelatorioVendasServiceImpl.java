@@ -12,12 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.client.vo.RegistroHistoricoEditorVO;
 import br.com.abril.nds.dto.RankingDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.CotaRepository;
@@ -101,6 +103,22 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	
 	@Override
 	@Transactional
+	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtroCurvaABCEditorDTO) {
+		
+		FiltroCurvaABCEditorDTO filtro = new FiltroCurvaABCEditorDTO();
+		
+		filtro.setCodigoEditor(filtroCurvaABCEditorDTO.getNumeroEditor());
+		filtro.setDataDe(filtroCurvaABCEditorDTO.getDataDe());
+		filtro.setDataAte(filtroCurvaABCEditorDTO.getDataAte());
+		
+		return this.relatorioVendasRepository.obterHistoricoEditor(filtro);
+		
+	}
+	
+	
+	
+	@Override
+	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		
 		List<RegistroCurvaABCDistribuidorVO> lista =
@@ -113,9 +131,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			// Merging - Merge_Fase2 - Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
 			
 			filtroCurvaABCDistribuidorDTO.setCodigoProduto(null);
+			FiltroCurvaABCDistribuidorDTO filtroDistribuidor = new FiltroCurvaABCDistribuidorDTO();
 			
+			filtroDistribuidor.setDataDe(filtroCurvaABCDistribuidorDTO.getDataDe());
+			filtroDistribuidor.setDataAte(filtroCurvaABCDistribuidorDTO.getDataAte());
+		
 			Map<Long, RankingDTO> mapRankingCota =
-                    this.rankingRepository.obterRankingCota(filtroCurvaABCDistribuidorDTO);
+                    this.rankingRepository.obterRankingCota(filtroDistribuidor);
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista){
 				
@@ -226,8 +248,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		}
 		
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
-		//BigDecimal participacaoAcumulada = BigDecimal.ZERO;
-
+		
+		
 		// Partipacao do registro em relacao a participacao total no periodo
 		if ( participacaoTotal.compareTo(BigDecimal.ZERO) != 0) {
 		
@@ -245,23 +267,25 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				
 				registro.setDataDe(filtro.getDataDe());
 				registro.setDataAte(filtro.getDataAte());
-
-				registro.setPorcentagemVendaExemplares(BigDecimal.ZERO);
 				
-				if(	registro.getReparte() != null && 
-					BigInteger.ZERO.compareTo(registro.getReparte()) < 0){
-					
-
-					registro.setPorcentagemVendaExemplares(
-							MathUtil.divide(CEM.multiply(new BigDecimal(registro.getVendaExemplares())), 
-									new BigDecimal(registro.getReparte())));
-					
-					
-				}
+				registro.setPorcentagemVendaExemplares(obterPercentualVendaExemplares(registro.getVendaExemplares(), registro.getReparte()));
 				
 			}
 		}
-
+	}
+	
+	private BigDecimal obterPercentualVendaExemplares(BigInteger vendaExemplares, BigInteger reparte) {
+		
+		vendaExemplares = (vendaExemplares != null) ? vendaExemplares : BigInteger.ZERO; 
+		reparte = (reparte != null) ? reparte: BigInteger.ZERO;
+		
+		if(BigInteger.ZERO.compareTo(vendaExemplares)!=0 &&
+				BigInteger.ZERO.compareTo(reparte)!=0) {
+			return MathUtil.divide(CEM.multiply(new BigDecimal(vendaExemplares)), new BigDecimal(reparte));
+		}
+		
+		return BigDecimal.ZERO;
+		
 	}
 	
 	private void carregarParticipacaoCurvaABCCota(List<RegistroCurvaABCCotaDTO> lista, BigDecimal participacaoTotal) {
@@ -269,7 +293,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		if (lista==null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
 		}
-
+		
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
 		
 		// Partipacao do registro em relacao a participacao total no periodo
@@ -277,6 +301,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		
 			// Verifica o percentual dos valores em relação ao total de participacao
 			for (RegistroCurvaABCCotaDTO registro : lista) {
+				
+				registro.setPorcentagemVenda(obterPercentualVendaExemplares(registro.getVendaExemplares(), registro.getReparte()));
 				
 				participacaoRegistro =
 						registro.getParticipacao().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);

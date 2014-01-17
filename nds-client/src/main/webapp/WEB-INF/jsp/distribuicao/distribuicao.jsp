@@ -241,7 +241,7 @@
 							</td>
       					</tr>
     					<tr>
-							<td>Boleto</td>
+							<td>Boleto / Recibo</td>
 							<td align="center">
 								<input id="${param.tela}boletoImpresso" type="checkbox" />
 							</td>
@@ -258,15 +258,15 @@
 								<input id="${param.tela}boletoSlipEmail" type="checkbox" />
 							</td>
       					</tr>
-    					<tr>
-							<td>Recibo</td>
-							<td align="center">
-								<input id="${param.tela}reciboImpresso" type="checkbox" />
-							</td>
-							<td align="center">
-								<input id="${param.tela}reciboEmail" type="checkbox" />
-							</td>
-      					</tr>
+<!--     					<tr> -->
+<!-- 							<td>Recibo</td> -->
+<!-- 							<td align="center"> -->
+<%-- 								<input id="${param.tela}reciboImpresso" type="checkbox" /> --%>
+<!-- 							</td> -->
+<!-- 							<td align="center"> -->
+<%-- 								<input id="${param.tela}reciboEmail" type="checkbox" /> --%>
+<!-- 							</td> -->
+<!--       					</tr> -->
 					    <tr>
 					      	<td>Note de Envio</td>
 						  	<td align="center">

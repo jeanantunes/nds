@@ -430,6 +430,9 @@ public class ConsultaBoletosController extends BaseController {
 		FileExporter.to("boleto-cota", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 				listaBoletos, BoletoVO.class, this.httpResponse);
+		
+		result.nothing();
+		
 	}
 	
 	/*

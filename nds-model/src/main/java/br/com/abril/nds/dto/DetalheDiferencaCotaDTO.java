@@ -26,7 +26,7 @@ public class DetalheDiferencaCotaDTO implements Serializable {
 	@Export(label = "Total Exemplares", alignment=Alignment.CENTER)
 	private BigInteger totalExemplares;
 
-	@Export(label = "Valor Total", alignment=Alignment.CENTER)
+	@Export(label = "Valor Total", alignment=Alignment.CENTER, alignWithHeader="Total R$")
 	private String valorTotalFormatado;
 
 	private BigDecimal valorTotal;

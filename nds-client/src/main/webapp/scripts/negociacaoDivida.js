@@ -760,6 +760,9 @@ var negociacaoDividaController = $.extend(true, {
 				function(result) {
 			
 			        $('#selectParcelas', negociacaoDividaController.workspace).val(result.int);
+					negociacaoDividaController.opcaoFormasPagto($('#selectPagamento', negociacaoDividaController.workspace).val()); 
+					negociacaoDividaController.calcularParcelas();
+			
 				}
 		);		
 	},
