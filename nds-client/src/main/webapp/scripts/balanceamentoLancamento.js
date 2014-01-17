@@ -900,6 +900,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				width : 60,
 				sortable : false,
 				align : 'center'
+			},{
+				display : 'Excluir',
+				name : 'excluir',
+				width : 30,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "codigoProduto",
 			sortorder : "asc",

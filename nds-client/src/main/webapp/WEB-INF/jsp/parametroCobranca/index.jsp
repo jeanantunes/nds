@@ -172,12 +172,14 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td width="10">Envio por E-mail:</td>
-                            <td colspan="2"><select name="envioEmail" id="envioEmail"
-                                style="width: 80px;">
-                                    <option value="S">Sim</option>
-                                    <option value="N">N&atilde;o</option>
-                            </select></td>
+<!--                             <td width="10">Envio por E-mail:</td> -->
+<!--                             <td colspan="2"><select name="envioEmail" id="envioEmail" -->
+<!--                                 style="width: 80px;"> -->
+<!--                                     <option value="S">Sim</option> -->
+<!--                                     <option value="N">N&atilde;o</option> -->
+<!--                             </select></td> -->
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
                         </tr>
     					
     					<tr>

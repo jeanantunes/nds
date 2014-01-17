@@ -72,12 +72,6 @@ var parametroCobrancaController = $.extend(true,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Envia E-Mail',
-					name : 'envioEmail',
-					width : 70,
-					sortable : true,
-					align : 'center'
-				}, {
 					display : 'Fornecedores',
 					name : 'fornecedores',
 					width : 80,

@@ -79,14 +79,14 @@
 			</span>
 			
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
+				<a isEdicao="true" id="linkConfirmar" href="javascript:;"  title="Confirmar balanceamento">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 				</a>
 			</span>
 			
 			<span class="bt_novos" >
-				<a isEdicao="true" id="linkReabrirMatriz" href="javascript:;" title="Reabrir Matriz">
-					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reopen.gif">
+				<a isEdicao="true" id="linkReabrirMatriz" title="Reabrir Matriz">
+					<img border="0" hspace="5" onclick='balanceamentoRecolhimentoController.obterDatasConfirmadasParaReaberturaPost();' src="${pageContext.request.contextPath}/images/ico_reopen.gif">
 				</a>
 			</span>
 			

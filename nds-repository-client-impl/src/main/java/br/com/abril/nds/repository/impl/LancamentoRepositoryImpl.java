@@ -46,6 +46,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FuroProdutoRepository;
@@ -2184,6 +2185,29 @@ public class LancamentoRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Lancamento> obterRecolhimentosConfirmados(List<Date> datasConfirmadas) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataRecolhimentoDistribuidor in (:datasConfirmadas) ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+		
+		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		
+		query.setParameterList("datasConfirmadas", datasConfirmadas);
+		query.setParameterList("statusLancamento", statusLancamento);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Lancamento> obterLancamentosConfirmados(List<Date> datasConfirmadas) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -2245,6 +2269,27 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idLancamento", idLancamento);
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
+
+	public boolean existeConferenciaEncalheParaLancamento(Long idLancamento,TipoChamadaEncalhe tipoChamadaEncalhe) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when(count(lancamento.id) > 0) then true else false end ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.chamadaEncalhe chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCotas ");
+		hql.append(" join chamadaEncalheCotas.conferenciasEncalhe conferenciasEncalhe ");
+		hql.append(" where lancamento.id = :idLancamento ");
+		hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe  ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		
 		return (Boolean) query.uniqueResult();
 	}

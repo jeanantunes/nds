@@ -134,6 +134,10 @@ public class RelatorioVendasController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
 
+		if(this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE) == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa realizada.");
+		}
+		
 		switch (tipoRelatorio) {
 		case DISTRIBUIDOR:
 			exportarDistribuidor(fileType, TipoConsultaCurvaABC.DISTRIBUIDOR);
@@ -268,7 +272,7 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroHistoricoEditorVO> lista = editorService.obterHistoricoEditor(filtroSessao);
+		List<RegistroHistoricoEditorVO> lista = relatorioVendasService.obterHistoricoEditor(filtroSessao);
 		
 		FileExporter.to("consulta-historico-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, RegistroHistoricoEditorVO.class, this.httpServletResponse);
 		
@@ -378,14 +382,16 @@ public class RelatorioVendasController extends BaseController {
 			String sortorder, String sortname, int page, int rp) throws Exception {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
-
+		
 		FiltroPesquisarHistoricoEditorDTO filtro = 
 				carregarFiltroHistoricoEditor(sortorder, sortname, page, rp, 
 						sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);	
 
+		
+		
 		List<RegistroHistoricoEditorVO> resultado = null;
 		try {
-			resultado = editorService.obterHistoricoEditor(filtro);
+			resultado = relatorioVendasService.obterHistoricoEditor(filtro);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
