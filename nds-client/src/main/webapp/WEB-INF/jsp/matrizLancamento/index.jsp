@@ -31,12 +31,13 @@ balanceamentoLancamento.inicializar();
 .dialog-confirm-balanceamento { display:none; }
 
 .gridLinhaDestacada {
-  background:#ffffff; 
-  color:#000000;
+  background:#888; 
+  font-weight:bold; 
+  color:#fff;
 }
 
 .gridLinhaDestacada:hover {
-   color:#000000;
+   color:#000;
 }
 
 .gridLinhaDestacada a {
@@ -52,6 +53,14 @@ balanceamentoLancamento.inicializar();
 </head>
 
 <body>
+
+<form id="form-excluir-lancamento">
+	<div id="dialog-excluir-lancamento" title="Remover Lançamento" style="display:none">
+			
+		<p>Deseja realmente excluir este lançamento?</p>
+			   
+	</div>
+</form>
 
 <form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
@@ -256,5 +265,6 @@ balanceamentoLancamento.inicializar();
 		</div>
 		</form>
 	
+		
 
 </body>

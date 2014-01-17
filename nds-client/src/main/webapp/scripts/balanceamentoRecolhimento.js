@@ -1241,6 +1241,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	}, 
 	
 	obterDatasConfirmadasParaReabertura: function() {
+
 		$.getJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReabertura", 
 			null,
@@ -1262,7 +1263,53 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		);		
 	},
 	
+	obterDatasConfirmadasParaReaberturaPost: function() {
+
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReaberturaPost", 
+			null,
+			function(result) {
+				
+				if (result.length == 0) {
+					
+					balanceamentoRecolhimentoController.bloquearLink("linkReabrirMatriz", balanceamentoRecolhimentoController.workspace);
+					
+				} else {
+				
+					balanceamentoRecolhimentoController.popularPopupReaberturaMatrizes(result);
+
+					balanceamentoRecolhimentoController.habilitarLink(
+						"linkReabrirMatriz", balanceamentoRecolhimentoController.abrirPopupReabrirMatriz
+					);
+				}
+			}
+		);		
+	},
+	
+	verificaDatasConfirmadasParaReaberturaPost: function() {
+
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/obterDatasConfirmadasReaberturaPost", 
+			null,
+			function(result) {
+				
+				if (result.length == 0) {
+					
+					balanceamentoRecolhimentoController.bloquearLink("linkReabrirMatriz", balanceamentoRecolhimentoController.workspace);
+					
+				}
+			}
+		);		
+	},
+	validarLancamentoParaReabertura: function() {
+	 $.postJSON(contextPath + "/devolucao/balanceamentoMatriz/validarLancamentoParaReabertura", null,function(result) {});
+	},
+	
 	abrirPopupReabrirMatriz : function() {
+		
+		var exec = false;
 	
 		$( "#dialog-reabrir-matriz", balanceamentoRecolhimentoController.workspace).dialog({
 			resizable: false,
@@ -1275,7 +1322,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			    	text: "Reabrir",
 			    	click: function() {
 					
+			    		exec =true;
 			    		balanceamentoRecolhimentoController.reabrirMatriz();
+
 			    	}
 			    },
 			    {
@@ -1288,8 +1337,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			],
 			beforeClose: function() {
+				if(exec){
+				  exec =false;
+				  balanceamentoRecolhimentoController.verificaDatasConfirmadasParaReaberturaPost();
+				  balanceamentoRecolhimentoController.validarLancamentoParaReabertura();
+				}
 				$("input[name='checkMatrizReabertura']:checked", balanceamentoRecolhimentoController.workspace).attr("checked", false);
-				balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
 		    },
 		    form: $("#form-reabrir-matriz", balanceamentoRecolhimentoController.workspace)
 		});
@@ -1333,6 +1386,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	obterConfirmacaoBalanceamento : function() {
+
 		
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
@@ -1374,7 +1428,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			],
 			beforeClose: function() {
 				clearMessageDialogTimeout("dialog-confirmar");
-				balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
+				//balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);
 		    },
 		    form: $("#dialog-confirm-balanceamento", balanceamentoRecolhimentoController.workspace).parents("form")
 		});

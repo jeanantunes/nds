@@ -29,7 +29,6 @@ public class ParametroCobrancaDTO {
 	boolean unificada;
 	boolean envioEmail;
 	boolean principal;
-	boolean cobradoPeloBackoffice;
 	
 	String instrucoes;
 	
@@ -53,6 +52,10 @@ public class ParametroCobrancaDTO {
 	private Long idFornecedorPadrao;
 	
 	private TipoCota tipoCota;
+	
+	private boolean unificadaPorCota;
+	
+	private List<CotaUnificacaoDTO> unificacoes;
 
 	public ParametroCobrancaDTO() {
 		
@@ -84,7 +87,6 @@ public class ParametroCobrancaDTO {
 		this.unificada = unificada;
 		this.envioEmail = envioEmail;
 		this.principal = principal;
-		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
 		this.instrucoes = instrucoes;
 		this.diasDoMes = diasDoMes;
 		this.domingo = domingo;
@@ -361,15 +363,6 @@ public class ParametroCobrancaDTO {
 		this.formaCobrancaBoleto = formaCobrancaBoleto;
 	}
 
-	public boolean isCobradoPeloBackoffice() {
-		return cobradoPeloBackoffice;
-	}
-
-
-	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
-		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
-	}
-
 
 	public Integer getFatorVencimento() {
 		return fatorVencimento;
@@ -398,6 +391,26 @@ public class ParametroCobrancaDTO {
 
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
+	}
+
+
+	public boolean isUnificadaPorCota() {
+		return unificadaPorCota;
+	}
+
+
+	public void setUnificadaPorCota(boolean unificadaPorCota) {
+		this.unificadaPorCota = unificadaPorCota;
+	}
+
+
+	public List<CotaUnificacaoDTO> getUnificacoes() {
+		return unificacoes;
+	}
+
+
+	public void setUnificacoes(List<CotaUnificacaoDTO> unificacoes) {
+		this.unificacoes = unificacoes;
 	}
 
 }
