@@ -1733,7 +1733,7 @@ var recebimentoFisicoController = $.extend(true, {
 				'nota.chaveAcesso':$("#novoChaveAcesso",recebimentoFisicoController.workspace).val(),
 				'nota.dataEmissao':$("#novoDataEmissao",recebimentoFisicoController.workspace).val(),
 				'nota.dataEntrada':$("#novoDataEntrada",recebimentoFisicoController.workspace).val(),
-				'nota.valorTotal':$("#novoValorTotal",recebimentoFisicoController.workspace).val()};
+				'nota.valorTotal': this.preparaValor($("#novoValorTotal",recebimentoFisicoController.workspace).val())};
 		return dadosCabecalho;
 	},
 
@@ -2118,6 +2118,7 @@ var recebimentoFisicoController = $.extend(true, {
 						pacotePadrao:pacotePadrao,
 						diferenca:diferenca,
 						valorTotal:recebimentoFisicoController.preparaValor(valor),
+						valorTotalString:recebimentoFisicoController.preparaValor(valor),
 						dataLancamento:dataLancamento,
 						dataRecolhimento:dataRecolhimento};
 				
