@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,6 +151,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
+	
+	@Value("${data_cabalistica}")
+	private String dataCabalistica;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -1162,6 +1166,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			dto.setTipoLancamento(uLancamento.getTipoLancamento());
 			
+			Date dataLancamento = null;
+			
 			if(TipoLancamento.PARCIAL.equals(uLancamento.getTipoLancamento())){
 				
 				LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicao.getId());
@@ -1179,10 +1185,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				PeriodoLancamentoParcial primeiroPeriodo = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
 				
 				if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
-					dto.setDataLancamento(primeiroPeriodo.getLancamento().getDataLancamentoDistribuidor());
+					dataLancamento = primeiroPeriodo.getLancamento().getDataLancamentoDistribuidor();
 				}
 				else{
-					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+					dataLancamento = uLancamento.getDataLancamentoDistribuidor();
 				}
 				
 				PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
@@ -1196,13 +1202,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			}else{
 				
-				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				dataLancamento = uLancamento.getDataLancamentoDistribuidor();
 				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
 
 				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
 				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 			}
-			
+
+			dto.setDataLancamento(DateUtil.parseDataPTBR(this.dataCabalistica).compareTo(dataLancamento) == 0 ? null : dataLancamento);
 			dto.setRepartePrevisto(uLancamento.getReparte());
 			dto.setRepartePromocional(uLancamento.getRepartePromocional());
 			
