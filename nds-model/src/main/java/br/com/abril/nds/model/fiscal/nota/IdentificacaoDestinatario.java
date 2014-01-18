@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -25,7 +26,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	private static final long serialVersionUID = -3558149602330018787L;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = true, fetch=FetchType.LAZY)
 	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
 	private NotaFiscalPessoa pessoaDestinatarioReferencia;
 	
@@ -69,12 +70,12 @@ public class IdentificacaoDestinatario implements Serializable {
 	@Column(name="EMAIL_DESTINATARIO", nullable=true, length=60)
 	private String email;
 	
-	@OneToOne(optional=false)
+	@OneToOne(optional=false, fetch=FetchType.LAZY)
 	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	@NFEExportType
 	private NotaFicalEndereco endereco;
 	
-	@OneToOne(optional=true)
+	@OneToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
 	@NFEExportType
 	private Telefone telefone;

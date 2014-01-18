@@ -68,24 +68,23 @@ $(function() {
 	
 		<tr>
     
-			<td width="94">Série:</td>
+			<td width="85">Série:</td>
 
-			<td width="129">
+			<td width="100">
 			
-				<input type="text" id="serieNfe" style="width: 120px;" />
+				<input type="text" id="serieNfe" style="width: 100px;" />
 
 			</td>
             
 			<td width="68">Período de:</td>
 
-			<td width="107"><input type="text"
-				id="dataInicial" style="width: 80px;" />
+			<td width="107">
+				<input type="text" id="dataInicial" style="width: 80px;" />
 			</td>
 
 			<td width="29">Até:</td>
 
-			<td width="107"><input type="text"
-				id="dataFinal" style="width: 80px;" />
+			<td width="107"><input type="text" id="dataFinal" style="width: 80px;" />
 			</td>
 
 			<td colspan="3">Destinatário:</td>

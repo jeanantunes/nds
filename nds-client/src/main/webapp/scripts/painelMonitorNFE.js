@@ -62,26 +62,25 @@ var PainelMonitorNFE = $.extend(true, {
 		var situacaoNfe = $("#situacaoNfe", PainelMonitorNFE.workspace).val();
 		var serieNfe	= $("#serieNfe", PainelMonitorNFE.workspace).val();	
 		
-		var formData = [
-		        {name:'box', value: box },
-		        {name:'dataInicial', value: dataInicial },
-		        {name:'dataFinal', value: dataFinal },
-		        {name:'tipoDocumento', value: tipoDocumento },
-		        {name:'documento', value: documento },
-		        {name:'tipoNfe', value: tipoNfe },
-		        {name:'numeroInicial', value: numeroInicial },
-		        {name:'numeroFinal', value: numeroFinal },
-		        {name:'chaveAcesso', value: chaveAcesso },
-		        {name:'situacaoNfe', value: situacaoNfe },
-		        {name:'serieNfe',    value: serieNfe}
+		var params = [
+		        {name:'filtro.box', value: box },
+		        {name:'filtro.dataInicial', value: dataInicial },
+		        {name:'filtro.dataFinal', value: dataFinal },
+		        {name:'filtro.tipoDocumento', value: tipoDocumento },
+		        {name:'filtro.documento', value: documento },
+		        {name:'filtro.tipoNfe', value: tipoNfe },
+		        {name:'filtro.numeroInicial', value: numeroInicial },
+		        {name:'filtro.numeroFinal', value: numeroFinal },
+		        {name:'filtro.chaveAcesso', value: chaveAcesso },
+		        {name:'filtro.situacaoNfe', value: situacaoNfe },
+		        {name:'filtro.serie',    value: serieNfe}
 		];
 		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexOptions({
-			url: contextPath + "/nfe/painelMonitorNFe/pesquisar",
-			params: formData
+			url: contextPath + "/nfe/painelMonitorNFe/pesquisar", params: params
 		});
 		
-		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();;
+		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();
 	},
 	
 	limparCheck:function (id){
