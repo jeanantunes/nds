@@ -27,10 +27,10 @@ public class RateioDiferencaCotaDTO implements Serializable {
 	@Export(label="Cota", alignment=Alignment.CENTER, exhibitionOrder=2)
 	private Integer numeroCota;
 
-	@Export(label="Nome", exhibitionOrder=3)
+	@Export(label="Nome", exhibitionOrder=3, widthPercent=30)
 	private String nomeCota;
 
-	@Export(label="Box", alignment=Alignment.CENTER, exhibitionOrder=4)
+	@Export(label="Box", alignment=Alignment.CENTER, exhibitionOrder=4, widthPercent=4)
 	private Integer codigoBox;
 
 	@Export(label="Exemplares", alignment=Alignment.CENTER, exhibitionOrder=5)
@@ -39,10 +39,10 @@ public class RateioDiferencaCotaDTO implements Serializable {
 	@Export(label="Preço Desc. R$", alignment=Alignment.CENTER, exhibitionOrder=6)
 	private String precoDescontoFormatado;
 	
-	@Export(label="Total Aprovadas R$", alignment=Alignment.CENTER, exhibitionOrder=7)
+	@Export(label="Total Aprovadas R$", alignment=Alignment.CENTER, exhibitionOrder=7, widthPercent=10)
 	private String totalAprovadasFormatado;
 	
-	@Export(label="Total Rejeitadas R$", alignment=Alignment.CENTER, exhibitionOrder=8)
+	@Export(label="Total Rejeitadas R$", alignment=Alignment.CENTER, exhibitionOrder=8, widthPercent=10)
 	private String totalRejeitadasFormatado;
 	
 	@Export(label="Total R$", alignment=Alignment.CENTER, exhibitionOrder=9)

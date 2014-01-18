@@ -134,20 +134,6 @@ public class ContaCorrenteCotaController extends BaseController {
 
 		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
-		String nomeBox;
-		
-		for(int i =0;i<listaItensContaCorrenteCota.size();i++){
-			
-			nomeBox = cotaService.obterPorId(listaItensContaCorrenteCota.get(i).getCotaId()).getBox().getNome();
-			
-			if(nomeBox ==null){
-			  listaItensContaCorrenteCota.get(i).setNomeBox(nomeBox);
-			}else{
-			  listaItensContaCorrenteCota.get(i).setNomeBox("Box não Cadastrado para essa Cota");	
-			}
-			
-		}
-		
 		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
 	}
 

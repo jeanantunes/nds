@@ -82,7 +82,19 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private Integer sequenciaMatriz;
   	
   	private Long peb;
+  	
+  	private boolean cancelado;
 	
+
+
+	public boolean isCancelado() {
+		return cancelado;
+	}
+
+	public void setCancelado(boolean cancelado) {
+		this.cancelado = cancelado;
+	}
+
 	/**
 	 * Construtor padrão.
 	 */

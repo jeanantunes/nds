@@ -421,7 +421,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	@Transactional
 	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, 
-			String contentType, InputStream imgInputStream) {
+			String contentType, InputStream imgInputStream, boolean istrac29) {
 		
 		ProdutoEdicao produtoEdicao = null;
 		
@@ -455,8 +455,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
 		}
 		
-		if (!produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE)
-				|| dto.getModoTela().equals(ModoTela.REDISTRIBUICAO)) {
+		if ((!produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE)
+				|| dto.getModoTela().equals(ModoTela.REDISTRIBUICAO)) ||  istrac29) {
 		
 			Usuario usuario = usuarioService.getUsuarioLogado();
 			
@@ -795,6 +795,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setNumeroLancamento(dto.getNumeroLancamento());
 		lancamento.setTipoLancamento(dto.getTipoLancamento());
 		
+		if(dto.getDataLancamento()!=null){
+		 lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento());
+		}
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
 		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		

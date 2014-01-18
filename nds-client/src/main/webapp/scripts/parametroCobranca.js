@@ -39,7 +39,7 @@ var parametroCobrancaController = $.extend(true,
 				colModel :[ {
 					display : 'Forma Pagto',
 					name : 'forma',
-					width : 50,
+					width : 112,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -72,12 +72,6 @@ var parametroCobrancaController = $.extend(true,
 					width : 110,
 					sortable : true,
 					align : 'left'
-				}, {
-					display : 'Envia E-Mail',
-					name : 'envioEmail',
-					width : 70,
-					sortable : true,
-					align : 'center'
 				}, {
 					display : 'Fornecedores',
 					name : 'fornecedores',
