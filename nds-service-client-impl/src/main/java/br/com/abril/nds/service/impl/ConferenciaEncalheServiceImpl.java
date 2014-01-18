@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
@@ -91,6 +92,7 @@ import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -242,6 +244,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private CotaUnificacaoRepository cotaUnificacaoRepository;
+	
+	@Autowired
+	private GrupoRepository grupoRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -622,9 +627,47 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return reparte;
 	}
+
+	private String obterDescricaoDiasSemana(List<DiaSemana> diasSemana) {
+		
+		StringBuilder descricao = new StringBuilder();
+		
+		int counter = 0;
+		
+		for(DiaSemana d : diasSemana) {
+			descricao.append(d.getDescricaoDiaSemana());
+			descricao.append(++counter==diasSemana.size() ? "" : ", ");
+		}
+		
+		return descricao.toString();
+		
+	}
+	
+	@Transactional(readOnly = true)
+	public void verificarCotaOperacaoDiferenciada(Integer numeroCota) {
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		
+		DiaSemana diaSemanaDataOperacao = DiaSemana.getByCodigoDiaSemana(DateUtil.obterDiaDaSemana(dataOperacao));
+		
+		if(diasSemanaOperacaoDiferenciada==null) {
+			return;
+		}
+		
+		if(diasSemanaOperacaoDiferenciada.contains(diaSemanaDataOperacao)) {
+			return;
+		}
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, 
+				" Cota possui operação difenciada, pode ser operada apenas: " + obterDescricaoDiasSemana(diasSemanaOperacaoDiferenciada));
+		
+	}
 	
 	@Transactional(readOnly = true)
 	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota) {
+		
 		
 		BigDecimal valorTotal = obterValorTotalReparte(numeroCota, distribuidorService.obterDataOperacaoDistribuidor());
 		
