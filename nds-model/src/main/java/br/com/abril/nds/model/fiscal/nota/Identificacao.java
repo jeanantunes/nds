@@ -78,7 +78,7 @@ public class Identificacao implements Serializable {
 		}
 	}	
 	
-	public enum FinalidadeEmissao implements NotaFiscalEnum {
+	public enum FinalidadeEmissaoNFe implements NotaFiscalEnum {
 		
 		NORMAL(1), 
 		COMPLEMENTAR(2), 
@@ -86,7 +86,7 @@ public class Identificacao implements Serializable {
 
 		private Integer finalidadeEmissao;
 		
-		FinalidadeEmissao(Integer finalidadeEmissao) {
+		FinalidadeEmissaoNFe(Integer finalidadeEmissao) {
 			this.finalidadeEmissao = finalidadeEmissao;
 		}
 		
@@ -294,11 +294,11 @@ public class Identificacao implements Serializable {
 	@Column(name = "FINALIDADE_EMISSAO", nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
 	@XmlTransient
-	private FinalidadeEmissao finalidadeEmissao;
+	private FinalidadeEmissaoNFe finalidadeEmissaoNFe;
 	
 	@Transient
 	@XmlElement(name="finNFe")
-	private Integer finalidadeEmissaoXML;
+	private Integer finalidadeEmissaoNFeXML;
 	
 	/**
 	 * finNFe
@@ -526,15 +526,15 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the finalidadeEmissao
 	 */
-	public FinalidadeEmissao getFinalidadeEmissao() {
-		return finalidadeEmissao;
+	public FinalidadeEmissaoNFe getFinalidadeEmissaoNFe() {
+		return finalidadeEmissaoNFe;
 	}
 
 	/**
-	 * @param finalidadeEmissao the finalidadeEmissao to set
+	 * @param finalidadeEmissaoNFe the finalidadeEmissao to set
 	 */
-	public void setFinalidadeEmissao(FinalidadeEmissao finalidadeEmissao) {
-		this.finalidadeEmissao = finalidadeEmissao;
+	public void setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe finalidadeEmissaoNFe) {
+		this.finalidadeEmissaoNFe = finalidadeEmissaoNFe;
 	}
 
 	/**
