@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -90,6 +91,9 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Value("${data_cabalistica}")
+	private String dataCabalistica;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
 	
@@ -1329,29 +1333,18 @@ public class MatrizLancamentoController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void excluirLancamento(ProdutoLancamentoVO produtoLancamento) {
 
-	 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+		Date data = DateUtil.parseDataPTBR(this.dataCabalistica);
 		
-		try {
-	 	  
-			Date data = simpleDateFormat.parse("3000-01-01");
-			
-			Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
-			
-			lancamento.setDataLancamentoDistribuidor(data);
-			lancamento.voltarStatusOriginal();
-			//atualizarLancamento(produtoLancamento.getId(),data);
+		Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
+		
+		lancamento.setDataLancamentoDistribuidor(data);
+		lancamento.voltarStatusOriginal();
+		//atualizarLancamento(produtoLancamento.getId(),data);
 
-			this.lancamentoRepositoryService.merge(lancamento);
+		this.lancamentoRepositoryService.merge(lancamento);
 
-			this.result.use(PlainJSONSerialization.class).from(
-						new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
-			
-            
-		}catch(ParseException ex){
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi Possivel excluir o lançamento.");
-		}
+		this.result.use(PlainJSONSerialization.class).from(
+					new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
 		
 	}
 
