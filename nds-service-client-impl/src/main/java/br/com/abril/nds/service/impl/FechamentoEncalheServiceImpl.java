@@ -900,7 +900,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 					NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
 
-					this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
+					//FIXME: Ajustar o parametro passado
+					//this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getDetalhesNotaFiscal(), listItemNotaFiscal);
 				
 				}
 				

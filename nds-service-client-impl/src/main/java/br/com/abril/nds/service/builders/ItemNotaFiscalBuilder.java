@@ -11,6 +11,9 @@ import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalItem;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nota.COFINS;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiro;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 
@@ -111,61 +114,87 @@ public class ItemNotaFiscalBuilder  {
 
 	public static void montaItemNotaFiscal(NotaFiscal notaFiscal2, MovimentoEstoqueCota movimentoEstoqueCota) {
 
-		ProdutoServico notaFiscalItem = new ProdutoServico();
+		ProdutoServico produtoServico = new ProdutoServico();
+		DetalheNotaFiscal detalheNotaFiscal = new DetalheNotaFiscal(produtoServico);
 		
 		if(notaFiscal2 == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
-			if(notaFiscal2.getProdutosServicos() == null) {
-				notaFiscal2.setProdutosServicos(new ArrayList<ProdutoServico>());
+			if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+				notaFiscal2.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
 			}
 		}
 		
-		if(notaFiscal2.getProdutosServicos().size() == 0) {
+		if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 		
-			notaFiscalItem.setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
-			notaFiscalItem.setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
-			notaFiscalItem.setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
-			notaFiscalItem.setQuantidade(movimentoEstoqueCota.getQtde());
-			notaFiscalItem.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
-			notaFiscalItem.setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
-			notaFiscalItem.setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+			detalheNotaFiscal.getProdutoServico().setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
+			detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
+			detalheNotaFiscal.getProdutoServico().setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
+			detalheNotaFiscal.getProdutoServico().setQuantidade(movimentoEstoqueCota.getQtde());
+			detalheNotaFiscal.getProdutoServico().setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+			detalheNotaFiscal.getProdutoServico().setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
+			detalheNotaFiscal.getProdutoServico().setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 			movimentoEstoqueCota.setNotaFiscalEmitida(true);
 			
-			List<OrigemItemNotaFiscal> origemItens = notaFiscalItem.getOrigemItemNotaFiscal() != null ? notaFiscalItem.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
+			if(detalheNotaFiscal.getEncargoFinanceiro() == null) {
+				detalheNotaFiscal.setEncargoFinanceiro(new EncargoFinanceiro() {
+					private static final long serialVersionUID = 1L;
+					
+				});
+			}
+			COFINS cofins= new COFINS();
+			cofins.setCst(1);
+			cofins.setPercentualAliquota(new BigDecimal("3.0"));
+			detalheNotaFiscal.getEncargoFinanceiro().setCofins(cofins);
+			
+			List<OrigemItemNotaFiscal> origemItens = detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() != null ? detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 			
 			OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
 			((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota(movimentoEstoqueCota);
 			origemItens.add(oinf);
-			notaFiscalItem.setOrigemItemNotaFiscal(origemItens);
+			detalheNotaFiscal.getProdutoServico().setOrigemItemNotaFiscal(origemItens);
 			
 		} else {
 			
-			for(ProdutoServico nfi : notaFiscal2.getProdutosServicos()) {
+			for(DetalheNotaFiscal dnf : notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 				
 				boolean notFound = true;
 
-				for(OrigemItemNotaFiscal oinf : nfi.getOrigemItemNotaFiscal()) {
+				if(dnf.getProdutoServico() == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Item de nota fiscal nulo.");
+				}
+				
+				for(OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 					
 					MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();
 					if(mec.getProdutoEdicao().getId().equals(movimentoEstoqueCota.getProdutoEdicao().getId())) {
 						
 						notFound = false;
 						
-						notaFiscalItem.setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
-						notaFiscalItem.setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
-						notaFiscalItem.setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
-						notaFiscalItem.setQuantidade(notaFiscalItem.getQuantidade().add(movimentoEstoqueCota.getQtde()));
-						notaFiscalItem.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+						detalheNotaFiscal.getProdutoServico().setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
+						detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
+						detalheNotaFiscal.getProdutoServico().setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
+						detalheNotaFiscal.getProdutoServico().setQuantidade(detalheNotaFiscal.getProdutoServico().getQuantidade().add(movimentoEstoqueCota.getQtde()));
+						detalheNotaFiscal.getProdutoServico().setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 						
-						BigDecimal valorTotalTemp = notaFiscalItem.getValorTotalBruto();
+						BigDecimal valorTotalTemp = detalheNotaFiscal.getProdutoServico().getValorTotalBruto();
 						BigDecimal valorTotalNovoMec = movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde()));
 						
-						notaFiscalItem.setValorTotalBruto(valorTotalTemp.add(valorTotalNovoMec));
+						detalheNotaFiscal.getProdutoServico().setValorTotalBruto(valorTotalTemp.add(valorTotalNovoMec));
 						
-						notaFiscalItem.setValorUnitario(notaFiscalItem.getValorTotalBruto().divide(new BigDecimal(notaFiscalItem.getQuantidade())));
+						detalheNotaFiscal.getProdutoServico().setValorUnitario(detalheNotaFiscal.getProdutoServico().getValorTotalBruto().divide(new BigDecimal(detalheNotaFiscal.getProdutoServico().getQuantidade())));
 						
 						mec.setNotaFiscalEmitida(true);
+						
+						if(detalheNotaFiscal.getEncargoFinanceiro() == null) {
+							detalheNotaFiscal.setEncargoFinanceiro(new EncargoFinanceiro() {
+								
+							});
+						}
+						COFINS cofins= new COFINS();
+						cofins.setCst(1);
+						cofins.setPercentualAliquota(new BigDecimal("3.0"));
+						detalheNotaFiscal.getEncargoFinanceiro().setCofins(cofins);
 						
 					}
 					
@@ -173,21 +202,31 @@ public class ItemNotaFiscalBuilder  {
 				
 				if(notFound) {
 					
-					notaFiscalItem.setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
-					notaFiscalItem.setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
-					notaFiscalItem.setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
-					notaFiscalItem.setQuantidade(movimentoEstoqueCota.getQtde());
-					notaFiscalItem.setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
-					notaFiscalItem.setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
-					notaFiscalItem.setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+					detalheNotaFiscal.getProdutoServico().setCodigoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo());
+					detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
+					detalheNotaFiscal.getProdutoServico().setNcm(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getCodigo());
+					detalheNotaFiscal.getProdutoServico().setQuantidade(movimentoEstoqueCota.getQtde());
+					detalheNotaFiscal.getProdutoServico().setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
+					detalheNotaFiscal.getProdutoServico().setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
+					detalheNotaFiscal.getProdutoServico().setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 					movimentoEstoqueCota.setNotaFiscalEmitida(true);
 					
-					List<OrigemItemNotaFiscal> origemItens = notaFiscalItem.getOrigemItemNotaFiscal() != null ? notaFiscalItem.getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
+					if(detalheNotaFiscal.getEncargoFinanceiro() == null) {
+						detalheNotaFiscal.setEncargoFinanceiro(new EncargoFinanceiro() {
+							
+						});
+					}
+					COFINS cofins= new COFINS();
+					cofins.setCst(1);
+					cofins.setPercentualAliquota(new BigDecimal("3.0"));
+					detalheNotaFiscal.getEncargoFinanceiro().setCofins(cofins);
+					
+					List<OrigemItemNotaFiscal> origemItens = detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() != null ? detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 					
 					OrigemItemNotaFiscal oinf = new OrigemItemNotaFiscalMovimentoEstoqueCota();
 					((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).setMovimentoEstoqueCota(movimentoEstoqueCota);
 					origemItens.add(oinf);
-					notaFiscalItem.setOrigemItemNotaFiscal(origemItens);
+					detalheNotaFiscal.getProdutoServico().setOrigemItemNotaFiscal(origemItens);
 					
 				}
 			}
@@ -195,7 +234,7 @@ public class ItemNotaFiscalBuilder  {
 		
 		// popular os itens das notas fiscais
 		// notaFiscalItem.setNotaFiscal(notaFiscal2);
-		notaFiscal2.getProdutosServicos().add(notaFiscalItem);
+		notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
 		
 	}
 	

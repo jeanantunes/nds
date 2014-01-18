@@ -7,6 +7,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -17,6 +19,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
 @Embeddable
 @XmlType(namespace="InformacaoTransporte")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class InformacaoTransporte implements Serializable {
 
 
@@ -30,6 +33,7 @@ public class InformacaoTransporte implements Serializable {
 	 */
 	@Column(name="MODALIDADE_FRENTE", length=1, nullable=false)
 	@NFEExport(secao = TipoSecao.X, posicao = 0)
+	@XmlElement(name="mdFrente")
 	private Integer modalidadeFrente;
 	
 	/**

@@ -39,7 +39,7 @@ public abstract class EncargoFinanceiro implements Serializable {
         @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
         @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
     })
-	private ProdutoServico produtoServico;
+	private DetalheNotaFiscal produtoServico;
 	
 	@Embedded
 	@NFEExportType(secaoPadrao = TipoSecao.Q)
@@ -102,14 +102,14 @@ public abstract class EncargoFinanceiro implements Serializable {
 	/**
 	 * @return the produtoServico
 	 */
-	public ProdutoServico getProdutoServico() {
+	public DetalheNotaFiscal getProdutoServico() {
 		return produtoServico;
 	}
 
 	/**
 	 * @param produtoServico the produtoServico to set
 	 */
-	public void setProdutoServico(ProdutoServico produtoServico) {
+	public void setProdutoServico(DetalheNotaFiscal produtoServico) {
 		this.produtoServico = produtoServico;
 	}
 

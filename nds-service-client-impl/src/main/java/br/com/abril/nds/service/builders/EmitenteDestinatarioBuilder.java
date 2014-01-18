@@ -43,37 +43,37 @@ public class EmitenteDestinatarioBuilder {
 
 	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, Cota cota) {
 		
-		if(notaFiscal2.getIdentificacaoDestinatario() == null) {
-			notaFiscal2.setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
+			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
 		}
 		
-		if(notaFiscal2.getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
+		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
 		}
 		
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			notaFiscal2.getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial());
-			notaFiscal2.getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaJuridica.getRazaoSocial());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaJuridica.getEmail());
 			
 		} else if (cota.getPessoa() instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
-			notaFiscal2.getIdentificacaoDestinatario().setNome(pessoaFisica.getNome());
-			notaFiscal2.getIdentificacaoDestinatario().setEmail(pessoaFisica.getEmail());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setNome(pessoaFisica.getNome());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEmail(pessoaFisica.getEmail());
 		}
 		
-		notaFiscal2.getIdentificacaoDestinatario().getEndereco().setId(cota.getEnderecoPrincipal().getEndereco().getId());
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setId(cota.getEnderecoPrincipal().getEndereco().getId());
 		
 	}
 	
 	public static void montarEnderecoEmitenteDestinatario(NotaFiscal notaFiscal2, EstoqueProduto estoque) {
 		
-		if(notaFiscal2.getIdentificacaoDestinatario() == null) {
-			notaFiscal2.setIdentificacaoDestinatario(new IdentificacaoDestinatario());
+		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario() == null) {
+			notaFiscal2.getNotaFiscalInformacoes().setIdentificacaoDestinatario(new IdentificacaoDestinatario());
 		}
 		
-		if(notaFiscal2.getIdentificacaoDestinatario().getEndereco() == null) {
-			notaFiscal2.getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
+		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
 		}
 		
 		

@@ -10,16 +10,20 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalEnum;
  */
 public enum TipoOperacao implements NotaFiscalEnum {
 	
-	ENTRADA("Entrada","E"),
-	SAIDA("Saída","S");
+	ENTRADA("Entrada", "E", 0),
+	SAIDA("Saída", "S", 1);
 	
-	TipoOperacao(String descricao, String simpleValue) {
+	
+	TipoOperacao(String descricao, String simpleValue, int tipoOperacaoNumerico) {
 		this.descricao = descricao;
-		this.simpleValue =simpleValue;
+		this.simpleValue = simpleValue;
+		this.tipoOperacaoNumerico = tipoOperacaoNumerico;
+		
 	}
 	
 	private String descricao;
 	private String simpleValue;
+	private int tipoOperacaoNumerico;
 
 	/**
 	 * Obtém descricao
@@ -56,4 +60,13 @@ public enum TipoOperacao implements NotaFiscalEnum {
 	public Integer getIntValue() {
 		return this.ordinal();
 	}
+
+	public int getTipoOperacaoNumerico() {
+		return tipoOperacaoNumerico;
+	}
+
+	public void setTipoOperacaoNumerico(int tipoOperacaoNumerico) {
+		this.tipoOperacaoNumerico = tipoOperacaoNumerico;
+	}
+	
 }

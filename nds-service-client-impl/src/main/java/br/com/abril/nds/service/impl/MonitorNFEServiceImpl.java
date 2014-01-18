@@ -35,6 +35,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
@@ -44,7 +45,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -132,11 +132,11 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 		}
 		
-		if (notaFiscal.getInformacaoEletronica() == null || 
-				notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica() == null){
+		if (notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null || 
+				notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica() == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota ainda não submetida ao SEFAZ");
-		} else if (!notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatus().equals(
+		} else if (!notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatus().equals(
 				Status.AUTORIZADO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota não autorizada pelo SEFAZ");
@@ -144,10 +144,10 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		if(indEmissaoDepec) {
 			
-			if(	StatusProcessamentoInterno.GERADA.equals(notaFiscal.getStatusProcessamentoInterno()) ||
-				StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno()) ) {
+			if(	StatusProcessamentoInterno.GERADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno()) ||
+				StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno()) ) {
 				
-				notaFiscal.getIdentificacao().setTipoEmissao(TipoEmissao.CONTINGENCIA);
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacao().setTipoEmissao(TipoEmissao.CONTINGENCIA);
 				notaFiscalRepository.alterar(notaFiscal);
 				
 				return;
@@ -175,20 +175,20 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String chave = null;
 		String protocolo = null;
 		
-		if(notaFiscal.getInformacaoEletronica() != null){
+		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() != null){
 			
-			InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
-			RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica();
+			InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
+			RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica();
 			chave = informacaoEletronica.getChaveAcesso();
 			protocolo = retornoComunicacaoEletronica.getProtocolo() == null ? "" : retornoComunicacaoEletronica.getProtocolo().toString();
 		}
 		
-		Identificacao identificacao 				= notaFiscal.getIdentificacao();
+		Identificacao identificacao 				= notaFiscal.getNotaFiscalInformacoes().getIdentificacao();
 		
-		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
+		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
 		
-		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getInformacaoValoresTotais().getTotaisISSQN();
-		InformacaoAdicional informacaoAdicional = notaFiscal.getInformacaoAdicional();
+		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais().getTotaisISSQN();
+		InformacaoAdicional informacaoAdicional = notaFiscal.getNotaFiscalInformacoes().getInformacaoAdicional();
 		
 		int tipoNF = identificacao.getTipoOperacao().ordinal();
 		
@@ -256,7 +256,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosEmissor(DanfeDTO danfe, NotaFiscal notaFiscal) {
 	
-		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getIdentificacaoEmitente();
+		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 		
 		String documento 	= identificacaoEmitente.getDocumento();
 		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
@@ -373,7 +373,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosDestinatario(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getIdentificacaoDestinatario();
+		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 		
 		String documento 			= identificacaoDestinatario.getDocumento();
 		
@@ -444,7 +444,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosTributarios(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
+		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
 		
 		BigDecimal valorBaseICMS 			= informacaoValoresTotais.getValorBaseCalculoICMS();
 		BigDecimal valorICMS 				= informacaoValoresTotais.getValorICMS();
@@ -481,7 +481,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosTransportadora(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		InformacaoTransporte informacaoTransporte = notaFiscal.getInformacaoTransporte();
+		InformacaoTransporte informacaoTransporte = notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte();
 		
 		Endereco endereco = informacaoTransporte.getEndereco();
 		
@@ -599,7 +599,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		List<ItemDanfe> listaItemDanfe = new ArrayList<ItemDanfe>();
 		
-		List<ProdutoServico> produtosSevicos =  notaFiscal.getProdutosServicos();
+		List<DetalheNotaFiscal> detalhesNotaFiscal =  notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal();
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
@@ -616,19 +616,19 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		BigDecimal aliquotaIPIProduto 	= BigDecimal.ZERO;
 		BigDecimal valorIPIProduto 		= BigDecimal.ZERO;
 		
-		for(ProdutoServico produtoServico : produtosSevicos) {
+		for(DetalheNotaFiscal detalheNotaFiscal : detalhesNotaFiscal) {
 			
-			String unidade = produtoServico.getUnidade();
+			String unidade = detalheNotaFiscal.getProdutoServico().getUnidade();
 					
-			codigoProduto 		= produtoServico.getCodigoProduto().toString();
-			descricaoProduto 	= produtoServico.getDescricaoProduto();
+			codigoProduto 		= detalheNotaFiscal.getProdutoServico().getCodigoProduto().toString();
+			descricaoProduto 	= detalheNotaFiscal.getProdutoServico().getDescricaoProduto();
 			
-			NCMProduto 			= produtoServico.getNcm().toString();
-			CFOPProduto 		= produtoServico.getCfop().toString();                            
+			NCMProduto 			= detalheNotaFiscal.getProdutoServico().getNcm().toString();
+			CFOPProduto 		= detalheNotaFiscal.getProdutoServico().getCfop().toString();                            
 			
-			quantidadeProduto 	= produtoServico.getQuantidade();              
-			valorUnitarioProduto = produtoServico.getValorUnitario();
-			valorTotalProduto = produtoServico.getValorTotalBruto();              
+			quantidadeProduto 	= detalheNotaFiscal.getProdutoServico().getQuantidade();              
+			valorUnitarioProduto = detalheNotaFiscal.getProdutoServico().getValorUnitario();
+			valorTotalProduto = detalheNotaFiscal.getProdutoServico().getValorTotalBruto();              
 			
 			CSTProduto 		= ""; //TODO obter campo                                   
 			CSOSNProduto 	= ""; //TODO obter campo                                    
@@ -643,7 +643,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 			item.setCodigoProduto(codigoProduto);
 			item.setDescricaoProduto(descricaoProduto);
-			item.setProdutoEdicao(produtoServico.getProdutoEdicao().getNumeroEdicao());
+			item.setProdutoEdicao(detalheNotaFiscal.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
 			item.setNCMProduto(NCMProduto);
 			item.setCFOPProduto(CFOPProduto);
 			item.setUnidadeProduto(unidade);
@@ -657,11 +657,12 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			item.setValorICMSProduto(valorICMSProduto);
 			item.setAliquotaIPIProduto(aliquotaIPIProduto);
 			item.setValorIPIProduto(valorIPIProduto);
-			if(produtoServico.getProdutoServicoPK() != null
-					&& produtoServico.getProdutoServicoPK().getNotaFiscal() != null
-					&& produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional() != null) {
+			if(detalheNotaFiscal.getProdutoServicoPK() != null
+					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal() != null
+					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal().getNotaFiscalInformacoes() != null
+					&& detalheNotaFiscal.getProdutoServicoPK().getNotaFiscal().getNotaFiscalInformacoes().getInformacaoAdicional() != null) {
 				
-				item.setInfoComplementar(produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
+				//item.setInfoComplementar(detalheNotaFiscal.getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
 			}
 			
 			listaItemDanfe.add(item);

@@ -42,6 +42,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
@@ -50,12 +51,10 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
@@ -211,14 +210,14 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarNfesDadosPrincipais(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
 
-		if(notaFiscal.getInformacaoEletronica() == null) return;
+		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) return;
 		
-		Identificacao identificacao 				= notaFiscal.getIdentificacao();
-		InformacaoEletronica informacaoEletronica 	= notaFiscal.getInformacaoEletronica();
-		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
-		RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica();
-		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getInformacaoValoresTotais().getTotaisISSQN();
-		InformacaoAdicional informacaoAdicional = notaFiscal.getInformacaoAdicional();
+		Identificacao identificacao 				= notaFiscal.getNotaFiscalInformacoes().getIdentificacao();
+		InformacaoEletronica informacaoEletronica 	= notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
+		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
+		RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica();
+		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais().getTotaisISSQN();
+		InformacaoAdicional informacaoAdicional = notaFiscal.getNotaFiscalInformacoes().getInformacaoAdicional();
 
 		int tipoNF = identificacao.getTipoOperacao().ordinal();
 
@@ -291,7 +290,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosEmissor(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 
-		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getIdentificacaoEmitente();
+		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 
 		String documento 	= identificacaoEmitente.getDocumento();
 		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
@@ -409,7 +408,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosDestinatario(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 
-		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getIdentificacaoDestinatario();
+		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 
 		String documento 			= identificacaoDestinatario.getDocumento();
 		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
@@ -479,7 +478,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosTributarios(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
 
-		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
+		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
 
 		BigDecimal valorBaseICMS 			= informacaoValoresTotais.getValorBaseCalculoICMS();
 		BigDecimal valorICMS 				= informacaoValoresTotais.getValorICMS();
@@ -516,7 +515,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosTransportadora(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
 
-		InformacaoTransporte informacaoTransporte = notaFiscal.getInformacaoTransporte();
+		InformacaoTransporte informacaoTransporte = notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte();
 
 		Endereco endereco = informacaoTransporte.getEndereco();
 
@@ -633,7 +632,7 @@ public class NFeServiceImpl implements NFeService {
 
 		List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
 
-		List<ProdutoServico> produtosSevicos =  notaFiscal.getProdutosServicos();
+		List<DetalheNotaFiscal> detalhesNotaFiscal = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal();
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
@@ -653,24 +652,24 @@ public class NFeServiceImpl implements NFeService {
 		BigDecimal aliquotaIPIProduto 	= BigDecimal.ZERO;
 		BigDecimal valorIPIProduto 		= BigDecimal.ZERO;
 
-		for(ProdutoServico produtoServico : produtosSevicos) {
+		for(DetalheNotaFiscal dnf : detalhesNotaFiscal) {
 
-			String unidade = produtoServico.getUnidade();
+			String unidade = dnf.getProdutoServico().getUnidade();
 
-			codigoProduto 		= produtoServico.getCodigoProduto().toString();
-			descricaoProduto 	= produtoServico.getDescricaoProduto();
-			produtoEdicao		= produtoServico.getProdutoEdicao().getNumeroEdicao();
+			codigoProduto 		= dnf.getProdutoServico().getCodigoProduto().toString();
+			descricaoProduto 	= dnf.getProdutoServico().getDescricaoProduto();
+			produtoEdicao		= dnf.getProdutoServico().getProdutoEdicao().getNumeroEdicao();
 
-			NCMProduto 			= produtoServico.getNcm().toString();
-			CFOPProduto 		= produtoServico.getCfop().toString();                            
+			NCMProduto 			= dnf.getProdutoServico().getNcm().toString();
+			CFOPProduto 		= dnf.getProdutoServico().getCfop().toString();                            
 
 			//TODO: Acertar a unidade do produto
 			unidadeProduto 		= null;//(unidade == null || unidade.isEmpty()) ? 0L : new Long(unidade);
 
-			quantidadeProduto 	= null; //TODO: produtoServico.getQuantidade();              
-			valorUnitarioProduto = produtoServico.getValorUnitario();
-			valorTotalProduto 	= produtoServico.getValorTotalBruto();   
-			valorDescontoProduto = produtoServico.getValorDesconto();
+			quantidadeProduto 	= null; //TODO: dnf.getProdutoServico().getQuantidade();              
+			valorUnitarioProduto = dnf.getProdutoServico().getValorUnitario();
+			valorTotalProduto 	= dnf.getProdutoServico().getValorTotalBruto();   
+			valorDescontoProduto = dnf.getProdutoServico().getValorDesconto();
 
 			CSTProduto 			= ""; //TODO obter campo                                   
 			CSOSNProduto 		= ""; //TODO obter campo                                    

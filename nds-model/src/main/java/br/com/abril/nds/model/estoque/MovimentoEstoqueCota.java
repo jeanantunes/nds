@@ -2,7 +2,6 @@ package br.com.abril.nds.model.estoque;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -11,20 +10,15 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
-import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -74,10 +68,10 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
-	
+	/*
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	@Cascade(value = {CascadeType.ALL})
-	private List<ProdutoServico> listaProdutoServicos;
+	private List<DetalheNotaFiscal> listaProdutoServicos;*/
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
@@ -115,7 +109,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
 		mec.setLancamento(this.getLancamento());
-		mec.setListaProdutoServicos(this.getListaProdutoServicos());
+		//mec.setListaProdutoServicos(this.getListaProdutoServicos());
 		mec.setMotivo(this.getMotivo());
 		mec.setProdutoEdicao(this.getProdutoEdicao());
 		mec.setQtde(this.getQtde());
@@ -177,16 +171,16 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	/**
 	 * @return the listaProdutoServicos
 	 */
-	public List<ProdutoServico> getListaProdutoServicos() {
+	/*public List<DetalheNotaFiscal> getListaProdutoServicos() {
 		return listaProdutoServicos;
-	}
+	}*/
 
 	/**
 	 * @param listaProdutoServicos the listaProdutoServicos to set
 	 */
-	public void setListaProdutoServicos(List<ProdutoServico> listaProdutoServicos) {
+	/*public void setListaProdutoServicos(List<DetalheNotaFiscal> listaProdutoServicos) {
 		this.listaProdutoServicos = listaProdutoServicos;
-	}
+	}*/
 
 	/**
 	 * @return the lancamento

@@ -22,10 +22,11 @@ public class NaturezaOperacaoBuilder {
 
 	public static void montarNaturezaOperacao(NotaFiscal notaFiscal2, NaturezaOperacao naturezaOperacao) {
 		
-		if(notaFiscal2.getIdentificacao() == null) {
-			notaFiscal2.setIdentificacao(new Identificacao());
+		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacao() == null) {
+			notaFiscal2.getNotaFiscalInformacoes().setIdentificacao(new Identificacao());
 		}
-		notaFiscal2.getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
+		
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
 		
 	}
 	

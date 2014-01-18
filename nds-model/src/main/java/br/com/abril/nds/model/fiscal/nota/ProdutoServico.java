@@ -6,20 +6,15 @@ import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -30,39 +25,26 @@ import org.hibernate.annotations.CascadeType;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
-import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 
-@Entity
-@Table(name = "NOTA_FISCAL_PRODUTO_SERVICO")
+@Embeddable
 @XmlType(name="prod")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProdutoServico implements Serializable {
 
+	/*
+	@Transient
+	@XmlTransient
+	DecimalFormat df = new DecimalFormat("##,###,###,##0.00", new DecimalFormatSymbols(new Locale ("pt", "BR")));  
+	*/
+	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 6402390731085431454L;
 
-	@Transient
-	@XmlAttribute(name="nItem")
-	private Long sequencia;
-	
-	@EmbeddedId
-	@NFEExportType
-	private ProdutoServicoPK produtoServicoPK;
-	
-	/**
-	 * Encargos financeiros
-	 */
-	@OneToOne(optional = false, mappedBy = "produtoServico")
-	@PrimaryKeyJoinColumn
-	@NFEExportType
-	private EncargoFinanceiro encargoFinanceiro;
-	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -80,6 +62,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="CODIGO_BARRAS", length=14, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=1, tamanho=14), @NFEExport(secao=TipoSecao.I, posicao=10, tamanho=14)})
+	@XmlElement(name="cEAN")
 	private Long codigoBarras;
 	
 	/**
@@ -134,8 +117,12 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL", precision=18, scale=4, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=16)})
-	@XmlElement(name="vUnCom")
+	@XmlTransient
 	private BigDecimal valorUnitario;
+	
+	@Transient
+	@XmlElement(name="vUnCom")
+	private String valorUnitarioXML;
 	
 	/**
 	 * vProd
@@ -184,7 +171,7 @@ public class ProdutoServico implements Serializable {
 	@Cascade(value = {CascadeType.ALL})
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
 	
-	@OneToMany//(targetEntity=OrigemItemNotaFiscal.class)
+	@OneToMany
 	@JoinTable(name = "NOTA_FISCAL_ITEM_NOTA_FISCAL_ORIGEM_ITEM", 
 			joinColumns = {
 				@JoinColumn(name = "PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA"),
@@ -194,28 +181,6 @@ public class ProdutoServico implements Serializable {
 	)
 	@XmlTransient
 	private List<OrigemItemNotaFiscal> origemItemNotaFiscal;
-	
-	public Long getSequencia() {
-		return sequencia;
-	}
-
-	public void setSequencia(Long sequencia) {
-		this.sequencia = sequencia;
-	}
-
-	/**
-	 * @return the encargoFinanceiro
-	 */
-	public EncargoFinanceiro getEncargoFinanceiro() {
-		return encargoFinanceiro;
-	}
-
-	/**
-	 * @param encargoFinanceiro the encargoFinanceiro to set
-	 */
-	public void setEncargoFinanceiro(EncargoFinanceiro encargoFinanceiro) {
-		this.encargoFinanceiro = encargoFinanceiro;
-	}
 	
 	/**
 	 * @return the produtoEdicao
@@ -229,20 +194,6 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
-	}
-
-	/**
-	 * @return the produtoServicoPK
-	 */
-	public ProdutoServicoPK getProdutoServicoPK() {
-		return produtoServicoPK;
-	}
-
-	/**
-	 * @param produtoServicoPK the produtoServicoPK to set
-	 */
-	public void setProdutoServicoPK(ProdutoServicoPK produtoServicoPK) {
-		this.produtoServicoPK = produtoServicoPK;
 	}
 
 	/**
@@ -369,6 +320,9 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
+		/*df.setMinimumFractionDigits(2);   
+		df.setParseBigDecimal (true);*/ 
+		this.valorUnitarioXML = valorUnitario.toString();
 	}
 
 	/**
@@ -470,36 +424,4 @@ public class ProdutoServico implements Serializable {
 		this.origemItemNotaFiscal = origemItemNotaFiscal;
 	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((produtoServicoPK == null) ? 0 : produtoServicoPK.hashCode());
-		return result;
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProdutoServico other = (ProdutoServico) obj;
-		if (produtoServicoPK == null) {
-			if (other.produtoServicoPK != null)
-				return false;
-		} else if (!produtoServicoPK.equals(other.produtoServicoPK))
-			return false;
-		return true;
-	}
 }

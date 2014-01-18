@@ -306,7 +306,7 @@ public class ImpressaoNFEController extends BaseController {
 			// Atualiza a flag que informa se a nota ja foi impressa
 			for(NotaFiscal nf : nfs) {
 				NotaFiscal nfOrig = nfeService.obterNotaFiscalPorId(nf);
-				nfOrig.setNotaImpressa(true);
+				nfOrig.getNotaFiscalInformacoes().setNotaImpressa(true);
 				nfeService.mergeNotaFiscal(nfOrig);
 			}
 

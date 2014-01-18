@@ -12456,14 +12456,14 @@ public class DataLoader {
 		
 		NotaFiscal notaFiscal = new NotaFiscal();
 		
-		notaFiscal.setIdentificacao(identificacao);
-		notaFiscal.setIdentificacaoDestinatario(identificacaoDestinatario);
-		notaFiscal.setIdentificacaoEmitente(identificacaoEmitente);
-		notaFiscal.setInformacaoAdicional(informacaoAdicional);
-		notaFiscal.setInformacaoEletronica(informacaoEletronica);
-		notaFiscal.setInformacaoTransporte(informacaoTransporte);
-		notaFiscal.setInformacaoValoresTotais(informacaoValoresTotais);
-		notaFiscal.setStatusProcessamentoInterno(statusProcessamentoInterno);
+		notaFiscal.getNotaFiscalInformacoes().setIdentificacao(identificacao);
+		notaFiscal.getNotaFiscalInformacoes().setIdentificacaoDestinatario(identificacaoDestinatario);
+		notaFiscal.getNotaFiscalInformacoes().setIdentificacaoEmitente(identificacaoEmitente);
+		notaFiscal.getNotaFiscalInformacoes().setInformacaoAdicional(informacaoAdicional);
+		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
+		notaFiscal.getNotaFiscalInformacoes().setInformacaoTransporte(informacaoTransporte);
+		notaFiscal.getNotaFiscalInformacoes().setInformacaoValoresTotais(informacaoValoresTotais);
+		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(statusProcessamentoInterno);
 		
 		session.save(notaFiscal);
 		
