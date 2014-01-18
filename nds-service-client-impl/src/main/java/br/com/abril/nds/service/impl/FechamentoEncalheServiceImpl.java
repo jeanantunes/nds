@@ -230,7 +230,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) 
 								&& movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null){
 							
-							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+							BigInteger exemplaresDevolucaoConferencia =
+								(conferencia.getExemplaresDevolucao() == null) ? BigInteger.ZERO : conferencia.getExemplaresDevolucao();
+							
+							conferencia.setExemplaresDevolucao(exemplaresDevolucaoConferencia.subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
 						}
 					}	
 				}
