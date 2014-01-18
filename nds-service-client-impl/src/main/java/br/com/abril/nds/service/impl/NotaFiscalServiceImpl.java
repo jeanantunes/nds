@@ -254,7 +254,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
 
-				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
 
 				if (notaFiscal != null) {
 

@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.inf.portalfiscal.nfe.TNFe;
 import br.inf.portalfiscal.nfe.TNfeProc;
@@ -25,10 +26,6 @@ import br.inf.portalfiscal.nfe.TProcCancNFe;
  */
 public class NFEImportUtil {
 	
-	/**
-	 * Constante com caminho da pasta resources
-	 */
-	private final static String PATH_MAIN_RESOURCES = "src/main/resources/";
 	
 	/**
 	 * Constante com caminho do arquivo do xsd do POJO TNFe
@@ -66,9 +63,8 @@ public class NFEImportUtil {
 		
 		JAXBContext context;
 		Unmarshaller unmarshaller;
-		//SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.DEFAULT_NS_PREFIX);
-		File xsdNFe;
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		// SchemaFactory schemaFactory = SchemaFactory.newInstance(javax.xml.XMLConstants.DEFAULT_NS_PREFIX);
 		Schema schema;
 		
 		Exception exception = null;
@@ -76,10 +72,7 @@ public class NFEImportUtil {
 		try {
 			context = JAXBContext.newInstance(TNFe.class);
 			unmarshaller = context.createUnmarshaller();			
-			
-			schema = schemaFactory.newSchema(Thread.currentThread().getContextClassLoader().getResource(NFEImportUtil.XSD_NFE));
-			unmarshaller.setSchema(schema);
-			
+			           
 			TNFe nfe = (TNFe) unmarshaller.unmarshal(arquivo);
 
 			retornoNFEDTO = NFEImportUtil.retornoNFeAssinada(nfe);

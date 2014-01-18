@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -54,7 +55,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	private static final long serialVersionUID = 4715921368300274189L;
 	
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = true, fetch=FetchType.LAZY)
 	@JoinColumn(name = "PESSOA_EMITENTE_ID_REFERENCIADA")
 	private NotaFiscalPessoa pessoaEmitenteReferencia;
 	
@@ -120,13 +121,13 @@ public class IdentificacaoEmitente implements Serializable {
 	@Column(name="CRT_EMITENTE",length=1, nullable=true)
 	private RegimeTributario regimeTributario;
 	
-	@OneToOne(optional=false)
+	@OneToOne(optional=false, fetch=FetchType.LAZY)
 	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	@NFEExportType
 	@XmlElement(name="enderEmit")
 	private NotaFicalEndereco endereco;
 	
-	@OneToOne(optional=true)
+	@OneToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE")
 	@NFEExportType
 	private Telefone telefone;
