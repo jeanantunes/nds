@@ -1,16 +1,20 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -30,15 +34,21 @@ public class CotaUnificacao implements Serializable {
 	private Long id;
 	
 	@OneToOne
-    @JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany(mappedBy = "cotaUnificacao")
-	private Set<Cota> cotas = new HashSet<Cota>();
+	@ManyToMany(fetch=  FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "COTAUNIFICACAO_COTAUNIFICADA", joinColumns = {
+			@JoinColumn(name = "COTA_UNIFICACAO_ID")},
+			inverseJoinColumns = {@JoinColumn(name="COTA_UNIFICADA_ID")})
+	private List<Cota> cotas;
 	
 	@Column(name = "DATA_UNIFICACAO")
 	@Temporal(TemporalType.DATE)
 	private Date dataUnificacao;
+	
+	@OneToOne
+	@JoinColumn(name = "POLITICA_COBRANCA_ID")
+	private PoliticaCobranca politicaCobranca;
 	
 	public Long getId() {
 		return id;
@@ -56,11 +66,11 @@ public class CotaUnificacao implements Serializable {
 		this.cota = cota;
 	}
 
-	public Set<Cota> getCotas() {
+	public List<Cota> getCotas() {
 		return cotas;
 	}
 
-	public void setCotas(Set<Cota> cotas) {
+	public void setCotas(List<Cota> cotas) {
 		this.cotas = cotas;
 	}
 
@@ -76,9 +86,24 @@ public class CotaUnificacao implements Serializable {
 		
         if (this.cotas == null){
 			
-			this.cotas = new HashSet<Cota>();
+			this.cotas = new ArrayList<Cota>();
 		}
         
         this.cotas.add(cota);
+        
+        if (cota.getCotasUnificacao() == null){
+        	
+        	cota.setCotasUnificacao(new HashSet<CotaUnificacao>());
+        }
+        
+        cota.getCotasUnificacao().add(this);
+	}
+
+	public PoliticaCobranca getPoliticaCobranca() {
+		return politicaCobranca;
+	}
+
+	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
+		this.politicaCobranca = politicaCobranca;
 	}
 }

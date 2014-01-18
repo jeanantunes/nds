@@ -29,12 +29,6 @@ public class EditorServiceImpl implements EditorService {
 	}
 
 	@Override
-	@Transactional
-	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro) {
-		return editorRepository.obterHistoricoEditor(filtro);
-	}
-
-	@Override
 	@Transactional(readOnly=true)
 	public List<Editor> obterEditoresDesc() {
 		

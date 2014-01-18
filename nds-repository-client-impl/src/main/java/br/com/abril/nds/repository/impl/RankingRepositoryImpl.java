@@ -25,30 +25,16 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select	");
-		
-		sql.append(" subRnkg.idCota as chave, 	");
-		sql.append(" subRnkg.valor as valor, 	");
-		sql.append(" @valorAcumulado\\:=@valorAcumulado + subRnkg.valor as valorAcumulado,	");
-		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
-		
-		sql.append(" subRnkg.vendaExemplares as vendaExemplares,	");
-		sql.append(" subRnkg.faturamentoCapa as faturamentoCapa,	");
-		sql.append(" subRnkg.reparte as reparte,	");
-		sql.append(" subRnkg.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
-		sql.append(" subRnkg.valorMargemDistribuidor as valorMargemDistribuidor, 			");
-		sql.append(" subRnkg.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
-		
-		sql.append(" from ( ");
-		
 		sql.append(" select ");
-
-		sql.append(" consolidado.COTA_ID as idCota,	");
-		sql.append(" consolidado.valor as valor,	");
+		
+		sql.append(" consolidado.COTA_ID as chave,	");
+		sql.append(" consolidado.NUMERO_COTA as numeroCota,	");
+		sql.append(" @valorAcumulado\\:=@valorAcumulado + consolidado.valor as valorAcumulado,	");
+		sql.append(" @posicaoRanking\\:=@posicaoRanking + 1 as ranking, ");
+		sql.append(" consolidado.valor as valor,						");
 		sql.append(" consolidado.vendaExemplares as vendaExemplares,	");
 		sql.append(" consolidado.faturamentoCapa as faturamentoCapa,	");
 		sql.append(" consolidado.reparte as reparte,	");
-		sql.append(" consolidado.porcentagemVendaExemplares as porcentagemVendaExemplares,		");
 		sql.append(" consolidado.valorMargemDistribuidor as valorMargemDistribuidor, 			");
 		sql.append(" consolidado.porcentagemMargemDistribuidor as porcentagemMargemDistribuidor	");
 		
@@ -56,8 +42,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(obterSQLRanking(filtro))
 	
-		.append("    group by consolidado.COTA_ID ")
-		.append("    order by consolidado.valor desc ) as subRnkg, (select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s  ");
+		.append(" ,(select @valorAcumulado\\:=0, @posicaoRanking\\:=0) as s ORDER BY faturamentoCapa desc, numeroCota ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
@@ -68,7 +53,6 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		query.addScalar("vendaExemplares", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("faturamentoCapa", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("porcentagemVendaExemplares", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("valorMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("porcentagemMargemDistribuidor", StandardBasicTypes.BIG_DECIMAL);
 		
@@ -140,17 +124,6 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		sql.append(" sum( ");
 		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end");
 		sql.append(" ) as reparte, ");
-
-		sql.append(" sum( ");
-		sql.append(" 	( ");
-		sql.append(" 		case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
-		sql.append("		(movimento_estoque_cota.qtde*-1) end ");
-		sql.append("  	) * 100 / ");
-		
-		sql.append(" 	( ");
-		sql.append(" 		case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else 0 end ");
-		sql.append(" 	)  	");
-		sql.append(" ) as porcentagemVendaExemplares, ");
 		
 		sql.append(" sum( ");
 		sql.append(" 	case when (tipomovimento.OPERACAO_ESTOQUE = 'ENTRADA') then movimento_estoque_cota.qtde else ");
@@ -217,11 +190,9 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		sql.append(this.getFiltroRanking(filtro, null));
 		
-		sql.append("		group by movimento_estoque_cota.PRODUTO_EDICAO_ID,   ");
-		sql.append("		movimento_estoque_cota.COTA_ID, ");
-		sql.append("		movimento_estoque_cota.DATA     ");
+		sql.append("	group by movimento_estoque_cota.COTA_ID	");
 		
-		sql.append("		order by movimento_estoque_cota.DATA desc ) as consolidado ");
+		sql.append("	) as consolidado ");
 		
 		return sql;
 	}

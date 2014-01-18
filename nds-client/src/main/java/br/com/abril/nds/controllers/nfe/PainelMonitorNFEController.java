@@ -2,7 +2,9 @@ package br.com.abril.nds.controllers.nfe;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,8 +91,6 @@ public class PainelMonitorNFEController extends BaseController {
 		
 	}
 	
-
-	
 	private void validarFormatoData(List<String> mensagens, String field, String label){
 		
 		if (!DateUtil.isValidDate(field, "dd/MM/yyyy")) {
@@ -119,15 +119,18 @@ public class PainelMonitorNFEController extends BaseController {
 		}
 	}
 	
-	private List<String> validarCampos(String dataInicial, String dataFinal) {
-		
+	private List<String> validarCampos(Date de, Date ate) {
+		SimpleDateFormat formatar = new SimpleDateFormat();
 		List<String> mensagens = new ArrayList<String>();
 		
-		if(dataInicial != null && !dataInicial.trim().isEmpty()) {
+		if(de != null && !"".equals(de)) {
+			
+			String dataInicial = formatar.format(de);
 			validarFormatoData(mensagens, dataInicial, "Período de");
 		}
 		
-		if(dataFinal != null && !dataFinal.trim().isEmpty()) {
+		if(ate != null && !"".equals(ate)) {
+			String dataFinal = formatar.format(ate);
 			validarFormatoData(mensagens, dataFinal, "Até");
 		}		
 		
@@ -240,7 +243,11 @@ public class PainelMonitorNFEController extends BaseController {
 
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void cancelarNfe() {
-
+		
+		// cancelamento de nota fiscal
+		
+		
+		
 		result.use(Results.json()).from("").serialize();
 		
 	}
@@ -430,16 +437,16 @@ public class PainelMonitorNFEController extends BaseController {
 			cpfRemetente			= (nfeDTO.getCpfRemetente() == null) ? "-" :  nfeDTO.getCpfRemetente();
 			
 			emissao 				= DateUtil.formatarDataPTBR(nfeDTO.getEmissao());
-			tipoEmissao				= obterDescricaoTipoEmissaoNfe(nfeDTO.getTipoEmissao());
+			tipoEmissao				= obterDescricaoTipoEmissaoNfe(nfeDTO.getTipoEmissao().name());
 			movimentoIntegracao 	= nfeDTO.getMovimentoIntegracao();
 			numero 					= nfeDTO.getNumero();
-			serie 					= nfeDTO.getSerie();
-			statusNfe 				= obterDescricaoStatusEmissaoNfe(nfeDTO.getStatusNfe());
-			tipoNfe 				= obterDescricaoTipoOperacao(nfeDTO.getTipoNfe());
+			serie 					= nfeDTO.getSerie().toString();
+			statusNfe 				= nfeDTO.getStatusNfe().name();
+			tipoNfe 				= nfeDTO.getTipoNfe();
 			
 			nfeVO = new NfeVO();
 			
-			nfeVO.setTipoOperacao(TipoOperacao.valueOf(nfeDTO.getTipoNfe()));
+			// nfeVO.setTipoOperacao(nfeDTO.getTipoNfe());
 			
 			nfeVO.setIdNotaFiscal(nfeDTO.getIdNotaFiscal());
 			
@@ -507,52 +514,15 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(
-			String tipoDocumento,
-			Integer box,
-			String dataInicial,
-			String dataFinal,
-			String documento,
-			String tipoNfe,
-			Long numeroInicial,
-			Long numeroFinal,
-			String chaveAcesso,
-			String situacaoNfe,
-			Integer serieNfe,
-			String sortorder, 
-			String sortname, 
-			int page, 
-			int rp
-			) {
-
-		List<String> mensagens = validarCampos(dataInicial, dataFinal);
+	public void pesquisar(FiltroMonitorNfeDTO filtro, String sortname, String sortorder, int rp, int page) {
+		
+		List<String> mensagens = validarCampos(filtro.getDataInicial(), filtro.getDataFinal());
 		
 		tratarErro(mensagens);
 		
-		FiltroMonitorNfeDTO filtroMonitorNfeDTO = new FiltroMonitorNfeDTO();
+		// tratarFiltro(filtro);
 		
-		filtroMonitorNfeDTO.setBox(box);
-		filtroMonitorNfeDTO.setChaveAcesso(chaveAcesso);
-		filtroMonitorNfeDTO.setDataInicial(DateUtil.parseData(dataInicial, "dd/MM/yyyy"));
-		filtroMonitorNfeDTO.setDataFinal(DateUtil.parseData(dataFinal, "dd/MM/yyyy"));
-		filtroMonitorNfeDTO.setDocumentoPessoa(documento);
-
-		filtroMonitorNfeDTO.setNumeroNotaInicial(numeroInicial);
-		
-		filtroMonitorNfeDTO.setNumeroNotaFinal(numeroFinal);
-		
-		filtroMonitorNfeDTO.setSituacaoNfe(situacaoNfe);
-		
-		filtroMonitorNfeDTO.setSerie(serieNfe);
-		
-		filtroMonitorNfeDTO.setTipoNfe(tipoNfe);
-		filtroMonitorNfeDTO.setIndDocumentoCPF(TIPO_DOCUMENTO_CPF.equals(tipoDocumento));
-		
-		configurarPaginacaoPesquisa(filtroMonitorNfeDTO, sortorder, sortname, page, rp);
-		
-		tratarFiltro(filtroMonitorNfeDTO);
-		
-		InfoNfeDTO info = monitorNFEService.pesquisarNFe(filtroMonitorNfeDTO);
+		InfoNfeDTO info = monitorNFEService.pesquisarNFe(filtro);
 		
 		List<NfeDTO> listaResultado = info.getListaNfeDTO();
 		
@@ -568,7 +538,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNfeVO));
 		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
-		tableModel.setPage(filtroMonitorNfeDTO.getPaginacao().getPaginaAtual());
+		tableModel.setPage(1);
 		
 		setListaNfeToSession(tableModel.getRows());
 		

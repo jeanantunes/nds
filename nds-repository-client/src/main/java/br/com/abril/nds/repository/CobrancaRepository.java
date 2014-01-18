@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
@@ -68,7 +69,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @param filtro
 	 * @return query.list(): lista de cobrancas
 	 */
-	public List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
+	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro);
 
 
 	void excluirCobrancaPorIdDivida(Long idDivida);

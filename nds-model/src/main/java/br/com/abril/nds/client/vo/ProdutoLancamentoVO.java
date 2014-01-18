@@ -48,6 +48,9 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="Previsto", exhibitionOrder = 11, widthPercent = 9)
 	private String dataLancamentoPrevista;
 	
+	@Export(label="Excluir", exhibitionOrder = 12, widthPercent = 9)
+	private boolean cancelado;
+	
 	private String novaDataLancamento;
 	
 	private boolean bloquearData;
@@ -311,5 +314,18 @@ public class ProdutoLancamentoVO  implements Serializable {
 	public void setPeb(Long peb) {
 		this.peb = peb;
 	}
+	
+	public boolean isCancelado() {
+		return cancelado;
+	}
+
+	public void setCancelado(boolean cancelado) {
+		this.cancelado = cancelado;
+	}
+
+
+
+	
+
 
 }

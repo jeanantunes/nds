@@ -21,7 +21,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.xmlbeans.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,12 +99,6 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.inf.portalfiscal.nfe.TNFe;
-import br.inf.portalfiscal.nfe.TNFe.InfNFe;
-import br.inf.portalfiscal.nfe.TNFe.InfNFe.Dest;
-import br.inf.portalfiscal.nfe.impl.TNFeImpl;
-import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl;
-import br.inf.portalfiscal.nfe.impl.TNFeImpl.InfNFeImpl.DestImpl;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -260,7 +253,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
 
-				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
 
 				if (notaFiscal != null) {
 
