@@ -26,14 +26,11 @@ import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -44,17 +41,12 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
@@ -1347,11 +1339,11 @@ public class MatrizLancamentoController extends BaseController {
 			Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
 			
 			lancamento.setDataLancamentoDistribuidor(data);
+			lancamento.voltarStatusOriginal();
 			//atualizarLancamento(produtoLancamento.getId(),data);
 
 			this.lancamentoRepositoryService.merge(lancamento);
-				
-				
+
 			this.result.use(PlainJSONSerialization.class).from(
 						new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
 			
