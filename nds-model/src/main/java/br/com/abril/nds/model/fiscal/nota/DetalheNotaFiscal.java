@@ -54,6 +54,10 @@ public class DetalheNotaFiscal implements Serializable {
 	@XmlElement(name="imposto")
 	private EncargoFinanceiro encargoFinanceiro;
 	
+	public DetalheNotaFiscal() {
+		super();
+	}
+	
 	public DetalheNotaFiscal(ProdutoServico produtoServico) {
 		this.produtoServico = produtoServico;
 	}

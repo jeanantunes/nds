@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +14,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -29,76 +34,140 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @XmlType(name="ide")
 public class Identificacao implements Serializable {
 	
+	@Transient
+	@XmlTransient
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 	public enum FormaPagamento implements NotaFiscalEnum {
-		A_VISTA, 
-		A_PRAZO, 
-		OUTROS;
+		
+		A_VISTA(0), 
+		A_PRAZO(1), 
+		OUTROS(2);
+		
+		Integer valor;
+		
+		FormaPagamento(int valor) {
+			this.valor = valor;
+		}
 		
 		@Override
 		public Integer getIntValue() {
-			return this.ordinal();
+			return this.valor.intValue();
 		}
+
+		public int getValor() {
+			return valor;
+		}
+		
 	}	
 	
 	public enum TipoEmissao implements NotaFiscalEnum {
+		
 		NORMAL(1), 
 		CONTINGENCIA(2);
 
 		private Integer indcador;
 		
-		TipoEmissao(Integer indcador){
+		TipoEmissao(Integer indcador) {
 			this.indcador = indcador;
 		}
 		
 		@Override
 		public Integer getIntValue() {
-			return indcador;
+			return indcador.intValue();
 		}
 	}	
 	
 	public enum FinalidadeEmissao implements NotaFiscalEnum {
+		
 		NORMAL(1), 
 		COMPLEMENTAR(2), 
 		AJUSTE(3);
 
-		private Integer indcador;
+		private Integer finalidadeEmissao;
 		
-		FinalidadeEmissao(Integer indcador){
-			this.indcador = indcador;
+		FinalidadeEmissao(Integer finalidadeEmissao) {
+			this.finalidadeEmissao = finalidadeEmissao;
+		}
+		
+		public Integer getIntValue() {
+			return finalidadeEmissao.intValue();
+		}
+	}	
+	
+	public enum FormatoImpressao implements NotaFiscalEnum {
+		
+		RETRATO(1), 
+		PAISAGEM(2);
+
+		private Integer tipoImpressao;
+		
+		FormatoImpressao(Integer tipoImpressao) {
+			this.tipoImpressao = tipoImpressao;
 		}
 		
 		@Override
 		public Integer getIntValue() {
-			return indcador;
+			return tipoImpressao.intValue();
 		}
 	}	
+	
+	public enum TipoAmbiente implements NotaFiscalEnum {
+		
+		PRODUCAO(1), 
+		HOMOLOGACAO(2);
+
+		private Integer tipoAmbiente;
+		
+		TipoAmbiente(Integer tipoAmbiente) {
+			this.tipoAmbiente = tipoAmbiente;
+		}
+		
+		@Override
+		public Integer getIntValue() {
+			return tipoAmbiente.intValue();
+		}
+	}
+	
+	public enum ProcessoEmissao implements NotaFiscalEnum {
+		
+		EMISSAO_NFE_APLICATIVO_CONTRIBUINTE(0), 
+		EMISSAO_NFE_AVULSA_PELO_FISCO(1),
+		EMISSAO_NFE_AVULSA_PELO_FISCO_COM_CERTIFICADO(2),
+		EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO(3);
+
+		private Integer processoEmissao;
+		
+		ProcessoEmissao(Integer processoEmissao) {
+			this.processoEmissao = processoEmissao;
+		}
+		
+		@Override
+		public Integer getIntValue() {
+			return processoEmissao.intValue();
+		}
+	}
 	
 	/**
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3614623505646574143L;
 
-	@ManyToOne
-	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID")
-	private NaturezaOperacao tipoNotaFiscal;
-
-	/**
-	 * tpNF
-	 */
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
-	@NFEExport(secao = TipoSecao.B, posicao = 10, tamanho = 1)
-	@XmlElement(name="tpNF")
-	private TipoOperacao tipoOperacao;
-
+	@Column(name="NOTA_FISCAL_CODIGO_UF")
+	@XmlElement(name="cUF")
+	private Long codigoUf;
+	
+	@Column(name="NOTA_FISCAL_CODIGO_NF", length=9)
+	@XmlElement(name="cNF")
+	private String codigoNF;
+	
 	/**
 	 * natOp
 	 */
-	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60,nullable=false)
+	@Column(name="DESCRICAO_NATUREZA_OPERACAO", length=60, nullable=false)
 	@NFEExport(secao=TipoSecao.B, posicao=2, tamanho=60)
 	@XmlElement(name="natOp")
 	private String descricaoNaturezaOperacao;
-	
 	
 	/**
 	 * indPag
@@ -106,9 +175,21 @@ public class Identificacao implements Serializable {
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
 	@NFEExport(secao = TipoSecao.B, posicao = 3, tamanho = 1)
+	@XmlTransient
 	private FormaPagamento formaPagamento;
 	
-		
+	@Transient
+	@XmlElement(name="indPag")
+	private String formaPagamentoXML;
+	
+	/**
+	 * mod
+	 */
+	@Column(name="MODELO_DOCUMENTO_FISCAL", length=2, nullable=false)
+	@NFEExport(secao=TipoSecao.B, posicao=5)
+	@XmlElement(name="mod")
+	private String modeloDocumentoFiscal;
+	
 	/**
 	 * serie
 	 */
@@ -116,13 +197,13 @@ public class Identificacao implements Serializable {
 	@NFEExport(secao=TipoSecao.B, posicao=5)
 	@XmlElement(name="serie")
 	private Integer serie;
-	
-	
+
 	/**
 	 * nNF
 	 */
 	@Column(name = "NUMERO_DOCUMENTO_FISCAL", length = 9, nullable = false)
 	@NFEExport(secao=TipoSecao.B, posicao=6 , tamanho=9)
+	@XmlElement(name="nNF")
 	private Long numeroDocumentoFiscal;
 	
 	/**
@@ -131,10 +212,13 @@ public class Identificacao implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_EMISSAO", nullable = false)
 	@NFEExport(secao=TipoSecao.B, posicao=7)
-	@XmlElement(name="dEmi")
+	@XmlTransient
 	private Date dataEmissao;
-	
-	
+
+	@Transient
+	@XmlElement(name="dEmi")
+	private String dataEmissaoXML;
+
 	/**
 	 * dSaiEnt
 	 */
@@ -142,6 +226,96 @@ public class Identificacao implements Serializable {
 	@Column(name = "DATA_SAIDA_ENTRADA", nullable = true)
 	@NFEExport(secao=TipoSecao.B, posicao=9)
 	private Date dataSaidaEntrada;
+	
+	@Transient
+	@XmlElement(name="dSaiEnt")
+	private String dataSaidaEntradaXML;
+
+	/**
+	 * tpNF
+	 */
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 10, tamanho = 1)
+	@XmlTransient
+	private TipoOperacao tipoOperacao;
+	
+	@Transient
+	@XmlElement(name = "tpNF")
+	private int tipoOperacaoXML;
+	
+	@Column(name="NOTA_FISCAL_CODIGO_MUNICIPIO")
+	@XmlElement(name="cMunFG")
+	private Long codigoMunicipio;
+	
+	@Column(name="NOTA_FISCAL_FORMATO_IMPRESSAO")
+	@XmlTransient
+	private FormatoImpressao formatoImpressao;
+	
+	@Transient
+	@XmlElement(name = "tpImp")
+	private Integer formatoImpressaoXML;
+	
+	/**
+	 * tpEmis
+	 */
+	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "TIPO_EMISSAO", nullable = true)
+	@NFEExport(secao = TipoSecao.B, posicao = 13, tamanho = 1)
+	@XmlTransient
+	private TipoEmissao tipoEmissao;
+	
+	@Transient
+	@XmlElement(name="tpEmis")
+	private Integer tipoEmissaoXML;
+	
+	@Column(name="NOTA_FISCAL_DV_CHAVE_ACESSO")
+	@XmlElement(name="cDV")
+	private Long digitoVerificadorChaveAcesso;
+	
+	/**
+	 * tpAmb
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_AMBIENTE", nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 13, tamanho = 1)
+	@XmlTransient
+	private TipoAmbiente tipoAmbiente;
+
+	@Transient
+	@XmlElement(name="tpAmb")
+	private Integer tipoAmbienteXML;
+	
+
+	/**
+	 * finNFe
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "FINALIDADE_EMISSAO", nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
+	@XmlTransient
+	private FinalidadeEmissao finalidadeEmissao;
+	
+	@Transient
+	@XmlElement(name="finNFe")
+	private Integer finalidadeEmissaoXML;
+	
+	/**
+	 * finNFe
+	 */
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PROCESSO_EMISSAO", nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
+	@XmlTransient
+	private ProcessoEmissao processoEmissao;
+	
+	@Transient
+	@XmlElement(name="procEmi")
+	private Integer processoEmissaoXML;
+	
+	@ManyToOne
+	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID")
+	private NaturezaOperacao tipoNotaFiscal;
 	
 	/**
 	 * dEmi
@@ -156,22 +330,6 @@ public class Identificacao implements Serializable {
 	private List<NotaFiscalReferenciada> listReferenciadas;
 	
 	/**
-	 * tpEmis
-	 */
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "TIPO_EMISSAO", nullable = true)
-	@NFEExport(secao = TipoSecao.B, posicao = 13, tamanho = 1)
-	private TipoEmissao tipoEmissao;
-	
-	/**
-	 * finNFe
-	 */
-	@Enumerated(EnumType.ORDINAL)
-	@Column(name = "FINALIDADE_EMISSAO", nullable = true)
-	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
-	private FinalidadeEmissao finalidadeEmissao;
-	
-	/**
 	 * dhCont
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
@@ -183,15 +341,6 @@ public class Identificacao implements Serializable {
 	 */
 	@Column(name="JUSTIFICATIVA_ENTRADA_CONTIGENCIA", nullable=true, length=256)
 	private String justificativaEntradaContigencia;
-	
-	@Column(name="NOTA_FISCAL_CODIGO_UF")
-	@XmlElement(name="cUF")
-	private Long codigoUf;
-	
-	@Column(name="NOTA_FISCAL_CODIGO_MUNICIPIO")
-	@XmlElement(name="cMunFG")
-	private Long codigoMunicipio;
-	
 	
 	/**
 	 * Construtor padrão.
@@ -212,6 +361,7 @@ public class Identificacao implements Serializable {
 	 */
 	public void setTipoOperacao(TipoOperacao tipoOperacao) {
 		this.tipoOperacao = tipoOperacao;
+		this.tipoOperacaoXML = tipoOperacao.getTipoOperacaoNumerico();
 	}
 
 	/**
@@ -240,6 +390,7 @@ public class Identificacao implements Serializable {
 	 */
 	public void setFormaPagamento(FormaPagamento formaPagamento) {
 		this.formaPagamento = formaPagamento;
+		this.formaPagamentoXML = formaPagamento.getIntValue().toString();
 	}
 
 	/**
@@ -282,6 +433,7 @@ public class Identificacao implements Serializable {
 	 */
 	public void setDataEmissao(Date dataEmissao) {
 		this.dataEmissao = dataEmissao;
+		this.dataEmissaoXML = sdf.format(dataEmissao);
 	}
 
 	/**
@@ -296,6 +448,7 @@ public class Identificacao implements Serializable {
 	 */
 	public void setDataSaidaEntrada(Date dataSaidaEntrada) {
 		this.dataSaidaEntrada = dataSaidaEntrada;
+		this.dataSaidaEntradaXML = sdf.format(dataSaidaEntrada);
 	}
 
 	/**
@@ -367,6 +520,7 @@ public class Identificacao implements Serializable {
 	 */
 	public void setTipoEmissao(TipoEmissao tipoEmissao) {
 		this.tipoEmissao = tipoEmissao;
+		this.tipoEmissaoXML = tipoEmissao.getIntValue();
 	}
 
 	/**
@@ -411,6 +565,57 @@ public class Identificacao implements Serializable {
 
 	public void setCodigoMunicipio(Long codigoMunicipio) {
 		this.codigoMunicipio = codigoMunicipio;
+	}
+
+	public FormatoImpressao getFormatoImpressao() {
+		return formatoImpressao;
+	}
+
+	public void setFormatoImpressao(FormatoImpressao formatoImpressao) {
+		this.formatoImpressao = formatoImpressao;
+		this.formatoImpressaoXML = formatoImpressao.getIntValue();
+	}
+
+	public TipoAmbiente getTipoAmbiente() {
+		return tipoAmbiente;
+	}
+
+	public void setTipoAmbiente(TipoAmbiente tipoAmbiente) {
+		this.tipoAmbiente = tipoAmbiente;
+		this.tipoAmbienteXML = tipoAmbiente.getIntValue();
+	}
+
+	public Long getCodigoNF() {
+		return Long.parseLong(codigoNF);
+	}
+
+	public void setCodigoNF(Long codigoNF) {
+		this.codigoNF = StringUtils.leftPad(codigoNF != null ? codigoNF.toString() : "", 8, '0') ;
+	}
+
+	public String getModeloDocumentoFiscal() {
+		return modeloDocumentoFiscal;
+	}
+
+	public void setModeloDocumentoFiscal(String modeloDocumentoFiscal) {
+		this.modeloDocumentoFiscal = modeloDocumentoFiscal;
+	}
+
+	public Long getDigitoVerificadorChaveAcesso() {
+		return digitoVerificadorChaveAcesso;
+	}
+
+	public void setDigitoVerificadorChaveAcesso(Long digitoVerificadorChaveAcesso) {
+		this.digitoVerificadorChaveAcesso = digitoVerificadorChaveAcesso;
+	}
+
+	public ProcessoEmissao getProcessoEmissao() {
+		return processoEmissao;
+	}
+
+	public void setProcessoEmissao(ProcessoEmissao processoEmissao) {
+		this.processoEmissao = processoEmissao;
+		this.processoEmissaoXML = processoEmissao.getIntValue();
 	}
 	
 }

@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,6 +34,12 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExports;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProdutoServico implements Serializable {
 
+	/*
+	@Transient
+	@XmlTransient
+	DecimalFormat df = new DecimalFormat("##,###,###,##0.00", new DecimalFormatSymbols(new Locale ("pt", "BR")));  
+	*/
+	
 	/**
 	 * Serial Version UID
 	 */
@@ -55,6 +62,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="CODIGO_BARRAS", length=14, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=1, tamanho=14), @NFEExport(secao=TipoSecao.I, posicao=10, tamanho=14)})
+	@XmlElement(name="cEAN")
 	private Long codigoBarras;
 	
 	/**
@@ -109,8 +117,12 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_UNITARIO_COMERCIAL", precision=18, scale=4, nullable=false)
 	@NFEExports({@NFEExport(secao=TipoSecao.I, posicao=8, tamanho=16),@NFEExport(secao=TipoSecao.I, posicao=13, tamanho=16)})
-	@XmlElement(name="vUnCom")
+	@XmlTransient
 	private BigDecimal valorUnitario;
+	
+	@Transient
+	@XmlElement(name="vUnCom")
+	private String valorUnitarioXML;
 	
 	/**
 	 * vProd
@@ -308,6 +320,9 @@ public class ProdutoServico implements Serializable {
 	 */
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
+		/*df.setMinimumFractionDigits(2);   
+		df.setParseBigDecimal (true);*/ 
+		this.valorUnitarioXML = valorUnitario.toString();
 	}
 
 	/**

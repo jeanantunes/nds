@@ -121,12 +121,12 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 		if(notaFiscal2 == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problemas ao gerar Nota Fiscal. Objeto nulo.");
 		} else {
-			if(notaFiscal2.getDetalhesNotaFiscal() == null) {
-				notaFiscal2.setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
+			if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal() == null) {
+				notaFiscal2.getNotaFiscalInformacoes().setDetalhesNotaFiscal(new ArrayList<DetalheNotaFiscal>());
 			}
 		}
 		
-		if(notaFiscal2.getDetalhesNotaFiscal().size() == 0) {
+		if(notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().size() == 0) {
 		
 			detalheNotaFiscal.getProdutoServico().setCodigoProduto(estoqueProduto.getProdutoEdicao().getProduto().getCodigo());
 			detalheNotaFiscal.getProdutoServico().setDescricaoProduto(estoqueProduto.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
@@ -145,7 +145,7 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 			
 		} else {
 			
-			for(DetalheNotaFiscal nfi : notaFiscal2.getDetalhesNotaFiscal()) {
+			for(DetalheNotaFiscal nfi : notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 				
 				boolean notFound = true;
 
@@ -196,7 +196,7 @@ public class ItemNotaFiscalEstoqueProdutoBuilder  {
 		
 		// popular os itens das notas fiscais
 		// notaFiscalItem.setNotaFiscal(notaFiscal2);
-		notaFiscal2.getDetalhesNotaFiscal().add(detalheNotaFiscal);
+		notaFiscal2.getNotaFiscalInformacoes().getDetalhesNotaFiscal().add(detalheNotaFiscal);
 		
 	}
 	

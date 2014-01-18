@@ -210,14 +210,14 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarNfesDadosPrincipais(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
 
-		if(notaFiscal.getInformacaoEletronica() == null) return;
+		if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica() == null) return;
 		
-		Identificacao identificacao 				= notaFiscal.getIdentificacao();
-		InformacaoEletronica informacaoEletronica 	= notaFiscal.getInformacaoEletronica();
-		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
-		RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica();
-		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getInformacaoValoresTotais().getTotaisISSQN();
-		InformacaoAdicional informacaoAdicional = notaFiscal.getInformacaoAdicional();
+		Identificacao identificacao 				= notaFiscal.getNotaFiscalInformacoes().getIdentificacao();
+		InformacaoEletronica informacaoEletronica 	= notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
+		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
+		RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getRetornoComunicacaoEletronica();
+		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais().getTotaisISSQN();
+		InformacaoAdicional informacaoAdicional = notaFiscal.getNotaFiscalInformacoes().getInformacaoAdicional();
 
 		int tipoNF = identificacao.getTipoOperacao().ordinal();
 
@@ -290,7 +290,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosEmissor(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 
-		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getIdentificacaoEmitente();
+		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 
 		String documento 	= identificacaoEmitente.getDocumento();
 		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
@@ -408,7 +408,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosDestinatario(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 
-		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getIdentificacaoDestinatario();
+		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 
 		String documento 			= identificacaoDestinatario.getDocumento();
 		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
@@ -478,7 +478,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosTributarios(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
 
-		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
+		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getNotaFiscalInformacoes().getInformacaoValoresTotais();
 
 		BigDecimal valorBaseICMS 			= informacaoValoresTotais.getValorBaseCalculoICMS();
 		BigDecimal valorICMS 				= informacaoValoresTotais.getValorICMS();
@@ -515,7 +515,7 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarDanfeDadosTransportadora(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
 
-		InformacaoTransporte informacaoTransporte = notaFiscal.getInformacaoTransporte();
+		InformacaoTransporte informacaoTransporte = notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte();
 
 		Endereco endereco = informacaoTransporte.getEndereco();
 
@@ -632,7 +632,7 @@ public class NFeServiceImpl implements NFeService {
 
 		List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
 
-		List<DetalheNotaFiscal> detalhesNotaFiscal = notaFiscal.getDetalhesNotaFiscal();
+		List<DetalheNotaFiscal> detalhesNotaFiscal = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal();
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";

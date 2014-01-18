@@ -24,13 +24,7 @@ public class NotaFicalEndereco implements Serializable {
 	
 	private static final long serialVersionUID = 7384512437561238172L;
 
-	@Id
-	@GeneratedValue
-	@Column(name="ID")
-	private Long id;
-	
-	@Column(name = "TIPO_LOGRADOURO", length=60)
-	
+	@Column(name = "TIPO_LOGRADOURO", length=60)	
 	private String tipoLogradouro;
 	
 	@Column(name = "LOGRADOURO", length=60)
@@ -40,6 +34,11 @@ public class NotaFicalEndereco implements Serializable {
 	})
 	@XmlElement(name="xLgr")
 	private String logradouro;
+	
+	@Id
+	@GeneratedValue
+	@Column(name="ID")
+	private Long id;
 	
 	@Column(name = "NUMERO", nullable = true, length=60)
 	@NFEWhens(value = {

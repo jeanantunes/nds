@@ -1253,7 +1253,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			TipoMovimentoEstoque tipoMovimento) {
 		
 		Long idUsuario = this.usuarioService.getUsuarioLogado().getId();
-		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getDetalhesNotaFiscal()) {
+		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 			
 			for (OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 				MovimentoEstoqueCota mec = ((OrigemItemNotaFiscalMovimentoEstoqueCota) oinf).getMovimentoEstoqueCota();

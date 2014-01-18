@@ -331,7 +331,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			this.tipoMovimentoEstoqueRepository.
 				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
 		
-		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getDetalhesNotaFiscal()) {
+		for (DetalheNotaFiscal dnf : notaFiscalCancelada.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 			
 			for (OrigemItemNotaFiscal oinf : dnf.getProdutoServico().getOrigemItemNotaFiscal()) {
 				

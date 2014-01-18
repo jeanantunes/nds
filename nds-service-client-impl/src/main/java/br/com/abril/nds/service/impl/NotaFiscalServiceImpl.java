@@ -27,8 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-
 import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.CotaExemplaresDTO;
 import br.com.abril.nds.dto.FornecedorExemplaresDTO;
@@ -260,15 +258,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 				if (notaFiscal != null) {
 
-					IdentificacaoEmitente emitente = notaFiscal.getIdentificacaoEmitente();
+					IdentificacaoEmitente emitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 
 					String cpfCnpjEmitente = emitente.getDocumento();
 
-					InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
+					InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 
 					if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
 
-						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
+						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
 
 							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus())
 									|| Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
@@ -276,7 +274,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}
 
-						} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getStatusProcessamentoInterno())) {
+						} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
 
 							if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus())
 									&& Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
@@ -324,7 +322,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private boolean isFaltaMercadoria(NotaFiscal notaFiscal) {
-		return Condicao.FALTA_MERCADORIA == notaFiscal.getCondicao();
+		return Condicao.FALTA_MERCADORIA == notaFiscal.getNotaFiscalInformacoes().getCondicao();
 	}
 
 	/**
@@ -333,7 +331,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private boolean isDevolucaoEncalhe(NotaFiscal notaFiscal) {		
-		return Condicao.DEVOLUCAO_ENCALHE == notaFiscal.getCondicao();
+		return Condicao.DEVOLUCAO_ENCALHE == notaFiscal.getNotaFiscalInformacoes().getCondicao();
 	}
 
 	/**
@@ -342,7 +340,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return
 	 */
 	private boolean isSobraMercadoria(NotaFiscal notaFiscal) {
-		return Condicao.SOBRA_MERCADORIA == notaFiscal.getCondicao();
+		return Condicao.SOBRA_MERCADORIA == notaFiscal.getNotaFiscalInformacoes().getCondicao();
 	}
 
 	/**
@@ -402,11 +400,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
 
-		InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
+		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 
 		if (informacaoEletronica == null) {
-			notaFiscal.setInformacaoEletronica(new InformacaoEletronica());
-			informacaoEletronica = notaFiscal.getInformacaoEletronica();
+			notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
+			informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 		}
 
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
@@ -419,8 +417,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		informacaoEletronica.setRetornoComunicacaoEletronica(retornoComunicacaoEletronica);
 
-		notaFiscal.setInformacaoEletronica(informacaoEletronica);
-		notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
+		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
+		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
 		this.notaFiscalRepository.merge(notaFiscal);	
 
@@ -440,7 +438,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(id);
 
 		if (notaFiscal != null) {
-			notaFiscal.setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
+			notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(StatusProcessamentoInterno.ENVIADA);
 			this.notaFiscalRepository.merge(notaFiscal);
 		}
 	}
@@ -552,25 +550,18 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			try {
 				
 				long index = 1;
-				for(DetalheNotaFiscal dnf : notaFiscal.getDetalhesNotaFiscal()) {
+				for(DetalheNotaFiscal dnf : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
 					dnf.setSequencia(index++);
 				}
 				
 				jc = JAXBContext.newInstance(NotaFiscal.class);
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapper() {
-					
-					@Override
-					public String getPreferredPrefix(String arg0, String arg1, boolean arg2) {
-						return "";
-					}
-				});
+		        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", null);
 		        marshaller.marshal(notaFiscal, System.out);
 			
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("Erro ao gerar XML", e);
 			}
 			/*
 			nfeExporter.clear();
@@ -1717,8 +1708,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		NotaFiscalReferenciada notaReferenciada = null;
 
-		InformacaoEletronica informacaoEletronica = notaFiscal
-				.getInformacaoEletronica();
+		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 
 		if (informacaoEletronica != null) {
 
