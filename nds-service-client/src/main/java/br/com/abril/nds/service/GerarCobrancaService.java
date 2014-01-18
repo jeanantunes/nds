@@ -2,9 +2,9 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -31,9 +31,7 @@ public interface GerarCobrancaService {
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
 	 */
-	void enviarDocumentosCobrancaEmail(Cota cota,
-									   Map<String, 
-									   Boolean> nossoNumeroEnvioEmail);
+	void enviarDocumentosCobrancaEmail(Cota cota, Set<String> nossoNumeroEnvioEmail);
 	
 	/**
 	 * Gera cobranças para Cotas específicas
@@ -57,7 +55,7 @@ public interface GerarCobrancaService {
 	 */
 	void gerarCobranca(Long idCota, 
 			           Long idUsuario, 
-			           Map<String, Boolean> mapNossoNumeroEnvioEmail) throws GerarCobrancaValidacaoException;
+			           Set<String> setNossoNumeroEnvioEmail) throws GerarCobrancaValidacaoException;
 	
 	/**
 	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cotas especificas
@@ -89,6 +87,8 @@ public interface GerarCobrancaService {
 	 */
 	boolean aceitaEnvioEmail(Cota cota, String nossoNumero);
 
+	boolean aceitaEmissaoDocumento(Cota cota, TipoEmissaoDocumento tipoEmissaoDocumento);
+	
 	/**
     * Obtem Data de Vencimento onforme Parametros 
     * @param dataConsolidado

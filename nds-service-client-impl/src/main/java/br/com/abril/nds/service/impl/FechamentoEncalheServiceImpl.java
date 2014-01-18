@@ -40,7 +40,6 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.CotaUnificacao;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
@@ -486,7 +485,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cobrado ");
 			}
+		} else if (cotaAusenteEncalheDTO.isUnificacao()){
 			
+			cotaAusenteEncalheDTO.setAcao(" Cota com unificação ");
 		} else {
 			
 			if (cotaAusenteEncalheDTO.isFechado()) {
@@ -596,11 +597,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
 		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
-	public Map<String, Boolean> realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
+	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
 
-		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
-		
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 
 		if (cotaAusente != null){
@@ -613,10 +612,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes) {
 
-			nossoNumeroEnvioEmail = this.realizarCobrancaCota(dataOperacao,
-															  usuario, 
-															  cotaAusenteEncalheDTO.getIdCota(),
-															  validacaoVO);
+			this.realizarCobrancaCota(dataOperacao,
+									  usuario, 
+									  cotaAusenteEncalheDTO.getIdCota(),
+									  validacaoVO);
 		}
 
 		// Se um dia precisar tratar as mensagens de erro de e-mail, elas estão nesta lista
@@ -626,9 +625,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
 			
 			throw new GerarCobrancaValidacaoException(validacaoVO);
-		}
-		
-		return nossoNumeroEnvioEmail;
+		}		
 	}
 
 	/**
@@ -637,14 +634,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
 				   noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
-	public Map<String, Boolean> realizarCobrancaCota(Date dataOperacao,
+	public void realizarCobrancaCota(Date dataOperacao,
 									                 Usuario usuario,
 									                 Long idCota,
 									                 ValidacaoVO validacaoVO) { 
 		
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+		Set<String> nossoNumeroEnvioEmail = new HashSet<String>();
 		
 		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
@@ -657,17 +654,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
 		
 		this.gerarMovimentosFinanceiros(cota, dataOperacao, dataOperacaoDistribuidor, usuario, isAlteracaoTipoCotaNaDataAtual);
-		
-		//gera movimentos financeiros para cotas unificadas
-		CotaUnificacao unific = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(cota.getNumeroCota());
-		if (unific != null){
-			
-			for (Cota unificada : unific.getCotas()){
-				
-				this.gerarMovimentosFinanceiros(unificada, dataOperacao, dataOperacaoDistribuidor, usuario, 
-					this.cotaService.isCotaAlteradaNaData(unificada,dataOperacao));
-			}
-		}
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
 
@@ -705,8 +691,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 		}
-		
-		return nossoNumeroEnvioEmail;
 	}
 
 	private void gerarMovimentosFinanceiros(Cota cota, Date dataOperacao, Date dataOperacaoDistribuidor,
@@ -841,6 +825,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			this.gerarNotaFiscal(dataEncalhe);
 		}
 		
+		//cobra cotas as demais cotas, no caso, as não ausentes e com unificação
+		try {
+			
+			this.gerarCobrancaService.gerarCobranca(null, usuario.getId(), null);
+		} catch (GerarCobrancaValidacaoException e) {
+			
+			throw new ValidacaoException(e.getValidacaoVO());
+		}
 	}
 
 	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {
@@ -949,7 +941,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return tipoNotaFiscal;
 	}
 
-	@SuppressWarnings("unused")
 	@Transactional
 	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
 		

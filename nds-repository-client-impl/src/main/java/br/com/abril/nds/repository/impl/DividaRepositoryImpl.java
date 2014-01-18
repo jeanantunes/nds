@@ -227,7 +227,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		hql.append(" FROM ")
 		.append(" Divida divida ")
 		.append(" JOIN divida.cobranca cobranca ")
-		.append(" JOIN divida.consolidado consolidado ")
+		.append(" JOIN divida.consolidados consolidado ")
 		.append(" JOIN cobranca.cota cota ")
 		.append(" left JOIN cota.box box ")
 		.append(" left JOIN cota.pdvs pdv ")
@@ -594,31 +594,44 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		}
 		
 		if (filtro.getStatusDivida() != null && !filtro.getStatusDivida().isEmpty()) {
-			
-			boolean utilizarAnd = false;
+
+			sql.append(whereUtilizado ? " AND " : " WHERE ");
+			whereUtilizado = true;
+
+			sql.append(" DIVIDA_.STATUS in (:statusDivida) ");
+			paramsList.put("statusDivida", this.parseListaStatusDivida(filtro.getStatusDivida()));
+
+			boolean pesquisaVencidosNaoPagos = false;
 			
 			if (filtro.getStatusDivida().contains(StatusDivida.EM_ABERTO) || 
 					filtro.getStatusDivida().contains(StatusDivida.PENDENTE) ||
 					filtro.getStatusDivida().contains(StatusDivida.PENDENTE_INADIMPLENCIA) ||
 					filtro.getStatusDivida().contains(StatusDivida.POSTERGADA)) {
 				
-				sql.append("AND COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
+				
+				sql.append(" AND COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
 				params.put("dataAtual", filtro.getDataOperacaoDistribuidor());
-				utilizarAnd = true;			
+				pesquisaVencidosNaoPagos = true;			
 			}
 
 			if (filtro.getStatusDivida().contains(StatusDivida.NEGOCIADA) || 
 					filtro.getStatusDivida().contains(StatusDivida.QUITADA)) {
 				
-				sql.append(utilizarAnd ? " AND ( COBRANCA_.DT_PAGAMENTO IS NULL OR " : "");
-				sql.append(" COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
-				sql.append(utilizarAnd ? "  ) " : "");
+				if(pesquisaVencidosNaoPagos) {
+
+					sql.append(" AND ( COBRANCA_.DT_PAGAMENTO IS NULL OR ");
+					sql.append(" COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
+					sql.append("  ) ");
+					
+				} else {
+					sql.append(" AND COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
+				}
+				
 			}
+			
 		}
 			
-		sql.append(" AND DIVIDA_.STATUS in (:statusDivida) ");
 		
-		paramsList.put("statusDivida", this.parseListaStatusDivida(filtro.getStatusDivida()));
 	}
 	
 	private List<String> parseListaStatusDivida(List<StatusDivida> statusDividas) {

@@ -84,6 +84,7 @@ public interface CobrancaService {
 	 */
 	CobrancaVO obterDadosCobranca(Long idCobranca, Date dataPagamento);
 	
+	CobrancaVO obterDadosCobrancaBoletoAntecipado(String nossoNumero, Date dataPagamento, BigDecimal valor);
 	
 	/**
 	 * Método responsável por obter dados somados de cobranças por códigos

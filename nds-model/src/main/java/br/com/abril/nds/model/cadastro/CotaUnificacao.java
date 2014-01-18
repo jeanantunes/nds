@@ -36,7 +36,7 @@ public class CotaUnificacao implements Serializable {
 	@OneToOne
 	private Cota cota;
 	
-	@ManyToMany(fetch=  FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JoinTable(name = "COTAUNIFICACAO_COTAUNIFICADA", joinColumns = {
 			@JoinColumn(name = "COTA_UNIFICACAO_ID")},
 			inverseJoinColumns = {@JoinColumn(name="COTA_UNIFICADA_ID")})
@@ -45,10 +45,6 @@ public class CotaUnificacao implements Serializable {
 	@Column(name = "DATA_UNIFICACAO")
 	@Temporal(TemporalType.DATE)
 	private Date dataUnificacao;
-	
-	@OneToOne
-	@JoinColumn(name = "POLITICA_COBRANCA_ID")
-	private PoliticaCobranca politicaCobranca;
 	
 	public Long getId() {
 		return id;
@@ -97,13 +93,5 @@ public class CotaUnificacao implements Serializable {
         }
         
         cota.getCotasUnificacao().add(this);
-	}
-
-	public PoliticaCobranca getPoliticaCobranca() {
-		return politicaCobranca;
-	}
-
-	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
-		this.politicaCobranca = politicaCobranca;
 	}
 }

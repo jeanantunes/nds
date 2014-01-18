@@ -487,7 +487,7 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			for (Long idCota : idsCotas) {
 
-				session.setMaxInactiveInterval(-1);
+				this.session.setMaxInactiveInterval(-1);
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
 
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
@@ -502,9 +502,11 @@ public class FechamentoEncalheController extends BaseController {
 			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
 
 			throw e;
+			
 		} finally {
-			session.setMaxInactiveInterval(maxInactiveIntervalSession);
+			
 			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.session.setMaxInactiveInterval(maxInactiveIntervalSession);
 		}
 
 		if (ex != null){
@@ -529,14 +531,17 @@ public class FechamentoEncalheController extends BaseController {
 			
 			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes){
 
-				session.setMaxInactiveInterval(-1);
+				this.session.setMaxInactiveInterval(-1);
 				
 				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
-
-				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
-												                   getUsuarioLogado(), 
-												                   cotaAusenteEncalheDTO.getIdCota(),
-												                   validacaoVO);					
+				
+				if (!cotaAusenteEncalheDTO.isUnificacao()){
+				
+					this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
+													                   getUsuarioLogado(), 
+													                   cotaAusenteEncalheDTO.getIdCota(),
+													                   validacaoVO);
+				}
 			}
 		} catch (Exception e) {
 
@@ -544,9 +549,9 @@ public class FechamentoEncalheController extends BaseController {
 			
 		} finally {
 			
-			session.setMaxInactiveInterval(maxInactiveIntervalSession);
-			
 			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			
+			this.session.setMaxInactiveInterval(maxInactiveIntervalSession);			
 		}
 
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
@@ -762,25 +767,14 @@ public class FechamentoEncalheController extends BaseController {
 			
 			return;
 		}
-			
-		try {
-			
-			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-			
-			@SuppressWarnings("unchecked")
-			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
-			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
 		
-		} catch(ValidacaoException ve){
-			
-			throw ve;
-			
-		} catch (Exception e) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
-		}
+		FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 		
+		@SuppressWarnings("unchecked")
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+		
+		this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
+			
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"),"result").recursive().serialize();
 	}
 

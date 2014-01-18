@@ -60,11 +60,8 @@ public class CotaUnificacaoController extends BaseController {
 	@Post
 	public void consultarCotaUnificacao(Integer numeroCotaCentralizadora){
 		
-		Long politicaCobrancaId = 
-			(Long) this.httpSession.getAttribute(ParametroCobrancaController.ID_EDICAO);
-		
 		List<CotaVO> cotasCentralizadas = 
-			this.cotaUnificacaoService.obterCotasCentralizadas(numeroCotaCentralizadora, politicaCobrancaId);
+			this.cotaUnificacaoService.obterCotasCentralizadas(numeroCotaCentralizadora);
 		
 		result.use(Results.json()).from(cotasCentralizadas, "result").recursive().serialize();
 	}
@@ -141,11 +138,11 @@ public class CotaUnificacaoController extends BaseController {
 			
 			if (dto.getNumeroCota().equals(cotaUnificadora)){
 				
-				cotas.add(this.cotaUnificacaoService.obterCota(dto.getNumeroCota(), true, null));
+				cotas.add(this.cotaUnificacaoService.obterCota(dto.getNumeroCota(), true));
 				
 				for (CotaVO vo : dto.getCotas()){
 					
-					cotas.add(this.cotaUnificacaoService.obterCota(vo.getNumero(), true, null));
+					cotas.add(this.cotaUnificacaoService.obterCota(vo.getNumero(), true));
 				}
 				
 				break;
@@ -166,16 +163,7 @@ public class CotaUnificacaoController extends BaseController {
 			return;
 		}
 		
-		Long idEdicao = 
-			(Long) this.httpSession.getAttribute(ParametroCobrancaController.ID_EDICAO);
-		
-		if (idEdicao == null){
-			
-			cotasUnificadas = new ArrayList<CotaUnificacaoDTO>();
-		} else {
-			
-			cotasUnificadas = this.cotaUnificacaoService.obterCotasUnificadas(idEdicao);
-		}
+		cotasUnificadas = this.cotaUnificacaoService.obterCotasUnificadas();
 		
 		result.use(FlexiGridJson.class).from(cotasUnificadas).page(1).total(cotasUnificadas.size()).serialize();
 	}
@@ -184,8 +172,7 @@ public class CotaUnificacaoController extends BaseController {
 	public void buscarCota(Integer numeroCota, boolean edicao){
 		
 		CotaVO cotaVO = 
-			this.cotaUnificacaoService.obterCota(numeroCota, edicao,
-				(Long) this.httpSession.getAttribute(ParametroCobrancaController.ID_EDICAO));
+			this.cotaUnificacaoService.obterCota(numeroCota, edicao);
 		
 		result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 	}

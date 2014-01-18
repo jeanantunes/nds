@@ -73,12 +73,6 @@ var parametroCobrancaController = $.extend(true,
 					sortable : true,
 					align : 'left'
 				}, {
-					display : 'Envia E-Mail',
-					name : 'envioEmail',
-					width : 70,
-					sortable : true,
-					align : 'center'
-				}, {
 					display : 'Fornecedores',
 					name : 'fornecedores',
 					width : 80,
@@ -233,8 +227,6 @@ var parametroCobrancaController = $.extend(true,
 		popup : function() {
 			
 			parametroCobrancaController.preparaCadastroParametro();
-			
-			parametroCobrancaController.botaoUnificaPorCotas('N');
 			
 			$("#unificadaCota", parametroCobrancaController.workspace).val("N");
 			
@@ -447,10 +439,6 @@ var parametroCobrancaController = $.extend(true,
 			$("#acumulaDivida", this.workspace).val(resultado.acumulaDivida?'S':'N');
 			$("#vencimentoDiaUtil", this.workspace).val(resultado.vencimentoDiaUtil?'S':'N');
 			$("#unificada", this.workspace).val(resultado.unificada?'S':'N');
-			$("#unificadaCota", this.workspace).val(resultado.unificadaPorCota?'S':'N');
-			parametroCobrancaController.botaoUnificaPorCotas(
-					resultado.unificadaPorCota?'S':'N',
-					resultado.tipoCobranca);
 			
 			$("#envioEmail", this.workspace).val(resultado.envioEmail?'S':'N');
 			
@@ -840,28 +828,6 @@ var parametroCobrancaController = $.extend(true,
 				centsSeparator: ',',
 			    thousandsSeparator: '.'
 			});
-		},
-		
-		botaoUnificaPorCotas : function(value, tipoPagamento){
-			
-			if (tipoPagamento && tipoPagamento == 'BOLETO_EM_BRANCO'){
-				
-				$("#unificadaCota", parametroCobrancaController.workspace).val("N");
-				$("#unificadaCota", parametroCobrancaController.workspace).attr("disabled", "disabled");
-				$("#botaoTelaUnificacao", parametroCobrancaController.workspace).hide();
-				return;
-			} else {
-				
-				$("#unificadaCota", parametroCobrancaController.workspace).removeAttr("disabled");
-			}
-			
-			if (value == 'S'){
-				
-				$("#botaoTelaUnificacao", parametroCobrancaController.workspace).show();
-			} else {
-				
-				$("#botaoTelaUnificacao", parametroCobrancaController.workspace).hide();
-			}
 		},
 		
 		mostrarUnificacaoCotas : function(){

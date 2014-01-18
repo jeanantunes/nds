@@ -218,6 +218,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		// lista para mensagens de validação
 		List<String> msgs = new ArrayList<String>();
 		Date dataAtual = new Date();
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 
 		if (formaCobranca != null) {
 
@@ -226,7 +228,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		}
 
 		// valida dados de entrada
-		this.validarDadosEntrada(msgs, dataAtual, parcelas,
+		this.validarDadosEntrada(msgs, parcelas,
 				valorDividaParaComissao, usuarioResponsavel,
 				ativarCotaAposParcela, comissaoParaSaldoDivida, formaCobranca);
 
@@ -266,7 +268,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				// e sua divida deve ter seus status modificado para negociada
 				cobrancaOriginaria.setStatusCobranca(StatusCobranca.PAGO);
 				
-				cobrancaOriginaria.setDataPagamento(dataAtual);
+				cobrancaOriginaria.setDataPagamento(dataOperacao);
 				
 				cobrancaOriginaria.getDivida().setStatus(StatusDivida.NEGOCIADA);
 				
@@ -528,7 +530,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		return novo;
 	}
 
-	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
+	private void validarDadosEntrada(List<String> msgs,
 			List<ParcelaNegociacao> parcelas,
 			BigDecimal valorDividaParaComissao, Usuario usuarioResponsavel,
 			Integer ativarCotaAposParcela, BigDecimal comissaoParaSaldoDivida,

@@ -45,6 +45,8 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	
 	private String check;
 	
+	private boolean unificacao;
+	
 	/**
 	 * Construtor Padrão
 	 */
@@ -208,6 +210,14 @@ public class CotaAusenteEncalheDTO implements Serializable {
 
 	public void setIndMFCNaoConsolidado(boolean indMFCNaoConsolidado) {
 		this.indMFCNaoConsolidado = indMFCNaoConsolidado;
+	}
+
+	public boolean isUnificacao() {
+		return unificacao;
+	}
+
+	public void setUnificacao(boolean unificacao) {
+		this.unificacao = unificacao;
 	}
 	
 	

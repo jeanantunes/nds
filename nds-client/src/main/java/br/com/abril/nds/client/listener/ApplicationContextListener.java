@@ -66,30 +66,30 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		
-		try {
-			
-			final WebApplicationContext springContext = 
-				WebApplicationContextUtils.getWebApplicationContext(
-					servletContextEvent.getServletContext());
-			
-			SchedulerFactoryBean schedulerFactoryBean =
-				springContext.getBean(SchedulerFactoryBean.class);
-			 
-			Scheduler scheduler = schedulerFactoryBean.getScheduler();
-			
-//			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
-//			this.agendaExeclusaoAjusteReparte(scheduler);
-//			this.agendarExclusaoDeEstudos(scheduler);
-//			this.agendarGeracaoRankings(scheduler);
-			
-			scheduler.start();
-			
-		} catch (SchedulerException e) {
-			
-			logger.fatal("Falha ao inicializar agendador do Quartz", e);
-
-			throw new RuntimeException(e);
-		}
+//		try {
+//			
+//			final WebApplicationContext springContext = 
+//				WebApplicationContextUtils.getWebApplicationContext(
+//					servletContextEvent.getServletContext());
+//			
+//			SchedulerFactoryBean schedulerFactoryBean =
+//				springContext.getBean(SchedulerFactoryBean.class);
+//			 
+//			Scheduler scheduler = schedulerFactoryBean.getScheduler();
+//			
+////			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
+////			this.agendaExeclusaoAjusteReparte(scheduler);
+////			this.agendarExclusaoDeEstudos(scheduler);
+////			this.agendarGeracaoRankings(scheduler);
+//			
+//			scheduler.start();
+//			
+//		} catch (SchedulerException e) {
+//			
+//			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+//
+//			throw new RuntimeException(e);
+//		}
 
 	}
 

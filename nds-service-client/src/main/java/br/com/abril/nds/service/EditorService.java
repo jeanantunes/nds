@@ -18,8 +18,6 @@ import br.com.abril.nds.model.cadastro.Editor;
 public interface EditorService {
 	
 	public Editor obterEditorPorId(Long idEditor);
-	
-	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro);
 
 	public List<Editor> obterEditoresDesc();
 }

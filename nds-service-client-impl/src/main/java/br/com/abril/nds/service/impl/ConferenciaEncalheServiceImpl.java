@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1272,7 +1274,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
 		
-		Map<String, Boolean> nossoNumeroCollection = new LinkedHashMap<String, Boolean>();
+		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
 		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
@@ -1318,14 +1320,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
 			
-			for (String nossoNumero : nossoNumeroCollection.keySet()){
+			Iterator<String> iterator = nossoNumeroCollection.iterator();
+			
+			while (iterator.hasNext()){
+				
+				String nossoNumero = iterator.next();
 				
 				if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
 					
 					associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
 				}
 				
-				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, nossoNumeroCollection.get(nossoNumero));
+				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
 		
@@ -1446,9 +1452,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return Set - String
 	 * @throws GerarCobrancaValidacaoException 
 	 */
-	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
+	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
-		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
+		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
 		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(controleConferenciaEncalheCota.getCota(), 

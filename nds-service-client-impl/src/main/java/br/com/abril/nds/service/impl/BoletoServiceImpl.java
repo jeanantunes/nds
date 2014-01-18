@@ -626,7 +626,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param dataPagamento
 	 */
 	private void gerarBaixaBoletoAntecipado(BoletoAntecipado boletoAntecipado, 
-											BigDecimal valorPago, 
+											PagamentoDTO pagamento, 
 											Date dataPagamento){
 
 		TipoMovimentoFinanceiro tipoMovimento = this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.CREDITO);
@@ -640,7 +640,7 @@ public class BoletoServiceImpl implements BoletoService {
 		movimento.setTipoMovimentoFinanceiro(tipoMovimento);
 		movimento.setUsuario(usuario);
 		movimento.setDataOperacao(dataOperacao);
-        movimento.setValor(valorPago);
+        movimento.setValor(pagamento.getValorPagamento());
         movimento.setDataCriacao(Calendar.getInstance().getTime());
 		movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimento.setDataVencimento(DateUtil.adicionarDias(dataOperacao,1));
@@ -652,7 +652,10 @@ public class BoletoServiceImpl implements BoletoService {
 		boletoAntecipado.setDataPagamento(dataPagamento);
 		boletoAntecipado.setMovimentoFinanceiroCota(movimentoFinanceiroCota);
 		boletoAntecipado.setStatus(StatusDivida.QUITADA);
-		boletoAntecipado.setValorPago(valorPago);
+		boletoAntecipado.setValorDesconto(pagamento.getValorDesconto());
+		boletoAntecipado.setValorJuros(pagamento.getValorJuros());
+		boletoAntecipado.setValorMulta(pagamento.getValorMulta());
+		boletoAntecipado.setValorPago(pagamento.getValorPagamento());
 		
 		this.boletoAntecipadoRepository.merge(boletoAntecipado);
 	}
@@ -697,8 +700,10 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			if (boletoAntecipado != null){
 			
+				boletoAntecipado.setTipoBaixa(tipoBaixaCobranca);
+				
 				this.gerarBaixaBoletoAntecipado(boletoAntecipado,
-												pagamento.getValorPagamento(),
+												pagamento,
 												dataPagamento);
 				
 				return null;
@@ -2123,11 +2128,7 @@ public class BoletoServiceImpl implements BoletoService {
 					
 					boletoDTO.setStatusCobranca(StatusCobranca.NAO_PAGO.name());
 				}
-				else if (boletoDTO.getStatusDivida().equals(StatusDivida.QUITADA)){	
-				
-					boletoDTO.setTipoBaixa(TipoBaixaCobranca.AUTOMATICA.name());
-				}
-				
+
 				continue;
 			}
 			
@@ -2535,4 +2536,16 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		return boletoAntecipadoRepository.obterBoletoAntecipadoPorNossoNumero(nossoNumero);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public BoletoAntecipado obterBoletoEmBrancoPorId(Long idBoletoAntecipado) {
+
+		return this.boletoAntecipadoRepository.buscarPorId(idBoletoAntecipado);
+	}
+	
+	
 }

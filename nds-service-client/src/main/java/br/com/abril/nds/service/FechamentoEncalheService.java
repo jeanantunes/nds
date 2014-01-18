@@ -3,7 +3,6 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
@@ -80,7 +79,7 @@ public interface FechamentoEncalheService {
 	
 	BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 
-	public abstract Map<String, Boolean> realizarCobrancaCotas(Date dataOperacao, 
+	public abstract void realizarCobrancaCotas(Date dataOperacao, 
 			                                                   Usuario usuario,
 			                                                   List<CotaAusenteEncalheDTO> listaCotasAusentes, 
 			                                                   Cota cotaAusente) throws GerarCobrancaValidacaoException;
@@ -90,10 +89,10 @@ public interface FechamentoEncalheService {
 
 	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao);
 	
-	Map<String, Boolean> realizarCobrancaCota(Date dataOperacao,
-							                  Usuario usuario, 
-							                  Long idCota,
-							                  ValidacaoVO validacaoVO);
+	void realizarCobrancaCota(Date dataOperacao,
+			                  Usuario usuario, 
+			                  Long idCota,
+			                  ValidacaoVO validacaoVO);
 	
 	Boolean validarEncerramentoOperacaoEncalhe(Date data);
 	
