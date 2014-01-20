@@ -1233,6 +1233,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                 sql.append(" cfc.ID as id, ")
                    .append(" cfc.COTA_ID as cotaId, ")
                    .append(" COTA.NUMERO_COTA as numeroCota, ")
+                   .append(" COALESCE(box.NOME, 'Box não Cadastrado para essa Cota') as nomeBox, ")
                    .append(" cfc.CONSIGNADO as consignado, ")
                    
                    .append(" cfc.DT_CONSOLIDADO as dataConsolidado, ")
@@ -1322,6 +1323,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    
                    .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
                    .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
+                   .append(" left join BOX box on cota.BOX_ID = box.ID")
                    .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
                    .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
                    .append(" where cota.NUMERO_COTA = :numeroCota ");
@@ -1339,6 +1341,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" null as id, ")
                    .append(" mfc.COTA_ID as cotaId, ")
                    .append(" null as numeroCota, ")
+                   .append(" COALESCE(box.NOME, 'Box não Cadastrado para essa Cota') as nomeBox, ")
                    
                    //consignado
                    .append("coalesce((select sum(m.VALOR) ")
@@ -1667,6 +1670,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    
                    .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
                    .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
+                   .append(" left join BOX box on COTA.BOX_ID = box.ID")
                    .append(" where COTA.NUMERO_COTA = :numeroCota ")
                    .append(" and mfc.ID not in (")
                    .append("     select MVTO_FINANCEIRO_COTA_ID ")
@@ -1716,7 +1720,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                 query.addScalar("valorVendaDia", StandardBasicTypes.BIG_DECIMAL);
                 query.addScalar("numeroAcumulo", StandardBasicTypes.BIG_INTEGER);
                 query.addScalar("inadimplente", StandardBasicTypes.BOOLEAN);
+
                 query.addScalar("statusDivida", StandardBasicTypes.STRING);
+
+                query.addScalar("nomeBox");
+
                 
                 query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
                 

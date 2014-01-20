@@ -408,6 +408,8 @@ var relatorioVendasController = $.extend(true, {
 			});
 		});
 		
+		$(".areaBts", relatorioVendasController.workspace).hide();
+		
 	},
 	
 	validarPesquisaEdicaoAvancada:function(){
@@ -458,6 +460,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_distrib();
 			
 		} else if ($('#filtro_editor', relatorioVendasController.workspace).attr("checked") == "checked") {
@@ -471,6 +474,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcEditorGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_editor();			
 			
 		} else if ($('#filtro_produto', relatorioVendasController.workspace).attr("checked") == "checked") {
@@ -490,6 +494,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcProdutoGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_produto();
 			
 		} else if ($('#filtro_cota', relatorioVendasController.workspace).attr("checked") == "checked") {
@@ -509,6 +514,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcCotaGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_cota();					
 		}
 	},
@@ -537,8 +543,6 @@ var relatorioVendasController = $.extend(true, {
 		         {name:'dataDe', value: dataDe},
 		         {name:'dataAte', value: dataAte},
 		         {name:'codigoFornecedor', value: selectFornecedor},
-		         {name:'codigoProduto', value: codigoProduto},
-		         {name:'nomeProduto', value: nomeProduto},
 		         {name:'codigoEditor', value: selectEditor},
 		         {name:'codigoCota', value: numerocota},
 		         {name:'nomeCota', value: nomeCota},
@@ -556,6 +560,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcDistribuidorGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_distrib();
 			
 		} else if ($('#filtro_editor', relatorioVendasController.workspace).attr("checked") == "checked") {
@@ -567,16 +572,25 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcEditorGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_editor();			
 			
 		} else if ($('#filtro_produto', relatorioVendasController.workspace).attr("checked") == "checked") {
 			
-			if ($('#nomeProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
+			if ($('#codigoProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
+				$("#codigoProduto", relatorioVendasController.workspace).val('');
 				codigoProduto=$('#codigoProdutoListaProduto', relatorioVendasController.workspace).val();
 			}
-			if ($('#codigoProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
+			
+			if ($('#nomeProdutoListaProduto', relatorioVendasController.workspace).val() != "") {
+				$("#nomeProduto", relatorioVendasController.workspace).val('');
 				nomeProduto=$('#nomeProdutoListaProduto', relatorioVendasController.workspace).val();
 			}
+			
+	        params.push({name:'codigoProduto', value: codigoProduto});
+	        
+	        params.push({name:'nomeProduto', value: nomeProduto});
+
 			
 			$(".abcProdutoGrid", relatorioVendasController.workspace).flexOptions({
 				url: contextPath + "/lancamento/relatorioVendas/pesquisarCurvaABCProdutoAvancada",
@@ -585,6 +599,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcProdutoGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_produto();
 			
 		} else if ($('#filtro_cota', relatorioVendasController.workspace).attr("checked") == "checked") {
@@ -603,6 +618,7 @@ var relatorioVendasController = $.extend(true, {
 			});
 			
 			$(".abcCotaGrid", relatorioVendasController.workspace).flexReload();
+			$(".areaBts", relatorioVendasController.workspace).show();
 			relatorioVendasController.mostra_cota();			
 			
 		}
@@ -645,6 +661,13 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
+		
+		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=1';
+		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=1';
+			
+		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
+		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
+		
 	},
 	
 	mostra_editor : function() {
@@ -654,6 +677,13 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
+		
+		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=2';
+		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=2';
+			
+		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
+		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
+		
 	},
 	
 	mostra_produto : function() {
@@ -663,6 +693,13 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).hide();
 		$('.linhaCota', relatorioVendasController.workspace).hide();
 		$('.linhaProduto', relatorioVendasController.workspace).show();
+
+		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=3';
+		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=3';
+			
+		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
+		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
+		
 	},
 	
 	mostra_cota : function() {
@@ -672,6 +709,13 @@ var relatorioVendasController = $.extend(true, {
 		$('#relatorioCota', relatorioVendasController.workspace).show();
 		$('.linhaCota', relatorioVendasController.workspace).show();
 		$('.linhaProduto', relatorioVendasController.workspace).hide();
+
+		var pathExportacaoRelatorioPDF = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=PDF&tipoRelatorio=4';
+		var pathExportacaoRelatorioXLS = $("#pathExportarRelatorioVendas", relatorioVendasController.workspace).val() + 'fileType=XLS&tipoRelatorio=4';
+			
+		$(".impressaoPDFRelatorioVendas").attr("href", pathExportacaoRelatorioPDF);
+		$(".impressaoXLSRelatorioVendas").attr("href", pathExportacaoRelatorioXLS);
+		
 	},
 
 	popup_editor : function() {

@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -101,15 +103,17 @@ public class FechamentoEncalheController extends BaseController {
 	protected BoletoService boletoService;
 	
 	@Autowired
-	private HttpSession session;
+	protected HttpSession session;
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
 	private static final String DATA_HOLDER_ACTION_KEY = "fechamentoEncalhe";
 	
-	private static final String STATUS_COBRANCA_COTA_SESSION = "statusCobrancaCotaSession";
-	
 	private static final String STATUS_FINALIZADO = "FINALIZADO";
+	
+	private static final String KEY_COBRANCA_COTAS = "cobrancaCotas";
+	
+	private static final ConcurrentMap<String, String> CACHE_COBRANCA_COTAS = new ConcurrentHashMap<>();
 	
 	@Path("/")
 	public void index() {
@@ -140,7 +144,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (quantidade == 0) {
 			
-			session.removeAttribute("gridFechamentoEncalheDTO");
+			this.getSession().removeAttribute("gridFechamentoEncalheDTO");
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(
 						TipoMensagem.WARNING, 
@@ -150,7 +154,7 @@ public class FechamentoEncalheController extends BaseController {
 					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, 
 							aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
 
-			session.setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
+			this.getSession().setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
 			
 			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
 		}
@@ -190,7 +194,7 @@ public class FechamentoEncalheController extends BaseController {
 				
 		} 
 		
-		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE,filtro);
+		this.getSession().setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE,filtro);
 		
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
@@ -205,7 +209,7 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private String getCheckedFromDataHolder(String codigo) {
 		
-		DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		DataHolder dataHolder = (DataHolder) this.getSession().getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
 		
 		if (dataHolder != null) {
 
@@ -227,7 +231,7 @@ public class FechamentoEncalheController extends BaseController {
 
 		gravaFechamentoEncalhe(fechamentos, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
 		
-		this.session.removeAttribute("listaDeGrid");
+		this.getSession().removeAttribute("listaDeGrid");
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
@@ -483,12 +487,12 @@ public class FechamentoEncalheController extends BaseController {
 		int statusCobrancaCota = 0;
 		int totalCotas = idsCotas.size();
 
-		int maxInactiveIntervalSession = session.getMaxInactiveInterval();
 		try {
 			for (Long idCota : idsCotas) {
 
-				session.setMaxInactiveInterval(-1);
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+				String status =  "Cota " + statusCobrancaCota++ + " de " + totalCotas;
+				
+				this.setStatusCobrancaCota(status);
 
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
 
@@ -499,12 +503,13 @@ public class FechamentoEncalheController extends BaseController {
 
 		} catch (Exception e) {
 
-			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 
 			throw e;
+			
 		} finally {
-			session.setMaxInactiveInterval(maxInactiveIntervalSession);
-			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 		}
 
 		if (ex != null){
@@ -522,16 +527,14 @@ public class FechamentoEncalheController extends BaseController {
 		int statusCobrancaCota = 0;
 		
 		int totalCotas = listaCotasAusentes.size();
-
-		int maxInactiveIntervalSession = session.getMaxInactiveInterval();
 		
 		try {
 			
 			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes){
-
-				session.setMaxInactiveInterval(-1);
 				
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
+				String status =  "Cota " + (++statusCobrancaCota) + " de " + totalCotas;
+				
+				this.setStatusCobrancaCota(status);
 
 				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
 												                   getUsuarioLogado(), 
@@ -544,9 +547,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 		} finally {
 			
-			session.setMaxInactiveInterval(maxInactiveIntervalSession);
-			
-			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 		}
 
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
@@ -558,7 +559,7 @@ public class FechamentoEncalheController extends BaseController {
 	@Post
 	public void obterStatusCobrancaCota() {
 		
-		String status = (String) this.session.getAttribute(STATUS_COBRANCA_COTA_SESSION);
+		String status = this.getStatusCobrancaCotas();
 		
 		result.use(Results.json()).withoutRoot().from(status==null?"Processando cotas..." : status).recursive().serialize();
 	}
@@ -654,10 +655,10 @@ public class FechamentoEncalheController extends BaseController {
 				return;
 			}
 			
-			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.getSession().getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 			
 			@SuppressWarnings("unchecked")
-			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 			
 			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
 			
@@ -765,10 +766,10 @@ public class FechamentoEncalheController extends BaseController {
 			
 		try {
 			
-			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.getSession().getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 			
 			@SuppressWarnings("unchecked")
-			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 			
 			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
 		
@@ -959,7 +960,7 @@ public class FechamentoEncalheController extends BaseController {
 	public void enviarGridAnteriorParaSession(String codigo, String produtoEdicao, String fisico, boolean checkbox){
 		
 		@SuppressWarnings("unchecked")
-		List<FechamentoFisicoLogicoDTO> listaDeGrid = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+		List<FechamentoFisicoLogicoDTO> listaDeGrid = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 		
 		boolean insercao = true;
 		if(listaDeGrid != null && !listaDeGrid.isEmpty()){
@@ -997,7 +998,7 @@ public class FechamentoEncalheController extends BaseController {
 			listaDeGrid.add(gridFechamentoEncalheDTO);
 		}
 		
-		session.setAttribute("gridFechamentoEncalheDTO", listaDeGrid);		
+		this.getSession().setAttribute("gridFechamentoEncalheDTO", listaDeGrid);		
 		
 		this.result.use(Results.nothing());
 	}
@@ -1005,8 +1006,24 @@ public class FechamentoEncalheController extends BaseController {
 	@Path("/limparDadosDaSessaoGrid")
 	public void limparDadosDaSessaoGrid(){
 		
-		this.session.removeAttribute("gridFechamentoEncalheDTO");
+		this.getSession().removeAttribute("gridFechamentoEncalheDTO");
 		
 		this.result.use(Results.nothing());
 	}
+
+	private HttpSession getSession() {
+
+		return this.session;
+	}
+	
+	private String getStatusCobrancaCotas() {
+		
+		return CACHE_COBRANCA_COTAS.get(KEY_COBRANCA_COTAS);
+	}
+	
+	private void setStatusCobrancaCota(String status) {
+		
+		CACHE_COBRANCA_COTAS.put(KEY_COBRANCA_COTAS, status);
+	}
+	
 }

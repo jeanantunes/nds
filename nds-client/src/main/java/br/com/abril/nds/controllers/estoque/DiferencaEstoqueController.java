@@ -280,6 +280,8 @@ public class DiferencaEstoqueController extends BaseController {
 		FileExporter.to("consulta-faltas-sobras", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoDiferencaVO, 
 				listaConsultaDiferenca, DiferencaVO.class, this.httpServletResponse);
+		
+		this.result.nothing();
 	}
 	
 	@Post
@@ -422,9 +424,7 @@ public class DiferencaEstoqueController extends BaseController {
 			
 		DiferencaVO diferencaEditavel = this.obterDiferencaPorId(idDiferenca);
 		
-		if(diferencaEditavel!= null){
-					
-			TipoDiferenca tipoDiferencas = diferencaEditavel.getTipoDiferenca(); 
+		if(diferencaEditavel!= null){ 
 			
 			diferencaEditavel.setQuantidade(quantidadeDiferenca);
 			
@@ -432,7 +432,7 @@ public class DiferencaEstoqueController extends BaseController {
 					this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
 						diferencaEditavel.getCodigoProduto(), diferencaEditavel.getNumeroEdicao());
 			
-			BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(tipoDiferencas, quantidadeDiferenca, produtoEdicao);
+			BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(quantidadeDiferenca, produtoEdicao);
 			
 			diferencaEditavel.setVlTotalDiferenca(valorTotalDiferenca);
 			
@@ -487,6 +487,7 @@ public class DiferencaEstoqueController extends BaseController {
 		diferencaVO.setCadastrado(true);
 		diferencaVO.setTipoEstoque(TipoEstoque.LANCAMENTO);
 		diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.NOTA);
+		diferencaVO.setTipoDiferenca(tipoDiferenca);
 		
 		Set<DiferencaVO> listaNovasDiferencasVO = 
 				(HashSet<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
@@ -514,7 +515,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Date dataMovimentacao = this.dataMovimentacaoDiferenca();
 		
-		Diferenca diferenca = this.obterDiferenca(diferencaVO, tipoDiferenca, id, dataMovimentacao); 
+		Diferenca diferenca = this.obterDiferenca(diferencaVO, id, dataMovimentacao); 
 		
 		listaDiferencas.add(diferenca);
 		
@@ -610,7 +611,7 @@ public class DiferencaEstoqueController extends BaseController {
 				tipoDirecionamento  = TipoDirecionamentoDiferenca.ESTOQUE;
 			}
 			
-			editarDiferenca(idDiferenca, diferenca,qntReparteRateio, rateioCotas, tipoDirecionamento,reparteAtual);
+			editarDiferenca(idDiferenca, diferenca,qntReparteRateio, rateioCotas, tipoDirecionamento,reparteAtual, tipoEstoque);
 		}
 		
 		result.use(Results.json()).from("").serialize();
@@ -706,7 +707,7 @@ public class DiferencaEstoqueController extends BaseController {
 								BigInteger qntReparteRateio,
 								List<RateioCotaVO> rateiosCota,
 								TipoDirecionamentoDiferenca direcionamento,
-								BigInteger reparteAtual){
+								BigInteger reparteAtual, TipoEstoque tipoEstoque){
 			
 		DiferencaVO diferencaEditavel = this.obterDiferencaPorId(idDiferenca);
 		
@@ -753,11 +754,13 @@ public class DiferencaEstoqueController extends BaseController {
 					this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
 						diferencaEditavel.getCodigoProduto(), diferencaEditavel.getNumeroEdicao());
 			
-			BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(tipoDiferencas, qntDiferenca, produtoEdicao);
+			BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(qntDiferenca, produtoEdicao);
 			
 			diferencaEditavel.setVlTotalDiferenca(valorTotalDiferenca);
 			
 			diferencaEditavel.setQuantidade(qntDiferenca);
+			
+			diferencaEditavel.setTipoEstoque(tipoEstoque);
 		    
 			if (diferencaEditavel.isCadastrado()){
 				
@@ -787,6 +790,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 				if(df.getId().equals(idDiferenca)){
 					df.setQtde(qntDiferenca);
+					df.setTipoEstoque(diferencaEditavel.getTipoEstoque());
 					df.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
 					df.setValorTotalDiferenca(valorTotalDiferenca);
 					break;
@@ -813,6 +817,7 @@ public class DiferencaEstoqueController extends BaseController {
 					diferenca.setQtde(qntDiferenca);
 					diferenca.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
 					diferenca.setValorTotalDiferenca(valorTotalDiferenca);
+					diferenca.setTipoEstoque(diferencaEditavel.getTipoEstoque());
 					break;
 				}
 			}
@@ -829,6 +834,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 				if(diferenca.getId().equals(idDiferenca)){
 					diferenca.setQuantidade(qntDiferenca);
+					diferenca.setTipoEstoque(diferencaEditavel.getTipoEstoque());
 					diferenca.setTipoDirecionamento(diferencaEditavel.getTipoDirecionamento());
 					diferenca.setValorTotalDiferenca(CurrencyUtil.formatarValor(valorTotalDiferenca));
 					break;
@@ -966,7 +972,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		this.validarNovaDiferenca(diferencaVO, dataMovimentacao, tipoDiferenca);
 		
-		Diferenca diferenca = this.obterDiferenca(diferencaVO, tipoDiferenca, id, dataMovimentacao); 
+		Diferenca diferenca = this.obterDiferenca(diferencaVO, id, dataMovimentacao); 
 		
 		listaDiferencas.removeAll(Collections.singleton(null));
 		HashMap<Long, Set<Diferenca>> mapaLongListaDiferencas = this.diferencaEstoqueService.verificarDiferencasIguais(listaDiferencas, diferenca);
@@ -1034,7 +1040,6 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 	
 	private Diferenca obterDiferenca(DiferencaVO diferencaVO,
-									TipoDiferenca tipoDiferenca,
 									Long idDiferenca,Date dataMovimentacao){
 		
 		Diferenca diferenca = new Diferenca();
@@ -1048,38 +1053,22 @@ public class DiferencaEstoqueController extends BaseController {
 		diferenca.setProdutoEdicao(produtoEdicao);
 		diferenca.setQtde(diferencaVO.getQuantidade());
 		diferenca.setStatusConfirmacao(StatusConfirmacao.PENDENTE);
-		diferenca.setTipoDiferenca(tipoDiferenca);
+		diferenca.setTipoDiferenca(diferencaVO.getTipoDiferenca());
 		diferenca.setAutomatica(false);
         diferenca.setTipoDirecionamento(diferencaVO.getTipoDirecionamento());
         diferenca.setTipoEstoque(diferencaVO.getTipoEstoque());
 		diferenca.setDataMovimento(dataMovimentacao);
 		
-		BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(tipoDiferenca, diferenca.getQtde(), produtoEdicao);
+		BigDecimal valorTotalDiferenca = calcularValorTotalDiferenca(diferenca.getQtde(), produtoEdicao);
 		
 		diferenca.setValorTotalDiferenca(valorTotalDiferenca);
 		
 		return diferenca;
 	}
 
-	private BigDecimal calcularValorTotalDiferenca(TipoDiferenca tipoDiferenca,BigInteger diferenca, ProdutoEdicao produtoEdicao) {
-		
-		BigDecimal valorTotalDiferenca = BigDecimal.ZERO;
-		
-		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
-				|| TipoDiferenca.SOBRA_DE.equals(tipoDiferenca)
-				|| TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA.equals(tipoDiferenca)) {
+	private BigDecimal calcularValorTotalDiferenca(BigInteger diferenca, ProdutoEdicao produtoEdicao) {
 
-			valorTotalDiferenca =
-					produtoEdicao.getPrecoVenda().multiply( new BigDecimal( diferenca ) );
-			
-		} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
-						|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)
-						|| TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.equals(tipoDiferenca)) {
-			
-			valorTotalDiferenca =
-				produtoEdicao.getPrecoVenda().multiply(new BigDecimal( diferenca ) );
-		}
-		return valorTotalDiferenca;
+		return produtoEdicao.getPrecoVenda().multiply(new BigDecimal(diferenca));
 	}
 
 	private void validarLancamentoPorCota(Integer numeroCota,Date dataNotaEnvio, List<DiferencaVO> diferencasProdutos) {
@@ -2981,6 +2970,8 @@ public class DiferencaEstoqueController extends BaseController {
 		FileExporter.to("diferenca-detalhe-estoque-cota", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, detalhes, 
 					detalhes.getDetalhesDiferenca(), RateioDiferencaCotaDTO.class, this.httpServletResponse);
+		
+		this.result.nothing();
 	}
 
 	private FiltroDetalheDiferencaCotaDTO prepararFiltroDetalheDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro, 

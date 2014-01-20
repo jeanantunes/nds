@@ -863,6 +863,12 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-faixaEtaria").val(result.faixaEtaria);
 							$("#produtoEdicaoController-temaPrincipal").val(result.temaPrincipal);
 							$("#produtoEdicaoController-temaSecundario").val(result.temaSecundario);
+						
+							if(!result.dataLancamento){
+								 $("#produtoEdicaoController-dataLancamento").val("");
+								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+								 $("#produtoEdicaoController-istrac29").val(true);
+							}
 
 							if (redistribuicao) {
 								

@@ -37,4 +37,15 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		
 	}
 
+	@Override
+	public ParametroCobrancaCota obterParametroCobrancaCotaPorCota(Integer numeroCota) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select p from ParametroCobrancaCota p where p.cota.numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (ParametroCobrancaCota) query.uniqueResult();
+	}
 }

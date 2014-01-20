@@ -141,7 +141,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		String novaDescricao = itemExtratoEdicao.getDescMovimento();
 		
-		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())
+				&& !diferenca.getTipoDiferenca().isAlteracaoReparte()) {
 			
 			novaDescricao = novaDescricao + " COTA";
 		}

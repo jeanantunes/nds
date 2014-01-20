@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,6 +86,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -236,6 +239,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private CotaUnificacaoRepository cotaUnificacaoRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -1268,7 +1274,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
 		
-		Map<String, Boolean> nossoNumeroCollection = new LinkedHashMap<String, Boolean>();
+		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
 		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
@@ -1314,14 +1320,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
 			
-			for (String nossoNumero : nossoNumeroCollection.keySet()){
+			Iterator<String> iterator = nossoNumeroCollection.iterator();
+			
+			while (iterator.hasNext()){
+				
+				String nossoNumero = iterator.next();
 				
 				if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
 					
 					associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
 				}
 				
-				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, nossoNumeroCollection.get(nossoNumero));
+				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero, true);
 			}
 		}
 		
@@ -1442,9 +1452,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return Set - String
 	 * @throws GerarCobrancaValidacaoException 
 	 */
-	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
+	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
-		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
+		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
 		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(controleConferenciaEncalheCota.getCota(), 
@@ -1467,16 +1477,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
 					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
 			
-			if (existeBoletoAntecipado){
-				
-				gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
-												           controleConferenciaEncalheCota.getUsuario().getId());
-			}
-			else{
+			//se a cota for unificadora ou unificada não pode gerar cobrança nesse ponto
+			boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), null),
+					
+					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
+							controleConferenciaEncalheCota.getCota().getNumeroCota(), null);
 			
-				gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
-												   controleConferenciaEncalheCota.getUsuario().getId(), 
-												   nossoNumeroCollection);
+			if (!cotaUnificadora && !cotaUnificada){
+			
+				if (existeBoletoAntecipado){
+					
+					gerarCobrancaService.gerarDividaPostergada(controleConferenciaEncalheCota.getCota().getId(), 
+													           controleConferenciaEncalheCota.getUsuario().getId());
+				}
+				else{
+				
+					gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
+													   controleConferenciaEncalheCota.getUsuario().getId(), 
+													   nossoNumeroCollection);
+				}
 			}
 	    }
 		else if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)){

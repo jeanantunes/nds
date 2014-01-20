@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.baixaboleto.TipoEmissaoDocumento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -192,7 +193,10 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 		
 		List<AnexoEmail> anexosEmail = new ArrayList<AnexoEmail>();
 		
-	    if (this.isEmiteSlip(cota)){	
+		boolean emiteSlip = this.gerarCobrancaService.aceitaEmissaoDocumento(cota, TipoEmissaoDocumento.EMAIL_SLIP);
+		boolean emiteBoletoRecibo = this.gerarCobrancaService.aceitaEmissaoDocumento(cota, TipoEmissaoDocumento.EMAIL_BOLETO_RECIBO);
+		
+	    if (emiteSlip){	
 	
             byte[] anexoSlip = this.documentoCobrancaService.gerarSlipCobranca(nossoNumero, false, TipoArquivo.PDF);
             
@@ -202,7 +206,7 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
             }
 	    }
 	
-	    if (this.isEmiteBoleto(cota) || this.isEmiteRecibo(cota)){
+	    if (emiteBoletoRecibo){
 		    
 	    	byte[] anexoBoleto = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
         
@@ -264,16 +268,15 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 					    continue;
 					}
 				    
-				    if (!this.gerarCobrancaService.aceitaEnvioEmail(cota, nossoNumero)) {
+				    boolean aceitaEmissao = 
+				    		this.gerarCobrancaService.aceitaEmissaoDocumento(cota, TipoEmissaoDocumento.EMAIL_BOLETO_RECIBO) ||
+				    		this.gerarCobrancaService.aceitaEmissaoDocumento(cota, TipoEmissaoDocumento.EMAIL_SLIP);
+
+				    if (!aceitaEmissao) {
 
 				    	continue;
 				    }
 				    
-				    if (!(this.isEmiteBoleto(cota) || this.isEmiteRecibo(cota)) && !this.isEmiteSlip(cota)){
-				    	
-				    	continue;
-				    }
-
 				    bm = new BoletoEmail();
 				
 				    bm.setCobranca(cobranca);
@@ -334,29 +337,26 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 		    return;
 		}
 	    
-		if (this.gerarCobrancaService.aceitaEnvioEmail(cota, nossoNumero)) {
-		
-			try {
+		try {
+			
+			List<AnexoEmail> anexosEmail = this.obterAnexosEmailCobranca(cota, nossoNumero);
+			
+			if (anexosEmail != null && !anexosEmail.isEmpty()){
 				
-				List<AnexoEmail> anexosEmail = this.obterAnexosEmailCobranca(cota, nossoNumero);
-				
-				if (anexosEmail != null && !anexosEmail.isEmpty()){
-					
-					this.enviarDocumentosCobrancaEmail(nossoNumero, email, anexosEmail);
-				}
-			} 
-			catch(AutenticacaoEmailException e){
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao conectar-se com o servidor de e-mail. Boleto["+nossoNumero+"]");
-	        }		
-	        catch (Exception e) {
-
-				throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
-	        }
-			finally{
-				
-				this.boletoEmailRepository.remover(boletoEmail);
+				this.enviarDocumentosCobrancaEmail(nossoNumero, email, anexosEmail);
 			}
+		} 
+		catch(AutenticacaoEmailException e){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao conectar-se com o servidor de e-mail. Boleto["+nossoNumero+"]");
+        }		
+        catch (Exception e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+        }
+		finally{
+			
+			this.boletoEmailRepository.remover(boletoEmail);
 		}
 	}
 }
