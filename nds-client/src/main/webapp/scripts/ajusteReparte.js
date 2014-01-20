@@ -1074,7 +1074,7 @@ init : function() {
 		
 	    if(indiceAjuste < 0 || indiceAjuste > 10){        
 	           var erros = new Array();
-	           erros[0] = "O Índice deve estar entre 0 e 10.";
+	           erros[0] = "O Índice deve estar entre 01 e 10.";
 	           exibirMensagemDialog('WARNING',   erros,"");                
 	           $("#AJUSTE_VENDA_MEDIA_input").val("");
 	           $("#AJUSTE_VENDA_MEDIA_editar_input").val("");
@@ -1087,7 +1087,7 @@ init : function() {
 		
 	    if(indiceAjuste < 0 || indiceAjuste > 10){        
 	           var erros = new Array();
-	           erros[0] = "O Índice deve estar entre 0 e 10.";
+	           erros[0] = "O Índice deve estar entre 01 e 10.";
 	           exibirMensagemDialog('WARNING',   erros,"");                
 	           $("#AJUSTE_VENDA_MEDIA_input").val("");
 	           $("#AJUSTE_VENDA_MEDIA_editar_input").val("");
