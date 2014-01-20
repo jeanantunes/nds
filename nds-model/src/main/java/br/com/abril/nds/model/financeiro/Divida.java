@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,9 +12,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -59,9 +63,11 @@ public class Divida implements Serializable {
 	@OneToOne(mappedBy = "divida", cascade={CascadeType.MERGE})
 	private Cobranca cobranca;
 	
-	@OneToOne(optional = false)
-	@JoinColumn(name = "CONSOLIDADO_ID")
-	private ConsolidadoFinanceiroCota consolidado;	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinTable(name = "DIVIDA_CONSOLIDADO", joinColumns = {
+			@JoinColumn(name = "DIVIDA_ID")},
+			inverseJoinColumns = {@JoinColumn(name="CONSOLIDADO_ID")})
+	private List<ConsolidadoFinanceiroCota> consolidados;	
 	
 	// Divida -> acumulados
 	@OneToMany(mappedBy="dividaRaiz")
@@ -134,12 +140,12 @@ public class Divida implements Serializable {
 		this.cobranca = cobranca;
 	}
 	
-	public ConsolidadoFinanceiroCota getConsolidado() {
-		return consolidado;
+	public List<ConsolidadoFinanceiroCota> getConsolidados() {
+		return consolidados;
 	}
 	
-	public void setConsolidado(ConsolidadoFinanceiroCota consolidado) {
-		this.consolidado = consolidado;
+	public void setConsolidados(List<ConsolidadoFinanceiroCota> consolidados) {
+		this.consolidados = consolidados;
 	}
 	
 	public Set<Divida> getAcumulado() {
@@ -186,42 +192,28 @@ public class Divida implements Serializable {
 		this.origemNegociacao = origemNegociacao;
 	}
 
-	/* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((consolidado == null) ? 0 : consolidado.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Divida other = (Divida) obj;
-        if (consolidado == null) {
-            if (other.consolidado != null) {
-                return false;
-            }
-        } else if (!consolidado.equals(other.consolidado)) {
-            return false;
-        }
-        return true;
-    }
-	
-	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Divida other = (Divida) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
 }

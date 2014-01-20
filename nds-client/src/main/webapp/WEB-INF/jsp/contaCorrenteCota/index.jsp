@@ -293,9 +293,48 @@
       </form>
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display: none;">
+      	<style>
+			#legenda {
+				text-align: center;
+			}
+			#legenda td {
+				padding: 5px;
+			}
+      	</style>
+      	
 	      <fieldset class="fieldGrid">
 	       	  <legend>Conta-Corrente Selecionado: <span id="cotanomeselecionado"></span></legend>
 	       	  <table class="itemContaCorrenteCotaGrid"></table>
 	      </fieldset>
+
+	      <div id="legenda">
+      	<table>
+      		<thead>
+      			<td><strong>Icone</strong></td>
+      			<td><strong>Legenda</strong></td>
+      		</thead>
+      		<tbody>
+      			<tr>
+      				<td><img src="${pageContext.request.contextPath}/images/bt_financeiro.png" alt="Cobrança Gerada"></td>
+      				<td>Cobrança Gerada</td>
+      			</tr>
+      			<tr>
+      				<td><img src="${pageContext.request.contextPath}/images/hammer.png" alt="Dívida Negociada"></td>
+      				<td>Dívida Negociada</td>
+      			</tr>
+      			<tr>
+      				<td><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" alt="Dívida Postergada"></td>
+      				<td>Dívida Postergada</td>
+      			</tr>	
+      			<tr>
+      				<td><img src="${pageContext.request.contextPath}/images/seta_sobe.gif" alt="Dívida Acumulada"></td>
+      				<td>Dívida Acumulada</td>
+      			</tr>
+      		</tbody>
+      	</table>
       </div>
+      </div>
+
+      
+
 </body>

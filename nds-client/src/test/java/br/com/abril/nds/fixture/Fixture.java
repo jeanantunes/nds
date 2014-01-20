@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -2491,7 +2492,7 @@ public class Fixture {
 			Cota cota, Date data, Usuario usuario, StatusDivida status,
 			BigDecimal valor, boolean acumulada) {
 		Divida divida = new Divida();
-		divida.setConsolidado(consolidado);
+		divida.setConsolidados(Arrays.asList(consolidado));
 		divida.setCota(cota);
 		divida.setData(data);
 		divida.setResponsavel(usuario);
