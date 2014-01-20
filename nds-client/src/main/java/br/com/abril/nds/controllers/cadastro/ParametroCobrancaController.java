@@ -96,8 +96,6 @@ public class ParametroCobrancaController extends BaseController {
     
     private static List<ItemDTO<TipoCota,String>> listaTiposCota = new ArrayList<ItemDTO<TipoCota,String>>();
     
-    public static String ID_EDICAO = "idEdicao";
-    
     /**
 	 * Construtor da classe
 	 * @param result
@@ -210,7 +208,6 @@ public class ParametroCobrancaController extends BaseController {
 		
 		this.politicaCobrancaService.postarPoliticaCobranca(parametros);
 		
-		this.httpSession.removeAttribute(ID_EDICAO);
 		this.httpSession.removeAttribute(CotaUnificacaoController.UNIFICACOES);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança cadastrado com sucesso."),"result").recursive().serialize();
@@ -236,11 +233,9 @@ public class ParametroCobrancaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma política de cobrança encontrada.");
 		} 
 		
-		this.httpSession.setAttribute(ID_EDICAO, idPolitica);
-		
 		this.httpSession.setAttribute(
 				CotaUnificacaoController.UNIFICACOES, 
-				this.cotaUnificacaoService.obterCotasUnificadas(idPolitica));
+				this.cotaUnificacaoService.obterCotasUnificadas());
 		
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
@@ -450,7 +445,6 @@ public class ParametroCobrancaController extends BaseController {
 	public void resetCotaUnificacoes(){
 		
 		this.httpSession.removeAttribute(CotaUnificacaoController.UNIFICACOES);
-		this.httpSession.removeAttribute(ID_EDICAO);
 		
 		this.result.use(Results.json()).from("").serialize();
 	}

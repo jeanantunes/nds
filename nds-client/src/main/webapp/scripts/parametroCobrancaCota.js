@@ -354,13 +354,17 @@ var parametroCobrancaCotaController = $.extend(true, {
             
             row.cell.principal = row.cell.principal ? '<img src="'+ contextPath +'/images/ico_check.gif" hspace="5" border="0px" title="Forma de cobrança principal">' : '';
             
-            if (!row.cell.unificacao){
-            	
-            	row.cell.unificacao = '';
+            if (!row.cell.unificacao || row.cell.unificacao.toUpperCase() == 'UNIFICADORA'){
+            
             	row.cell.acao = linkEditar + linkExcluir;
             } else {
             	
             	row.cell.acao = '';
+            }
+            
+            if (!row.cell.unificacao){
+            	
+            	row.cell.unificacao = '';
             }
 		});
 			
