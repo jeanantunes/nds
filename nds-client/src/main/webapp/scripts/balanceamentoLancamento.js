@@ -191,12 +191,33 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.codigoProdutoFormatado = row.cell.codigoProduto;
 		
+		row.cell.cancelado = T.gerarExcluir(row.cell.cancelado, i);
+
 		row.cell.novaDataLancamento = T.gerarInputDataDistrib(row.cell.novaDataLancamento, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
 		
 		if (row.cell.destacarLinha) {
 			T.linhasDestacadas.push(i+1);
 		}
+		
+	},
+	
+   this.gerarExcluir = function(isPodeExcluir, index) {
+		
+
+		if(isPodeExcluir){
+
+			return '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
+	            ' onclick="' + T.instancia + '.dialogConfirmarExclusaoLancamento(' + index + ');' +
+	            '">' + '<img title="Excluir" src="' + contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" />' + '</a>';
+		}else{
+
+			return '<a id="cancelado' + index + '" href="javascript:;" name="cancelado" ' + 
+            'disabled="disabled' +
+             '">' + '<img title="Excluir" src="' + contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" />' + '</a>';
+			
+		}
+		
 		
 	},
 	
@@ -212,6 +233,55 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		       (bloquearData? '' : ' onclick="' + T.instancia + '.reprogramarLancamentoUnico(' + index + ');') +
 		       '">&nbsp;</a></span>';
 		
+	},
+	
+	this.excluirLancamento = function(index) {
+		
+        var data = [];
+
+        data.push({name : 'produtoLancamento.id', value : T.lancamentosPaginacao[index].id});
+		data.push({name : 'produtoLancamento.numeroEdicao', value : T.lancamentosPaginacao[index].numeroEdicao});
+		data.push({name : 'produtoLancamento.nomeProduto', value : T.lancamentosPaginacao[index].nomeProduto});
+
+		$.postJSON(pathTela + "/matrizLancamento/excluirLancamento",
+				data,
+				function(retorno) {
+					T.pesquisar();
+				}
+		);
+		
+		
+
+	},
+	
+	this.dialogConfirmarExclusaoLancamento = function(index) {
+		
+		$( "#dialog-excluir-lancamento", _workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: [
+			    {
+			    	text: "Confirmar",
+			    	click: function() {
+			    		
+			    		T.excluirLancamento(index);
+			    		$(this).dialog("close");
+			    	}
+			    }, {
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
+			beforeClose: function() {
+				clearMessageDialogTimeout("#dialog-excluir-lancamento");
+		    },
+		    form: $("#dialog-excluir-lancamento", _workspace).parents("form")
+		});
 	},
 	
 	this.reprogramarLancamentoUnico = function(index) {
@@ -902,7 +972,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				align : 'center'
 			},{
 				display : 'Excluir',
-				name : 'excluir',
+				name : 'cancelado',
 				width : 30,
 				sortable : false,
 				align : 'center'
