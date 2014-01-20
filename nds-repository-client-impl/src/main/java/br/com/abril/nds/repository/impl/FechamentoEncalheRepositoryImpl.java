@@ -486,7 +486,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" union all ");
 		
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString()); 
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao, false).toString()); 
 
 		sql.append(" ) as ausentes	");
 		
@@ -600,7 +600,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return sql;
 	}
 	
-	private StringBuffer getSqlCotaAusenteComChamadaEncalheSemPostergado(boolean indCount, boolean isSomenteCotasSemAcao) {
+	private StringBuffer getSqlCotaAusenteComChamadaEncalheSemPostergado(boolean indCount, boolean isSomenteCotasSemAcao,
+			boolean ignorarUnificacao) {
 		
 		StringBuffer sql = new StringBuffer();
 		
@@ -668,8 +669,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("                cec.data_operacao = :dataEncalhe                        ");    
 		sql.append("        )                                                               ");
 		
-//		if (comUnificacao){
-//			
+		if (ignorarUnificacao){
+			
 			sql.append("	and cota.ID not in ( 															");
 			sql.append("		select aoada.COTA_UNIFICADA_ID								");
 			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada) 					 	");
@@ -677,8 +678,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			sql.append("	and cota.ID not in ( 															");
 			sql.append("		select uni.cota_id 							");
 			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) 					 	");
-//			
-//		}
+			
+		}
 		
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 		
@@ -696,7 +697,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return sql;
 	}
 
-	private StringBuffer getSqlCotaAusenteSemChamadaEncalhe(boolean indCount, boolean isSomenteCotasSemAcao) {
+	private StringBuffer getSqlCotaAusenteSemChamadaEncalhe(boolean indCount, boolean isSomenteCotasSemAcao,
+			boolean ignorarUnificacao) {
 		
 		StringBuffer sqlMovimentoFinaceiroCotaNaoConsolidado = new StringBuffer();
 		
@@ -769,8 +771,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 		sql.append("	cota.SITUACAO_CADASTRO <> :inativo and cota.SITUACAO_CADASTRO <> :pendente ");
 		
-//		if (comUnificacao){
-//			
+		if (ignorarUnificacao){
+			
 			sql.append("	and cota.ID not in ( 															");
 			sql.append("		select aoada.COTA_UNIFICADA_ID								");
 			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada) 					 	");
@@ -778,8 +780,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			sql.append("	and cota.ID not in ( 															");
 			sql.append("		select uni.cota_id 							");
 			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) 					 	");
-//			
-//		}
+			
+		}
 		
 		sql.append("	and cota.ID not in  (                                   ");
 		sql.append("            select                                          ");
@@ -822,7 +824,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" union all ");
 		
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao, false).toString());
 		
 		if("acao".equals(sortname)) {
 			
@@ -1348,7 +1350,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 	@Override
 	public Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao,
-			String sortorder, String sortname, int page, int rp) {
+			String sortorder, String sortname, int page, int rp, boolean ignorarUnificacao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -1356,9 +1358,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" ( ");
 		
-		sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao).toString());
+		sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao, ignorarUnificacao).toString());
 		sql.append(" union all ");
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao, ignorarUnificacao).toString());		 
 
 		sql.append(" ) as ausentes	");
 		

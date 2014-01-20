@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -101,22 +102,18 @@ public class FechamentoEncalheController extends BaseController {
 	@Autowired
 	protected BoletoService boletoService;
 	
-	private AtomicReference<HttpSession> sessionHolder;
+	@Autowired
+	protected HttpSession session;
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
 	private static final String DATA_HOLDER_ACTION_KEY = "fechamentoEncalhe";
 	
-	private static final String STATUS_COBRANCA_COTA_SESSION = "statusCobrancaCotaSession";
-	
 	private static final String STATUS_FINALIZADO = "FINALIZADO";
 	
-	public FechamentoEncalheController(HttpSession session) {
-		
-		this.sessionHolder = new AtomicReference<>();
-		
-		this.sessionHolder.set(session);
-	}
+	private static final String KEY_COBRANCA_COTAS = "cobrancaCotas";
+	
+	private static final ConcurrentMap<String, String> CACHE_COBRANCA_COTAS = new ConcurrentHashMap<>();
 	
 	@Path("/")
 	public void index() {
@@ -462,7 +459,11 @@ public class FechamentoEncalheController extends BaseController {
 				
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
-				
+				for (CotaAusenteEncalheDTO d : listaCotaAusenteEncalhe){
+					if (d.getNumeroCota().equals(1) || d.getNumeroCota().equals(2) || d.getNumeroCota().equals(3)){
+						System.out.println(d.getNumeroCota() + " " + d.isUnificacao());
+					}
+				}
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
 			} else {
@@ -493,7 +494,9 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			for (Long idCota : idsCotas) {
 
-				this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+				String status =  "Cota " + statusCobrancaCota++ + " de " + totalCotas;
+				
+				this.setStatusCobrancaCota(status);
 
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
 
@@ -504,13 +507,13 @@ public class FechamentoEncalheController extends BaseController {
 
 		} catch (Exception e) {
 
-			this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 
 			throw e;
 			
 		} finally {
 			
-			this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 		}
 
 		if (ex != null){
@@ -533,15 +536,14 @@ public class FechamentoEncalheController extends BaseController {
 			
 			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes){
 				
-				this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
+				String status =  "Cota " + (++statusCobrancaCota) + " de " + totalCotas;
 				
-				if (!cotaAusenteEncalheDTO.isUnificacao()){
-				
-					this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
-													                   getUsuarioLogado(), 
-													                   cotaAusenteEncalheDTO.getIdCota(),
-													                   validacaoVO);
-				}
+				this.setStatusCobrancaCota(status);
+
+				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
+												                   getUsuarioLogado(), 
+												                   cotaAusenteEncalheDTO.getIdCota(),
+												                   validacaoVO);					
 			}
 		} catch (Exception e) {
 
@@ -549,7 +551,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 		} finally {
 			
-			this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 		}
 
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
@@ -561,7 +563,7 @@ public class FechamentoEncalheController extends BaseController {
 	@Post
 	public void obterStatusCobrancaCota() {
 		
-		String status = (String) this.getSession().getAttribute(STATUS_COBRANCA_COTA_SESSION);
+		String status = this.getStatusCobrancaCotas();
 		
 		result.use(Results.json()).withoutRoot().from(status==null?"Processando cotas..." : status).recursive().serialize();
 	}
@@ -751,8 +753,7 @@ public class FechamentoEncalheController extends BaseController {
 			return;
 		}
 		
-		int totalCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true,
-				true);
+		int totalCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true, true);
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
@@ -766,14 +767,25 @@ public class FechamentoEncalheController extends BaseController {
 			
 			return;
 		}
-		
-		FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.getSession().getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
-		@SuppressWarnings("unchecked")
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
-		
-		this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
 			
+		try {
+			
+			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.getSession().getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			
+			@SuppressWarnings("unchecked")
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
+		
+		} catch(ValidacaoException ve){
+			
+			throw ve;
+			
+		} catch (Exception e) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
+		}
+		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"),"result").recursive().serialize();
 	}
 
@@ -1005,7 +1017,17 @@ public class FechamentoEncalheController extends BaseController {
 
 	private HttpSession getSession() {
 
-		return this.sessionHolder.get();
+		return this.session;
+	}
+	
+	private String getStatusCobrancaCotas() {
+		
+		return CACHE_COBRANCA_COTAS.get(KEY_COBRANCA_COTAS);
+	}
+	
+	private void setStatusCobrancaCota(String status) {
+		
+		CACHE_COBRANCA_COTAS.put(KEY_COBRANCA_COTAS, status);
 	}
 	
 }

@@ -1327,7 +1327,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" inner join DIVIDA_CONSOLIDADO d_cons on d_cons.CONSOLIDADO_ID = cfc.ID ")
                    .append(" left join DIVIDA divida on divida.ID = d_cons.DIVIDA_ID ")
                    .append(" left join BOX box on cota.BOX_ID = box.ID")
-                   .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
                    .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
                    .append(" where cota.NUMERO_COTA = :numeroCota ");
                 

@@ -352,16 +352,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			//Varre todos os movimentos encontrados, agrupando por cota e por fornecedor
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
 			
-			Fornecedor ultimoFornecedor = listaMovimentoFinanceiroCota.get(0).getFornecedor();
-			
-			if (ultimoFornecedor == null){
-		    	
-		    	throw new GerarCobrancaValidacaoException(
-		    			new ValidacaoVO(
-		    			TipoMensagem.WARNING, 
-		    			"Fornecedor não encontrado para o [Movimento Financeiro " + 
-		    					listaMovimentoFinanceiroCota.get(0).getId() + "] [Cota " + ultimaCota.getNumeroCota() + "]."));
-		    }
+			Fornecedor ultimoFornecedor = null;
 			
 			BigDecimal valorMovimentos = BigDecimal.ZERO;
 			
@@ -380,7 +371,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
 				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro()) &&
-						this.cotaUnificacaoRepository.verificarCotaUnificada(ultimaCota.getNumeroCota())){
+						!this.cotaUnificacaoRepository.verificarCotaUnificada(ultimaCota.getNumeroCota())){
 					
 					if (!movimentoFinanceiroCota.getCota().equals(ultimaCota)){
 						
@@ -404,10 +395,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    			movimentoFinanceiroCota.getId() + "] [Cota " + cotaAtual.getNumeroCota() + "]."));
 			    }
 				
-				if  
-				   (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
-				   (fornecedorProdutoMovimento != null && fornecedorProdutoMovimento.equals(ultimoFornecedor) ||
-					fornecedorProdutoMovimento == ultimoFornecedor && unificaCobranca)){
+				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
+				   (ultimoFornecedor == null || fornecedorProdutoMovimento.equals(ultimoFornecedor) || unificaCobranca)){
 					
 					movimentos.add(movimentoFinanceiroCota);
 

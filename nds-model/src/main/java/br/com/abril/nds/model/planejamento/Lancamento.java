@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -415,5 +416,24 @@ public class Lancamento implements Serializable {
 
 	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
 		this.dataFinMatDistrib = dataFinMatDistrib;
+	}
+	
+	public void voltarStatusOriginal() {
+		
+		if (this.produtoEdicao == null) {
+			
+			return;
+		}
+
+		Origem origem = this.produtoEdicao.getOrigem();
+		
+		if (Origem.MANUAL.equals(origem)) {
+			
+			this.status = StatusLancamento.PLANEJADO;
+		
+		} else if (Origem.INTERFACE.equals(origem)) {
+			
+			this.status = StatusLancamento.CONFIRMADO;
+		}
 	}
 }

@@ -658,29 +658,33 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		this.gerarMovimentosFinanceiros(cota, dataOperacao, dataOperacaoDistribuidor, usuario, isAlteracaoTipoCotaNaDataAtual);
 		
-		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
-
-			try {
-				
-				boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
-
-				if (existeBoletoAntecipado){
-				
-				    this.gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
-				}
-				else{
-				
-				    this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
-				}    
-			} 
-			catch (GerarCobrancaValidacaoException e) {
-
-				if (validacaoVO.getListaMensagens() == null){
+		if (!this.cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota()) &&
+			!this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())){
+			
+			if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+	
+				try {
 					
-					validacaoVO.setListaMensagens(new ArrayList<String>());
+					boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
+	
+					if (existeBoletoAntecipado){
+					
+					    this.gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
+					}
+					else{
+					
+					    this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+					}    
+				} 
+				catch (GerarCobrancaValidacaoException e) {
+	
+					if (validacaoVO.getListaMensagens() == null){
+						
+						validacaoVO.setListaMensagens(new ArrayList<String>());
+					}
+	
+					validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
 				}
-
-				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
 			}
 		}
 			
@@ -784,7 +788,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, List<FechamentoFisicoLogicoDTO> listaEncalheSessao)  {
 
-		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true);
+		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true, true);
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
@@ -1263,8 +1267,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
-	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao) { 
-		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
-	
+	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, 
+			boolean ignorarUnificacao) { 
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(
+				dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0, ignorarUnificacao);
 	}
 }
