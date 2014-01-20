@@ -43,4 +43,6 @@ public interface NegociacaoDividaService {
 	 * @return Integer
 	 */
 	Integer obterQuantidadeParcelasConformeValorMinimo(FiltroCalculaParcelas filtro);
+	
+	void abaterNegociacaoPorComissao(Long idCota, BigDecimal valorTotalEncalhe, Usuario usuario);
 }
