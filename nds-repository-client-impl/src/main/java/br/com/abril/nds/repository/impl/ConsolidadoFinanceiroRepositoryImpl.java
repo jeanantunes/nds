@@ -1269,8 +1269,14 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
                    .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
                    .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
-                   //data raiz postergado
                    
+                   .append(" ( select divida.status from cobranca cobranca ")
+                   .append("  join divida divida on divida.id = cobranca.divida_id  ")
+                   .append("  join cota cota on cota.id = divida.cota_id ")
+                   .append("  where cota.id = cfc.COTA_ID ")
+                   .append("  and  divida.data = cfc.dt_consolidado limit 1 ) as statusDivida,")	
+                   
+                   //data raiz postergado
                    .append(" (select max(mfp.DATA_CRIACAO)  ")
                    .append(" from  MOVIMENTO_FINANCEIRO_COTA mfp ") 
            .append(" join consolidado_mvto_financeiro_cota cmfc on cmfc.MVTO_FINANCEIRO_COTA_ID=mfp.id ")
@@ -1488,6 +1494,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    
                    //cobrado
                    .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
+                   
+                   .append(" ( select divida.status from cobranca cobranca ")
+                   .append("  join divida divida on divida.id = cobranca.divida_id  ")
+                   .append("  join cota cota on cota.id = divida.cota_id ")
+                   .append("  where cota.id = mfc.COTA_ID ")
+                   .append("  and  divida.data = mfc.data limit 1 ) as statusDivida,")
                    
                    //data raiz
                    .append(" (select ")
@@ -1708,7 +1720,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                 query.addScalar("valorVendaDia", StandardBasicTypes.BIG_DECIMAL);
                 query.addScalar("numeroAcumulo", StandardBasicTypes.BIG_INTEGER);
                 query.addScalar("inadimplente", StandardBasicTypes.BOOLEAN);
+
+                query.addScalar("statusDivida", StandardBasicTypes.STRING);
+
                 query.addScalar("nomeBox");
+
                 
                 query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
                 
