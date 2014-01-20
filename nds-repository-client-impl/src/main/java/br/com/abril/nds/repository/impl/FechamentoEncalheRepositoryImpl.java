@@ -537,10 +537,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("		join COTAUNIFICACAO_COTAUNIFICADA co_un on (cu.ID = co_un.COTA_UNIFICACAO_ID) ");
 		sql.append("		where cu.COTA_ID = cota.ID or ");
 		sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
-		sql.append("		");
-		sql.append("		");
-		sql.append("		");
-		sql.append("		");
 	}
 	
 	
@@ -671,13 +667,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		if (ignorarUnificacao){
 			
-			sql.append("	and cota.ID not in ( 															");
+			sql.append("	and cota.ID not in ( 											");
 			sql.append("		select aoada.COTA_UNIFICADA_ID								");
-			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada) 					 	");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada) 			 	");
 			
-			sql.append("	and cota.ID not in ( 															");
-			sql.append("		select uni.cota_id 							");
-			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) 					 	");
+			sql.append("	and cota.ID not in ( 											");
+			sql.append("		select uni.cota_id 											");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
 			
 		}
 		
@@ -773,13 +769,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		if (ignorarUnificacao){
 			
-			sql.append("	and cota.ID not in ( 															");
-			sql.append("		select aoada.COTA_UNIFICADA_ID								");
-			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada) 					 	");
+			sql.append("	and cota.ID not in ( 								");
+			sql.append("		select aoada.COTA_UNIFICADA_ID					");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada)	");
 			
-			sql.append("	and cota.ID not in ( 															");
-			sql.append("		select uni.cota_id 							");
-			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) 					 	");
+			sql.append("	and cota.ID not in ( 								");
+			sql.append("		select uni.cota_id 								");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
 			
 		}
 		

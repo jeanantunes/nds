@@ -459,11 +459,7 @@ public class FechamentoEncalheController extends BaseController {
 				
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
-				for (CotaAusenteEncalheDTO d : listaCotaAusenteEncalhe){
-					if (d.getNumeroCota().equals(1) || d.getNumeroCota().equals(2) || d.getNumeroCota().equals(3)){
-						System.out.println(d.getNumeroCota() + " " + d.isUnificacao());
-					}
-				}
+				
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
 			} else {
