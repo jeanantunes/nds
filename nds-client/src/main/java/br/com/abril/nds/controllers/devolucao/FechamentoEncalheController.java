@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -101,22 +102,18 @@ public class FechamentoEncalheController extends BaseController {
 	@Autowired
 	protected BoletoService boletoService;
 	
-	private AtomicReference<HttpSession> sessionHolder;
+	@Autowired
+	protected HttpSession session;
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
 	private static final String DATA_HOLDER_ACTION_KEY = "fechamentoEncalhe";
 	
-	private static final String STATUS_COBRANCA_COTA_SESSION = "statusCobrancaCotaSession";
-	
 	private static final String STATUS_FINALIZADO = "FINALIZADO";
 	
-	public FechamentoEncalheController(HttpSession session) {
-		
-		this.sessionHolder = new AtomicReference<>();
-		
-		this.sessionHolder.set(session);
-	}
+	private static final String KEY_COBRANCA_COTAS = "cobrancaCotas";
+	
+	private static final ConcurrentMap<String, String> CACHE_COBRANCA_COTAS = new ConcurrentHashMap<>();
 	
 	@Path("/")
 	public void index() {
@@ -493,7 +490,9 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			for (Long idCota : idsCotas) {
 
-				this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+				String status =  "Cota " + statusCobrancaCota++ + " de " + totalCotas;
+				
+				this.setStatusCobrancaCota(status);
 
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
 
@@ -504,13 +503,13 @@ public class FechamentoEncalheController extends BaseController {
 
 		} catch (Exception e) {
 
-			this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 
 			throw e;
 			
 		} finally {
 			
-			this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 		}
 
 		if (ex != null){
@@ -533,7 +532,9 @@ public class FechamentoEncalheController extends BaseController {
 			
 			for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotasAusentes){
 				
-				this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
+				String status =  "Cota " + (++statusCobrancaCota) + " de " + totalCotas;
+				
+				this.setStatusCobrancaCota(status);
 
 				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
 												                   getUsuarioLogado(), 
@@ -546,7 +547,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 		} finally {
 			
-			this.getSession().setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
+			this.setStatusCobrancaCota(STATUS_FINALIZADO);
 		}
 
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
@@ -558,7 +559,7 @@ public class FechamentoEncalheController extends BaseController {
 	@Post
 	public void obterStatusCobrancaCota() {
 		
-		String status = (String) this.getSession().getAttribute(STATUS_COBRANCA_COTA_SESSION);
+		String status = this.getStatusCobrancaCotas();
 		
 		result.use(Results.json()).withoutRoot().from(status==null?"Processando cotas..." : status).recursive().serialize();
 	}
@@ -1012,7 +1013,17 @@ public class FechamentoEncalheController extends BaseController {
 
 	private HttpSession getSession() {
 
-		return this.sessionHolder.get();
+		return this.session;
+	}
+	
+	private String getStatusCobrancaCotas() {
+		
+		return CACHE_COBRANCA_COTAS.get(KEY_COBRANCA_COTAS);
+	}
+	
+	private void setStatusCobrancaCota(String status) {
+		
+		CACHE_COBRANCA_COTAS.put(KEY_COBRANCA_COTAS, status);
 	}
 	
 }
