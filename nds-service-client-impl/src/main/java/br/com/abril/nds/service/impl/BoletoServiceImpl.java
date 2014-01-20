@@ -58,6 +58,7 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoAntecipado;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.EmissaoBoletoAntecipado;
@@ -561,9 +562,20 @@ public class BoletoServiceImpl implements BoletoService {
 
 		acumuloDivida.setMovimentoFinanceiroMulta(movimentoMulta);
 
+		ConsolidadoFinanceiroCota c = null;
+		
+		for (ConsolidadoFinanceiroCota cc : divida.getConsolidados()){
+			
+			if (cc.getCota().equals(divida.getCota())){
+				
+				c = cc;
+				break;
+			}
+		}
+		
 		acumuloDivida.setNumeroAcumulo(
 			this.acumuloDividasService.obterNumeroDeAcumulosDivida(
-				divida.getConsolidado().getId()).add(BigInteger.ONE));
+				c.getId()).add(BigInteger.ONE));
 		
 		acumuloDivida.setDataCriacao(new Date());
 		

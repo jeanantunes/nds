@@ -135,15 +135,9 @@
                             	Por Cotas:
                             </td>
                             <td>
-                            	<select name="unificadaPorCota" id="unificadaCota" style="width: 80px;"
-                            		onchange="parametroCobrancaController.botaoUnificaPorCotas(this.value);">
-                                    <option value="S">Sim</option>
-                                    <option value="N" selected="selected">N&atilde;o</option>
-                            	</select>
-                            	
                             	<button type="button" id="botaoTelaUnificacao" onclick="parametroCobrancaController.mostrarUnificacaoCotas();"
                             		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" 
-                            		role="button" aria-disabled="false" style="display: none;">
+                            		role="button" aria-disabled="false">
                             		<span class="ui-button-text">Cadastrar</span>
                             	</button>
                             	

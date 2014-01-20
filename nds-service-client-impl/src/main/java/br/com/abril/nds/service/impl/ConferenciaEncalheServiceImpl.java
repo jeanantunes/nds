@@ -1479,10 +1479,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			//se a cota for unificadora ou unificada não pode gerar cobrança nesse ponto
 			boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
-					controleConferenciaEncalheCota.getCota().getNumeroCota(), null),
+					controleConferenciaEncalheCota.getCota().getNumeroCota()),
 					
 					cotaUnificada = this.cotaUnificacaoRepository.verificarCotaUnificadora(
-							controleConferenciaEncalheCota.getCota().getNumeroCota(), null);
+							controleConferenciaEncalheCota.getCota().getNumeroCota());
 			
 			if (!cotaUnificadora && !cotaUnificada){
 			

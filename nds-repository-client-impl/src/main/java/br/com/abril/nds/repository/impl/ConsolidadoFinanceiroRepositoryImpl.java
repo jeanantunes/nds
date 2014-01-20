@@ -1130,7 +1130,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" join consolidado.cota cota ")
                    .append(" where consolidado.dataConsolidado = (select d.dataOperacao from Distribuidor d) ")
                    .append(" and consolidado.id not in (")
-                   .append(" select c.id from Divida d join d.consolidado c where c.id = consolidado.id ")
+                   .append(" select c.id from Divida d join d.consolidados c where c.id = consolidado.id ")
                    .append(" and d.origemNegociacao = false ")
                    .append(")");
                 
@@ -1245,7 +1245,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
                    .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
                    .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
-                   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
+                   .append(" join divida_consolidado d_cons on d_data.ID = d_cons.DIVIDA_ID ")
+                   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_cons.CONSOLIDADO_ID ")
                    .append(" join consolidado_mvto_financeiro_cota cmfc_data_data_ant on cmfc_data_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
                    .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_data_ant.MVTO_FINANCEIRO_COTA_ID ")
                    .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
@@ -1268,7 +1269,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" cfc.PENDENTE as pendente, ")
                    .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
                    .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
-                   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
+                   .append(" ((select count(cob.ID) from COBRANCA cob ")
+                   .append("	join DIVIDA _div on (_div.id = cob.divida_id) ")
+                   .append("	join DIVIDA_CONSOLIDADO _d_cons on (_d_cons.DIVIDA_ID = _div.ID) ")
+                   .append(" where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO) > 0) as cobrado, ")
+                   //data raiz postergado
                    
                    .append(" ( select divida.status from cobranca cobranca ")
                    .append("  join divida divida on divida.id = cobranca.divida_id  ")
@@ -1293,9 +1298,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
                    .append("           inner join DIVIDA divida ")
                    .append("                 on divida.ID = cobranca.DIVIDA_ID ")
+                   .append("		   inner join DIVIDA_CONSOLIDADO d_cons ")
+                   .append("				 on divida.ID = d_cons.DIVIDA_ID ")
                    .append("           where bc.STATUS not in (:statusBaixaCobranca) ")
                    .append("           and cota.ID = cobranca.COTA_ID ")
-                   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
+                   .append("           and d_cons.CONSOLIDADO_ID = cfc.ID ")
                    .append("           and cfc.ID) as valorPago, ")
                    //total
                    .append(" cfc.TOTAL as total, ")
@@ -1307,8 +1314,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                         .append("          FROM BAIXA_COBRANCA bc ")
                         .append("          INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
                         .append("          INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
+                        .append("		   INNER JOIN DIVIDA_CONSOLIDADO d_cons ON divida.ID = d_cons.DIVIDA_ID ")
                         .append("          WHERE bc.STATUS NOT IN (:statusBaixaCobranca)  ")
-                        .append("          AND cota.ID = cobranca.COTA_ID AND divida.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
+                        .append("          AND cota.ID = cobranca.COTA_ID AND d_cons.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
                         .append(" ) as saldo, ")
 
                    .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) ")
@@ -1323,8 +1331,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    
                    .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
                    .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
+                   .append(" inner join DIVIDA_CONSOLIDADO d_cons on d_cons.CONSOLIDADO_ID = cfc.ID ")
+                   .append(" left join DIVIDA divida on divida.ID = d_cons.DIVIDA_ID ")
                    .append(" left join BOX box on cota.BOX_ID = box.ID")
-                   .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
                    .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
                    .append(" where cota.NUMERO_COTA = :numeroCota ");
                 
@@ -1364,7 +1373,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" join tipo_movimento tm_data on tm_data.ID=mfc_data.TIPO_MOVIMENTO_ID ")
                    .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
                    .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
-                   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
+                   .append(" join divida_consolidado d_cons on d_cons.DIVIDA_ID = d_data.ID ")
+                   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_cons.CONSOLIDADO_ID ")
                    .append(" join consolidado_mvto_financeiro_cota cmfc_data_ant on cmfc_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
                    .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_ant.MVTO_FINANCEIRO_COTA_ID ")
                    .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")

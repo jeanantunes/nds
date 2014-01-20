@@ -139,7 +139,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	public void obterMovimentoFinanceiroCota() {
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiro =
-			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(null);
+			movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(null, new Date());
 		
 		Assert.assertNotNull(listaMovimentoFinanceiro);
 		
@@ -151,7 +151,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	public void obterMovimentoFinanceiroCotaPorCota() {
 		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiro =
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(cotaManoel.getId());
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(cotaManoel.getId(), new Date());
 		
 		Assert.assertNotNull(listaMovimentoFinanceiro);
 
