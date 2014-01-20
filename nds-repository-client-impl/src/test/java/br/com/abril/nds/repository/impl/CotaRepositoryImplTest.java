@@ -1426,7 +1426,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(itemRecebimentoFisico1Veja);
 
 		Lancamento lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, veja1,
+				TipoLancamento.LANCAMENTO, veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(),
 				new Date(), BigInteger.valueOf(100),

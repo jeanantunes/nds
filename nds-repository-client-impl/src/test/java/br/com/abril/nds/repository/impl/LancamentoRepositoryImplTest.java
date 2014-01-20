@@ -239,20 +239,20 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 						recebimentoFisico4Rodas, BigInteger.valueOf(25));
 		save(itemRecebimentoFisico4Rodas);
 
-		lancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
+		lancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(),
 				new Date(), BigInteger.valueOf(100),
 				StatusLancamento.CONFIRMADO, itemRecebimentoFisico1Veja, 1);
 		lancamentoVeja.getRecebimentos().add(itemRecebimentoFisico2Veja);
 
-		proximoLancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR,
+		proximoLancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				veja1, Fixture.criarData(23, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(),
 				new Date(), BigInteger.valueOf(100),
 				StatusLancamento.CONFIRMADO, null, 1);
 
-		ultimoLancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR,
+		ultimoLancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				veja1, Fixture.criarData(24, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(),
 				new Date(), BigInteger.valueOf(100),

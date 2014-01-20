@@ -184,6 +184,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		((SQLQuery) query).addScalar("recolhimento", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("suplementar", StandardBasicTypes.BOOLEAN);
 		((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
+		((SQLQuery) query).addScalar("parcial", StandardBasicTypes.BOOLEAN);
+		((SQLQuery) query).addScalar("chamadaEncalheId", StandardBasicTypes.LONG);
 		
 		return query.list();
 	}
@@ -202,7 +204,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 coalesce(ce.SEQUENCIA, 0) as sequencia,"); 
 		query.append("			 p.NOME as produto, ");
 		query.append("			 p.CODIGO as codigo, ");
-		query.append("			 pe.NUMERO_EDICAO as edicao,"); 
+		query.append("			 pe.NUMERO_EDICAO as edicao,");
+		query.append("			 pe.PARCIAL as parcial,");
+		query.append("			 ce.ID as chamadaEncalheId,");
 		query.append("			 pe.ORIGEM as origem, ");
 		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
 		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
@@ -254,7 +258,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 ce.SEQUENCIA as sequencia,"); 
 		query.append("			 p.NOME as produto, ");
 		query.append("			 p.CODIGO as codigo, ");
-		query.append("			 pe.NUMERO_EDICAO as edicao,"); 
+		query.append("			 pe.NUMERO_EDICAO as edicao,");
+		query.append("			 pe.PARCIAL as parcial,");
+		query.append("			 ce.ID as chamadaEncalheId,");
 		query.append("			 pe.ORIGEM as origem, ");
 		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
 		query.append("			 dlp.ID as produtoDescontoLogisticaId,");

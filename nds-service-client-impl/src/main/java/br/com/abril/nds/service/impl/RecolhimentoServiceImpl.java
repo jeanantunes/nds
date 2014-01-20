@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
+import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -44,7 +45,6 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -54,6 +54,7 @@ import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
@@ -97,6 +98,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	protected ProdutoEdicaoRepository produtoEdicaoRepository;
+
+	@Autowired
+	protected MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -407,10 +411,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				this.lancamentoRepository.merge(lancamento);
 				
-				if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
-					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento, usuario);
-				}
-				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
 												   		lancamento, novaData);
 				
@@ -508,36 +508,31 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
-					throw new ValidacaoException(TipoMensagem.WARNING,
-							"Estoque produto cota não encontrado!");
+					throw new ValidacaoException(TipoMensagem.WARNING, "Estoque produto cota não encontrado!");
 				}
 
-				List<ChamadaEncalhe> listaChamadaEncalhe = new ArrayList<ChamadaEncalhe>();
+				ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
+				
+				List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idLancamento, produtoEdicao.getId());
 
-				for (EstoqueProdutoCota estoqueProdutoCota : listaEstoqueProdutoCota) {
+				for (CotaReparteDTO cotaReparte : cotasReparte) {
 
-					boolean indNovaChamadaEncalhe = false;
+					Cota cota = cotaReparte.getCota();
+					BigInteger qtdPrevista = cotaReparte.getReparte();
+
+					List<ChamadaEncalhe> chamadasEncalhe =
+						this.chamadaEncalheRepository.obterChamadasEncalhe(
+							produtoEdicao, null, dataRecolhimento);
 					
-					ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
-
-					Cota cota = estoqueProdutoCota.getCota();
-
-					Boolean existeChamadaEncalheCota = 
-						this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(
-							cota.getId(), produtoEdicao.getId(), dataRecolhimento);
-					
-					if (existeChamadaEncalheCota) {
-						
+					if (this.existeChamadaEncalheAntecipadaChamadao(chamadasEncalhe, cota.getId())) {
 						continue;
 					}
 					
 					ChamadaEncalhe chamadaEncalhe =
-						this.obterChamadaEncalheLista(
-							listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());
-
-					indNovaChamadaEncalhe = (chamadaEncalhe == null);
+						this.getChamadaEncalheMatrizRecolhimento(chamadasEncalhe);
 					
-					if (indNovaChamadaEncalhe) {
+					if (chamadaEncalhe == null) {
+						
 						chamadaEncalhe =
 							this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
@@ -554,49 +549,96 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					chamadaEncalhe = this.chamadaEncalheRepository.merge(chamadaEncalhe);
 					
-					if (indNovaChamadaEncalhe) {
-						listaChamadaEncalhe.add(chamadaEncalhe);
-					}
-					
-					this.criarChamadaEncalheCota(estoqueProdutoCota, cota, chamadaEncalhe);
+					this.criarChamadaEncalheCota(qtdPrevista, cota, chamadaEncalhe);
 				}
 			}
 		}
 	}
-
+	
 	/**
 	 * Método que cria uma chamada de encalhe para a cota.
 	 * 
-	 * @param estoqueProdutoCota - estoque do produto da cota
+	 * @param qtdPrevista - quantidade prevista
 	 * @param cota - cota
 	 * @param chamadaEncalhe chamada de encalhe
 	 */
-	private void criarChamadaEncalheCota(EstoqueProdutoCota estoqueProdutoCota,
+	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe) {
-
-		BigInteger qtdPrevista = BigInteger.ZERO;
-		
-		if (estoqueProdutoCota != null) {
-			
-			qtdPrevista = estoqueProdutoCota.getQtdeRecebida().subtract(
-				estoqueProdutoCota.getQtdeDevolvida());
-		}
 		
 		if(BigInteger.ZERO.compareTo(qtdPrevista)>=0) {
 			
 			return;
 		}
 		
-		ChamadaEncalheCota chamadaEncalheCota = new ChamadaEncalheCota();
+		ChamadaEncalheCota chamadaEncalheCota =
+			this.getChamadaEncalheCota(chamadaEncalhe, cota.getId());
+		
+		if (chamadaEncalheCota == null) {
+			chamadaEncalheCota = new ChamadaEncalheCota();
+		}
+		
+		BigInteger qtdPrevistaExistente =
+			chamadaEncalheCota.getQtdePrevista() != null ? chamadaEncalheCota.getQtdePrevista() : BigInteger.ZERO;
+			
+		qtdPrevista = qtdPrevista.add(qtdPrevistaExistente);
 		
 		chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 		chamadaEncalheCota.setFechado(false);
 		chamadaEncalheCota.setCota(cota);
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
 		
-		this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+		this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 	}
+	
+	private ChamadaEncalhe getChamadaEncalheMatrizRecolhimento(List<ChamadaEncalhe> chamadasEncalhe) {
+		
+		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
+			
+			TipoChamadaEncalhe tipoChamadaEncalhe = chamadaEncalhe.getTipoChamadaEncalhe();
+			
+			if (tipoChamadaEncalhe.equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+				
+				return chamadaEncalhe;
+			}
+		}
+		
+		return null;
+	}
+	
+	private boolean existeChamadaEncalheAntecipadaChamadao(List<ChamadaEncalhe> chamadasEncalhe, Long idCota) {
+		
+		for (ChamadaEncalhe chamadaEncalhe : chamadasEncalhe) {
+			
+			TipoChamadaEncalhe tipoChamadaEncalhe = chamadaEncalhe.getTipoChamadaEncalhe();
+			
+			if (!tipoChamadaEncalhe.equals(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
+				
+				for (ChamadaEncalheCota chamadaEncalheCota : chamadaEncalhe.getChamadaEncalheCotas()) {
+					
+					if (idCota.equals(chamadaEncalheCota.getCota().getId())) {
+						
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private ChamadaEncalheCota getChamadaEncalheCota(ChamadaEncalhe chamadaEncalhe, Long idCota) {
+			
+		for (ChamadaEncalheCota chamadaEncalheCota : chamadaEncalhe.getChamadaEncalheCotas()) {
+			
+			if (idCota.equals(chamadaEncalheCota.getCota().getId())) {
+		
+				return chamadaEncalheCota;
+			}
+		}
 
+		return null;
+	}
+	
 	/**
 	 * Método que cria uma chamada de encalhe.
 	 * 
@@ -616,32 +658,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalhe.setSequencia(sequencia);
 		
 		return chamadaEncalhe;
-	}
-	
-	/**
-	 * Método que obtém uma chamada de encalhe da lista informada.
-	 * É utilizado para informar se já existe uma chamada de encalhe adicionada anteriormente na lista.
-	 * 
-	 * @param listaChamadaEncalhe - lista de chamadas de encalhe
-	 * @param dataRecolhimento - 
-	 * @param idProdutoEdicao - 
-	 * 
-	 * @return chamada de encalhe, caso já exista uma chamada na lista
-	 */
-	private ChamadaEncalhe obterChamadaEncalheLista(List<ChamadaEncalhe> listaChamadaEncalhe,
-													Date dataRecolhimento,
-													Long idProdutoEdicao) {
-		
-		for (ChamadaEncalhe chamadaEncalheLista : listaChamadaEncalhe) {
-			
-			if (dataRecolhimento.equals(chamadaEncalheLista.getDataRecolhimento())
-					&& idProdutoEdicao.equals(chamadaEncalheLista.getProdutoEdicao().getId())) {
-				
-				return chamadaEncalheLista;
-			}
-		}
-		
-		return null;
 	}
 	
 	/**

@@ -208,8 +208,10 @@ public interface ProdutoEdicaoService {
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
 
-	
 	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
 
     BigInteger obterReparteDisponivel(Long idProdutoEdicao);
+	
+    Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
+	
 }

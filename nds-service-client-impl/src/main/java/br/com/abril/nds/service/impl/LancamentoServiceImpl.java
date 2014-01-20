@@ -136,7 +136,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional
-	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, 
+									  TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,
+									  TipoMovimentoEstoque tipoMovimentoJuramentado) {
 		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 		
@@ -162,7 +164,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
-				lancamento.getIdProduto(), lancamento.getIdProdutoEdicao(), idLancamento, idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
+				lancamento.getIdProduto(), lancamento.getIdProdutoEdicao(), idLancamento, idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota, tipoMovimentoJuramentado);
 		
 				
 		
@@ -279,16 +281,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao) {
 		
-		Boolean isEdicaoParcial = produtoEdicaoRepository.isEdicaoParcial(idProdutoEdicao);
-		
-		if(isEdicaoParcial){
-			
-			return lancamentoRepository.obterLancamentosParcialEdicao(idProdutoEdicao, sortorder, sortname);
-		}
-		
-		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
+		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao);
 	}
 
 	@Override

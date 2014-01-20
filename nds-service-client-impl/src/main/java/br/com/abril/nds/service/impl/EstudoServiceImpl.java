@@ -26,6 +26,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -45,6 +46,9 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
@@ -292,5 +296,22 @@ public class EstudoServiceImpl implements EstudoService {
 		return this.estudoRepository.obterUltimoAutoIncrement();
 		
 	}
+
+	@Transactional
+	public Estudo criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento){
+		
+		Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		Estudo estudo = new Estudo();
+		estudo.setDataCadastro(dataOperacao);
+		estudo.setDataLancamento(dataLancamento);
+		estudo.setProdutoEdicao(produtoEdicao);
+		estudo.setQtdeReparte(quantidadeReparte);
+		estudo.setReparteDistribuir(quantidadeReparte);
+		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+		
+		return estudoRepository.merge(estudo);
+	}
+	
 	
 }
