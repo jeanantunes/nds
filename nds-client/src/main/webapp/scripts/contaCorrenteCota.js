@@ -225,18 +225,18 @@ var contaCorrenteCotaController = $.extend(true, {
                                    (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
                
                 if(value.cell.statusDivida && value.cell.statusDivida == "NEGOCIADA") {	
-                	value.cell.cobrado = '<img src="'+ contextPath +'/images/hammer.png"/>';
+                	value.cell.cobrado = '<img src="'+ contextPath +'/images/hammer.png" alt="Dívida Negociada"/>';
                 } else if (value.cell.inadimplente) {
 				
-            	   value.cell.cobrado = '<img src="'+ contextPath +'/images/seta_sobe.gif"/>';
+            	   value.cell.cobrado = '<img src="'+ contextPath +'/images/seta_sobe.gif" alt="Dívida Acumulada"/>';
                
                } else if (value.cell.cobrado){
 					
-					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png" alt="Cobrança Gerada" />';
 				
 				} else {
 					
-					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif" alt="Dívida Postergada" />';
 					value.cell.saldo = (value.cell.total != null && value.cell.total != 0)?
 					                   (formatMoneyValue(value.cell.total, 2)) : '0.00';
 				}
