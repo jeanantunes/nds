@@ -521,7 +521,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		   .append(" (case when m.observacao is null then '' else (' - ' || m.observacao) end) as observacao, ")
 		   .append(" m.tipoMovimento as tipoMovimentoFinanceiro ")
 		   .append(" from Cobranca c ")
-		   .append(" join c.divida.consolidado.movimentos m ")
+		   .append(" join c.divida.consolidados consolidados")
+		   .append(" join consolidados.movimentos m ")
 		   .append(" where c.id = :idCobranca ")
 		   .append(" order by m.dataCriacao desc ");
 		
