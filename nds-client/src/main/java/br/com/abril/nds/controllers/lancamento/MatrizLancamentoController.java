@@ -888,7 +888,9 @@ public class MatrizLancamentoController extends BaseController {
 				
 		produtoBalanceamentoVO.setPeb(produtoLancamentoDTO.getPeb());
 		
-		if(produtoLancamentoDTO.getStatus()== StatusLancamento.CONFIRMADO || produtoLancamentoDTO.getStatus()== StatusLancamento.EM_BALANCEAMENTO){
+		if(produtoLancamentoDTO.getStatus()== StatusLancamento.CONFIRMADO 
+				|| produtoLancamentoDTO.getStatus()== StatusLancamento.EM_BALANCEAMENTO
+				|| produtoLancamentoDTO.getStatus()== StatusLancamento.PLANEJADO){
 		  produtoBalanceamentoVO.setCancelado(true);
 		}else{
 		  produtoBalanceamentoVO.setCancelado(false);	
