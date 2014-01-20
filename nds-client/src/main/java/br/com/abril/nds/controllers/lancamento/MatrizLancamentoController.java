@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -32,8 +33,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -72,6 +75,10 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Autowired
 	private MatrizLancamentoService matrizLancamentoService;
+
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepositoryService;
 	
 	@Autowired
 	private HttpSession session;
@@ -84,6 +91,9 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Value("${data_cabalistica}")
+	private String dataCabalistica;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
 	
@@ -882,6 +892,12 @@ public class MatrizLancamentoController extends BaseController {
 				
 		produtoBalanceamentoVO.setPeb(produtoLancamentoDTO.getPeb());
 		
+		if(produtoLancamentoDTO.getStatus()== StatusLancamento.CONFIRMADO || produtoLancamentoDTO.getStatus()== StatusLancamento.EM_BALANCEAMENTO){
+		  produtoBalanceamentoVO.setCancelado(true);
+		}else{
+		  produtoBalanceamentoVO.setCancelado(false);	
+		}
+		
 		return produtoBalanceamentoVO;
 	}	
 	
@@ -1315,6 +1331,25 @@ public class MatrizLancamentoController extends BaseController {
 		
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
+	public void excluirLancamento(ProdutoLancamentoVO produtoLancamento) {
+
+		Date data = DateUtil.parseDataPTBR(this.dataCabalistica);
+		
+		Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
+		
+		lancamento.setDataLancamentoDistribuidor(data);
+		lancamento.voltarStatusOriginal();
+		//atualizarLancamento(produtoLancamento.getId(),data);
+
+		this.lancamentoRepositoryService.merge(lancamento);
+
+		this.result.use(PlainJSONSerialization.class).from(
+					new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
+		
 	}
 
 }

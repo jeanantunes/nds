@@ -893,6 +893,12 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-sexo").attr("disabled", true);
 							$("#produtoEdicaoController-faixaEtaria").attr("disabled", true);
 							$("#produtoEdicaoController-tipoSegmento").attr("disabled", true);
+							
+							if(!result.dataLancamento){
+								 $("#produtoEdicaoController-dataLancamento").val("");
+								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+								 $("#produtoEdicaoController-istrac29").val(true);
+							}
 
 							if (redistribuicao) {
 								

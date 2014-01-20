@@ -169,6 +169,9 @@ fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 
 .bt_atualizarIco{background:url(../images/ico_atualizar.gif) no-repeat left center; width:21px; height:20px; float:left;}
 .bt_atualizarIco a{text-decoration:none; width:20px; display:block;}
 
+.bt_excluirLancamentoIco{background:url(../images/ico_excluir.gif) no-repeat left center; width:20px; height:20px; float:left;}
+.bt_excluirLancamentoIco a{text-decoration:none; width:20px; display:block;}
+
 .bt_liberaDivida{background:url(../images/ico_add_novo.gif) no-repeat left center; width:16px; height:16px; float:left;}
 .bt_liberaDivida a{text-decoration:none;}
 

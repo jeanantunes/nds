@@ -45,7 +45,13 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" JOIN prodEdicao.produto as produto ");
 		hql.append(" left JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
 		
-		hql.append(" WHERE datediff(current_date(), estudo.dataLancamento)<365 ");
+		hql.append(" WHERE ");
+		
+		hql.append(" datediff(current_date(), ");
+		
+		hql.append(" CASE WHEN estudo.dataLancamento is not null THEN estudo.dataLancamento ELSE estudo.dataCadastro END ");
+		
+		hql.append(" )<365 ");
 		
 		hql.append(this.getSqlWhereBuscarEstudos(filtro));
 		hql.append(this.ordenarConsultaAnaliseEstudo(filtro));
