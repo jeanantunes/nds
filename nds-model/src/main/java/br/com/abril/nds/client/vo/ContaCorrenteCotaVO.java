@@ -33,6 +33,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private Date dataRaiz;
 	
+	private String statusDivida;
+	
 	private Date dataPendente;
 	
 	private String nomeBox;
@@ -350,4 +352,13 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setInadimplente(boolean inadimplente) {
 		this.inadimplente = inadimplente;
 	}
+
+	public String getStatusDivida() {
+		return statusDivida;
+	}
+
+	public void setStatusDivida(String statusDivida) {
+		this.statusDivida = statusDivida;
+	}
+
 }
