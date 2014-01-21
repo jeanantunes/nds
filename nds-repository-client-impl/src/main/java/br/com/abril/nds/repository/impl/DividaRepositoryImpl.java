@@ -227,7 +227,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		hql.append(" FROM ")
 		.append(" Divida divida ")
 		.append(" JOIN divida.cobranca cobranca ")
-		.append(" JOIN divida.consolidado consolidado ")
+		.append(" JOIN divida.consolidados consolidado ")
 		.append(" JOIN cobranca.cota cota ")
 		.append(" left JOIN cota.box box ")
 		.append(" left JOIN cota.pdvs pdv ")
@@ -812,7 +812,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		StringBuilder hql = new StringBuilder("select d ");
 		hql.append(" from Divida d ")
-		   .append(" join d.consolidado cons ")
+		   .append(" join d.consolidados cons ")
 		   .append(" join d.cobranca cob ")
 		   .append(" where cons.id = :idConsolidado ")
 		   .append(" and cob.id not in ( ")
@@ -832,7 +832,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		StringBuilder hql = new StringBuilder("select d ");
 		hql.append(" from Divida d ")
-		   .append(" join d.consolidado cons ")
+		   .append(" join d.consolidados cons ")
 		   .append(" where cons.id = :idConsolidado ");
 		
 		Query query = this.getSession().createQuery(hql.toString());

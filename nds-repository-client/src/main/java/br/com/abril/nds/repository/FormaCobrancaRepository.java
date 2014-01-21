@@ -73,9 +73,5 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	 */
 	List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa);
 
-	List<FormaCobranca>obterFormaCobrancaCotaUnificadora(Long idCota);
-	
-	List<FormaCobranca>obterFormaCobrancaCotaUnificada(Long idCota);
-
 	void removerFormasCobrancaCota(Integer numeroCota);
 }
