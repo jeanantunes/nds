@@ -383,6 +383,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return ordinal;
 	}
 	
+
+	/**
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.integracao.DistribuidorService#obterDatasAposFinalizacaoPrazoRecolhimento(java.util.Date, java.lang.Long[])
+	 */
 	@Transactional(readOnly = true)
 	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor) {
 		
@@ -468,6 +473,17 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return 0;
 	}
 	
+	/**
+	 * Retorna um mapa com as data de recolhimento possíveis tendo como chave
+	 * os valores de 1 a 5 representando a sequencia ordinal dos dias de recolhimento 
+	 * como primerio até quinto dia.
+	 *  
+	 * 
+	 * @param dataRecolhimento
+	 * @param diasSemanaDistribuidorOpera
+	 * 
+	 * @return Map<Integer,Date>
+	 */
 	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento,List<Integer> diasSemanaDistribuidorOpera) {
 		
 		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();

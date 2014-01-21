@@ -451,6 +451,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		fechamentoEncalheRepository.flush();
 	}
 
+	private Integer obterDiaRecolhimento(Date dataRecolhimento) {
+		
+		if(dataRecolhimento == null) {
+			return null;
+		}
+		
+		return DateUtil.obterDiaDaSemana(dataRecolhimento);
+		
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe,
@@ -462,8 +472,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			startSearch = page * rp - rp;	
 		} 
 		
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
+		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
+			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
 
 		if (!isSomenteCotasSemAcao){
 			
@@ -509,6 +521,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
+		if(cotaAusenteEncalheDTO.isOperacaoDiferenciada()) {
+			cotaAusenteEncalheDTO.setAcao( 
+					(cotaAusenteEncalheDTO.getAcao()==null || cotaAusenteEncalheDTO.getAcao().trim().isEmpty()) ?  
+					"Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao()+ " / Operação Diferenciada" 
+			);
+		}
+		
+		
 	}
 	
 	
@@ -516,7 +536,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
 		
-		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
+		
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, null, null, 0, 0);
 	}
 
 
@@ -1268,8 +1290,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, 
-			boolean ignorarUnificacao) { 
+			boolean ignorarUnificacao) {
+		
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
+		
 		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(
-				dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0, ignorarUnificacao);
+				dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, null, null, 0, 0, ignorarUnificacao);
 	}
 }

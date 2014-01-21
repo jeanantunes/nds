@@ -32,7 +32,8 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6, widthPercent=15)
 	private String acao = "";
 
-
+	private boolean operacaoDiferenciada;
+	
 	private boolean postergado;
 	
 	private boolean indPossuiChamadaEncalheCota;
@@ -218,6 +219,14 @@ public class CotaAusenteEncalheDTO implements Serializable {
 
 	public void setUnificacao(boolean unificacao) {
 		this.unificacao = unificacao;
+	}
+
+	public boolean isOperacaoDiferenciada() {
+		return operacaoDiferenciada;
+	}
+
+	public void setOperacaoDiferenciada(boolean operacaoDiferenciada) {
+		this.operacaoDiferenciada = operacaoDiferenciada;
 	}
 	
 	
