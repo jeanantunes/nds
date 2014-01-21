@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -43,6 +44,8 @@ public class BoletoEmailController extends BaseController {
 	@Autowired
 	private HttpSession session;
 	
+	private static final Logger LOG = Logger.getLogger("envioEmailBoletosLogger");
+	
 	private static final String STATUS_ENVIO_FINALIZADO = "ENVIO_FINALIZADO";
 	
 	private static final String STATUS_BOLETO_EMAIL_SESSION = "statusCobrancaCotaSession";
@@ -77,18 +80,29 @@ public class BoletoEmailController extends BaseController {
 			
 			this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir);
 			
-		    try{
+		    try {
 
 				this.boletoEmailService.enviarBoletoEmail(bm);
-			}	
-            catch(Exception e){
-            	
-            	e.printStackTrace();
+
+				LOG.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] enviado com sucesso, para a cota: " + bm.getCobranca().getCota().getNumeroCota());
+
+			} catch(Exception e) {
             	
             	Cota cota = bm.getCobranca().getCota();
         	
         	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome());
         	    
+        	    LOG.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: " + bm.getCobranca().getCota().getNumeroCota());
+        	    LOG.info(e.getMessage());
+
+        	    String stackTrace = "";
+        	    
+        	    for (StackTraceElement element : e.getStackTrace()) {
+        	    	stackTrace += element.toString() + "\n";
+        	    }
+        	    
+        	    LOG.info(stackTrace);
+
         	    boletosNaoEmitidos = true;
             }
 		}
