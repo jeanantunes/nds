@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -31,8 +30,6 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cadastro/cotaUnificacao")
 //@Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA)
 public class CotaUnificacaoController extends BaseController {
-	
-	public static String UNIFICACOES = "unificacoes";
 	
 	@Autowired
 	private CotaUnificacaoService cotaUnificacaoService;
@@ -76,32 +73,8 @@ public class CotaUnificacaoController extends BaseController {
 	@Post
 	public void cadastrarCotaUnificacao(Integer numeroCotaCentralizadora, 
 			                            List<Integer> numeroCotasCentralizadas){
-        
-		List<CotaUnificacaoDTO> lista = this.getUnificacoesSessao();
 		
-		for (CotaUnificacaoDTO dto : lista){
-			
-			if (dto.getNumeroCota().equals(numeroCotaCentralizadora)){
-				
-				lista.remove(dto);
-				break;
-			}
-		}
-		
-		CotaUnificacaoDTO dto = new CotaUnificacaoDTO();
-		dto.setNumeroCota(numeroCotaCentralizadora);
-		
-		ArrayList<CotaVO> cotas = new ArrayList<CotaVO>();
-		for (Integer c :numeroCotasCentralizadas){
-			
-			cotas.add(new CotaVO(c, null));
-		}
-		
-		dto.setCotas(cotas);
-		
-		lista.add(dto);
-		
-		this.httpSession.setAttribute(UNIFICACOES, lista);
+		this.cotaUnificacaoService.salvarCotaUnificacao(numeroCotaCentralizadora, numeroCotasCentralizadas);
 
 		result.use(Results.json()).from("").serialize();
 	}
@@ -114,18 +87,7 @@ public class CotaUnificacaoController extends BaseController {
 	@Post
 	public void excluirCotaUnificacao(Integer cotaUnificadora){
 		
-		List<CotaUnificacaoDTO> lista = this.getUnificacoesSessao();
-		
-		for (int index = 0 ; index < lista.size() ; index++){
-			
-			if (lista.get(index).getNumeroCota().equals(cotaUnificadora)){
-				
-				lista.remove(index);
-				break;
-			}
-		}
-		
-		this.httpSession.setAttribute(UNIFICACOES, lista);
+		this.cotaUnificacaoService.removerCotaUnificacao(cotaUnificadora);
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
@@ -134,20 +96,10 @@ public class CotaUnificacaoController extends BaseController {
 	public void editarCotaUnificacao(Integer cotaUnificadora){
 		
 		List<CotaVO> cotas = new ArrayList<CotaVO>();
-		for (CotaUnificacaoDTO dto : this.getUnificacoesSessao()){
-			
-			if (dto.getNumeroCota().equals(cotaUnificadora)){
-				
-				cotas.add(this.cotaUnificacaoService.obterCota(dto.getNumeroCota(), true));
-				
-				for (CotaVO vo : dto.getCotas()){
-					
-					cotas.add(this.cotaUnificacaoService.obterCota(vo.getNumero(), true));
-				}
-				
-				break;
-			}
-		}
+		
+		cotas.add(this.cotaUnificacaoService.obterCota(cotaUnificadora, true));
+		
+		cotas.addAll(this.cotaUnificacaoService.obterCotasCentralizadas(cotaUnificadora));
 		
 		result.use(Results.json()).from(cotas, "result").recursive().serialize();
 	}
@@ -155,7 +107,7 @@ public class CotaUnificacaoController extends BaseController {
 	@Post
 	public void consultarCotasUnificadas(){
 		
-		List<CotaUnificacaoDTO> cotasUnificadas = this.getUnificacoesSessao();
+		List<CotaUnificacaoDTO> cotasUnificadas = this.cotaUnificacaoService.obterCotasUnificadas();
 		
 		if (cotasUnificadas != null){
 			
@@ -175,20 +127,5 @@ public class CotaUnificacaoController extends BaseController {
 			this.cotaUnificacaoService.obterCota(numeroCota, edicao);
 		
 		result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
-	}
-	
-	@SuppressWarnings("unchecked")
-	private List<CotaUnificacaoDTO> getUnificacoesSessao(){
-		
-		List<CotaUnificacaoDTO> lista = 
-			(List<CotaUnificacaoDTO>) this.httpSession.getAttribute(UNIFICACOES);
-		
-		if (lista == null){
-			
-			lista = new LinkedList<CotaUnificacaoDTO>();
-			this.httpSession.setAttribute(UNIFICACOES, lista);
-		}
-		
-		return lista;
 	}
 }
