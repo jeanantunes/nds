@@ -134,7 +134,7 @@ public interface ProdutoEdicaoService {
 	 * @param contentType
 	 * @param imgInputStream
 	 */
-	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream);
+	public void salvarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, String contentType, InputStream imgInputStream,boolean istrac29);
 	
 	/**
 	 * Exclui uma Edição da base de dados.<br>
@@ -207,6 +207,7 @@ public interface ProdutoEdicaoService {
 	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
+
 	
 	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
 

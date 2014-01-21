@@ -38,7 +38,7 @@ var parametroCobrancaController = $.extend(true,
 				colModel :[ {
 					display : 'Forma Pagto',
 					name : 'forma',
-					width : 50,
+					width : 112,
 					sortable : true,
 					align : 'left'
 				}, {

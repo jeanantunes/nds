@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,7 +57,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
@@ -270,15 +270,75 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	@Post
-	public void salvar(UploadedFile imagemCapa, String codigoProduto, ProdutoEdicaoDTO produtoEdicaoDTO, Localization localization, ModoTela modoTela) {
+	public void salvar(UploadedFile imagemCapa,
+			String codigoProduto, Long idProdutoEdicao,
+			String codigoProdutoEdicao, String nomeComercialProduto,Integer peb,
+			Long numeroEdicao, int pacotePadrao,
+			TipoLancamento tipoLancamento,
+			String precoPrevisto, String precoVenda,GrupoProduto categoria,
+			Date dataLancamento, Date dataRecolhimento,
+			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
+			BigInteger repartePrevisto, BigInteger repartePromocional,
+			String codigoDeBarras, String codigoDeBarrasCorporativo,
+			String desconto, String descricaoDesconto,Long peso, 
+			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
+			String chamadaCapa, boolean parcial, boolean possuiBrinde,
+			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
+            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario, ModoTela modoTela,boolean istrac29) {
+			
+		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
+		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
+		BigDecimal vlDesconto = (desconto!= null) ? new BigDecimal(desconto.replace(",", ".")) :null;
 		
-		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoPrevisto());
+		// DTO para transportar os dados:
+		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		
+		dto.setModoTela(modoTela);
+		dto.setId(idProdutoEdicao);
+		dto.setNomeComercialProduto(nomeComercialProduto);
+		dto.setPeb( (peb == null)?0:peb);
+		dto.setCaracteristicaProduto(descricaoProduto);
+		dto.setNumeroEdicao(numeroEdicao);
+		dto.setCodigoProduto(codigoProdutoEdicao);
+		dto.setPacotePadrao(pacotePadrao);
+		dto.setTipoLancamento(tipoLancamento);
+		dto.setPrecoPrevisto(pPrevisto);
+		dto.setPrecoVenda(pVenda);
+		dto.setDataLancamento(dataLancamento);
+		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
+		dto.setDataRecolhimentoReal(dataRecolhimento); 
+		dto.setDataRecolhimentoPrevisto(dataRecolhimentoPrevisto);
+		dto.setDataRecolhimentoDistribuidor(dataRecolhimentoPrevisto);
+		dto.setRepartePrevisto(repartePrevisto);
+		dto.setRepartePromocional(repartePromocional);
+		dto.setCodigoDeBarras(codigoDeBarras);
+		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
+		dto.setDesconto(vlDesconto);
+		dto.setDescricaoDesconto(descricaoDesconto);
+		dto.setPeso(peso);
+		dto.setLargura(largura == null ? 0 : largura.floatValue());
+		dto.setComprimento(comprimento == null ? 0 : comprimento.floatValue());
+		dto.setEspessura(espessura == null ? 0 : espessura.floatValue());
+		dto.setChamadaCapa(chamadaCapa);
+		dto.setParcial(parcial);
+		dto.setPossuiBrinde(possuiBrinde);
+		dto.setNumeroLancamento(numeroLancamento);
+		dto.setIdBrinde(descricaoBrinde);
+		dto.setBoletimInformativo(boletimInformativo);
+		dto.setGrupoProduto(categoria);
+		
+		//Segmentação
+		dto.setClasseSocial(classeSocial);
+		dto.setFaixaEtaria(faixaEtaria);
+		dto.setSexo(sexo);
+		dto.setTemaPrincipal(temaPrincipal);
+		dto.setTemaSecundario(temaSecundario);
 		
 		ValidacaoVO vo = null;
 		 
 		try {
 			
-			this.validarProdutoEdicao(produtoEdicaoDTO, codigoProduto, modoTela);
+			this.validarProdutoEdicao(dto, codigoProduto, modoTela);
 			
 			// Dados da Imagem:
 			String contentType = null;
@@ -291,7 +351,7 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, codigoProduto, contentType, imgInputStream);
+			produtoEdicaoService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream,istrac29);
 			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 			
@@ -388,7 +448,7 @@ public class ProdutoEdicaoController extends BaseController {
 				String contentType = null;
 				InputStream imgInputStream = null;
 				
-				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream);
+				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false);
 				
 			} 
 			catch (Throwable e) {

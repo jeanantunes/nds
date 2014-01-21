@@ -182,15 +182,15 @@ init : function() {
 
 		if (ajusteReparteController.isAjusteSegmento == true){
 			if(ajusteReparteController.get("segmento1") != ""){
-				data.push({name:"ajustes", value: ajusteReparteController.get("segmento1")});
+				data.push({name:"ajustes", value: $('#segmento1').val().replace('.',',')});
 				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")});
 			}
 			if(ajusteReparteController.get("segmento2") != ""){
-				data.push({name:"ajustes", value: ajusteReparteController.get("segmento2")});
+				data.push({name:"ajustes", value: $('#segmento2').val().replace('.',',')});
 				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")});
 			}
 			if(ajusteReparteController.get("segmento3") != ""){
-				data.push({name:"ajustes", value: ajusteReparteController.get("segmento3")});
+				data.push({name:"ajustes", value: $('#segmento3').val().replace('.',',')});
 				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")});
 			}
 			
@@ -315,14 +315,14 @@ init : function() {
 	 get : function(campo) {
 			  
 		  var elemento = $("#" + campo);
-		  
+		   
 		  if(elemento.attr('type') == 'checkbox') {
 		   return (elemento.attr('checked') == 'checked') ;
 		  } else {
 		   return elemento.val();
 		  }
 			  
-		 },
+	 },
 		 
 //	Pegar Valor Radio
 		 
@@ -346,7 +346,7 @@ init : function() {
 		var valElemento;
 		
 		if(radio != "ajuste_segmento"){
-			valElemento = $("#"+radio+"_input").val();
+			valElemento = $("#"+radio+"_input").val().replace('.',',');
 		}else{
 			valElemento = "Segmento";
 		}
@@ -355,7 +355,7 @@ init : function() {
 	},
 	
 	getAjusteAplicadoEditar : function (){
-		var valElemento = $("#"+ajusteReparteController.getRadioEditar()+"_editar_input").val();
+		var valElemento = $("#"+ajusteReparteController.getRadioEditar()+"_editar_input").val().replace('.',',');
 		
 		return valElemento;
 	},
@@ -442,7 +442,7 @@ init : function() {
 					if (ajusteReparteController.isAjusteSegmento == true){
 						
 						if(ajusteReparteController.get("segmento1") != ""){
-							data.push({name:"ajuste", value: ajusteReparteController.get("segmento1")});
+							data.push({name:"ajuste", value: $('#segmento1').val().replace('.',',')});
 							data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")});
 						}else{
 							 var erros = new Array();
@@ -1074,7 +1074,7 @@ init : function() {
 		
 	    if(indiceAjuste < 0 || indiceAjuste > 10){        
 	           var erros = new Array();
-	           erros[0] = "O Índice deve estar entre 0 e 10.";
+	           erros[0] = "O Índice deve estar entre 01 e 10.";
 	           exibirMensagemDialog('WARNING',   erros,"");                
 	           $("#AJUSTE_VENDA_MEDIA_input").val("");
 	           $("#AJUSTE_VENDA_MEDIA_editar_input").val("");
@@ -1087,7 +1087,7 @@ init : function() {
 		
 	    if(indiceAjuste < 0 || indiceAjuste > 10){        
 	           var erros = new Array();
-	           erros[0] = "O Índice deve estar entre 0 e 10.";
+	           erros[0] = "O Índice deve estar entre 01 e 10.";
 	           exibirMensagemDialog('WARNING',   erros,"");                
 	           $("#AJUSTE_VENDA_MEDIA_input").val("");
 	           $("#AJUSTE_VENDA_MEDIA_editar_input").val("");
