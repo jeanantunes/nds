@@ -456,6 +456,7 @@ public class Lancamento implements Serializable {
 		} else if (!this.getProdutoEdicao().equals(other.produtoEdicao))
 			return false;
 		return true;
+
 	}
 	
 	public void voltarStatusOriginal() {
