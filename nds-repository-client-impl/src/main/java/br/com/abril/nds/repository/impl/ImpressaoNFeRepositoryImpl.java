@@ -1,7 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -14,10 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
