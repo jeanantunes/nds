@@ -452,6 +452,8 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
+			this.limparStatusCobrancaCotas();
+			
 			if (cobrarTodasCotas) {
 				
 				//idsCotas a serem retirados da lista
@@ -492,7 +494,7 @@ public class FechamentoEncalheController extends BaseController {
 
 				String status =  "Cota " + statusCobrancaCota++ + " de " + totalCotas;
 				
-				this.setStatusCobrancaCota(status);
+				this.setStatusCobrancaCotas(status);
 
 				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
 
@@ -503,13 +505,13 @@ public class FechamentoEncalheController extends BaseController {
 
 		} catch (Exception e) {
 
-			this.setStatusCobrancaCota(STATUS_FINALIZADO);
+			this.setStatusCobrancaCotas(STATUS_FINALIZADO);
 
 			throw e;
 			
 		} finally {
 			
-			this.setStatusCobrancaCota(STATUS_FINALIZADO);
+			this.setStatusCobrancaCotas(STATUS_FINALIZADO);
 		}
 
 		if (ex != null){
@@ -534,7 +536,7 @@ public class FechamentoEncalheController extends BaseController {
 				
 				String status =  "Cota " + (++statusCobrancaCota) + " de " + totalCotas;
 				
-				this.setStatusCobrancaCota(status);
+				this.setStatusCobrancaCotas(status);
 
 				this.fechamentoEncalheService.realizarCobrancaCota(dataOperacao,
 												                   getUsuarioLogado(), 
@@ -547,7 +549,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 		} finally {
 			
-			this.setStatusCobrancaCota(STATUS_FINALIZADO);
+			this.setStatusCobrancaCotas(STATUS_FINALIZADO);
 		}
 
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
@@ -1021,9 +1023,14 @@ public class FechamentoEncalheController extends BaseController {
 		return CACHE_COBRANCA_COTAS.get(KEY_COBRANCA_COTAS);
 	}
 	
-	private void setStatusCobrancaCota(String status) {
+	private void setStatusCobrancaCotas(String status) {
 		
 		CACHE_COBRANCA_COTAS.put(KEY_COBRANCA_COTAS, status);
+	}
+	
+	private void limparStatusCobrancaCotas() {
+		
+		CACHE_COBRANCA_COTAS.clear();
 	}
 	
 }

@@ -88,6 +88,7 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -165,6 +166,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	protected BoletoEmailService boletoEmailService;
+	
+	@Autowired
+	private NegociacaoDividaService negociacaoDividaService;
 	
 	@Autowired
 	private CotaUnificacaoRepository cotaUnificacaoRepository;
@@ -674,6 +678,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
 		}
+		
+		BigDecimal reparte =
+				this.chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(), dataOperacao, false, false);
+		
+		reparte = reparte != null ? reparte : BigDecimal.ZERO;
+		
+		this.negociacaoDividaService.abaterNegociacaoPorComissao(idCota, reparte, usuario);
 		
 		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);

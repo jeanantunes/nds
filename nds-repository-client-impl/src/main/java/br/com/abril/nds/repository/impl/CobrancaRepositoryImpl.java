@@ -501,7 +501,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	public String obterNossoNumeroPorMovimentoFinanceiroCota(Long idMovimentoFinanceiro) {
 		
 		StringBuilder hql = new StringBuilder("select cob.nossoNumero from Cobranca cob ");
-		hql.append(" join cob.divida.consolidado.movimentos mov ")
+		hql.append(" join cob.divida.consolidados cons ")
+		   .append(" join cons.movimentos mov ")
 		   .append(" where mov.id = :idMovimentoFinanceiro");
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -521,7 +522,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		   .append(" (case when m.observacao is null then '' else (' - ' || m.observacao) end) as observacao, ")
 		   .append(" m.tipoMovimento as tipoMovimentoFinanceiro ")
 		   .append(" from Cobranca c ")
-		   .append(" join c.divida.consolidado.movimentos m ")
+		   .append(" join c.divida.consolidados consolidados")
+		   .append(" join consolidados.movimentos m ")
 		   .append(" where c.id = :idCobranca ")
 		   .append(" order by m.dataCriacao desc ");
 		

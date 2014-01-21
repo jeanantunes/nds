@@ -23,7 +23,6 @@ import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
-import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -31,7 +30,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
@@ -62,7 +60,6 @@ import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
-import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -99,7 +96,6 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
-import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
@@ -117,6 +113,7 @@ import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
@@ -228,7 +225,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private CobrancaRepository cobrancaRepository;
 	
 	@Autowired
-	private NegociacaoDividaRepository negociacaoDividaRepository;
+	private NegociacaoDividaService negociacaoDividaService;
 	
 	@Autowired
 	private FechamentoEncalheRepository fechamentoEncalheRepository;
@@ -1315,7 +1312,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		valorTotalEncalheOperacaoConferenciaEncalhe = reparte.subtract(valorTotalEncalheOperacaoConferenciaEncalhe);
 		
-		this.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
+		this.negociacaoDividaService.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe, usuario);
 		
 		Set<String> nossoNumeroCollection = new LinkedHashSet<String>();
 		
@@ -1392,100 +1389,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return (documentoImpressaoDistribuidor != null) ? documentoImpressaoDistribuidor : false; 
 	}
 	
-	//caso haja negociação por comissão da cota será abatida aqui
-	private void abaterNegociacaoPorComissao(Long idCota,
-			BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe,
-			Usuario usuario) {
-		
-		//verifica se existe valor para abater das negociações
-		if (valorTotalEncalheOperacaoConferenciaEncalhe != null &&
-				valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(BigDecimal.ZERO) > 0){
-			
-			//busca negociações por comissão ainda não quitadas
-			List<Negociacao> negociacoes = 
-					this.negociacaoDividaRepository.obterNegociacaoPorComissaoCota(idCota);
-			
-			if (negociacoes != null && !negociacoes.isEmpty()){
-			
-				Cota cota = this.cotaRepository.buscarPorId(idCota);
-				
-				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.NEGOCIACAO_COMISSAO);
-				
-				Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-				
-				BigDecimal valorCem = new BigDecimal(100);
-				
-				for (Negociacao negociacao : negociacoes){
-					
-					//caso todo o valor da conferencia tenha sido usado para quitação das negociações
-					if  (valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(BigDecimal.ZERO) <= 0){
-						
-						valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
-						break;
-					}
-					
-					BigDecimal comissao = negociacao.getComissaoParaSaldoDivida();
-					
-					BigDecimal valorDescontar = valorTotalEncalheOperacaoConferenciaEncalhe.multiply(comissao).divide(valorCem);
-					
-					valorTotalEncalheOperacaoConferenciaEncalhe = 
-							valorTotalEncalheOperacaoConferenciaEncalhe.subtract(valorDescontar);
-					
-					BigDecimal valorRestanteNegociacao = negociacao.getValorDividaPagaComissao().subtract(valorDescontar);
-					
-					//se o valor resultante não quita a negociação
-					if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0){
-						
-						negociacao.setValorDividaPagaComissao(valorRestanteNegociacao);
-					} else {
-						
-						negociacao.setValorDividaPagaComissao(BigDecimal.ZERO);
-						
-						//gera crédito para cota caso a comissão gere sobra na quitação
-						valorTotalEncalheOperacaoConferenciaEncalhe = 
-								valorTotalEncalheOperacaoConferenciaEncalhe.add(valorRestanteNegociacao.negate());
-					}
-					
-					MovimentoFinanceiroCotaDTO movDTO = new MovimentoFinanceiroCotaDTO();
-					movDTO.setAprovacaoAutomatica(true);
-					movDTO.setCota(cota);
-					movDTO.setDataAprovacao(dataOperacao);
-					movDTO.setDataCriacao(dataOperacao);
-					movDTO.setDataOperacao(dataOperacao);
-					movDTO.setDataVencimento(movDTO.getDataAprovacao());
-					movDTO.setObservacao("Negociação por comissão");
-					movDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
-					movDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
-					movDTO.setUsuario(usuario);
-					
-					if (valorRestanteNegociacao.compareTo(BigDecimal.ZERO) > 0){
-						
-						movDTO.setValor(valorDescontar);
-					} else {
-						
-						movDTO.setValor(valorRestanteNegociacao);
-					}
-					
-					MovimentoFinanceiroCota m = 
-						this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(movDTO, null);
-					
-					this.movimentoFinanceiroCotaRepository.adicionar(m);
-					
-					if (negociacao.getMovimentosFinanceiroCota() == null){
-						
-						negociacao.setMovimentosFinanceiroCota(new ArrayList<MovimentoFinanceiroCota>());
-					}
-					
-					negociacao.getMovimentosFinanceiroCota().add(m);
-					
-					this.negociacaoDividaRepository.alterar(negociacao);
-				}
-			}
-		}
-	}
-
 	/**
 	 * Gera o movimento financeiro referente a operação de conferência de encalhe e
 	 * em seguida dispara componentes responsáveis pela geração da cobrança.

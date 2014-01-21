@@ -52,7 +52,8 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 								+ " join movimento_financeiro_cota mfc on mfc.ID = ad.MOV_PENDENTE_ID "
 								+ " join CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc on mfc.ID = cmfc.MVTO_FINANCEIRO_COTA_ID "
 								+ " join consolidado_financeiro_cota cfc on cmfc.CONSOLIDADO_FINANCEIRO_ID = cfc.ID "
-								+ " join divida d on d.CONSOLIDADO_ID = cfc.id "
+								+ " join divida_consolidado _d_cons on _d_cons.CONSOLIDADO_ID = cfc.ID "
+								+ " join divida d on d.ID = _d_cons.DIVIDA_ID "
 								+ " join cobranca c on c.DIVIDA_ID = d.ID "
 								+ " where d.ID=:idDivida ")
 		

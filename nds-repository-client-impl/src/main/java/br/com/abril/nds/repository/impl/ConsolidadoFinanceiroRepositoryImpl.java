@@ -1154,8 +1154,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                 
                 StringBuilder hql = new StringBuilder("select count(c.id) ");
                 hql.append(" from ConsolidadoFinanceiroCota c, Divida divida ")
+                   .append(" join divida.consolidados cons ")
                    .append(" where c.dataConsolidado = :dataVencimentoDebito ")
-                   .append(" and c.id = divida.consolidado.id ")
+                   .append(" and c.id = cons.id ")
                    .append(" and divida.data = :dataVencimentoDebito ");
                 
                 if (idsCota != null) {
