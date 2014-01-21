@@ -360,7 +360,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		parametrosDistribuidor.setParcelamentoDividas(distribuidor.isParcelamentoDividas());
 		
-		if(distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
+		if(distribuidor.getDescontoCotaNegociacao() == null ||  distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
 			parametrosDistribuidor.setUtilizaDesconto(false);
 			parametrosDistribuidor.setPercentualDesconto(CurrencyUtil.formatarValor(0));
 		} else {
