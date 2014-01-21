@@ -327,7 +327,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeCobrancaParaLancamento(Long idLancamento);
 
-	List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+	List<Lancamento> obterLancamentosEdicao(Long idEdicao);
 
 	LancamentoDTO obterLancamentoPorID(Long idLancamento);
 
@@ -338,8 +338,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
-	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
-
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
@@ -368,7 +366,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 
-	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao);
+	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
 	
 	Date getMaiorDataLancamentoPrevisto(Long idProdutoEdicao);
 	
@@ -394,4 +392,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	public abstract BigInteger obterUltimoRepartePorProduto(Long codigoProduto);
 
 	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento, Long produtoEdicaoId );
+	
+	Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe);
+	
 }

@@ -7,8 +7,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +36,7 @@ import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -604,10 +607,10 @@ public class ProdutoEdicaoController extends BaseController {
 				listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
 			}
 			
-			if (dto.getRepartePrevisto() == null) {
+			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
 			}
-			if (dto.getRepartePromocional() == null) {
+			if (!dto.isParcial() && dto.getRepartePromocional() == null) {
 				listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Promocional'!");
 			}
 			if (dto.getDescricaoDesconto() == null || dto.getDescricaoDesconto().trim().isEmpty()){
@@ -747,8 +750,23 @@ public class ProdutoEdicaoController extends BaseController {
 
 		List<PeriodoLancamentosProdutoEdicaoVO> listaPeriodosLancamentos = new ArrayList<>();
 		
-		for (Lancamento lancamento : lancamentoService.obterLancamentosEdicao(produtoEdicaoId, sortorder, sortname)) {
+		Set<Integer> numerosPeriodo = new HashSet<>();
+		
+		for (Lancamento lancamento : lancamentoService.obterLancamentosEdicao(produtoEdicaoId)) {
+			
+			Integer numeroPeriodo = null;
+			
+			PeriodoLancamentoParcial periodoLancamentoParcial = lancamento.getPeriodoLancamentoParcial();
+			
+			if (periodoLancamentoParcial != null) {
+			
+				numeroPeriodo = periodoLancamentoParcial.getNumeroPeriodo();
+			}
+			
+			
 			PeriodoLancamentosProdutoEdicaoVO periodoLancamento = new PeriodoLancamentosProdutoEdicaoVO();
+			
+			periodoLancamento.setNumeroPeriodo(numeroPeriodo);
 			periodoLancamento.setNumeroLancamento(lancamento.getNumeroLancamento());
 			periodoLancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoDistribuidor());
 			periodoLancamento.setDataLancamentoPrevista(lancamento.getDataLancamentoPrevista());
@@ -756,6 +774,13 @@ public class ProdutoEdicaoController extends BaseController {
 			periodoLancamento.setDataRecolhimentoPrevista(lancamento.getDataRecolhimentoPrevista());
 			periodoLancamento.setStatus(lancamento.getStatus().getDescricao());
 			periodoLancamento.setReparte(lancamento.getReparte());
+			
+			if (!numerosPeriodo.contains(numeroPeriodo)) {
+				periodoLancamento.setDestacarLinha(true);
+			}
+			
+			numerosPeriodo.add(numeroPeriodo);
+			
 			listaPeriodosLancamentos.add(periodoLancamento);
 		}
 		

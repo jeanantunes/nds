@@ -11,7 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -26,12 +28,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
+import br.com.abril.nds.dto.CotaReparteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -218,15 +222,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		hql.append(" produtoEdicao.id as idProdutoEdicao,	");
 		hql.append(" cota.id as idCota,						");
-		hql.append(" sum(mec.qtde) as qtde					");
+		hql.append(" sum(mec.qtde) as qtde,					");
+		hql.append(" chamadaEncalhe.id as idChamadaEncalhe ");
 		
 		hql.append(" from ConferenciaEncalhe conferenciaEncalhe	");	
 		
 		hql.append(" inner join conferenciaEncalhe.movimentoEstoqueCota mec		");
 		hql.append(" inner join mec.cota as cota 								");
 		hql.append(" inner join mec.produtoEdicao as produtoEdicao 				");
-		hql.append(" inner join conferenciaEncalhe.controleConferenciaEncalheCota 	");
-		hql.append(" controlConfEncalheCota");
+		hql.append(" inner join conferenciaEncalhe.controleConferenciaEncalheCota controlConfEncalheCota");
+		hql.append(" inner join conferenciaEncalhe.chamadaEncalheCota chamadaEncalheCota ");
+		hql.append(" inner join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
 		
 		hql.append(" where ");	
 		
@@ -3409,4 +3415,39 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaReparteDTO> obterReparte(Long idLancamento, Long idProdutoEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select cota as cota, ");
+		sql.append(" sum( ");
+		sql.append(" 	case when (tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = 'ENTRADA') ");
+		sql.append(" 	then (mec.qtde) ");
+		sql.append(" 	else (-mec.qtde) end ");
+		sql.append(" ) as reparte ");
+		sql.append(" from MovimentoEstoqueCota mec ");
+		sql.append(" join mec.cota cota ");
+		sql.append(" join mec.lancamento lancamento ");
+		sql.append(" join mec.tipoMovimento tipoMovimento ");
+		sql.append(" join mec.produtoEdicao produtoEdicao ");
+		sql.append(" join lancamento.estudo estudo ");
+		sql.append(" join estudo.estudoCotas estudoCota ");
+		sql.append(" join estudoCota.cota cota ");
+		sql.append(" where lancamento.id = :idLancamento ");
+		sql.append(" and produtoEdicao.id = :idProdutoEdicao ");
+		sql.append(" group by cota ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
+		
+		return query.list();
+	}
+	
 }

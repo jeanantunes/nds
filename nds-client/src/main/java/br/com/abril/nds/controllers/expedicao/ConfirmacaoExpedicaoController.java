@@ -208,13 +208,16 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				TipoMovimentoEstoque tipoMovimento =
 					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 				
+				TipoMovimentoEstoque tipoMovimentoJuramentado =
+						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+				
 				TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
 				for(int i=0; i<selecionados.size(); i++) {
-					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
+					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota,tipoMovimentoJuramentado);
 					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));	
 				}
 				

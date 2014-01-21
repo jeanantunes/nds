@@ -62,8 +62,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
  * @author Discover Technology
  */
 @Repository
-public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<ProdutoEdicao, Long> 
-										 implements ProdutoEdicaoRepository {
+public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<ProdutoEdicao, Long> implements ProdutoEdicaoRepository {
 	/**
 	 * Construtor padrão.
 	 */
@@ -316,10 +315,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(pessoa.nome, pessoa.RAZAO_SOCIAL) as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
-		
 		.append("        l.status as statusSituacao , ") 
-
-		.append("        pe.possui_brinde as temBrinde ");
+		.append("        pe.possui_brinde as temBrinde, ")
+		.append("        pe.parcial as parcial ");
 		
 		// Corpo da consulta com os filtros:
 		SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortname, sortorder);
@@ -337,6 +335,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("statusLancamento", StandardBasicTypes.STRING);
 		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
 		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
+		query.addScalar("parcial", StandardBasicTypes.BOOLEAN);
 		
 		return query.list();
 	}

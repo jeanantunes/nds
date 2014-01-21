@@ -204,7 +204,7 @@ public class ConferenciaEncalheParcialRepositoryImplTest extends AbstractReposit
 		save(itemRecebimentoFisico4Rodas);
 		
 		lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, 
+				TipoLancamento.LANCAMENTO, 
 				veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
