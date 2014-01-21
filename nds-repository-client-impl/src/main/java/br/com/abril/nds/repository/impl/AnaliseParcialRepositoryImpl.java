@@ -262,7 +262,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
         sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
-        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
+        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id ");
         sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append(" where epe.estudo_id = :estudoId ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
@@ -359,7 +359,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  from lancamento l ");
         sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id and pe.numero_edicao = :numeroEdicao ");
         sql.append("  join produto p on p.id = pe.produto_id and p.codigo = :codigoProduto ");
-        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
+        sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id ");
         sql.append("  join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
         sql.append("  join cota c on c.id = mec.cota_id and c.numero_cota = :numeroCota ");
         sql.append(" where l.tipo_lancamento = 'PARCIAL' ");
@@ -623,7 +623,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         if (numeroPeriodo == null) {
             sql.append(" left ");
         }
-        sql.append(" join periodo_lancamento_parcial plp on plp.lancamento_id = l.id and plp.numero_periodo = :numeroPeriodo");
+        sql.append(" join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id and plp.numero_periodo = :numeroPeriodo");
         sql.append(" group by pe.id, pe.numero_edicao, plp.numero_periodo ");
         sql.append(" order by plp.numero_periodo desc ");
 

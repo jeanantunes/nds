@@ -32,6 +32,13 @@ fieldset {
     margin-right:0px!important;
 }
 .ldPesq{float:left; width:210px;}
+
+.gridLinhaDestacada {
+  background:#888; 
+  font-weight:bold; 
+  color:#fff;
+}
+
 </style>
 </head>
 
@@ -292,7 +299,6 @@ fieldset {
 	                           <b>Nova Redistribuição</b>
 	                   </a>
                    </span>
-					
 				</div>
 
 				<div class="ldForm">

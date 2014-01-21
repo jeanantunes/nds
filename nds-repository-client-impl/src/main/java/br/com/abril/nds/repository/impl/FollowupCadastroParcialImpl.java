@@ -58,11 +58,8 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 		
 		return query.list();
 		 
-	
 	}
-	
-	
-	
+
 	private Integer  obterConsignadosParaChamadaoTotalRegistros(FiltroFollowupCadastroParcialDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -76,16 +73,13 @@ public class FollowupCadastroParcialImpl extends AbstractRepositoryModel<Produto
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("origem", Origem.MANUAL);
-
-		
+	
 		return  ((Long)query.uniqueResult()).intValue();
-		 
 	
 	}
-	
-	
 
 	private String getSubqueryPeridoLancamento() {
+		
 		StringBuilder hqlSub = new StringBuilder();
 		hqlSub.append( " from Lancamento as lanc ");
 		hqlSub.append( " join  lanc.periodoLancamentoParcial "); 

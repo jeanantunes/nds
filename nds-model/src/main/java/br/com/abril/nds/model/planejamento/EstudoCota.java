@@ -5,8 +5,11 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -60,6 +63,10 @@ public class EstudoCota implements Serializable {
 
     @Column(name = "REPARTE")
     private BigInteger reparte;
+    
+    @Column(name="TIPO_ESTUDO",columnDefinition="VARCHAR(20) default 'NORMAL'")
+	@Enumerated(EnumType.STRING)
+	private TipoEstudoCota tipoEstudo;
 
     @OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
     private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
@@ -74,6 +81,10 @@ public class EstudoCota implements Serializable {
 
     @Column(name = "CLASSIFICACAO")
     private String classificacao;
+    
+    public enum TipoEstudoCota{
+		NORMAL,JURAMENTADO
+	}
 
     public EstudoCota() {
 
@@ -202,4 +213,12 @@ public class EstudoCota implements Serializable {
 	    return false;
 	return true;
     }
+    
+    public TipoEstudoCota getTipoEstudo() {
+		return tipoEstudo;
+	}
+
+	public void setTipoEstudo(TipoEstudoCota tipoEstudo) {
+		this.tipoEstudo = tipoEstudo;
+	}
 }

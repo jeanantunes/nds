@@ -39,7 +39,7 @@ public interface LancamentoService {
 	 * @param dataOperacao 
 	 * @return boolean
 	 */
-	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
+	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado);
 	
 	Lancamento obterPorId(Long idLancamento);
 	
@@ -124,7 +124,7 @@ public interface LancamentoService {
 
 	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
 	
-	public List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+	public List<Lancamento> obterLancamentosEdicao(Long idEdicao);
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
 			Date data, Long idFornecedor, Boolean isSaldoInsuficiente);

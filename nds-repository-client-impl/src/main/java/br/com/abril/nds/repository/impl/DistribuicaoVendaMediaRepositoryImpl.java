@@ -68,7 +68,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("          from movimento_estoque_cota mec ");
 		sql.append("          join tipo_movimento tm ON tm.id = mec.tipo_movimento_id ");
 		sql.append("          join lancamento l ON l.id = mec.lancamento_id ");
-		sql.append("          join periodo_lancamento_parcial plp ON plp.lancamento_id = l.id ");
+		sql.append("          join periodo_lancamento_parcial plp ON plp.lancamento_parcial_id = l.id ");
 		sql.append("          join produto_edicao pe on pe.id = mec.produto_edicao_id ");
 		sql.append("          join produto p on p.id = pe.produto_id ");
 		sql.append("          join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
@@ -126,7 +126,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
         sql.append("       coalesce(tcp.descricao, '') classificacao ");
 		sql.append("  from lancamento l ");
 		sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id ");
-		sql.append("  left join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
+		sql.append("  left join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = l.id ");
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
 		sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");

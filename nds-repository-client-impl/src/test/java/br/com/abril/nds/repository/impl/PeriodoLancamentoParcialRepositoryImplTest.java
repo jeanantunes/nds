@@ -80,13 +80,13 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 				dtInicial, dtFinal, StatusLancamentoParcial.PROJETADO);
 		save(lancamentoParcial);
 
-		lancamento = Fixture.lancamento(TipoLancamento.PARCIAL,
+		lancamento = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, Fixture.criarData(1, 1, 2010),
 				Fixture.criarData(1, 2, 2010), new Date(), new Date(),
 				BigInteger.valueOf(100), StatusLancamento.CONFIRMADO, null, 1);
 		save(lancamento);
 
-		lancamento2 = Fixture.lancamento(TipoLancamento.PARCIAL,
+		lancamento2 = Fixture.lancamento(TipoLancamento.LANCAMENTO,
 				produtoEdicaoVeja1, Fixture.criarData(1, 3, 2010),
 				Fixture.criarData(1, 4, 2010), new Date(), new Date(),
 				BigInteger.valueOf(100), StatusLancamento.CONFIRMADO, null, 2);
@@ -322,59 +322,12 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 	}
 
 	@Test
-	public void verificarValidadeNovoPeriodoParcialValido() {
-
-		Date novaDataLancamento = Fixture.criarData(1, 3, 2011);
-		Date novaDataRecolhimento = Fixture.criarData(1, 4, 2011);
-
-		boolean possivel = periodoLancamentoParcialRepository
-				.verificarValidadeNovoPeriodoParcial(lancamento.getId(),
-						novaDataLancamento, novaDataRecolhimento);
-
-		Assert.assertTrue(possivel);
-
-		novaDataLancamento = Fixture.criarData(1, 1, 2010);
-		novaDataRecolhimento = Fixture.criarData(1, 2, 2010);
-
-		possivel = periodoLancamentoParcialRepository
-				.verificarValidadeNovoPeriodoParcial(lancamento.getId(),
-						novaDataLancamento, novaDataRecolhimento);
-
-		Assert.assertTrue(possivel);
-
-		novaDataLancamento = Fixture.criarData(1, 1, 2010);
-		novaDataRecolhimento = Fixture.criarData(1, 1, 2011);
-
-		possivel = periodoLancamentoParcialRepository
-				.verificarValidadeNovoPeriodoParcial(lancamento.getId(),
-						novaDataLancamento, novaDataRecolhimento);
-
-		Assert.assertFalse(possivel);
-	}
-
-	@Test
 	public void obterDetalhesVenda() {
 		Date dataLancamento = Fixture.criarData(1, 3, 2011);
 		Date dataRecolhimento = Fixture.criarData(1, 4, 2011);
 
 		List<ParcialVendaDTO> lista = periodoLancamentoParcialRepository.obterDetalhesVenda(dataLancamento, dataRecolhimento, 1L);
 		Assert.assertNotNull(lista);
-		
-	}
-	
-	@Test
-	public void obterLancamentoPosterior(){
-		Date dataRecolhimento = Fixture.criarData(1, 4, 2011);
-		
-		Lancamento lancamento = periodoLancamentoParcialRepository.obterLancamentoPosterior(1L, dataRecolhimento);
-		
-	}
-	
-	@Test
-	public void obterLancamentoAnterior(){
-		Date dataRecolhimento = Fixture.criarData(1, 4, 2011);
-		
-		Lancamento lancamento = periodoLancamentoParcialRepository.obterLancamentoPosterior(1L, dataRecolhimento);
 		
 	}
 	
