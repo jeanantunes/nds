@@ -1583,7 +1583,7 @@ public class RecebimentoFisicoController extends BaseController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Diferença] do ítem "+linha+" é obrigatório!");
 				}
 				
-				if (item.getValorTotal()==null){
+				if (item.getValorTotal()==null && item.getValorTotalString() == null){
 					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Valor] do ítem "+linha+" é obrigatório!");
 				}
 			}
@@ -1612,13 +1612,13 @@ public class RecebimentoFisicoController extends BaseController {
 			}
 		}
 		
-		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
+		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.getBigDecimal(nota.getValorTotal());
 				
 		BigDecimal totalItem = BigDecimal.ZERO;
 		
 		for (RecebimentoFisicoDTO recebimento : itens) {
 			
-			totalItem = totalItem.add(recebimento.getValorTotal());
+			totalItem = totalItem.add(CurrencyUtil.getBigDecimal(recebimento.getValorTotalString()));
 			
 	    }
 		

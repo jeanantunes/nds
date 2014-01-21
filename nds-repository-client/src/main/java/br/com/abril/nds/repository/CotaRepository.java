@@ -26,9 +26,12 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
@@ -52,7 +55,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * 
      * @return {@link Cota}
      */
-    Cota obterPorNumerDaCota(Integer numeroCota);
+    Cota obterPorNumeroDaCota(Integer numeroCota);
 
     /**
      * Obtém uma lista de cotas através da comparação por nome.
@@ -63,6 +66,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return Lista de {@link Cota}
      */
     List<Cota> obterCotasPorNomePessoa(String nome);
+    
+    List<CotaDTO> obterCotasPorNomeAutoComplete(String nome);
 
     /**
      * Obtém uma lista de cotas pelo nome.
@@ -205,7 +210,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      *            - número da cota
      * @return Cota
      */
-    Cota obterPorNumerDaCotaAtiva(Integer numeroCota);
+    Cota obterPorNumerDaCota(Integer numeroCota);
 
     /**
      * Retorna um telefone associado a uma cota
@@ -365,6 +370,22 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+	
+	boolean cotaVinculadaCotaBase(Long idCota);
+	
+	List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
+	
+	Cota obterCotaComBaseReferencia(Long idCota);
+	
+	TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
+
+    int obterCotasAtivas();
+
+    CotaDTO buscarCotaPorNumero(Integer numeroCota, String codigoProduto);
+    
+    List<CotaEstudo> getInformacoesCotaEstudo(ProdutoEdicao produtoEdicao);
+    
+    List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	/**
 	 * Obtém o número da cota, através de seu ID.

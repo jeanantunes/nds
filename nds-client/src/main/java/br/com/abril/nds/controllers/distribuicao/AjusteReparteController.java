@@ -40,7 +40,6 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/ajusteReparte")
-@Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE)
 public class AjusteReparteController extends BaseController {
 	
 	@Autowired
@@ -62,7 +61,8 @@ public class AjusteReparteController extends BaseController {
 		this.result = result;
 	}
 	
-	@Path("/")	
+	@Path("/")
+	@Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE)
 	public void index(){
 		this.carregarComboMotivoStatusCota();
 		this.carregarComboSegmento();
@@ -84,26 +84,32 @@ public class AjusteReparteController extends BaseController {
 	@Post
 	@Path("/incluirAjusteSegmento")
 	public void salvarAjusteSegmento (AjusteReparteDTO ajusteDTO, BigDecimal [] ajustes, Long [] segmentos){
-		
-		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
-		
-		Long idCota = cota.getId();
+
+		validarInsercaoPorSegmento(ajustes, segmentos);
 		
 		evitarCotaRepetidaSegmento(ajusteDTO);
 		
-		int qtdAjustesCadastrados = ajusteService.qtdAjusteSegmento(idCota);
+		// Testar essa inserção deste IF if(seg...)
 		
-		 for (int i = qtdAjustesCadastrados; i < 3; i++) {
-			 		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
+		for (int i = 0; i < segmentos.length; i++) {
+			 		if(segmentos[i] != null){
+					TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
 					ajusteDTO.setAjusteAplicado(ajustes[i]);
 					ajusteDTO.setTipoSegmento_Ajuste(segmento);
 					evitarSegmentosRepetidos(ajusteDTO, segmento);
 					AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
 					ajusteService.salvarAjuste(ajusteModel);
+			 		}
 		 }
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."), 
 				"result").recursive().serialize();
+	}
+
+	private void validarInsercaoPorSegmento(BigDecimal[] ajustes, Long[] segmentos) {
+		if((segmentos.length == 0) || (ajustes.length == 0)){
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Informe no mínimo 1 segmento com 1 índice para ajuste.");	
+		}
 	}
 	
 	@Post
@@ -253,7 +259,7 @@ public class AjusteReparteController extends BaseController {
 		}
 		
 		if (ajusteDTO.getAjusteAplicado() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Selecione um tipo de ajuste.");
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Informe um indice para ajuste.");
 		}
 		
 		if (ajusteDTO.getMotivoAjuste() == null) {
@@ -305,13 +311,19 @@ public class AjusteReparteController extends BaseController {
 	private void evitarSegmentosRepetidos(AjusteReparteDTO ajusteDTO, TipoSegmentoProduto segmento) {
 		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
 		Long idCota = cota.getId();
+		AjusteReparteDTO ajusteCadastrado = new AjusteReparteDTO();
 		
 		List<AjusteReparteDTO> cotaEmAjuste = ajusteService.buscarPorIdCota(idCota);
 		
+		if(ajusteDTO.getIdAjusteReparte() != null){
+			ajusteCadastrado = ajusteService.buscarPorIdAjuste(ajusteDTO.getIdAjusteReparte());
+		}
 		
-		for (AjusteReparteDTO ajusteReparteDTO : cotaEmAjuste) {
-			if ((ajusteReparteDTO.getIdSegmento()) == (segmento.getId())){
-				throw new ValidacaoException(TipoMensagem.ERROR, "Ajuste por segmento já cadastrado.");
+		if(ajusteCadastrado.getIdSegmento() != ajusteDTO.getTipoSegmento_Ajuste().getId()){
+			for (AjusteReparteDTO ajusteReparteDTO : cotaEmAjuste) {
+				if ((ajusteReparteDTO.getIdSegmento()) == (segmento.getId())){
+					throw new ValidacaoException(TipoMensagem.ERROR, "Ajuste por segmento já cadastrado.");
+				}
 			}
 		}
 	}

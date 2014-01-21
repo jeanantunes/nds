@@ -1,4 +1,3 @@
-
 var parametroSistemaController = $.extend(true, {
 	path : contextPath + '/administracao/parametrosSistema/',
 	init : function() {

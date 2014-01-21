@@ -144,29 +144,29 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name = "DATA_EXPEDICAO", nullable = false)
 	protected Date dataExpedicao;
 	
-	@Column(name = "NUMERO")
+	@Column(name = "NUMERO", nullable = false)
 	protected Long numero;
 	
-	@Column(name = "SERIE")
+	@Column(name = "SERIE", nullable  = false)
 	protected String serie;
 	
 	@Column(name = "CHAVE_ACESSO")
 	protected String chaveAcesso;
 	
-	@Column(name = "VALOR_BRUTO", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR_BRUTO", nullable = false)
 	protected BigDecimal valorBruto;
 	
-	@Column(name = "VALOR_LIQUIDO", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR_LIQUIDO", nullable = false)
 	protected BigDecimal valorLiquido;
 	
-	@Column(name = "VALOR_DESCONTO", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR_DESCONTO", nullable = false)
 	protected BigDecimal valorDesconto;	
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "TIPO_NF_ID")
 	protected TipoNotaFiscal tipoNotaFiscal;
 	
-	@Column(name = "VALOR_INFORMADO", nullable = true, precision=18, scale=4)
+	@Column(name = "VALOR_INFORMADO", nullable = true)
 	protected BigDecimal valorInformado;
 	
 	/**

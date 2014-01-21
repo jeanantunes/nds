@@ -580,5 +580,4 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	public void setMensagemValidacao(String mensagemValidacao) {
 		this.mensagemValidacao = mensagemValidacao;
 	}
-	
 }

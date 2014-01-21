@@ -54,6 +54,47 @@ var followUpSistemaController = $.extend(true, {
 			height : 255
 	    }));
 
+
+		$(".distribuicaoGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
+			url : contextPath + '/followup/pesquisaDistribuicaoCotasAjustes',
+	        preProcess:  followUpSistemaController.exPreProcFollowupDistribuicao, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeJornaleiro',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Mensagem',
+				name : 'mensagem',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Dias restantes',
+				name : 'qtdDiasRestantes',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "numeroCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
+
+
 		$(".pendenciasGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			url : contextPath + '/followup/pesquisaDadosPendenciaNFEEncalhe',
 			dataType : 'json',
@@ -398,6 +439,15 @@ var followUpSistemaController = $.extend(true, {
 		}
    		return resultado;
 	},
+	
+	exPreProcFollowupDistribuicao : function (resultado) {
+
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoDistribuicao').hide();
+		}
+		return resultado;
+	},
+	
 	exPreProcFollowupCadastroParcial : function (resultado) {
 		
 		if(resultado.rows.length == 0){

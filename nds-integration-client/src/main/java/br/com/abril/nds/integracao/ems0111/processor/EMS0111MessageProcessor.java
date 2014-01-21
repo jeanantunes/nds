@@ -22,9 +22,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 /**
@@ -35,27 +37,17 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 @Component
 public class EMS0111MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
+
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
-	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");  
-
-	// METODO PARA AJUSTAR A INTERFACE AO ENUM
-	public TipoLancamento parseTipo(String tipo) {
-		if (tipo.equalsIgnoreCase("LAN"))
-			return TipoLancamento.LANCAMENTO;
-		if (tipo.equalsIgnoreCase("SUP"))
-			return TipoLancamento.SUPLEMENTAR;
-		if (tipo.equalsIgnoreCase("REL"))
-			return TipoLancamento.RELANCAMENTO;
-		if (tipo.equalsIgnoreCase("PAR"))
-			return TipoLancamento.PARCIAL;
-		return null;
-	}
-
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ParciaisService parciaisService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -152,7 +144,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setDataLancamentoPrevista(input.getDataLancamento());
 			
-			lancamento.setTipoLancamento(parseTipo(input.getTipoLancamento()));
+			lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 			
 			lancamento.setReparte(BigInteger.valueOf(input.getRepartePrevisto()));
 			
@@ -176,7 +168,9 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setRecebimentos(null);// default
 			
-			lancamento.setSequenciaMatriz(null);// confirmado				
+			lancamento.setSequenciaMatriz(null);// confirmado
+			
+			lancamento.setNumeroLancamento(1);
 
 			// EFETIVAR INSERCAO NA BASE
 			getSession().persist(lancamento);	
@@ -222,20 +216,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 				lancamento.setRepartePromocional(repartePromocional);
 			}
 			
-			final TipoLancamento tipoLancamento = 
-					this.parseTipo(input.getTipoLancamento());  
-			if (null != lancamento.getTipoLancamento() && !lancamento.getTipoLancamento().equals(tipoLancamento)) {
-				this.ndsiLoggerFactory.getLogger().logInfo(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao do TIPO LANCAMENTO do Produto: "
-								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " 
-								+ lancamento.getTipoLancamento().getDescricao() 
-								+ "para: " + tipoLancamento.getDescricao());
-				lancamento.setTipoLancamento(tipoLancamento);
-			}
-			
-			
 			final Date dataLancamento = input.getDataLancamento();
 			
 			// Remover a hora, minuto, segundo e milissegundo para comparação:
@@ -252,6 +232,13 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 								+ "para: " + simpleDateFormat.format(
 										dtLancamentoNovo));
 				lancamento.setDataLancamentoPrevista(dtLancamentoNovo);
+				
+				boolean erroRetornoParciais =
+					this.tratarParciais(lancamento, message, codigoProduto, edicao);
+				
+				if (erroRetornoParciais) {
+					return;
+				}
 			}
 			
 			// Atualizar lançamento Distribuidor:
@@ -273,10 +260,42 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 										dtLancamentoNovo));
 				
 				lancamento.setDataLancamentoDistribuidor(dtLancamentoNovo);
+				
+				boolean erroRetornoParciais =
+					this.tratarParciais(lancamento, message, codigoProduto, edicao);
+				
+				if (erroRetornoParciais) {
+					return;
+				}
 			}
-			
 		}
+	}
+	
+	private boolean tratarParciais(Lancamento lancamento, Message message, String codigoProduto, Long edicao) {
 		
+		try {
+			
+			PeriodoLancamentoParcial periodoLancamentoParcial = lancamento.getPeriodoLancamentoParcial();
+			
+			if (periodoLancamentoParcial != null) {
+				
+				this.parciaisService.reajustarRedistribuicoes(
+					periodoLancamentoParcial,
+					lancamento.getDataLancamentoDistribuidor(),
+					lancamento.getDataRecolhimentoDistribuidor());
+			}
+		
+			return false;
+			
+		} catch (Exception e) {
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+								  codigoProduto, edicao));
+			
+			return true;
+		}
 	}
 	
 	/**
@@ -324,6 +343,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 
 		criteria.add(Restrictions.ge("dataLancamentoPrevista", dataGeracaoArquivo));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		criteria.add(Restrictions.eq("tipoLancamento", TipoLancamento.LANCAMENTO));
 		criteria.addOrder(Order.asc("dataLancamentoPrevista"));
 		
 		criteria.setFetchSize(1);

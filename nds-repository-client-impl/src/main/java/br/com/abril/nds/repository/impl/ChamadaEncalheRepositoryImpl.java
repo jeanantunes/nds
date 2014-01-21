@@ -114,20 +114,34 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,
-			 												  TipoChamadaEncalhe tipoChamadaEncalhe) {
-
+	public List<ChamadaEncalhe> obterChamadasEncalhe(ProdutoEdicao produtoEdicao,
+				 									 TipoChamadaEncalhe tipoChamadaEncalhe,
+				 									 Date dataRecolhimento) {
+		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ")
-		.append(" where  ")
-		.append(" chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
-		.append(" and chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		hql.append(" select chamadaEncalhe from ChamadaEncalhe chamadaEncalhe ");
+		hql.append(" where chamadaEncalhe.produtoEdicao = :produtoEdicao ");
+		
+		if (tipoChamadaEncalhe != null ) {
+			hql.append(" and chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ");
+		}
+		
+		if (dataRecolhimento != null ) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
 		query.setParameter("produtoEdicao", produtoEdicao);
+		
+		if (tipoChamadaEncalhe != null) {
+			query.setParameter("tipoChamadaEncalhe", tipoChamadaEncalhe);
+		}
+		
+		if (dataRecolhimento != null ) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
 		
 		return  query.list();
 	}
@@ -678,8 +692,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
-		hql.append(" 	    coalesce(movimentoCota.valoresAplicados.valorDesconto, 0) as desconto, ");
-		hql.append("		coalesce(movimentoCota.valoresAplicados.precoVenda, produtoEdicao.precoVenda, 0)  as precoVenda,    		");
+
+		hql.append(" 	    (movimentoCota.valoresAplicados.valorDesconto) as desconto, 	");
+		hql.append("		produtoEdicao.precoVenda as precoVenda,    		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
@@ -737,6 +752,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
+		//TODO Ajuste alterações PARCIAIS
+		
 		hql.append(" from ChamadaEncalheCota chamEncCota 					")
 		   .append(" join chamEncCota.chamadaEncalhe chamadaEncalhe 		")
 		   .append(" join chamEncCota.cota cota 							")
@@ -747,7 +764,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
 		   .append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
 		   .append(" left join movimentoCota.tipoMovimento tipoMovimento         ")
-		   .append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
 		   .append(" left join movimentoCota.cota cotaMov ")
 		   .append(" where cota.id=:idCota 									")
 		   .append(" and produtoEdicao.id = produtoEdicao.id  	")

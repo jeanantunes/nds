@@ -22,9 +22,11 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.job.AjusteReparteJob;
+import br.com.abril.nds.client.job.FixacaoReparteJob;
 import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.client.job.RankingFaturamentoJob;
 import br.com.abril.nds.client.job.RankingSegmentoJob;
+import br.com.abril.nds.client.job.RegiaoJob;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -65,7 +67,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		
+
 		try {
 			
 			final WebApplicationContext springContext = 
@@ -81,6 +83,8 @@ public class ApplicationContextListener implements ServletContextListener {
 //			this.agendaExeclusaoAjusteReparte(scheduler);
 //			this.agendarExclusaoDeEstudos(scheduler);
 //			this.agendarGeracaoRankings(scheduler);
+//			this.agendaExclusaoFixacaoReparte();
+//			this.agendaExclusaoRegiao();
 			
 			scheduler.start();
 			
@@ -90,7 +94,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			throw new RuntimeException(e);
 		}
-
+		
 	}
 
 	/*
@@ -208,8 +212,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			throw new RuntimeException(e);
 		}
-		
-		
 	}
 
 	
@@ -242,6 +244,86 @@ public class ApplicationContextListener implements ServletContextListener {
 					.build();
 
 			scheduler.scheduleJob(job, cronTrigger);
+
+		} catch (SchedulerException se) {
+
+			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+
+			throw new RuntimeException(se);
+		}
+	}
+	
+	/*
+	 * Efetua o agendamento do serviço de exclusão de fixacao por reparte.
+	 * 
+	 */
+	private void agendaExclusaoFixacaoReparte(Scheduler scheduler) {
+
+		try {
+
+			String groupName = "integracaoGroup";
+
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
+
+			PropertiesUtil propertiesUtil = new PropertiesUtil(
+					"integracao-distribuidor.properties");
+
+			String intervaloExecucao = propertiesUtil
+					.getPropertyValue("intervalo.execucao.fixacao.reparte");
+
+			JobDetail job = newJob(FixacaoReparteJob.class)
+					.withIdentity(FixacaoReparteJob.class.getName(), groupName)
+					.build();
+
+			CronTrigger cronTrigger = newTrigger()
+					.withIdentity("fixacaoReparteTrigger", groupName)
+					.withSchedule(
+							cronSchedule(intervaloExecucao))
+					.build();
+
+			scheduler.scheduleJob(job, cronTrigger);
+
+			scheduler.start();
+
+		} catch (SchedulerException se) {
+
+			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+
+			throw new RuntimeException(se);
+		}
+	}
+	
+	/*
+	 * Efetua o agendamento do serviço de exclusão de Regiões.
+	 * 
+	 */
+	private void agendaExclusaoRegiao(Scheduler scheduler) {
+
+		try {
+
+			String groupName = "integracaoGroup";
+
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
+
+			PropertiesUtil propertiesUtil = new PropertiesUtil(
+					"integracao-distribuidor.properties");
+
+			String intervaloExecucao = propertiesUtil
+					.getPropertyValue("intervalo.execucao.regiao");
+
+			JobDetail job = newJob(RegiaoJob.class)
+					.withIdentity(RegiaoJob.class.getName(), groupName)
+					.build();
+
+			CronTrigger cronTrigger = newTrigger()
+					.withIdentity("regiaoTrigger", groupName)
+					.withSchedule(
+							cronSchedule(intervaloExecucao))
+					.build();
+
+			scheduler.scheduleJob(job, cronTrigger);
+
+			scheduler.start();
 
 		} catch (SchedulerException se) {
 

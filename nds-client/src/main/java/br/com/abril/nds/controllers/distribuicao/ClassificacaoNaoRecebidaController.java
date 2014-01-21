@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -17,12 +16,9 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ClassificacaoNaoRecebidaDTO;
 import br.com.abril.nds.dto.CotaQueNaoRecebeClassificacaoDTO;
 import br.com.abril.nds.dto.CotaQueRecebeClassificacaoDTO;
-import br.com.abril.nds.dto.CotaQueRecebeExcecaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.filtro.FiltroClassificacaoNaoRecebidaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -49,7 +45,6 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/classificacaoNaoRecebida")
-@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
 public class ClassificacaoNaoRecebidaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroClassificacaoNaoRecebidaDTO";
@@ -74,7 +69,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse; 
 	
-	@Path("/")
+	@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
 	public void index(){
 		this.carregarComboClassificacao();
 	}

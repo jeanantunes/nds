@@ -523,5 +523,4 @@
 			alteracaoCotaController.init();
 		});
 	</script>
-
 </body>

@@ -388,4 +388,5 @@ public class ParametroCobrancaDTO {
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
 	}
+
 }

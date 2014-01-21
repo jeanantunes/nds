@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+
 @SuppressWarnings("serial")
 public class MixCotaProdutoDTO implements Serializable{
 	
@@ -24,6 +26,9 @@ public class MixCotaProdutoDTO implements Serializable{
 	private Long ultimoReparte;
 	private Long reparteMinimo;
 	private Long reparteMaximo;
+	private String codigoICD;
+	
+	private boolean itemValido; 
 	
 	List<RepartePDVDTO> repartesPDV;
 	public Long getId() {
@@ -122,10 +127,19 @@ public class MixCotaProdutoDTO implements Serializable{
 	public void setClassificacaoProduto(String classificacaoProduto) {
 		this.classificacaoProduto = classificacaoProduto;
 	}
-	
+	public boolean isItemValido() {
+		return itemValido;
+	}
+	public void setItemValido(boolean itemValido) {
+		this.itemValido = itemValido;
+	}
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
 
-	
-	
 	
 }
 

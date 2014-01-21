@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -324,15 +325,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de,Integer ate, String[] edicoes);
 
-	
-	/**
-	 * 
-	 * @param idEstudoBase
-	 * @param produtoEdicao
-	 * @return
-	 */
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao);
-	
 	/**
 	 * Retorna o percentual de desconto logistica de um produto edição
 	 * 
@@ -352,4 +344,24 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Boolean isEdicaoParcial(Long idProdutoEdicao);
 	
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto);
+	
+	ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto);
+
+	List<ProdutoEdicaoDTO> findReparteEVenda(
+			List<ProdutoEdicaoDTO> produtosEdicao);
+
+	void insereVendaRandomica(ProdutoEdicao produtoEdicao);
+
+	List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(
+			String codigoProduto, Long numeroEdicaoInicial,
+			Long numeroEdicaoFinal);
+
+    BigInteger obterReparteDisponivel(Long idProdutoEdicao);
+
+    boolean isEdicaoAberta(Long produtoEdicaoId);
+    
+    public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto);
+    
+    public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD);
 }

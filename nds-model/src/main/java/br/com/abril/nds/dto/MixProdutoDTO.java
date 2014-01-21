@@ -13,7 +13,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 @SuppressWarnings("serial")
 @Exportable
-public class MixProdutoDTO implements Serializable{
+public class MixProdutoDTO implements Serializable {
 	
 	private BigInteger id;
 	
@@ -23,22 +23,22 @@ public class MixProdutoDTO implements Serializable{
 	@Export(label="nome",exhibitionOrder = 2)
 	private String nomeCota;
 	
-	@Export(label="reparte m�dio", exhibitionOrder = 3)
+	@Export(label="reparte médio", exhibitionOrder = 3)
 	private BigDecimal reparteMedio;
 	
-	@Export(label="venda m�dia",exhibitionOrder = 4)
+	@Export(label="venda média",exhibitionOrder = 4)
 	private BigDecimal vendaMedia;
 	
-	@Export(label="�ltimo reparte",exhibitionOrder = 5)
+	@Export(label="ultimo reparte",exhibitionOrder = 5)
 	private BigDecimal ultimoReparte;
 	
-	@Export(label="reparte m�nimo" ,exhibitionOrder = 6)
+	@Export(label="reparte minimo" ,exhibitionOrder = 6)
 	private BigInteger reparteMinimo;
 	
-	@Export(label="reparte m�ximo" ,exhibitionOrder = 7)
+	@Export(label="reparte maximo" ,exhibitionOrder = 7)
 	private BigInteger reparteMaximo;
 
-	@Export(label="usu�rio",exhibitionOrder = 8)
+	@Export(label="usuário",exhibitionOrder = 8)
 	private String usuario;
 	
 	@Export(label="data" ,exhibitionOrder = 10)
@@ -53,8 +53,10 @@ public class MixProdutoDTO implements Serializable{
 	private BigInteger idCota;
 	private BigInteger idProduto;
 	private String codigoProduto;
-	private String classificacaoProduto;
+	private String codigoICD;
 	
+	private String classificacaoProduto;
+	private BigInteger classificacaoProdutoID;
 	private PaginacaoVO paginacaoVO;
 	
 
@@ -219,6 +221,18 @@ public class MixProdutoDTO implements Serializable{
 	}
 	public void setClassificacaoProduto(String classificacaoProduto) {
 		this.classificacaoProduto = classificacaoProduto;
+	}
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
+	public BigInteger getClassificacaoProdutoID() {
+		return classificacaoProdutoID;
+	}
+	public void setClassificacaoProdutoID(BigInteger classificacaoProdutoID) {
+		this.classificacaoProdutoID = classificacaoProdutoID;
 	}
 	
 	

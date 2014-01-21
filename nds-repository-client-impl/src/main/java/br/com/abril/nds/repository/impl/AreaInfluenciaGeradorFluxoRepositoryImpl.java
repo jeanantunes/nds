@@ -131,6 +131,8 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		
 		// FROM
 		hql.append(" from EstoqueProdutoCota as estoqueProdutoCota");
+		//hql.append(" from Cota as cota");
+		//hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota");
 		hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" left join estoqueProdutoCota.cota as cota ");
 		hql.append(" left join cota.enderecos as cotaEndereco ");
