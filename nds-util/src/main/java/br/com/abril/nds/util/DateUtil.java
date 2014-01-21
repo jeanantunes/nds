@@ -278,6 +278,14 @@ public class DateUtil {
 		return obterAno(calendar);
 	}
 	
+	public static int obterDiaDaSemana(Date data) {
+		
+		Calendar calendar = toCalendar(data);
+		
+		return calendar.get(Calendar.DAY_OF_WEEK);
+		
+	}
+	
 	/**
 	 * Retorna o dia do mês de uma determinada data.
 	 * 
