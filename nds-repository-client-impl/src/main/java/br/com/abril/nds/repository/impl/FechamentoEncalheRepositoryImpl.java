@@ -479,7 +479,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 	}
 
-	public Integer obterTotalCotasAusentes(Date dataEncalhe, 
+	public Integer obterTotalCotasAusentes(Date dataEncalhe, Integer diaRecolhimento,
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
 			
 		StringBuilder sql = new StringBuilder();
@@ -492,7 +492,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" union all ");
 		
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString()); 
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao, false).toString()); 
 
 		sql.append(" ) as ausentes	");
 		
@@ -507,6 +507,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
+		
+		query.setParameter("diaRecolhimento", diaRecolhimento);
+
 		
 		BigInteger qtde = (BigInteger) query.uniqueResult();
 		
@@ -536,11 +539,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
 		sql.append(" 		true as indPossuiChamadaEncalheCota, 							");
 		sql.append(" 		false as indMFCNaoConsolidado, 									");
+		
+		sql.append(" 		case when (grupoCota.id is null) then false			");
+		sql.append(" 		else true end as operacaoDiferenciada,				");
+		
 		sql.append("        coalesce(chamadaEncalheCota.FECHADO, 0)  as fechado,            ");
 		sql.append("        coalesce(chamadaEncalheCota.POSTERGADO, 0) as postergado,       		");
-		sql.append("        coalesce(chamadaEncalhe.DATA_RECOLHIMENTO, :dataEncalhe) as dataEncalhe ");
-
-		
+		sql.append("        coalesce(chamadaEncalhe.DATA_RECOLHIMENTO, :dataEncalhe) as dataEncalhe, ");
+		sql.append("		(select count(cu.id) from COTA_UNIFICACAO cu ");
+		sql.append("		join COTAUNIFICACAO_COTAUNIFICADA co_un on (cu.ID = co_un.COTA_UNIFICACAO_ID) ");
+		sql.append("		where cu.COTA_ID = cota.ID or ");
+		sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
 	}
 	
 	
@@ -570,7 +579,22 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	sql.append("    left outer join                                                     ");
 	sql.append("        ROTEIRO roteiro                                                 ");
 	sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                               ");
-	sql.append("    where                                                               ");
+	
+	sql.append("	left outer join COTA_GRUPO cotaGrupo	");
+	sql.append("	on cotaGrupo.cota_id = cota.id			");
+	
+	sql.append("	left outer join GRUPO_COTA grupoCota 		");
+	sql.append("	on grupoCota.id = cotaGrupo.grupo_cota_id	");
+	
+	sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
+	sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
+	
+	sql.append("    where    ");
+	
+	
+	sql.append("    (	grupoCota.id is null		");	
+	sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");
+	
 	sql.append("        chamadaEncalhe.DATA_RECOLHIMENTO = 	:dataEncalhe                ");
 	sql.append("        and cota.ID not in  (                                           ");
 	sql.append("            select                                                      ");
@@ -581,6 +605,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	sql.append("                cec.data_operacao = :dataEncalhe                        ");   
 	sql.append("        )                                                               ");
 	sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
+
 	
 	if (isSomenteCotasSemAcao) {
 		
@@ -596,7 +621,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return sql;
 	}
 	
-	private StringBuffer getSqlCotaAusenteComChamadaEncalheSemPostergado(boolean indCount, boolean isSomenteCotasSemAcao) {
+	private StringBuffer getSqlCotaAusenteComChamadaEncalheSemPostergado(boolean indCount, boolean isSomenteCotasSemAcao,
+			boolean ignorarUnificacao) {
 		
 		StringBuffer sql = new StringBuffer();
 		
@@ -618,6 +644,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
 			sql.append(" 		true as indPossuiChamadaEncalheCota, 							");
 			sql.append(" 		false as indMFCNaoConsolidado, 									");
+			
+			sql.append(" 		case when (grupoCota.id is null) then false			");
+			sql.append(" 		else true end as operacaoDiferenciada,				");
 			sql.append("        coalesce(chamadaEncalheCota.FECHADO, 0)  as fechado,            ");
 			sql.append("        coalesce(chamadaEncalheCota.POSTERGADO, 0) as postergado,       		");
 			sql.append("        coalesce(chamadaEncalhe.DATA_RECOLHIMENTO, :dataEncalhe) as dataEncalhe ");
@@ -651,7 +680,22 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("    left outer join                                                     ");
 		sql.append("        ROTEIRO roteiro                                                 ");
 		sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                               ");
+		
+		sql.append("	left outer join COTA_GRUPO cotaGrupo	");
+		sql.append("	on cotaGrupo.cota_id = cota.id			");
+		
+		sql.append("	left outer join GRUPO_COTA grupoCota 		");
+		sql.append("	on grupoCota.id = cotaGrupo.grupo_cota_id	");
+		
+		sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
+		sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
+
+		
 		sql.append("    where                                                               ");
+		
+		sql.append("    (	grupoCota.id is null		");	
+		sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento ) and	");
+		
 		sql.append("        chamadaEncalhe.DATA_RECOLHIMENTO = 	:dataEncalhe                ");
 		sql.append("        and chamadaEncalheCota.postergado = :postergadoCota             ");
 		sql.append("        and cota.ID not in  (                                           ");
@@ -662,6 +706,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("            where                                                       ");
 		sql.append("                cec.data_operacao = :dataEncalhe                        ");    
 		sql.append("        )                                                               ");
+		
+		if (ignorarUnificacao){
+			
+			sql.append("	and cota.ID not in ( 											");
+			sql.append("		select aoada.COTA_UNIFICADA_ID								");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada) 			 	");
+			
+			sql.append("	and cota.ID not in ( 											");
+			sql.append("		select uni.cota_id 											");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
+			
+		}
+		
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 		
 		if (isSomenteCotasSemAcao) {
@@ -678,7 +735,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return sql;
 	}
 
-	private StringBuffer getSqlCotaAusenteSemChamadaEncalhe(boolean indCount, boolean isSomenteCotasSemAcao) {
+	private StringBuffer getSqlCotaAusenteSemChamadaEncalhe(boolean indCount, boolean isSomenteCotasSemAcao,
+			boolean ignorarUnificacao) {
 		
 		StringBuffer sqlMovimentoFinaceiroCotaNaoConsolidado = new StringBuffer();
 		
@@ -716,9 +774,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			
 			sql.append(sqlMovimentoFinaceiroCotaNaoConsolidado.toString()).append(" as indMFCNaoConsolidado, ");
 			
+			sql.append(" 		case when (grupoCota.id is null) then false			");
+			sql.append(" 		else true end as operacaoDiferenciada,				");
+
+			
 			sql.append("   false as fechado, ");
 		    sql.append("   false as postergado, ");
-		    sql.append("   coalesce(:dataEncalhe) as dataEncalhe ");
+		    sql.append("   coalesce(:dataEncalhe) as dataEncalhe, ");
+			sql.append("		(select count(cu.ID) from COTA_UNIFICACAO cu ");
+			sql.append("		join COTAUNIFICACAO_COTAUNIFICADA co_un on (cu.ID = co_un.COTA_UNIFICACAO_ID) ");
+			sql.append("		where cu.COTA_ID = cota.ID or ");
+			sql.append("		co_un.COTA_UNIFICADA_ID = cota.ID > 0) as unificacao ");
 			
 		}
 		
@@ -743,11 +809,37 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("        ROTEIRO roteiro                                     ");
 		sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                   ");
 		
+		sql.append("	left outer join COTA_GRUPO cotaGrupo	");
+		sql.append("	on cotaGrupo.cota_id = cota.id			");
+		
+		sql.append("	left outer join GRUPO_COTA grupoCota 		");
+		sql.append("	on grupoCota.id = cotaGrupo.grupo_cota_id	");
+		
+		sql.append("	left outer join DIA_RECOLHIMENTO_GRUPO_COTA diaRecolhimentoGrupoCota	");
+		sql.append("	on grupoCota.id = diaRecolhimentoGrupoCota.grupo_id						");
+		
 		sql.append("    where  ");
 
-		sql.append("	cota.SITUACAO_CADASTRO <> :inativo and cota.SITUACAO_CADASTRO <> :pendente and ");
+		sql.append("	cota.SITUACAO_CADASTRO <> :inativo and cota.SITUACAO_CADASTRO <> :pendente ");
 		
-		sql.append("	cota.ID not in  (                                   ");
+		
+		sql.append("    and (	grupoCota.id is null		");	
+		sql.append("    or diaRecolhimentoGrupoCota.dia_id = :diaRecolhimento )	");
+		
+		
+		if (ignorarUnificacao){
+			
+			sql.append("	and cota.ID not in ( 								");
+			sql.append("		select aoada.COTA_UNIFICADA_ID					");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada)	");
+			
+			sql.append("	and cota.ID not in ( 								");
+			sql.append("		select uni.cota_id 								");
+			sql.append("			from COTAUNIFICACAO_COTAUNIFICADA aoada join COTA_UNIFICACAO UNI ON (aoada.COTA_UNIFICACAO_ID = uni.ID	)) ");
+			
+		}
+		
+		sql.append("	and cota.ID not in  (                                   ");
 		sql.append("            select                                          ");
 		sql.append("                distinct( cec.COTA_ID )                     ");
 		sql.append("            from                                            ");
@@ -779,7 +871,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, 
+	public List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, Integer diaRecolhimento,
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
 	
 		StringBuilder sql = new StringBuilder();
@@ -788,7 +880,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" union all ");
 		
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao, false).toString());
 		
 		if("acao".equals(sortname)) {
 			
@@ -811,6 +903,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		((SQLQuery) query).addScalar("indPossuiChamadaEncalheCota", StandardBasicTypes.BOOLEAN);
 		
+		((SQLQuery) query).addScalar("operacaoDiferenciada", StandardBasicTypes.BOOLEAN);
+		
 		((SQLQuery) query).addScalar("fechado", StandardBasicTypes.BOOLEAN);
 		
 		((SQLQuery) query).addScalar("indMFCNaoConsolidado", StandardBasicTypes.BOOLEAN);
@@ -818,6 +912,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		((SQLQuery) query).addScalar("postergado", StandardBasicTypes.BOOLEAN);
 		
 		((SQLQuery) query).addScalar("dataEncalhe", StandardBasicTypes.DATE);
+		
+		((SQLQuery) query).addScalar("unificacao", StandardBasicTypes.BOOLEAN);
 
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
 		
@@ -828,6 +924,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
+		
+		query.setParameter("diaRecolhimento", diaRecolhimento);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaAusenteEncalheDTO.class));
 
@@ -1311,7 +1409,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	}
 
 	@Override
-	public Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
+	public Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, Integer diaRecolhimento, boolean isSomenteCotasSemAcao,
+			String sortorder, String sortname, int page, int rp, boolean ignorarUnificacao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -1319,9 +1418,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" ( ");
 		
-		sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao).toString());
+		sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao, ignorarUnificacao).toString());
 		sql.append(" union all ");
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao, ignorarUnificacao).toString());		 
 
 		sql.append(" ) as ausentes	");
 		
@@ -1338,6 +1437,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
+		
+		query.setParameter("diaRecolhimento", diaRecolhimento);
 		
 		BigInteger qtde = (BigInteger) query.uniqueResult();
 		

@@ -139,8 +139,10 @@ function PesquisaCota(workspace) {
 			},
 			close : function(event, ui) {
 				pesquisaCota.descricaoAtribuida = true;
-				if(ui.item)
+				
+				if (ui.item){
 					pesquisaCota.numeroCotaSelecionada = ui.item.chave.numero;
+				}
 			},
 			select : function(event, ui) {
 				pesquisaCota.descricaoAtribuida = true;

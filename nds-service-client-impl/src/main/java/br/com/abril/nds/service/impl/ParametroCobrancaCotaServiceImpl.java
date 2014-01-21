@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -752,10 +751,15 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		List<FormaCobrancaDTO> formasCobrancaDTO = new LinkedList<FormaCobrancaDTO>();
 		
-		formasCobranca = this.formaCobrancaRepository.obterFormaCobrancaCotaUnificadora(idCota);
 		if (formasCobranca != null && !formasCobranca.isEmpty()){
 			
-			this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, false, "Unificadora");
+			if (this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())){
+				
+				this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, false, "Unificadora");
+			} else {
+				
+				this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, false, null);
+			}
 		}
 		
 		List<CotaUnificacao> unis = 
@@ -766,7 +770,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			for (CotaUnificacao unificacao : unis){
 				
 				this.criarDTODadosFormasCobrancas(formasCobrancaDTO, 
-					Arrays.asList(unificacao.getPoliticaCobranca().getFormaCobranca()),
+					this.formaCobrancaRepository.obterFormasCobrancaCota(unificacao.getCota()),
 					false,
 					"Unificada na cota " + unificacao.getCota().getNumeroCota());
 			}

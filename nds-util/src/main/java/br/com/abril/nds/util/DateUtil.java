@@ -279,7 +279,6 @@ public class DateUtil {
 		return obterAno(calendar);
 	}
 	
-	
 	public static Date obterDtInicioSemanaPorNumeroSemanaAno(Integer inicioSemana,Integer numeroSemana, Integer ano){
 		GregorianCalendar dataInicio = new GregorianCalendar();
 		dataInicio.set(Calendar.YEAR, ano);  
@@ -290,6 +289,14 @@ public class DateUtil {
 		Date retorno = dataInicio.getTime();
 		
 		return retorno;
+	}
+
+	public static int obterDiaDaSemana(Date data) {
+		
+		Calendar calendar = toCalendar(data);
+		
+		return calendar.get(Calendar.DAY_OF_WEEK);
+		
 	}
 	
 	/**

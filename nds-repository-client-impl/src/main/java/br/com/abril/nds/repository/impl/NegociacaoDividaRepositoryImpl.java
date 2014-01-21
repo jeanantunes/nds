@@ -259,7 +259,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaPendente.divida dividaPendente ")
 			
-			.append(" join dividaPendente.consolidado consolidadoPendente ")
+			.append(" join dividaPendente.consolidados consolidadoPendente ")
 			
 			.append(" join consolidadoPendente.movimentos movimentoFinanceiroPendente ")
 			
@@ -294,7 +294,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaData.divida dividaData ")
 			
-			.append(" join dividaData.consolidado consolidadoData ")
+			.append(" join dividaData.consolidados consolidadoData ")
 			
 			.append(" join consolidadoData.movimentos movimentoFinanceiroData ")
 			
@@ -319,7 +319,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaValor.divida dividaValor ")
 			
-			.append(" join dividaValor.consolidado consolidadoValor ")
+			.append(" join dividaValor.consolidados consolidadoValor ")
 			
 			.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
 			
@@ -347,7 +347,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaValor.divida dividaValor ")
 			
-			.append(" join dividaValor.consolidado consolidadoValor ")
+			.append(" join dividaValor.consolidados consolidadoValor ")
 			
 			.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
 			
@@ -390,7 +390,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			
 			.append(" join cobrancaNumeroParcela.divida dividaNumeroParcela ")
 			
-			.append(" join dividaNumeroParcela.consolidado consolidadoNumeroParcela ")
+			.append(" join dividaNumeroParcela.consolidados consolidadoNumeroParcela ")
 			
 			.append(" join consolidadoNumeroParcela.movimentos movimentoFinanceiroNumeroParcela ")
 			
@@ -415,7 +415,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 				.append(" join cobrancaValor.divida dividaValor ")
 
-				.append(" join dividaValor.consolidado consolidadoValor ")
+				.append(" join dividaValor.consolidados consolidadoValor ")
 
 				.append(" join consolidadoValor.movimentos movimentoFinanceiroValor ")
 

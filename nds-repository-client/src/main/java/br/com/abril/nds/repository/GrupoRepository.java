@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 
 /**
@@ -13,6 +14,8 @@ import br.com.abril.nds.model.cadastro.GrupoCota;
  * @author Discover Technology
  */
 public interface GrupoRepository extends Repository<GrupoCota,Long> {
+	
+	List<DiaSemana> obterDiasOperacaoDiferenciadaCota(Integer numeroCota);
 	
 	List<GrupoCota> obterGruposCota(Date data) ;
 

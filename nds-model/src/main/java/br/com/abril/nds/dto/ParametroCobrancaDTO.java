@@ -52,10 +52,6 @@ public class ParametroCobrancaDTO {
 	private Long idFornecedorPadrao;
 	
 	private TipoCota tipoCota;
-	
-	private boolean unificadaPorCota;
-	
-	private List<CotaUnificacaoDTO> unificacoes;
 
 	public ParametroCobrancaDTO() {
 		
@@ -391,25 +387,6 @@ public class ParametroCobrancaDTO {
 
 	public void setTipoCota(TipoCota tipoCota) {
 		this.tipoCota = tipoCota;
-	}
-
-	public boolean isUnificadaPorCota() {
-		return unificadaPorCota;
-	}
-
-
-	public void setUnificadaPorCota(boolean unificadaPorCota) {
-		this.unificadaPorCota = unificadaPorCota;
-	}
-
-
-	public List<CotaUnificacaoDTO> getUnificacoes() {
-		return unificacoes;
-	}
-
-
-	public void setUnificacoes(List<CotaUnificacaoDTO> unificacoes) {
-		this.unificacoes = unificacoes;
 	}
 
 }

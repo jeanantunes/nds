@@ -12,7 +12,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.CotaUnificacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
@@ -28,7 +27,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.CotaUnificacaoService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
@@ -76,9 +74,6 @@ public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private CotaService cotaService;
-	
-	@Autowired
-	private CotaUnificacaoService cotaUnificacaoService;
 		
     private Result result;
     
@@ -95,8 +90,6 @@ public class ParametroCobrancaController extends BaseController {
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaParametrosCobranca";
     
     private static List<ItemDTO<TipoCota,String>> listaTiposCota = new ArrayList<ItemDTO<TipoCota,String>>();
-    
-    public static String ID_EDICAO = "idEdicao";
     
     /**
 	 * Construtor da classe
@@ -132,8 +125,6 @@ public class ParametroCobrancaController extends BaseController {
 		result.include("listaTiposCobranca", listaTiposCobranca);
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaTiposCota", listaTiposCota);
-		
-		this.httpSession.removeAttribute(CotaUnificacaoController.UNIFICACOES);
 	}
     
     
@@ -188,7 +179,6 @@ public class ParametroCobrancaController extends BaseController {
 	 * Método responsável pela inclusão de novo parametro de cobrança
 	 * @param ParametroCobrancaDTO
 	 */
-	@SuppressWarnings("unchecked")
 	@Post
 	@Path("/postarParametroCobranca")
 	@Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO)
@@ -205,13 +195,7 @@ public class ParametroCobrancaController extends BaseController {
 		
 		validarParametros(parametros);
 		
-		parametros.setUnificacoes((List<CotaUnificacaoDTO>) 
-				this.httpSession.getAttribute(CotaUnificacaoController.UNIFICACOES));
-		
 		this.politicaCobrancaService.postarPoliticaCobranca(parametros);
-		
-		this.httpSession.removeAttribute(ID_EDICAO);
-		this.httpSession.removeAttribute(CotaUnificacaoController.UNIFICACOES);
         
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetro de cobrança cadastrado com sucesso."),"result").recursive().serialize();
 	}
@@ -234,13 +218,7 @@ public class ParametroCobrancaController extends BaseController {
 		
 		if (parametroCobranca==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma política de cobrança encontrada.");
-		} 
-		
-		this.httpSession.setAttribute(ID_EDICAO, idPolitica);
-		
-		this.httpSession.setAttribute(
-				CotaUnificacaoController.UNIFICACOES, 
-				this.cotaUnificacaoService.obterCotasUnificadas(idPolitica));
+		}
 		
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
@@ -398,14 +376,5 @@ public class ParametroCobrancaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 			}
 		}
-	}
-	
-	@Post
-	public void resetCotaUnificacoes(){
-		
-		this.httpSession.removeAttribute(CotaUnificacaoController.UNIFICACOES);
-		this.httpSession.removeAttribute(ID_EDICAO);
-		
-		this.result.use(Results.json()).from("").serialize();
 	}
 }
