@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.dto.CotaUnificacaoDTO;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 
 
 /**
@@ -18,24 +17,19 @@ public interface CotaUnificacaoService {
 	/**
 	 * Salva/Altera Unificação de Cotas
 	 * 
-	 * @param cotaUnificacaoId
 	 * @param numeroCotaCentralizadora
 	 * @param numeroCotasCentralizadas
 	 */
 	void salvarCotaUnificacao(Integer numeroCotaCentralizadora,
-			                  List<CotaVO> numeroCotasCentralizadas,
-			                  PoliticaCobranca politicaCobranca);
+			                  List<Integer> numeroCotasCentralizadas);
 	
-	/**
-	 * Remove Unificação de Cotas
-	 * 
-	 * @param politicaCobrancaId
-	 */
-	void removerCotaUnificacao(Long politicaCobrancaId);
 	
-	List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora, Long idPoliticaCobranca);
+	List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora);
 
-	List<CotaUnificacaoDTO> obterCotasUnificadas(Long idPoliticaCobranca);
+	List<CotaUnificacaoDTO> obterCotasUnificadas();
 
-	CotaVO obterCota(Integer numeroCota, boolean edicao, Long idPoliticaCobranca);
+	CotaVO obterCota(Integer numeroCota, boolean edicao);
+
+
+	void removerCotaUnificacao(Integer numeroCota);
 }

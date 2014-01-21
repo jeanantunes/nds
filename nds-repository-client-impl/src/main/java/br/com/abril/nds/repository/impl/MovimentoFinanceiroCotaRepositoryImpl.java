@@ -136,18 +136,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota, Date dataOperacao){
 		
 		StringBuilder hql = new StringBuilder("select mfc ")
-		
 	   .append(" from MovimentoFinanceiroCota mfc ")
-	
 	   .append(" join mfc.cota cota ")
-	   
 	   .append(" join mfc.fornecedor fornecedor ")
-	   
-	   .append(" where mfc.data <= (select d.dataOperacao from Distribuidor d) ")
-	   
+	   .append(" where mfc.data <= :dataOperacao ")
 	   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
@@ -156,11 +151,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		hql.append(" and cota.situacaoCadastro != :inativo and cota.situacaoCadastro != :pendente ")
-		
-		   .append(" and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
-		
-		hql.append(" group by mfc.id ")
-		
+		   .append(" and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+		   .append(" group by mfc.id ")
 		   .append(" order by cota.id, fornecedor.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -173,8 +165,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO);
-		
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE);
+		query.setParameter("dataOperacao", dataOperacao);
 		
 		return query.list();
 	}

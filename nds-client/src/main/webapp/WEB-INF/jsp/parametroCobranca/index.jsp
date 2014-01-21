@@ -5,8 +5,11 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parametroCobranca.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 <script language="javascript" type="text/javascript">
+
+	var pesquisaCota = new PesquisaCota(parametroCobrancaController.workspace);
 
     $(function() {
     	parametroCobrancaController.init();
@@ -46,7 +49,7 @@
                             <td width="133">Tipo de Pagamento:</td>
                             <td><select name="dTipoCobranca" id="dTipoCobranca"
                                 style="width: 200px;"
-                                onchange="parametroCobrancaController.botaoUnificaPorCotas(null, this.value);parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
+                                onchange="parametroCobrancaController.opcaoPagto(this.value);parametroCobrancaController.carregarFormasEmissao(this.value,'');">
                                     <option value="">Selecione</option>
                                     <c:forEach varStatus="counter" var="tipoCobranca"
                                         items="${listaTiposCobranca}">
@@ -131,23 +134,11 @@
                                 name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" 
                                 	  readonly="readonly"/></td>
                                 	  
-                            <td style="text-align: right;">
-                            	Por Cotas:
+                            <td>
+                            	
                             </td>
                             <td>
-                            	<select name="unificadaPorCota" id="unificadaCota" style="width: 80px;"
-                            		onchange="parametroCobrancaController.botaoUnificaPorCotas(this.value);">
-                                    <option value="S">Sim</option>
-                                    <option value="N" selected="selected">N&atilde;o</option>
-                            	</select>
                             	
-                            	<button type="button" id="botaoTelaUnificacao" onclick="parametroCobrancaController.mostrarUnificacaoCotas();"
-                            		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" 
-                            		role="button" aria-disabled="false" style="display: none;">
-                            		<span class="ui-button-text">Cadastrar</span>
-                            	</button>
-                            	
-                            	<br clear="all" />
                             </td>
                         </tr>
     
@@ -371,7 +362,9 @@
 		  					onchange="parametroCobrancaController.buscarCotaPorNumero('')"/>
 		  			</td>
 		  			<td>
-		  				<input type="text" id="nomeCota_" style="width: 495px;"/>
+		  				<input type="text" id="nomeCota_" style="width: 495px;" 
+		  					onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCota_');" 
+		  					onblur="pesquisaCota.pesquisarPorNomeCota('#numeroCota_', '#nomeCota_');"/>
 		  			</td>
 		  		</tr>
 		  	</table>
@@ -402,6 +395,13 @@
 				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 			</a>
 			</span>
+			
+			<span class="bt_novos" id="bt_novo" title="Unificar Cotas">
+				<a href="javascript:;" onclick="parametroCobrancaController.mostrarUnificacaoCotas();">
+					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif">
+				</a>
+			</span>
+			
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>

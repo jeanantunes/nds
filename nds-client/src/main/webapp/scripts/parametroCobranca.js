@@ -227,12 +227,8 @@ var parametroCobrancaController = $.extend(true,
 			
 			parametroCobrancaController.preparaCadastroParametro();
 			
-			parametroCobrancaController.botaoUnificaPorCotas('N');
-			
 			$("#unificadaCota", parametroCobrancaController.workspace).val("N");
 			
-			$.postJSON(contextPath+"/distribuidor/parametroCobranca/resetCotaUnificacoes", null, null, null, true);
-	
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:530,
@@ -440,10 +436,6 @@ var parametroCobrancaController = $.extend(true,
 			$("#acumulaDivida", this.workspace).val(resultado.acumulaDivida?'S':'N');
 			$("#vencimentoDiaUtil", this.workspace).val(resultado.vencimentoDiaUtil?'S':'N');
 			$("#unificada", this.workspace).val(resultado.unificada?'S':'N');
-			$("#unificadaCota", this.workspace).val(resultado.unificadaPorCota?'S':'N');
-			parametroCobrancaController.botaoUnificaPorCotas(
-					resultado.unificadaPorCota?'S':'N',
-					resultado.tipoCobranca);
 			
 			$("#envioEmail", this.workspace).val(resultado.envioEmail?'S':'N');
 			
@@ -835,28 +827,6 @@ var parametroCobrancaController = $.extend(true,
 			});
 		},
 		
-		botaoUnificaPorCotas : function(value, tipoPagamento){
-			
-			if (tipoPagamento && tipoPagamento == 'BOLETO_EM_BRANCO'){
-				
-				$("#unificadaCota", parametroCobrancaController.workspace).val("N");
-				$("#unificadaCota", parametroCobrancaController.workspace).attr("disabled", "disabled");
-				$("#botaoTelaUnificacao", parametroCobrancaController.workspace).hide();
-				return;
-			} else {
-				
-				$("#unificadaCota", parametroCobrancaController.workspace).removeAttr("disabled");
-			}
-			
-			if (value == 'S'){
-				
-				$("#botaoTelaUnificacao", parametroCobrancaController.workspace).show();
-			} else {
-				
-				$("#botaoTelaUnificacao", parametroCobrancaController.workspace).hide();
-			}
-		},
-		
 		mostrarUnificacaoCotas : function(){
 			
 			$(".cotasCentralizadas", parametroCobrancaController.workspace).flexOptions({
@@ -1071,13 +1041,29 @@ var parametroCobrancaController = $.extend(true,
 				'onchange="parametroCobrancaController.buscarCotaPorNumero('+ indexAnterior +')"/>'+
 				'</td><td>'+
 				'<input type="text" id="nomeCota_'+ indexAnterior +'" style="width: 475px;"'+
-				'onblur="parametroCobrancaController.adicionarLinhaCota('+ indexAnterior +')"/></td></tr>';
+				'onkeyup="parametroCobrancaController.onkeyupCampoNome('+ indexAnterior +')"' +
+				'onblur="parametroCobrancaController.onblurCampoNome('+ indexAnterior +')"'+
+				'/></td></tr>';
 			
 			$("#cotasCentralizadas", parametroCobrancaController.workspace).append(template);
 			
 			$(".numCota", parametroCobrancaController.workspace).numeric();
 			
 			$("#numeroCota_"+ indexAnterior, parametroCobrancaController.workspace).focus();
+		},
+		
+		onkeyupCampoNome : function(index){
+			
+			pesquisaCota.autoCompletarPorNome("#nomeCota_" + index);
+		},
+		
+		onblurCampoNome : function(index){
+			
+			parametroCobrancaController.adicionarLinhaCota(index);
+			
+			if ($("#numeroCota_" + index, parametroCobrancaController.workspace).val() == ""){
+				pesquisaCota.pesquisarPorNomeCota("#numeroCota_" + index, "#nomeCota_" + index);
+			}
 		},
 		
 		limparCamposCentralizacaoCotas : function(){

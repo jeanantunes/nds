@@ -71,6 +71,7 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
@@ -92,6 +93,7 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -185,6 +187,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	protected BoletoEmailService boletoEmailService;
+	
+	@Autowired
+	private NegociacaoDividaService negociacaoDividaService;
+	
+	@Autowired
+	private CotaUnificacaoRepository cotaUnificacaoRepository;
 	
 	@Override
 	@Transactional
@@ -468,6 +476,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		fechamentoEncalheRepository.flush();
 	}
 
+	private Integer obterDiaRecolhimento(Date dataRecolhimento) {
+		
+		if(dataRecolhimento == null) {
+			return null;
+		}
+		
+		return DateUtil.obterDiaDaSemana(dataRecolhimento);
+		
+	}
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe,
@@ -479,8 +497,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			startSearch = page * rp - rp;	
 		} 
 		
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
+		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
+			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
 
 		if (!isSomenteCotasSemAcao){
 			
@@ -505,7 +525,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cobrado ");
 			}
+		} else if (cotaAusenteEncalheDTO.isUnificacao()){
 			
+			cotaAusenteEncalheDTO.setAcao(" Cota com unificação ");
 		} else {
 			
 			if (cotaAusenteEncalheDTO.isFechado()) {
@@ -524,6 +546,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
+		if(cotaAusenteEncalheDTO.isOperacaoDiferenciada()) {
+			cotaAusenteEncalheDTO.setAcao( 
+					(cotaAusenteEncalheDTO.getAcao()==null || cotaAusenteEncalheDTO.getAcao().trim().isEmpty()) ?  
+					"Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao()+ " / Operação Diferenciada" 
+			);
+		}
+		
+		
 	}
 	
 	
@@ -531,7 +561,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
 		
-		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
+		
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, null, null, 0, 0);
 	}
 
 
@@ -667,8 +699,62 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
 		}
 		
+		BigDecimal reparte =
+				this.chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(cota.getNumeroCota(), dataOperacao, false, false);
+		
+		reparte = reparte != null ? reparte : BigDecimal.ZERO;
+		
+		this.negociacaoDividaService.abaterNegociacaoPorComissao(idCota, reparte, usuario);
+		
 		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
+		
+		this.gerarMovimentosFinanceiros(cota, dataOperacao, dataOperacaoDistribuidor, usuario, isAlteracaoTipoCotaNaDataAtual);
+		
+		if (!this.cotaUnificacaoRepository.verificarCotaUnificada(cota.getNumeroCota()) &&
+			!this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())){
+			
+			if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+	
+				try {
+					
+					boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
+	
+					if (existeBoletoAntecipado){
+					
+					    this.gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
+					}
+					else{
+					
+					    this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+					}    
+				} 
+				catch (GerarCobrancaValidacaoException e) {
+	
+					if (validacaoVO.getListaMensagens() == null){
+						
+						validacaoVO.setListaMensagens(new ArrayList<String>());
+					}
+	
+					validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
+				}
+			}
+		}
+			
+		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+			this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(
+				cota.getId(), dataOperacao);
+		
+		for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
+			
+			chamadaEncalheCota.setFechado(true);
+			
+			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
+		}
+	}
+
+	private void gerarMovimentosFinanceiros(Cota cota, Date dataOperacao, Date dataOperacaoDistribuidor,
+			Usuario usuario, boolean isAlteracaoTipoCotaNaDataAtual) {
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
 		
@@ -689,43 +775,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 																	dataOperacaoDistribuidor,
 																	usuario,
 																	null);
-		
-		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
-
-			try {
-				
-				boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(cota.getId(), dataOperacaoDistribuidor);
-
-				if (existeBoletoAntecipado){
-				
-				    this.gerarCobrancaService.gerarDividaPostergada(cota.getId(), usuario.getId());
-				}
-				else{
-				
-				    this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
-				}    
-			} 
-			catch (GerarCobrancaValidacaoException e) {
-
-				if (validacaoVO.getListaMensagens() == null){
-					
-					validacaoVO.setListaMensagens(new ArrayList<String>());
-				}
-
-				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
-			}
-		}
-			
-		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-			this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(
-				cota.getId(), dataOperacao);
-		
-		for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
-			
-			chamadaEncalheCota.setFechado(true);
-			
-			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
-		}
 	}
 
 	@Override
@@ -818,7 +867,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, List<FechamentoFisicoLogicoDTO> listaEncalheSessao)  {
 
-		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true);
+		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true, true);
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
@@ -863,6 +912,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			this.gerarNotaFiscal(dataEncalhe);
 		}
 		
+		//cobra cotas as demais cotas, no caso, as não ausentes e com unificação
+		try {
+			
+			this.gerarCobrancaService.gerarCobranca(null, usuario.getId(), null);
+		} catch (GerarCobrancaValidacaoException e) {
+			
+			throw new ValidacaoException(e.getValidacaoVO());
+		}
 	}
 
 	private void tratarAtualizacaoProximoLancamentoParcial(FechamentoFisicoLogicoDTO item,
@@ -990,7 +1047,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return tipoNotaFiscal;
 	}
 
-	@SuppressWarnings("unused")
 	@Transactional
 	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
 		
@@ -1310,8 +1366,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
-	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao) { 
-		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
-	
+	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, 
+			boolean ignorarUnificacao) {
+		
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe);
+		
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(
+				dataEncalhe, diaRecolhimento, isSomenteCotasSemAcao, null, null, 0, 0, ignorarUnificacao);
 	}
 }

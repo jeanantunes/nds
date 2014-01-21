@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
-import br.com.abril.nds.dto.CotaUnificacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
@@ -32,7 +31,6 @@ import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
-import br.com.abril.nds.service.CotaUnificacaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 
@@ -62,9 +60,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-	
-	@Autowired
-	private CotaUnificacaoService cotaUnificacaoService;
 	 
 	    
 	/**
@@ -249,7 +244,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			parametroCobrancaDTO.setAcumulaDivida(politica.isAcumulaDivida()?true:false);
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
-			parametroCobrancaDTO.setUnificadaPorCota(politica.isUnificaCobrancaPorCota());
 			
 			if(politica.getFormaCobranca() != null 
 					&& politica.getFornecedorPadrao() != null) {
@@ -408,14 +402,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		politica.setFormaEmissao(parametroCobrancaDTO.getFormaEmissao());
 		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
 		
-		if (parametroCobrancaDTO.getTipoCobranca() == TipoCobranca.BOLETO_EM_BRANCO){
-			
-			politica.setUnificaCobrancaPorCota(false);
-		} else {
-			
-			politica.setUnificaCobrancaPorCota(parametroCobrancaDTO.isUnificadaPorCota());
-		}
-		
 		politica.setAtivo(true);
 		politica.setDistribuidor(distribuidorRepository.obter());
 		politica.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
@@ -560,21 +546,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	    	
 	    	politicaCobrancaRepository.merge(politica);
 		}
-		
-	    this.cotaUnificacaoService.removerCotaUnificacao(politica.getId());
-	    
-	    if (parametroCobrancaDTO.getTipoCobranca() != TipoCobranca.BOLETO_EM_BRANCO &&
-	    		parametroCobrancaDTO.isUnificadaPorCota()){
-	    	
-		    if (parametroCobrancaDTO.getUnificacoes() != null){
-		    	
-		    	for (CotaUnificacaoDTO dto : parametroCobrancaDTO.getUnificacoes()){
-		    		
-		    		this.cotaUnificacaoService.salvarCotaUnificacao(dto.getNumeroCota(), 
-		    				dto.getCotas(), politica);
-		    	}
-		    }
-	    }
 	}
 
 	@Override

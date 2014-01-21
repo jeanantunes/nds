@@ -24,5 +24,13 @@ public class GrupoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(todosGrupos);		
 		
 	}
+	
+	@Test
+	public void obterDiasOperacaoDiferenciadaCota() {
+		
+		grupoRepositoryImpl.obterDiasOperacaoDiferenciadaCota(1);
+		
+	}
+
 
 }
