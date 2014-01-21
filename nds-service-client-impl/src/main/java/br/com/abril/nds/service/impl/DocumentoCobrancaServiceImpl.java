@@ -53,6 +53,7 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -1284,7 +1285,18 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     private List<ItemSlipVendaEncalheDTO> obterListaItensRecibo(Cobranca cobranca){
     	
-    	List<MovimentoFinanceiroCota> mfcs = cobranca.getDivida().getConsolidado().getMovimentos();
+    	ConsolidadoFinanceiroCota c = null;
+		
+		for (ConsolidadoFinanceiroCota cc : cobranca.getDivida().getConsolidados()){
+			
+			if (cc.getCota().equals(cobranca.getCota())){
+				
+				c = cc;
+				break;
+			}
+		}
+    	
+    	List<MovimentoFinanceiroCota> mfcs = c.getMovimentos();
     	
     	List<MovimentoEstoqueCota> mecs = new ArrayList<MovimentoEstoqueCota>();
     	

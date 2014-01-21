@@ -87,7 +87,7 @@ public interface FechamentoEncalheService {
 	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
 			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
 
-	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao);
+	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, boolean ignorarUnificacao);
 	
 	void realizarCobrancaCota(Date dataOperacao,
 			                  Usuario usuario, 

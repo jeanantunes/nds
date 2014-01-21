@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.SerializationUtils;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -26,14 +27,11 @@ import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
-import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -44,17 +42,12 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
@@ -98,6 +91,9 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Value("${data_cabalistica}")
+	private String dataCabalistica;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizBalanceamento";
 	
@@ -892,7 +888,9 @@ public class MatrizLancamentoController extends BaseController {
 				
 		produtoBalanceamentoVO.setPeb(produtoLancamentoDTO.getPeb());
 		
-		if(produtoLancamentoDTO.getStatus()== StatusLancamento.CONFIRMADO || produtoLancamentoDTO.getStatus()== StatusLancamento.EM_BALANCEAMENTO){
+		if(produtoLancamentoDTO.getStatus()== StatusLancamento.CONFIRMADO 
+				|| produtoLancamentoDTO.getStatus()== StatusLancamento.EM_BALANCEAMENTO
+				|| produtoLancamentoDTO.getStatus()== StatusLancamento.PLANEJADO){
 		  produtoBalanceamentoVO.setCancelado(true);
 		}else{
 		  produtoBalanceamentoVO.setCancelado(false);	
@@ -1337,29 +1335,18 @@ public class MatrizLancamentoController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void excluirLancamento(ProdutoLancamentoVO produtoLancamento) {
 
-	 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+		Date data = DateUtil.parseDataPTBR(this.dataCabalistica);
 		
-		try {
-	 	  
-			Date data = simpleDateFormat.parse("3000-01-01");
-			
-			Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
-			
-			lancamento.setDataLancamentoDistribuidor(data);
-			//atualizarLancamento(produtoLancamento.getId(),data);
+		Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
+		
+		lancamento.setDataLancamentoDistribuidor(data);
+		lancamento.voltarStatusOriginal();
+		//atualizarLancamento(produtoLancamento.getId(),data);
 
-			this.lancamentoRepositoryService.merge(lancamento);
-				
-				
-			this.result.use(PlainJSONSerialization.class).from(
-						new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
-			
-            
-		}catch(ParseException ex){
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi Possivel excluir o lançamento.");
-		}
+		this.lancamentoRepositoryService.merge(lancamento);
+
+		this.result.use(PlainJSONSerialization.class).from(
+					new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
 		
 	}
 

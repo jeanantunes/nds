@@ -463,9 +463,17 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		if (idFornecedor == null) {
 
-			throw new ValidacaoException(
+			PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
+
+			idFornecedor = politica.getFornecedorPadrao() != null ? 
+					politica.getFornecedorPadrao().getId()
+					: null;
+
+			if (idFornecedor == null) {
+				throw new ValidacaoException(
 					TipoMensagem.WARNING,
 					"Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
+			}
 		}
 
 		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota,

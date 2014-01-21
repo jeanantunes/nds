@@ -6,6 +6,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.CotaVO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaUnificacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
@@ -35,19 +36,31 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 	 * @return CotaUnificacao
 	 */
 	@Override
-	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(
-			Integer numeroCota, Long politicaCobrancaId) {
+	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(Integer numeroCota) {
 		
         StringBuilder hql = new StringBuilder();
         hql.append(" select cotaUnificacao ")
 		   .append(" from CotaUnificacao cotaUnificacao ")
-		   .append(" where cotaUnificacao.cota.numeroCota = :numeroCota ")
-		   .append(" and cotaUnificacao.politicaCobranca.id = :politicaCobrancaId ");
+		   .append(" where cotaUnificacao.cota.numeroCota = :numeroCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("politicaCobrancaId", politicaCobrancaId);
+		
+		return (CotaUnificacao) query.uniqueResult();
+	}
+	
+	@Override
+	public CotaUnificacao obterCotaUnificacaoPorCotaCentralizadora(Long idCota) {
+		
+        StringBuilder hql = new StringBuilder();
+        hql.append(" select cotaUnificacao ")
+		   .append(" from CotaUnificacao cotaUnificacao ")
+		   .append(" where cotaUnificacao.cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
 		
 		return (CotaUnificacao) query.uniqueResult();
 	}
@@ -80,8 +93,7 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora,
-			Long politicaCobrancaId) {
+	public List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora) {
 		
 		StringBuilder hql = new StringBuilder("select ");
 		hql.append(" c.numeroCota as numero, ")
@@ -89,14 +101,12 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 		   .append(" from CotaUnificacao cu ")
 		   .append(" join cu.cotas c ")
 		   .append(" where cu.cota.numeroCota = :numeroCotaCentralizadora ")
-		   .append(" and cu.politicaCobranca.id = :politicaCobrancaId ")
 		   .append(" order by c.numeroCota ");
 		
 		Query query =
 			this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCotaCentralizadora", numeroCotaCentralizadora);
-		query.setParameter("politicaCobrancaId", politicaCobrancaId);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaVO.class));
 		
@@ -104,80 +114,45 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 	}
 
 	@Override
-	public boolean verificarCotaUnificadora(Integer numeroCota, Long politicaCobrancaId) {
+	public boolean verificarCotaUnificadora(Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder("select ");
 		hql.append(" count(c.id) from CotaUnificacao c ")
 		   .append(" where c.cota.numeroCota = :numeroCota ");
 		
-		if (politicaCobrancaId != null){
-			
-			hql.append(" and c.politicaCobranca.id = :politicaCobrancaId ");
-		}
-		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", numeroCota);
-		
-		if (politicaCobrancaId != null){
-			
-			query.setParameter("politicaCobrancaId", politicaCobrancaId);
-		}
 		
 		return (Long)query.uniqueResult() > 0;
 	}
 
 	@Override
-	public boolean verificarCotaUnificada(Integer numeroCota, Long politicaCobrancaId) {
+	public boolean verificarCotaUnificada(Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder("select count(c.id) ");
 		hql.append(" from CotaUnificacao c ")
 		   .append(" join c.cotas cotaUnificada ")
 		   .append(" where cotaUnificada.numeroCota = :numeroCota");
 		
-		if (politicaCobrancaId != null){
-			
-			hql.append(" and c.politicaCobranca.id = :politicaCobrancaId");
-		}
-		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", numeroCota);
-		
-		if (politicaCobrancaId != null){
-		
-			query.setParameter("politicaCobrancaId", politicaCobrancaId);
-		}
 		
 		return (Long)query.uniqueResult() > 0;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Integer> buscarNumeroCotasUnificadoras(Long politicaCobrancaId) {
+	public List<Integer> buscarNumeroCotasUnificadoras() {
 		
 		StringBuilder hql = new StringBuilder("select ");
 		hql.append(" cu.cota.numeroCota from CotaUnificacao cu ")
-		   .append(" where cu.politicaCobranca.id = :politicaCobrancaId ")
 		   .append(" order by cu.cota.numeroCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("politicaCobrancaId", politicaCobrancaId);
-		
 		return query.list();
-	}
-
-	@Override
-	public void removerCotaUnificacao(Long politicaCobrancaId) {
-		
-		Query query = 
-			this.getSession().createQuery(
-				"delete from CotaUnificacao c where c.politicaCobranca.id = :politicaCobrancaId");
-		
-		query.setParameter("politicaCobrancaId", politicaCobrancaId);
-		
-		query.executeUpdate();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -193,5 +168,20 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 		query.setParameter("numeroCota", numeroCota);
 		
 		return query.list();
+	}
+	
+	@Override
+	public Cota obterCotaUnificadoraPorCota(Integer numeroCota){
+		
+		StringBuilder hql = new StringBuilder("select cu.cota ");
+		hql.append(" from CotaUnificacao cu ")
+		   .append(" join cu.cotas cotaUnificada ")
+		   .append(" where cu.cota.numeroCota = :numeroCota ")
+		   .append(" or cotaUnificada.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (Cota) query.uniqueResult();
 	}
 }

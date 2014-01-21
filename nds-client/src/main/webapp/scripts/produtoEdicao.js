@@ -864,11 +864,11 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-temaPrincipal").val(result.temaPrincipal);
 							$("#produtoEdicaoController-temaSecundario").val(result.temaSecundario);
 						
-							if(result.dataLancamento.$ == '01/01/3000'){
-							 $("#produtoEdicaoController-dataLancamento").val("");
-							 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
-							 $("#produtoEdicaoController-istrac29").val(true);
-						    }
+							if(!result.dataLancamento){
+								 $("#produtoEdicaoController-dataLancamento").val("");
+								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+								 $("#produtoEdicaoController-istrac29").val(true);
+							}
 
 							if (redistribuicao) {
 								
