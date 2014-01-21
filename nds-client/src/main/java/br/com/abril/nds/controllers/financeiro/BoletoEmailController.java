@@ -2,8 +2,8 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpSession;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +41,18 @@ public class BoletoEmailController extends BaseController {
 	@Autowired
 	protected BoletoEmailService boletoEmailService;
 	
-	@Autowired
-	private HttpSession session;
-	
 	private static final Logger LOG = Logger.getLogger("envioEmailBoletosLogger");
 	
 	private static final String STATUS_ENVIO_FINALIZADO = "ENVIO_FINALIZADO";
 	
-	private static final String STATUS_BOLETO_EMAIL_SESSION = "statusCobrancaCotaSession";
+	private static final String KEY_ENVIO_BOLETO_EMAIL = "envioBoletoEmail";
+	
+	private static final ConcurrentMap<String, String> CACHE_ENVIO_BOLETO = new ConcurrentHashMap<>();
 	
 	@Path("/")
 	public void index() {
 		
-		this.session.removeAttribute(STATUS_BOLETO_EMAIL_SESSION);
+		CACHE_ENVIO_BOLETO.clear();
 	}
 	
 	@Post
@@ -76,11 +75,15 @@ public class BoletoEmailController extends BaseController {
 		
 		int boletosEmitidos = 0;
 		
+		CACHE_ENVIO_BOLETO.clear();
+		
 		for(BoletoEmail bm : listaBoletoEmail){
 			
-			this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir);
+			String status = "Enviando boleto " + (++boletosEmitidos) + " de " + totalBoletosEmitir;
 			
-		    try {
+			CACHE_ENVIO_BOLETO.put(KEY_ENVIO_BOLETO_EMAIL, status);
+			
+		    try{
 
 				this.boletoEmailService.enviarBoletoEmail(bm);
 
@@ -107,7 +110,7 @@ public class BoletoEmailController extends BaseController {
             }
 		}
 		
-		this.session.setAttribute(STATUS_BOLETO_EMAIL_SESSION, STATUS_ENVIO_FINALIZADO);
+		CACHE_ENVIO_BOLETO.put(KEY_ENVIO_BOLETO_EMAIL, STATUS_ENVIO_FINALIZADO);
 		
 		if (boletosNaoEmitidos){
 			
@@ -122,7 +125,7 @@ public class BoletoEmailController extends BaseController {
 	@Post
 	public void obterStatusEmissaoBoletosFechamentoEncalhe() {
 		
-		String status = (String) this.session.getAttribute(STATUS_BOLETO_EMAIL_SESSION);
+		String status = CACHE_ENVIO_BOLETO.get(KEY_ENVIO_BOLETO_EMAIL);
 		
 		result.use(Results.json()).withoutRoot().from(status==null?"Enviando boletos por email..." : status).recursive().serialize();
 	}
