@@ -650,6 +650,8 @@ public class ContaCorrenteCotaController extends BaseController {
 				this.getNDSFileHeader(), this.obterFiltroExportacao(), null,
 				movs, DebitoCreditoCotaDTO.class,
 				this.httpServletResponse);
+		
+		result.nothing();
 	}
 	
 	@Post
