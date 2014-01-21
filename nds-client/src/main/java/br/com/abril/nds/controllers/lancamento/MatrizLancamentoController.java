@@ -888,16 +888,25 @@ public class MatrizLancamentoController extends BaseController {
 				
 		produtoBalanceamentoVO.setPeb(produtoLancamentoDTO.getPeb());
 		
-		if(produtoLancamentoDTO.getStatus()== StatusLancamento.CONFIRMADO 
-				|| produtoLancamentoDTO.getStatus()== StatusLancamento.EM_BALANCEAMENTO
-				|| produtoLancamentoDTO.getStatus()== StatusLancamento.PLANEJADO){
+		if (validarStatusParaExclusaoLancamento(produtoLancamentoDTO.getStatus())) {
+
 		  produtoBalanceamentoVO.setCancelado(true);
-		}else{
+		  
+		} else {
+			
 		  produtoBalanceamentoVO.setCancelado(false);	
 		}
 		
 		return produtoBalanceamentoVO;
-	}	
+	}
+	
+	private boolean validarStatusParaExclusaoLancamento(StatusLancamento status) {
+		
+		return (StatusLancamento.CONFIRMADO.equals(status)
+					|| StatusLancamento.EM_BALANCEAMENTO.equals(status)
+					|| StatusLancamento.PLANEJADO.equals(status)
+					|| StatusLancamento.FURO.equals(status));
+	}
 	
 	@Exportable
 	public class RodapeDTO {
