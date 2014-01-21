@@ -341,20 +341,20 @@ public class BoletoEmailServiceImpl implements BoletoEmailService {
 			
 			List<AnexoEmail> anexosEmail = this.obterAnexosEmailCobranca(cota, nossoNumero);
 			
-			if (anexosEmail != null && !anexosEmail.isEmpty()){
+			if (anexosEmail != null && !anexosEmail.isEmpty()) {
 				
 				this.enviarDocumentosCobrancaEmail(nossoNumero, email, anexosEmail);
 			}
-		} 
-		catch(AutenticacaoEmailException e){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao conectar-se com o servidor de e-mail. Boleto["+nossoNumero+"]");
-        }		
-        catch (Exception e) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
-        }
-		finally{
+		} catch(AutenticacaoEmailException e) {
+			
+			throw new IllegalArgumentException("Erro ao conectar-se com o servidor de e-mail. Boleto["+nossoNumero+"]", e);
+        
+		} catch (Exception e) {
+
+			throw new IllegalArgumentException(e);
+        
+		} finally {
 			
 			this.boletoEmailRepository.remover(boletoEmail);
 		}
