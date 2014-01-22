@@ -169,7 +169,7 @@ var analiseParcialController = $.extend(true, {
 
         $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/carregarDetalhesCota',
             [{name: 'numeroCota', value: numeroCota},
-             {name: 'codigoProduto', value: $('#codigoProduto').val()}],
+             {name: 'codigoProduto', value: $('input[id="codigoProduto"]').val()}],
             function(result){
 
                 var $dialog = $('#dialog-cotas-detalhes'),
