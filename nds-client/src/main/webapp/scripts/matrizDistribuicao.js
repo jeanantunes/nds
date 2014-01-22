@@ -52,11 +52,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			data,
 			function(result) {
 			    	if(result.parametrosDistribuidorVO.geracaoAutomaticaEstudo) {
-			    	    $('#spanGerarEstudoAutomatico').attr('class', 'bt_novos');
-			    	    $('#linkGerarEstudoAutomatico').attr('onclick', 'matrizDistribuicao.gerarEstudoAutomatico();');
+			    	//    $('#spanGerarEstudoAutomatico').;
+			    	    $('#linkGerarEstudoAutomatico').attr('onclick', 'matrizDistribuicao.gerarEstudoAutomatico();').attr('class', '');
 			    	} else {
-			    	    $('#spanGerarEstudoAutomatico').attr('class', 'linkDisabled');
-			    	    $('#linkGerarEstudoAutomatico').attr('onclick', '');
+			    	  //  $('#spanGerarEstudoAutomatico');
+			    	    $('#linkGerarEstudoAutomatico').attr('onclick', '').attr('class', 'linkDisabled');
 			    	}
 			    	
 				T.carregarGrid();
@@ -67,6 +67,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.escondeGrid = function() { 
 		$("#gridMatrizDistribuicao", _workspace).hide();
+		$("#btnsMatrizDistribuicao", _workspace).hide();
+		
 	},
 
 	this.carregarGrid = function() {		
@@ -1053,6 +1055,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.mostrarGridEBotoesAcao = function () {
 		
 		$("#gridMatrizDistribuicao", _workspace).show();
+		$("#btnsMatrizDistribuicao", _workspace).show();
+		
 		
 	},
 	
