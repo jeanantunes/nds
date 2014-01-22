@@ -69,7 +69,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
 	@NFEExportType
 	@XmlElements(value={ @XmlElement(name="det") })
-	List<DetalheNotaFiscal> detalhesNotaFiscal;
+	private List<DetalheNotaFiscal> detalhesNotaFiscal;
 	//private List<ProdutoServico> produtosServicos;
 	
 	/**

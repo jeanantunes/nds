@@ -25,6 +25,9 @@ public abstract class NotaFiscalPessoa implements Serializable {
 	@Column(name="EMAIL")
 	private String email;
 	
+	@Column(name="ID_PESSOA_ORIGINAL")
+	private Long idPessoaOriginal;
+	
 	public Long getId() {
 		return id;
 	}
@@ -47,6 +50,14 @@ public abstract class NotaFiscalPessoa implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+	public Long getIdPessoaOriginal() {
+		return idPessoaOriginal;
+	}
+
+	public void setIdPessoaOriginal(Long idPessoaOriginal) {
+		this.idPessoaOriginal = idPessoaOriginal;
 	}
 
 	@Override

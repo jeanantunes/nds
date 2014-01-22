@@ -40,6 +40,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 
 	private Long idTipoEmissao;
 
+	private Long idNaturezaOperacao;
+
 	private List<Long> idsFornecedores;
 
 	private List<Long> codigosProdutos;
@@ -47,6 +49,8 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 	private List<Long> idsCotas;
 	
 	private List<Long> numerosNotas;
+	
+	private List<Long> listIdFornecedor;
 
 	private PaginacaoVO paginacao;
 
@@ -146,20 +150,6 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		}
 
 		return (erros != null && erros.size() > 0) ? erros : null;
-
-		//TODO : Sérgio : Verificar se necessita validação
-		/*
-		if( this.getDataEmissao() == null ) {
-			erros.put("dataEmissao", "A Data de Emissão é obrigatória.");
-		if( this.getIdRoteiro() != null ) { }
-		if( this.getIdRota() != null ) { }
-		if( this.getIdTipoEmissao() != null ) { }
-		if( this.getIdsFornecedores() != null ) { }
-		if( this.getIdsProdutos() != null ) { }
-		if( this.getPaginacao() != null ) { }
-		if( this.getOrdenacaoColuna() != null) { }
-		 */
-
 	}
 
 	/*
@@ -351,4 +341,19 @@ public class FiltroImpressaoNFEDTO implements Serializable {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
 
+	public Long getIdNaturezaOperacao() {
+		return idNaturezaOperacao;
+	}
+
+	public void setIdNaturezaOperacao(Long idNaturezaOperacao) {
+		this.idNaturezaOperacao = idNaturezaOperacao;
+	}
+
+	public List<Long> getListIdFornecedor() {
+		return listIdFornecedor;
+	}
+
+	public void setListIdFornecedor(List<Long> listIdFornecedor) {
+		this.listIdFornecedor = listIdFornecedor;
+	}
 }

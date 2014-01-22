@@ -19,11 +19,13 @@ public class EmitenteDestinatarioBuilder {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
 			notaFiscal.getEmitenteDestinario().setNome(pessoaJuridica.getRazaoSocial());
 			notaFiscal.getEmitenteDestinario().setEmail(pessoaJuridica.getEmail());
+			notaFiscal.getEmitenteDestinario().setIdPessoaOriginal(pessoaJuridica.getId());
 			
 		} else if (cota.getPessoa() instanceof PessoaFisica) {			
 			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
 			notaFiscal.getEmitenteDestinario().setNome(pessoaFisica.getNome());
 			notaFiscal.getEmitenteDestinario().setEmail(pessoaFisica.getEmail());
+			notaFiscal.getEmitenteDestinario().setIdPessoaOriginal(pessoaFisica.getId());
 		}
 		
 		notaFiscal.setDataEmissao(new Date());			
@@ -75,9 +77,5 @@ public class EmitenteDestinatarioBuilder {
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco() == null) {
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setEndereco(new NotaFicalEndereco());
 		}
-		
-		
-		
 	}
-	
 }
