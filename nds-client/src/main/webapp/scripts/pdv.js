@@ -150,7 +150,7 @@ var PDV =  $.extend(true, {
 			
 			$("#idPDV", this.workspace).val(result.pdvDTO.id);
 			$("#idCotaImagem", this.workspace).val(result.pdvDTO.idCota);
-			$("#selectStatus", this.workspace).val(result.pdvDTO.statusPDV);
+			$("#selectStatusPDV", this.workspace).val(result.pdvDTO.statusPDV);
 			if(result.pdvDTO.dataInicio)
 				$("#dataInicio", this.workspace).val(result.pdvDTO.dataInicio.$.substr(0,10));
 			$("#nomePDV", this.workspace).val(result.pdvDTO.nomePDV);
@@ -390,7 +390,7 @@ var PDV =  $.extend(true, {
 			
 			var dados = {"pdvDTO.idCota":PDV.idCota , 
 					"pdvDTO.id":$("#idPDV", this.workspace).val() , 
-					"pdvDTO.statusPDV":$("#selectStatus", this.workspace).val() , 
+					"pdvDTO.statusPDV":$("#selectStatusPDV", this.workspace).val() , 
 					"pdvDTO.dataInicio":$("#dataInicio", this.workspace).val(), 
 					"pdvDTO.nomePDV":$("#nomePDV", this.workspace).val(), 
 					"pdvDTO.contato":$("#contatoPDV", this.workspace).val(), 
@@ -404,7 +404,7 @@ var PDV =  $.extend(true, {
 					"pdvDTO.tamanhoPDV":$("#selectTamanhoPDV", this.workspace).val(), 
 					"pdvDTO.qtdeFuncionarios":$("#qntFuncionarios", this.workspace).val(), 
 					"pdvDTO.sistemaIPV":this.isChecked("#sistemaIPV", this.workspace), 
-					"pdvDTO.porcentagemFaturamento":$("#porcentagemFaturamento", this.workspace).val(), 
+					"pdvDTO.porcentagemFaturamento":$("#porcentagemFaturamento", this.workspace).val().replace(".", ","), 
 					"pdvDTO.tipoLicencaMunicipal.id":$("#selectTipoLicenca", this.workspace).val(), 
 					"pdvDTO.numeroLicenca":$("#numerolicenca", this.workspace).val(), 
 					"pdvDTO.nomeLicenca":$("#nomeLicenca", this.workspace).val(),
