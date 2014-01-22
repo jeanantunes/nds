@@ -3,13 +3,18 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ProdutoDistribuicaoVO  implements Serializable {
+public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoDistribuicaoVO> {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
@@ -46,7 +51,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	private BigDecimal suplem;
 	
 	@Export(label="Lancto.", exhibitionOrder = 10)
-	private Integer lancto;
+	private BigDecimal lancto;
 	
 	@Export(label="Promo.", exhibitionOrder = 11)
 	private BigDecimal promo;
@@ -57,12 +62,12 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
 	
-	@Export(label="Status")
-	private String status;
+	private BigInteger idProdutoEdicao;
 	
 	private String dataLancto;
 	
 	private BigDecimal reparte;
+    private BigDecimal estoque;
 	
 	private BigInteger repDistrib;
 	
@@ -70,8 +75,36 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	
 	private Long idUsuario;
 	
-	private String codigoBarraProduto;
+	private Integer idCopia;
+	
+	private Date dataLancamentoEstudo;
+	
+	private String dataLancamentoEstudoFormatado;
+	
+	//Usado para controlar cor sim cor não entre linhas originais e copias
+	//Na matriz de distribuição
+	private Integer idRow;
 
+	private Boolean estudoLiberado;
+	
+	private BigInteger qtdeReparteEstudo;
+	
+	private List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados =  new ArrayList<ProdutoDistribuicaoVO>();
+	
+	private Boolean geracaoAutomatica;
+	
+	public void addItemDuplicado(ProdutoDistribuicaoVO produtoDistribuicaoVO, Integer row) {
+		
+		produtoDistribuicoesDuplicados.add(produtoDistribuicaoVO);
+		
+		int index = 0; 
+		
+		for (ProdutoDistribuicaoVO pdVO: produtoDistribuicoesDuplicados) {
+			pdVO.setIdCopia(index++);
+			pdVO.setIdRow(row);
+		}
+	}
+	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
 	}
@@ -125,8 +158,12 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		return periodo;
 	}
 
-	public void setPeriodo(String periodo) {
-		this.periodo = periodo;
+	public void setPeriodo(Object periodo) {
+		if(periodo == null){
+			this.periodo = "";
+		}else{
+			this.periodo = periodo.toString();			
+		}
 	}
 
 	public BigDecimal getPrecoVenda() {
@@ -161,11 +198,11 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.suplem = suplem;
 	}
 
-	public Integer getLancto() {
+	public BigDecimal getLancto() {
 		return lancto;
 	}
 
-	public void setLancto(Integer lancto) {
+	public void setLancto(BigDecimal lancto) {
 		this.lancto = lancto;
 	}
 
@@ -191,6 +228,17 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+	
+	public Date getDataLanctoSemFormatacao() {
+	    try {
+		return new SimpleDateFormat("dd/MM/yyyy").parse(dataLancto);
+	    } catch (Exception ex) {}
+	    return null;
+	}
+	
+	public void setDataLanctoSemFormatacao(Date dataLancto) {
+		this.dataLancto = new SimpleDateFormat("dd/MM/yyyy").format(dataLancto);
 	}
 	
 	public String getDataLancto() {
@@ -238,12 +286,13 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.idUsuario = idUsuario;
 	}
 	
-	public String getCodigoBarraProduto() {
-		return codigoBarraProduto;
+
+	public BigInteger getIdProdutoEdicao() {
+	    return idProdutoEdicao;
 	}
 
-	public void setCodigoBarraProduto(String codigoBarraProduto) {
-		this.codigoBarraProduto = codigoBarraProduto;
+	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
+	    this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 	@Override
@@ -263,22 +312,118 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoDistribuicaoVO other = (ProdutoDistribuicaoVO) obj;
-		if (idLancamento == null) {
-			if (other.idLancamento != null)
-				return false;
-		} else if (!idLancamento.equals(other.idLancamento))
-			return false;
-		return true;
+		
+		boolean equal = (((this.getIdLancamento() == null && other.getIdLancamento() == null) ||
+                (this.getIdLancamento() != null && this.getIdLancamento().equals(other.getIdLancamento()))) &&
+		 this.getCodigoProduto().equals(other.getCodigoProduto()) &&
+		 this.getNumeroEdicao().equals(other.getNumeroEdicao())) &&
+		 ((this.getIdCopia() == null && other.getIdCopia() == null) || 
+		  (this.getIdCopia() != null && this.getIdCopia().equals(other.getIdCopia())));
+
+	   return equal;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	
+	private Long getComparatorHash(ProdutoDistribuicaoVO prodDistribVO) {
+		
+		long hash = 0l;
+		
+		hash += (prodDistribVO.getNomeProduto().length() * 100);
+		
+		if (prodDistribVO.getIdEstudo() != null) {
+			
+			hash += (prodDistribVO.getIdEstudo().longValue() * 1000);
+			
+			if (!StringUtils.isEmpty(prodDistribVO.getLiberado())) {
+				
+				hash *= 10000l;
+			}
+		}
+		
+		return hash;
 	}
 	
-	
+	@Override
+	public int compareTo(ProdutoDistribuicaoVO prodDistribVO) {
+		
+		return getComparatorHash(this).compareTo(getComparatorHash(prodDistribVO));
+	}
 
+	public Integer getIdCopia() {
+		return idCopia;
+	}
+
+	public void setIdCopia(Integer idCopia) {
+		this.idCopia = idCopia;
+	}
+
+	public Integer getIdRow() {
+		return idRow;
+	}
+
+	public void setIdRow(Integer idRow) {
+		this.idRow = idRow;
+	}
+
+	public Boolean getEstudoLiberado() {
+		return estudoLiberado;
+	}
+
+	public void setEstudoLiberado(Boolean estudoLiberado) {
+		this.estudoLiberado = estudoLiberado;
+	}
+
+	public BigInteger getQtdeReparteEstudo() {
+		return qtdeReparteEstudo;
+	}
+
+	public void setQtdeReparteEstudo(BigInteger qtdeReparteEstudo) {
+		this.qtdeReparteEstudo = qtdeReparteEstudo;
+	}
+
+	public List<ProdutoDistribuicaoVO> getProdutoDistribuicoesDuplicados() {
+		return produtoDistribuicoesDuplicados;
+	}
+
+
+	public void setProdutoDistribuicoesDuplicados(
+			List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados) {
+		this.produtoDistribuicoesDuplicados = produtoDistribuicoesDuplicados;
+	}
+	
+	public Date getDataLancamentoEstudo() {
+		return dataLancamentoEstudo;
+	}
+
+	public void setDataLancamentoEstudo(Date dataLancamentoEstudo) {
+		this.dataLancamentoEstudo = dataLancamentoEstudo;
+		if(dataLancamentoEstudo!=null)
+			this.dataLancamentoEstudoFormatado = new SimpleDateFormat("dd/MM/yyyy").format(dataLancamentoEstudo);
+	}
+
+	public String getDataLancamentoEstudoFormatado() {
+		return dataLancamentoEstudoFormatado;
+	}
+
+	public void setDataLancamentoEstudoFormatado(String dataLancamentoEstudoFormatado) {
+		this.dataLancamentoEstudoFormatado = dataLancamentoEstudoFormatado;
+	}
+
+    public BigDecimal getEstoque() {
+        return estoque;
+    }
+
+    public void setEstoque(BigDecimal estoque) {
+        this.estoque = estoque;
+    }
+
+	public Boolean getGeracaoAutomatica() {
+		return geracaoAutomatica;
+	}
+
+	public void setGeracaoAutomatica(Boolean geracaoAutomatica) {
+		this.geracaoAutomatica = geracaoAutomatica;
+	}
+    
+    
 }

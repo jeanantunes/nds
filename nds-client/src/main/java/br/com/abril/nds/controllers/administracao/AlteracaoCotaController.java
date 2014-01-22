@@ -98,6 +98,7 @@ public class AlteracaoCotaController extends BaseController {
 	}
 	
 	@Path("/")
+
 	public void index()
 	{
 		result.include("listFornecedores", fornecedorService.obterFornecedoresAtivos());

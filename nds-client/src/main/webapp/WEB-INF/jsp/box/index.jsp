@@ -122,5 +122,4 @@ $(function(){
 	      </fieldset>
       </div>
     </form>
-
 </body>

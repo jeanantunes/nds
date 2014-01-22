@@ -75,7 +75,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Integer numCota,GrupoMovimentoEstoque grupoMovimentoEstoque) {
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numCota);
 		
 		return this.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), grupoMovimentoEstoque);
 	}
@@ -160,7 +160,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	public Long obterQuantidadeReparteProdutoCota(Long idProdutoEdicao,
 			Integer numeroCota) {		
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		TipoMovimentoEstoque tipoMovimentoCota =
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);

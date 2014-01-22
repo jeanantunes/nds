@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
@@ -71,8 +72,10 @@ public class VendaProdutoController extends BaseController {
 	
 	
 	@Path("/")
+	@Rules(Permissao.ROLE_LANCAMENTO_VENDA_PRODUTO)
 	public void index(){
 		this.carregarComboFornecedores();
+		this.carregarComboClassificacao();
 	}
 	
 	
@@ -253,6 +256,17 @@ public class VendaProdutoController extends BaseController {
 		this.montarFiltroDetalheVendaProduto(filtroAtual);
 		
 		session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtroAtual);
+	}
+	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		
+		List<TipoClassificacaoProduto> classificacoes = vendaProdutoService.buscarClassificacaoProduto();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
 	}
 
 }

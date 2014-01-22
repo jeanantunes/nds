@@ -234,5 +234,4 @@ public class EntityInterceptor extends EmptyInterceptor {
 		}
 		return liberar;
 	}
-
 }

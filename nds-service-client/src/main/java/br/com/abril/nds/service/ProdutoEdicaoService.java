@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +122,7 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
@@ -207,5 +208,10 @@ public interface ProdutoEdicaoService {
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
 
+	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
+
+    BigInteger obterReparteDisponivel(Long idProdutoEdicao);
+	
+    Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
 	
 }

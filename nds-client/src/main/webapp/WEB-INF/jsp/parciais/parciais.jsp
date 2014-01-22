@@ -95,6 +95,14 @@
 	</div>
 </form>
 
+<form id="idParciaisDiaUtil">
+	<div id="dialog-edit-lancamento-dia-util" title="Parcial">
+	  <p><span id="mensagemAlertaDiaUtil"></span></p>
+	</div>
+</form>
+
+
+
 <form id="idParciaisDetalhes">
 	
 	<div id="dialog-detalhes" title="Parcial">
@@ -328,3 +336,5 @@
 </fieldset>
 
 <jsp:include page="parciaisDeVenda.jsp" />
+
+<jsp:include page="redistribuicao.jsp" />

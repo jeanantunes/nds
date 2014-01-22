@@ -586,37 +586,37 @@ public class NFeServiceImpl implements NFeService {
 	 * 
 	 * @return DanfeDTO
 	 */
-	private NfeImpressaoDTO obterDadosNFe(NfeVO nfe) {
-
-		NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
-
-		if(nfe == null || nfe.getIdNotaFiscal() == null) {
-			return null;
-		}
-
-		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(nfe.getIdNotaFiscal()); 
-
-		if(notaFiscal == null) {
-			return null;
-		}
-
-		carregarNfesDadosPrincipais(nfeImpressao, notaFiscal);
-
-		carregarDanfeDadosEmissor(nfeImpressao, notaFiscal);
-
-		carregarDanfeDadosDestinatario(nfeImpressao, notaFiscal);
-
-		carregarDanfeDadosTributarios(nfeImpressao, notaFiscal);
-
-		carregarDanfeDadosTransportadora(nfeImpressao, notaFiscal);
-
-		carregarDadosItensNfe(nfeImpressao, notaFiscal);
-
-		carregarDadosDuplicatas(nfeImpressao, notaFiscal);
-
-		return nfeImpressao;
-
-	}
+//	private NfeImpressaoDTO obterDadosNFe(NfeVO nfe) {
+//
+//		NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
+//
+//		if(nfe == null || nfe.getIdNotaFiscal() == null) {
+//			return null;
+//		}
+//
+//		NotaFiscal notaFiscal = notaFiscalRepository.buscarPorId(nfe.getIdNotaFiscal()); 
+//
+//		if(notaFiscal == null) {
+//			return null;
+//		}
+//
+//		carregarNfesDadosPrincipais(nfeImpressao, notaFiscal);
+//
+//		carregarDanfeDadosEmissor(nfeImpressao, notaFiscal);
+//
+//		carregarDanfeDadosDestinatario(nfeImpressao, notaFiscal);
+//
+//		carregarDanfeDadosTributarios(nfeImpressao, notaFiscal);
+//
+//		carregarDanfeDadosTransportadora(nfeImpressao, notaFiscal);
+//
+//		carregarDadosItensNfe(nfeImpressao, notaFiscal);
+//
+//		carregarDadosDuplicatas(nfeImpressao, notaFiscal);
+//
+//		return nfeImpressao;
+//
+//	}
 
 
 

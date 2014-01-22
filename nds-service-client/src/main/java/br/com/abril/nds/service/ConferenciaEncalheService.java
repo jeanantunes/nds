@@ -54,6 +54,17 @@ public interface ConferenciaEncalheService {
 	
 	
 	/**
+	 * Verifica se a cota informada possui operação diferenciada. 
+	 * 
+	 * Caso possua, é verificado se o dia da semana da data de operação se encontra nos dias
+	 * de operação diferenciada configurados para a cota em questão. 
+	 * 
+	 * @param numeroCota
+	 */
+	public void verificarCotaOperacaoDiferenciada(Integer numeroCota);
+
+	
+	/**
 	 * 
 	 * @param conferenciaEncalhe
 	 * @param cota

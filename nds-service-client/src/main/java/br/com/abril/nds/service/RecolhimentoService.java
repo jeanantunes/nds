@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;

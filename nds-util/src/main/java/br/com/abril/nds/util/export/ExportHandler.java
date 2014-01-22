@@ -56,8 +56,11 @@ public class ExportHandler {
 				
 				exportRows.add(exportRow);
 			}
-			
-			exportFooters.addAll(footerHandler.get());
+
+			if (footerHandler.get() != null) {
+
+				exportFooters.addAll(footerHandler.get());
+			}
 
 			exportModel.setFilters(exportFilters);
 			

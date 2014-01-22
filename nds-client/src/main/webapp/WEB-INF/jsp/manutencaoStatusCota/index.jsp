@@ -121,6 +121,7 @@
 		
 		<div class="grids" style="display: none;">
 			<table class="manutencaoStatusCotaGrid"></table>
+			
 		</div>
 	</fieldset>
 </form>

@@ -25,7 +25,7 @@ public class HistoricoTitularidadeCotaAtualizacaoCaucaoLiquida implements Serial
     @Temporal(TemporalType.TIMESTAMP)
     private Date atualizacao;
     
-    @Column(name = "VALOR", precision=18, scale=4)
+    @Column(name = "VALOR")
     private BigDecimal valor;
 
     public HistoricoTitularidadeCotaAtualizacaoCaucaoLiquida() {

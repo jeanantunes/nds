@@ -156,6 +156,7 @@ $(function(){
 		</form>
 	</fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
+<<<<<<< HEAD
 <fieldset class="fieldGrid">
 	<legend>Gera&ccedil;&atilde;o NF-e</legend>
 	<!--
@@ -172,3 +173,11 @@ $(function(){
 	</div>
 
 </fieldset>
+=======
+       <fieldset class="fieldGrid">
+       	  <legend>Gera&ccedil;&atilde;o NF-e</legend>
+          <div class="grids" style="display:none;">
+		  <table id="gridNFe"></table>
+		</div>
+      </fieldset>
+>>>>>>> DGBti/master

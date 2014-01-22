@@ -99,6 +99,13 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		Assert.assertNotNull(resultado);
 	}
 	
+	private Integer obterDiaRecolhimento(Date dataRecolhimento) {
+		if(dataRecolhimento == null) {
+			return null;
+		}
+		return DateUtil.obterDiaDaSemana(dataRecolhimento);
+	}
+	
 	@Test
 	public void testObterCotasAusentes() {
 
@@ -106,15 +113,18 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		dataEncalhe.set(2012, 5, 20);
 		
+		
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe.getTime());
+		
 		List<CotaAusenteEncalheDTO> listaCotasAusentes = 
 			this.fechamentoEncalheRepository.obterCotasAusentes(
-				dataEncalhe.getTime(), false, "asc", "numeroCota", 0, 20);
+				dataEncalhe.getTime(), diaRecolhimento, false, "asc", "numeroCota", 0, 20);
 		
 		Assert.assertNotNull(listaCotasAusentes);
 		
 		listaCotasAusentes = 
 			this.fechamentoEncalheRepository.obterCotasAusentes(
-				dataEncalhe.getTime(), false, "desc", "numeroCota", 20, 20);
+				dataEncalhe.getTime(), diaRecolhimento, false, "desc", "numeroCota", 20, 20);
 
 		Assert.assertNotNull(listaCotasAusentes);
 
@@ -128,15 +138,17 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		
 		dataEncalhe.set(2012, 5, 20);
 		
+		Integer diaRecolhimento = obterDiaRecolhimento(dataEncalhe.getTime());
+		
 		Integer totalCotasAusentes =  
 			this.fechamentoEncalheRepository.obterTotalCotasAusentes(
-				dataEncalhe.getTime(), false, "asc", "numeroCota", 0, 20);
+				dataEncalhe.getTime(), diaRecolhimento, false, "asc", "numeroCota", 0, 20);
 		
 		Assert.assertNotNull(totalCotasAusentes);
 		
 		totalCotasAusentes = 
 			this.fechamentoEncalheRepository.obterTotalCotasAusentes(
-				dataEncalhe.getTime(), false, "desc", "numeroCota", 20, 20);
+				dataEncalhe.getTime(), diaRecolhimento,  false, "desc", "numeroCota", 20, 20);
 
 		Assert.assertNotNull(totalCotasAusentes);
 

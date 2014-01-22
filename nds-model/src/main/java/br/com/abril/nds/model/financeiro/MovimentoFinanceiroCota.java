@@ -27,6 +27,8 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	 */
 	private static final long serialVersionUID = 1395654431152408327L;
 
+	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
@@ -45,8 +47,9 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	private boolean lancamentoManual;
 	
 	@OneToMany(mappedBy = "movimentoFinanceiroCota", cascade=CascadeType.REMOVE)
+
 	private List<HistoricoMovimentoFinanceiroCota> historicos = new ArrayList<HistoricoMovimentoFinanceiroCota>();
-	
+
 	@OneToOne(mappedBy="movimentoFinanceiroCota")
 	private ParcelaNegociacao parcelaNegociacao;
 	

@@ -263,4 +263,5 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
 		this.itemNotaEnvio = itemNotaEnvio;
 	}
+
 }

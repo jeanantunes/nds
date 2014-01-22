@@ -357,6 +357,4 @@ public class ConferenciaEncalheDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 }

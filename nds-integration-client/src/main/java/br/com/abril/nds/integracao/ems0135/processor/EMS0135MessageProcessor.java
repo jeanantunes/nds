@@ -202,7 +202,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 //				ItemNotFound = true;
 				
 				//Trac 784
-				Produto produto = this.produtoRepository.obterProdutoPorCodigo(codigoProduto);
+				Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
 				
 				if (produto == null){
 					

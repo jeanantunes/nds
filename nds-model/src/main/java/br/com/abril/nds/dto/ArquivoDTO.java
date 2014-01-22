@@ -3,8 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import javax.activation.MimetypesFileTypeMap;
-
 public class ArquivoDTO implements Serializable {
 
 	private static final long serialVersionUID = 2355174705466848188L;

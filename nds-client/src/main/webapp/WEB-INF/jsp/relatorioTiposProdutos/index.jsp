@@ -41,8 +41,8 @@
 	              	<td>
 	              		<select id="tipoProduto" name="filtro.tipoProduto" style="width:120px;">
 	                		<option selected="selected" value="-1"></option>
-							<c:forEach items="${listTipoProduto}" var="tipoProduto">
-								<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
+							<c:forEach items="${listTipoProduto}" var="tipoClassificacao">
+								<option value="${tipoClassificacao.id}">${tipoClassificacao.descricao}</option>
 							</c:forEach>
 	              		</select>
 	              	</td>

@@ -26,7 +26,7 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase, CotaBaseDTO dto) {
 		return cotaBaseRepository.obterCotasBases(cotaBase, dto);
 	}
@@ -38,13 +38,13 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	}
 
 	@Override
-	@Transactional
-	public CotaBase obterCotaNova(Integer numeroCotaNova) {		
-		return this.cotaBaseRepository.obterCotaNova(numeroCotaNova);
+	@Transactional(readOnly = true)
+	public CotaBase obterCotaNova(Integer numeroCotaNova, Boolean ativo) {		
+		return this.cotaBaseRepository.obterCotaNova(numeroCotaNova, ativo);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public FiltroCotaBaseDTO obterCotaDoFiltro(CotaBase cotaBase) {
 		return this.cotaBaseRepository.obterCotaDoFiltro(cotaBase);
 	}
@@ -56,20 +56,26 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaBaseHistoricoDTO> obterCotasHistorico(CotaBase cotaBase, CotaBaseDTO dto) {
 		return this.cotaBaseRepository.obterCotasHistorico(cotaBase, dto);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaBaseDTO> obterListaCotaPesquisaGeral(CotaBaseDTO dto){
 		return this.cotaBaseRepository.obterListaCotaPesquisaGeral(dto);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase) {
+		
+		if (cotaBase == null) {
+			
+			return null;
+		}
+		
 		return this.cotaBaseRepository.obterListaTelaDetalhe(cotaBase);
 	}
 

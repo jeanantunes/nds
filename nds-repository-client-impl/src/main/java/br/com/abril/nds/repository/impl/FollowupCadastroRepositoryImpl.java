@@ -49,7 +49,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
 		hql.append(" WHERE datediff(contrato.dataTermino, sysdate()) < distribuidor.prazoFollowUp ");
-	   
+	    hql.append(" order by cota.numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -89,7 +89,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		
 		hql.append(" WHERE datediff(np.vencimento, sysdate()) < distribuidor.prazoFollowUp ");
 		
-		
+		hql.append(" order by cota.numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -126,6 +126,8 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		
 		hql.append(" WHERE datediff(cheque.validade, sysdate()) < distribuidor.prazoFollowUp ");
+		
+		hql.append(" order by cota.numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -165,6 +167,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		
 		hql.append(" WHERE datediff(outros.validade, sysdate()) < distribuidor.prazoFollowUp ");
 		
+		hql.append(" order by cota.numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		
@@ -195,6 +198,7 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");		
 		hql.append(" WHERE  ( cota.parametroDistribuicao.utilizaTermoAdesao = true and cota.parametroDistribuicao.termoAdesaoRecebido= false )    ");
 		hql.append("  or  ( cota.parametroDistribuicao.utilizaProcuracao = true and cota.parametroDistribuicao.procuracaoRecebida = false )    ");
+		hql.append(" order by cota.numeroCota");
 
 		Query query =  getSession().createQuery(hql.toString());		
 
@@ -232,6 +236,8 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		
 		hql.append(" WHERE    fornecedores.possuiContrato = true   and   datediff( fornecedores.validadeContrato, sysdate()) < distribuidor.prazoFollowUp ");
+		
+		hql.append(" order by cota.numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		

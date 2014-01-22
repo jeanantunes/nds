@@ -166,10 +166,12 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
@@ -503,7 +505,7 @@ public class Fixture {
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
 			SituacaoCadastro situacaoCadastro,
-			TipoFornecedor tipo, Integer codigoInterface) {
+			boolean b, TipoFornecedor tipo, Integer codigoInterface) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
@@ -3193,7 +3195,8 @@ public class Fixture {
 		
 		PeriodoLancamentoParcial parcial = new PeriodoLancamentoParcial();
 		
-		parcial.setLancamento(lancamento);
+		//TODO Ajuste alterações PARCIAIS
+		//parcial.setLancamento(lancamento);
 		
 		parcial.setLancamentoParcial(lancamentoParcial);
 		
@@ -4443,6 +4446,17 @@ public class Fixture {
 		tipoNotaFiscal.setCfopOutrosEstados("");
 		
 		return tipoNotaFiscal;
+	}
+
+	public static HistoricoAcumuloDivida criarHistoricoAcumuloDivida(
+			Divida dividaAcumuladaGuilherme1, Date criarData,
+			Usuario usuarioJoao, StatusInadimplencia ativa) {
+		return null;
+	}
+	
+	private static Fornecedor fornecedor(PessoaJuridica juridicaFC,
+			SituacaoCadastro ativo, TipoFornecedor tipoFornecedor, int i) {
+		return null;
 	}
    
 }

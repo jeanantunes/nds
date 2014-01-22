@@ -65,7 +65,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Enumerated(EnumType.STRING)
     private RegimeRecolhimento regimeRecolhimento;
 
-    @Column(name = "PRECO_UNITARIO", nullable = false, precision=18, scale=4)
+    @Column(name = "PRECO_UNITARIO", nullable = false)
     private BigDecimal precoUnitario;
 
     @Temporal(TemporalType.DATE)
@@ -78,7 +78,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_VENDA_APURADA")
     private Long qtdeVendaApurada;
 
-    @Column(name = "VALOR_VENDA_APURADO", precision=18, scale=4)
+    @Column(name = "VALOR_VENDA_APURADO")
     private BigDecimal valorVendaApurado;
 
     @Column(name = "QTDE_DEVOLUCAO_INFORMADA")
@@ -87,7 +87,7 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_VENDA_INFORMADA")
     private Long qtdeVendaInformada;
 
-    @Column(name = "VALOR_VENDA_INFORMADO", precision=18, scale=4)
+    @Column(name = "VALOR_VENDA_INFORMADO")
     private BigDecimal valorVendaInformado;
 
     @Column(name = "NUMERO_NOTA_ENVIO", nullable = false)
@@ -105,10 +105,10 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "QTDE_DEVOLUCAO_PARCIAL")
     private Long qtdeDevolucaoParcial;
 
-    @Column(name = "VALOR_MARGEM_INFORMADO", precision=18, scale=4)
+    @Column(name = "VALOR_MARGEM_INFORMADO")
     private BigDecimal valorMargemInformado;
 
-    @Column(name = "VALOR_MARGEM_APURADO", nullable = false, precision=18, scale=4)
+    @Column(name = "VALOR_MARGEM_APURADO", nullable = false)
     private BigDecimal valorMargemApurado;
     
     /**

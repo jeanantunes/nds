@@ -26,7 +26,7 @@ public class HistoricoTitularidadeCotaOutros extends HistoricoTitularidadeCotaGa
     @Column(name="OUTROS_DESCRICAO")
     private String descricao;
     
-    @Column(name="OUTROS_VALOR", precision=18, scale=4)
+    @Column(name="OUTROS_VALOR")
     private BigDecimal valor;
     
     @Temporal(TemporalType.TIMESTAMP)

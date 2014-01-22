@@ -21,7 +21,7 @@ public interface CotaUnificacaoService {
 	 * @param numeroCotasCentralizadas
 	 */
 	void salvarCotaUnificacao(Integer numeroCotaCentralizadora,
-			                  List<CotaVO> numeroCotasCentralizadas);
+			                  List<Integer> numeroCotasCentralizadas);
 	
 	
 	List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora);
@@ -31,5 +31,5 @@ public interface CotaUnificacaoService {
 	CotaVO obterCota(Integer numeroCota, boolean edicao);
 
 
-	void removerCotaUnificacao();
+	void removerCotaUnificacao(Integer numeroCota);
 }

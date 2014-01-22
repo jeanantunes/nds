@@ -624,7 +624,4 @@
 	</fieldset>
 
 </div>
-
-
-
 <br clear="all" />

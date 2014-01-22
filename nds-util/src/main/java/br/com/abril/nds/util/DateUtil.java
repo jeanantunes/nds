@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -278,6 +279,26 @@ public class DateUtil {
 		return obterAno(calendar);
 	}
 	
+	public static Date obterDtInicioSemanaPorNumeroSemanaAno(Integer inicioSemana,Integer numeroSemana, Integer ano){
+		GregorianCalendar dataInicio = new GregorianCalendar();
+		dataInicio.set(Calendar.YEAR, ano);  
+		dataInicio.setFirstDayOfWeek(inicioSemana);  
+		dataInicio.set(Calendar.WEEK_OF_YEAR, numeroSemana);  
+		
+	
+		Date retorno = dataInicio.getTime();
+		
+		return retorno;
+	}
+
+	public static int obterDiaDaSemana(Date data) {
+		
+		Calendar calendar = toCalendar(data);
+		
+		return calendar.get(Calendar.DAY_OF_WEEK);
+		
+	}
+	
 	/**
 	 * Retorna o dia do mês de uma determinada data.
 	 * 
@@ -371,4 +392,20 @@ public class DateUtil {
 				return "Dezembro";
 		}
 	}
+
+	public static Date obterDataDaSemanaNoAno(int numeroSemana,
+			int codigoDiaSemana, Date dataAtual) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static int obterNumeroSemanaNoAno(Date dataAtual, int codigoDiaSemana) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	
+	
+	
+	
 }

@@ -1,19 +1,9 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
+import br.com.abril.nds.client.vo.ProdutoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -21,42 +11,30 @@ import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.ClasseSocial;
-import br.com.abril.nds.model.cadastro.DescontoLogistica;
-import br.com.abril.nds.model.cadastro.Editor;
-import br.com.abril.nds.model.cadastro.FaixaEtaria;
-import br.com.abril.nds.model.cadastro.FormatoProduto;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoFornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.Sexo;
-import br.com.abril.nds.model.cadastro.TemaProduto;
-import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.*;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.DescontoLogisticaService;
-import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.EditorService;
-import br.com.abril.nds.service.EstoqueProdutoService;
-import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.*;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.*;
 import br.com.caelum.vraptor.view.Results;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe responsável pelo controle das ações referentes a produtos.
@@ -67,7 +45,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/produto")
 @Rules(Permissao.ROLE_CADASTRO_PRODUTO)
 public class ProdutoController extends BaseController {
-
+	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -103,6 +82,9 @@ public class ProdutoController extends BaseController {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
 	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
@@ -114,6 +96,10 @@ public class ProdutoController extends BaseController {
 	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
 	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
+	
+	private static List<ItemDTO<FormaFisica,String>> listaFormaFisica =  new ArrayList<ItemDTO<FormaFisica,String>>();
+	
+	private static List<ItemDTO<PeriodicidadeProduto,String>> listaPeriodicidade =  new ArrayList<ItemDTO<PeriodicidadeProduto,String>>();
 	
 	private static final String PRODUTO_MANUAL = "MANUAL";
 
@@ -135,31 +121,43 @@ public class ProdutoController extends BaseController {
 		}
 	}
 	
+	/**
+	 * Metodo a ser utilizado para o componente autocomplete.js
+	 * @param codigo
+	 * @throws ValidacaoException
+	 */
+	@Post
+	public void pesquisarPorCodigoProdutoAutoComplete(String codigo) throws ValidacaoException{
+		
+		pesquisarPorCodigoProduto(codigo); 
+	}
+	
+	
 	@Post
 	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
 		
-		if(codigoProduto == null || "".equals(codigoProduto.trim()))
-				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
-		
-		FiltroProdutoDTO filtro = new FiltroProdutoDTO();
-		filtro.setCodigo(codigoProduto);
-		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + filtro.getCodigo() + "\" não encontrado!");
-			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 		} else {
-			
 			result.use(Results.json()).from(produto, "result").serialize();
-			
 		}		
 	}
 
+	/**
+	 * Metodo a ser utilizado no componente autocomplete.js
+	 * @param nome
+	 */
 	@Post
-	public void autoCompletarPorNomeProduto(FiltroProdutoDTO filtro) {
+	public void autoCompletarPorNomeProdutoAutoComplete(String nome) {
 		
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(filtro.getNome(), Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+		autoCompletarPorNome(nome); 
+	}
+	
+	@Post
+	public void autoCompletarPorNomeProduto(String nomeProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -172,6 +170,28 @@ public class ProdutoController extends BaseController {
 				
 				ItemAutoComplete itemAutoComplete =
 					new ItemAutoComplete(produto.getNome(), null, produtoAutoComplete);
+				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+	
+	@Post
+	public void autoCompletarPorNome(String nome) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nome, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()) {
+			ProdutoVO produtoAutoComplete = null;
+			
+			for (Produto produto : listaProduto) {
+				produtoAutoComplete = new ProdutoVO(produto.getCodigo(),produto.getNome(),produto);
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
 				
 				listaProdutos.add(itemAutoComplete);
 			}
@@ -206,11 +226,7 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	public void autoCompletarEdicaoPorProduto(String codigoProduto) {
-		
-		FiltroProdutoDTO filtro = new FiltroProdutoDTO();
-		filtro.setCodigo(codigoProduto);
-		
-		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(filtro.getCodigo());
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 				
@@ -227,24 +243,77 @@ public class ProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
-		
+	
+	/**
+	 * Metodo a ser utilizado para o componente autocomplete.js
+	 * @param codigo
+	 */
 	@Post
-	public void pesquisarPorNomeProduto(FiltroProdutoDTO filtro) {
+	public void autoCompletarPorCodigoProdutoAutoComplete(String codigo) {
+		
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeCodigo(codigo);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()) {
+			ProdutoVO produtoAutoComplete = null;
+			
+			for (Produto produto : listaProduto) {
+				produtoAutoComplete = new ProdutoVO(produto.getCodigo(),produto.getNome(),produto);
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
+				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+	
+	
+	@Post
+	public void autoCompletarPorCodProduto(String codigoProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeCodigo(codigoProduto);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()){
+			
+			for (Produto produto : listaProduto) {
+				ItemAutoComplete itemAutoComplete =
+						new ItemAutoComplete(produto.getCodigo(), produto.getCodigo(), produto.getId().intValue());
+
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+	
+	@Post
+	public void pesquisarPorNomeProdutoAutoComplete(String nome,String codigo) {
+		
+		pesquisarPorNomeProduto(nome, codigo);
+	}
+	
+	@Post
+	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
 		
 		Produto produto = null;
 		
-		if(filtro.getCodigo() != null) {
+		if(codigoProduto!= null){
 			
-			produto = this.produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+			produto = this.produtoService.obterProdutoPorCodigo(codigoProduto);
 			
-			if(produto == null || !produto.getNome().equals(filtro.getNome())){
+			if(produto == null || !produto.getNome().equals(nomeProduto)){
 				
-				produto = this.produtoService.obterProdutoPorNome(filtro.getNome());
+				produto = this.produtoService.obterProdutoPorNome(nomeProduto);
 			}
+		}
+		else{
 			
-		} else {
-			
-			produto = this.produtoService.obterProdutoPorNome(filtro.getNome());
+			produto = this.produtoService.obterProdutoPorNome(nomeProduto);
 		}
 		
 		if (produto == null) {
@@ -257,13 +326,34 @@ public class ProdutoController extends BaseController {
 		}
 	}
 	
+	
+	/**
+	 * Auto complete para produto. Casos de pesquisa por nome onde existem protudos com nomes iguais.
+	 * @param produtos
+	 * @return List<ItemAutoComplete>
+	 */
+	private List<ItemAutoComplete> getAutocompleteCodigoProduto(List<Produto> produtos){
+		
+		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		for (Produto produto : produtos){
+			
+			String numeroExibicao = produto.getCodigo();
+
+			listaCotasAutoComplete.add(new ItemAutoComplete(numeroExibicao, null, produto));
+		}
+		
+		return listaCotasAutoComplete;
+	}
+	
+	
 	@Post
-	public void validarNumeroEdicao(FiltroProdutoDTO filtro, String numeroEdicao) {
+	public void validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
 		
 		boolean numEdicaoValida = false;
 			
 		ProdutoEdicao produtoEdicao =
-			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), numeroEdicao);
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
 		numEdicaoValida = (produtoEdicao != null);
 		
@@ -273,16 +363,16 @@ public class ProdutoController extends BaseController {
 			
 		} else {
 			
-			result.use(Results.json()).from("", "result").serialize();			
+			result.use(Results.json()).withoutRoot().from(produtoEdicao).serialize();
 		}
 	}
 	
 	@Post
 	@Path("/obterProdutoEdicao")
-	public void obterProdutoEdicaoPorCodProdutoNumEdicao(FiltroProdutoDTO filtro, String numeroEdicao) {
+	public void obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao) {
 		
 		ProdutoEdicao produtoEdicao =
-			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), numeroEdicao);
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
 		if (produtoEdicao == null) {
 			
@@ -329,20 +419,25 @@ public class ProdutoController extends BaseController {
 	 */
 	@Path("/pesquisarProdutos")
 	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
-			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
 		
 		int startSearch = page*rp - rp;
+
+        if (StringUtils.isNotBlank(codigo)) {
+            Produto produtoDB = produtoService.obterProdutoPorCodigo(codigo);
+            codigo = produtoDB.getCodigoICD();
+        }
+
+        FiltroProdutoDTO filtroProdutoDTO =
+				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname,isGeracaoAutomatica);
 		
-		FiltroProdutoDTO filtro = 
-				new FiltroProdutoDTO(codigo, produto, editor, fornecedor, codigoTipoProduto, sortorder, sortname);
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);
 		
 		List<ConsultaProdutoDTO> listaProdutos =
-			this.produtoService.pesquisarProdutos(filtro.getCodigo(), produto, fornecedor, editor, 
-				codigoTipoProduto, sortorder, sortname, startSearch, rp);
+			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
+				codigoTipoProduto, sortorder, sortname, startSearch, rp, isGeracaoAutomatica);
 		
-		Integer totalResultados = this.produtoService.pesquisarCountProdutos(filtro.getCodigo(), produto, fornecedor, editor, codigoTipoProduto);
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
 		
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}
@@ -410,18 +505,33 @@ public class ProdutoController extends BaseController {
 			listaFormatoProduto.add(new ItemDTO<FormatoProduto,String>(item,item.getDescFormatoProduto()));
 		}
 		result.include("listaFormatoProduto",listaFormatoProduto);	
-
+		
 		listaTipoLancamento.clear();
 		for(TipoLancamento item:TipoLancamento.values()){
 			listaTipoLancamento.add(new ItemDTO<TipoLancamento,String>(item,item.getDescricao()));
 		}
-		result.include("listaTipoLancamento",listaTipoLancamento);	
-		
+		result.include("listaTipoLancamento",listaTipoLancamento);
+
 		listaTemaProduto.clear();
 		for(TemaProduto item:TemaProduto.values()){
 			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
 		}
-		result.include("listaTemaProduto",listaTemaProduto);	
+		result.include("listaTemaProduto",listaTemaProduto);
+		
+		listaFormaFisica.clear();
+		for(FormaFisica item:FormaFisica.values()){
+			listaFormaFisica.add(new ItemDTO<FormaFisica,String>(item,item.getDescFormaFisica()));
+		}
+		result.include("listaFormaFisica",listaFormaFisica);
+		
+		listaPeriodicidade.clear();
+		for(PeriodicidadeProduto item:PeriodicidadeProduto.values()){
+			listaPeriodicidade.add(new ItemDTO<PeriodicidadeProduto,String>(item,item.toString()));
+		}
+		result.include("listaPeriodicidade",listaPeriodicidade);
+		
+		this.carregarComboSegmento();
+		
     }
 	
 	/**
@@ -532,7 +642,7 @@ public class ProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
-	
+		
 	/**
 	 * Valida o produto.
 	 * 
@@ -550,33 +660,31 @@ public class ProdutoController extends BaseController {
 		if (produto != null) {
 
 			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
-				
 				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
-				
-			} else {
+			}else{
 				
 				String msgCodigoTreelog = this.validarCodigoProduto(codigoFornecedor, produto.getCodigo());
-				
+				        
 				if (msgCodigoTreelog != null){
-					
+		          
 					listaMensagens.add(msgCodigoTreelog);
-				}
+		        }
 				
 				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
-				
+
 				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
-					
 					listaMensagens.add(" O código [" + produto.getCodigo() + "] já esta sendo utilizado por outro produto ");
 				}
-				
 				produto.setCodigo(produto.getCodigo().trim());
-				
-				
 			}
 
+			if(produto.getCodigoICD() == null || produto.getCodigoICD().trim().isEmpty()){
+				listaMensagens.add("O preenchimento do campo [Código ICD] é obrigatório!");
+			}
+			
 			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
 				listaMensagens.add("O preenchimento do campo [Produto] é obrigatório!");
-			} else {
+			}else{
 				produto.setNome(produto.getNome().trim());
 			}
 			
@@ -586,13 +694,13 @@ public class ProdutoController extends BaseController {
 			
 			if (produto.getPeb() <= 0) {
 				listaMensagens.add("O preenchimento do campo [PEB] é obrigatório!");
-			} else {
+			}else{
 				produto.setPeb(produto.getPeb());
 			}
 			
 			if (produto.getPacotePadrao() <= 0) {
 				listaMensagens.add("O preenchimento do campo [Pacote Padrão] é obrigatório!");
-			} else {
+			}else{
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
@@ -626,6 +734,10 @@ public class ProdutoController extends BaseController {
 			if (produto.getTributacaoFiscal() == null) {
 				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
 			}
+			
+			if (produto.getTipoSegmentoProduto().getId() == null) {
+				listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
+			}
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
@@ -633,41 +745,64 @@ public class ProdutoController extends BaseController {
 		}
 	}
 	
-	private String validarCodigoProduto(Long codigoFornecedor, String codigoProduto){
-		
-		if (codigoProduto == null || codigoFornecedor == null){
-			
+	private String validarCodigoProduto(Long codigoFornecedor, String codigoProduto) {
+
+		if (codigoProduto == null || codigoFornecedor == null) {
+
 			return null;
 		}
-		
+
 		boolean produtoTreelog = false;
-		
+
 		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(codigoFornecedor);
-		
+		     
 		if (Origem.INTERFACE.equals(origem)){
-			
+
 			produtoTreelog = true;
 		}
-		
-		if (!produtoTreelog && (!codigoProduto.startsWith("10") || codigoProduto.length() != 10)){
-			
+
+		if (!produtoTreelog && (!codigoProduto.startsWith("10") || codigoProduto.length() != 10)) {
+
 			return "Os produtos de Fornecedores Terceiros devem ter códigos iniciados por '10' com 10 dígitos.";
 		}
-		
+
 		return null;
+	}
+
+	@Post
+	public void validarCodigoProdutoInput(Long codigoFornecedor, String codigoProduto) {
+
+		String retorno = this.validarCodigoProduto(codigoFornecedor, codigoProduto);
+
+		if (retorno != null) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, retorno);
+		}
+
+		result.nothing();
 	}
 	
 	@Post
-	public void validarCodigoProdutoInput(Long codigoFornecedor, String codigoProduto){
+	public void obterCodigoDisponivel(Long idFornecedor){
+	    
+		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(idFornecedor);
 		
-		String retorno = this.validarCodigoProduto(codigoFornecedor, codigoProduto);
-		
-		if (retorno != null){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, retorno);
+		Object[] dados = new Object[2];
+		     
+		if (Origem.INTERFACE.equals(origem)) {
+
+			dados[0] = true;
+			dados[1] = "";
+
+			result.use(Results.json()).from(dados, "result").serialize();
+
+			return;
 		}
-		
-		result.nothing();
+
+		dados[0] = false;
+		dados[1] = this.produtoService.obterCodigoDisponivel();
+
+		result.use(Results.json()).from(dados, "result").serialize();
 	}
 	
 	/**
@@ -730,7 +865,6 @@ public class ProdutoController extends BaseController {
 	/**
 	 * Popular combo.
 	 * 
-	 * @param listaDescontoLogistica
 	 * @return List<BaseComboVO>
 	 */
 	private List<BaseComboVO> getComboDescontoLogistica() {
@@ -747,6 +881,23 @@ public class ProdutoController extends BaseController {
 
 		return listaBaseComboVO;
 	}
+	
+	/**
+	 * Popular combo lista de Segmento.
+	 */
+	private void carregarComboSegmento() {
+
+		List<ItemDTO<Long,String>> comboSegmento =  new ArrayList<ItemDTO<Long,String>>();
+
+		List<TipoSegmentoProduto> segmentos = produtoService.carregarSegmentos();
+
+		for (TipoSegmentoProduto itemSegmento : segmentos) {
+			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
+		}
+
+		result.include("listaSegmentoProduto",comboSegmento );
+	}
+	
 	
 	/**
 	 * Retorna o valor default para combo.
@@ -768,7 +919,7 @@ public class ProdutoController extends BaseController {
 			
 			listaProdutos =
 					this.produtoService.pesquisarProdutos(filtro.getCodigo(), filtro.getNome(), filtro.getFornecedor(), filtro.getEditor(), 
-						filtro.getTipoProduto().getCodigo(), null, null, 0, 0);
+						filtro.getTipoProduto().getCodigo(), null, null, 0, 0, filtro.getIsGeracaoAutomatica());
 		}
 		
 		if (listaProdutos == null || listaProdutos.isEmpty()){
@@ -776,32 +927,15 @@ public class ProdutoController extends BaseController {
 			listaProdutos = new ArrayList<ConsultaProdutoDTO>();
 		}
 		
+		/*
 		FileExporter.to("produtos", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaProdutos, ConsultaProdutoDTO.class, this.response);
+		*/
+		
+		FileExporter.to("produtos", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaProdutos, ConsultaProdutoDTO.class, this.response);
 		
 		result.nothing();
 	}
 	
-	@Post
-	public void obterCodigoDisponivel(Long idFornecedor){
-		
-		Origem origem = fornecedorService.obterOrigemCadastroFornecedor(idFornecedor);
-		
-		Object[] dados = new Object[2];
-		
-		if (Origem.INTERFACE.equals(origem)){
-			
-			dados[0] = true;
-			dados[1] = "";
-			
-			result.use(Results.json()).from(dados, "result").serialize();
-			
-			return;
-		}
-		
-		dados[0] = false;
-		dados[1] = this.produtoService.obterCodigoDisponivel();
-		
-		result.use(Results.json()).from(dados, "result").serialize();
-	}
 }

@@ -2372,7 +2372,7 @@ public class DataLoader {
 
 		save(session, lancamentoParcial1,lancamentoParcial2,lancamentoParcial3);
 
-		Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+		Lancamento lancamentoPeriodo = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoBrasileiraoEd1,
 				Fixture.criarData(1, 2, 2011),
 				Fixture.criarData(1, 3, 2011),
 				new Date(),
@@ -2381,7 +2381,7 @@ public class DataLoader {
 				StatusLancamento.RECOLHIDO, null, 1);
 		save(session,lancamentoPeriodo);
 		
-		Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.PARCIAL, cromoBrasileiraoEd1,
+		Lancamento lancamentoPeriodo2 = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoBrasileiraoEd1,
 				Fixture.criarData(5, 3, 2011),
 				Fixture.criarData(5, 4, 2011),
 				new Date(),
@@ -2390,7 +2390,7 @@ public class DataLoader {
 				StatusLancamento.PLANEJADO, null, 1);
 		save(session,lancamentoPeriodo2);
 		
-		Lancamento lancamentoPeriodoSuplementar = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, cromoBrasileiraoEd1,
+		Lancamento lancamentoPeriodoSuplementar = Fixture.lancamento(TipoLancamento.LANCAMENTO, cromoBrasileiraoEd1,
 				Fixture.criarData(2, 2, 2011),
 				Fixture.criarData(1, 3, 2011),
 				new Date(),
@@ -8227,7 +8227,7 @@ public class DataLoader {
 
 
 		lancamentoRevistaCE = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR,
+				TipoLancamento.LANCAMENTO,
 				produtoEdicaoCE,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
@@ -8247,7 +8247,7 @@ public class DataLoader {
 
 
 		lancamentoRevistaCE_2 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR,
+				TipoLancamento.LANCAMENTO,
 				produtoEdicaoCE_2,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
@@ -8267,7 +8267,7 @@ public class DataLoader {
 
 
 		lancamentoRevistaCE_3 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR,
+				TipoLancamento.LANCAMENTO,
 				produtoEdicaoCE_3,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
@@ -10167,7 +10167,7 @@ public class DataLoader {
 				StatusLancamento.CONFIRMADO, null, 1);
 
 		Lancamento lancamentoJavaMagazineEdicao101Suplementar = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				TipoLancamento.LANCAMENTO, javaMagazineEdicao101,
 				dataLancamento,
 				dataRecolhimento,
 				new Date(),
@@ -10268,7 +10268,7 @@ public class DataLoader {
 				StatusLancamento.CONFIRMADO, itemRecebimentoFisicoMundoEstranhoEdicao102, 1);
 
 		Lancamento lancamentoJavaMagazineEdicao101Suplementar2 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				TipoLancamento.LANCAMENTO, javaMagazineEdicao101,
 				dataLancamento,
 				dataRecolhimento,
 				new Date(),
@@ -10369,7 +10369,7 @@ public class DataLoader {
 				StatusLancamento.CONFIRMADO, null, 1);
 
 		Lancamento lancamentoJavaMagazineEdicao101Suplementar3 = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, javaMagazineEdicao101,
+				TipoLancamento.LANCAMENTO, javaMagazineEdicao101,
 				dataLancamento,
 				dataRecolhimento,
 				new Date(),
@@ -10378,7 +10378,7 @@ public class DataLoader {
 				StatusLancamento.CONFIRMADO, null, 1);
 
 		Lancamento lancamentoRoadieCrewEdicao101Suplementar = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, roadieCrewEdicao101,
+				TipoLancamento.LANCAMENTO, roadieCrewEdicao101,
 				dataLancamento,
 				dataRecolhimento,
 				new Date(),
@@ -10735,7 +10735,7 @@ public class DataLoader {
 
 		//LANCAMENTOS
 		Lancamento lancamentoJavaMagazineEdicao101 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, javaMagazineEdicao101,
+				TipoLancamento.LANCAMENTO, javaMagazineEdicao101,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -10762,7 +10762,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoGalileuEdicao101 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, galileuEdicao101,
+				TipoLancamento.LANCAMENTO, galileuEdicao101,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -10807,7 +10807,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoValhallaEdicao101 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, valhallaEdicao101,
+				TipoLancamento.LANCAMENTO, valhallaEdicao101,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -10964,7 +10964,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoJavaMagazineEdicao102 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, javaMagazineEdicao102,
+				TipoLancamento.LANCAMENTO, javaMagazineEdicao102,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -11029,7 +11029,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoRockBrigadeEdicao102 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, rockBrigadeEdicao102,
+				TipoLancamento.LANCAMENTO, rockBrigadeEdicao102,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -11038,7 +11038,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoValhallaEdicao102 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, valhallaEdicao102,
+				TipoLancamento.LANCAMENTO, valhallaEdicao102,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),
@@ -11157,7 +11157,7 @@ public class DataLoader {
 				StatusLancamento.EXPEDIDO, null, 1);
 
 		Lancamento lancamentoGestaoEscolarEdicao102 = Fixture.lancamento(
-				TipoLancamento.PARCIAL, gestaoEscolarEdicao102,
+				TipoLancamento.LANCAMENTO, gestaoEscolarEdicao102,
 				dataLancamento,
 				dataRecolhimentoProximaSemana,
 				new Date(),

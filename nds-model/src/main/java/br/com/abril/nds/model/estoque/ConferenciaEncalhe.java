@@ -82,7 +82,7 @@ public class ConferenciaEncalhe implements Serializable {
 	 * Preco capa relativo ao item de nota fiscal de entrada
 	 * fornecida pela cota na operação de conferência de encalhe.
 	 */
-	@Column(name = "PRECO_CAPA_INFORMADO", precision=18, scale=4)
+	@Column(name = "PRECO_CAPA_INFORMADO")
 	private BigDecimal precoCapaInformado;
 	
 	/**

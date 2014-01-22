@@ -53,7 +53,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (EstoqueProduto) query.uniqueResult();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<EstoqueProdutoDTO> buscarEstoquesProdutos() {
 		StringBuilder hql = new StringBuilder("")

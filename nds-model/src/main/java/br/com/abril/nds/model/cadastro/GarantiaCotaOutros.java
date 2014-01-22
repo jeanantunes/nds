@@ -28,7 +28,7 @@ public class GarantiaCotaOutros implements Serializable {
 	@Column(name="DESCRICAO")
 	private String descricao;
 	
-	@Column(name="VALOR", precision=18, scale=4)
+	@Column(name="VALOR")
 	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)
