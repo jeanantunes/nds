@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 
 public interface DistribuicaoRepository extends Repository<Lancamento, Long> {
@@ -13,7 +13,7 @@ public interface DistribuicaoRepository extends Repository<Lancamento, Long> {
 	 * @param filtro
 	 * @return
 	 */
-	public List<ProdutoDistribuicaoVO> obterMatrizDistribuicao(FiltroLancamentoDTO filtro);
+	public List<ProdutoDistribuicaoVO> obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro);
 	
 	/**
 	 * @param idEstudo
@@ -21,5 +21,6 @@ public interface DistribuicaoRepository extends Repository<Lancamento, Long> {
 	 */
 	public ProdutoDistribuicaoVO obterProdutoDistribuicaoPorEstudo(BigInteger idEstudo);
 	
+	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id);
 	
 }

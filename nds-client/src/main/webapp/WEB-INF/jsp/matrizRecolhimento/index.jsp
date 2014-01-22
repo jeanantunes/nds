@@ -60,13 +60,12 @@
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_detalhes.png">
 				</a>
 			</span>
-			
+		
 			<span class="bt_novos hidden_buttons" style="display:none;">
 				<a isEdicao="true" id="linkReprogramar" href="javascript:;" title="Reprogramar" >
 					<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 				</a>
 			</span>
-			
 			<span class="bt_arq" >
   					<a href="${pageContext.request.contextPath}/devolucao/balanceamentoMatriz/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
@@ -279,12 +278,12 @@
 			<legend>Balanceamento da Matriz de Recolhimento </legend>
 			
 			<div class="grids" style="display: none;">
-	  						<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
-							    <a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
-								    <img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-									     hspace="5" border="0" />Fechar
-							    </a>
-						    </span>
+				<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
+					<a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
+						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
+							 hspace="5" border="0" />Fechar
+					</a>
+				</span>
 	
 	         						
 				<br clear="all" style="margin-top: 20px;" />

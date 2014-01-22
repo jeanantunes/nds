@@ -17,7 +17,7 @@ public class NotaFiscalTest {
 	private String versaoNFE2 = "2.00";
 	private String versaoNFE = "3.10";
 	
-	@Test
+	//@Test
 	public void validateXML() throws Exception {
 		
 		try {
@@ -27,13 +27,14 @@ public class NotaFiscalTest {
             Schema schema = factory.newSchema(new File("src/main/resources/xsd/v"+ versaoNFE +"/nfe_v"+ versaoNFE +".xsd"));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(new File("src/main/resources/nfe-v"+ versaoNFE +".xml")));
+            //validator.validate(new StreamSource(new File("src/main/resources/xmlGerado.xml")));
         } catch (IOException | SAXException e) {
             System.out.println("Exception: "+e.getMessage());
         }
 
 	}
 	
-	//@Test
+	@Test
 	public void validateXML2() throws Exception {
 		
 		try {

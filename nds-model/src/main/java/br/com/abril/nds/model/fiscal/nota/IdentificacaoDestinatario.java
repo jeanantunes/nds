@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -38,21 +40,33 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * CNPJ CPF
 	 */
-	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
-	private String documento;
+	@Embedded
+	@XmlElements(value = {
+        @XmlElement(name="CPF", type=CPFDestinatario.class),
+        @XmlElement(name="CNPJ", type=CNPJDestinatario.class)
+    })
+	private DocumentoDestinatario documento;
 	
 	/**
 	 * xNome
 	 */	
 	@Column(name="NOME_DESTINATARIO", nullable=false, length=60)
 	@NFEExport(secao=TipoSecao.E, posicao=0, tamanho=60)
+	@XmlElement(name="xNome")
 	private String nome;
 	
 	/**
 	 * xFant
 	 */
 	@Column(name="NOME_FANTASIA_DESTINATARIO", nullable=true, length=60)
+	@XmlElement(name="xFant")
 	private String nomeFantasia;
+	
+	@OneToOne(optional=false, fetch=FetchType.LAZY)
+	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
+	@NFEExportType
+	@XmlElement(name="enderDest")
+	private NotaFicalEndereco endereco;
 	
 	/**
 	 * IE
@@ -73,12 +87,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	@Column(name="EMAIL_DESTINATARIO", nullable=true, length=60)
 	private String email;
-	
-	@OneToOne(optional=false, fetch=FetchType.LAZY)
-	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
-	@NFEExportType
-	@XmlElement(name="enderDest")
-	private NotaFicalEndereco endereco;
 	
 	@OneToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
@@ -107,7 +115,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @return the documento
 	 */
-	public String getDocumento() {
+	public DocumentoDestinatario getDocumento() {
 		return documento;
 	}
 
@@ -115,7 +123,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @param documento the documento to set
 	 */
-	public void setDocumento(String documento) {
+	public void setDocumento(DocumentoDestinatario documento) {
 		this.documento = documento;
 	}
 

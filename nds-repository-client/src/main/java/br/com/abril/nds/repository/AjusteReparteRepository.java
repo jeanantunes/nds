@@ -17,7 +17,4 @@ public interface AjusteReparteRepository extends Repository<AjusteReparte, Long>
 	
 	int qtdAjusteSegmento (Long idCota);
 	
-//	void removerPorIdCota (Long numCota);
-//	
-//	void removerPorCota (Cota cota);
 }

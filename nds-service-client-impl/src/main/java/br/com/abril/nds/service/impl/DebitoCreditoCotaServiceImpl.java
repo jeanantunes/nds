@@ -91,7 +91,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(debitoCredito.getNumeroCota());
 		
 		movimentoFinanceiroCotaDTO.setCota(cota);
 
@@ -196,7 +196,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		if (numeroCota!=null){
 		
-			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			if (cota!=null){
 			
@@ -305,13 +305,12 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
 		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
-		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacao);
-		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacaoComissao);
+		this.validar_adicionar_tiposMovimentosFinanceirosIgnorados(
+				tipoMovimentoFinanceiroEnvioEncalhe,
+				tipoMovimentoFinanceiroRecebimentoReparte,
+				tipoMovimentoFinanceiroNegociacao,
+				tipoMovimentoFinanceiroNegociacaoComissao,
+				tiposMovimentoFinanceiroIgnorados);
 		
 
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
@@ -347,6 +346,27 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		}
 		
 		return listaDebitoCreditoCompleta;
+	}
+
+
+	private void validar_adicionar_tiposMovimentosFinanceirosIgnorados(
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacao,
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiroNegociacaoComissao,
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados) {
+		
+		if(tipoMovimentoFinanceiroEnvioEncalhe != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+
+		if (tipoMovimentoFinanceiroRecebimentoReparte != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+		
+		if(tipoMovimentoFinanceiroNegociacao != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacao);
+
+		if(tipoMovimentoFinanceiroNegociacaoComissao != null)
+			tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroNegociacaoComissao);
 	}
 	
 	/**

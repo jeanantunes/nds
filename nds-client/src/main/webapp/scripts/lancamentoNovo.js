@@ -1349,9 +1349,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var reparteDevolvido = 0;
 		
-		if ($('#diferencaProdutoInput', this.workspace).val() != 0) {
+		if ($('#diferencaProdutoInputAlteracaoReparte', this.workspace).val() != 0) {
 			
-			reparteDevolvido = eval($('#diferencaProdutoInput', this.workspace).val());
+			reparteDevolvido = eval($('#diferencaProdutoInputAlteracaoReparte', this.workspace).val());
 		}
 		
 		var saldoConsignado = reparte - reparteDevolvido;
@@ -1382,8 +1382,8 @@ var lancamentoNovoController = $.extend(true, {
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/buscarReparteCotaProduto",
 			[
-			 	{name: "codigoProduto", value: $("#codigoProdutoInput", lancamentoNovoController.workspace).val()},
-			 	{name: "numeroEdicao", value: $("#edicaoProdutoInput", lancamentoNovoController.workspace).val()},
+			 	{name: "codigoProduto", value: $("#codigoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
+			 	{name: "numeroEdicao", value: $("#edicaoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
 			 	{name: "numeroCota", value: $("#cotaInput1", lancamentoNovoController.workspace).val()}
 			],
 			function(result) {
@@ -1407,14 +1407,14 @@ var lancamentoNovoController = $.extend(true, {
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/buscarReparteCotaProduto",
 			[
-			 	{name: "codigoProduto", value: $("#codigoProdutoInput", lancamentoNovoController.workspace).val()},
-			 	{name: "numeroEdicao", value: $("#edicaoProdutoInput", lancamentoNovoController.workspace).val()},
+			 	{name: "codigoProduto", value: $("#codigoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
+			 	{name: "numeroEdicao", value: $("#edicaoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
 			 	{name: "numeroCota", value: $("#cotaInput1", lancamentoNovoController.workspace).val()}
 			],
 			function(result) {
 				
 				$("#alteracaoReparteProduto", lancamentoNovoController.workspace).text(result);
-				$("#diferencaProdutoInput", lancamentoNovoController.workspace).focus();
+				$("#diferencaProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).focus();
 				
 				lancamentoNovoController.atualizarSaldoConsignado();
 				

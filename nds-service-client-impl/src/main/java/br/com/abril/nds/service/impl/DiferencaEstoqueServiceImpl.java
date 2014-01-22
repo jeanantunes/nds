@@ -86,6 +86,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
@@ -141,6 +142,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
+	private VisaoEstoqueService visaoEstoqueService;
+	
+	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	@Autowired
@@ -181,7 +185,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
 		if(filtro.getNumeroCota() != null) {
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 			filtro.setIdCota(cota.getId());
 		}
 		
@@ -459,7 +463,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
 			MovimentoEstoque movimentoEstoque = null;
-			
+
 			boolean validarTransfEstoqueDiferenca = TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque());
 			
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
@@ -509,7 +513,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					this.gerarMovimentoEstoque(diferenca, usuario.getId(),
 						isMovimentoDiferencaAutomatico, validarTransfEstoqueDiferenca,
 							ultimoLancamento.getDataLancamentoDistribuidor(), origem);
-						
 			}
 
 			if (statusAprovacao == null) {
@@ -830,7 +833,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			if(rateioDiferenca == null){
 				
 				rateioDiferenca = new RateioDiferenca();
-				
+
 				EstudoCota estudoCota = 
 						this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(
 								this.distribuidorService.obterDataOperacaoDistribuidor(),
@@ -842,7 +845,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				rateioDiferenca.setDiferenca(diferenca);
 			}
 			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(rateioCotaVO.getNumeroCota());
 			
 			rateioDiferenca.setCota(cota);
 			

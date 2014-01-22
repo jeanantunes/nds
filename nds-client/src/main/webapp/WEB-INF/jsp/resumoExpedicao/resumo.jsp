@@ -1,4 +1,3 @@
-
 <head>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/resumoExpedicao.js"></script>
@@ -128,5 +127,4 @@
 			</fieldset>
 		</div>
 	</form>
-	
 </body>

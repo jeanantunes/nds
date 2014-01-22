@@ -23,7 +23,7 @@ public class FollowupNegociacaoRepositoryImpl  extends AbstractRepositoryModel<C
 			FiltroFollowupNegociacaoDTO filtro) {
 		StringBuilder myqrystr = new StringBuilder();
 		
-		myqrystr.append("select * from cota");
+		myqrystr.append("select * from cota order by numeroCota");
 		Query qry2db = this.getSession().createSQLQuery(myqrystr.toString());
 
 		return qry2db.list();

@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
+import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -31,6 +33,9 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
+import br.com.abril.nds.model.cadastro.DistribuidorPercentualExcedente;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
@@ -60,6 +65,9 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
+import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
+import br.com.abril.nds.repository.DistribuidorGridDistribuicaoRepository;
+import br.com.abril.nds.repository.DistribuidorPercentualExcedenteRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
@@ -93,6 +101,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
 	
 	private static final String DB_NAME = "db_parametro_distribuidor";
+	
+	@Autowired
+	DistribuidorClassificacaoCotaRepository classificacaoCotaRepository;
+	
+	@Autowired
+	DistribuidorPercentualExcedenteRepository percentualExcedenteRepository;
+	
+	@Autowired
+	DistribuidorGridDistribuicaoRepository gridDistribuicaoRepository;
 	
 	@Autowired
 	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
@@ -341,8 +358,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		                    .getValor());
 		        }
 		    }
-		
-		
 
 		// Negociação de Dividas
 		if (distribuidor.getPoliticaSuspensao() != null) {
@@ -353,7 +368,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		}
 		parametrosDistribuidor.setParcelamentoDividas(distribuidor.isParcelamentoDividas());
 		
-		if(distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
+		if(distribuidor.getDescontoCotaNegociacao() == null ||  distribuidor.getDescontoCotaNegociacao().compareTo(BigDecimal.ZERO) == 0) {
 			parametrosDistribuidor.setUtilizaDesconto(false);
 			parametrosDistribuidor.setPercentualDesconto(CurrencyUtil.formatarValor(0));
 		} else {
@@ -375,7 +390,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setNumeroDiasNovaCobranca(distribuidor.getNumeroDiasNovaCobranca());
 		parametrosDistribuidor.setAssuntoEmailCobranca(distribuidor.getAssuntoEmailCobranca());
 		parametrosDistribuidor.setMensagemEmailCobranca(distribuidor.getMensagemEmailCobranca());
-		
 		
 		// Aprovação
 		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
@@ -404,6 +418,59 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setNumeroDispositivoLegal(distribuidor.getNumeroDispositivoLegal());
 		parametrosDistribuidor.setDataLimiteVigenciaRegimeEspecial(distribuidor.getDataLimiteVigenciaRegimeEspecial());
 		
+        // Aba Distribuição - Grid Distribuição
+        DistribuidorGridDistribuicao gridDistribuicao = distribuidor.getGridDistribuicao();
+        if (gridDistribuicao == null) {
+                gridDistribuicao = new DistribuidorGridDistribuicao();
+                gridDistribuicao.setVendaMediaMais(1);
+                gridDistribuicao.setPracaVeraneio(false);
+                gridDistribuicao.setComplementarAutomatico(true);
+                gridDistribuicao.setGeracaoAutomaticaEstudo(false);
+                gridDistribuicao.setPercentualMaximoFixacao(50);
+        }
+        parametrosDistribuidor.setGeracaoAutomaticaEstudo(gridDistribuicao.isGeracaoAutomaticaEstudo());
+        parametrosDistribuidor.setVendaMediaMais(gridDistribuicao.getVendaMediaMais());
+        parametrosDistribuidor.setPracaVeraneio(gridDistribuicao.isPracaVeraneio());
+        parametrosDistribuidor.setComplementarAutomatico(gridDistribuicao.isComplementarAutomatico());
+        parametrosDistribuidor.setPercentualMaximoFixacao(gridDistribuicao.getPercentualMaximoFixacao());
+        
+
+        // Aba Distribuição - Grid Classificação Cota
+        List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO = new ArrayList<>();
+        List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
+        
+        if (listClassificacaoCota != null) {
+                for (DistribuidorClassificacaoCota classificacaoCota : listClassificacaoCota) {
+                        DistribuidorClassificacaoCotaVO classificacaoCotaVO = new DistribuidorClassificacaoCotaVO();
+                        classificacaoCotaVO.setId(classificacaoCota.getId());
+                        classificacaoCotaVO.setCodigoClassificacaoCota(classificacaoCota.getCodigoClassificacaoCota());
+                        classificacaoCotaVO.setValorDe(classificacaoCota.getValorDe());
+                        classificacaoCotaVO.setValorAte(classificacaoCota.getValorAte());
+                        listClassificacaoCotaVO.add(classificacaoCotaVO);
+                }
+        }
+
+        parametrosDistribuidor.setListClassificacaoCota(listClassificacaoCotaVO);
+		
+		// Aba Distribuição - Grid Percentual de Excedente
+        
+		List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO = new ArrayList<>();
+        
+		List<DistribuidorPercentualExcedente> listPercentualExcedente = distribuidor.getListPercentualExcedente();
+                
+			if (listPercentualExcedente != null) {
+                    for (DistribuidorPercentualExcedente percentualExcedente : listPercentualExcedente) {
+                            DistribuidorPercentualExcedenteVO percentualExcedenteVO = new DistribuidorPercentualExcedenteVO();
+                            percentualExcedenteVO.setId(percentualExcedente.getId());
+                            percentualExcedenteVO.setEficiencia(percentualExcedente.getEficiencia());
+                            percentualExcedenteVO.setVenda(percentualExcedente.getVenda());
+                            percentualExcedenteVO.setPdv(percentualExcedente.getPdv());
+                            listPercentualExcedenteVO.add(percentualExcedenteVO);
+                    }
+            }
+				
+        parametrosDistribuidor.setListPercentualExcedente(listPercentualExcedenteVO);
+                
 		return parametrosDistribuidor;
 	}
 	
@@ -602,11 +669,11 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		if (parametrosDistribuidor.getChamadaoValorConsignado() != null) {
 			
-			chamadaoConsignado =
-				CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
+			chamadaoConsignado = CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
+			
+			politicaChamadao.setValorConsignado(chamadaoConsignado);
 		}
 		
-		politicaChamadao.setValorConsignado(chamadaoConsignado);
 		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
@@ -837,6 +904,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
 						 					this.getGruposMovimentoEstoqueFaltasSobras(),
 						 					!parametrosDistribuidor.getFaltasSobras());
+
+		//#### F2 ####
+//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
+//	  	  Tratar futuramente, como será utilizado o parametro de ajuste.
+//	
+//	this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+//			 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
+//			 					 		!parametrosDistribuidor.getAjusteEstoque());
 		
 		distribuidor.setParametrosAprovacaoDistribuidor(parametrosAprovacaoDistribuidor);
 		
@@ -931,6 +1006,15 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 			}
 		}
+
+		// Aba Distribuição - Grid Distribuição
+		distribuidor.setGridDistribuicao(gravarGridDistribuicao(distribuidor, parametrosDistribuidor));
+		
+		// Aba Distribuição - Grid Classificação Cota
+		distribuidor.setListClassificacaoCota(this.gravarClassificacaoCota(distribuidor, parametrosDistribuidor.getListClassificacaoCota()));
+		
+		// Aba Distribuição - Grid Percentual de Excedente
+		distribuidor.setListPercentualExcedente(this.gravarPercentualExcedente(distribuidor, parametrosDistribuidor.getListPercentualExcedente()));
 		
 		distribuidorService.alterar(distribuidor);
 		
@@ -940,6 +1024,84 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.salvarLogo(imgLogotipo, imgContentType);
 		
 		this.gravarTelefoneDistribuidor(distribuidor, parametrosDistribuidor.getNumeroTelefone(), parametrosDistribuidor.getNumeroDDD());
+	}
+	
+	private DistribuidorGridDistribuicao gravarGridDistribuicao(
+			Distribuidor distribuidor,
+			ParametrosDistribuidorVO parametrosDistribuidor) {
+		
+		DistribuidorGridDistribuicao gridDistribuicao = distribuidor.getGridDistribuicao();
+		if (gridDistribuicao == null) {
+			gridDistribuicao = new DistribuidorGridDistribuicao();
+			gridDistribuicao.setDistribuidor(distribuidor);
+		}
+		gridDistribuicao.setGeracaoAutomaticaEstudo(parametrosDistribuidor.isGeracaoAutomaticaEstudo());
+		gridDistribuicao.setVendaMediaMais(parametrosDistribuidor.getVendaMediaMais());
+		gridDistribuicao.setPracaVeraneio(parametrosDistribuidor.isPracaVeraneio());
+		gridDistribuicao.setComplementarAutomatico(parametrosDistribuidor.isComplementarAutomatico());
+		gridDistribuicao.setPercentualMaximoFixacao(parametrosDistribuidor.getPercentualMaximoFixacao());
+
+		gridDistribuicaoRepository.merge(gridDistribuicao);
+		
+		return gridDistribuicao;
+	}
+
+	private List<DistribuidorPercentualExcedente> gravarPercentualExcedente(
+			Distribuidor distribuidor,
+            List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO) {
+
+        List<DistribuidorPercentualExcedente> listPercentualExcedente = distribuidor.getListPercentualExcedente();
+		if (listPercentualExcedente == null) {
+			listPercentualExcedente = new ArrayList<>();
+		}
+		
+		for (DistribuidorPercentualExcedenteVO percentualExcedenteVO : listPercentualExcedenteVO) {
+			if (percentualExcedenteVO.getVenda() == null || percentualExcedenteVO.getPdv() == null) {
+				continue;
+			}
+			DistribuidorPercentualExcedente percentualExcedente = percentualExcedenteVO.getId()==null?null:percentualExcedenteRepository.buscarPorId(percentualExcedenteVO.getId());
+			if (percentualExcedente == null) {
+				percentualExcedente = new DistribuidorPercentualExcedente();
+				percentualExcedente.setDistribuidor(distribuidor);
+			}
+			percentualExcedente.setEficiencia(percentualExcedenteVO.getEficiencia());
+			percentualExcedente.setVenda(percentualExcedenteVO.getVenda());
+			percentualExcedente.setPdv(percentualExcedenteVO.getPdv());
+			
+//			percentualExcedenteRepository.merge(percentualExcedente);
+			
+			listPercentualExcedente.add(percentualExcedente);
+		}
+		
+		return listPercentualExcedente;
+	}
+
+	private List<DistribuidorClassificacaoCota> gravarClassificacaoCota(
+            Distribuidor distribuidor,
+            List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO) {
+
+        List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
+		if (listClassificacaoCota == null) {
+			listClassificacaoCota = new ArrayList<>();
+		}
+		
+		for (DistribuidorClassificacaoCotaVO classificacaoCotaVO : listClassificacaoCotaVO) {
+			if (classificacaoCotaVO.getValorDe() == null || classificacaoCotaVO.getValorAte() == null) {
+				continue;
+			}
+			DistribuidorClassificacaoCota classificacaoCota = classificacaoCotaVO.getId()==null?null:classificacaoCotaRepository.buscarPorId(classificacaoCotaVO.getId());
+			if (classificacaoCota == null) {
+				classificacaoCota = new DistribuidorClassificacaoCota();
+				classificacaoCota.setDistribuidor(distribuidor);
+			}
+			classificacaoCota.setCodigoClassificacaoCota(classificacaoCotaVO.getCodigoClassificacaoCota());
+			classificacaoCota.setValorDe(classificacaoCotaVO.getValorDe());
+			classificacaoCota.setValorAte(classificacaoCotaVO.getValorAte());
+			
+			listClassificacaoCota.add(classificacaoCota);
+		}
+		
+		return listClassificacaoCota;
 	}
 	
 	private void validarUtilizacaoControleAprovacao(ParametrosDistribuidorVO parametrosDistribuidor) {
@@ -1024,6 +1186,21 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return gruposMovimentoFinanceiro;
 	}
 
+	@SuppressWarnings("unused")
+	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
+
+        return Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
+	}
+	
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
 		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 

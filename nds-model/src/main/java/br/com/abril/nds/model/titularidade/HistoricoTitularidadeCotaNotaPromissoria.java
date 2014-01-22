@@ -35,7 +35,7 @@ public class HistoricoTitularidadeCotaNotaPromissoria extends
     /**
      * Valor da nota promissória
      */
-    @Column(name = "NOTA_PROMISSORIA_VALOR", precision=18, scale=4)
+    @Column(name = "NOTA_PROMISSORIA_VALOR")
     private BigDecimal valor;
 
     /**

@@ -313,7 +313,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterPorNumeroCota() {
 
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(NUMERO_COTA);
 
 		Assert.assertNotNull(cota);
 
@@ -321,9 +321,9 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 
 	@Test
-	public void obterPorNumerDaCotaAtiva() {
+	public void obterPorNumerDaCota() {
 
-		Cota cota = this.cotaRepository.obterPorNumerDaCotaAtiva(NUMERO_COTA);
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
 
 		Assert.assertNotNull(cota);
 
@@ -658,7 +658,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Test
 	public void obterEnderecosPorIdCotaSucesso() {
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(NUMERO_COTA);
 
 		Assert.assertNotNull(cota);
 
@@ -1426,7 +1426,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(itemRecebimentoFisico1Veja);
 
 		Lancamento lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, veja1,
+				TipoLancamento.LANCAMENTO, veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(),
 				new Date(), BigInteger.valueOf(100),

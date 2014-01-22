@@ -11,8 +11,10 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
-import br.com.abril.nds.model.fiscal.nota.CNPJ;
-import br.com.abril.nds.model.fiscal.nota.CPF;
+import br.com.abril.nds.model.fiscal.nota.CNPJDestinatario;
+import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
+import br.com.abril.nds.model.fiscal.nota.CPFDestinatario;
+import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FinalidadeEmissaoNFe;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoEmissao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
@@ -102,11 +105,16 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNome(distribuidor.getJuridica().getRazaoSocial());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNomeFantasia(distribuidor.getJuridica().getNomeFantasia());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
-		CNPJ cnpj = new CNPJ();
-		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
-		CPF cpf = new CPF();
-		cpf.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoMunicipal(distribuidor.getJuridica().getInscricaoMunicipal());
 		
+		//FIXME: Obter o valor cnae
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("1234567");
+		
+		//FIXME: Obter o valor crt
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGINE_NORMAL);
+		
+		CNPJEmitente cnpj = new CNPJEmitente();
+		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setDocumento(cnpj);
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setId(distribuidor.getEnderecoDistribuidor().getEndereco().getId());
@@ -115,6 +123,9 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCep(distribuidor.getEnderecoDistribuidor().getEndereco().getCep().replaceAll("-", ""));
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoPais(1058L);
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setPais("Brasil");
 		
 		try {
 			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoCidadeIBGE(3550308L); //distribuidor.getEnderecoDistribuidor().getEndereco().getCodigoCidadeIBGE().longValue());
@@ -159,10 +170,13 @@ public class NotaFiscalBuilder implements Serializable {
 		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setLocalDestinoOperacao(LocalDestinoOperacao.INTERNA);
 		
+		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setFormatoImpressao(FormatoImpressao.PAISAGEM);
 		
+		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setModeloDocumentoFiscal("55");
 		
+		//FIXME: Ajustar para variavel parametrizada
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setProcessoEmissao(ProcessoEmissao.EMISSAO_NFE_APLICATIVO_FORNECIDO_PELO_FISCO);
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(Long.parseLong(new Random().nextInt(10000000)+""));
@@ -183,7 +197,14 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento("123");
+		DocumentoDestinatario documento = null;
+		if(cota.getPessoa() instanceof PessoaJuridica) { 
+			documento = new CNPJDestinatario();
+		} else {
+			documento = new CPFDestinatario();
+		}
+		documento.setDocumento(cota.getPessoa().getDocumento());
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 	}
 
 

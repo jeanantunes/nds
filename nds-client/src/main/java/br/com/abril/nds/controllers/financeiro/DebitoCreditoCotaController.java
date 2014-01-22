@@ -671,7 +671,7 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		this.result.use(Results.json()).from(debitoCredito, "result").recursive().serialize();
 	}
-
+	
 	private TableModel<CellModel> getTableModel(List<MovimentoFinanceiroCota> listaDebitoCredito) {
 
 		List<CellModel> listaCellModel = new ArrayList<CellModel>();

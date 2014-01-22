@@ -96,5 +96,4 @@ $(function(){
 		</div>
 		
 	</fieldset>
-
 </body>

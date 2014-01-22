@@ -233,7 +233,7 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 				Fixture.itemRecebimentoFisico(itemNotaFiscal4Rodas, recebimentoFisico4Rodas, BigInteger.valueOf(25));
 		save(itemRecebimentoFisico4Rodas);
 		
-		lancamentoVeja = Fixture.lancamento(TipoLancamento.SUPLEMENTAR, veja1,
+		lancamentoVeja = Fixture.lancamento(TipoLancamento.LANCAMENTO, veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
 				new Date(),

@@ -72,7 +72,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 	 */
 	private StringBuilder ordenacaoDescontoCota(FiltroTipoDescontoCotaDTO filtro,StringBuilder hql){
 		
-		if (filtro.getOrdenacaoColuna() == null){
+		if (filtro ==null || filtro.getOrdenacaoColuna() == null){
 			
 			return hql;
 		}
@@ -132,7 +132,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		hql.append(" where hdcpe.produto is null and  hdcpe.produtoEdicao is null ");
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		if(filtro.getNumeroCota() != null) {
+		if(filtro != null && filtro.getNumeroCota() != null) {
 			
 			hql.append(" and c.numeroCota = :numeroCota ");
 			param.put("numeroCota", filtro.getNumeroCota());
@@ -140,7 +140,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 				
 		hql.append(" group by hdcpe.desconto, hdcpe.dataAlteracao ");
 		
-		if(filtro.getPaginacao()!=null){
+		if(filtro != null  && filtro.getPaginacao()!=null){
 			
 			if (filtro.getPaginacao().getSortColumn() != null && 
 				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
@@ -167,12 +167,15 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				TipoDescontoCotaDTO.class));
 		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-
+		if (filtro != null) {
+			if (filtro.getPaginacao() != null
+					&& filtro.getPaginacao().getPosicaoInicial() != null)
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			if (filtro.getPaginacao() != null
+					&& filtro.getPaginacao().getQtdResultadosPorPagina() != null)
+				query.setMaxResults(filtro.getPaginacao()
+						.getQtdResultadosPorPagina());
+		}
 		return query.list();
 	}
 

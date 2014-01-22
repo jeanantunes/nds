@@ -20,6 +20,8 @@ public class ParcialDTO implements Serializable{
 	
 	private Long idProdutoEdicao;
 	
+	private Long idLancamentoParcial;
+	
 	@Export(label = "Data Lancto", alignment=Alignment.CENTER)
 	private String dataLancamento;
 	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER)
@@ -167,6 +169,16 @@ public class ParcialDTO implements Serializable{
 			this.geradoPorInterface = false;
 		}
 		
+	}
+
+
+	public Long getIdLancamentoParcial() {
+		return idLancamentoParcial;
+	}
+
+
+	public void setIdLancamentoParcial(Long idLancamentoParcial) {
+		this.idLancamentoParcial = idLancamentoParcial;
 	}
 	
 	

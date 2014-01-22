@@ -34,16 +34,16 @@ public abstract class  FechamentoDiarioConsignado implements Serializable {
 	@JoinColumn(name = "FECHAMENTO_DIARIO_ID")
 	private FechamentoDiario fechamentoDiario;
 	
-	@Column(name="SALDO_ANTERIOR", precision=18, scale=4)
+	@Column(name="SALDO_ANTERIOR")
 	private BigDecimal saldoAnterior;
 	
-	@Column(name="VALOR_ENTRADA", precision=18, scale=4)
+	@Column(name="VALOR_ENTRADA")
 	private BigDecimal valorEntradas;
 	
-	@Column(name="VALOR_SAIDA", precision=18, scale=4)
+	@Column(name="VALOR_SAIDA")
 	private BigDecimal valorSaidas;
 	
-	@Column(name="SALDO_ATUAL", precision=18, scale=4)
+	@Column(name="SALDO_ATUAL")
 	private BigDecimal saldoAtual;
 
 	public Long getId() {

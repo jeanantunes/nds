@@ -19,7 +19,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -108,6 +107,9 @@ public class Lancamento implements Serializable {
 	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
 		
+	@Column(name = "NUMERO_REPROGRAMACOES")
+	private Integer numeroReprogramacoes;
+	
 	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
@@ -122,7 +124,8 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL})
+	@ManyToOne
+    @JoinColumn(name = "PERIODO_LANCAMENTO_PARCIAL_ID")
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	@OneToMany(mappedBy = "lancamento")
@@ -256,6 +259,14 @@ public class Lancamento implements Serializable {
 	
 	public void addRecebimento(ItemRecebimentoFisico itemRecebimentoFisico) {
 		this.recebimentos.add(itemRecebimentoFisico);
+	}
+	
+	public Integer getNumeroReprogramacoes() {
+		return numeroReprogramacoes;
+	}
+	
+	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
+		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 	
 	public Integer getSequenciaMatriz() {

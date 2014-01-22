@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jrimum.utilix.text.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -16,6 +17,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParcialDTO;
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -23,6 +25,9 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoParcialService;
 import br.com.abril.nds.service.ParciaisService;
@@ -31,16 +36,19 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -87,6 +95,9 @@ public class ParciaisController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 		
 	public ParciaisController(Result result){
 		this.result = result;
@@ -213,7 +224,6 @@ public class ParciaisController extends BaseController {
 	 */	
 	private TableModel<CellModelKeyValue<ParcialDTO>> efetuarConsulta(FiltroParciaisDTO filtro) {
 		
-		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 						
 		Integer totalRegistros = lancamentoParcialService.totalBuscaLancamentosParciais(filtro);
@@ -238,13 +248,6 @@ public class ParciaisController extends BaseController {
 		
 		
 		List<PeriodoParcialDTO> listaPeriodo = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
-		
-		for(PeriodoParcialDTO periodo:listaPeriodo) {
-			if(periodo.getReparte()=="") {
-				periodo.setReparteAcum(null);
-				periodo.setPercVendaAcumulada(null);
-			}
-		}
 		
 		Integer totalRegistros = periodoLancamentoParcialService.totalObterPeriodosParciais(filtro);
 				
@@ -350,15 +353,20 @@ public class ParciaisController extends BaseController {
 		if( lancamento == null )
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lancaçmento não válida.");
 		
+		validarDatasPeriodoLancamento(lancamento, recolhimento);
+				
+		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento, getUsuarioLogado());
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+	}
+
+	private void validarDatasPeriodoLancamento(Date lancamento,
+			Date recolhimento) {
 		if( recolhimento == null )
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Recolhimento não válida.");
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(lancamento, recolhimento))
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lançamento é inferior a de Recolhimento");
-				
-		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento, getUsuarioLogado());
-		
-		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 		
 	/**
@@ -450,6 +458,69 @@ public class ParciaisController extends BaseController {
 				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
 
 		result.nothing();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void pesquisarRedistribuicao(Long idPeriodo){
+		
+		List<RedistribuicaoParcialDTO> list = parciaisService.obterRedistribuicoesParciais(idPeriodo);
+		
+		result.use(FlexiGridJson.class).from(list).total(list.size()).page(1).serialize();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void incluirRedistribuicao(RedistribuicaoParcialDTO redistribuicaoDTO){
+		
+		parciaisService.incluirRedistribuicaoParcial(redistribuicaoDTO);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();		
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void excluirRedistribuicao(Long idLancamentoRedistribuicao){
+		
+		parciaisService.excluirRedistribuicaoParcial(idLancamentoRedistribuicao);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();		
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void editarRedistribuicao(RedistribuicaoParcialDTO redistribuicaoDTO){
+		
+		parciaisService.salvarRedistribuicaoParcial(redistribuicaoDTO);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void validarDiaUtil(Date dataLancamento, Date dataRecolhimento){
+		
+		validarDatasPeriodoLancamento(dataLancamento, dataRecolhimento);
+		
+		String mensagemAlerta ="";
+		
+		if (!calendarioService.isDiaUtil(dataLancamento)){
+			mensagemAlerta = "Data de lançamento não é um dia util deseja prosseguir ? ";
+		}
+		
+		if (!calendarioService.isDiaUtil(dataRecolhimento)){
+			
+			if(mensagemAlerta.trim().isEmpty() ){
+				mensagemAlerta = "Data de recolhimento não é um dia util deseja prosseguir ? ";
+			}else{
+				mensagemAlerta = "Data de lançamento e data de recolhimento não são dias uteis deseja prosseguir ? ";
+			}
+		}
+		
+		result.use(Results.json()).from(mensagemAlerta, "result").recursive().serialize();
 	}
 		
 }
