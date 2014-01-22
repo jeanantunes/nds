@@ -797,7 +797,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, List<FechamentoFisicoLogicoDTO> listaEncalheSessao)  {
+	public Set<String> encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, 
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao, boolean cobrarCotas)  {
 
 		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true, true);
 		
@@ -844,13 +845,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		//cobra cotas as demais cotas, no caso, as não ausentes e com unificação
-		try {
-			
-			this.gerarCobrancaService.gerarCobranca(null, usuario.getId(), null);
-		} catch (GerarCobrancaValidacaoException e) {
-			
-			throw new ValidacaoException(e.getValidacaoVO());
+		Set<String> nossoNumero = new HashSet<String>();
+		
+		if (cobrarCotas){
+			try {
+				
+				this.gerarCobrancaService.gerarCobranca(null, usuario.getId(), nossoNumero);
+			} catch (GerarCobrancaValidacaoException e) {
+				
+				throw new ValidacaoException(e.getValidacaoVO());
+			}
 		}
+		
+		return nossoNumero;
 	}
 
 	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {
