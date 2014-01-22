@@ -111,6 +111,14 @@ public class DetalheNotaFiscal implements Serializable {
 		this.encargoFinanceiro = encargoFinanceiro;
 	}
 	
+	public NotaFiscal getNotaFiscal() {
+		return notaFiscal;
+	}
+
+	public void setNotaFiscal(NotaFiscal notaFiscal) {
+		this.notaFiscal = notaFiscal;
+	}
+	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */

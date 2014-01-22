@@ -173,7 +173,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(0L);
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF("");
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
 		

@@ -26,4 +26,6 @@ public interface NotaFiscalRepository extends Repository<NotaFiscal, Long>  {
 	List<Long> obterNumerosNFePorLancamento(Long idLancamento);
 
 	public abstract NotaFiscal buscarNotaFiscalNumeroSerie(RetornoNFEDTO dadosRetornoNFE);
+	
+	public abstract List<NotaFiscal> obterListaNotasFiscaisNumeroSerie(FiltroMonitorNfeDTO filtro);
 }

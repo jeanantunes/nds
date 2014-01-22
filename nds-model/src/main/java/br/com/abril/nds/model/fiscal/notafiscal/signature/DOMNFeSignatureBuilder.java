@@ -103,16 +103,16 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 			signature.sign(dsc);
 			logger.debug(" Primeiro digest value encontrado  {}.", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getDigestValue());
 			logger.debug(" Primeiro digest value encontrado  {}.", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getHere());
-			InputStreamReader isr = 
-			    new InputStreamReader(signature.getSignedInfo().getCanonicalizedData());
+			InputStreamReader isr = new InputStreamReader(signature.getSignedInfo().getCanonicalizedData());
 			char[] cbuf = new char[1024];
+			
 			while (isr.read(cbuf, 0, 1024) != -1) {
 			    System.out.print(cbuf);
 			}
-			System.out.println();
-			logger.debug("Elemento <{}> assinado e inserido em <{}>.", elementToSign.getTagName(), parentElement.getTagName());
+			
+			logger.debug(" Elemento <{}> assinado e inserido em <{}>.", elementToSign.getTagName(), parentElement.getTagName());
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Impossivel construir assinatura, ", e);
+			throw new IllegalArgumentException(" Impossivel construir assinatura, ", e);
 		}
 	}
 	
