@@ -107,7 +107,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			hql += "responsavel.nome as usuario, ";
 			hql += "hsc.motivo as motivo, ";
 			hql += "hsc.descricao as descricao, ";
-			hql += "hsc.processado as processado ";
+			hql += "case when hsc.processado is null then false else hsc.processado end as processado ";
 		}
 		
 		hql += " from HistoricoSituacaoCota hsc ";
