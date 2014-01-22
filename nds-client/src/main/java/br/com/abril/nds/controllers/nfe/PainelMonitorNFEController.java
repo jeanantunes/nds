@@ -37,6 +37,7 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -77,7 +78,7 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	private static final String LISTA_NFE = "listaNFE";
 	
-	private static final String TIPO_DOCUMENTO_CPF = "cpf";
+	// private static final String TIPO_DOCUMENTO_CPF = "cpf";
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaNfe";
 	
@@ -257,8 +258,7 @@ public class PainelMonitorNFEController extends BaseController {
 	 */
 	private FiltroMonitorNfeDTO obterFiltroExportacao() {
 		
-		FiltroMonitorNfeDTO filtro = 
-				(FiltroMonitorNfeDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroMonitorNfeDTO filtro = (FiltroMonitorNfeDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtro != null) {
 			
@@ -517,16 +517,15 @@ public class PainelMonitorNFEController extends BaseController {
 	public void pesquisar(FiltroMonitorNfeDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
 		List<String> mensagens = validarCampos(filtro.getDataInicial(), filtro.getDataFinal());
-		
 		tratarErro(mensagens);
 		
-		// tratarFiltro(filtro);
+		// Paginação 
+		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		filtro.setPaginacao(paginacao);
 		
 		InfoNfeDTO info = monitorNFEService.pesquisarNFe(filtro);
 		
 		List<NfeDTO> listaResultado = info.getListaNfeDTO();
-		
-		Integer quantidadeRegistros = info.getQtdeRegistros();
 		
 		if (listaResultado == null || listaResultado.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -537,13 +536,23 @@ public class PainelMonitorNFEController extends BaseController {
 		TableModel<CellModelKeyValue<NfeVO>> tableModel = new TableModel<CellModelKeyValue<NfeVO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaNfeVO));
-		tableModel.setTotal( (quantidadeRegistros!= null) ? quantidadeRegistros : 0);
+		tableModel.setTotal( (info.getQtdeRegistros()!= null) ? info.getQtdeRegistros() : 0);
 		tableModel.setPage(1);
 		
 		setListaNfeToSession(tableModel.getRows());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
+	}
+	
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+	    paginacao.setPaginaAtual(page);
+	    paginacao.setQtdResultadosPorPagina(rp);
+	    paginacao.setSortOrder(sortorder);
+	    paginacao.setSortColumn(sortname);
+		return paginacao;
 	}
 	
 	@SuppressWarnings("unchecked")

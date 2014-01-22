@@ -156,20 +156,16 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.idCotaInicial', value:$('#idCotaInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idCotaFinal', value:$('#idCotaFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idBoxInicial', value:$('#idBoxInicial', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.idBoxFinal', value:$('#idBoxFinal', impressaoNfeController.workspace).val()}		         	
+		           	{name:'filtro.idBoxFinal', value:$('#idBoxFinal', impressaoNfeController.workspace).val()}
 		           	];
-
-		var inputs = $('#menuFornecedores :checkbox');
-		var values = [];
-		inputs.each(function(index) {
-			if(this.id != "selecionarTodosFornecedores" && this.checked) {	 
-				params.push({
-					'name' : "filtro.idsFornecedores[]",
-					'value' : this.value
-				});
-			}
-		});
-
+		
+		if ($('#impressaoNfe-filtro-selectFornecedoresDestinatarios').val()) {
+			$.each($("#impressaoNfe-filtro-selectFornecedoresDestinatarios").val(), function(index, v) {
+				params.push({name : "filtro.listIdFornecedor[]", value : v});
+			});
+		}
+		
+		
 		for(i = 0; i < impressaoNfeController.filtroProdutos.length; i++) {
 
 			params.push({
@@ -636,7 +632,7 @@ var impressaoNfeController = $.extend(true, {
 		});
 		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
 		
-		$("#impressaoNfe-filtro-selectFornecedores").multiselect({
+		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
 			selectedList : 6
 		}).multiselect("checkAll");
 		

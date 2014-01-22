@@ -70,7 +70,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	@NFEExportType
 	@XmlElements(value={ @XmlElement(name="det") })
 	private List<DetalheNotaFiscal> detalhesNotaFiscal;
-	
+
 	/**
 	 * TOTAL
 	 */

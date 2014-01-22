@@ -171,15 +171,21 @@ public class ImpressaoNFEController extends BaseController {
 		
 	@Post
 	public void pesquisarImpressaoNFE(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname, int page, int rp){
-
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-
+		// Paginação 
+		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		
+		filtro.setPaginacao(paginacao);
+		
 		verificarFiltro(filtro);
 
 		TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>> tableModel = new TableModel<CellModelKeyValue<NotasCotasImpressaoNfeDTO>>();
 
 		List<NotasCotasImpressaoNfeDTO> listaCotasImpressaoNFe = impressaoNFEService.obterNotafiscalImpressao(filtro);
 
+		if(listaCotasImpressaoNFe == null || listaCotasImpressaoNFe.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		// tableModel.setTotal(impressaoNFEService.buscarNFeParaImpressaoTotalQtd(filtro));
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasImpressaoNFe));
@@ -189,7 +195,18 @@ public class ImpressaoNFEController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
-
+	
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,
+			int page) {
+		PaginacaoVO paginacao = new PaginacaoVO();
+		paginacao.setOrdenacao(Ordenacao.ASC);
+	    paginacao.setPaginaAtual(page);
+	    paginacao.setQtdResultadosPorPagina(rp);
+	    paginacao.setSortOrder(sortorder);
+	    paginacao.setSortColumn(sortname);
+		return paginacao;
+	}
+	
 	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
 		if(!filtro.isFiltroValido()) {
 

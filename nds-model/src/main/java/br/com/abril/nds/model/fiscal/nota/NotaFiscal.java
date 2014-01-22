@@ -73,15 +73,15 @@ public class NotaFiscal implements Serializable {
 	public void setNotaFiscalInformacoes(NotaFiscalInformacoes notaFiscalInformacoes) {
 		this.notaFiscalInformacoes = notaFiscalInformacoes;
 	}
-	
-/*
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result
-				+ ((this.getProcessos() == null) ? 0 : this.getProcessos().hashCode());
+		result = prime
+				* result
+				+ ((this.getNotaFiscalInformacoes() == null) ? 0 :this.getNotaFiscalInformacoes().hashCode());
 		return result;
 	}
 
@@ -93,19 +93,17 @@ public class NotaFiscal implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		NotaFiscalInformacoes other = (NotaFiscalInformacoes) obj;
+		NotaFiscal other = (NotaFiscal) obj;
 		if (this.getId() == null) {
 			if (other.id != null)
 				return false;
 		} else if (!this.getId().equals(other.id))
 			return false;
-		if (this.notaFiscalInformacoes.getProcessos() == null) {
-			if (other.processos != null)
+		if (this.getNotaFiscalInformacoes() == null) {
+			if (other.notaFiscalInformacoes != null)
 				return false;
-		} else if (!this.getProcessos().equals(other.processos))
+		} else if (!this.getNotaFiscalInformacoes().equals(other.notaFiscalInformacoes))
 			return false;
 		return true;
 	}
-*/
-	
 }

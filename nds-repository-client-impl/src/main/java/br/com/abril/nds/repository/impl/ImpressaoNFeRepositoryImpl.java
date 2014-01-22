@@ -550,33 +550,135 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@SuppressWarnings("unchecked")
 	public List<NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro) {
 		
-		//Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
+		/**
+		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
+		 */
 		StringBuilder hql = new StringBuilder("SELECT ")
 		.append(" notaFiscal.id, ")
 		.append(" false, ")
 		.append(" cota, ")
+		.append(" pj.razaoSocial, ")
 		.append(" SUM(item.quantidade), ")
 		.append(" SUM(item.valorTotalBruto), ")
-		.append(" SUM(item.valorDesconto) ")		
-		.append(" FROM Cota c, NotaFiscal notaFiscal ")
-		.append(" JOIN notaFiscal.produtosServicos item ")
-		.append(" JOIN notaFiscal.identificacaoEmitente.pessoaEmitenteReferencia pj ")
-		.append(" WHERE c.pessoa.id = pj.id ");
-		//.append(" pj.nome as nomeCota, ")
-		// .append(" WHERE ");
+		.append(" SUM(item.valorDesconto) ");		
 		
-		if(filtro.getDataEmissao()!=null) {
-			hql.append(" notaFiscal.dataEmissao >= :dataEmissao ");
-		}
-		
-		hql.append("group by notaFiscal.id ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		// query.setParameter("dataEmissao", filtro.getDataEmissao());
+		Query query = queryConsultaImpressaoParameters(queryConsultaImpressaoNfe(filtro, hql, true, true, true), filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NotasCotasImpressaoNfeDTO.class));
 		
 		return query.list();
 		
+	}
+	
+	private StringBuilder queryConsultaImpressaoNfe(FiltroImpressaoNFEDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
+		
+		hql.append(" FROM Cota cota, NotaFiscal notaFiscal ")
+			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal item ")
+			.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia pj ")
+			.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ");
+
+		
+		// Tipo de Nota:		
+		if(filtro.getListIdFornecedor() != null) {
+			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
+			hql.append(" FROM NaturezaOperacao no");
+			hql.append(" JOIN no.tipoMovimento tm");
+			hql.append(" WHERE no.id in(:tipoNota))");
+		}
+		
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			hql.append(" ");
+		}
+		
+		// Intervalo de Cota:
+		if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
+			hql.append(" AND cota.numeroCota BETWEEN :numeroCotaInicial AND :numeroCotaFinal ");
+		}
+		
+		// Roteiro:
+		if(filtro.getIdRoteiro() > 0) {
+			hql.append(" AND roteiro.id = :roteiroId ");
+		}
+		
+		// Rota:		
+		if(filtro.getIdRota() > 0) {
+			hql.append(" AND rota.id = :rotaId ");
+		}
+		
+		// Cota de:	 Até   
+		if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() != null) {
+			hql.append(" AND box.codigo between :codigoBoxInicial AND :codigoBoxFinal ");
+		}
+		
+		if(filtro.getIdsFornecedores() != null) {
+			hql.append(" AND fornecedor.id in (:fornecedor) ");
+		}
+		
+		if(!isGroup){
+			hql.append(" group by notaFiscal.id ");
+		}
+		
+		if(!isCount && !isPagination){
+			if(filtro.getPaginacao()!=null && filtro.getPaginacao().getSortOrder() != null && filtro.getPaginacao().getSortColumn() != null) {
+				hql.append(" ORDER BY  ").append(filtro.getPaginacao().getSortColumn()).append(" ").append(filtro.getPaginacao().getSortOrder());
+			}
+		}
+		
+		return hql;
+	}
+	
+	private Query queryConsultaImpressaoParameters(StringBuilder hql, FiltroImpressaoNFEDTO filtro) {
+		
+		// Realizar a consulta e converter ao objeto cota exemplares.
+		Query query = this.getSession().createQuery(hql.toString());		
+		
+		// Data Movimento:	...  Até   ...
+		if (filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
+			query.setParameter("dataInicial", filtro.getDataMovimentoInicial());
+			query.setParameter("dataFinal", filtro.getDataMovimentoFinal());
+		}
+		
+		// tipo da nota fiscal		
+		if(filtro.getIdNaturezaOperacao() !=null && !"".equals(filtro.getIdNaturezaOperacao())) {
+			query.setParameter("tipoNota", filtro.getIdNaturezaOperacao());
+		}
+		
+		// forncedor id		
+		if(filtro.getIdsFornecedores() !=null && !filtro.getIdsFornecedores().isEmpty()) {
+			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
+		}
+		
+		// Data Emissão:	...		
+		if(filtro.getDataEmissao() != null) {
+			query.setParameter("dataEmissao", filtro.getDataEmissao());
+		}
+		
+		if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
+			query.setParameter("numeroCotaInicial", filtro.getIdCotaInicial());
+			query.setParameter("numeroCotaFinal", filtro.getIdCotaFinal());
+		}
+		
+		// Roteiro:
+		if(filtro.getIdRoteiro() > 0) {
+			query.setParameter("roteiroId", filtro.getIdRoteiro());
+		}
+		
+		// Rota:		
+		if(filtro.getIdRota() > 0) {
+			query.setParameter("rotaId", filtro.getIdRota());
+		}
+		
+		// Cota de:	 Até   
+		if(filtro.getIdBoxInicial() != null && filtro.getIdBoxFinal() != null) {
+			query.setParameter("codigoBoxInicial", filtro.getIdBoxInicial());
+			query.setParameter("codigoBoxFinal", filtro.getIdBoxFinal());
+		}
+		
+		if(filtro.getIdsFornecedores() != null) {
+			query.setParameterList("fornecedor", filtro.getIdsFornecedores());
+		}
+		
+		return query;
 	}
 }

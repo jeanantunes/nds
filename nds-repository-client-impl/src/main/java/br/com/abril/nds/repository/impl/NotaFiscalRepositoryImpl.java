@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -50,7 +49,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		StringBuffer sql = new StringBuffer("");
 		
-		sql.append(" SELECT ")
+		sql.append(" SELECT DISTINCT ")
 		.append(" COUNT(notaFiscal.id) ")
 		.append(" FROM NotaFiscal as notaFiscal");
 
@@ -71,11 +70,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		if(filtro.getDataInicial()!=null) {
 			
-			sql.append(" AND notaFiscal.identificacao.dataEmissao >= :dataInicial ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
 		}
 
 		if(filtro.getDataFinal()!=null) {
-			sql.append(" notaFiscal.identificacao.dataEmissao <= :dataFinal ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
 		}
 
 		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
@@ -87,15 +86,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getNumeroNotaInicial()!=null) {
-			sql.append(" notaFiscal.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
 		}
 
 		if(filtro.getNumeroNotaFinal()!=null) {
-			sql.append(" notaFiscal.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
 		}
 
 		if(filtro.getChaveAcesso()!=null && !filtro.getChaveAcesso().isEmpty()) {
-			sql.append(" notaFiscal.informacaoEletronica.chaveAcesso = :chaveAcesso ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
 		}
 
 		if(filtro.getSituacaoNfe()!=null && !filtro.getSituacaoNfe().isEmpty()) {
@@ -108,12 +107,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				sql.append(" AND ");
 			}
 			
-			sql.append("notaFiscal.identificacao.serie = :serie ");
+			sql.append("notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
 			
 		}
-		
-		sql.append(" group by notaFiscal.id ");
-		
 		
 		Query query = this.getSession().createQuery(sql.toString());
 		
@@ -124,9 +120,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return ((qtde == null) ? 0 : qtde.intValue());
 
 	}	
-
-
-
+	
 	@SuppressWarnings("unchecked")
 	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro) {
 
@@ -136,14 +130,14 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		sql.append(" SELECT ")
 		.append(" notaFiscal.id as idNotaFiscal,")
-		.append(" notaFiscal.identificacao.numeroDocumentoFiscal as numero,")
-		.append(" notaFiscal.identificacao.serie as serie,")
-		.append(" notaFiscal.identificacao.dataEmissao as emissao,")
-		.append(" notaFiscal.identificacao.tipoEmissao as tipoEmissao,")
-		.append(" notaFiscal.identificacaoEmitente.documento as cnpjDestinatario,")
-		.append(" notaFiscal.statusProcessamentoInterno as statusNfe,")
-		.append(" notaFiscal.identificacao.tipoNotaFiscal.descricao as tipoNfe,")
-		.append(" notaFiscal.identificacao.tipoNotaFiscal.descricao as movimentoIntegracao")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal as numero,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.serie as serie,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao as emissao,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoEmissao as tipoEmissao,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento as cnpjDestinatario,")
+		.append(" notaFiscal.notaFiscalInformacoes.statusProcessamentoInterno as statusNfe,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoNotaFiscal.descricao as tipoNfe,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoNotaFiscal.descricao as movimentoIntegracao")
 		.append(" FROM NotaFiscal as notaFiscal");
 
 		if(	(filtro.getBox()!=null) ||
@@ -163,11 +157,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		if(filtro.getDataInicial()!=null) {
 			
-			sql.append(" AND notaFiscal.identificacao.dataEmissao >= :dataInicial ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
 		}
 
 		if(filtro.getDataFinal()!=null) {
-			sql.append(" notaFiscal.identificacao.dataEmissao <= :dataFinal ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
 		}
 
 		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
@@ -179,15 +173,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getNumeroNotaInicial()!=null) {
-			sql.append(" notaFiscal.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
 		}
 
 		if(filtro.getNumeroNotaFinal()!=null) {
-			sql.append(" notaFiscal.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
 		}
 
 		if(filtro.getChaveAcesso()!=null && !filtro.getChaveAcesso().isEmpty()) {
-			sql.append(" notaFiscal.informacaoEletronica.chaveAcesso = :chaveAcesso ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
 		}
 
 		if(filtro.getSituacaoNfe()!=null && !filtro.getSituacaoNfe().isEmpty()) {
@@ -200,7 +194,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 				sql.append(" AND ");
 			}
 			
-			sql.append("notaFiscal.identificacao.serie = :serie ");
+			sql.append("notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
 			
 		}
 		
@@ -296,7 +290,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		
 		if(dadosRetornoNFE.getIdNotaFiscal()!=null) {
 
-			sql.append(" AND notaFiscal.informacaoEletronica.chaveAcesso = :chave ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chave ");
 
 		}
 		
