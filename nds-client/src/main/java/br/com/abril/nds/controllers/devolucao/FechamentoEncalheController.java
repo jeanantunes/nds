@@ -1,18 +1,23 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.bind.ValidationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +117,8 @@ public class FechamentoEncalheController extends BaseController {
 	private static final String STATUS_FINALIZADO = "FINALIZADO";
 	
 	private static final String KEY_COBRANCA_COTAS = "cobrancaCotas";
+	
+	private static final String SET_NOSSO_NUMERO = "setNossoNumero";
 	
 	private static final ConcurrentMap<String, String> CACHE_COBRANCA_COTAS = new ConcurrentHashMap<>();
 	
@@ -662,7 +669,11 @@ public class FechamentoEncalheController extends BaseController {
 			@SuppressWarnings("unchecked")
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
+			Set<String> nossoNumero = this.fechamentoEncalheService.encerrarOperacaoEncalhe(
+					dataEncalhe, getUsuarioLogado(), filtroSessao, 
+					listaEncalhe, true);
+			
+			this.session.setAttribute(SET_NOSSO_NUMERO, nossoNumero);
 			
 		} catch (Exception e) {
 			
@@ -773,7 +784,10 @@ public class FechamentoEncalheController extends BaseController {
 			@SuppressWarnings("unchecked")
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) this.getSession().getAttribute("gridFechamentoEncalheDTO");
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
+			Set<String> nossoNumero = this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, 
+					listaEncalhe, true);
+			
+			this.session.setAttribute(SET_NOSSO_NUMERO, nossoNumero);
 		
 		} catch(ValidacaoException ve){
 			
@@ -1011,6 +1025,34 @@ public class FechamentoEncalheController extends BaseController {
 		this.getSession().removeAttribute("gridFechamentoEncalheDTO");
 		
 		this.result.use(Results.nothing());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Get
+	public void imprimirBoletosCotasAusentes() throws ValidationException, IOException{
+		
+		Set<String> setNossoNumero = (Set<String>) this.session.getAttribute(SET_NOSSO_NUMERO);
+		
+		if (setNossoNumero == null || setNossoNumero.isEmpty()){
+			
+			result.nothing();
+			return;
+		}
+		
+		byte[] dados = this.boletoService.gerarImpressaoBoletos(setNossoNumero);
+		
+		this.response.setContentType("application/pdf");
+		this.response.setHeader("Content-Disposition", "attachment; filename=boletosCotasUnificadas_" +
+				Calendar.getInstance().getTimeInMillis() + ".pdf");
+		
+		OutputStream out = this.response.getOutputStream();
+		out.write(dados);
+		out.flush();
+		out.close();
+		
+		result.nothing();
+		
+		this.session.removeAttribute(SET_NOSSO_NUMERO);
 	}
 
 	private HttpSession getSession() {
