@@ -62,7 +62,11 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDTO.class));
 		
-		configurarPaginacao(filtro, query);
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		if(paginacao != null) {
+			configurarPaginacao(paginacao, query);
+		}
 		
 		return query.list();
 		
@@ -166,9 +170,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		}
 	}
 	
-	private void configurarPaginacao(FiltroAnaliseEstudoDTO filtro, Query query) {
-
-		PaginacaoVO paginacao = filtro.getPaginacao();
+	private void configurarPaginacao(PaginacaoVO paginacao, Query query) {
 
 		if (paginacao.getQtdResultadosTotal().equals(0)) {
 			paginacao.setQtdResultadosTotal(query.list().size());
