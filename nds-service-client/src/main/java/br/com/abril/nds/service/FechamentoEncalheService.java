@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
@@ -36,7 +37,8 @@ public interface FechamentoEncalheService {
 	
 	void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, List<FechamentoFisicoLogicoDTO> listaNaoReplicados);
 	
-	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
+	Set<String> encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, 
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao, boolean cobrarCotas);
 	
 	/**
 	 * Verifica se existe pesquisa de fechamento de encalhe feita
