@@ -1,4 +1,5 @@
-package br.com.abril.nds.repository.impl;
+package br.com.abril.
+nds.repository.impl;
 
 import java.util.Calendar;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	}
 	
 	@Test
-	public void obterProdutoLikeNomeProduto() {
+	public void testObterProdutoLikeNomeProduto() {
 		List<Produto> listaProduto = 
 			produtoRepository.obterProdutoLikeNome("Vej");
 		
