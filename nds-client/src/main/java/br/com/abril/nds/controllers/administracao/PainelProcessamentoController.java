@@ -104,6 +104,8 @@ public class PainelProcessamentoController extends BaseController {
 		default:
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de relatório " + tipoRelatorio + " não encontrado!");
 		}
+		
+		this.result.nothing();
 	}
 
 	/**
@@ -112,7 +114,9 @@ public class PainelProcessamentoController extends BaseController {
 	 * @throws IOException 
 	 */
 	private void exportarInterface(FileType fileType) throws IOException {
-		FiltroInterfacesDTO filtroSessao = (FiltroInterfacesDTO) this.session.getAttribute(FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE);
+		FiltroInterfacesDTO filtroSessao = 
+			(FiltroInterfacesDTO) this.session.getAttribute(FILTRO_PESQUISA_INTERFACES_SESSION_ATTRIBUTE);
+		
 		if (filtroSessao != null) {
 			if (filtroSessao.getPaginacao() != null) {				
 				filtroSessao.getPaginacao().setPaginaAtual(null);
@@ -124,7 +128,8 @@ public class PainelProcessamentoController extends BaseController {
 		
 		String nomeArquivo = "relatorio-interfaces";
 		
-		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, InterfaceDTO.class, this.httpServletResponse);
+		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(
+			this.getNDSFileHeader(), filtroSessao, lista, InterfaceDTO.class, this.httpServletResponse);
 	}
 
 	/**
@@ -133,7 +138,9 @@ public class PainelProcessamentoController extends BaseController {
 	 * @throws IOException 
 	 */
 	private void exportarProcesso(FileType fileType) throws IOException {
-		FiltroProcessosDTO filtroSessao = (FiltroProcessosDTO) this.session.getAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE);
+		FiltroProcessosDTO filtroSessao = 
+				(FiltroProcessosDTO) this.session.getAttribute(FILTRO_PESQUISA_PROCESSOS_SESSION_ATTRIBUTE);
+		
 		if (filtroSessao != null) {
 			if (filtroSessao.getPaginacao() != null) {				
 				filtroSessao.getPaginacao().setPaginaAtual(null);
@@ -145,7 +152,8 @@ public class PainelProcessamentoController extends BaseController {
 		
 		String nomeArquivo = "relatorio-processos";
 		
-		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, lista, ProcessoDTO.class, this.httpServletResponse);
+		FileExporter.to(nomeArquivo, fileType).inHTTPResponse(
+				this.getNDSFileHeader(), filtroSessao, lista, ProcessoDTO.class, this.httpServletResponse);
 	}
 
 	/**

@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -1862,7 +1863,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException {
+	public byte[] gerarImpressaoBoletos(Collection<String> nossoNumeros) throws IOException, ValidationException {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		

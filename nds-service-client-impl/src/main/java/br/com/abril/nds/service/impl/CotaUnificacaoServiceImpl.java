@@ -75,7 +75,7 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		//adiciona novas cotas na centralização
 		for (Integer numeroCota : numeroCotasCentralizadas){
 			
-			Cota novaCotaCentralizada = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			Cota novaCotaCentralizada = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			cotaUnificacao.adicionarCota(novaCotaCentralizada);
 			
