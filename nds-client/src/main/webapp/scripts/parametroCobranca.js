@@ -1027,6 +1027,10 @@ var parametroCobrancaController = $.extend(true,
 				return;
 			}
 			
+			if (indexAnterior === ""){
+				indexAnterior = -1;
+			}
+			
 			if (!indexAnterior && indexAnterior != 0){
 				indexAnterior = 0;
 			} else {
