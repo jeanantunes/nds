@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -13,8 +14,10 @@ import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
@@ -62,9 +65,13 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * CNPJ CPF
 	 */
-	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
-	@XmlElement(name="CNPJ")
-	private String documento;
+	@Embedded
+	//@XmlElement(name="CNPJ")
+	@XmlElements(value = {
+        @XmlElement(name="CPF", type=CPF.class),
+        @XmlElement(name="CNPJ", type=CNPJ.class)
+    })
+	private DocumentoPrincipalPessoa documento;
 	
 	/**
 	 * xNome
@@ -81,6 +88,12 @@ public class IdentificacaoEmitente implements Serializable {
 	@NFEExport(secao=TipoSecao.C, posicao = 1, tamanho=60)
 	@XmlElement(name="xFant")
 	private String nomeFantasia;
+	
+	@OneToOne(optional=false, fetch=FetchType.LAZY)
+	@JoinColumn(name="ENDERECO_ID_EMITENTE")
+	@NFEExportType
+	@XmlElement(name="enderEmit")
+	private NotaFicalEndereco endereco;
 	
 	/**
 	 * IE
@@ -121,12 +134,6 @@ public class IdentificacaoEmitente implements Serializable {
 	@Column(name="CRT_EMITENTE",length=1, nullable=true)
 	private RegimeTributario regimeTributario;
 	
-	@OneToOne(optional=false, fetch=FetchType.LAZY)
-	@JoinColumn(name="ENDERECO_ID_EMITENTE")
-	@NFEExportType
-	@XmlElement(name="enderEmit")
-	private NotaFicalEndereco endereco;
-	
 	@OneToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE")
 	@NFEExportType
@@ -163,7 +170,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @return the documento
 	 */
-	public String getDocumento() {
+	public DocumentoPrincipalPessoa getDocumento() {
 		return documento;
 	}
 
@@ -172,7 +179,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @param documento the documento to set
 	 */
-	public void setDocumento(String documento) {
+	public void setDocumento(DocumentoPrincipalPessoa documento) {
 		this.documento = documento;
 	}
 
