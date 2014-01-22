@@ -273,5 +273,4 @@ public class ParametroCobrancaCotaDTO implements Serializable {
         }
         return true;
     }
-
 }

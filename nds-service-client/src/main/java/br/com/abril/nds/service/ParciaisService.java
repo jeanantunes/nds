@@ -1,11 +1,13 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.dto.RedistribuicaoParcialDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -27,21 +29,6 @@ public interface ParciaisService {
 	 *            - Usuário
 	 */
 	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos,Usuario usuario);
-
-	/**
-	 * Cria novos período parcial para determinada edição de um produto
-	 * 
-	 * @param produtoEdicao
-	 *            - Produto edição
-	 * @param qtdePeriodos
-	 *            - Quantidade de períodos
-	 * @param usuario
-	 *            - Usuário
-	 *            
-	 * @param distribuidor
-	 *            - Distribuídor
-	 */
-	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,Integer qtdePeriodos, Usuario usuario);
 
 	/**
 	 * Altera data de Período de Lancamento Parcial
@@ -74,13 +61,6 @@ public interface ParciaisService {
 			Date dataRecolhimento, Long idProdutoEdicao);
 	
 	/**
-	 * Atualiza a quantidade de reparte do próximo lançamento parcial
-	 * 
-	 * @param lancamento
-	 */
-	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento, Usuario usuario);
-	
-	/**
 	 * Retorna a peb calculada de uma parcial referente a um produto edição
 	 * 
 	 * @param codigoProduto
@@ -90,4 +70,20 @@ public interface ParciaisService {
 	 */
 	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
+	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo);
+	
+	void incluirRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
+	
+	void salvarRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
+	
+	void excluirRedistribuicaoParcial(Long idLancamentoRedistribuicao);
+	
+	List<Lancamento> obterRedistribuicoes(Long idPeriodo);
+	
+	void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento);
+	
+	void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte);
+	
+	Lancamento getProximoLancamentoPeriodo(Lancamento lancamento);
+	
 }

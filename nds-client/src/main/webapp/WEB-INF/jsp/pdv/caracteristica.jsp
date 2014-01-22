@@ -17,19 +17,19 @@
 
 <fieldset style="margin-left: 20px">
 
-<legend>Características</legend>
+<legend>Caracter&iacute;sticas</legend>
 
 <table border="0" cellspacing="1" cellpadding="1">
   <tr>
      <td colspan="2" class="complementar" colspan="2">
     	  <input name="balcaoCentral" type="checkbox" value="" id="balcaoCentral" />
-	      <label for="balcaoCentral" >Balcão Central</label>
+	      <label for="balcaoCentral" >Balc&atilde;o Central</label>
 	      <br clear="all" />
 	      <input name="temComputador" type="checkbox" value="" id="temComputador" />
 	      <label for="temComputador" >Tem Computador?</label>
 	      <br clear="all" />
 	      <input name="possuiCartao" type="checkbox" value="" id="possuiCartao" />
-	      <label for="possuiCartao" >Possui cartão de Crédito/Débito?</label>
+	      <label for="possuiCartao" >Possui cart&atilde;o de Cr&eacute;dito/D&eacute;bito?</label>
 	      <br clear="all" />
 	      <input name="luminoso" type="checkbox" value="" id="luminoso" onclick="PDV.opcaoTextoLuminoso('#luminoso')" />
 	      <label for="luminoso" >Luminoso</label>
@@ -42,36 +42,25 @@
 
 <fieldset style="margin-left: 20px">
 
-    <legend>Segmentação</legend>
+    <legend>Segmenta&ccedil;&atilde;o</legend>
  
     <table width="522" border="0" cellspacing="1" cellpadding="1">
     
 	    <tr>
-		    <td width="123">Tipo de Ponto:</td>
-		    <td width="392">
-			    <select name="selectdTipoPonto" id="selectdTipoPonto" style="width:232px;">
+		    <td>Caracter&iacute;ticas:</td>
+		    <td>
+		     <select name="selectCaracteristica" id="selectCaracteristica" style="width:232px;">
 			      <option selected="selected">Selecione...</option>     
 			      <c:forEach items="${listaTipoPontoPDV}" var="item">
 				      <option value="${item.key}">${item.value}</option>	          
 				  </c:forEach>
 			    </select>
+			    
 		    </td>
 	    </tr>
     
 	    <tr>
-		    <td>Características:</td>
-		    <td>
-			    <select style="width:232px;" id="selectCaracteristica" name="selectCaracteristica">
-			      <option selected="selected">Selecione...</option>
-			       <c:forEach items="${listaCaracteristicaPDV}" var="item">
-				      <option value="${item.key}">${item.value}</option>	          
-				  </c:forEach>
-			    </select>
-		    </td>
-	    </tr>
-    
-	    <tr>
-		    <td>Área de Influência:</td>
+		    <td>&Aacute;rea de Influ&ecirc;ncia:</td>
 		    <td>
 			    <select name="selectAreainfluencia" id="selectAreainfluencia" style="width:232px;">
 			      <option selected="selected">Selecione....</option>
@@ -84,4 +73,3 @@
  
     </table>
  </fieldset>
- 

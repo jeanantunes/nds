@@ -1,4 +1,4 @@
-var classificacaoNaoRecebidaController = $.extend(true, {
+﻿var classificacaoNaoRecebidaController = $.extend(true, {
 	
 	/**
 	* @author InfoA2 - Samuel Mendes
@@ -26,45 +26,60 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	*/
 	init : function() {
 	
+		var autoComplete = new AutoCompleteController(classificacaoNaoRecebidaController.workspace);
+		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 
 		// ### POR COTA ###
-		$('#pesquisarPorCota').click(function (){
+		$('#pesquisarPorCota', classificacaoNaoRecebidaController.workspace).click(function (){
 			classificacaoNaoRecebidaController.porCota();
 		});
 		
-		$('#porCota_numeroCota').change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#porCota_numeroCota','#porCota_nomeCota');
+		$('#porCota_numeroCota', classificacaoNaoRecebidaController.workspace).change(function (){
+			autoComplete.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumeroAutoComplete",'#porCota_numeroCota','#porCota_nomeCota');
+			//pesquisaCota.pesquisarPorNumeroCota('#porCota_numeroCota','#porCota_nomeCota');
 		});
 		
-		$('#porCota_nomeCota').keyup(function (){
-			pesquisaCota.autoCompletarPorNome('#porCota_nomeCota');
+		$('#porCota_nomeCota', classificacaoNaoRecebidaController.workspace).keyup(function (){
+			autoComplete.autoCompletar("/cadastro/cota/autoCompletarPorNomeAutoComplete",'#porCota_numeroCota','#porCota_nomeCota');
+			//consultaCota.autoCompletarPorNome(inputsCota);
+			
 		});
+		
+		autoComplete.limparCampoOnChange('#porCota_nomeCota', new Array('#porCota_numeroCota'));
 		
 		// INCLUIR CLASSIFICAÇÃO NA COTA
-		$('#confirmarInclusaoDaClassificacaoNaCota').click(function (){
+		$('#confirmarInclusaoDaClassificacaoNaCota', classificacaoNaoRecebidaController.workspace).click(function (){
 			classificacaoNaoRecebidaController.inserirClassificacaoNaCota();
 		});
 		
 		// ### POR CLASSIFICAÇÃO ###
-		$('#pesquisarPorClassificacao').click(function (){
+		$('#pesquisarPorClassificacao', classificacaoNaoRecebidaController.workspace).click(function (){
 			classificacaoNaoRecebidaController.porClassificacao();
 		});
 		
-		$('#cotasQueRecebem_numeroCota').change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+		$('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).change(function (){
+			autoComplete.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumeroAutoComplete",'#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+			//pesquisaCota.pesquisarPorNumeroCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
 		});
 		
-		$('#cotasQueRecebem_nomeCota').keyup(function (){
-			classificacaoNaoRecebidaController.autoCompletarPorNomeCotaQueRecebeClassificacao('#cotasQueRecebem_nomeCota');
+		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).keyup(function (){
+			autoComplete.autoCompletar("/cadastro/cota/autoCompletarPorNomeAutoComplete",'#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+			//pesquisaCota.autoCompletarPorNome('#cotasQueRecebem_nomeCota');
 		});
+		
+		autoComplete.limparCampoOnChange('#cotasQueRecebem_nomeCota', new Array('#cotasQueRecebem_numeroCota'));
+		
+//		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).change(function (){
+//			pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+//		});
 		
 		// INCLUIR COTAS NA CLASSIFICAÇÃO NÃO RECEBIDA
-		$('#confirmarInclusaoDaCotaNaClassificacaoNaoRecebida').click(function (){
+		$('#confirmarInclusaoDaCotaNaClassificacaoNaoRecebida', classificacaoNaoRecebidaController.workspace).click(function (){
 			classificacaoNaoRecebidaController.inserirCotaNaClassificacaoNaoRecebida();
 		});
 		
-		$('#pesquisarCotaQueRecebeClassificacao').click(function (){
+		$('#pesquisarCotaQueRecebeClassificacao', classificacaoNaoRecebidaController.workspace).click(function (){
 			
 			var grids = classificacaoNaoRecebidaController.Grids,
 			params = [];
@@ -94,13 +109,13 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 		
 		
 		// EXPORTAÇÃO
-		$('#porClassificacaoGerarPDF').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=false");
+		$('#porClassificacaoGerarPDF', classificacaoNaoRecebidaController.workspace).attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=false");
 		
-		$('#porClassificacaoGerarXLS').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=false");
+		$('#porClassificacaoGerarXLS', classificacaoNaoRecebidaController.workspace).attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=false");
 		
-		$('#porCotaGerarPDF').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=true");
+		$('#porCotaGerarPDF', classificacaoNaoRecebidaController.workspace).attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=true");
 		
-		$('#porCotaGerarXLS').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=true");
+		$('#porCotaGerarXLS', classificacaoNaoRecebidaController.workspace).attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=true");
 		
 		// URLs usadas para requisições post (Inserção e Deleção)
 		classificacaoNaoRecebidaController.Url = {
@@ -127,12 +142,12 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 								exibirMensagem(result.mensagens.tipoMensagem,
 										result.mensagens.listaMensagens);
 
-								$(".grids").hide();
+								$(".grids", classificacaoNaoRecebidaController.workspace).hide();
 
 								return result;
 							}
 
-							$(".grids").show();
+							$(".grids", classificacaoNaoRecebidaController.workspace).show();
 
 							return result;
 						};
@@ -208,11 +223,19 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							exibirMensagem(result.mensagens.tipoMensagem,
 									result.mensagens.listaMensagens);
 
-							$(".grids").hide();
+							$(".grids", classificacaoNaoRecebidaController.workspace).hide();
 
 							return result;
 						}
 
+						if (result.rows.length === 0) {
+							$('#porClassificacaoGerarXLS').hide();
+							$('#porClassificacaoGerarPDF').hide();
+						}else {
+							$('#porClassificacaoGerarXLS').show();
+							$('#porClassificacaoGerarPDF').show();
+						}
+						
 						$.each(result.rows, function(index, row) {
 							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirCotaDaClassificacaoNaoRecebida('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +
 					   	 				   '<img title="Excluir Classificação" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
@@ -221,26 +244,44 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							row.cell.acao = link;
 						});
 						
-						$(".grids").show();
+						$(".grids", classificacaoNaoRecebidaController.workspace).show();
 
 						return result;
 					}
 				},
 				init : 
-					$(".classificaNaoRecebidaGrid").flexigrid({
+					$(".classificaNaoRecebidaGrid", classificacaoNaoRecebidaController.workspace).flexigrid({
 						colModel : [ {
 							display : 'Cota',
 							name : 'numeroCota',
-							width : 120,
+							width : 60,
 							sortable : true,
 							align : 'left'
 						}, {
 							display : 'Nome',
 							name : 'nomePessoa',
-							width : 420,
+							width : 200,
 							sortable : true,
 							align : 'left'
-						},  {
+						}, {
+							display : 'Usuário',
+							name : 'nomeUsuario',
+							width : 100,
+							sortable : true,
+							align : 'left'
+						}, {
+							display : 'Data',
+							name : 'dataAlteracaoFormatada',
+							width : 80,
+							sortable : true,
+							align : 'center'
+						}, {
+							display : 'Hora',
+							name : 'horaAlteracaoFormatada',
+							width : 80,
+							sortable : true,
+							align : 'center'
+						}, {
 							display : 'Ação',
 							name : 'acao',
 							width : 30,
@@ -267,16 +308,19 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 				PreProcess : {
 					_default : function(result){
 						
+						$('#porCota_numeroCota', classificacaoNaoRecebidaController.workspace).val('');
+						$('#porCota_nomeCota', classificacaoNaoRecebidaController.workspace).val('');
+						
 						if (result.mensagens) {
 
 							exibirMensagem(result.mensagens.tipoMensagem,
 									result.mensagens.listaMensagens);
 
-							$(".grids").hide();
+							$(".grids", classificacaoNaoRecebidaController.workspace).hide();
 
 							return result;
 						}
-
+						
 						$.each(result.rows, function(index, row) {
 							
 							var checkBox = '<input type="checkbox" name="cotaQueRecebeClassificacao" value="' + row.cell.numeroCota + '" />';
@@ -284,13 +328,13 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							row.cell.sel = checkBox;
 						});
 						
-						$(".grids").show();
+						$(".grids", classificacaoNaoRecebidaController.workspace).show();
 
 						return result;
 					}
 				},
 				init : 
-					$(".classificacaoGrid").flexigrid({
+					$(".classificacaoGrid", classificacaoNaoRecebidaController.workspace).flexigrid({
 						colModel : [ {
 							display : 'Cota',
 							name : 'numeroCota',
@@ -329,11 +373,19 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							exibirMensagem(result.mensagens.tipoMensagem,
 									result.mensagens.listaMensagens);
 
-							$(".grids").hide();
+							$(".grids", classificacaoNaoRecebidaController.workspace).hide();
 
 							return result;
 						}
 
+						if (result.rows.length === 0) {
+							$('#porCotaGerarXLS').hide();
+							$('#porCotaGerarPDF').hide();
+						}else {
+							$('#porCotaGerarXLS').show();
+							$('#porCotaGerarPDF').show();
+						}
+						
 						$.each(result.rows, function(index, row) {
 							
 							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirClassificacaoNaoRecebidaDaCota('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +
@@ -343,13 +395,13 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							row.cell.acao = link;
 						});
 						
-						$(".grids").show();
+						$(".grids", classificacaoNaoRecebidaController.workspace).show();
 
 						return result;
 					}
 				},
 				init : 
-					$(".classificaCotaGrid").flexigrid({
+					$(".classificaCotaGrid", classificacaoNaoRecebidaController.workspace).flexigrid({
 						colModel : [ {
 							display : 'Classificação',
 							name : 'nomeClassificacao',
@@ -407,7 +459,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							exibirMensagem(result.mensagens.tipoMensagem,
 									result.mensagens.listaMensagens);
 
-							$(".grids").hide();
+							$(".grids", classificacaoNaoRecebidaController.workspace).hide();
 
 							return result;
 						}
@@ -419,7 +471,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							row.cell.sel = checkBox;
 						});
 						
-						$(".grids").show();
+						$(".grids", classificacaoNaoRecebidaController.workspace).show();
 
 						return result;
 					}
@@ -452,14 +504,14 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 			focusSelectRefField($("#radio", classificacaoNaoRecebidaController.workspace));
 			$("#radio", classificacaoNaoRecebidaController.workspace).attr("checked", true);
 			
-			$(document.body).keydown(function(e) {
-				
-				if(keyEventEnterAux(e)){
-					classificacaoNaoRecebidaController.porClassificacao();
-				}
-				
-				return true;
-			});
+//			$(document.body).keydown(function(e) {
+//				
+//				if(keyEventEnterAux(e)){
+//					classificacaoNaoRecebidaController.porClassificacao();
+//				}
+//				
+//				return true;
+//			});
 		});
 	},
 	
@@ -652,8 +704,8 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	
 	//pesquisarPorCota
 	porCota : function porCota(){
-		$('.porCota').show();
-		$('.porClassificacao').hide();
+		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).show();
+		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
 		
 		var grids = classificacaoNaoRecebidaController.Grids,
 		params = [];
@@ -672,8 +724,8 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	},
 	
 	porClassificacao : function porClassificacao(){
-		$('.porCota').hide();
-		$('.porClassificacao').show();
+		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).hide();
+		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).show();
 		
 		var grids = classificacaoNaoRecebidaController.Grids,
 		params = [];
@@ -748,4 +800,5 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	},
 	
 }, BaseController);
+
 //@ sourceURL=classificacaoNaoRecebidaController.js

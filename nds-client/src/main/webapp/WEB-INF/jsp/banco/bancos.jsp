@@ -237,5 +237,4 @@ label {
 				
 		</fieldset>
 	</div>
-</body>
-	
+</body>	

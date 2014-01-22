@@ -72,7 +72,7 @@ public class FollowupStatusCotaRepositoryImpl  extends AbstractRepositoryModel<C
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" order by cota.numeroCota ");
+		hql.append(" order by cota.numeroCota, nomeJornaleiro ");
 		
 		if (filtro.getPaginacao().getOrdenacao() != null) {
 			hql.append( filtro.getPaginacao().getOrdenacao().toString());

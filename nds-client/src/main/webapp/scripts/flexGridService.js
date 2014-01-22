@@ -6,11 +6,15 @@ function FlexGridService() {
 	
 	var flexGridService = this,
 		loadingGrid;
+
+	flexGridService.addTableModel = function(tableModel){
+		$('.' + this.gridName).flexAddData(tableModel);
+	},
 	
 	flexGridService.addDataToGrid = function addDataToGrid(row){
 		loadingGrid = this;
 		
-		if (row) {
+		if (row.length > 0 || row) {
 			
 			if (loadingGrid.tableModel.rows.length > 0) {
 				lastId = loadingGrid.tableModel.rows[loadingGrid.tableModel.rows.length -1].id;
@@ -175,6 +179,8 @@ function FlexGridService() {
 		
 		options.preProcess = options.preProcess || this.preProcess; 
 		
+		options.onSuccess = options.onSuccess || this.onSuccess;
+		
 		// GUARDA O ULTIMO PARÂMETRO UTILIZADO
 		this.lastParams = options.params;
 		
@@ -224,6 +230,7 @@ function FlexGridService() {
 							urlDefault : options.url,
 						},
 						addData : flexGridService.addDataToGrid,
+						addTableModel : flexGridService.addTableModel, 
 						removeRow : flexGridService.removeRowFromGrid,
 						reload : flexGridService.reload,
 						tableModel : {
@@ -232,6 +239,7 @@ function FlexGridService() {
 							total : 0
 						},
 						preProcess : options.preProcess || flexGridService.defaultPreProcess,
+						onSuccess : options.onSuccess,
 						inputModel : options.inputModel,
 						init : $("."+options.gridName).flexigrid(options.gridConfiguration),
 				};
@@ -242,5 +250,4 @@ function FlexGridService() {
 			},
 	};
 }
-
 //@ sourceURL=flexGridService.js

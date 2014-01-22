@@ -36,5 +36,5 @@
 		<property name="username" value="${couchdb.username}"/>
 		<property name="password" value="${couchdb.password}"/>
 	</bean>
-	
+
 </beans>

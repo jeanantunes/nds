@@ -33,7 +33,7 @@ public class HistoricoTitularidadeCotaCaucaoLiquida extends HistoricoTitularidad
     /**
      * Valor da caução líquida
      */
-    @Column( name = "VALOR_CAUCAO_LIQUIDA", precision=18, scale=4 )
+    @Column(name = "VALOR_CAUCAO_LIQUIDA")
     private BigDecimal valor;
 
     /**

@@ -1401,7 +1401,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	private CorpoBoleto geraCorpoBoletoEmBranco(BoletoEmBrancoDTO bbDTO){
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(bbDTO.getNumeroCota());
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(bbDTO.getNumeroCota());
 		
 		BoletoAntecipado boletoAntecipado = this.boletoAntecipadoRepository.buscarPorId(bbDTO.getIdBoletoAntecipado());
 		
@@ -2168,7 +2168,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 		return fornecedor;
 	}
-	
+
 	/**
 	 * Obtem dados de boleto em Branco utilizando dados de CE e periodo de recolhimento do filtro
 	 * @param ceDTO
@@ -2403,7 +2403,7 @@ public class BoletoServiceImpl implements BoletoService {
     		this.boletoAntecipadoRepository.merge(boletoAntecipado);
     	}
     	
-        Cota cota = this.cotaRepository.obterPorNumerDaCota(bbDTO.getNumeroCota());
+        Cota cota = this.cotaRepository.obterPorNumeroDaCota(bbDTO.getNumeroCota());
         
         bbDTO.setIdBoletoAntecipado(boletoAntecipado.getId());
         

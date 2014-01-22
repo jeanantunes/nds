@@ -1282,8 +1282,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 	}
 	
-	
-	
 	/**
 	 * Obtem o fornecedor padrão da cota informada
 	 * @param idCota

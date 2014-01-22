@@ -314,4 +314,5 @@ public interface CotaGarantiaService {
 	List<String> validarDadosCotaPreImpressao(Long idCota);
 
 	boolean existeCaucaoLiquidasCota(Long idCota);
+
 }

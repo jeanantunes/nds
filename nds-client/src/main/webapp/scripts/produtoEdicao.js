@@ -1,5 +1,6 @@
-
 var produtoEdicaoController =$.extend(true,  {
+	
+	linhasDestacadas : [],
 	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
@@ -80,7 +81,7 @@ var produtoEdicaoController =$.extend(true,  {
 		var nome = $(idProduto,this.workspace).val();
 
 		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nome},
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'nomeProduto': nome},
 					function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 					null, isFromModal);
 		}
@@ -151,7 +152,7 @@ var produtoEdicaoController =$.extend(true,  {
 		$(idCodigo,this.workspace).val("");
 
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"filtro.nome" : nomeProduto},
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
 					function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 					function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 		} else {
@@ -277,7 +278,6 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-numeroLancamento").numeric();
 		$("#produtoEdicaoController-peb").numeric();
 
-
 		$("#produtoEdicaoController-dataLancamentoPrevisto").mask("99/99/9999");
 		$("#produtoEdicaoController-dataRecolhimentoPrevisto").mask("99/99/9999");
 		$("#produtoEdicaoController-dataRecolhimentoReal").mask("99/99/9999");
@@ -290,6 +290,26 @@ var produtoEdicaoController =$.extend(true,  {
 				$('.descBrinde',this.workspace,this.workspace).hide();
 			}
 		});
+		
+		
+		$('#produtoEdicaoController-pNome', this.workspace).bind({
+			keyup: function(){
+				//autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
+				produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);
+			},
+			blur: function(){
+				//autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
+				produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false, undefined,	undefined);
+			}
+		});
+		
+		
+		$('#produtoEdicaoController-nomeComercialProduto', this.workspace).keyup(function(){
+			
+			this.value = this.value.toUpperCase();
+		
+		});
+		
 			
 			
 		$(".bonificacoesGrid",this.workspace).flexigrid({
@@ -366,9 +386,15 @@ var produtoEdicaoController =$.extend(true,  {
 			}, {
 				display : 'Fornecedor',
 				name : 'nomeFornecedor',
-				width : 200,
+				width : 145,
 				sortable : true,
 				align : 'left',
+			}, {
+				display : 'Parcial',
+				name : 'parcial',
+				width : 40,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Tipo de Lan&ccedil;amento',
 				name : 'statusLancamento',
@@ -441,52 +467,57 @@ var produtoEdicaoController =$.extend(true,  {
 		
 		$(".produtoEdicaoPeriodosLancamentosGrid", produtoEdicaoController.workspace).flexigrid({
 			preProcess: produtoEdicaoController.executarPreProcessamentoLancamentosPeriodo,
+			onSuccess: produtoEdicaoController.onSuccessLancamentosPeriodo,
 			dataType : 'json',
 			colModel : [{
+				display : 'Periodo',
+				name : 'numeroPeriodo',
+				width : 55,
+				sortable : false,
+				align : 'center'
+			},{
 				display : 'Nº Lancto',
 				name : 'numeroLancamento',
 				width : 65,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{ 
 				display : 'Lancto Previsto',
 				name : 'dataLancamentoPrevista',
-				width : 110,
-				sortable : true,
+				width : 100,
+				sortable : false,
 				align : 'center'
 			},{ 
 				display : 'Lancto Real',
 				name : 'dataLancamentoDistribuidor',
-				width : 90,
-				sortable : true,
+				width : 80,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Recolhimento Previsto',
 				name : 'dataRecolhimentoPrevista',
 				width : 120,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Recolhimento Real',
 				name : 'dataRecolhimentoDistribuidor',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Status',
 				name : 'status',
-				width : 85,
-				sortable : true,
+				width : 70,
+				sortable : false,
 				align : 'center'
 			},{
 				display : 'Reparte',
 				name : 'reparte',
-				width : 85,
-				sortable : true,
+				width : 55,
+				sortable : false,
 				align : 'right'
 			}  ],
-			sortname : "dataLancamentoPrevista",
-			sortorder : "asc",
 			usepager : false,
 			useRp : false,
 			showTableToggleBtn : false,
@@ -532,7 +563,7 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'situacaoLancamento', value: situacaoLancamento },
 			         {name:'codigoDeBarras', value: codigoDeBarras },
 			         {name:'brinde', value : brinde }],
-			         newp: 1,
+			         newp: 1
 		});
 			
 		$(".edicoesGrid",this.workspace).flexReload();
@@ -580,6 +611,11 @@ var produtoEdicaoController =$.extend(true,  {
 					row.cell.statusSituacao = '-';
 				}
 				
+				if(row.cell.parcial){
+					row.cell.parcial = 'Sim';
+				} else {
+					row.cell.parcial = 'Não';
+				}
 				
 				cProduto = row.cell.codigoProduto;
 			});
@@ -821,6 +857,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 							$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
 							$("#produtoEdicaoController-nomePublicacao").val(result.nomeProduto);
+							$("#produtoEdicaoController-comboClassificacao").val(result.classificacao);
 							$("#produtoEdicaoController-nomeComercialProduto").val(result.nomeComercialProduto);
 							$("#produtoEdicaoController-nomeFornecedor").val(result.nomeFornecedor);
 							$("#produtoEdicaoController-situacao").val(result.statusSituacao);
@@ -829,8 +866,8 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-numeroLancamento").val(result.numeroLancamento);
 							$("#produtoEdicaoController-pacotePadrao").val(result.pacotePadrao);
 							$("#produtoEdicaoController-tipoLancamento").val(result.tipoLancamento);	
-							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevistoFormatado);
-							$("#produtoEdicaoController-precoVenda").val(result.precoVendaFormatado);
+							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevisto).formatNumber({format:'#.00', locale:'br'});;
+							$("#produtoEdicaoController-precoVenda").val(result.precoVenda).formatNumber({format:'#.00', locale:'br'});;
 							
 							$("#produtoEdicaoController-dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
 							$("#produtoEdicaoController-dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
@@ -850,7 +887,12 @@ var produtoEdicaoController =$.extend(true,  {
 							$('#produtoEdicaoController-parcial').val(result.parcial + "");
 							$('#produtoEdicaoController-possuiBrinde').attr('checked', result.possuiBrinde).change();
 							$('#produtoEdicaoController-boletimInformativo').val(result.boletimInformativo);
-							$('#produtoEdicaoController-semanaRecolhimento').val(result.semanaRecolhimento);
+//							$('#produtoEdicaoController-semanaRecolhimento').val(result.semanaRecolhimento);
+							if (result.dataRecolhimentoReal || result.dataRecolhimentoPrevisto) {
+								ano = (result.dataRecolhimentoReal || result.dataRecolhimentoPrevisto).$.split("/")[2];
+								anoSemanaRecolhimento = ano + result.semanaRecolhimento;
+								$('#produtoEdicaoController-semanaRecolhimento').val(anoSemanaRecolhimento);
+							}
 							$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);								
 							$('#produtoEdicaoController-dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$);
 							$("#produtoEdicaoController-peb").val(result.peb);		
@@ -861,9 +903,14 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-classeSocial").val(result.classeSocial);
 							$("#produtoEdicaoController-sexo").val(result.sexo);
 							$("#produtoEdicaoController-faixaEtaria").val(result.faixaEtaria);
-							$("#produtoEdicaoController-temaPrincipal").val(result.temaPrincipal);
-							$("#produtoEdicaoController-temaSecundario").val(result.temaSecundario);
-						
+							$("#produtoEdicaoController-tipoSegmento").val(result.tipoSegmentoProdutoId);
+
+							//Desativar Segmentação
+							$("#produtoEdicaoController-classeSocial").attr("disabled", true);
+							$("#produtoEdicaoController-sexo").attr("disabled", true);
+							$("#produtoEdicaoController-faixaEtaria").attr("disabled", true);
+							$("#produtoEdicaoController-tipoSegmento").attr("disabled", true);
+							
 							if(!result.dataLancamento){
 								 $("#produtoEdicaoController-dataLancamento").val("");
 								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
@@ -880,6 +927,8 @@ var produtoEdicaoController =$.extend(true,  {
 								produtoEdicaoController.definirBackgroundInputs(
 									result.origemInterface, result.numeroEdicao, false);	
 							}
+							
+							$("#produtoEdicaoController-tipoLancamento option").not(":selected").attr("disabled", true);
 							
 							if(result.id){
 								
@@ -923,7 +972,6 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-chamadaCapa", bloquearRedistribuicao);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-peso", bloquearRedistribuicao);
 		
-		$("#produtoEdicaoController-tipoLancamento option").not(":selected").attr("disabled", bloquear);
 		$("#produtoEdicaoController-parcial option").not(":selected").attr("disabled", bloquear);
 		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
 		
@@ -931,8 +979,7 @@ var produtoEdicaoController =$.extend(true,  {
 	    $("#produtoEdicaoController-classeSocial option").not(":selected").attr("disabled", bloquear);
 	    $("#produtoEdicaoController-sexo option").not(":selected").attr("disabled", bloquear);
 	    $("#produtoEdicaoController-faixaEtaria option").not(":selected").attr("disabled", bloquear);
-	    $("#produtoEdicaoController-temaPrincipal option").not(":selected").attr("disabled", bloquear);
-	    $("#produtoEdicaoController-temaSecundario option").not(":selected").attr("disabled", bloquear);
+	    $("#produtoEdicaoController-tipoSegmento option").not(":selected").attr("disabled", bloquear);
 	},
 	
 	bloquearCampo : function(campo, bloquear) {
@@ -956,14 +1003,37 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	executarPreProcessamentoLancamentosPeriodo : function (result) {
 		
+		linhasDestacadas = [];
+		
 		$.each(result.rows, function(index, row) {
 			
-			if(!row.cell.numeroLancamento) {
+			if(row.cell.numeroLancamento == undefined) {
 				row.cell.numeroLancamento = "";
+			}
+			
+			if(row.cell.numeroPeriodo == undefined) {
+				row.cell.numeroPeriodo = "";
+			}
+			
+			if(row.cell.reparte == undefined) {
+				row.cell.reparte = "";
+			}
+			
+			if (row.cell.destacarLinha) {
+				linhasDestacadas.push(index + 1);
 			}
 		});
 		
 		return result;
+	},
+	
+	onSuccessLancamentosPeriodo : function() {
+		
+		$(linhasDestacadas).each(function(i, item){
+			 id = '#row' + item;			    	
+			 $(id, this.workspace).removeClass("erow").addClass("gridLinhaDestacada");
+			 $(id, this.workspace).children("td").removeClass("sorted");
+		});
 	},
 	
 	iniciaTab: function(){
@@ -1139,6 +1209,7 @@ var produtoEdicaoController =$.extend(true,  {
 					}
 				}
 		);
+		$("#produtoEdicaoController-comboClassificacao").val('');
 	},
 	
 	carregarCapaTemporaria : function() {
@@ -1359,8 +1430,72 @@ var produtoEdicaoController =$.extend(true,  {
 	isEdicao : function(modoTela) {
 		
 		return modoTela == 'EDICAO';
-	}
+	},
 
+// FUNCTION - ADD EM LOTE
+	
+	edicaoLote : function() {
+
+		
+		$("#dialog-lote").dialog({
+			resizable : false,
+			height : 250,
+			width : 350,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					
+					produtoEdicaoController.executarSubmitAddLote();
+					
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+
+	},
+	
+	executarSubmitAddLote : function (){
+		 var fileName = $("#xls").val();
+	      
+	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	       if(ext!="xls" & ext!="xlsx"){
+	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+	    	   $(this).val('');
+	    	   return;
+	       }else{
+	    	
+	    	   $("#arquivoUpLoadEdicao").ajaxSubmit({
+					beforeSubmit: function(arr, formData, options) {
+					},
+					success: function(responseText, statusText, xhr, $form)  { 
+						var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+						var tipoMensagem = mensagens.tipoMensagem;
+						var listaMensagens = mensagens.listaMensagens;
+
+						if (tipoMensagem && listaMensagens) {
+							
+							if (tipoMensagem != 'SUCCESS') {
+								
+								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+							
+							}else{
+								exibirMensagem(tipoMensagem, listaMensagens);	
+							}
+
+							$("#dialog-lote").dialog( "close" );
+							
+						}
+					}, 
+					url:  contextPath + '/cadastro/edicao/addLote',
+					type: 'POST',
+					dataType: 'json'
+				});
+	       }
+	}
+	
 }, BaseController);
 
 //@ sourceURL=scriptProdutoEdicao.js

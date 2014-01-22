@@ -1,4 +1,5 @@
-var relatorioTiposProdutosController = $.extend(true, {
+
+﻿var relatorioTiposProdutosController = $.extend(true, {
 	
 	path : contextPath + '/lancamento/relatorioTiposProdutos/',
 
@@ -159,6 +160,7 @@ var relatorioTiposProdutosController = $.extend(true, {
 			width : 960,
 			height : 255
 		});
+
 	}
 	
 	

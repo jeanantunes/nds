@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,21 +22,32 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RodapeHistogramaVendaDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RegiaoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -47,11 +60,12 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/histogramaVendas")
-@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
+//@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 public class HistogramaVendasController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroHistogramaVendas";
 	private static final String HISTOGRAMA_SESSION_ATTRIBUTE = "resultadoHistogramaVendas";
+	private String[] faixaVendaInicial = {"0-0","1-4","5-9","10-19","20-49","50-999999"};
 	
 	@Autowired
 	private Result result;
@@ -68,65 +82,83 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private PdvService pdvService;
 	
-	
 	@Autowired
 	private EnderecoService enderecoService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
-	@Path("/")
+	@Autowired
+	private InformacoesProdutoService infoProdService;
+	
+	@Autowired
+	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
+	@Autowired
+	private ProdutoService produtoService;
+	
+	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 	public void index(){
 		
 		result.include("componenteList", ComponentesPDV.values());
-		
+		this.carregarComboClassificacao();		
 	}
 	
+	@Autowired
+	private RegiaoService regiaoService;
+	
+	private static String reparteTotal;
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
 	@Path("/carregarElementos")
 	public void carregarElementos(String componente){
 		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
 		
 		switch (ComponentesPDV.values()[Integer.parseInt(componente)]) {
-		case TipoPontodeVenda:
+		case TIPO_PONTO_DE_VENDA:
 			for(TipoPontoPDV tipo:pdvService.obterTiposPontoPDVPrincipal()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case Area_de_Influência:
+		case AREA_DE_INFLUENCIA:
 			for(AreaInfluenciaPDV tipo:pdvService.obterAreasInfluenciaPDV()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
 
-		case Bairro:
+		case BAIRRO:
 			for(String tipo:enderecoService.obterBairrosCotas()){
 				resultList.add(new ItemDTO(tipo,tipo));
 			}
 			break;
-		case Distrito:
+		case DISTRITO:
 			for(UfEnum tipo:UfEnum.values()){
 				resultList.add(new ItemDTO(tipo.getSigla(),tipo.getSigla()));
 			}
 			break;
-		case GeradorDeFluxo:
-			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxo()){
+		case GERADOR_DE_FLUXO:
+			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxoOrdenado()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case CotasAVista:
+		case COTAS_A_VISTA:
 			
 			break;
-		case CotasNovasRetivadas:
+		case COTAS_NOVAS_RETIVADAS:
 			
 			break;
-		case Região:
-			//todo: EMS 2004
+		case REGIAO:
+			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {
+				resultList.add(new ItemDTO(regiao.getIdRegiao(), regiao.getNomeRegiao()));
+			}
 			break;
 		default:
 			break;
 		}
-		
 		
 		result.use(Results.json()).from(resultList, "result").recursive().serialize();
 	}
@@ -138,8 +170,6 @@ public class HistogramaVendasController extends BaseController {
 		File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
 		try {
 			att = capaService.getCapaInputStream(codigoProduto,Long.parseLong(numeroEdicao));
-//			att = capaService.getCapaInputStream("00000000",Long.parseLong("0114"));
-			
 				 
 					// write the inputStream to a FileOutputStream
 					OutputStream out = new FileOutputStream(file);
@@ -169,10 +199,11 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Post
 	@Path("/analiseHistograma")
-	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String[] faixasVenda
-			,String labelComponente,String labelElemento){
+	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String labelComponente,String labelElemento,String classificacaoLabel){
 		String[] nrEdicoes = edicoes.split(",");
 		
+		int reparteTotalDistribuidor = 0;
+		ProdutoEdicao produtoEdicao = null;
 		String enumeratedList = null;
 		
 		if(nrEdicoes.length==1){
@@ -181,25 +212,37 @@ public class HistogramaVendasController extends BaseController {
 			enumeratedList = StringUtils.join(nrEdicoes, " - ");
 		}
 		
+		for (int j = 0; j < nrEdicoes.length; j++) {
+			produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, nrEdicoes[j]);
+			
+			reparteTotalDistribuidor += this.estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId()).getQtde().intValue();
+		}
 		
 		result.include("filtroUtilizado", getFiltroSessao());
 		result.include("listaEdicoes", enumeratedList);
 		result.include("segmentoLabel", segmento);
-		result.include("produtoLabel", codigoProduto);
+		result.include("codigoLabel", codigoProduto);
 		result.include("nomeProduto", nomeProduto);
+		
 		
 		result.include("labelComponente", labelComponente);
 		result.include("labelElemento", labelElemento);
+		result.include("classificacaoLabel", classificacaoLabel);
+		
+		NumberFormat f = NumberFormat.getNumberInstance();
+		// informações do resumo do histograma (parte inferior da tela)
+		reparteTotal = f.format(reparteTotalDistribuidor / nrEdicoes.length);
+		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
+		
 		
 		
 		//Pesquisar base de estudo e salvar em sessão
-//		List list = new ArrayList();
-		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixasVenda, nrEdicoes);
-		
+		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaVendaInicial, nrEdicoes);
 	
 		session.setAttribute(HISTOGRAMA_SESSION_ATTRIBUTE, list);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
 	@Path("/populateHistograma")
 	public void popularHistograma(String edicoes,String faixasVenda,String codigoProduto){
@@ -225,9 +268,18 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Post
 	@Path("/consultar")
-	public void pesquisarFiltro(FiltroHistogramaVendas filtro, String sortorder, String sortname, int page, int rp) {
+	public void pesquisarFiltro(FiltroHistogramaVendas filtro, Long classificacaoId, String sortorder, String sortname, int page, int rp) {
+		
+		filtro.setIdTipoClassificacaoProduto(classificacaoId);
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistogramaVendas.OrdemColuna.values(), sortname));
+		
+		if(filtro.getCodigo() != null){
+			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+			filtro.setIdProduto(produto.getId());			
+		}
 		
 		tratarFiltro(filtro);
 		
@@ -241,7 +293,15 @@ public class HistogramaVendasController extends BaseController {
 	private TableModel<CellModelKeyValue<EdicoesProdutosDTO>> efetuarConsultaEdicoesDoProdutos(
 			FiltroHistogramaVendas filtro) {
 		
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+		filtro.setCodigo(produto.getCodigoICD());
+		
 		List<EdicoesProdutosDTO> list = produtoEdicaoService.obterHistoricoEdicoes(filtro);
+		
+		if (list==null || list.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Nenhum registro encontrado.");
+		}
 		
 		TableModel<CellModelKeyValue<EdicoesProdutosDTO>> tableModel = new TableModel<CellModelKeyValue<EdicoesProdutosDTO>>();
 		
@@ -249,33 +309,69 @@ public class HistogramaVendasController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(list.size());
-		
+		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 		
 		return tableModel;
 	}
+	
+	
+        
 
+	@SuppressWarnings("unchecked")
 	@Get
-	public void exportar(FileType fileType) throws IOException {
+	public void exportar(FileType fileType, String abrangenciaDistribuicao, String abrangenciaVenda, String eficienciaVenda) throws IOException {
 		
 		List<AnaliseHistogramaDTO> lista = (List<AnaliseHistogramaDTO>)session.getAttribute(HISTOGRAMA_SESSION_ATTRIBUTE);
+		
+		AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
 		
 		if (lista==null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"A última pesquisa realizada não obteve resultado.");
 		}
-
-		FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), getFiltroSessao(), null, lista,
-				AnaliseHistogramaDTO.class, this.httpResponse);
 		
+		if(fileType.equals(FileType.XLS)){
+			RodapeHistogramaVendaDTO rodapeDTO = montarRodapeParaXLS(footer, abrangenciaDistribuicao, abrangenciaVenda, eficienciaVenda);
+			
+			FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), 
+					getFiltroSessao(), 
+					rodapeDTO, 
+					lista,
+					AnaliseHistogramaDTO.class, this.httpResponse);
+		}
 		result.nothing();
 	}
+
+	private RodapeHistogramaVendaDTO montarRodapeParaXLS(AnaliseHistogramaDTO footer, String abrangenciaDistribuicao, String abrangenciaVenda, String eficienciaVenda) {
+		
+		String qtdeTotalCotasAtivasFormatada = footer.getQtdeTotalCotasAtivas().toString();
+		String cotasProduto = footer.getQtdeCotas().toString();
+		String cotaEsmagas = footer.getCotasEsmagadas().toString();
+		String vendaEsmagada = footer.getVendaEsmagadas().setScale(0).toString();		
+		String vendaTotal = footer.getVdaTotal().setScale(0, BigDecimal.ROUND_FLOOR) .toString();
+		String reparteTotalFormatado = footer.getRepTotal().setScale(0, BigDecimal.ROUND_FLOOR).toString() ;
+		RodapeHistogramaVendaDTO rodapeDTO = new RodapeHistogramaVendaDTO(qtdeTotalCotasAtivasFormatada, 
+				cotasProduto, 
+				cotaEsmagas,
+				vendaEsmagada, 
+				reparteTotal,
+				reparteTotalFormatado,
+				vendaTotal,
+				eficienciaVenda.concat("%"),
+				abrangenciaDistribuicao.concat("%"),
+				abrangenciaVenda.concat("%"),
+				footer.getRepMedio().toString(),
+				footer.getVdaMedio().toString(),
+				footer.getEncalheMedio().toString());
+		return rodapeDTO;
+	}
+	
 	
 
-	private void tratarFiltro(FiltroHistogramaVendas filtroAtual) {
+	private void tratarFiltro(FiltroHistogramaVendas filtroAtual)throws ValidacaoException {
 
-		if(StringUtils.isNotEmpty(filtroAtual.getEdicao()) && (StringUtils.isEmpty(filtroAtual.getCodigo()) || StringUtils.isNotEmpty(filtroAtual.getProduto()) )){ 
+		if(StringUtils.isEmpty(filtroAtual.getCodigo()) & StringUtils.isEmpty(filtroAtual.getProduto())){ 
 			throw new ValidacaoException(TipoMensagem.WARNING,"Favor informar um código ou nome de produto.");
 		}
 		
@@ -295,6 +391,16 @@ public class HistogramaVendasController extends BaseController {
 		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		return filtroSession;
+	}
+	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
 	}
 	
 	public ProdutoEdicaoService getProdutoEdicaoService() {
@@ -337,8 +443,4 @@ public class HistogramaVendasController extends BaseController {
 	public void setHttpResponse(HttpServletResponse httpResponse) {
 		this.httpResponse = httpResponse;
 	}
-	
-	
-	
 }
-

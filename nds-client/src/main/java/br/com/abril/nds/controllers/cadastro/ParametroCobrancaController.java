@@ -376,51 +376,5 @@ public class ParametroCobrancaController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");      	
 			}
 		}
-		
-		Long idDistribuidor = this.distribuidorService.obterId();
-		
-		if (parametros.isEnvioEmail()){
-			if (this.distribuidorService.getEmail() == null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para o distribuidor ou desmarque a opção de envio de email.");
-			}
-		}
-		
-		if ((parametros.getFornecedoresId()!=null)&&(parametros.getFornecedoresId().size()>0)){
-		
-			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO SEMANAL
-			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-				
-				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(parametros.getTipoCobranca(),
-						                                                   parametros.getIdPolitica(),
-					                                                       idDistribuidor,
-					                                                       parametros.getTipoFormaCobranca(), 
-					                                                       parametros.getFornecedoresId(), 
-																		   parametros.isDomingo(),
-																	       parametros.isSegunda(),
-																	       parametros.isTerca(),
-																	       parametros.isQuarta(),
-																	       parametros.isQuinta(),
-																	       parametros.isSexta(),
-																	       parametros.isSabado())){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
-				}
-				
-			}	
-			
-			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO MENSAL
-			else{
-				
-				if (!this.formaCobrancaService.validarFormaCobrancaMensal(parametros.getTipoCobranca(),
-						                                                  parametros.getIdPolitica(),
-					                                                      idDistribuidor,
-					                                                      parametros.getTipoFormaCobranca(), 
-					                                                      parametros.getFornecedoresId(), 
-					                                                      parametros.getDiasDoMes())){
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
-				}
-			}
-		}	
 	}
 }

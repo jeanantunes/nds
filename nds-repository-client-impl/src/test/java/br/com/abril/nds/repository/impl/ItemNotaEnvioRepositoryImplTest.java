@@ -9,11 +9,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 
 public class ItemNotaEnvioRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Autowired
-	private ItemNotaEnvioRepositoryImpl itemNotaEnvioRepositoryImpl;
+	private ItemNotaEnvioRepository itemNotaEnvioRepositoryImpl;
 	
 	
 	@Test

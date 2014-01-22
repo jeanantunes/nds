@@ -10,6 +10,8 @@ public class MovimentoEstoqueCotaGenericoDTO implements Serializable {
 	private Long idProdutoEdicao;
 	
 	private BigInteger qtde;
+	
+	private Long idChamadaEncalhe;
 
 	public Long getIdCota() {
 		return idCota;
@@ -34,5 +36,15 @@ public class MovimentoEstoqueCotaGenericoDTO implements Serializable {
 	public void setQtde(BigInteger qtde) {
 		this.qtde = qtde;
 	}
+
+	public Long getIdChamadaEncalhe() {
+		return idChamadaEncalhe;
+	}
+
+	public void setIdChamadaEncalhe(Long idChamadaEncalhe) {
+		this.idChamadaEncalhe = idChamadaEncalhe;
+	}
+	
+	
 	
 }

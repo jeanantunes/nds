@@ -11,6 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.GrupoRepository;
@@ -32,6 +33,26 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		criteria.add(Restrictions.lt("dataCadastro", data));
 		
 		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DiaSemana> obterDiasOperacaoDiferenciadaCota(Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT distinct(dia)					");
+		hql.append(" FROM GrupoCota grupoCota 				");
+		hql.append(" join grupoCota.diasRecolhimento dia  	");
+		hql.append(" join grupoCota.cotas cota 				");
+		hql.append(" WHERE cota.numeroCota = :numeroCota 	");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (List<DiaSemana>) query.list();
+		
 	}
 	
 	@Override

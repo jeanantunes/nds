@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
+import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -243,6 +244,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
+
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 											 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),

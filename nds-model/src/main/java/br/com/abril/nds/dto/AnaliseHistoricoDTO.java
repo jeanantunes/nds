@@ -1,9 +1,5 @@
 package br.com.abril.nds.dto;
 
-import org.eclipse.jdt.internal.compiler.util.FloatUtil;
-import org.springframework.format.annotation.NumberFormat;
-
-import antlr.StringUtils;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
@@ -123,10 +119,18 @@ public class AnaliseHistoricoDTO {
 		this.reparteMedio = reparteMedio;
 		this.reparteMedioFormat = CurrencyUtil.formatarValor(reparteMedio);
 	}
+	
+	public Double getReparteMedio(){
+		return this.reparteMedio;
+	}
 
 	public void setVendaMedia(Double vendaMedia) {
 		this.vendaMedia = vendaMedia;
 		this.vendaMediaFormat = CurrencyUtil.formatarValor(vendaMedia);
+	}
+	
+	public Double getVendaMedia(){
+		return this.vendaMedia;
 	}
 
 	public String getEd1Reparte() {
@@ -228,9 +232,17 @@ public class AnaliseHistoricoDTO {
 	public String getReparteMedioFormat() {
 		return reparteMedioFormat;
 	}
+	
+	public void setReparteMedioFormat(String reparteMedioFormatado) {
+		this.reparteMedioFormat = reparteMedioFormatado;
+	}
 
 	public String getVendaMediaFormat() {
 		return vendaMediaFormat;
+	}
+	
+	public void setVendaMediaFormat(String vendaMediaFormatado) {
+		this.vendaMediaFormat = vendaMediaFormatado;
 	}
 
 }

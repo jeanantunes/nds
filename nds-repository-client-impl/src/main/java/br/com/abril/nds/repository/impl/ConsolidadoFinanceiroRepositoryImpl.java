@@ -1746,118 +1746,117 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                                                 StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA.name(),
                                                 StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR.name());
 
-                query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
-                
-                if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
-                        
-                        query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
-                        query.setParameter("fimPeriodo", filtro.getFimPeriodo());
-                }
-                
-                query.setParameterList("tiposMovimentoCredito", tiposMovimentoCredito);
-                query.setParameterList("tiposMovimentoDebito", tiposMovimentoDebito);
-                query.setParameterList("tipoMovimentoEncalhe", tipoMovimentoEncalhe);
-                query.setParameterList("tiposMovimentoEncargos", tiposMovimentoEncargos);
-                query.setParameterList("tiposMovimentoPostergadoCredito", tiposMovimentoPostergadoCredito);
-                query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
-                query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
-                query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
-                query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
-                query.setParameterList("tiposMovimentoNegociacaoComissao", tiposMovimentoNegociacaoComissao);
-                
-                query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
-                
-                query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
-                
-                query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
-                
-                PaginacaoVO paginacao = filtro.getPaginacao();
-                if (paginacao != null) {
-                        
-                        if (paginacao.getPosicaoInicial() != null) {
-                                
-                                query.setFirstResult(paginacao.getPosicaoInicial());
-                        }
-                        
-                        if (paginacao.getQtdResultadosPorPagina() != null) {
-                                
-                                query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-                        }
-                }
-                
-                return query.list();
-        }
-        
-        @Override
-        public BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
-                
-                StringBuilder sql = new StringBuilder("select count(cotaId) from (");
-                sql.append(" select cfc.COTA_ID as cotaId, ")
-                   .append(" cfc.DT_CONSOLIDADO as dataConsolidado ")
-                   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
-                   .append(" inner join COTA on COTA.ID = cfc.COTA_ID")
-                   .append(" where COTA.NUMERO_COTA = :numeroCota ");
-                
-                if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
-                        
-                        sql.append(" and cfc.DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
-                }
-                
-                sql.append(" union all ")
-                   
-                   .append(" select mfc.COTA_ID as cotaId, ")
-                   .append(" mfc.DATA as dataConsolidado ")
-                   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
-                   .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
-                   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-                   .append(" and mfc.DATA not in (")
-                   .append("     select DT_CONSOLIDADO ")
-                   .append("     from CONSOLIDADO_FINANCEIRO_COTA ")
-                   .append("     inner join COTA on COTA.ID = CONSOLIDADO_FINANCEIRO_COTA.COTA_ID")
-                   .append(")");
-                
-                if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
-                        
-                        sql.append(" and mfc.DATA between :inicioPeriodo and :fimPeriodo ");
-                }
-                
-                sql.append(" group by dataConsolidado ")
-                   .append(") as tmp ");
-                
-                Query query = this.getSession().createSQLQuery(sql.toString());
-                
-                query.setParameter("numeroCota", filtro.getNumeroCota());
-                
-                if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
-                        
-                        query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
-                        query.setParameter("fimPeriodo", filtro.getFimPeriodo());
-                }
-                
-                return (BigInteger) query.uniqueResult();
-        }
-        
-        @Override
-        public Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota) {
-                
-                // Comentado para demonstrar o valor "outros" na conferência de encalhe mesmo que a dívida já tenha gerado cobrança
-                /*String hql = " select max(cfc.dataConsolidado) " +
-                                         " from ConsolidadoFinanceiroCota cfc " +
-                                         " where cfc.dataConsolidado < :dataConsolidado " +
-                                         " and cfc.cota = :cotaConsolidado " +
-                                         " and (select count(cob.id) from Cobranca cob where cob.cota = cfc.cota) = 0";*/        
-                
-                String hql = " select max(cfc.dataConsolidado) " +
-                                 " from ConsolidadoFinanceiroCota cfc " +
-                                 " where cfc.dataConsolidado < :dataConsolidado " +
-                                 " and cfc.cota = :cotaConsolidado ";
-                
-                Query query = this.getSession().createQuery(hql);
-                
-                query.setParameter("dataConsolidado", consolidadoFinanceiroCota.getDataConsolidado());
-                query.setParameter("cotaConsolidado", consolidadoFinanceiroCota.getCota());
-                
-                return (Date) query.uniqueResult();
-        }
-        
+		query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+		}
+		
+		query.setParameterList("tiposMovimentoCredito", tiposMovimentoCredito);
+		query.setParameterList("tiposMovimentoDebito", tiposMovimentoDebito);
+		query.setParameterList("tipoMovimentoEncalhe", tipoMovimentoEncalhe);
+		query.setParameterList("tiposMovimentoEncargos", tiposMovimentoEncargos);
+		query.setParameterList("tiposMovimentoPostergadoCredito", tiposMovimentoPostergadoCredito);
+		query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
+		query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
+		query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
+		query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
+		query.setParameterList("tiposMovimentoNegociacaoComissao", tiposMovimentoNegociacaoComissao);
+		
+		query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
+		
+		query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
+		
+		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+		
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		if (paginacao != null) {
+			
+			if (paginacao.getPosicaoInicial() != null) {
+				
+				query.setFirstResult(paginacao.getPosicaoInicial());
+			}
+			
+			if (paginacao.getQtdResultadosPorPagina() != null) {
+				
+				query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+			}
+		}
+		
+		return query.list();
+	}
+	
+	@Override
+	public BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
+		
+		StringBuilder sql = new StringBuilder("select count(cotaId) from (");
+		sql.append(" select cfc.COTA_ID as cotaId, ")
+		   .append(" cfc.DT_CONSOLIDADO as dataConsolidado ")
+		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
+		   .append(" inner join COTA on COTA.ID = cfc.COTA_ID")
+		   .append(" where COTA.NUMERO_COTA = :numeroCota ");
+		
+		if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
+			
+			sql.append(" and cfc.DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
+		}
+		
+		sql.append(" union all ")
+		   
+		   .append(" select mfc.COTA_ID as cotaId, ")
+		   .append(" mfc.DATA as dataConsolidado ")
+		   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
+		   .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
+		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+		   .append(" and mfc.DATA not in (")
+		   .append("     select DT_CONSOLIDADO ")
+		   .append("     from CONSOLIDADO_FINANCEIRO_COTA ")
+		   .append("     inner join COTA on COTA.ID = CONSOLIDADO_FINANCEIRO_COTA.COTA_ID")
+		   .append(")");
+		
+		if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
+			
+			sql.append(" and mfc.DATA between :inicioPeriodo and :fimPeriodo ");
+		}
+		
+		sql.append(" group by dataConsolidado ")
+		   .append(") as tmp ");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("numeroCota", filtro.getNumeroCota());
+		
+		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
+			
+			query.setParameter("inicioPeriodo", filtro.getInicioPeriodo());
+			query.setParameter("fimPeriodo", filtro.getFimPeriodo());
+		}
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	@Override
+	public Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota) {
+		
+		// Comentado para demonstrar o valor "outros" na conferência de encalhe mesmo que a dívida já tenha gerado cobrança
+		/*String hql = " select max(cfc.dataConsolidado) " +
+					 " from ConsolidadoFinanceiroCota cfc " +
+					 " where cfc.dataConsolidado < :dataConsolidado " +
+					 " and cfc.cota = :cotaConsolidado " +
+					 " and (select count(cob.id) from Cobranca cob where cob.cota = cfc.cota) = 0";*/	
+		
+		String hql = " select max(cfc.dataConsolidado) " +
+				 " from ConsolidadoFinanceiroCota cfc " +
+				 " where cfc.dataConsolidado < :dataConsolidado " +
+				 " and cfc.cota = :cotaConsolidado ";
+		
+		Query query = this.getSession().createQuery(hql);
+		
+		query.setParameter("dataConsolidado", consolidadoFinanceiroCota.getDataConsolidado());
+		query.setParameter("cotaConsolidado", consolidadoFinanceiroCota.getCota());
+		
+		return (Date) query.uniqueResult();
+	}	
 }

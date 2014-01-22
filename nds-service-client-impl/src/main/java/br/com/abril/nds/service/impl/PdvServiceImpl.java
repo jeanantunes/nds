@@ -163,14 +163,14 @@ public class PdvServiceImpl implements PdvService {
     @Override
     public List<AreaInfluenciaPDV> obterTipoAreaInfluencia() {
 
-        return areaInfluenciaPDVRepository.buscarTodos();
+        return areaInfluenciaPDVRepository.obterTodasAreaInfluenciaPDV();
     }
 
     @Transactional(readOnly = true)
     @Override
 	public List<TipoGeradorFluxoPDV> obterTipoGeradorDeFluxo() {
 		// TODO Auto-generated method stub
-    	return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+    	return tipoGeradorFluxoPDVRepsitory.obterTodosTiposGeradorFluxo();
 	}
     
     @Transactional(readOnly = true)
@@ -810,23 +810,26 @@ public class PdvServiceImpl implements PdvService {
         pdvDTO.setPontoReferencia(pdv.getPontoReferencia());
         pdvDTO.setDentroOutroEstabelecimento(pdv.isDentroOutroEstabelecimento());
         pdvDTO.setArrendatario(pdv.isArrendatario());
-        TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoPDV = pdv
-                .getTipoEstabelecimentoPDV();
+        
+        TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoPDV = pdv.getTipoEstabelecimentoPDV();
         
         if(pdv.getSegmentacao() != null && pdv.getSegmentacao().getTipoPontoPDV() != null) {
-	        TipoPontoPDVDTO tppDTO = new TipoPontoPDVDTO();
-	        tppDTO.setCodigo(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
-	        tppDTO.setDescricao(pdv.getSegmentacao().getTipoPontoPDV().getDescricao());
-	        tppDTO.setId(pdv.getSegmentacao().getTipoPontoPDV().getId());
-	        
-	        pdvDTO.setTipoPontoPDV(tppDTO);
+            
+        	TipoPontoPDVDTO tppDTO = new TipoPontoPDVDTO();
+            
+        	tppDTO.setCodigo(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
+            tppDTO.setDescricao(pdv.getSegmentacao().getTipoPontoPDV().getDescricao());
+            tppDTO.setId(pdv.getSegmentacao().getTipoPontoPDV().getId());
+            
+            pdvDTO.setTipoPontoPDV(tppDTO);
         }
-
+        
         if (tipoEstabelecimentoPDV != null) {
             pdvDTO.setTipoEstabelecimentoAssociacaoPDV(new TipoEstabelecimentoAssociacaoPDVDTO(
                     tipoEstabelecimentoPDV.getId(), tipoEstabelecimentoPDV
                             .getCodigo(), tipoEstabelecimentoPDV.getDescricao()));
         }
+        
         pdvDTO.setTamanhoPDV(pdv.getTamanhoPDV());
         pdvDTO.setSistemaIPV(pdv.isPossuiSistemaIPV());
         pdvDTO.setQtdeFuncionarios(pdv.getQtdeFuncionarios());
@@ -1602,6 +1605,11 @@ public class PdvServiceImpl implements PdvService {
 	@Override
 	public List<PdvDTO> obterPDVs(Integer numeroCota) {
 		return this.pdvRepository.obterPDVs(numeroCota);
+	}
+
+	@Override
+	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxoOrdenado() {
+		return this.tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoOrdenado();
 	}
 
 }

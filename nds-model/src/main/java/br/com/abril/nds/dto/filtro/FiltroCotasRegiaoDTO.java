@@ -17,6 +17,9 @@ public class FiltroCotasRegiaoDTO extends FiltroDTO implements Serializable {
 	
 	private String cepFinal;
 	
+	private Integer limiteBuscaPorSegmento = 0;
+	
+	private long idSegmento;
 	
 	public Long getId() {
 		return id;
@@ -48,5 +51,21 @@ public class FiltroCotasRegiaoDTO extends FiltroDTO implements Serializable {
 
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	public Integer getLimiteBuscaPorSegmento() {
+		return limiteBuscaPorSegmento;
+	}
+
+	public void setLimiteBuscaPorSegmento(Integer limiteBuscaPorSegmento) {
+		this.limiteBuscaPorSegmento = limiteBuscaPorSegmento;
+	}
+
+	public long getIdSegmento() {
+		return idSegmento;
+	}
+
+	public void setIdSegmento(long idSegmento) {
+		this.idSegmento = idSegmento;
 	}
 }

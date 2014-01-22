@@ -46,6 +46,10 @@ public class SegmentacaoProduto implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TEMA_SECUNDARIO")
 	private TemaProduto temaSecundario;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "FORMA_FISICA")
+	private FormaFisica formaFisica;
 
 	/**
 	 * @return the classeSocial
@@ -145,6 +149,14 @@ public class SegmentacaoProduto implements Serializable {
 		this.temaSecundario = temaSecundario;
 	}
 
+	public FormaFisica getFormaFisica() {
+		return formaFisica;
+	}
 
+	public void setFormaFisica(FormaFisica formaFisica) {
+		this.formaFisica = formaFisica;
+	}
+
+ 
 }
 

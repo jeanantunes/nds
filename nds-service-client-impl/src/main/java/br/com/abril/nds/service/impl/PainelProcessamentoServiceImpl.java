@@ -552,5 +552,4 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	    }
 	    return map;
 	}
-
 }

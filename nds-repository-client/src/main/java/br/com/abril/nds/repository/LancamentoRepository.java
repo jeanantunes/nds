@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -211,11 +212,11 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - período de distribuição
 	 * @param fornecedores
 	 *            - fornecedores
+	 * @param list 
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
-	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
@@ -326,7 +327,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	boolean existeCobrancaParaLancamento(Long idLancamento);
 
-	List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+	List<Lancamento> obterLancamentosEdicao(Long idEdicao);
 
 	LancamentoDTO obterLancamentoPorID(Long idLancamento);
 
@@ -337,8 +338,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
-	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
-
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
@@ -367,7 +366,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
 
-	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao);
+	Integer obterUltimoNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
 	
 	Date getMaiorDataLancamentoPrevisto(Long idProdutoEdicao);
 	
@@ -385,5 +384,15 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	boolean existeConferenciaEncalheParaLancamento(Long id,
 			TipoChamadaEncalhe matrizRecolhimento);
+	
+	public List<Lancamento> obterPorEstudo(Estudo estudo);
+
+	Lancamento buscarPorIdSemEstudo(Long lancamentoId);
+
+	public abstract BigInteger obterUltimoRepartePorProduto(Long codigoProduto);
+
+	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento, Long produtoEdicaoId );
+	
+	Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe);
 	
 }

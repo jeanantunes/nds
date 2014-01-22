@@ -1,4 +1,3 @@
-
 var tipoFormaCobranca = null;
 var idPolitica = null;
 
