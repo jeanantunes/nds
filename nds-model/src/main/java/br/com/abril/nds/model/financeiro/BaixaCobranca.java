@@ -44,7 +44,7 @@ public abstract class BaixaCobranca {
 	@Column(name = "DATA_PAGAMENTO", nullable = false)
 	private Date dataPagamento;
 	
-	@Column(name = "VALOR_PAGO", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR_PAGO", nullable = false)
 	private BigDecimal valorPago;
 	
 	@ManyToOne(optional = true)

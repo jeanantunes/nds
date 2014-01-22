@@ -264,7 +264,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		save(itemRecebimentoFisico4Rodas);
 		
 		lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, 
+				TipoLancamento.LANCAMENTO, 
 				veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
@@ -540,7 +540,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	public void setUpForConsultaEncalhe() {
 		
 		lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, 
+				TipoLancamento.LANCAMENTO, 
 				veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),
@@ -680,7 +680,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	public void setUpForNotaFiscal() {
 		
 		lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, 
+				TipoLancamento.LANCAMENTO, 
 				veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012),

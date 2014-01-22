@@ -310,7 +310,7 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			this.processarDiferencasLancamento(listaLancamentoDiferencas, filtro, qtdeTotalRegistros.intValue());
 			
-			this.httpSession.setAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE, listaLancamentoDiferencas);
+			this.httpSession.setAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE,listaLancamentoDiferencas);
 		}
 	}
 	

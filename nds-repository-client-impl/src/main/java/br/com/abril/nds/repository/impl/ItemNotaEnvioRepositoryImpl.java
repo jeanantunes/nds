@@ -199,4 +199,20 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		return query.list();
 	}
 	
+	@Override
+	public void removerItemNotaEnvioPorEstudo(Long idEstudo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" update ItemNotaEnvio itemNota set itemNota.estudoCota = null");
+		hql.append(" where itemNota.estudoCota.id in (");
+		hql.append(" select id from EstudoCota");
+		hql.append(" where estudo.id = :idEstudo)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idEstudo", idEstudo);
+		
+		query.executeUpdate();
+	}
+	
 }

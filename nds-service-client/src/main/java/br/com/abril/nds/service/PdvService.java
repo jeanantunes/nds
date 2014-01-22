@@ -187,5 +187,8 @@ public interface PdvService {
 	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
 	 */
 	List<PdvDTO> obterPDVs(Integer numeroCota);
+	
+	
+	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxoOrdenado();
 }
 

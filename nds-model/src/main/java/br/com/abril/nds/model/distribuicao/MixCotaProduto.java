@@ -3,7 +3,6 @@ package br.com.abril.nds.model.distribuicao;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,8 +13,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -32,10 +33,6 @@ public class MixCotaProduto {
 	@ManyToOne
 	@JoinColumn(name = "ID_COTA")
 	private Cota cota;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_PRODUTO")
-	private Produto produto;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_USUARIO")
@@ -59,9 +56,16 @@ public class MixCotaProduto {
 	@Column(name = "REPARTE_MAX")
 	private Long reparteMaximo;
 	
-	@OneToMany(mappedBy="mixCotaProduto", cascade={CascadeType.REMOVE})
-	List<RepartePDV> repartesPDV;
+	@Column(name = "CODIGO_ICD")
+	private String codigoICD;
 	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	
+	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE})
+	@OneToMany(mappedBy="mixCotaProduto")
+	List<RepartePDV> repartesPDV;
 	
 	public Long getId() {
 		return id;
@@ -77,14 +81,6 @@ public class MixCotaProduto {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
-	}
-
-	public Produto getProduto() {
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
 	}
 
 	public Usuario getUsuario() {
@@ -150,7 +146,22 @@ public class MixCotaProduto {
 	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
 		this.repartesPDV = repartesPDV;
 	}
-	
-	
+
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	}
 	
 }

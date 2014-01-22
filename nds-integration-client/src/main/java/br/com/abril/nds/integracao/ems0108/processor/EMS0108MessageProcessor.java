@@ -25,10 +25,12 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
@@ -43,6 +45,9 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ParciaisService parciaisService;
 
 	private final static String DATA_ZEROS = "00000000";
 
@@ -175,7 +180,19 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 									return;
 								}
 							}
+							
 							this.getSession().merge(lancamento);
+							
+							try {
+								this.tratarParciais(lancamento);
+							} catch (Exception e) {
+								ndsiLoggerFactory.getLogger().logError(
+										message,
+										EventoExecucaoEnum.INF_DADO_ALTERADO,
+										String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+													  input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+								return;
+							}
 						}
 					}
 				} else {
@@ -291,6 +308,17 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					} else {
 						lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
 						this.getSession().merge(lancamento);
+						
+						try {
+							this.tratarParciais(lancamento);
+						} catch (Exception e) {
+							ndsiLoggerFactory.getLogger().logError(
+									message,
+									EventoExecucaoEnum.INF_DADO_ALTERADO,
+									String.format("Erro ao processar as parcias para o Produto %1$s Edicao %2$s. " + e.getMessage(),
+												  input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() ));
+							return;
+						}
 					}
 				}
 			}
@@ -341,12 +369,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
 		sql.append("      AND lcto.dataLancamentoDistribuidor >= :dataMovimento ");
+		sql.append("      AND lcto.tipoLancamento = :tipoLancamento ");
 		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("produtoEdicao", produtoEdicaoLancamento);
 		query.setDate("dataMovimento", dataMovimento);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -369,6 +399,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("    WHERE pe = :produtoEdicao ");
 		sql.append("      AND lcto.dataLancamentoDistribuidor < :dataMovimento ");
 		sql.append("      AND (lcto.status = :statusConfirmado OR lcto.status = :statusBalanceado) ");
+		sql.append("      AND lcto.tipoLancamento = :tipoLancamento ");
 		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor DESC");
 		
 		Query query = getSession().createQuery(sql.toString());
@@ -377,6 +408,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		query.setParameter("statusConfirmado", StatusLancamento.CONFIRMADO);
 		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO);
 		query.setDate("dataMovimento", dataMovimento);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -392,12 +424,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
 		sql.append("      AND lcto.dataRecolhimentoPrevista = :dataRecolhimentoLancamento ");
+		sql.append("      AND lcto.tipoLancamento = :tipoLancamento ");
 		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor ASC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("produtoEdicao", produtoEdicaoRecolhimento);
 		query.setDate("dataRecolhimentoLancamento", dataRecolhimentoLancamento);
+		query.setParameter("tipoLancamento", TipoLancamento.LANCAMENTO);
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -746,6 +780,19 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		return produtoEdicao;
 	}
 
+	private void tratarParciais(Lancamento lancamento) {
+		
+		PeriodoLancamentoParcial periodoLancamentoParcial = lancamento.getPeriodoLancamentoParcial();
+		
+		if (periodoLancamentoParcial != null) {
+			
+			this.parciaisService.reajustarRedistribuicoes(
+				periodoLancamentoParcial,
+				lancamento.getDataLancamentoDistribuidor(),
+				lancamento.getDataRecolhimentoDistribuidor());
+		}
+	}
+	
 	private ProdutoEdicao recuperarProdutoEdicao(String codigoPublicacao,
 			Long edicao) {
 		

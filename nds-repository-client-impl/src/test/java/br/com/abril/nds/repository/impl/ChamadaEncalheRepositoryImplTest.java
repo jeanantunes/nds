@@ -157,7 +157,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		save(itemRecebimentoFisico2Veja);
 
 		Lancamento lancamentoVeja = Fixture.lancamento(
-				TipoLancamento.SUPLEMENTAR, veja1,
+				TipoLancamento.LANCAMENTO, veja1,
 				Fixture.criarData(22, Calendar.FEBRUARY, 2012),
 				Fixture.criarData(28, Calendar.FEBRUARY, 2012), new Date(),
 				new Date(), BigInteger.valueOf(100),

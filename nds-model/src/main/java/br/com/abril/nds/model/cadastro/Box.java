@@ -200,5 +200,4 @@ public class Box implements Serializable {
 			return false;
 		return true;
 	}
-
 }

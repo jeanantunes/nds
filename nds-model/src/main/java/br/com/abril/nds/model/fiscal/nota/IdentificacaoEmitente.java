@@ -11,14 +11,17 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 
+import org.hibernate.annotations.Type;
+
+import br.com.abril.nds.integracao.persistence.PersistentEnum;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
@@ -32,25 +35,37 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 public class IdentificacaoEmitente implements Serializable {
 	
 	
-	public enum RegimeTributario implements NotaFiscalEnum {
+	public enum RegimeTributario implements NotaFiscalEnum, PersistentEnum {
 	
 		/**
 		 * 1 – Simples Nacional
 		 */
-		SIMPLES_NACIONAL, 
+		SIMPLES_NACIONAL(1), 
 		/**
 		 * 2 – Simples Nacional – excesso de sublimite de receita bruta
 		 */
-		SIMPLES_NACIONAL_EXECESSO,
+		SIMPLES_NACIONAL_EXECESSO(2),
 		/**
 		 * 3 – Regime Normal. (v2.0)
 		 */
-		REGINE_NORMAL;
+		REGINE_NORMAL(3);
+		
+		private Integer regimeTributario;
+		
+		RegimeTributario(Integer regimeTributario) {
+			this.regimeTributario = regimeTributario;
+		}
 
 		@Override
 		public Integer getIntValue() {
-			return this.ordinal();
+			return regimeTributario.intValue();
 		}
+
+		@Override
+		public int getId() {
+			return regimeTributario.intValue();
+		}
+		
 	}
 
 	/**
@@ -66,12 +81,12 @@ public class IdentificacaoEmitente implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Embedded
-	//@XmlElement(name="CNPJ")
+	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
 	@XmlElements(value = {
-        @XmlElement(name="CPF", type=CPF.class),
-        @XmlElement(name="CNPJ", type=CNPJ.class)
+        @XmlElement(name="CPF", type=CPFEmitente.class),
+        @XmlElement(name="CNPJ", type=CNPJEmitente.class)
     })
-	private DocumentoPrincipalPessoa documento;
+	private DocumentoEmitente documento;
 	
 	/**
 	 * xNome
@@ -132,7 +147,13 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name="CRT_EMITENTE",length=1, nullable=true)
+	@XmlTransient
+	@Type(type="br.com.abril.nds.model.fiscal.notafiscal.enums.RegimeTributarioUserType") //Permite persistir como int (valores no XSD)
 	private RegimeTributario regimeTributario;
+	
+	@Transient
+	@XmlElement(name="CRT")
+	private Integer regimeTributarioXML;
 	
 	@OneToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE")
@@ -170,7 +191,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @return the documento
 	 */
-	public DocumentoPrincipalPessoa getDocumento() {
+	public DocumentoEmitente getDocumento() {
 		return documento;
 	}
 
@@ -179,7 +200,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @param documento the documento to set
 	 */
-	public void setDocumento(DocumentoPrincipalPessoa documento) {
+	public void setDocumento(DocumentoEmitente documento) {
 		this.documento = documento;
 	}
 
@@ -307,6 +328,7 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	public void setRegimeTributario(RegimeTributario regimeTributario) {
 		this.regimeTributario = regimeTributario;
+		this.regimeTributarioXML = regimeTributario != null ? regimeTributario.getIntValue() : null;
 	}
 
 
@@ -507,7 +529,5 @@ public class IdentificacaoEmitente implements Serializable {
 				+ (endereco != null ? "endereco=" + endereco + ", " : "")
 				+ (telefone != null ? "telefone=" + telefone : "") + "]";
 	}
-
-	
 
 }

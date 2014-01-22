@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -1400,7 +1401,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	private CorpoBoleto geraCorpoBoletoEmBranco(BoletoEmBrancoDTO bbDTO){
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(bbDTO.getNumeroCota());
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(bbDTO.getNumeroCota());
 		
 		BoletoAntecipado boletoAntecipado = this.boletoAntecipadoRepository.buscarPorId(bbDTO.getIdBoletoAntecipado());
 		
@@ -1862,7 +1863,7 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException {
+	public byte[] gerarImpressaoBoletos(Collection<String> nossoNumeros) throws IOException, ValidationException {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		
@@ -2167,7 +2168,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 		return fornecedor;
 	}
-	
+
 	/**
 	 * Obtem dados de boleto em Branco utilizando dados de CE e periodo de recolhimento do filtro
 	 * @param ceDTO
@@ -2402,7 +2403,7 @@ public class BoletoServiceImpl implements BoletoService {
     		this.boletoAntecipadoRepository.merge(boletoAntecipado);
     	}
     	
-        Cota cota = this.cotaRepository.obterPorNumerDaCota(bbDTO.getNumeroCota());
+        Cota cota = this.cotaRepository.obterPorNumeroDaCota(bbDTO.getNumeroCota());
         
         bbDTO.setIdBoletoAntecipado(boletoAntecipado.getId());
         

@@ -1615,7 +1615,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#precoCapa", ConferenciaEncalhe.workspace).text("");
 		$("#desconto", ConferenciaEncalhe.workspace).text("");
 		$("#valorTotal", ConferenciaEncalhe.workspace).text("");
-		
+
 		if(keepQtdValorCE != true) {
 
 			$("#vlrCE", ConferenciaEncalhe.workspace).val("");

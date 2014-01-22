@@ -409,6 +409,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 	/**
 	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<PdvDTO> obterPDVs(Integer numeroCota) {
 		StringBuilder hql = new StringBuilder();
@@ -437,6 +438,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota){
@@ -453,8 +455,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			.append("LEFT JOIN enderecoPdv.endereco endereco ")
 			.append("LEFT JOIN pdv.telefones telefonePdv ")
 			.append("LEFT JOIN telefonePdv.telefone telefone ")
-			.append(" WHERE pdv.cota.id = :idCota ")
-			.append(" and enderecoPdv.principal = true");
+			.append(" WHERE pdv.cota.id = :idCota ");
+			//.append(" and enderecoPdv.principal = true"); -- Retirado no merge com a Fase2
 	        	
 		Query q = getSession().createQuery(hql.toString());
         q.setParameter("idCota", idCota);

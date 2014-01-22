@@ -707,7 +707,7 @@ public class FecharDiaController extends BaseController {
          */
         JQUERY_FILE_DOWNLOAD_PLUGIN
     }
-    
+
     @Post
     public void isDataOperacaoDistribuidor(Date data){
     	

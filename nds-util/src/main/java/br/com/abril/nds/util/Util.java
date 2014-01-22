@@ -1,5 +1,7 @@
 package br.com.abril.nds.util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -661,6 +663,97 @@ public abstract class Util {
 		
 		System.out.println(isDiferencaMenorMeioCentavo(v1, v2));
 	}
+
+    private static String toFirstUpperCase(String string) {
+        
+        return string.substring(0,1).toUpperCase() + string.substring(1);
+    }
+
+    
+    public static Object getValuePath(Object obj,String path){
+        
+        
+        String[] pathList = path.split("\\.");
+        
+        String att = null;
+        if(pathList.length==0){
+            att=path;
+        }else{
+            att = pathList[0];
+            
+        }
+        
+        Method[] declaredMethods = obj.getClass().getDeclaredMethods();
+        
+        Method getM = null;
+        for (Method method : declaredMethods) {
+            if(method.getName().equals("get"+toFirstUpperCase(att))){
+                getM = method;
+            }
+        }
+        
+        if(getM==null){
+            return null;
+        }
+        
+        Object result =null;
+        try {
+             result = getM.invoke(obj, null);
+        } catch (IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        
+        if(pathList.length==1){
+            return result;
+        }else{
+            
+            return getValuePath(result,path.substring(path.indexOf(".")+1));
+        }
+    }
+    
+    public static Object getReturnTypePath(Object obj,String path){
+        
+        
+        String[] pathList = path.split("\\.");
+        
+        String att = null;
+        if(pathList.length==0){
+            att=path;
+        }else{
+            att = pathList[0];
+            
+        }
+        
+        Method[] declaredMethods = obj.getClass().getDeclaredMethods();
+        
+        Method getM = null;
+        for (Method method : declaredMethods) {
+            if(method.getName().equals("get"+toFirstUpperCase(att))){
+                getM = method;
+            }
+        }
+        
+        if(getM==null){
+            return null;
+        }
+        
+        Object result =null;
+        try {
+             result = getM.invoke(obj, null);
+        } catch (IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        
+        if(pathList.length==1){
+            //return result;
+        	return getM.getReturnType();
+        }else{
+            
+            return getValuePath(result,path.substring(path.indexOf(".")+1));
+        }
+    }
 
 	public static String encriptar(String info) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 		

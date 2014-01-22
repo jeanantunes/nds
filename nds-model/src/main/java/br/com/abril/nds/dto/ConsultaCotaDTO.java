@@ -2,8 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-
 /*
  *  @author Samuel Mendes
  *  @email mildf.dev@gmail.com

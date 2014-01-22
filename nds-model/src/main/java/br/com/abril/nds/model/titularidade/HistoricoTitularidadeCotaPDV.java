@@ -156,7 +156,7 @@ public class HistoricoTitularidadeCotaPDV implements Serializable {
     /**
      * Porcentagem que o PDV representa no total do faturamento da cota
      */
-    @Column(name = "PORCENTAGEM_FATURAMENTO", precision=18, scale=4)
+    @Column(name = "PORCENTAGEM_FATURAMENTO")
     private BigDecimal porcentagemFaturamento;
 
     /**

@@ -35,5 +35,4 @@ public class Boleto extends Cobranca {
 	public void setRecebeCobrancaEmail(boolean recebeCobrancaEmail) {
 		this.recebeCobrancaEmail = recebeCobrancaEmail;
 	}
-	
 }

@@ -97,7 +97,7 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 		
 		StringBuilder hql = new StringBuilder("select ");
 		hql.append(" c.numeroCota as numero, ")
-		   .append(" case when c.pessoa.cnpj is not null then concat('(', c.pessoa.razaoSocial, ')') else concat('(', c.pessoa.nome, ')') end as nome ")
+		   .append(" case when c.pessoa.cnpj is not null then concat(c.pessoa.razaoSocial, ' (', :siglaPJ, ')') else concat(c.pessoa.nome, ' (', :siglaPF, ')') end as nome ")
 		   .append(" from CotaUnificacao cu ")
 		   .append(" join cu.cotas c ")
 		   .append(" where cu.cota.numeroCota = :numeroCotaCentralizadora ")
@@ -107,6 +107,8 @@ public class CotaUnificacaoRepositoryImpl extends AbstractRepositoryModel<CotaUn
 			this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCotaCentralizadora", numeroCotaCentralizadora);
+		query.setParameter("siglaPJ", "PJ");
+		query.setParameter("siglaPF", "PF");
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaVO.class));
 		

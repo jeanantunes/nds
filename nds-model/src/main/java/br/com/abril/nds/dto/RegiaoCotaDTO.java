@@ -34,7 +34,7 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	private SituacaoCadastro tipoStatus;
 	
 	@Export(label = "Bairro", alignment=Alignment.LEFT, exhibitionOrder = 5)
-	private String bairro = "";
+	private String bairro = " ";
 	
 	@Export(label = "Cidade", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private String cidade = "";
@@ -74,7 +74,11 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	}
 	
 	public void setTipoPDV(String tipoPDV) {
+		if (tipoPDV == null){
+			this.tipoPDV = " ";
+		}else{
 		this.tipoPDV = tipoPDV;
+		}
 	}
 	
 	public SituacaoCadastro getTipoStatus() {
@@ -90,7 +94,11 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	}
 	
 	public void setBairro(String bairro) {
-		this.bairro = bairro;
+		if (bairro == null){
+			this.bairro = " ";
+		}else{
+			this.bairro = bairro;
+		}
 	}
 	
 	public String getCidade() {

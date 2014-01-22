@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public interface BoletoService {
 	
 	CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero, Date dataPagamento);
 	
-	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException;
+	byte[] gerarImpressaoBoletos(Collection<String> nossoNumeros) throws IOException, ValidationException;
 	
 	void incrementarVia(String... nossoNumero);
 	

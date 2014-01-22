@@ -123,4 +123,5 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	public void setFuroProduto(FuroProduto furoProduto) {
 		this.furoProduto = furoProduto;
 	}
+
 }

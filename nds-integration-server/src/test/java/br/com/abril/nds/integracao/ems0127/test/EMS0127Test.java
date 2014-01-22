@@ -20,11 +20,7 @@ public class EMS0127Test extends RouteTestTemplate {
 	@Test
 	@Override
 	public void test() {
-		
 		getRoute().execute("test");
-		
-		return;
-		
 	}
 	
 }

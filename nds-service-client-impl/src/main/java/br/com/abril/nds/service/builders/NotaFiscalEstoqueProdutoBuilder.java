@@ -8,7 +8,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
-import br.com.abril.nds.model.fiscal.nota.CNPJ;
+import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
@@ -60,7 +60,7 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNome(distribuidor.getJuridica().getRazaoSocial());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setNomeFantasia(distribuidor.getJuridica().getNomeFantasia());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
-		CNPJ cnpj = new CNPJ();
+		CNPJEmitente cnpj = new CNPJEmitente();
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setDocumento(cnpj);
 		
@@ -93,7 +93,7 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento("123");
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(null);
 	}
 	
 }

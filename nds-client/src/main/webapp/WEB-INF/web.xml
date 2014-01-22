@@ -1,125 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
-	<display-name>NDS - Novo Distrib</display-name>
-
-	<context-param>
-		<param-name>br.com.caelum.vraptor.encoding</param-name>
-		<param-value>UTF-8</param-value>
-	</context-param>
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:/applicationContext.xml,classpath:/applicationContext-security-jdbc.xml</param-value>
-	</context-param>
-	<context-param>
-		<param-name>javax.servlet.jsp.jstl.fmt.fallbackLocale</param-name>
-		<param-value>pt_BR</param-value>
-	</context-param>
-	<context-param>
-		<param-name>javax.servlet.jsp.jstl.fmt.locale</param-name>
-		<param-value>pt_BR</param-value>
-	</context-param>
-	<context-param>
-		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-		<param-value>messages</param-value>
-	</context-param>
-
-	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	<filter>
-		<filter-name>vraptor</filter-name>
-		<filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>vraptor</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
-	<filter>
-		<filter-name>imagesCache</filter-name>
-		<filter-class>com.samaxes.filter.CacheFilter</filter-class>
-		<init-param>
-			<param-name>static</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<init-param>
-			<param-name>expirationTime</param-name>
-			<param-value>2592000</param-value>
-		</init-param>
-	</filter>
-	<filter>
-		<filter-name>cssCache</filter-name>
-		<filter-class>com.samaxes.filter.CacheFilter</filter-class>
-		<init-param>
-			<param-name>expirationTime</param-name>
-			<param-value>604800</param-value>
-		</init-param>
-	</filter>
-	<filter>
-		<filter-name>jsCache</filter-name>
-		<filter-class>com.samaxes.filter.CacheFilter</filter-class>
-		<init-param>
-			<param-name>private</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<init-param>
-			<param-name>expirationTime</param-name>
-			<param-value>216000</param-value>
-		</init-param>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>cssCache</filter-name>
-		<url-pattern>*.css</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>jsCache</filter-name>
-		<url-pattern>*.js</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>imagesCache</filter-name>
-		<url-pattern>*.png, *.gif, *.jpg, *.jpeg</url-pattern>
-	</filter-mapping>
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-	
-	<listener>
-		<listener-class>br.com.abril.nds.client.listener.ApplicationContextListener</listener-class>
-	</listener>
-
-	<listener>
-		<listener-class>br.com.abril.nds.client.listener.ControleSessionListener</listener-class>
-	</listener>
-
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-
-	<session-config>
-		<session-timeout>90</session-timeout>
-	</session-config>
-
-	<jsp-config>
-		<jsp-property-group>
-			<url-pattern>*.jsp</url-pattern>
-			<page-encoding>UTF-8</page-encoding>
-			<scripting-invalid>true</scripting-invalid>
-			<include-prelude>/WEB-INF/jsp/prelude.jspf</include-prelude>
-		</jsp-property-group>
-	</jsp-config>
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    	 xmlns="http://java.sun.com/xml/ns/javaee"
+    	 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+     	 xmlns:jsp="http://java.sun.com/xml/ns/javaee/jsp"  
+		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+		 version="2.5">
+    	 
+  <display-name>NDS - Novo Distrib</display-name>
+  <context-param>
+    <param-name>br.com.caelum.vraptor.encoding</param-name>
+    <param-value>UTF-8</param-value>
+  </context-param>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:/applicationContext.xml,classpath:/applicationContext-security-jdbc.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.servlet.jsp.jstl.fmt.fallbackLocale</param-name>
+    <param-value>pt_BR</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.servlet.jsp.jstl.fmt.locale</param-name>
+    <param-value>pt_BR</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+    <param-value>messages</param-value>
+  </context-param>
+  <context-param>
+    <param-name>br.com.caelum.vraptor.packages</param-name>
+    <param-value>br.com.caelum.vraptor.converter.l10n</param-value>
+  </context-param>
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter>
+    <filter-name>vraptor</filter-name>
+    <filter-class>br.com.caelum.vraptor.VRaptor</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>vraptor</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>br.com.abril.nds.client.listener.ApplicationContextListener</listener-class>
+  </listener>
+  <listener>
+     <listener-class>br.com.abril.nds.client.listener.ControleSessionListener</listener-class>
+  </listener>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
+      <scripting-invalid>true</scripting-invalid>
+      <include-prelude>/WEB-INF/jsp/prelude.jspf</include-prelude>
+    </jsp-property-group>
+  </jsp-config>
+    <servlet>
+        <servlet-name>H2Console</servlet-name>
+        <servlet-class>org.h2.server.web.WebServlet</servlet-class>
+        <init-param>
+            <param-name>webAllowOthers</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>user</param-name>
+            <param-value>${dataSource.user}</param-value>
+        </init-param>
+        <init-param>
+            <param-name>password</param-name>
+            <param-value>${dataSource.password}</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>H2Console</servlet-name>
+        <url-pattern>/console/*</url-pattern>
+    </servlet-mapping>
 </web-app>

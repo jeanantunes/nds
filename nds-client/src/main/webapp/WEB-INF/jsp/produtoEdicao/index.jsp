@@ -3,8 +3,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
 
@@ -32,6 +32,13 @@ fieldset {
     margin-right:0px!important;
 }
 .ldPesq{float:left; width:210px;}
+
+.gridLinhaDestacada {
+  background:#888; 
+  font-weight:bold; 
+  color:#fff;
+}
+
 </style>
 </head>
 
@@ -51,7 +58,7 @@ fieldset {
 </div>
 
 <div id="produtoEdicaoController-dialog-precos-real-previsto-divergentes" title="Preços Real e Previsto divergentes">
-	<p>Os valores de preço previsto e real estão divergentes. Deseja corrigir?</p>
+        <p>Os valores de preço previsto e real estão divergentes. Deseja corrigir?</p>
 </div>
 
 <!--  INICIO POPUP CADASTRO EDICAO -->
@@ -59,52 +66,52 @@ fieldset {
 <input type="hidden" name="istrac29" id="produtoEdicaoController-istrac29" />
 
 <div id="produtoEdicaoController-dialog-novo" title="Incluir Nova Edi&ccedil;&atilde;o">
-	
+
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
 	</jsp:include> 
-	
+
 	<div id="dialog-produto-edicao-periodos-lancamentos" title="Períodos de Lançamentos" style="display:none">
 		<table class="produtoEdicaoPeriodosLancamentosGrid"></table>
 	</div>
 	
 	<div id="dialog-redistribuicao-lancamento" title="Redistribuicao" style="display:none">
-		
-	</div>
-	
+                
+    </div>
+
 		<div id="produtoEdicaoController-tabEdicoes">
 			<ul>
 				<li><a id="produtoEdicaoController-tabIdentificacao" href="#produtoEdicaoController-tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
 				<li><a id="produtoEdicaoController-tabCaractLancto" href="#produtoEdicaoController-tabEdicoes-2">Caracter&iacute;sticas do Lan&ccedil;amento</a></li>
 				<li><a id="produtoEdicaoController-tabSegmentacao" href="#produtoEdicaoController-tabEdicoes-3">Segmenta&ccedil;&atilde;o</a></li>
 			</ul>
-			
+
 			<div id="produtoEdicaoController-tabEdicoes-1">
-				<input type="hidden" id="produtoEdicaoController-idProdutoEdicao" name="idProdutoEdicao" />
-				<input type="hidden" id="produtoEdicaoController-modoTela" name="modoTela" />
-				
+				<input type="hidden" id="produtoEdicaoController-idProdutoEdicao" name="produtoEdicaoDTO.id" />
+			    <input type="hidden" id="produtoEdicaoController-modoTela" name="modoTela" />
+			    	
 				<div class="ldPesq">
 					<fieldset id="produtoEdicaoController-pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
-					
+
 					<span class="bt_novos">
-						<a name="linkIncluirNovo" href="javascript:;"
-						   onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
-							<img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
-							<b> Incluir Novo</b>
-						</a>
-					</span>
-					<span class="bt_novos">
-						<a name="linkRedistribuicao" href="javascript:;" style="display:none;"
-						   onclick="produtoEdicaoController.popupRedistribuicao();" >
-							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
-							<b>Nova Redistribuição</b>
-						</a>
-					</span>
+	                    <a name="linkIncluirNovo" href="javascript:;"
+	                       onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
+	                            <img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
+	                            <b> Incluir Novo</b>
+	                    </a>
+                    </span>
+                  	<span class="bt_novos">
+                         <a name="linkRedistribuicao" href="javascript:;" style="display:none;"
+                            onclick="produtoEdicaoController.popupRedistribuicao();" >
+                                 <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+                                 <b>Nova Redistribuição</b>
+                         </a>
+                  	</span>
 				</div>
-				
+
 				<div class="ldForm">
 					<fieldset style="width:655px!important; margin-bottom:5px;">
 						<legend>Identifica&ccedil;&atilde;o</legend>
@@ -113,20 +120,20 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="181">C&oacute;digo:</td>
-									<td width="100" colspan="3"><input type="text" name="codigoProdutoEdicao" id="produtoEdicaoController-codigoProdutoEdicao" style="width:100px;" /></td>
-									
+									<td width="100" colspan="3"><input type="text" name="produtoEdicaoDTO.codigoProduto" id="produtoEdicaoController-codigoProdutoEdicao" style="width:100px;" /></td>
+
 									<td width="90">&nbsp;</td>
 									<td width="108">&nbsp;</td>
 									<td width="153" rowspan="8" align="center">
-										
+
 										<div id="produtoEdicaoController-div_imagem_capa">
 											<img alt="Capa" src="" width="144" height="185" />
 										</div>
-										
+
 										<br clear="all" />
 										<a id="linkExclusaoCapa" href="javascript:;" onclick="produtoEdicaoController.popup_excluir_capa();">
 											<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
-										</a>	
+										</a>
 									</td>
 								</tr>
 								<tr>
@@ -135,46 +142,58 @@ fieldset {
 								</tr>
 								<tr>
 									<td>Nome Comercial Produto:</td>
-									<td colspan="5"><input type="text" name="nomeComercialProduto" id="produtoEdicaoController-nomeComercialProduto" style="width:340px;" /></td>
+									<td colspan="5"><input type="text" name="produtoEdicaoDTO.nomeComercialProduto" id="produtoEdicaoController-nomeComercialProduto" style="width:340px;" /></td>
 								</tr>
+								<tr>
+								
+								<td width="43">Classificação:</td>
+                				<td width="276">
+				                  <select name="produtoEdicaoDTO.tipoClassificacaoProduto.id" id="produtoEdicaoController-comboClassificacao" style="width:200px;">
+			                  		<option selected="selected">Selecione...</option>
+				                  		<c:forEach items="${listaClassificacao}" var="classificacao">
+											<option value="${classificacao.key}">${classificacao.value}</option>
+								  		</c:forEach>
+				                  </select>
+				                </td>
+								</tr>
+								
 								<tr>
 									<td>Fornecedor:</td>
 									<td colspan="5"><input type="text" name="nomeFornecedor" id="produtoEdicaoController-nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td>Situa&ccedil;&atilde;o:</td>
+									
 									<td colspan="5">
-										<input type="text" name="situacao" id="produtoEdicaoController-situacao"
-											   style="width:340px;background-color:buttonface;" readonly="true" />
-									</td>
+                                    	<input type="text" name="situacao" id="produtoEdicaoController-situacao" style="width:340px; background-color:buttonface;" readonly="true" />
+                                    </td>
+                                                                        
 								</tr>
 								<tr>
 									<td>Edi&ccedil;&atilde;o:</td>
-									<td><input type="text" name="numeroEdicao" id="produtoEdicaoController-numeroEdicao" style="width:50px;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.numeroEdicao" id="produtoEdicaoController-numeroEdicao" style="width:50px;" /></td>
 									<td>PEB:</td>
-									<td><input type="text" name="peb" id="produtoEdicaoController-peb" style="width:50px;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.peb" id="produtoEdicaoController-peb" style="width:50px;" /></td>
 									<td>Pct. Padr&atilde;o:</td>
-									<td><input type="text" name="pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
 								</tr>
-							
+
 								<tr>
-									<td>Tipo de Lan&ccedil;amento:</td>
+									<td>Tipo de Distribui&ccedil;&atilde;o:</td>
 									<td colspan="3">
-										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
+										<select name="produtoEdicaoDTO.tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
 											<option value="LANCAMENTO">Lan&ccedil;amento</option>
 											<option value="PARCIAL">Ed. Parcial</option>
 											<option value="RELANCAMENTO">Relan&ccedil;amento</option>
 											<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
-											<option value="SUPLEMENTAR">Supl. Compuls</option>
+											<option value="SUPLEMENTAR">Suplementar</option>
 										</select>
 									</td>
 									<td>N&ordm; Lancto:</td>
 									<td>
-										<input type="text" name="numeroLancamento" id="produtoEdicaoController-numeroLancamento"
-											   readonly="true"
-											   style="width:50px; background-color:buttonface;" maxlength="9" />
-									</td>
+	                                    <input type="text" name="numeroLancamento" id="produtoEdicaoController-numeroLancamento" readonly="true" style="width:50px; background-color:buttonface;" maxlength="9" />
+                                    </td>
 								</tr>
 								<tr>
 									<td>Capa da Edi&ccedil;&atilde;o:</td>
@@ -193,7 +212,7 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="103">Previsto:</td>
-									<td width="80"><input type="text" name="repartePrevisto" id="produtoEdicaoController-repartePrevisto" style="width:80px; float:left;" /></td>
+									<td width="80"><input type="text" name="produtoEdicaoDTO.repartePrevisto" id="produtoEdicaoController-repartePrevisto" style="width:80px; float:left;" /></td>
 								</tr>
 								<tr>
 									<td>Exp. Venda(%):</td>
@@ -201,7 +220,7 @@ fieldset {
 								</tr>
 								<tr>
 									<td>Promocional:</td>
-									<td><input type="text" name="repartePromocional" id="produtoEdicaoController-repartePromocional" style="width:80px; float:left;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.repartePromocional" id="produtoEdicaoController-repartePromocional" style="width:80px; float:left;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -213,9 +232,9 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="60">Previsto:</td>
-									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; text-align:right; float:left;" /></td>
+									<td width="90"><input type="text" name="produtoEdicaoDTO.precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; float:left;" /></td>
 									<td width="30">Real:</td>
-									<td width="120"><input type="text" name="precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
+									<td width="120"><input type="text" name="produtoEdicaoDTO.precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -227,12 +246,13 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="60">Previsto:</td>
-									<td width="90"><input type="text" name="dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px;" /></td>
+									<td width="90"><input type="text" name="produtoEdicaoDTO.dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px;" /></td>
 									<td width="30">Real:</td>
 									<td width="120"><input type="text" name="dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:center;" disabled="disabled" /></td>
+									
 									<td width="50">
-										<a id="idLinkMostrarPeriodos" href="javascript:;"
-										   onclick="produtoEdicaoController.mostrarPeriodosLancamento();" >
+										<a id="idLinkMostrarPeriodos" href="javascript:;" 
+											onclick="produtoEdicaoController.mostrarPeriodosLancamento();" >
 											<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" />
 										</a>
 									</td>
@@ -245,7 +265,7 @@ fieldset {
 					   	<table border="0" cellSpacing="1" cellPadding="1" width="562">
 					      <tbody><tr>
 					        <td width="60">Previsto:</td>
-					        <td width="90"><input style="width: 70px; float: left;" id="produtoEdicaoController-dataRecolhimentoPrevisto" name="dataRecolhimentoPrevisto" type="text"></td>
+					        <td width="90"><input style="width: 70px; float: left;" id="produtoEdicaoController-dataRecolhimentoPrevisto" name="produtoEdicaoDTO.dataRecolhimentoPrevisto" type="text"></td>
 					        <td width="30" align="right">Real:</td>
 					        <td width="90"><input style="width: 70px; text-align: right;" id="produtoEdicaoController-dataRecolhimentoReal" disabled="disabled" name="dataRecolhimentoReal" type="text"></td>
 					        <td width="170" align="right">Semana de Recolhimento:</td>
@@ -257,31 +277,30 @@ fieldset {
 				</div>
 				<br clear="all" />
 			</div>
-			
+
 			<div id="produtoEdicaoController-tabEdicoes-2">
 				<div class="ldPesq">
 					<fieldset id="produtoEdicaoController-pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
-					
+
 					<span class="bt_novos">
-						<a name="linkIncluirNovo" href="javascript:;"
-						   onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
-							<img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
-							<b> Incluir Novo</b>
-						</a>
-					</span>
-					<span class="bt_novos">
-						<a name="linkRedistribuicao" href="javascript:;" style="display:none;"
-						   onclick="produtoEdicaoController.popupRedistribuicao();" >
-							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
-							<b>Nova Redistribuição</b>
-						</a>
-					</span>
-					
+	                    <a name="linkIncluirNovo" href="javascript:;"
+	                       onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
+	                            <img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
+	                            <b> Incluir Novo</b>
+	                    </a>
+                    </span>
+                   <span class="bt_novos">
+	                   <a name="linkRedistribuicao" href="javascript:;" style="display:none;"
+	                      onclick="produtoEdicaoController.popupRedistribuicao();" >
+	                           <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+	                           <b>Nova Redistribuição</b>
+	                   </a>
+                   </span>
 				</div>
-				
+
 				<div class="ldForm">
 					<fieldset style="width:350px!important; margin-bottom:5px;">
 						<legend>Caracter&iacute;sticas do Lan&ccedil;amento</legend>
@@ -289,9 +308,9 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="145">Categoria:</td>
+									<td width="145">Firma F&iacute;sica:</td>
 									<td width="193">
-										<select name="categoria" id="produtoEdicaoController-categoria" style="width:180px;" >
+										<select name="produtoEdicaoDTO.categoria.codigo" id="produtoEdicaoController-categoria" style="width:180px;" >
 											<option value="">Selecione</option>
 					                        <c:forEach items="${listaGrupoProduto}" var="categoria">
 												<option value="${categoria.key}" >${categoria.value}</option>
@@ -301,11 +320,11 @@ fieldset {
 								</tr>
 								<tr>
 									<td>Cod. de Barras:</td>
-									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
 								</tr>
 								<tr class="target_visible" style="visibility:hidden">
 									<td>Cod. Barras Corporativo:</td>
-									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -315,14 +334,14 @@ fieldset {
 						<table width="250" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td colspan="2">
-									<input type="text" name="descricaoDesconto" 
+									<input type="text" name="produtoEdicaoDTO.descricaoDesconto"
 										   id="produtoEdicaoController-descricaoDesconto" style="width:235px;" />
 								</td>
 							</tr>
 							<tr>
 								<td>Desconto %:</td>
 								<td>
-									<input type="text" name="desconto" 
+									<input type="text" name="produtoEdicaoDTO.desconto"
 										   id="produtoEdicaoController-desconto" style="width:113px;" />
 								</td>
 							</tr>
@@ -335,11 +354,11 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="139">Peso:</td>
-									<td><input type="text" name="peso" id="produtoEdicaoController-peso" style="width:80px;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.peso" id="produtoEdicaoController-peso" style="width:80px;" /></td>
 								</tr>
 								<tr>
 									<td>Descri&ccedil;&atilde;o Produto:</td>
-									<td><input type="text" name="descricaoProduto" id="produtoEdicaoController-descricaoProduto" style="width:80px;" /></td>
+									<td><input type="text" name="produtoEdicaoDTO.caracteristicaProduto" id="produtoEdicaoController-descricaoProduto" style="width:80px;" /></td>
 								</tr>							
 							</tbody>
 						</table>
@@ -351,12 +370,12 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="130" height="24">Chamada de Capa:</td>
-									<td width="193"><input type="text" name="chamadaCapa" id="produtoEdicaoController-chamadaCapa" style="width:190px;" /></td>
+									<td width="193"><input type="text" name="produtoEdicaoDTO.chamadaCapa" id="produtoEdicaoController-chamadaCapa" style="width:190px;" /></td>
 								</tr>
 								<tr>
-									<td height="24">Regime Recolhimento:</td>
+									<td height="24">Tipo de Recolhimento:</td>
 									<td>
-										<select name="parcial" id="produtoEdicaoController-parcial" style="width:190px;" >
+										<select name="produtoEdicaoDTO.parcial" id="produtoEdicaoController-parcial" style="width:190px;" >
 											<option value="">Selecione...</option>
 											<option value="true">Parcial</option>
 											<option value="false">Normal</option>
@@ -365,13 +384,13 @@ fieldset {
 								</tr>
 								<tr>
 									<td height="24">Brinde:</td>
-									<td><input type="checkbox" name="possuiBrinde" id="produtoEdicaoController-possuiBrinde" /></td>
+									<td><input type="checkbox" name="produtoEdicaoDTO.possuiBrinde" id="produtoEdicaoController-possuiBrinde" /></td>
 								</tr>			     	
-						     	
+
 						     	<tr class="descBrinde" style="display:none;">
 								    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
 								    <td>
-								        <select name="descricaoBrinde" id="produtoEdicaoController-descricaoBrinde" style="width:190px;">
+								        <select name="produtoEdicaoDTO.idBrinde" id="produtoEdicaoController-descricaoBrinde" style="width:190px;">
 					                        <option value="">Selecione</option>
 					                        <c:forEach items="${brindes}" var="brinde">
 												<option value="${brinde.id}" >${brinde.descricao}</option>
@@ -379,7 +398,7 @@ fieldset {
 					                    </select> 
 								    </td>
 							    </tr>						     							     	
-						 	
+
 							</tbody>
 						</table>
 					</fieldset>
@@ -389,7 +408,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="600"><textarea name="boletimInformativo" id="produtoEdicaoController-boletimInformativo" rows="5" style="width:610px;"></textarea></td>
+									<td width="600"><textarea name="produtoEdicaoDTO.boletimInformativo" id="produtoEdicaoController-boletimInformativo" rows="5" style="width:610px;"></textarea></td>
 							</tbody>
 						</table>
 					</fieldset>
@@ -397,31 +416,32 @@ fieldset {
 				</div>
 				<br clear="all" />
 			</div>
-			
+
 			<div id="produtoEdicaoController-tabEdicoes-3">
+				
 				<div class="ldPesq">
 					<fieldset id="produtoEdicaoController-pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
-					
-					<span class="bt_novos">
-						<a name="linkIncluirNovo" href="javascript:;"
-						   onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
-							<img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
-							<b> Incluir Novo</b>
-						</a>
-					</span>
-					<span class="bt_novos">
-						<a name="linkRedistribuicao" href="javascript:;" style="display:none;"
-						   onclick="produtoEdicaoController.popupRedistribuicao();" >
-							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
-							<b>Nova Redistribuição</b>
-						</a>
-					</span>
-					
-				</div>
+
+				 <span class="bt_novos">
+	                 <a name="linkIncluirNovo" href="javascript:;"
+	                    onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
+	                         <img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
+	                         <b> Incluir Novo</b>
+	                 </a>
+                 </span>
+                 <span class="bt_novos">
+                     <a name="linkRedistribuicao" href="javascript:;" style="display:none;"
+                        onclick="produtoEdicaoController.popupRedistribuicao();" >
+                             <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+                             <b>Nova Redistribuição</b>
+                     </a>
+                 </span>
 				
+				</div>
+
 				<div class="ldForm">
 					<fieldset style="width:410px!important;">
 						<legend>P&uacute;blico Alvo</legend>
@@ -431,7 +451,7 @@ fieldset {
 								<tr>
 									<td width="112">Classe Social:</td>
 									<td width="281">
-										<select name="classeSocial" id="produtoEdicaoController-classeSocial" style="width:150px;">
+										<select name="produtoEdicaoDTO.classeSocial" id="produtoEdicaoController-classeSocial" style="width:150px;">
 -					                        <option value="">Selecione</option>
 -					                        <c:forEach varStatus="counter" var="itemClasseSocial" items="${listaClasseSocial}">
 -							                    <option value="${itemClasseSocial.key}">${itemClasseSocial.value}</option>
@@ -442,7 +462,7 @@ fieldset {
 								<tr>
 									<td>Sexo:</td>
 									<td>
-										<select name="sexo" id="produtoEdicaoController-sexo" style="width:150px;">
+										<select name="produtoEdicaoDTO.sexo" id="produtoEdicaoController-sexo" style="width:150px;">
 -					                        <option value="">Selecione</option>
 -					                        <c:forEach varStatus="counter" var="itemSexo" items="${listaSexo}">
 -							                    <option value="${itemSexo.key}">${itemSexo.value}</option>
@@ -453,7 +473,7 @@ fieldset {
 								<tr>
 									<td>Faixa-Et&aacute;ria:</td>
 									<td>
-										<select name="faixaEtaria" id="produtoEdicaoController-faixaEtaria" style="width:150px;">
+										<select name="produtoEdicaoDTO.faixaEtaria" id="produtoEdicaoController-faixaEtaria" style="width:150px;">
 -					                        <option value="">Selecione</option>
 -					                        <c:forEach varStatus="counter" var="itemFaixaEtaria" items="${listaFaixaEtaria}">
 -							                    <option value="${itemFaixaEtaria.key}">${itemFaixaEtaria.value}</option>
@@ -461,10 +481,21 @@ fieldset {
 -					                    </select>
 									</td>
 								</tr>
+								<tr>
+									<td>Segmento:</td>
+									<td>
+										<select name="produtoEdicaoDTO.tipoSegmentoProdutoId" id="produtoEdicaoController-tipoSegmento" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemTipoSegmentoProduto" items="${listaTipoSegmentoProduto}">
+-							                    <option value="${itemTipoSegmentoProduto.key}">${itemTipoSegmentoProduto.value}</option>
+-							                </c:forEach>
+-					                    </select>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</fieldset>
-					<fieldset style="width:410px!important;">
+					<%-- <fieldset style="width:410px!important;">
 						<legend>Outros</legend>
 						<table width="400" border="0" cellspacing="1" cellpadding="1">
 							<thead />
@@ -492,7 +523,7 @@ fieldset {
 									</td>
 							</tbody>
 						</table>
-					</fieldset>
+					</fieldset> --%>
 				</div>
 				<br clear="all" />
 			</div>
@@ -506,51 +537,49 @@ fieldset {
 			<span class="bt_novos">
 				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Edição"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
 			</span>
+			<span class="bt_novos">
+				<a href="javascript:;" onclick="produtoEdicaoController.edicaoLote();" rel="tipsy" title="Adicionar Edição em Lote"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" /></a>
+			</span>
 		</div>
 	</div>
-	
+
 	<div class="linha_separa_fields">&nbsp;</div>
-		
+
 	<!-- INICIO FILTRO PESQUISA -->
-	
+
 	<fieldset class="fieldFiltro">
-		
+
 		<input type="hidden" id="produtoEdicaoController-codigoProduto" name="codigoProduto" value="" />
-		
+
 		<legend>Pesquisar Produto</legend>
-		
+
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-			
+
 			<thead/>
-			
+
 			<tbody>
-			
+
 				<tr>
-				
+
 					<td width="75">C&oacute;digo:</td>
-					
+
 					<td width="65">
-					
+
 						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="30" 
 								style="width:60px;" 
 								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,
 										undefined);" />
 					</td>
-					
+
 					<td width="57">Produto:</td>
-					
+
 					<td width="170">
-					
-						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" 
-								style="width:150px;"
-								onkeyup="produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);"
-								onblur="produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
-									undefined,
-									undefined);" />
-					
+
+						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" style="width:150px;" />
+
 					</td>
-					
+
 					<td width="93">Per&iacute;odo Lcto:</td>
 	                <td width="106"><input type="text" name="pDateLanctoDe" id="produtoEdicaoController-pDateLanctoDe" style="width:60px;"/></td>
 	                <td width="26">At&eacute;:</td>
@@ -558,7 +587,7 @@ fieldset {
 					<td width="22">&nbsp;</td>
 					<td width="57">Situa&ccedil;&atilde;o:</td>
 					<td width="113">
-					
+
 						<select name="pSituacaoLancamento" id="produtoEdicaoController-pSituacaoLancamento" style="width:130px;" >
 							<option value="" selected="selected">Selecione...</option>
 	                        <c:forEach items="${listaStatusLancamento}" var="statusLancamento">
@@ -566,11 +595,11 @@ fieldset {
 							</c:forEach>
 						</select>
 					</td>
-		
+
 				</tr>
-		
+
 				<tr>
-		
+
 					<td>C&oacute;d. Barras:</td>
 					<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="produtoEdicaoController-pCodigoDeBarras" style="width:290px;" maxlength="25" /></td>						
 					<td>Pre&ccedil;o (R$) de:</td>
@@ -580,30 +609,55 @@ fieldset {
 					<td align="right"><input type="checkbox" name="pBrinde" id="produtoEdicaoController-pBrinde" value=""/></td>
 					<td><label for="pBrinde">Brinde</label></td>
 					<td><span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.pesquisarEdicoes();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
-		
+
 				</tr>
-		
+
 			</tbody>
-		
+
 		</table>
-		
+
 	</fieldset>
 	<!-- FIM FILTRO PESQUISA -->
-	
-	
+
+
 	<div class="linha_separa_fields">&nbsp;</div>
-	
+
 	<!-- INICIO GRID RESULTADO -->
 	<div class="grids" style="display:none;">
-	
+
 		<fieldset class="fieldGrid">
 			<legend>Edi&ccedil;&otilde;es do Produto<span id="produtoEdicaoController-labelNomeProduto" /></legend>
 			<table class="edicoesGrid"></table>
 		</fieldset>
-	
+
 	</div>
 	<!-- FIM GRID RESULTADO -->
-		
+	
+	<!-- ADICIONAR EM LOTE -->
+
+	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
+		<fieldset style="width: 300px;">
+			<legend>Adicionar em Lote</legend>
+			<table width="200" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+				 <p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+		      	<p ><span class="bt_novos" title="Download Modelo">
+		      	  		<a href="${pageContext.request.contextPath}/modelos/modelo_edicao.xls">
+		      	  			<img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo
+		      	  		</a>
+		      	  	</span></p>
+		      	<br><br><br>
+		      	<hr>
+				 <p>Selecione um arquivo para upload:</p>
+				 <form name="arquivoUpLoadEdicao" id="arquivoUpLoadEdicao" method="post" enctype="multipart/form-data">
+					<input type="file" id="xls" name="xls" />
+				 </form>
+				</tr>
+			</table>
+			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
+		</fieldset>
+	</div>
+
 </body>
 
 </html>

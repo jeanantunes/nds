@@ -1,17 +1,16 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,10 +22,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia
@@ -45,19 +47,27 @@ public class Estudo implements Serializable {
 	@GeneratedValue(generator = "ESTUDO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+
 	@Column(name = "QTDE_REPARTE", nullable = false)
 	private BigInteger qtdeReparte;
-	@Column(name = "DATA_LANCAMENTO", nullable = false)
+
+	@Column(name = "DATA_LANCAMENTO")
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
+
+	@ManyToOne
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
+
 	@NotFound(action = NotFoundAction.IGNORE)
-	@OneToMany(mappedBy = "estudo")
+	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
-	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+	@Column(name = "LANCAMENTO_ID")
+	private Long lancamentoID;
+	
+	@Cascade(value={CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.DELETE})
+	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
 	/** Status do Estudo. */
@@ -76,22 +86,26 @@ public class Estudo implements Serializable {
 	private Date dataAlteracao;
 	
 	@Column(name = "LIBERADO")
-	private Integer liberado;
+	private Boolean liberado;
 	
 	@Column(name = "REPARTE_DISTRIBUIR")
 	private BigInteger reparteDistribuir;
 	
+	@Column(name = "SOBRA")
+	private BigInteger sobra;
+	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
-	private Integer distribuicaoPorMultiplos;
+	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
 	
 	@Column(name = "PACOTE_PADRAO")
-	private BigInteger pacotePadrao;
+	private BigInteger pacotePadrao; //TODO BigDecimal
 	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV", precision=18, scale=4)
-	private BigDecimal percentualProporcaoExcedentePDV;
-	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA", precision=18, scale=4)
-	private BigDecimal percentualProporcaoExcedenteVenda;
+	@ManyToOne (optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
+
+    @Column(name = "ESTUDO_ORIGEM_COPIA")
+    private Long idEstudoOrigemCopia; //Estudo usado para gerar copia proporcional
 	
 	public Long getId() {
 		return id;
@@ -128,7 +142,7 @@ public class Estudo implements Serializable {
 	public Lancamento getLancamento() {
 		return lancamentos.isEmpty() ? null : lancamentos.iterator().next();
 	}
-
+	
 	/**
 	 * @return the estudoCotas
 	 */
@@ -167,11 +181,11 @@ public class Estudo implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
-	public Integer getLiberado() {
+	public Boolean isLiberado() {
 		return liberado;
 	}
 
-	public void setLiberado(Integer liberado) {
+	public void setLiberado(Boolean liberado) {
 		this.liberado = liberado;
 	}
 
@@ -207,22 +221,35 @@ public class Estudo implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedentePDV() {
-		return percentualProporcaoExcedentePDV;
+	public Usuario getUsuarioId() {
+		return usuario;
 	}
 
-	public void setPercentualProporcaoExcedentePDV(
-			BigDecimal percentualProporcaoExcedentePDV) {
-		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
+	public void setUsuarioId(Usuario usuarioId) {
+		this.usuario = usuarioId;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedenteVenda() {
-		return percentualProporcaoExcedenteVenda;
+	public Long getLancamentoID() {
+		return lancamentoID;
 	}
 
-	public void setPercentualProporcaoExcedenteVenda(
-			BigDecimal percentualProporcaoExcedenteVenda) {
-		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
+	public void setLancamentoID(Long lancamentoID) {
+		this.lancamentoID = lancamentoID;
 	}
-	
+
+	public BigInteger getSobra() {
+		return sobra;
+	}
+
+	public void setSobra(BigInteger sobra) {
+		this.sobra = sobra;
+	}
+
+    public Long getIdEstudoOrigemCopia() {
+        return idEstudoOrigemCopia;
+    }
+
+    public void setIdEstudoOrigemCopia(Long idEstudoOrigemCopia) {
+        this.idEstudoOrigemCopia = idEstudoOrigemCopia;
+    }
 }

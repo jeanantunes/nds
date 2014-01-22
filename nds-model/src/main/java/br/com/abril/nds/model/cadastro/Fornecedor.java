@@ -123,7 +123,7 @@ public class Fornecedor implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "COTA_ID")})
 	private Set<Cota> cotas = new HashSet<Cota>();
 	
-	@Column(name="MARGEM_DISTRIBUIDOR", precision=18, scale=4)
+	@Column(name="MARGEM_DISTRIBUIDOR")
 	private BigDecimal margemDistribuidor;
 	
 	@Enumerated(EnumType.STRING)

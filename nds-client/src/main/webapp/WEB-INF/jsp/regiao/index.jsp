@@ -1,16 +1,41 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script type="text/javascript" src="scripts/regiao.js"></script>
 
 <script language="javascript" type="text/javascript">
 
 var pesquisaCota = new PesquisaCota();
+var pesquisaProduto = new PesquisaProduto();
 
 $(function(){
 	regiaoController.init();
 });
+
+var produtosEscolhidosArray=new Array();
+var validatorProdEscolhidos=new Array();
+
+var cotasRankingNMaioresArray=new Array();
+var numCotasRankingNM=new Array();
+
+function removeProdutoEscohido(idx){
+	produtosEscolhidosArray.splice(parseInt(idx),1);
+	
+	var data = {
+	        total: produtosEscolhidosArray.length,    
+	        page:1,
+	        rows: produtosEscolhidosArray
+	};
+	
+	
+	$("#nMaioresGrid").flexAddData(data);
+	
+	$(".btnExcluir").each(function(idx,value){
+		$(this).val(idx);
+	});
+}
 
 </script>
 
@@ -23,9 +48,9 @@ $(function(){
 	display: none;
 }
 
-#row5 {
+/* #row5 {
 	display: none;
-}
+} */
 </style>
 </head>
 
@@ -36,19 +61,19 @@ $(function(){
 
 		<div class="container">
 		
-	<!-- 
-	<form action="/produto" id="excluir_form">
-	<div id="dialog-excluir " title="Excluir Região">
-		<p>Confirma a exclusão desta Região?</p>
-	</div>
-	</form>
-	 -->
-	
 	<form action="/produto" id="excluir_form">
 	<div id="dialog-confirmacao" title="Inserir cota" style="display: none;">
 		<p>Confirma a inserção destas cotas na região?</p>
 	</div>
 	</form>
+	
+	<div id="dialog-AddProdutos" title="Incluir produtos para pesquisa de cotas." style="display: none;">
+		<p>Confirma a inserção destes produtos?</p>
+	</div>
+	
+	<div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
+	 <img id="imagemCapaEdicao" width="235" height="314" />
+	</div>
 	
 	<div id="dialog-pesqCotas" title="Selecionar Cotas"
 		style="display: none;">
@@ -87,51 +112,81 @@ $(function(){
 		
 	</div>
 
-	<div id="dialog-detalhes" title="Visualizando Produto">
-		<img src="../capas/revista-nautica-11.jpg" width="235" height="314" />
-	</div>
-	
-	<!-- ADD POR N-MAIORES -->
+	<!-- ADD POR N-MAIORES, ADD PRODUTOS -->
 	
 	<div id="dialog-addNMaiores" title="Adicionar Produtos"
 		style="display: none;">
-		<fieldset style="width: 600px !important;">
+		<fieldset style="width: 680px !important;">
 			<legend>Pesquisar Produtos</legend>
 			<table width="588" border="0" cellspacing="2" cellpadding="2">
 				<tr>
 					<td width="36">Código:</td>
-					<td width="77"><input type="text" name="textfield"
-						id="textfield" style="width: 60px;" />
+					<td width="77">
+						<input type="text" name="idCodigo"	id="idCodigo" style="width: 60px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#idCodigo','#nomeProduto', false, undefined, undefined);" />
 					</td>
 					<td width="40">Produto:</td>
-					<td width="129"><input type="text" name="textfield5"
-						id="textfield6" style="width: 120px;" />
+					<td width="129">
+						<input type="text" name="nomeProduto" id="nomeProduto" style="width: 120px;"
+							   onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" 
+		 	   		   		   onblur="pesquisaProduto.pesquisarPorNomeProduto('#idCodigo', '#nomeProduto');" />
 					</td>
 					<td width="68">Classificação:</td>
-					<td width="163"><select name="select" id="select"
-						style="width: 140px;">
-							<option selected="selected">Selecione...</option>
-							<option>Classificaçao 1</option>
-							<option>Classificação 2</option>
-							<option>Classificação 3</option>
-							<option>Classificação 4</option>
-					</select>
+						 <td width="150">
+						 	<select name="select" id="comboClassificacao" style="width:140px;">
+                            	<option selected="selected">Selecione...</option>
+                  					<c:forEach items="${listaClassificacao}" var="classificacao">
+										<option value="${classificacao.key}">${classificacao.value}</option>
+				  					</c:forEach>
+                			</select>
+                		</td>
+					<td width="20"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a></span></td>					
+				</tr>
+			</table>
+		</fieldset>
+
+		<fieldset
+			style="width: 680px !important; margin-top: 10px !important;">
+			<legend>Produtos</legend>
+			
+			<table id="lstProdutosGrid"></table>
+			<span class="bt_sellAll" style="float: right;">
+				<label for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="selTodosProdutos" name="Todos" onclick="regiaoController.checkAllNMaiores();"
+				style="float: left; margin-right: 25px;"/> </span>
+		</fieldset>
+
+	</div>
+	
+	<!-- ADD POR NMAIORES, RANKING DE COTAS -->
+	
+	<div id="dialog-rankingCotas" title="Seleção de Cotas"
+		style="display: none;">
+		<fieldset style="width: 600px !important;">
+			<legend>Seleção de Cotas</legend>
+			<table width="588" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td width="36">Cota:</td>
+					<td width="77">
+						<input type="text" name="numeroCota" id="numeroCota" style="width: 60px;" />
 					</td>
-					<td width="31"><span title="Pesquisar Produto"
-						class="classPesquisar"><a href="javascript:;">&nbsp;</a> </span>
+					<td width="40">Nome:</td>
+					<td width="129">
+						<input type="text" name="nomeCota" id="nomeCota" style="width: 120px;" />
 					</td>
+					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroCotaRanking();">Pesquisar</a></span></td>					
 				</tr>
 			</table>
 		</fieldset>
 
 		<fieldset
 			style="width: 600px !important; margin-top: 10px !important;">
-			<legend>Regiao</legend>
-			<table class="lstProdutosGrid"></table>
-			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-				name="Todos" onclick="regiaoController.checkAll();"
-				style="float: left; margin-right: 25px;" /> </span>
+			<legend>Cotas</legend>
+			
+			<table id="lstCotasRankingGrid"></table>
+			<span class="bt_sellAll" style="float: right;">
+				<label for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="selTodasCotas" name="Todos" onclick="regiaoController.checkAllRankingNMaiores();"
+				style="float: left; margin-right: 25px;" checked /> </span>
 		</fieldset>
 
 	</div>
@@ -148,10 +203,12 @@ $(function(){
 						value="radio" onclick="regiaoController.filtroPorCep();" />
 					</td>
 					<td width="40">CEP</td>
+					
 					<td width="20"><input type="radio" name="radio" id="radio2"
 						value="radio" onclick="regiaoController.filtroPorNMaiores();" />
 					</td>
 					<td width="74">N Maiores</td>
+					
 					<td width="20"><input type="radio" name="radio" id="radio3"
 						value="radio" onclick="regiaoController.filtroPorSegmento();" />
 					</td>
@@ -166,13 +223,13 @@ $(function(){
 					<tr>
 						<td width="86">Faixa de CEP:</td>
 						<td width="133">
-							<input type="text" name="textfield" id="cepInicialPart1" size="5" maxlength="5" style="width: 50px;" /> 
-							<input type="text" name="textfield3" id="cepInicialPart2" size="3" maxlength="3" style="width: 30px;" />
+							<input type="text" name="textfield" id="cepInicialPart1" onkeydown='onlyNumeric(event);' size="5" maxlength="5" style="width: 50px;" /> 
+							<input type="text" name="textfield3" id="cepInicialPart2" onkeydown='onlyNumeric(event);' size="3" maxlength="3" style="width: 30px;" />
 						</td>
 						<td width="26">Até:</td>
 						<td width="186">
-							<input type="text" name="textfield4" id="cepFinalPart1" size="5" maxlength="5" style="width: 50px;" /> 
-							<input type="text" name="textfield4" id="cepFinalPart2" size="3" maxlength="3" style="width: 30px;" /></td>
+							<input type="text" name="textfield4" id="cepFinalPart1" onkeydown='onlyNumeric(event);' size="5" maxlength="5" style="width: 50px;" /> 
+							<input type="text" name="textfield4" id="cepFinalPart2" onkeydown='onlyNumeric(event);' size="3" maxlength="3" style="width: 30px;" /></td>
 						<td width="87">
 							<span class="bt_pesquisar">
 								<a href="javascript:;" onclick="regiaoController.mostrarPorCep();">Pesquisar</a>
@@ -189,18 +246,8 @@ $(function(){
 					<tr>
 						<td width="51">Segmento:</td>
 						<td width="205">
-							<!-- 
-							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
-									<option selected="selected">Selecione...</option>
-									<c:forEach items="${listaRegiao}" var="regiao">
-										<option value="${regiao.key}">${regiao.value}</option>
-									</c:forEach>
-							</select>
-							 -->
 													
-							<select name="comboSegmento" id="comboSegmento" style="width: 180px;"
-									onchange="$('.grids').toggle(); regiaoController.carregarSegmento()">
+							<select name="comboSegmento" id="comboSegmento" style="width: 180px;">
 									<option option selected="selected">Selecione...</option>
 										<c:forEach items="${listaSegmento}" var="segmento">
 											<option value="${segmento.key}">${segmento.value}</option>
@@ -210,8 +257,8 @@ $(function(){
 							
 						</td>
 						<td width="92">Qtde de Cotas:</td>
-						<td width="83"><input type="text" name="textfield2"
-							id="textfield2" style="width: 80px;" />
+						<td width="83"><input type="text" onkeydown='onlyNumeric(event);' name="qtdCotas"
+							id="qtdCotas" style="width: 80px;" />
 						</td>
 						<td width="87"><span class="bt_pesquisar"><a
 								href="javascript:;"
@@ -221,8 +268,6 @@ $(function(){
 				</table>
 			</div>
 		</fieldset>
-
-		<!-- <br clear="all" /> -->
 
 		<!-- REGIAO AUTOMÁTICA - POR CEP - GRID -->
 
@@ -240,11 +285,6 @@ $(function(){
 					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> 
 				</span>
 				
-				<!-- 
-				<span class="bt_novos"><a href="javascript:;" >
-					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a> 
-				</span>
-				 -->
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR N-MAIORES -->
@@ -252,16 +292,19 @@ $(function(){
 		<fieldset style="width: 600px !important; margin-top: 10px;"
 			class="gridNMaiores">
 			<legend>N Maiores</legend>
-			<table class="nMaioresGrid"></table>
+			<table id="nMaioresGrid"></table>
 
 			<span class="bt_novos"><a href="javascript:;"
 				onclick="regiaoController.add_produtos();"><img
-					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> </span> <span
-				style="float: right; margin-top: 5px; margin-right: 50px;">Qtde
-				de Cotas:&nbsp;&nbsp; <input name="" type="text"
-				style="width: 60px;" /> <a href="javascript:;"
-				onclick="regiaoController.add_cotas();"><img
-					src="${pageContext.request.contextPath}k/images/ico_check.gif" border="0" /> </a> </span>
+					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> </span> 
+				<span style="float: right; margin-top: 5px; margin-right: 50px;">
+					Qtde de Cotas: &nbsp;&nbsp; 
+					<input name="qtdCotasRanking" id="qtdCotasRanking" type="text" onkeydown='onlyNumeric(event);' style="width: 60px;" /> 
+						
+						<a href="javascript:;" onclick="regiaoController.validarDadosParaRanking();">
+						<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /> 
+						</a> 
+				</span>
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR SEGMENTO -->
@@ -269,31 +312,23 @@ $(function(){
 		<fieldset style="width: 600px !important; margin-top: 10px;"
 			class="gridsegmentos">
 			<legend>Segmento</legend>
-			<table class="segmentosGrid"></table>
+			<table class="segmentosGrid" id="segmentosGrid"></table>
 			
 			<span class="bt_sellAll" style="float: right;">
 				<label for="sel">Selecionar Todos</label>
-					<input type="checkbox" id="sel"	name="Todos" onchange='regiaoController.checkAll();'
-						   style="float: left; margin-right: 25px;" /> 
+					<input type="checkbox" id="todosSegmento"	name="todosSegmento" onchange='regiaoController.checkAllSegmento();'
+						   style="float: left; margin-right: 25px;" checked /> 
 			</span> 
 			
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="regiaoController.add_cotas();">
-					<img src="../images/ico_add.gif" hspace="5" border="0" />
+				<a href="javascript:;" onclick="regiaoController.add_cotas_Segmento();">
+					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />
 				
 				Incluir
 				
 				</a> 
 			</span> 
 			
-			<span class="bt_novos">
-				<a href="javascript:;">
-					<img src="../images/ico_excluir.gif" hspace="5" border="0" />
-				
-				Cancelar
-				
-				</a> 
-			</span>
 		</fieldset>
 	</div>
 	
@@ -301,13 +336,18 @@ $(function(){
 	<!-- ADICIONAR EM LOTE -->
 
 	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
-		<fieldset style="width: 225px;">
+		<fieldset style="width: 300px;">
 			<legend>Adicionar em Lote</legend>
 			<table width="200" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-					<td width="44">N° cota: <textarea rows="4" cols="30" > </textarea> 
-					<!-- <input name="numCota" id="numCota" type="text" style="width: 100px;" /> --> 
-					</td>
+				 <p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+		      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_regiao.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+		      	<br><br><br>
+		      	<hr>
+				 <p>Selecione um arquivo para upload:</p>
+				 <form name="arquivoUpLoad" id="arquivoUpLoad" method="post" enctype="multipart/form-data">
+					<input type="file" id="xls" name="xls" />
+				 </form>
 				</tr>
 			</table>
 			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
@@ -328,7 +368,7 @@ $(function(){
 			<table class="addCotasGrid"></table>
 			<span class="bt_novos"><a href="javascript:;"
 				onclick="regiaoController.addNovaRegiao();"><img
-					src="../images/ico_add.gif" hspace="5" border="0" />Nova Região</a> </span>
+					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Nova Região</a> </span>
 		</fieldset>
 	</div>
 
@@ -339,7 +379,6 @@ $(function(){
 		<fieldset style="width: 600px !important;">
 			<legend>Regiões Cadastradas</legend>
 			<table class="regioesCadastradasGrid">
-			<!-- <span class="bt_novos"><a href="javascript:;" onclick="addNovaRegiao();"><img src="../images/ico_add.gif" hspace="5" border="0" />Nova Região</a></span>-->
 			</table>
 		</fieldset>
 	</div>
@@ -369,37 +408,6 @@ $(function(){
 			<table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro" id="idCotas"></table>
 		<div class="linha_separa_fields">&nbsp;</div>
 	</form>
-
-		<!-- 
-		<fieldset>
-			<legend> Dados </legend>
-			<table width="270" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<td width="44"> <b>Tipo PDV: </b></b></td>
-					
-					<td width="44"><b>Status: </b></td>
-					
-				</tr>
-				<tr>
-					<td width="44"><b>Bairro: </b></td>
-					
-					<td width="44"><b>Cidade: </b></td>
-				</tr>
-				
-				<tr>
-					<td width="44"><b>Faturamento:  </b></td>
-					
-					<td width="44"><b>Usário: </b></td>
-				</tr>
-				
-				<tr>
-					<td width="44"><b>Data: </b></td>
-					
-					<td width="44"><b>Hora: </b></td>
-				</tr>
-			</table>
-		</fieldset>
-		 -->
 	</div>
 
 	<!-- EXCLUIR REGIAO -->
@@ -415,17 +423,6 @@ $(function(){
 	<div id="dialog-alterarRegiao" title="Alterar Região" style="display:none;">
 		<p>Confirma a alteração desta Região?</p>
 	</div>
-			<!-- 
-			<div id="effect" style="padding: 0 .7em;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info">
-					</span> 
-						<b>Região < evento > com < status >.</b>
-				</p>
-			</div>
-			 -->
 			
 	<!-- EDITAR REGIAO -->
 
@@ -441,10 +438,10 @@ $(function(){
 						<td width="48">Região:</td>
 						<td width="752">
 							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle(); regiaoController.carregarMotivo()">
+									onchange="$('.grids').toggle(); regiaoController.carregarRegiao()">
 									<option selected="selected">Selecione...</option>
 									<c:forEach items="${listaRegiao}" var="regiao">
-										<option value="${regiao.key}">${regiao.value}</option>
+										<option value="${regiao.key}" label="${regiao.value}" />
 									</c:forEach>
 							</select>
 						</td>
@@ -469,7 +466,7 @@ $(function(){
 					
 						<!-- BOTÕES GRID PRINCIPAL -->
 						
-					<span class="bt_novos" title="Arquivo">
+					<span class="bt_novos" title="Arquivo" id="spanArquivoRegiaoCadastradas">
 						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=XLS">
 							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 							
@@ -478,7 +475,7 @@ $(function(){
 						</a> 
 					</span> 
 					
-					<span class="bt_novos" title="Imprimir">
+					<span class="bt_novos" title="Imprimir" id="spanImprimirRegiaoCadastradas">
 						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 							
@@ -487,10 +484,8 @@ $(function(){
 						</a> 
 					</span>
 
-					<!--<span class="bt_novos"><a href="javascript:;" onclick="addCotas();"><img src="../images/ico_add.gif" alt="Adicionar Cotas" hspace="5" border="0" />Adicionar Cotas</a></span>-->
-					
 					<span class="bt_novos" title="Região Automática">
-						<a href="javascript:;" onclick="regiaoController.addCotas();">
+						<a href="javascript:;" onclick="regiaoController.addCotasRegAutomatica();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 						
 						Região	Automática
@@ -499,7 +494,7 @@ $(function(){
 					</span> 
 					
 					<span class="bt_novos" title="Adicionar em Lote">
-						<a href="javascript:;" onclick="regiaoController.add_lote();">
+						<a href="javascript:;" onclick="regiaoController.cotasLote();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 						
 						Adicionar em Lote
@@ -529,4 +524,3 @@ $(function(){
 			</div>
 		</div>
 </body>
-

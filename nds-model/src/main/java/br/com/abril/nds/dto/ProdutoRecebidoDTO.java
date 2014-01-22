@@ -24,6 +24,8 @@ public class ProdutoRecebidoDTO extends UsuarioLogDTO {
 	
 	@Export(label="Produto", alignment=Alignment.LEFT,exhibitionOrder=2)
 	private String nomeProduto;
+	
+	private String classificacaoProduto;
 
 	@Export(label="Usuário", alignment=Alignment.LEFT,exhibitionOrder=3)
 	@Override
@@ -31,6 +33,8 @@ public class ProdutoRecebidoDTO extends UsuarioLogDTO {
 		return super.getNomeUsuario();
 	}
 
+	private String codigoProdin;
+	
 	@Export(label="Data", alignment=Alignment.LEFT,exhibitionOrder=4)
 	@Override
 	public String getDataAlteracaoFormatada() {
@@ -69,4 +73,22 @@ public class ProdutoRecebidoDTO extends UsuarioLogDTO {
 		this.nomeProduto = nomeProduto;
 	}
 
+	public String getCodigoProdin() {
+		return codigoProdin;
+	}
+
+	public void setCodigoProdin(String codigoProdin) {
+		this.codigoProdin = codigoProdin;
+	}
+
+	public String getClassificacaoProduto() {
+		return classificacaoProduto;
+	}
+
+	public void setClassificacaoProduto(String classificacaoProduto) {
+		this.classificacaoProduto = classificacaoProduto;
+	}
+
+	
+	
 }

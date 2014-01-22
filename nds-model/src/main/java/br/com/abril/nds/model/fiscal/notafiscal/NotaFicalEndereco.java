@@ -103,6 +103,10 @@ public class NotaFicalEndereco implements Serializable {
 	})
 	private String complemento;
 	
+	@Column(name = "CODIGO_PAIS", length=20)
+	@XmlElement(name="cPais")
+	private Long codigoPais;
+	
 	@Column(name = "PAIS", length=60)
 	@XmlElement(name="xPais")
 	private String pais;
@@ -163,14 +167,6 @@ public class NotaFicalEndereco implements Serializable {
 		this.bairro = bairro;
 	}
 
-	public String getCEP() {
-		return cep;
-	}
-
-	public void setCEP(String cep) {
-		this.cep = cep;
-	}
-
 	public String getTipoLogradouro() {
 		return tipoLogradouro;
 	}
@@ -201,6 +197,14 @@ public class NotaFicalEndereco implements Serializable {
 
 	public void setCep(String cep) {
 		this.cep = cep;
+	}
+
+	public Long getCodigoPais() {
+		return codigoPais;
+	}
+
+	public void setCodigoPais(Long codigoPais) {
+		this.codigoPais = codigoPais;
 	}
 
 	public String getPais() {

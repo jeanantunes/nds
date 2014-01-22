@@ -334,7 +334,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		for (ProdutoAbastecimentoDTO item : produtosCota) {
 	
 			if (!produtoMapa.containsKey(item.getIdProdutoEdicao())) {
-	
+				
 				BigInteger somaEstoqueJuramentado =
 						this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
 								item.getIdProdutoEdicao(), filtro.getDataDate());

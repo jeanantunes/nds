@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -276,23 +277,24 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
         sql.append(this.getSQLBoletosCota(filtro));
         
-        sql.append("UNION ALL");
+        sql.append(" UNION ALL ");
         
         sql.append(this.getSQLBoletosAntecipadosCota(filtro));
 
 		sql.append(this.getOrdenacaoConsultaBoletos(filtro));
 		
-		Query query = super.getSession().createSQLQuery(sql.toString()).addScalar("nossoNumero", StandardBasicTypes.STRING)
-																	   .addScalar("dataEmissao", StandardBasicTypes.DATE)
-						                                               .addScalar("dataVencimento", StandardBasicTypes.DATE)
-								                                       .addScalar("dataPagamento", StandardBasicTypes.DATE)
-								                                       .addScalar("encargos", StandardBasicTypes.BIG_DECIMAL)
-								                                       .addScalar("valor", StandardBasicTypes.BIG_DECIMAL)
-								                                       .addScalar("tipoBaixa")
-								                                       .addScalar("statusCobranca")
-								                                       .addScalar("statusDivida")
-				                                                       .addScalar("boletoAntecipado", StandardBasicTypes.BOOLEAN)
-				                                                       .addScalar("recebeCobrancaEmail", StandardBasicTypes.BOOLEAN);
+		SQLQuery query = super.getSession().createSQLQuery(sql.toString());
+		query.addScalar("nossoNumero", StandardBasicTypes.STRING);
+		query.addScalar("dataEmissao", StandardBasicTypes.DATE);
+		query.addScalar("dataVencimento", StandardBasicTypes.DATE);
+		query.addScalar("dataPagamento", StandardBasicTypes.DATE);
+		query.addScalar("encargos", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("tipoBaixa");
+		query.addScalar("statusCobranca");
+		query.addScalar("statusDivida");
+		query.addScalar("boletoAntecipado", StandardBasicTypes.BOOLEAN);
+		query.addScalar("recebeCobrancaEmail", StandardBasicTypes.BOOLEAN);
 		
 		query.setParameter("ncota", filtro.getNumeroCota());
 		

@@ -49,7 +49,7 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	@Transactional
 	@Override
 	public void salvarCotaUnificacao(Integer numeroCotaCentralizadora, 
-			                         List<CotaVO> numeroCotasCentralizadas){
+			                         List<Integer> numeroCotasCentralizadas){
 		
 		this.validarCotasCentralizadas(numeroCotasCentralizadas, numeroCotaCentralizadora);
 		
@@ -73,15 +73,15 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		}
 		
 		//adiciona novas cotas na centralização
-		for (CotaVO cotaVO : numeroCotasCentralizadas){
+		for (Integer numeroCota : numeroCotasCentralizadas){
 			
-			Cota novaCotaCentralizada = this.cotaRepository.obterPorNumerDaCota(cotaVO.getNumero());
+			Cota novaCotaCentralizada = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			cotaUnificacao.adicionarCota(novaCotaCentralizada);
 			
 			//apaga forma de cobrança da cota que acaba de ser unificada
 			ParametroCobrancaCota p = 
-				this.parametroCobrancaCotaRepository.obterParametroCobrancaCotaPorCota(cotaVO.getNumero());
+				this.parametroCobrancaCotaRepository.obterParametroCobrancaCotaPorCota(numeroCota);
 			
 			if (p != null){
 				
@@ -99,7 +99,7 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		}
 	}
 
-	private void validarCotasCentralizadas(List<CotaVO> numeroCotasCentralizadas,
+	private void validarCotasCentralizadas(List<Integer> numeroCotasCentralizadas,
 			Integer numeroCotaCentralizadora) {
 		
 		if (numeroCotasCentralizadas != null && !numeroCotasCentralizadas.isEmpty()){
@@ -108,21 +108,21 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 			
 			CotaUnificacao cotaUnificacao = null;
 			
-			for (CotaVO vo : numeroCotasCentralizadas){
+			for (Integer numeroCota : numeroCotasCentralizadas){
 				
 				cotaUnificacao =
-					this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(vo.getNumero());
+					this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizada(numeroCota);
 				
 				if (cotaUnificacao != null && 
 						!cotaUnificacao.getCota().getNumeroCota().equals(numeroCotaCentralizadora)){
 					
-					msgs.add("Cota " + vo.getNumero() + " já está centralizada na cota " + 
+					msgs.add("Cota " + numeroCota + " já está centralizada na cota " + 
 					cotaUnificacao.getCota().getNumeroCota());
 				}
 				
-				if (this.cotaUnificacaoRepository.verificarCotaUnificadora(vo.getNumero())){
+				if (this.cotaUnificacaoRepository.verificarCotaUnificadora(numeroCota)){
 					
-					msgs.add("Cota " + vo.getNumero() + " já é centralizadora");
+					msgs.add("Cota " + numeroCota + " já é centralizadora");
 				}
 			}
 			
@@ -151,6 +151,11 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaVO> obterCotasCentralizadas(Integer numeroCotaCentralizadora) {
+		
+		if (numeroCotaCentralizadora == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota unificadora é obrigatório.");
+		}
 		
 		return this.cotaUnificacaoRepository.obterCotasCentralizadas(
 				numeroCotaCentralizadora);
@@ -184,6 +189,11 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 	@Override
 	public CotaVO obterCota(Integer numeroCota, boolean edicao) {
 		
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+		}
+		
 		if (!edicao){
 			if (this.cotaUnificacaoRepository.verificarCotaUnificadora(numeroCota)){
 				
@@ -199,13 +209,19 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		return this.cotaRepository.obterDadosBasicosCota(numeroCota);
 	}
 
+	@Transactional
 	@Override
-	public void removerCotaUnificacao() {
+	public void removerCotaUnificacao(Integer numeroCota) {
 		
-		List<CotaUnificacao> lista = this.cotaUnificacaoRepository.buscarTodos();
-		
-		for (CotaUnificacao c : lista){
-			this.cotaUnificacaoRepository.remover(c);
+		if (numeroCota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
+		
+		CotaUnificacao cotaUnificacao = 
+			this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(numeroCota);
+		
+		
+		this.cotaUnificacaoRepository.remover(cotaUnificacao);
 	}
 }

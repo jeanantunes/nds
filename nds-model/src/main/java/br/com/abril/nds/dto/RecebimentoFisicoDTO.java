@@ -64,6 +64,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal valorTotal;
 	
+	private String valorTotalString;
+	
 	private TipoDiferenca tipoDiferenca;
 	
 	private Origem origemItemNota;
@@ -375,7 +377,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.produtoSemCadastro = produtoSemCadastro;
 	}
 
-	
-	
+	public String getValorTotalString() {
+		return valorTotalString;
+	}
 
+	public void setValorTotalString(String valorTotalString) {
+		this.valorTotalString = valorTotalString;
+	}
 }

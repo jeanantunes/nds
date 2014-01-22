@@ -65,7 +65,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<ConsignadoCotaDTO> consigadoDTO = new ArrayList<ConsignadoCotaDTO>();
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || 
 		    ((cota.getTipoCota().equals(TipoCota.A_VISTA)) && 
