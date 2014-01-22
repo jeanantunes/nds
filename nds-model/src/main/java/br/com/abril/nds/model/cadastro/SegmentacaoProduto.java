@@ -1,12 +1,11 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 
 /**
  * Segmentação de Produto
@@ -35,9 +34,7 @@ public class SegmentacaoProduto implements Serializable {
 	@Column(name = "FORMATO_PRODUTO")
 	private FormatoProduto formatoProduto;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_LANCAMENTO")
-	private TipoLancamento tipoLancamento;
+	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TEMA_PRINCIPAL")
@@ -107,19 +104,6 @@ public class SegmentacaoProduto implements Serializable {
 		this.formatoProduto = formatoProduto;
 	}
 
-	/**
-	 * @return the tipoLancamento
-	 */
-	public TipoLancamento getTipoLancamento() {
-		return tipoLancamento;
-	}
-
-	/**
-	 * @param tipoLancamento the tipoLancamento to set
-	 */
-	public void setTipoLancamento(TipoLancamento tipoLancamento) {
-		this.tipoLancamento = tipoLancamento;
-	}
 
 	/**
 	 * @return the temaPrincipal
