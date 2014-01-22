@@ -260,7 +260,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 					IdentificacaoEmitente emitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 
-					String cpfCnpjEmitente = emitente.getDocumento();
+					String cpfCnpjEmitente = emitente.getDocumento().getDocumento();
 
 					InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 
@@ -557,7 +557,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				jc = JAXBContext.newInstance(NotaFiscal.class);
 		        Marshaller marshaller = jc.createMarshaller();
 		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", null);
+		        //marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", "");
 		        marshaller.marshal(notaFiscal, System.out);
 			
 			} catch (JAXBException e) {

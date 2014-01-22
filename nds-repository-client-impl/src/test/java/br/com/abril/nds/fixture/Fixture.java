@@ -3515,7 +3515,7 @@ public class Fixture {
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 		
 		identificacaoEmitente.setCnae(cnae);
-		identificacaoEmitente.setDocumento(documento);
+		identificacaoEmitente.setDocumento(null);
 		identificacaoEmitente.setEndereco(endereco);
 		identificacaoEmitente.setInscricaoEstadual(inscricaoEstadual);
 		identificacaoEmitente.setInscricaoEstadualSubstituto(inscricaoEstadualSubstituto);
