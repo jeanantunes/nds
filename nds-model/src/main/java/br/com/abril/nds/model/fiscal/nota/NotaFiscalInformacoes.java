@@ -37,7 +37,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	private static String idNFe = "NFe00000000000000000000000000000000000000000000";
 	
 	@XmlAttribute
-	private static String versao = "2.00";
+	private static String versao = "3.10";
 		
 	/**
 	 * IDE
@@ -69,8 +69,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
 	@NFEExportType
 	@XmlElements(value={ @XmlElement(name="det") })
-	List<DetalheNotaFiscal> detalhesNotaFiscal;
-	//private List<ProdutoServico> produtosServicos;
+	private List<DetalheNotaFiscal> detalhesNotaFiscal;
 	
 	/**
 	 * TOTAL

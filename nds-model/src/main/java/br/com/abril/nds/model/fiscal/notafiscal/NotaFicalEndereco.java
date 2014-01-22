@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
@@ -24,6 +25,12 @@ public class NotaFicalEndereco implements Serializable {
 	
 	private static final long serialVersionUID = 7384512437561238172L;
 
+	@Id
+	@GeneratedValue
+	@Column(name="ID")
+	@XmlTransient
+	private Long id;
+	
 	@Column(name = "TIPO_LOGRADOURO", length=60)	
 	private String tipoLogradouro;
 	
@@ -35,11 +42,6 @@ public class NotaFicalEndereco implements Serializable {
 	@XmlElement(name="xLgr")
 	private String logradouro;
 	
-	@Id
-	@GeneratedValue
-	@Column(name="ID")
-	private Long id;
-	
 	@Column(name = "NUMERO", nullable = true, length=60)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=1, tamanho=60)),
@@ -47,18 +49,15 @@ public class NotaFicalEndereco implements Serializable {
 	})
 	@XmlElement(name="nro")
 	private String numero;
-
-	@Column(name = "UF", length=2)
+	
+	@Column(name = "BAIRRO", length=60)
 	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.C05, posicao = 6, tamanho = 2)),
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao = TipoSecao.E05, posicao = 6, tamanho = 2))
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=3, tamanho=60)),
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=3 , tamanho=60))
 	})
-	@XmlElement(name="UF")
-	private String uf;
-	
-	@Column(name="CODIGO_UF")
-	private Long codigoUf;
-	
+	@XmlElement(name="xBairro")
+	private String bairro;
+
 	@Column(name = "CODIGO_CIDADE_IBGE", nullable = true, length=7)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.B, posicao = 11)),
@@ -76,21 +75,15 @@ public class NotaFicalEndereco implements Serializable {
 	@XmlElement(name="xMun")
 	private String cidade;
 	
-	@Column(name = "COMPLEMENTO", length=60)
+	@Column(name = "UF", length=2)
 	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=2, tamanho=60)),
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=2 , tamanho=60))
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao = TipoSecao.C05, posicao = 6, tamanho = 2)),
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao = TipoSecao.E05, posicao = 6, tamanho = 2))
 	})
-	private String complemento;
+	@XmlElement(name="UF")
+	private String uf;
 	
-	@Column(name = "BAIRRO", length=60)
-	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=3, tamanho=60)),
-			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=3 , tamanho=60))
-	})
-	@XmlElement(name="xBairro")
-	private String bairro;
-	
+
 	@Column(name = "CEP", length=9)
 	@NFEWhens(value = {
 			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=7, tamanho=8)),
@@ -98,6 +91,17 @@ public class NotaFicalEndereco implements Serializable {
 	})
 	@XmlElement(name="CEP")
 	private String cep;
+	
+	@XmlTransient
+	@Column(name="CODIGO_UF")
+	private Long codigoUf;
+	
+	@Column(name = "COMPLEMENTO", length=60)
+	@NFEWhens(value = {
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_EMITENTE, export = @NFEExport(secao=TipoSecao.C05, posicao=2, tamanho=60)),
+			@NFEWhen(condition = NFEConditions.IDENTIFICACAO_DESTINATARIO, export = @NFEExport(secao=TipoSecao.E05, posicao=2 , tamanho=60))
+	})
+	private String complemento;
 	
 	@Column(name = "PAIS", length=60)
 	@XmlElement(name="xPais")

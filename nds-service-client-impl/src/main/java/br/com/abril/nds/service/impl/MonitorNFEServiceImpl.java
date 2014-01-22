@@ -258,7 +258,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 		
-		String documento 	= identificacaoEmitente.getDocumento();
+		String documento 	= identificacaoEmitente.getDocumento().getDocumento();
 		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
 		Telefone telefone 	= identificacaoEmitente.getTelefone();
 	

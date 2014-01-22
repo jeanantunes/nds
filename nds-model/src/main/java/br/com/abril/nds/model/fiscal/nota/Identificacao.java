@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,7 +20,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
 
+import br.com.abril.nds.integracao.persistence.PersistentEnum;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.util.TipoSecao;
@@ -36,7 +36,7 @@ public class Identificacao implements Serializable {
 	
 	@Transient
 	@XmlTransient
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	
 	public enum FormaPagamento implements NotaFiscalEnum {
 		
@@ -58,7 +58,7 @@ public class Identificacao implements Serializable {
 		public int getValor() {
 			return valor;
 		}
-		
+
 	}	
 	
 	public enum TipoEmissao implements NotaFiscalEnum {
@@ -76,13 +76,15 @@ public class Identificacao implements Serializable {
 		public Integer getIntValue() {
 			return indcador.intValue();
 		}
+
 	}	
 	
 	public enum FinalidadeEmissaoNFe implements NotaFiscalEnum {
 		
 		NORMAL(1), 
 		COMPLEMENTAR(2), 
-		AJUSTE(3);
+		AJUSTE(3),
+		DEVOLUCAO_RETORNO(4);
 
 		private Integer finalidadeEmissao;
 		
@@ -93,6 +95,7 @@ public class Identificacao implements Serializable {
 		public Integer getIntValue() {
 			return finalidadeEmissao.intValue();
 		}
+
 	}	
 	
 	public enum FormatoImpressao implements NotaFiscalEnum {
@@ -110,9 +113,10 @@ public class Identificacao implements Serializable {
 		public Integer getIntValue() {
 			return tipoImpressao.intValue();
 		}
+
 	}	
 	
-	public enum TipoAmbiente implements NotaFiscalEnum {
+	public enum TipoAmbiente implements NotaFiscalEnum, PersistentEnum {
 		
 		PRODUCAO(1), 
 		HOMOLOGACAO(2);
@@ -127,6 +131,12 @@ public class Identificacao implements Serializable {
 		public Integer getIntValue() {
 			return tipoAmbiente.intValue();
 		}
+
+		@Override
+		public int getId() {
+			return tipoAmbiente.intValue();
+		}
+
 	}
 	
 	public enum ProcessoEmissao implements NotaFiscalEnum {
@@ -146,6 +156,76 @@ public class Identificacao implements Serializable {
 		public Integer getIntValue() {
 			return processoEmissao.intValue();
 		}
+
+	}
+	
+	public enum LocalDestinoOperacao implements NotaFiscalEnum {
+		
+		INTERNA(1, "Interna"),
+		INTERESTADUAL(2, "Interestadual"),
+		EXTERIOR(3, "Exterior");
+		
+		private Integer localDestinoOperacao;
+		private String descricao;
+		
+		LocalDestinoOperacao(Integer localDestinoOperacao, String descricao) {
+			this.localDestinoOperacao = localDestinoOperacao;
+			this.setDescricao(descricao); 
+		}
+		
+		@Override
+		public Integer getIntValue() {
+			return localDestinoOperacao.intValue();
+		}
+
+		public String getDescricao() {
+			return descricao;
+		}
+
+		public void setDescricao(String descricao) {
+			this.descricao = descricao;
+		}
+
+	}
+	
+	public enum OperacaoConsumidorFinal implements NotaFiscalEnum {
+		
+		NAO(0), 
+		CONSUMIDOR_FINAL(1);
+
+		private Integer operacaoConsumidorFinal;
+		
+		OperacaoConsumidorFinal(Integer operacaoConsumidorFinal) {
+			this.operacaoConsumidorFinal = operacaoConsumidorFinal;
+		}
+		
+		@Override
+		public Integer getIntValue() {
+			return operacaoConsumidorFinal.intValue();
+		}
+
+	}
+	
+	public enum PresencaConsumidor implements NotaFiscalEnum {
+		
+		NAO_SE_APLICA(0), 
+		OPERACAO_PRESENCIAL(1),
+		NAO_PRESENCIAL_INTERNET(2),
+		NAO_PRESENCIAL_TELEATENTDIMENTO(3),
+		NFC_E_EM_DOMICILIO(4),
+		NAO_PRESENCIAL_OUTROS(9);
+
+		private Integer presencaConsumidor;
+		
+		PresencaConsumidor(Integer operacaoConsumidorFinal) {
+			this.presencaConsumidor = operacaoConsumidorFinal;
+		}
+		
+		@Override
+		public Integer getIntValue() {
+			return presencaConsumidor.intValue();
+		}
+
 	}
 	
 	/**
@@ -172,7 +252,6 @@ public class Identificacao implements Serializable {
 	/**
 	 * indPag
 	 */
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name="INDICADOR_FORMA_PAGAMENTO", length=1, nullable=false)
 	@NFEExport(secao = TipoSecao.B, posicao = 3, tamanho = 1)
 	@XmlTransient
@@ -216,9 +295,9 @@ public class Identificacao implements Serializable {
 	private Date dataEmissao;
 
 	@Transient
-	@XmlElement(name="dEmi")
+	@XmlElement(name="dhEmi")
 	private String dataEmissaoXML;
-
+	
 	/**
 	 * dSaiEnt
 	 */
@@ -234,7 +313,6 @@ public class Identificacao implements Serializable {
 	/**
 	 * tpNF
 	 */
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_OPERACAO", length = 1, nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 10, tamanho = 1)
 	@XmlTransient
@@ -243,6 +321,15 @@ public class Identificacao implements Serializable {
 	@Transient
 	@XmlElement(name = "tpNF")
 	private int tipoOperacaoXML;
+	
+	@Column(name = "LOCAL_DESTINO_OPERACAO", nullable = false)
+	@NFEExport(secao=TipoSecao.B, posicao=7)
+	@XmlTransient
+	private LocalDestinoOperacao localDestinoOperacao;
+	
+	@Transient
+	@XmlElement(name="idDest")
+	private Integer localDestinoOperacaoXML;
 	
 	@Column(name="NOTA_FISCAL_CODIGO_MUNICIPIO")
 	@XmlElement(name="cMunFG")
@@ -259,7 +346,6 @@ public class Identificacao implements Serializable {
 	/**
 	 * tpEmis
 	 */
-	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "TIPO_EMISSAO", nullable = true)
 	@NFEExport(secao = TipoSecao.B, posicao = 13, tamanho = 1)
 	@XmlTransient
@@ -276,21 +362,19 @@ public class Identificacao implements Serializable {
 	/**
 	 * tpAmb
 	 */
-	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_AMBIENTE", nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 13, tamanho = 1)
 	@XmlTransient
+	@Type(type="br.com.abril.nds.model.fiscal.notafiscal.enums.TipoAmbienteUserType") //Permite persistir como int (valores no XSD)
 	private TipoAmbiente tipoAmbiente;
 
 	@Transient
 	@XmlElement(name="tpAmb")
 	private Integer tipoAmbienteXML;
 	
-
 	/**
 	 * finNFe
 	 */
-	@Enumerated(EnumType.STRING)
 	@Column(name = "FINALIDADE_EMISSAO", nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
 	@XmlTransient
@@ -300,10 +384,27 @@ public class Identificacao implements Serializable {
 	@XmlElement(name="finNFe")
 	private Integer finalidadeEmissaoNFeXML;
 	
+	@Column(name = "OPERACAO_CONSUMIDOR_FINAL", nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
+	@XmlTransient
+	private OperacaoConsumidorFinal operacaoConsumidorFinal;
+	
+	@Transient
+	@XmlElement(name="indFinal")
+	private Integer operacaoConsumidorFinalXML;
+	
+	@Column(name = "PRESENCA_CONSUMIDOR", nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
+	@XmlTransient
+	private PresencaConsumidor presencaConsumidor;
+	
+	@Transient
+	@XmlElement(name="indPres")
+	private Integer presencaConsumidorXML;
+	
 	/**
 	 * finNFe
 	 */
-	@Enumerated(EnumType.STRING)
 	@Column(name = "PROCESSO_EMISSAO", nullable = false)
 	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
 	@XmlTransient
@@ -312,6 +413,11 @@ public class Identificacao implements Serializable {
 	@Transient
 	@XmlElement(name="procEmi")
 	private Integer processoEmissaoXML;
+	
+	@Column(name = "VERSAO_SISTEMA_EMISSAO", nullable = false)
+	@NFEExport(secao = TipoSecao.B, posicao = 16, tamanho = 1)
+	@XmlElement(name="verProc")
+	private String versaoSistemaEmissao;
 	
 	@ManyToOne
 	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID")
@@ -535,6 +641,34 @@ public class Identificacao implements Serializable {
 	 */
 	public void setFinalidadeEmissaoNFe(FinalidadeEmissaoNFe finalidadeEmissaoNFe) {
 		this.finalidadeEmissaoNFe = finalidadeEmissaoNFe;
+		this.finalidadeEmissaoNFeXML = finalidadeEmissaoNFe.getIntValue();
+	}
+
+	public OperacaoConsumidorFinal getOperacaoConsumidorFinal() {
+		return operacaoConsumidorFinal;
+	}
+
+	public void setOperacaoConsumidorFinal(
+			OperacaoConsumidorFinal operacaoConsumidorFinal) {
+		this.operacaoConsumidorFinal = operacaoConsumidorFinal;
+		this.operacaoConsumidorFinalXML = operacaoConsumidorFinal.getIntValue();
+	}
+
+	public PresencaConsumidor getPresencaConsumidor() {
+		return presencaConsumidor;
+	}
+
+	public void setPresencaConsumidor(PresencaConsumidor presencaConsumidor) {
+		this.presencaConsumidor = presencaConsumidor;
+		this.presencaConsumidorXML = presencaConsumidor.getIntValue();
+	}
+
+	public String getVersaoSistemaEmissao() {
+		return versaoSistemaEmissao;
+	}
+
+	public void setVersaoSistemaEmissao(String versaoSistemaEmissao) {
+		this.versaoSistemaEmissao = versaoSistemaEmissao;
 	}
 
 	/**
@@ -616,6 +750,15 @@ public class Identificacao implements Serializable {
 	public void setProcessoEmissao(ProcessoEmissao processoEmissao) {
 		this.processoEmissao = processoEmissao;
 		this.processoEmissaoXML = processoEmissao.getIntValue();
+	}
+
+	public LocalDestinoOperacao getLocalDestinoOperacao() {
+		return localDestinoOperacao;
+	}
+
+	public void setLocalDestinoOperacao(LocalDestinoOperacao localDestinoOperacao) {
+		this.localDestinoOperacao = localDestinoOperacao;
+		this.localDestinoOperacaoXML = localDestinoOperacao.getIntValue();
 	}
 	
 }
