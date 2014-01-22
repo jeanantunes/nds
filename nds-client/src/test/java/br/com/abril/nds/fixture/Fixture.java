@@ -3579,7 +3579,7 @@ public class Fixture {
 		
 		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
 		
-		identificacaoDestinatario.setDocumento(documento);
+//		identificacaoDestinatario.setDocumento(documento);
 		identificacaoDestinatario.setEmail(email);
 		identificacaoDestinatario.setEndereco(endereco);
 		identificacaoDestinatario.setInscricaoEstadual(inscricaoEstadual);

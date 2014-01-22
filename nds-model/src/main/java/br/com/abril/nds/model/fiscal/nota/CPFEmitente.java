@@ -2,7 +2,7 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
-public class CPF extends DocumentoPrincipalPessoa implements Serializable {
+public class CPFEmitente extends DocumentoEmitente implements Serializable {
 
 	/**
 	 * 

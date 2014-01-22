@@ -342,6 +342,7 @@ public class Distribuidor {
 	@OrderBy("sequencia")
 	private Set<NotaFiscalTipoEmissao> tiposEmissoesNotaFiscalDistribuidor = new HashSet<NotaFiscalTipoEmissao>();
 
+	@OneToMany
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
 	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})

@@ -8,10 +8,10 @@ import javax.xml.bind.annotation.XmlValue;
 
 @Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentoPrincipalPessoa {
+public class DocumentoDestinatario {
 
 	@XmlValue
-	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
+	@Column(name="DOCUMENTO_DESTINATARIO", nullable=false, length=14)
 	private String documento;
 
 	public String getDocumento() {

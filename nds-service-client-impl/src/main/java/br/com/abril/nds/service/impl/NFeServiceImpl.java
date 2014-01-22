@@ -410,7 +410,7 @@ public class NFeServiceImpl implements NFeService {
 
 		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 
-		String documento 			= identificacaoDestinatario.getDocumento();
+		String documento			= identificacaoDestinatario.getDocumento().getDocumento();
 		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 

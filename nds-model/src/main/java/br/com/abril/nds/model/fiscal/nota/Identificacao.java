@@ -36,7 +36,17 @@ public class Identificacao implements Serializable {
 	
 	@Transient
 	@XmlTransient
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ") {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3751355831694201574L;
+
+		public StringBuffer format(Date date, StringBuffer toAppendTo, java.text.FieldPosition pos) {
+            StringBuffer toFix = super.format(date, toAppendTo, pos);
+            return toFix.insert(toFix.length()-2, ':');
+        };
+	};
 	
 	public enum FormaPagamento implements NotaFiscalEnum {
 		
