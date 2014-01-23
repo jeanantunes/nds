@@ -23,8 +23,6 @@ public class EMS0140Test extends RouteTestTemplate {
 		
 		getRoute().execute("test");
 		
-		return;
-		
 	} 
 
 }
