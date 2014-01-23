@@ -394,6 +394,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						
 						if(!resultado.rows.length){
 							$(".grids", segmentoNaoRecebidoController.workspace).hide();
+							$(".areaBts", segmentoNaoRecebidoController.workspace).hide();
 							
 							return;
 						}
@@ -409,6 +410,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 						$(".grids", segmentoNaoRecebidoController.workspace).show();
+						$(".areaBts", segmentoNaoRecebidoController.workspace).show();
 
 						return resultado;
 
@@ -429,6 +431,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 						$(".grids", segmentoNaoRecebidoController.workspace).show();
+						$(".areaBts", segmentoNaoRecebidoController.workspace).show();
 
 						return resultado;
 
@@ -449,6 +452,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 						$(".grids", segmentoNaoRecebidoController.workspace).show();
+						$(".areaBts", segmentoNaoRecebidoController.workspace).show();
 						
 						return resultado;
 						
@@ -467,6 +471,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 						$(".grids", segmentoNaoRecebidoController.workspace).show();
+						$(".areaBts", segmentoNaoRecebidoController.workspace).show();
 						
 						return resultado;
 						
@@ -776,15 +781,15 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					
 					
 					porSegmento : function(){
-						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
-						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).show();
+						$('.porCota', segmentoNaoRecebidoController.workspace).hide();
+						$('.porSegmento', segmentoNaoRecebidoController.workspace).show();
 						
 						segmentoNaoRecebidoController.pesquisarCotasNaoRecebemSegmento();
 					},
 					
 					porCota : function(){
-						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).show();
-						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).hide();
+						$('.porCota', segmentoNaoRecebidoController.workspace).show();
+						$('.porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						
 						if($("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val()=="" && $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val()==""){						
 					           var erros = [];
@@ -835,7 +840,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					filtroPorCota : function(){
 						$('#segmentoNaoRecebido_filtroPorCota', segmentoNaoRecebidoController.workspace).show();
 						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).hide();
-						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).hide();
+						$('.porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroSegmento();
 						segmentoNaoRecebidoController.limparFiltroCota2();
 						segmentoNaoRecebidoController.limparFiltroSegmento2();
@@ -844,7 +849,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					filtroPorSegmento : function (){
 						$('#segmentoNaoRecebido_filtroPorCota', segmentoNaoRecebidoController.workspace).hide();
 						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).show();
-						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
+						$('.porCota', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroCota();
 						segmentoNaoRecebidoController.limparFiltroCota2();
 						segmentoNaoRecebidoController.limparFiltroSegmento2();
@@ -878,6 +883,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 									resultado.mensagens.listaMensagens);
 
 							$(".grids", segmentoNaoRecebidoController.workspace).hide();
+							$(".areaBts", segmentoNaoRecebidoController.workspace).hide();
 
 							return resultado;
 						}
