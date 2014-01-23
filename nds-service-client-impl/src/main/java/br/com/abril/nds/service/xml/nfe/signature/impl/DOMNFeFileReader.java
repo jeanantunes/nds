@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -19,6 +19,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 
 public class DOMNFeFileReader {
 	

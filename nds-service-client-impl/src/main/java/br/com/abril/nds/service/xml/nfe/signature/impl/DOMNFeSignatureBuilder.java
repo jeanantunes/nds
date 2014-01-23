@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.io.InputStreamReader;
 import java.security.InvalidAlgorithmParameterException;
@@ -27,6 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.w3c.dom.Element;
+
+import br.com.abril.nds.service.xml.nfe.signature.KeyInfoBuilder;
+import br.com.abril.nds.service.xml.nfe.signature.SignatureBuilder;
 
 public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, InitializingBean {
 
