@@ -1657,6 +1657,10 @@ public class CotaServiceImpl implements CotaService {
 				mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
 			}
 		}
+		
+		if(cotaDto.getTipoDistribuicaoCota() == null){
+			mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
+		}
 				
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));

@@ -11,7 +11,7 @@
      	 
      	 <strong>Tipo:</strong>
      	 
-	     <select name="cotaDTO.tipoDistribuicao" id="cotaDTO.tipoDistribuicao" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
+	     <select name="cotaDTO.tipoDistribuicaoCota" id="cotaDTO.tipoDistribuicao" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
 	        <option value="" selected="selected">Selecione...</option>
 	        <option value="ALTERNATIVO">Alternativo</option>
 	        <option value="CONVENCIONAL">Convencional</option>
