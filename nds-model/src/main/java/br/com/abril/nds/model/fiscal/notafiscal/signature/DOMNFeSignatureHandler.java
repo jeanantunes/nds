@@ -46,7 +46,6 @@ public class DOMNFeSignatureHandler implements SignatureHandler {
 		}
 	}
 	
-	
 	@Resource
 	public void setSecurityHandler(SecurityHandler securityHandler) {
 		this.securityHandler = securityHandler;

@@ -8,7 +8,7 @@ import org.springframework.core.io.Resource;
 public abstract class AbstractSecurityHandlerBean implements SecurityHandler, InitializingBean {
 	
 	private KeyStore keyStore;
-	private Resource location;
+	private Resource location;   
 	
 	protected KeyStore getKeyStore() {
 		return keyStore;

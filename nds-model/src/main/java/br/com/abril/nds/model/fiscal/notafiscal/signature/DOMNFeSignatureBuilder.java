@@ -1,18 +1,3 @@
-/* Copyright 2005 I Serv Consultoria Empresarial Ltda.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package br.com.abril.nds.model.fiscal.notafiscal.signature;
 
 import java.io.InputStreamReader;
@@ -45,6 +30,8 @@ import org.w3c.dom.Element;
 
 public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, InitializingBean {
 
+	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSignatureBuilder.class);
+	
 	public static final String CANONICALIZATION_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
 	public static final String C14N_TRANSFORMATION_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
 	
@@ -101,8 +88,8 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 			DOMSignContext dsc = new DOMSignContext(privateKey, parentElement);
 			XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, keyInfo);
 			signature.sign(dsc);
-			logger.debug(" Primeiro digest value encontrado  {}.", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getDigestValue());
-			logger.debug(" Primeiro digest value encontrado  {}.", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getHere());
+			logger.debug(" Primeiro digest value encontrado  {}", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getDigestValue());
+			logger.debug(" Primeiro digest value encontrado  {}", ((DOMReference) signature.getSignedInfo().getReferences().get(0)).getHere());
 			InputStreamReader isr = new InputStreamReader(signature.getSignedInfo().getCanonicalizedData());
 			char[] cbuf = new char[1024];
 			
@@ -147,7 +134,5 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 	public void setKeyInfoBuilder(KeyInfoBuilder keyInfoBuilder) {
 		this.keyInfoBuilder = keyInfoBuilder;
 	}
-	
-	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSignatureBuilder.class);
 	
 }

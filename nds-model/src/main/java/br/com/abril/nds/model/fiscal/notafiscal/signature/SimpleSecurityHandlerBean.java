@@ -17,7 +17,7 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 	
 	private String alias;
 	private char[] password;
-	
+	   
 	public SimpleSecurityHandlerBean() {
 	
 	}

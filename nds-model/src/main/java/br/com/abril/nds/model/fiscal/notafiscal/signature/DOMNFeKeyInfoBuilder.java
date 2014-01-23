@@ -13,9 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DOMNFeKeyInfoBuilder implements KeyInfoBuilder {
-
+    
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeKeyInfoBuilder.class);
 	private XMLSignatureFactory signatureFactory;
+	
+	/**
+	 * METODO 
+	 */
 	
 	public KeyInfo newKeyInfo(Certificate certificate) {
 		KeyInfoFactory kif = signatureFactory.getKeyInfoFactory();
