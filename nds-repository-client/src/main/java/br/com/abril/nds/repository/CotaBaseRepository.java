@@ -24,4 +24,5 @@ public interface CotaBaseRepository extends Repository<CotaBase, Long> {
 
 	List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase);
 
+	boolean cotaTemCotaBase(Long idCota);
 }

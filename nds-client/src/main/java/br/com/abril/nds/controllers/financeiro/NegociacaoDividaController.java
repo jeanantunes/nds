@@ -305,11 +305,12 @@ public class NegociacaoDividaController extends BaseController {
 		
 		BigDecimal comissaoCota = this.descontoService.obterComissaoCota(numeroCota);
 		
-		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0 ||
-				comissaoCota == null || BigDecimal.ZERO.compareTo(comissaoCota) == 0){
+		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0) {
 			
 			this.result.use(Results.json()).from("", "result").serialize();
 		} else {
+			
+			comissaoCota = comissaoCota == null ? BigDecimal.ZERO : comissaoCota;
 			
 			List<Object> valoresDesconto = new ArrayList<Object>();
 			valoresDesconto.add(comissao);

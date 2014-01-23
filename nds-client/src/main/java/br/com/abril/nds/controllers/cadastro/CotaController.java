@@ -105,8 +105,6 @@ public class CotaController extends BaseController {
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
 	public static final String SENHA_USUARIO_IMPRIMIR = "SENHA_USUARIO_IMPRIMIR";
-
-	public static final int[] vetor =  {1};
 	
 	public static final FileType[] extensoesAceitas = 
 		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
@@ -1175,7 +1173,7 @@ public class CotaController extends BaseController {
 		
 		List<CotaVO> listaCotasVO = getListaCotaVO(listaCotas);
 		
-		FileExporter.to("cotas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("cotas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaCotasVO, CotaVO.class, this.httpResponse);
 		
 		result.nothing();
