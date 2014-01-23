@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
+
 public class DOMNFeSignatureHandler implements SignatureHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSignatureHandler.class);
@@ -38,9 +41,10 @@ public class DOMNFeSignatureHandler implements SignatureHandler {
 		}
 		else {
 			logger.warn("Não foi encontrada a tag {} para assinar.", tagNameToSign);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrada a tag {} para assinar.");
+			
 		}
 	}
-	
 	
 	@Resource
 	public void setSecurityHandler(SecurityHandler securityHandler) {

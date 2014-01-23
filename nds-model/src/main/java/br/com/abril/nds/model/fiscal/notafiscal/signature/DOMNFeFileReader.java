@@ -25,6 +25,10 @@ public class DOMNFeFileReader {
 	private DocumentBuilderFactory documentBuilderFactory;
 	private SignatureHandler signatureHandler;
 	
+	
+	/**
+	 * 
+	 */
 	public Result loadAndSign(String filePath, String tagToSign) throws Exception {
 		InputStreamSource resource = new ClassPathResource(filePath);
 		return loadAndSign(resource.getInputStream(), tagToSign);

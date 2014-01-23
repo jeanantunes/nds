@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.nfe;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -29,8 +30,11 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.MonitorNFEService;
+import br.com.abril.nds.service.NotaFiscalNdsService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -75,6 +79,10 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	@Autowired
 	private HttpServletRequest request;
+	
+	@Autowired
+	private NotaFiscalService notaFiscalService;
+	
 	
 	private static final String LISTA_NFE = "listaNFE";
 	
@@ -244,13 +252,12 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
-	public void cancelarNfe() {
+	public void cancelarNfe(FiltroMonitorNfeDTO filtro) throws FileNotFoundException, IOException {
 		
 		// cancelamento de nota fiscal
+		this.monitorNFEService.cancelarNfe(filtro);
 		
-		
-		
-		result.use(Results.json()).from("").serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "NF-e(s) cancelada(s) com sucesso."), Constantes.PARAM_MSGS).serialize();
 		
 	}
 	
@@ -517,11 +524,9 @@ public class PainelMonitorNFEController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(FiltroMonitorNfeDTO filtro, String sortname, String sortorder, int rp, int page) {
 		
-		List<String> mensagens = validarCampos(filtro.getDataInicial(), filtro.getDataFinal());
-		tratarErro(mensagens);
-		
 		// Paginação 
 		PaginacaoVO paginacao = carregarPaginacao(sortname, sortorder, rp, page);
+		
 		filtro.setPaginacao(paginacao);
 		
 		InfoNfeDTO info = monitorNFEService.pesquisarNFe(filtro);

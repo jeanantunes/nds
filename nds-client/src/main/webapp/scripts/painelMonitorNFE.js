@@ -24,6 +24,8 @@ var PainelMonitorNFE = $.extend(true, {
 			width : 960
 		});
 		
+		this.initFiltroDatas();
+		
 		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -46,6 +48,19 @@ var PainelMonitorNFE = $.extend(true, {
 		$(".grids", PainelMonitorNFE.workspace).hide();
 		
 	    $(".bt_arq", PainelMonitorNFE.workspace).hide();
+	},
+	
+	initFiltroDatas : function(){
+		
+	    $.postJSON(contextPath + '/cadastro/distribuidor/obterDataDistribuidor',
+				null, 
+				function(result) {
+			
+					$("#dataInicial", this.workspace).val(result);
+					
+					$("#dataFinal", this.workspace).val(result);
+		        }
+		); 
 	},
 	
 	pesquisar: function() {
@@ -263,14 +278,8 @@ var PainelMonitorNFE = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'CNPJ Remetente',
+				display : 'CNPJ / CPF Remetente',
 				name : 'cnpjRemetente',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'CPF Remetente',
-				name : 'cpfRemetente',
 				width : 100,
 				sortable : true,
 				align : 'left'
@@ -283,13 +292,7 @@ var PainelMonitorNFE = $.extend(true, {
 			}, {
 				display : 'Tipo NF-e',
 				name : 'tipoNfe',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Movimento Integração',
-				name : 'movimentoIntegracao',
-				width : 140,
+				width : 220,
 				sortable : true,
 				align : 'left'
 			}, {

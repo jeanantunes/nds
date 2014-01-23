@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 public class Pkcs12SecurityHandlerBean extends AbstractSecurityHandlerBean {
-
+    
 	protected static final Logger logger = LoggerFactory.getLogger(Pkcs12SecurityHandlerBean.class);
 	
 	private String alias;

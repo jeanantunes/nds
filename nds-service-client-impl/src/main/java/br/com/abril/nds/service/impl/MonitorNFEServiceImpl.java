@@ -1,6 +1,8 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -55,6 +57,7 @@ import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
+import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 
 @Service
@@ -71,6 +74,10 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private NotaFiscalService notaFiscalService;
+	
 	
 	@Transactional
 	public InfoNfeDTO pesquisarNFe(FiltroMonitorNfeDTO filtro) {
@@ -705,6 +712,20 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+	}
+	
+	@Override
+	public void cancelarNfe(FiltroMonitorNfeDTO filtro) throws FileNotFoundException, IOException {
+		
+		
+		List<NotaFiscal> notas = this.notaFiscalRepository.obterListaNotasFiscaisNumeroSerie(filtro);
+		
+		if(notas != null && ! notas.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não encontrada!");
+		}
+		
+		this.notaFiscalService.exportarNotasFiscais(notas);
+		
 	}
 	
 }

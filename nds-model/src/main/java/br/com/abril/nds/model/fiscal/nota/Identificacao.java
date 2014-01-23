@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import br.com.abril.nds.integracao.persistence.PersistentEnum;
@@ -733,14 +732,16 @@ public class Identificacao implements Serializable {
 		this.tipoAmbiente = tipoAmbiente;
 		this.tipoAmbienteXML = tipoAmbiente.getIntValue();
 	}
-
+	
+	public void setCodigoNF(String codigoNF) {
+		this.codigoNF = codigoNF;
+	}
+	
 	public Long getCodigoNF() {
 		return Long.parseLong(codigoNF);
 	}
 
-	public void setCodigoNF(Long codigoNF) {
-		this.codigoNF = StringUtils.leftPad(codigoNF != null ? codigoNF.toString() : "", 8, '0') ;
-	}
+	
 
 	public String getModeloDocumentoFiscal() {
 		return modeloDocumentoFiscal;

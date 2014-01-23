@@ -18,6 +18,23 @@ public class NotaFiscalPessoaFisica extends NotaFiscalPessoa implements Serializ
 	@Column(name="RG")
 	private String rg;
 	
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getRg() {
+		return rg;
+	}
+
+	public void setRg(String rg) {
+		this.rg = rg;
+	}
+
+
 	@OneToOne
 	@JoinColumn(name="NOTA_FICAL_ENDERECO_ID", unique=true)
 	private NotaFicalEndereco notaFicalEndereco;

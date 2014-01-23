@@ -7,5 +7,5 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 public interface KeyInfoBuilder {
 	
 	public KeyInfo newKeyInfo(Certificate certificate);
-
+	    
 }

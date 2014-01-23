@@ -12,7 +12,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class DOMNFeSigantureFactoryBean implements InitializingBean, FactoryBean<XMLSignatureFactory> {
 
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSigantureFactoryBean.class);
-	
+	   
 	public static final String DEFAULT_PROVIDER_CLASS_NAME = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 	public static final String DEFAULT_PROVIDER_NAME = "jsr105Provider";
 	
