@@ -704,8 +704,8 @@
 	
 	//pesquisarPorCota
 	porCota : function porCota(){
-		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).show();
-		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
+		$('.porCota', classificacaoNaoRecebidaController.workspace).show();
+		$('.porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
 		
 		var grids = classificacaoNaoRecebidaController.Grids,
 		params = [];
@@ -724,8 +724,8 @@
 	},
 	
 	porClassificacao : function porClassificacao(){
-		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).hide();
-		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).show();
+		$('.porCota', classificacaoNaoRecebidaController.workspace).hide();
+		$('.porClassificacao', classificacaoNaoRecebidaController.workspace).show();
 		
 		var grids = classificacaoNaoRecebidaController.Grids,
 		params = [];
