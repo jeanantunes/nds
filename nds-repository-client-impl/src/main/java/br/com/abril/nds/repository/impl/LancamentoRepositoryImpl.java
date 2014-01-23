@@ -1944,7 +1944,7 @@ public class LancamentoRepositoryImpl extends
         
         hql.append(" inner join lancamentoParcial.periodos as periodo         ");
         
-        hql.append(" inner join periodo.lancamento as lancamento                 ");
+        hql.append(" inner join periodo.lancamentos as lancamento                 ");
         
         hql.append(" where ");
 

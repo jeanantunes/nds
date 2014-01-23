@@ -161,8 +161,12 @@ public class DiferencaEstoqueController extends BaseController {
 		this.carregarCombosLancamento();
 		
 		this.limparSessao();
+
+		result.include(
+			"dataAtual", 
+				DateUtil.formatarDataPTBR(
+					this.distribuidorService.obterDataOperacaoDistribuidor()));
 		
-		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
 		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO));
 	}
 	
@@ -2428,7 +2432,8 @@ public class DiferencaEstoqueController extends BaseController {
 				
 				if (diferencaVO.getCodigoProduto().trim().equalsIgnoreCase(ultimaDiferencaVO.getCodigoProduto())
 						&& diferencaVO.getNumeroEdicao().trim().equalsIgnoreCase(ultimaDiferencaVO.getNumeroEdicao())
-						&& diferencaVO.getTipoDirecionamento().equals(ultimaDiferencaVO.getTipoDirecionamento())) {
+						&& diferencaVO.getTipoDirecionamento().equals(ultimaDiferencaVO.getTipoDirecionamento())
+						&& diferencaVO.getTipoEstoque().equals(ultimaDiferencaVO.getTipoEstoque())) {
 					
 					if (!ultimaDiferencaVO.isCadastrado()) {
 						
