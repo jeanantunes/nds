@@ -11,10 +11,7 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
-import br.com.abril.nds.model.fiscal.nota.CNPJDestinatario;
 import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
-import br.com.abril.nds.model.fiscal.nota.CPFDestinatario;
-import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FinalidadeEmissaoNFe;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
@@ -187,7 +184,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoMunicipio(3550308L); //notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getCodigoCidadeIBGE());
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF("");
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setCodigoNF(((Long) Long.parseLong(new Random().nextInt(10000000)+"")).toString());
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
 		
@@ -197,16 +194,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
 		
-		DocumentoDestinatario documento = null;
-		if(cota.getPessoa() instanceof PessoaJuridica) { 
-			documento = new CNPJDestinatario();
-		} else {
-			documento = new CPFDestinatario();
-		}
-		documento.setDocumento(cota.getPessoa().getDocumento());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 	}
-
 
 	public static void popularDadosTransportadora(NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro) {
 		
