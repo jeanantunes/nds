@@ -8,5 +8,5 @@ import org.w3c.dom.Element;
 public interface SecurityCallBack {
 
 	public void doInSecurityContext(Element parentElement, Element elementToSign, Certificate certificate, PrivateKey privateKey);
-	
+    	
 }

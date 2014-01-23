@@ -627,16 +627,15 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	initInputs : function() {
+		
 		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
 			selectedList : 6,
 		});
 		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
 		
-		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
+		$("#impressaoNfe-filtro-selectFornecedores").multiselect({
 			selectedList : 6
 		}).multiselect("checkAll");
-		
-
 		
 		$("#selFornecedor", impressaoNfeController.workspace).click(function() {
 			$(".menu_fornecedor", impressaoNfeController.workspace).show().fadeIn("fast");

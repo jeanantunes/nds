@@ -45,8 +45,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 	public Integer obterQtdeRegistroNotaFiscal(FiltroMonitorNfeDTO filtro) {
 
-		boolean isAnd = false;
-		
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" SELECT DISTINCT ")
@@ -69,12 +67,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 		
 		if(filtro.getDataInicial()!=null) {
-			
-			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
 		}
 
 		if(filtro.getDataFinal()!=null) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
 		}
 
 		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
@@ -102,13 +99,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getSerie()!=null) {
-			
-			if(isAnd){
-				sql.append(" AND ");
-			}
-			
-			sql.append("notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
-			
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
 		}
 		
 		Query query = this.getSession().createQuery(sql.toString());
@@ -123,8 +114,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	
 	@SuppressWarnings("unchecked")
 	public List<NfeDTO> pesquisarNotaFiscal(FiltroMonitorNfeDTO filtro) {
-
-		boolean isAnd = false;
 		
 		StringBuffer sql = new StringBuffer("");
 		
@@ -134,7 +123,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.serie as serie,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao as emissao,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoEmissao as tipoEmissao,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento as cnpjDestinatario,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento as cnpjDestinatario,")
 		.append(" notaFiscal.notaFiscalInformacoes.statusProcessamentoInterno as statusNfe,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoNotaFiscal.descricao as tipoNfe,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoNotaFiscal.descricao as movimentoIntegracao")
@@ -155,47 +144,41 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		}
 		
-		if(filtro.getDataInicial()!=null) {
+		if(filtro.getDataInicial() !=null) {
 			
-			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
+			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao >= :dataInicial ");
 		}
 
-		if(filtro.getDataFinal()!=null) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
+		if(filtro.getDataFinal() !=null) {
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
 		}
 
-		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
-			sql.append(" NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO = :documento AND PESSOA_DESTINATARIO.TIPO = 'F' ");
+		if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
+			sql.append(" AND NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO = :documento AND PESSOA_DESTINATARIO.TIPO = 'F' ");
 		}
 
-		if(filtro.getTipoNfe()!=null && !filtro.getTipoNfe().isEmpty()) {
+		if(filtro.getTipoNfe() !=null && !filtro.getTipoNfe().isEmpty()) {
 			sql.append(" AND NOTA_FISCAL_PROCESSO.PROCESSO = :tipoEmissaoNfe");
 		}
 
-		if(filtro.getNumeroNotaInicial()!=null) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
+		if(filtro.getNumeroNotaInicial() !=null) {
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
 		}
 
-		if(filtro.getNumeroNotaFinal()!=null) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
+		if(filtro.getNumeroNotaFinal() !=null) {
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
 		}
 
-		if(filtro.getChaveAcesso()!=null && !filtro.getChaveAcesso().isEmpty()) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
+		if(filtro.getChaveAcesso() !=null && !filtro.getChaveAcesso().isEmpty()) {
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
 		}
 
-		if(filtro.getSituacaoNfe()!=null && !filtro.getSituacaoNfe().isEmpty()) {
-			sql.append(" NOTA_FISCAL_NOVO.STATUS = :situacaoNfe ");
+		if(filtro.getSituacaoNfe() !=null && !filtro.getSituacaoNfe().isEmpty()) {
+			sql.append(" AND NOTA_FISCAL_NOVO.STATUS = :situacaoNfe ");
 		}
 
-		if(filtro.getSerie()!=null) {
-			
-			if(isAnd){
-				sql.append(" AND ");
-			}
-			
-			sql.append("notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
-			
+		if(filtro.getSerie() !=null) {
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.serie = :serie ");
 		}
 		
 		Query query = this.getSession().createQuery(sql.toString());
@@ -288,7 +271,7 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		}
 		
-		if(dadosRetornoNFE.getIdNotaFiscal()!=null) {
+		if(dadosRetornoNFE.getChaveAcesso()!=null) {
 
 			sql.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chave ");
 
@@ -303,4 +286,30 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		return (NotaFiscal) query.uniqueResult();
 		
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<NotaFiscal> obterListaNotasFiscaisNumeroSerie(FiltroMonitorNfeDTO filtro) {
+
+		StringBuffer sql = new StringBuffer("SELECT notaFiscal");
+		sql.append(" FROM NotaFiscal as notaFiscal");
+		sql.append(" WHERE");
+		
+		if(filtro.getSerie() !=null ) {
+			sql.append(" notaFiscal.id = :serie ");
+		}
+		
+		if(filtro.getNumeroNotaInicial() !=null) {
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal = :numeroNotaFiscal ");
+		}
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		query.setParameter("serie", filtro.getSerie());
+		query.setParameter("numeroNotaFiscal", filtro.getNumeroNotaInicial());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscal.class));
+		
+		return query.list();
+	}
+	
 }

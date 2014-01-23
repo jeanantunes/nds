@@ -26,12 +26,12 @@
 			<version>2.3.0</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>br.com.abril.nfeschema</groupId>
 			<artifactId>schema</artifactId>
 			<version>3.10</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	<build>
 		<pluginManagement>

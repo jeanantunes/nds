@@ -20,7 +20,8 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
  * 
  */
 @Entity
-@Table(name="NOTA_FISCAL_RETENCAO_ICMS_TRANSPORTE")public class RetencaoICMSTransporte implements Serializable {
+@Table(name="NOTA_FISCAL_RETENCAO_ICMS_TRANSPORTE")
+public class RetencaoICMSTransporte implements Serializable {
 	
 	/**
 	 * 
