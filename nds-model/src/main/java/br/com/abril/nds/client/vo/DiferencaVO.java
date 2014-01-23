@@ -56,7 +56,7 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Status", exhibitionOrder = 10, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
 	private String statusAprovacao;
 	
-	@Export(label = "StatusIntegracao", exhibitionOrder = 11, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
+	@Export(label = "StatusIntegracao", exhibitionOrder = 11, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 10)
 	private String statusIntegracao;
 	
 	private String motivoAprovacao;

@@ -173,40 +173,21 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	 */
 	@Override
 	public long obterQuantidadeCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro){
+		
 		long quantidade = 0;
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select count(c) from Cobranca c where ");		
-		hql.append(" c.cota.numeroCota = :ncota ");
 		
-		if (filtro.getDataVencimento()!=null){
-		    hql.append(" and c.dataVencimento <= :vcto ");
-		}
+		StringBuilder sql = new StringBuilder(" select count(*) as contagem from ( ");
 		
-		if (filtro.getStatusCobranca()!=null){
-			hql.append(" and c.statusCobranca = :status ");
-		}
+		sql.append(this.obterConsultaCobrancasPorCota(filtro));
 		
-		if (filtro.isAcumulaDivida()){
-		    hql.append(" and ( (c.divida.acumulada = :acumulada) or (c.divida.data = :data) )");
-		}
+		sql.append(" ) as cobrancas ");
+
+		Query query = this.createQueryCobrancasPorCota(filtro, sql.toString());
 		
-		Query query = super.getSession().createQuery(hql.toString());
-		query.setParameter("ncota", filtro.getNumeroCota());
-		
-		if (filtro.getDataVencimento()!=null){
-		    query.setDate("vcto", filtro.getDataVencimento());
-		}
-		
-		if (filtro.getStatusCobranca()!=null){
-		    query.setParameter("status", filtro.getStatusCobranca());
-		}
-		
-		if (filtro.isAcumulaDivida()){
-			query.setParameter("acumulada", filtro.isAcumulaDivida());
-			query.setParameter("data", filtro.getDataVencimento());
-		}
-		
+		((SQLQuery) query).addScalar("contagem", StandardBasicTypes.LONG);
+
 		quantidade = (Long) query.uniqueResult();
+
 		return quantidade;
 	}
 	
@@ -312,43 +293,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	@SuppressWarnings("unchecked")
 	public List<CobrancaVO> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, c.ID as codigo, ");
-		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, c.DT_EMISSAO as dataEmissao, "); 
-		hql.append(" c.DT_VENCIMENTO as dataVencimento, c.VALOR as valor, false as boletoAntecipado ");
-		hql.append(" FROM cobranca c ");
-		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on c.ID = bc.COBRANCA_ID ");
-		hql.append(" LEFT JOIN DIVIDA d on d.ID = c.DIVIDA_ID ");
-		hql.append(" INNER JOIN COTA ct on ct.ID = c.COTA_ID ");
-		hql.append(" INNER JOIN PESSOA p on p.ID = ct.PESSOA_ID ");
-		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
-		hql.append(" AND bc.STATUS_APROVACAO is null ");
-		hql.append(" AND d.STATUS != :statusPendenteInadimplencia ");
-		
-		if (filtro.getDataVencimento()!=null){
-		    hql.append(" AND c.DT_VENCIMENTO <= :vcto ");
-		}
-		
-		if (filtro.getStatusCobranca()!=null){
-			hql.append(" AND c.STATUS_COBRANCA = :status ");
-		}
-		
-		if (filtro.isAcumulaDivida()){
-		    hql.append(" AND ( (d.ACUMULADA = :acumulada) OR (d.DATA = :data) )");
-		}
-
-		hql.append(" UNION ALL ");
-		
-		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, ba.ID as codigo, ");
-		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, ba.`DATA` as dataEmissao, "); 
-		hql.append(" ba.DATA_VENCIMENTO as dataVencimento, ba.VALOR as valor, true as boletoAntecipado ");
-		hql.append(" FROM boleto_antecipado ba ");
-		hql.append(" INNER join chamada_encalhe_cota ce on ba.CHAMADA_ENCALHE_COTA_ID = ce.ID ");
-		hql.append(" INNER join cota ct on ct.ID = ce.COTA_ID ");
-		hql.append(" INNER join pessoa p on p.ID = ct.PESSOA_ID ");
-		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
-		hql.append(" AND ba.STATUs != :quitada ");
+		StringBuilder hql = this.obterConsultaCobrancasPorCota(filtro);
 
 		if (filtro.getOrdenacaoColuna() != null) {
 			
@@ -360,25 +305,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			}
 		}
 
-		Query query = super.getSession().createSQLQuery(hql.toString());
-
-		query.setParameter("ncota", filtro.getNumeroCota());
-		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
-		query.setParameter("quitada", StatusDivida.QUITADA.name());
-
-		if (filtro.getDataVencimento()!=null){
-		    query.setDate("vcto", filtro.getDataVencimento());
-		}
-		
-		if (filtro.getStatusCobranca()!=null){
-		    query.setParameter("status", filtro.getStatusCobranca().name());
-		}
-		
-		if (filtro.isAcumulaDivida()){
-			query.setParameter("acumulada", filtro.isAcumulaDivida());
-			query.setParameter("data", filtro.getDataVencimento());
-		}
-
+		Query query = this.createQueryCobrancasPorCota(filtro, hql.toString()); 
+				
 		if (filtro.getPaginacao() != null) {
         	
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -416,6 +344,73 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		}
 		
 		return ((SQLQuery) query).list();
+	}
+	
+	private StringBuilder obterConsultaCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, c.ID as codigo, ");
+		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, c.DT_EMISSAO as dataEmissao, "); 
+		hql.append(" c.DT_VENCIMENTO as dataVencimento, c.VALOR as valor, false as boletoAntecipado ");
+		hql.append(" FROM cobranca c ");
+		hql.append(" LEFT JOIN BAIXA_COBRANCA bc on c.ID = bc.COBRANCA_ID ");
+		hql.append(" LEFT JOIN DIVIDA d on d.ID = c.DIVIDA_ID ");
+		hql.append(" INNER JOIN COTA ct on ct.ID = c.COTA_ID ");
+		hql.append(" INNER JOIN PESSOA p on p.ID = ct.PESSOA_ID ");
+		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
+		hql.append(" AND bc.STATUS_APROVACAO is null ");
+		hql.append(" AND d.STATUS != :statusPendenteInadimplencia ");
+		
+		if (filtro.getDataVencimento()!=null){
+		    hql.append(" AND c.DT_VENCIMENTO <= :vcto ");
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+			hql.append(" AND c.STATUS_COBRANCA = :status ");
+		}
+		
+		if (filtro.isAcumulaDivida()){
+		    hql.append(" AND ( (d.ACUMULADA = :acumulada) OR (d.DATA = :data) )");
+		}
+
+		hql.append(" UNION ALL ");
+		
+		hql.append(" SELECT ct.NUMERO_COTA as numeroCota, ba.ID as codigo, ");
+		hql.append(" COALESCE(p.NOME, p.RAZAO_SOCIAL) as nome, ba.`DATA` as dataEmissao, "); 
+		hql.append(" ba.DATA_VENCIMENTO as dataVencimento, ba.VALOR as valor, true as boletoAntecipado ");
+		hql.append(" FROM boleto_antecipado ba ");
+		hql.append(" INNER join chamada_encalhe_cota ce on ba.CHAMADA_ENCALHE_COTA_ID = ce.ID ");
+		hql.append(" INNER join cota ct on ct.ID = ce.COTA_ID ");
+		hql.append(" INNER join pessoa p on p.ID = ct.PESSOA_ID ");
+		hql.append(" WHERE ct.NUMERO_COTA = :ncota ");
+		hql.append(" AND ba.STATUs != :quitada ");
+		
+		return hql;
+	}
+	
+	private Query createQueryCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro, String consulta) {
+	
+		Query query = super.getSession().createSQLQuery(consulta);
+
+		query.setParameter("ncota", filtro.getNumeroCota());
+		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
+		query.setParameter("quitada", StatusDivida.QUITADA.name());
+
+		if (filtro.getDataVencimento()!=null){
+		    query.setDate("vcto", filtro.getDataVencimento());
+		}
+		
+		if (filtro.getStatusCobranca()!=null){
+		    query.setParameter("status", filtro.getStatusCobranca().name());
+		}
+		
+		if (filtro.isAcumulaDivida()){
+			query.setParameter("acumulada", filtro.isAcumulaDivida());
+			query.setParameter("data", filtro.getDataVencimento());
+		}
+
+		return query;
 	}
 	
 	@Override

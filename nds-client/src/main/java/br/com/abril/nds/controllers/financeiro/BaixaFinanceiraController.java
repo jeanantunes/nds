@@ -1058,6 +1058,8 @@ public class BaixaFinanceiraController extends BaseController {
 		FileExporter.to("dividas-cota", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					cobrancasVO, CobrancaVO.class, this.httpResponse);
+		
+		this.result.nothing();
 	}
 	
 	private FiltroDetalheBaixaBoletoDTO obterFiltroExportacaoDetalhe() {
@@ -1278,6 +1280,8 @@ public class BaixaFinanceiraController extends BaseController {
 		FileExporter.to(tipoBaixaBoleto.getNomeArquivo(), fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);
+		
+		this.result.nothing();
 	}
 
 	@Post
