@@ -6,6 +6,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +37,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.CotaBaseRepository;
+import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
@@ -105,6 +110,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Autowired
 	private ConsultaConsignadoCotaService consignadoCotaService;
+	
+	@Autowired
+	private CotaBaseRepository cotaBaseRepository;
+	
+	@Autowired
+	private MixCotaProdutoRepository mixCotaProdutoRepository;
+	
+	@Autowired
+	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
 	
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
@@ -484,6 +498,42 @@ public class ManutencaoStatusCotaController extends BaseController {
 					
 					msgs.add(
 						"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+				}
+				
+				//segundo César, situação PENDENTE == cota nova
+				if (cota.getSituacaoCadastro() == SituacaoCadastro.PENDENTE){
+					
+					if (cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
+						
+						if (!this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+							
+							msgs.add(
+								"É obrigatório o cadastro de Cota Base para mudança de status para Ativo de cotas novas.");
+						}
+						
+					} else {
+						
+						if (!this.mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(null, cota.getId())){
+							
+							msgs.add(
+								"É obrigatório o cadastro de Mix para mudança de status para Ativo de cotas novas.");
+						}
+					}
+				} else if (cota.getSituacaoCadastro() == SituacaoCadastro.SUSPENSO &&
+					cota.getTipoDistribuicaoCota() == TipoDistribuicaoCota.CONVENCIONAL){
+					
+					HistoricoSituacaoCota ultimoHistorico = 
+						this.historicoSituacaoCotaRepository.obterUltimoHistorico(
+							cota.getNumeroCota(), SituacaoCadastro.SUSPENSO);
+					
+					long diasSuspensao = DateUtil.obterDiferencaDias(ultimoHistorico.getDataInicioValidade(), 
+							Calendar.getInstance().getTime());
+					
+					if (diasSuspensao >= 90 && !this.cotaBaseRepository.cotaTemCotaBase(cota.getId())){
+						
+						msgs.add(
+							"Cota suspensa por mais de 90 dias, cadastro de Cota Base obrigatório para mudança de status para Ativo");
+					}
 				}
 				
 				if (!msgs.isEmpty()){

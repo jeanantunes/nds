@@ -349,7 +349,8 @@ public class HistoricoSituacaoCotaRepositoryImplTest extends AbstractRepositoryI
 		
 		Integer numeroCota = 1;
 		
-		historicoSituacaoCota = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+		historicoSituacaoCota = 
+			historicoSituacaoCotaRepository.obterUltimoHistorico(numeroCota, SituacaoCadastro.ATIVO);
 		
 //		Assert.assertNull(historicoSituacaoCota);
 		

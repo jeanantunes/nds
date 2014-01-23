@@ -2063,7 +2063,7 @@ public class CotaServiceImpl implements CotaService {
 	private boolean isParametroDistribuidoNumeroCotaValido(Integer  numeroCota){
 		
 		HistoricoSituacaoCota historicoSituacaoCota  = 
-			this.historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+			this.historicoSituacaoCotaRepository.obterUltimoHistorico(numeroCota, SituacaoCadastro.INATIVO);
 		
 		if (historicoSituacaoCota == null) {
 			
