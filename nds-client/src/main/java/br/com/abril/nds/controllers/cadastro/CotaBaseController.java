@@ -282,7 +282,7 @@ public class CotaBaseController extends BaseController {
 	
 	private void validarCota(Cota cota, CotaBase cotaBase, Integer[] numerosDeCotasBase) {
 		
-		if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO) {
+		if(cota.getSituacaoCadastro() == SituacaoCadastro.INATIVO) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + cota.getNumeroCota() + "\" não está ativa!");
 		} 

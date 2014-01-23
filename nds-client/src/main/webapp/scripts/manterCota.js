@@ -1221,7 +1221,7 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
-        $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoCota);
+        $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
@@ -1442,7 +1442,7 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
-        $('[name="cotaDTO.tipoDistribuicao"]', this.workspace).val(result.tipoDistribuicaoCota);
+        $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
 //        //Ajuste 0153
 //        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
@@ -1489,7 +1489,7 @@ var COTA_CPF = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
-        formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicao"]:visible', this.workspace).val()});
+        formData.push({name:"cotaDTO.tipoDistribuicaoCota", value: $('[name="cotaDTO.tipoDistribuicaoCota"]:visible', this.workspace).val()});
 
         if (MANTER_COTA.numeroCota) {
         	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
