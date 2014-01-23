@@ -16,6 +16,8 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.eclipse.persistence.oxm.annotations.XmlPath;
+
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 

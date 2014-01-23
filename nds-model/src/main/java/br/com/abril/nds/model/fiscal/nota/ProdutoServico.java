@@ -86,6 +86,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="EXTIPI", length=2, nullable=true)
 	@NFEExport(secao=TipoSecao.I, posicao=4, tamanho=3)
+	@XmlElement(name="EXTIPI")
 	private Long extipi;
 	
 	/**
