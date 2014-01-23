@@ -47,7 +47,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -1536,8 +1535,7 @@ public class DiferencaEstoqueController extends BaseController {
 	 */
 	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
-		List<Fornecedor> listaFornecedor =
-			fornecedorService.obterFornecedoresPorProduto(codigoProduto, GrupoFornecedor.PUBLICACAO);
+		List<Fornecedor> listaFornecedor = this.fornecedorService.obterFornecedoresAtivos();
 		
 		List<ItemDTO<Long, String>> listaFornecedoresCombo =
 			new ArrayList<ItemDTO<Long,String>>();
@@ -2101,16 +2099,13 @@ public class DiferencaEstoqueController extends BaseController {
 				TipoMensagem.WARNING, "O campo [Data Lançamento] não deve ser maior que o campo [Até]!");
 		}
 		
-		if ((codigoProduto == null || codigoProduto.trim().isEmpty())  
-				&& (dataInicial == null || dataInicial.trim().isEmpty())
-				&& (dataFinal == null || dataFinal.trim().isEmpty())
-				&& idFornecedor == null && tipoDiferenca == null) {
+		if ((dataInicial == null || dataInicial.trim().isEmpty())
+				|| (dataFinal == null || dataFinal.trim().isEmpty())) {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING,
-					"Para realizar a pesquisa é necessário informar um ou mais filtro(s) da pesquisa!");
+					"Para realizar a pesquisa é necessário informar um Período de Data de Lançamento!");
 		}
-		
 	}
 	
 	/**
