@@ -5,16 +5,21 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -372,6 +377,206 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
+// TODO: remover metodo apos testes	
+//	public static void main(String[] args) {
+//		
+//		ConferenciaEncalheServiceImpl service = new ConferenciaEncalheServiceImpl();
+//		
+//		Integer primeiroDiaDaSemanaDistribuidor = Calendar.WEDNESDAY;
+//		
+//		Calendar cData = Calendar.getInstance();
+//		cData.set(2014, Calendar.JANUARY, 7);
+//		
+//		List<DiaSemanaRecolhimento> diasRecolhimento = service.obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(1, cData.getTime(), primeiroDiaDaSemanaDistribuidor);
+//		
+//		for(DiaSemanaRecolhimento dia : diasRecolhimento) {
+//			
+//			System.out.println(dia.data);
+//			System.out.println("dia ce "+dia.indDiaProgramadoRecolhimento);
+//			System.out.println("op. dif "+dia.indOperacaoDiferenciada);
+//			System.out.println("prim. dia rec"+dia.indPrimeiroDiaRecolhimento);
+//			System.out.println(dia.diaSemana);
+//			System.out.println("\n");
+//			
+//		}
+//		
+//		System.out.println("----------------------------------------------------------------------------");
+//		
+//		service.identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(diasRecolhimento);
+//		
+//		for(DiaSemanaRecolhimento dia : diasRecolhimento) {
+//			
+//			System.out.println(dia.data);
+//			System.out.println("dia ce "+dia.indDiaProgramadoRecolhimento);
+//			System.out.println("op. dif "+dia.indOperacaoDiferenciada);
+//			System.out.println("prim. dia rec"+dia.indPrimeiroDiaRecolhimento);
+//			System.out.println(dia.diaSemana);
+//			System.out.println("\n");
+//			
+//		}
+//		
+//	}
+	
+	private class DiaSemanaRecolhimento {
+		
+		public Date data;
+		public DiaSemana diaSemana;
+		public boolean indOperacaoDiferenciada;
+		public boolean indDiaProgramadoRecolhimento;
+		public boolean indPrimeiroDiaRecolhimento;
+		
+	}
+	
+	
+	private ChamadaEncalheCota validarRecolhimentoOperacaoDiferenciada(Cota cota, ProdutoEdicao produtoEdicao) {
+	
+		ChamadaEncalheCota cec = null; //TODO: obter a cec do produto e cota em questão
+		
+		Date dataRecolhimentoCE = null; //TODO: obter da cec acima
+		
+		Date dataOperacao = null;//TODO: obter data de operação
+		
+		List<Integer> diasSemanaDistribOperaRecolhimento = null; //TODO obter dia em que o distribuidor opera recolhimento
+		
+		List<Integer> diasSemanaOperacaoDiferenciada = null; //TODO obter dias da semana cota opera diferenciada
+		
+		Integer diaInicioSemanaRecolhimento = diasSemanaDistribOperaRecolhimento.get(0);
+		
+		Integer inicioSemana = null; //TODO obter o dia em que a semana inicia no distribuidor
+		//esta informacao se encontra no campo INICIO_SEMANA na tabela distribuidor
+		
+		List<Date> datasAposFinalizacaoPrazoRecolhimento = null; //TODO obter esta lista de datas
+		// em que é possivel aceitar o recolhimento após data planejada
+		// datas que são calculadas utilizando os parametros.
+		//
+		//		- Ordinal de dia recolhimento (1º a 5º)
+		//
+		//		- Dias da semana em que o distribuidor opera recolhimento
+		//		  ordenado a partir do primeiro dia da semana de recolhimento (INICIO_SEMANA na tabela distribuido)
+		//
+		//		- A contagem do primeiro ao quinto dia aceitavel inicia do primeiro
+		//        dia operacao diferenciada maior ou igual data de recolhimento. 
+		//		  sendo que os dias subsequentes são contados a cada dia em que (INICIO_SEMANA na tabela distribuido)
+		//		  
+		
+		return cec;
+		
+	}
+
+	
+	/**
+	 * Identifica o primeiro qual o primeiro dia de recolhimento na semana 
+	 * da cota de operacao diferenciada.
+	 * 
+	 * @param diasSemanaRecolhimentoOperacaoDiferenciada
+	 */
+	private void identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada) {
+		
+		//Se o dia programado de recolhimento for também dia de operação diferenciada então este
+		//é o primeiro dia de recolhimento
+		for(DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
+			if(dia.indDiaProgramadoRecolhimento && dia.indOperacaoDiferenciada) {
+				dia.indPrimeiroDiaRecolhimento = true;
+				return;
+			}
+		}
+		
+		int counter = 0;
+		int ownerPosition = -1;
+		boolean ceFound = false;
+		
+		Collections.reverse(diasSemanaRecolhimentoOperacaoDiferenciada);
+		
+		for(DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
+			
+			if(dia.indDiaProgramadoRecolhimento) {
+				ceFound = true;
+			}
+			
+			if(dia.indOperacaoDiferenciada) {
+				ownerPosition = counter;
+			}
+			
+			if(ceFound && ownerPosition!=-1){
+				break;
+			}
+			
+			++counter;
+			
+		}
+		
+		diasSemanaRecolhimentoOperacaoDiferenciada.get(ownerPosition).indPrimeiroDiaRecolhimento = true;
+		
+		Collections.reverse(diasSemanaRecolhimentoOperacaoDiferenciada);
+		
+	}
+	
+	/**
+	 * Retorna uma lista ordenada de objetos com informações sobre
+	 * as datas da semana de recolhimento da operação diferenciada
+	 * sendo esta semana baseada na data de recolhimento informada 
+	 * por parâmetro.
+	 * 
+	 * @param numeroCota
+	 * @param dataRecolhimentoCE
+	 * @param primeiroDiaDaSemanaDistribuidor
+	 * 
+	 * @return List - DiaSemanaRecolhimento
+	 */
+	private List<DiaSemanaRecolhimento> obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(
+			Integer numeroCota, 
+			Date dataRecolhimentoCE, 
+			Integer primeiroDiaDaSemanaDistribuidor) {
+		
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = null;//TODO: voltar apos testes grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		
+		//TODO: remover abaixo após os testes
+		diasSemanaOperacaoDiferenciada = new LinkedList<>();
+		diasSemanaOperacaoDiferenciada.add(DiaSemana.SEGUNDA_FEIRA);
+		diasSemanaOperacaoDiferenciada.add(DiaSemana.QUARTA_FEIRA);
+		diasSemanaOperacaoDiferenciada.add(DiaSemana.SEXTA_FEIRA);
+		
+		List<DiaSemanaRecolhimento> listaDiaSemanaRecolhimento = new ArrayList<>();
+
+		Calendar cData = Calendar.getInstance();
+		cData.setTime(dataRecolhimentoCE);
+		cData.setFirstDayOfWeek(primeiroDiaDaSemanaDistribuidor);
+		
+		Integer diaSemanaRecolhimentoProgramado = cData.get(Calendar.DAY_OF_WEEK);
+		
+		for(DiaSemana dia : DiaSemana.values()) {
+			
+			cData.set(Calendar.DAY_OF_WEEK, dia.getCodigoDiaSemana());
+			
+			DiaSemanaRecolhimento diaSemanaRecolhimento = new DiaSemanaRecolhimento();
+			diaSemanaRecolhimento.diaSemana = dia;
+			diaSemanaRecolhimento.data = cData.getTime();
+			diaSemanaRecolhimento.indDiaProgramadoRecolhimento = (diaSemanaRecolhimentoProgramado.intValue() == dia.getCodigoDiaSemana());
+			diaSemanaRecolhimento.indOperacaoDiferenciada = diasSemanaOperacaoDiferenciada.contains(dia);
+			diaSemanaRecolhimento.indPrimeiroDiaRecolhimento = false;
+			
+			listaDiaSemanaRecolhimento.add(diaSemanaRecolhimento);
+			
+		}
+		
+		Collections.sort(listaDiaSemanaRecolhimento, new Comparator<DiaSemanaRecolhimento>(){
+
+			@Override
+			public int compare(DiaSemanaRecolhimento o1,
+					DiaSemanaRecolhimento o2) {
+				return o1.data.compareTo(o2.data);
+			}
+			
+		});
+		
+		
+		return listaDiaSemanaRecolhimento;
+
+	}
+	
+	
+	
 	/**
 	 * Valida a existência de chamada de encalhe de acordo com a
 	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
@@ -388,8 +593,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 *  
 	 * @return ChamadaEncalhe
 	 */
-	private ChamadaEncalheCota validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
-
+	private ChamadaEncalheCota validarChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		if(isCotaOperacaoDiferenciada(cota.getNumeroCota())) {
+			//return validarChamadaEncalheParaCotaProdutoEdicaoOperacaoDiferenciada(cota, produtoEdicao);
+		}
+		
 		boolean postergado = false;
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		ChamadaEncalheCota chamadaEncalheCota = null;
@@ -640,6 +849,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	private boolean isCotaOperacaoDiferenciada(Integer numeroCota){
+		
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+
+		return (diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty());
+		
+		
+	}
+	
 	@Transactional(readOnly = true)
 	public void verificarCotaOperacaoDiferenciada(Integer numeroCota) {
 		
@@ -863,7 +1081,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
-			ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+			ChamadaEncalheCota chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
 			if( chamadaEncalheCota != null) {
 				
@@ -962,7 +1180,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
-			ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+			ChamadaEncalheCota chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
 			if( chamadaEncalheCota != null) {
 				
@@ -1075,7 +1293,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 		    for (ProdutoEdicao produtoEdicao : produtosEdicao) {
 		    
-				ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+				ChamadaEncalheCota chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 				
 				if( chamadaEncalheCota != null) {
 					
