@@ -11,15 +11,12 @@
             <nNF>2673891</nNF>
             <dEmi>2014-01-22</dEmi>
             <tpNF>1</tpNF>
-            <idDest>1</idDest>
             <cMunFG>3550308</cMunFG>
             <tpImp>2</tpImp>
             <tpEmis>1</tpEmis>
             <cDV>0</cDV>
             <tpAmb>2</tpAmb>
             <finNFe>1</finNFe>
-            <indFinal>0</indFinal>
-            <indPres>0</indPres>
             <procEmi>3</procEmi>
             <verProc>2.2.21</verProc>
         </ide>
@@ -55,7 +52,7 @@
                 <UF>SP</UF>
                 <CEP>13041070</CEP>
             </enderDest>
-            <indIEDest>1</indIEDest>
+            <IE>244989941114</IE>
         </dest>
         <det nItem="1">
             <prod>
@@ -63,7 +60,6 @@
                 <cEAN>12345678</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
-                <NVE>AA1234</NVE>
                 <EXTIPI>11</EXTIPI>
                 <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
@@ -81,7 +77,6 @@
                 <indTot>1</indTot>
             </prod>
             <imposto>
-            	<vTotTrib>10</vTotTrib>
             	<ICMS>
 					<ICMS00>
 						<orig>0</orig>
@@ -404,7 +399,6 @@
 			<ICMSTot>
 				<vBC>20000000.00</vBC>
 				<vICMS>18.00</vICMS>
-				<vICMSDeson>1</vICMSDeson>
 				<vBCST>0</vBCST>
 				<vST>0</vST>
 				<vProd>20000000.00</vProd>
@@ -423,15 +417,7 @@
 			<modFrete>0</modFrete>
 		</transp>
 		<cobr></cobr>
-		<pag>
-			<tPag>01</tPag>
-			<vPag>5.50</vPag>
-		</pag>
 		<infAdic></infAdic>
-		<exporta>
-			<UFSaidaPais>SP</UFSaidaPais>
-			<xLocExporta>1</xLocExporta>
-		</exporta>
 		<compra></compra>
 		<cana>
 			<safra>1234</safra>

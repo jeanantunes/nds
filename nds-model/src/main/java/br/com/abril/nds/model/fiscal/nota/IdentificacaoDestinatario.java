@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -73,6 +74,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	@Column(name="IE_DESTINATARIO", nullable=true, length=14)
 	@NFEExport(secao=TipoSecao.E, posicao=1, tamanho=14)
+	@XmlElement(name="IE")
 	private String inscricaoEstadual;
 	
 	/**

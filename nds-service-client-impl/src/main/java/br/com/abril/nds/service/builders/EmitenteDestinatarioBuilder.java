@@ -9,6 +9,9 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nota.CNPJDestinatario;
+import br.com.abril.nds.model.fiscal.nota.CPFDestinatario;
+import br.com.abril.nds.model.fiscal.nota.DocumentoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;;
@@ -67,6 +70,16 @@ public class EmitenteDestinatarioBuilder {
 		} else {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de destinatário não identificado.");
 		}
+		
+		DocumentoDestinatario documento = null;
+		if(cota.getPessoa() instanceof PessoaJuridica) { 
+			documento = new CNPJDestinatario();
+		} else {
+			documento = new CPFDestinatario();
+		}
+		documento.setDocumento(cota.getPessoa().getDocumento());
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual("123");
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setId(cota.getEnderecoPrincipal().getEndereco().getId());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());

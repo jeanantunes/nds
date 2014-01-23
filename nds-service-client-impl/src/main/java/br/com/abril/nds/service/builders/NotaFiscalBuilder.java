@@ -197,16 +197,7 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
 		
-		DocumentoDestinatario documento = null;
-		if(cota.getPessoa() instanceof PessoaJuridica) { 
-			documento = new CNPJDestinatario();
-		} else {
-			documento = new CPFDestinatario();
-		}
-		documento.setDocumento(cota.getPessoa().getDocumento());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 	}
-
 
 	public static void popularDadosTransportadora(NotaFiscal notaFiscal2, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro) {
 		
