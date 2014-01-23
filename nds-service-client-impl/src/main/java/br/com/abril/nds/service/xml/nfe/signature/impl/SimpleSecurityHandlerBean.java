@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;
@@ -10,6 +10,8 @@ import java.util.Enumeration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import br.com.abril.nds.service.xml.nfe.signature.SecurityCallBack;
 
 public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 	

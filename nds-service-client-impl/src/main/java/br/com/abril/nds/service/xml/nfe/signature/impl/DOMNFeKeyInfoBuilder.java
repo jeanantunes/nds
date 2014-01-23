@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.security.cert.Certificate;
 import java.util.Collections;
@@ -11,6 +11,8 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import br.com.abril.nds.service.xml.nfe.signature.KeyInfoBuilder;
 
 public class DOMNFeKeyInfoBuilder implements KeyInfoBuilder {
     

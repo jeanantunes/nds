@@ -1,9 +1,11 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.security.KeyStore;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+
+import br.com.abril.nds.service.xml.nfe.signature.SecurityHandler;
 
 public abstract class AbstractSecurityHandlerBean implements SecurityHandler, InitializingBean {
 	
