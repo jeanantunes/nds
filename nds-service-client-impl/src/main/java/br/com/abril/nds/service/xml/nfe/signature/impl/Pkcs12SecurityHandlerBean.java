@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.io.FileNotFoundException;
 import java.security.KeyStore;
@@ -12,6 +12,8 @@ import java.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+
+import br.com.abril.nds.service.xml.nfe.signature.SecurityCallBack;
 
 public class Pkcs12SecurityHandlerBean extends AbstractSecurityHandlerBean {
     

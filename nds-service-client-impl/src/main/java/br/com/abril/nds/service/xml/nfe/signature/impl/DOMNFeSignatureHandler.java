@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal.signature;
+package br.com.abril.nds.service.xml.nfe.signature.impl;
 
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -14,6 +14,10 @@ import org.w3c.dom.NodeList;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.service.xml.nfe.signature.SecurityCallBack;
+import br.com.abril.nds.service.xml.nfe.signature.SecurityHandler;
+import br.com.abril.nds.service.xml.nfe.signature.SignatureBuilder;
+import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 
 public class DOMNFeSignatureHandler implements SignatureHandler {
 
