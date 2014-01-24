@@ -27,6 +27,15 @@ import br.com.abril.nds.util.ItemAutoComplete;
 public interface ConferenciaEncalheService {
 	
 	/**
+	 * Retorna se a cota possui operação diferenciada.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaOperacaoDiferenciada(Integer numeroCota);
+	
+	/**
 	 * Retorna uma lista de box de recolhimento.
 	 * 
 	 * @return List - Box
@@ -260,7 +269,7 @@ public interface ConferenciaEncalheService {
 	
 	boolean isLancamentoParcial(Long idProdutoEdicao);
 	
-	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao);
+	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada);
 
 	BigDecimal obterValorTotalDesconto(Integer numeroCota, Date dataOperacao);
 

@@ -442,7 +442,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long produtoEdicaoId){
+	public Integer obterDiaDeRecolhimentoDaData(
+			Date dataConferencia, 
+			Date dataRecolhimento, 
+			Integer numeroCota, 
+			Long produtoEdicaoId ){
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
 		
@@ -484,7 +488,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * 
 	 * @return Map<Integer,Date>
 	 */
-	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento,List<Integer> diasSemanaDistribuidorOpera) {
+	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento, List<Integer> diasSemanaDistribuidorOpera) {
 		
 		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
 		

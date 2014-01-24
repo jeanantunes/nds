@@ -328,7 +328,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			try {
 				
 				this.conferenciaEncalheService.isDataRecolhimentoValida(
-					dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId());
+					dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId(), 
+					conferenciaEncalheService.isCotaOperacaoDiferenciada(numeroCota));
 				
 				produtosEdicaoValidos.add(produtoEdicao);
 				

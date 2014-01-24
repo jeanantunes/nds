@@ -926,6 +926,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				dto.setFornecedor(rs.getString("fornecedor"));
 				dto.setDataMovimento(rs.getDate("dataMovimento"));
 				dto.setObservacaoConferenciaEncalhe(rs.getString("observacaoConferenciaEncalhe"));
+				dto.setRecolhimento(rs.getInt("diaRecolhimento"));
 				
 				return dto;
 			}
@@ -1066,6 +1067,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 				sql.append(" CONFERENCIA_ENCALHE.OBSERVACAO AS observacaoConferenciaEncalhe, ");
 			}
+			
+			sql.append(" CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO AS diaRecolhimento, ");
 			
 			sql.append(" cota.TIPO_COTA as tipoCota, ");
 					
