@@ -200,6 +200,18 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             query.setParameter(i, paramsWhere.get(j++));
         }
 
+        ((SQLQuery) query).addScalar("cota", StandardBasicTypes.INTEGER);
+        ((SQLQuery) query).addScalar("classificacao", StandardBasicTypes.STRING);
+        ((SQLQuery) query).addScalar("nome", StandardBasicTypes.STRING);
+        ((SQLQuery) query).addScalar("npdv", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("reparteEstudo", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("reparteEstudoOrigemCopia", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("reparteSugerido", StandardBasicTypes.BIG_INTEGER);
+        ((SQLQuery) query).addScalar("leg", StandardBasicTypes.STRING);
+        ((SQLQuery) query).addScalar("cotaNova", StandardBasicTypes.BOOLEAN);
+        ((SQLQuery) query).addScalar("juramento", StandardBasicTypes.BIG_DECIMAL);
+        ((SQLQuery) query).addScalar("ultimoReparte", StandardBasicTypes.BIG_DECIMAL);
+
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
         return query.list();
     }
