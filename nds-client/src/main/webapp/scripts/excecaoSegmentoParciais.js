@@ -221,11 +221,13 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 										result.mensagens.listaMensagens);
 
 								$(".grids").hide();
+								$(".areaBts").hide();
 
 								return result;
 							}
 
 							$(".grids").show();
+							$(".areaBts").show();
 
 							return result;
 						};
@@ -304,6 +306,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 									result.mensagens.listaMensagens);
 
 							$(".grids").hide();
+							$(".areaBts").hide();
 
 							return result;
 						}
@@ -323,6 +326,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						});
 						
 						$(".grids").show();
+						$(".areaBts").show();
+						
 
 						return result;
 					}
@@ -379,6 +384,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 									result.mensagens.listaMensagens);
 
 							$(".grids").hide();
+							$(".areaBts").hide();
 
 							return result;
 						}
@@ -401,6 +407,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						});
 						
 						$(".grids").show();
+						$(".areaBts").show();
 
 						return result;
 					}
@@ -479,6 +486,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 									result.mensagens.listaMensagens);
 
 							$(".grids").hide();
+							$(".areaBts").hide();
 
 							return result;
 						}
@@ -501,6 +509,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						});
 						
 						$(".grids").show();
+						$(".areaBts").show();
 
 						return result;
 					}
@@ -578,6 +587,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 									result.mensagens.listaMensagens);
 
 							$(".grids").hide();
+							$(".areaBts").hide();
 
 							return result;
 						}
@@ -645,6 +655,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						});
 						
 						$(".grids").show();
+						$(".areaBts").show();
 
 						return result;
 					}
@@ -939,8 +950,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	},
 	
 	porCota : function (){
-		$('#excecaoSegmentoParciais_porCota').show();
-		$('#excecaoSegmentoParciais_porExcessao').hide();
+		$('.porCota').show();
+		$('.porExcessao').hide();
 		
 		if($(".pesquisaPorSegmento").is(":checked")){
 			excecaoSegmentoParciaisController.alteraLegendResultadoSegmento();
@@ -973,8 +984,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	porExcecao : function porExcessao(){
 		
-		$('#excecaoSegmentoParciais_porCota').hide();
-		$('#excecaoSegmentoParciais_porExcessao').show();
+		$('.porCota').hide();
+		$('.porExcessao').show();
 		
 		
 		if($(".pesquisaPorSegmento").is(":checked")){
@@ -1207,7 +1218,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	filtroPorCota : function filtroPorCota(){
 		$('#excecaoSegmentoParciais_filtroPorCota').show();
 		$('#excecaoSegmentoParciais_filtroPorProduto').hide();
-		$('#excecaoSegmentoParciais_porExcessao').hide();
+		$('.porExcessao').hide();
 		
 		$('#numeroCotaFiltroPrincipal').val('');
 	    $('#nomeCotaFiltroPrincipal').val('');
@@ -1218,7 +1229,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	filtroPorProduto: function filtroPorProduto(){
 		$('#excecaoSegmentoParciais_filtroPorCota').hide();
 		$('#excecaoSegmentoParciais_filtroPorProduto').show();
-		$('#excecaoSegmentoParciais_porCota').hide();
+		$('.porCota').hide();
 		
 		$('#codigoProdutoPrincipal').val('');
 	    $('#nomeProdutoPrincipal').val('');
@@ -1231,7 +1242,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	limparCampos: function limparCampos() {
 		$('#excecaoSegmentoParciais_filtroPorProduto').hide();
-		$('#excecaoSegmentoParciais_porCota').hide();
+		$('.porCota').hide();
 	    $('#numeroCotaFiltroPrincipal').val('');
 	    $('#nomeCotaFiltroPrincipal').val('');
 	    $('#codigoProdutoPrincipal').val('');

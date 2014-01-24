@@ -1,8 +1,76 @@
 <!-- mixCotaProduto -->
-<br clear="all"/>
+    <div class="areaBts">
+		<div class="area">
+			<div class="pesqCota" style="display:none;">
+				<span class="bt_novos"   id="btAddLoteMixCota">
+					<a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();" rel="tipsy" title="Adicionar em Lote">
+						<img src="images/ico_integrar.png" hspace="5" border="0" />
+					</a>
+				</span>
+		         <span class="bt_novos" id="btNovoMixCota">
+		         	<a href="javascript:mixCotaProdutoController.novoMixPorCota();" rel="tipsy" title="Novo" >
+		         		<img src="images/ico_salvar.gif" hspace="5" border="0" />
+		         	</a>
+		         </span>
+		         <span class="bt_novos" id="btExcluirTudoCota">
+		         	<a href="javascript:mixCotaProdutoController.excluirTodos();" rel="tipsy" title="Excluir Todos">
+		         		<img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />
+		         	</a>
+		         </span>
+				 <span class="bt_novos" id="btCopiaMix">
+				 	<a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()" rel="tipsy" title="C&oacute;pia de Mix">
+				 		<img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />
+				 	</a>
+				 </span>
+		         <span class="bt_arq" id="btGerarArquivoMixCota">
+		         	<a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+		         		<img src="images/ico_excel.png" hspace="5" border="0" />
+		         	</a>
+		         </span>
+		         <span class="bt_arq" id="btImprimirMixCota">
+		         	<a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=PDF" rel='tipsy' title="Imprimir">
+		         		<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+		         	</a>
+		         </span>
+			</div>
+			<div class="pesqProduto" style="display:none;">
+				 <span class="bt_novos" id="btAddLoteMixCota">
+				 	<a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();" rel="tipsy" title="Adicionar em Lote">
+				 		<img src="images/ico_integrar.png" hspace="5" border="0" />
+				 	</a>
+				 </span>
+         		<span class="bt_novos" id="btNovoMixProduto">
+         			<a href="javascript:;" onclick="mixCotaProdutoController.novoMixPorProduto()" rel="tipsy" title="Novo">
+         				<img src="images/ico_salvar.gif" hspace="5" border="0" />
+         			</a>
+         		</span>
+				
+				<span class="bt_novos" id="btExcluirTudoProduto">
+					<a href="javascript:mixCotaProdutoController.excluirTodos();" rel="tipsy" title="Excluir Todos" >
+						<img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_novos" id="btCopiaMix">
+					<a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()" rel="tipsy" title="C&oacute;pia de Mix">
+						<img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_arq" id="btGerarArquivoMixProduto">
+					<a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridProduto?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+						<img src="images/ico_excel.png" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_arq" id="btImprimirMixProduto">
+					<a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridProduto?fileType=PDF" rel="tipsy" title="Imprimir">
+						<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
+					</a>
+				</span>
+			</div>
+		</div>  		  		
+	</div>
+	<br clear="all"/>
     <br />
-    
-     <div class="container">
+  	<div class="linha_separa_fields">&nbsp;</div>
     	
       <fieldset class="classFieldset">
    	    <legend> Pesquisar Mix de Produto</legend>
@@ -43,35 +111,15 @@
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display:block;">
-      <fieldset class="classFieldset pesqCota" style="display:none;">
-       	  <legend >Cota: &nbsp;<span id="spanLegendCota"></span></legend>
-        
-        	<table class="mixCotasGrid"></table>
-
-        	
-        	
-          <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
-         
-         <span class="bt_novos" title="Novo"  id="btNovoMixCota"><a href="javascript:mixCotaProdutoController.novoMixPorCota();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-         <!--<span class="bt_novos" title="Histórico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histï¿½rico</a></span>-->
-         <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-         <span class="bt_novos" title="Imprimir" id="btImprimirMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=PDF"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-		 <span class="bt_novos" title="Excluir Todos" id="btExcluirTudoCota"><a href="javascript:mixCotaProdutoController.excluirTodos();"><img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />Excluir Todos</a></span>
-		 <span class="bt_novos" title="Cópia de mix" id="btCopiaMix"><a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />C&oacute;pia de Mix</a></span>
-            
-      </fieldset>
-            
-      <fieldset class="classFieldset pesqProduto" style="display:none;">
-       	  <legend>Produto: &nbsp;<span id="spanLegendProduto"></span></legend>
-        
-        	<table class="mixProdutosGrid"></table>
-         <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
-         <span class="bt_novos" title="Novo" id="btNovoMixProduto"><a href="javascript:;" onclick="mixCotaProdutoController.novoMixPorProduto()"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-         <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoMixProduto"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridProduto?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-        <span class="bt_novos" title="Imprimir" id="btImprimirMixProduto"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridProduto?fileType=PDF"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-        <span class="bt_novos" title="Excluir Todos" id="btExcluirTudoProduto"><a href="javascript:mixCotaProdutoController.excluirTodos();"><img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />Excluir Todos</a></span>
-        		 <span class="bt_novos" title="Cópia de mix" id="btCopiaMix"><a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />C&oacute;pia de Mix</a></span>
-      </fieldset>
+	      <fieldset class="classFieldset pesqCota" style="display:none;">
+	       	 <legend >Cota: &nbsp;<span id="spanLegendCota"></span></legend>
+	         <table class="mixCotasGrid"></table>
+	      </fieldset>
+	            
+	      <fieldset class="classFieldset pesqProduto" style="display:none;">
+	       	  	<legend>Produto: &nbsp;<span id="spanLegendProduto"></span></legend>
+	        	<table class="mixProdutosGrid"></table>
+	       </fieldset>
        </div>
        
       <div class="linha_separa_fields">&nbsp;</div>

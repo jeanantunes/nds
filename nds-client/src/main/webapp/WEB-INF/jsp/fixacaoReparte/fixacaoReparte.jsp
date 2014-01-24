@@ -164,6 +164,66 @@ function mostraIntervalo(){
           </fieldset>
 	   
       </div>
+
+<div class="areaBts">
+		<div class="area">
+			<div class="porExcessao" style="display:none">
+				<span class="bt_novos" id="btNovoProduto">
+					<a href="javascript:;" rel="tipsy" title="Incluir Novo">
+						<img src="images/ico_salvar.gif" hspace="5" border="0" />
+					</a>
+				</span>
+	            <span class="bt_novos" id="btAddLoteProduto">
+	            	<a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();" rel="tipsy" title="Adicionar em Lote">
+	            		<img src="images/ico_integrar.png" hspace="5" border="0" />
+	            	</a>
+	            </span>
+				<span class="bt_novos" id="btCopiaMix">
+					<a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()" rel="tipsy" title="C&oacute;pia de Fixa&ccedil;&atilde;o">
+						<img src="images/ico_negociar.png" alt="Cópia de Fixação" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_arq" id="btGerarArquivoProduto">
+     	    		<a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto" rel="tipsy" title="Gerar Arquivo">
+     	    			<img src="images/ico_excel.png" hspace="5" border="0" />
+     	    		</a>
+     	    	</span>
+				<span class="bt_arq" id="btImprimirProduto">
+					<a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto" rel="tipsy" title="Imprimir">
+						<img src="images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+			</div>
+			<div class="porCota" style="display:none;">
+				<span class="bt_novos" id="btNovoCota">
+					<a href="javascript:;" rel="tipsy" title="Incluir Novo">
+						<img src="images/ico_salvar.gif" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_novos" id="btAddLoteCota">
+					<a href="javascript:;" onclick="fixacaoReparteController.add_lote();" rel="tipsy" title="Adicionar em Lote">
+						<img src="images/ico_integrar.png" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_novos" id="btCopiaMix">
+					<a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()" rel="tipsy" title="C&oacute;pia de Fixa&ccedil;&atilde;o">
+						<img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_arq" id="btGerarArquivoCota">
+					<a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota" rel="tipsy" title="Gerar Arquivo">
+						<img src="images/ico_excel.png" hspace="5" border="0" />
+					</a>
+				</span>
+				<span class="bt_arq" id="btImprimirCota">
+					<a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota" rel="tipsy" title="Imprimir">
+						<img src="images/ico_impressora.gif" hspace="5" border="0" />
+					</a>
+				</span>
+			</div>
+		</div>
+</div>
+
      
 <br clear="all"/>
     <br />
@@ -220,24 +280,13 @@ function mostraIntervalo(){
 	      <div class="porExcessao" id="fixacaoReparte_fixacaoProduto" style="display:none;">
 		      <fieldset class="classFieldset">
 		       	  	<legend>Fixação Produto</legend>
-		        		<table class="fixacaoProdutoGrid"></table>
- 			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
-	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-						<span class="bt_novos" title="Cópia de Fixação" id="btCopiaMix"><a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Fixação" hspace="5" border="0" />C&oacute;pia de Fixa&ccedil;&atilde;o</a></span>
+		        	<table class="fixacaoProdutoGrid"></table>
 		      </fieldset>
 	      </div>
 	       <div class="porCota" id="fixacaoReparte_porCota" style="display:none;">
 		      <fieldset class="classFieldset">
-		       	  <legend>Produtos</legend>
-		        
-		        	<table class="fixacaoCotaGrid"></table> 
-		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota"><a href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
-		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-					<span class="bt_novos" title="Cópia de Fixação" id="btCopiaMix"><a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />C&oacute;pia de Fixa&ccedil;&atilde;o</a></span>
+		       	 <legend>Produtos</legend>
+		        <table class="fixacaoCotaGrid"></table> 
 		      </fieldset>
    		   </div>
    		   
@@ -313,9 +362,9 @@ function mostraIntervalo(){
 
 		    <br clear="all" />
 
-		     <span class="bt_novos" title="Gerar Arquivo"><a id="historicoXLS" ><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		     <span class="bt_novos"><a id="historicoXLS" rel="tipsy" title="Gerar Arquivo"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-		    <span class="bt_novos" title="Imprimir"><a id="historicoPDF" ><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		    <span class="bt_novos"><a id="historicoPDF" rel="tipsy" title="Imprimir"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		   </fieldset>
 	</div>
 
@@ -323,7 +372,7 @@ function mostraIntervalo(){
 	<div id="modalUploadArquivo" title="Adicionar em Lote" style="display:none;">
 	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
 			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
-			<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+			<p ><span class="bt_novos"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls" rel="tipsy" title="Download Modelo"><img align="center" src="images/ico_excel.png" hspace="5" border="0" /></a></span></p>
 			<br><br><br>
 			<hr>
 			<p>Selecione um arquivo para upload:</p>
