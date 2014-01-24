@@ -38,7 +38,7 @@ function mostraFiltroPorCota(){
 	$('#porCota_nomeCota').val(null);
 	$('#classificacaoNaoRecebida_filtroPorCota').show();
 	$('#classificacaoNaoRecebida_filtroPorClassificacao').hide();
-	$('#classificacaoNaoRecebida_porClassificacao').hide();
+	$('.porClassificacao').hide();
 	$('#cotasQueRecebem_numeroCota').val('');
 	$('#cotasQueRecebem_nomeCota').val('');
 }
@@ -47,7 +47,7 @@ function mostraFiltroPorClassificacao(){
 	$('#selectClassificacao').val(null);
 	$('#classificacaoNaoRecebida_filtroPorCota').hide();
 	$('#classificacaoNaoRecebida_filtroPorClassificacao').show();
-	$('#classificacaoNaoRecebida_porCota').hide();	
+	$('.porCota').hide();	
 	$('#cotasQueRecebem_numeroCota').val('');
 	$('#cotasQueRecebem_nomeCota').val('');
 }
@@ -71,6 +71,46 @@ function mostraFiltroPorClassificacao(){
 
 <div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o">
 	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
+</div>
+
+<div class="areaBts">
+    <div class="area">
+        <div class="porClassificacao" style="display:none;">
+          <span class="bt_novos">
+            <a href="javascript:;" id="confirmarInclusaoDaCotaNaClassificacaoNaoRecebida" rel="tipsy" title="Confirmar" >
+              <img src="images/ico_check.gif" hspace="5" border="0" />
+            </a>
+          </span>
+          <span class="bt_arq" >
+            <a href="javascript:;" id="porClassificacaoGerarXLS" rel="tipsy" title="Gerar Arquivo">
+              <img src="images/ico_excel.png" hspace="5" border="0" />
+            </a>
+          </span>
+          <span class="bt_arq">
+            <a href="javascript:;" id="porClassificacaoGerarPDF" rel="tipsy" title="Imprimir">
+              <img src="images/ico_impressora.gif" hspace="5" border="0" />
+            </a>
+          </span>
+        </div>
+        <div class="porCota" style="display:none;">
+          <span class="bt_novos">
+            <a href="javascript:;" id="confirmarInclusaoDaClassificacaoNaCota" rel="tipsy" title="Confirmar">
+              <img src="images/ico_check.gif" hspace="5" border="0" />
+            </a>
+          </span>
+          <span class="bt_arq">
+            <a href="javascript:;" id="porCotaGerarXLS" rel="tipsy" title="Gerar Arquivo">
+              <img src="images/ico_excel.png" hspace="5" border="0" />
+            </a>
+          </span>
+          <span class="bt_arq" >
+            <a href="javascript:;" id="porCotaGerarPDF" rel="tipsy" title="Imprimir">
+              <img src="images/ico_impressora.gif" hspace="5" border="0" />
+            </a>
+          </span>
+        </div>
+
+    </div>
 </div>
 
 <div class="corpo">
@@ -135,10 +175,7 @@ function mostraFiltroPorClassificacao(){
        	  <legend>Cotas que  N&atilde;o Recebem</legend>
         
         	<table class="classificaNaoRecebidaGrid"></table>
-             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="porClassificacaoGerarXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;" id="porClassificacaoGerarPDF"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-        
+             
       </fieldset>
 
       
@@ -155,7 +192,7 @@ function mostraFiltroPorClassificacao(){
    	      </table>
        	  <br />
         	<table class="classificacaoGrid"></table>
-              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="confirmarInclusaoDaCotaNaClassificacaoNaoRecebida"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+              
         
       </fieldset>
       </div>
@@ -166,9 +203,7 @@ function mostraFiltroPorClassificacao(){
        	  <legend>Classifica&ccedil;&otilde;es N&atilde;o Recebidas</legend>
         
         	<table class="classificaCotaGrid"></table>
-             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="porCotaGerarXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;" id="porCotaGerarPDF"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+             
         
       </fieldset>
      
@@ -176,7 +211,7 @@ function mostraFiltroPorClassificacao(){
        	  <legend>Classifica&ccedil;&otilde;es Recebidas</legend>
        	  <br />
         	<table class="classificacaoBGrid"></table>
-              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="confirmarInclusaoDaClassificacaoNaCota"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+              
         
       </fieldset>
       </div>

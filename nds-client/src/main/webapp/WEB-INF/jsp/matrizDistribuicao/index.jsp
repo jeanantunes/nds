@@ -5,15 +5,9 @@
 }
 
 .opcoesEstudos {
-position: absolute;
-bottom: 0px;
-width: 220px;
-margin-bottom: 1px;
-border-radius: 0px 8px 8px 0px;
-box-shadow: 0px -1px 3px 6px rgba(0, 0, 0, 0.2);
-background: url(${pageContext.request.contextPath}/images/bg_header.jpg) repeat-x bottom left #fff;
+
 padding: 15px;
-display: none;
+display: none; position:absolute; border:1px solid #ccc; background:#FFF; width:220px; z-index:10;top: 35px;
 }
 
 .gridLinha {
@@ -97,6 +91,88 @@ var lancamentosSelecionados = [];
 		   	<jsp:include page="../messagesDialog.jsp">
 				<jsp:param value="dialog-novo" name="messageDialog"/>
 			</jsp:include>
+			
+			
+			<div class="areaBts">
+				<div class="area">
+				<div id=btnsMatrizDistribuicao style="display: none;">
+							<span class="bt_novos">
+			         	  		<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
+									<img id="imgExcluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"/>
+ 						        </a>
+		         	  		</span>
+		         	  		
+		         	  		<div class="bt_novos" style="position:relative; z-index:1;" >
+				        		<a href="javascript:;" onclick="matrizDistribuicao.mostrarOpcoes();" rel="tipsy" title="Opções">
+				        			<img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0"/><img src="${pageContext.request.contextPath}/images/p7PM_dark_south.gif" width="14" height="8" border="0" class="setaMuda" />
+				        		</a>
+				        		<div class="opcoesEstudos" >
+						            <ul style="list-style-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);line-height:0px">
+							               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.distribuicaoVendaMedia();"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
+							               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.gerarEstudoManual();"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
+							               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
+							               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.dividirEstudo();"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
+							               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.estudoComplementarShow();" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
+							               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
+						           </ul>
+  							 	</div>
+       	  					</div>
+						        	
+		         	  		<span class="bt_novos">
+			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();" rel="tipsy" title="Finalizar Matriz de Distribui&ccedil&atildeo">
+		         	  					<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0"/>
+			         	  			</a>
+		         	  		</span>	
+		         	  		
+<!-- 		         	  		<span class="bt_novos"> -->
+<!-- 						         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();"> -->
+<%-- 								        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0"> --%>
+<!-- 								         	 Reabrir Itens -->
+<!-- 						        		</img> -->
+<!-- 						        	</a> -->
+<!-- 		         	  		</span>	 -->
+		         	  		
+		         	  		<span class="bt_novos">
+			         	  			<a id="linkReabrir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_estudo();" rel="tipsy" title="Reabrir Estudo">
+							        		<img id="imgReabrirEst" src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />
+							        </a>
+		         	  		</span>
+		         	  		
+		         	  		<span class="bt_novos">
+			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analise()" rel="tipsy" title="Analisar Estudo">
+		         	  					<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0"/>
+			         	  			</a>
+		         	  		</span>
+		         	  		
+		         	  		<span class="bt_novos">
+								<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_duplicarLinha();" rel="tipsy" title="Duplicar Linha">
+									<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" /></a>
+							</span>
+							
+							<span class="bt_novos" id="spanGerarEstudoAutomatico">
+								<a id="linkGerarEstudoAutomatico" href="#" onclick="" rel="tipsy" title="Gera&ccedil;&atilde;o Autom&aacute;tica">
+									<img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />
+								</a>
+							</span>
+		         	  		
+		         	  		<span class="bt_arq">
+								<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+							    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+						   	 	</a>
+						   	</span>
+							<span class="bt_arq">
+								<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+							    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0"/>
+						    	</a>
+							</span>
+								
+						</div>
+				
+				</div>
+			</div>
+			
+			<div class="linha_separa_fields">&nbsp;</div>
+			<div class="linha_separa_fields">&nbsp;</div>
 		     
 			    <div id="telaPesquisaMatriz"> 
 			      <fieldset class="fieldFiltroMatriz">
@@ -141,93 +217,18 @@ var lancamentosSelecionados = [];
 		        
 		       	   <table id="lancamentoMatrizDistribuicaoGrid" class="lancamentoMatrizDistribuicaoGrid"></table>
 		         	  		
-		         	  		<span class="bt_novos">
-			         	  			<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
-									<img id="imgExcluir" src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0"> 
- 						        		Excluir Estudo 
- 						        	</img> 
- 						        </a>
-		         	  		</span>
 		         	  		
-		         	  		<div class="bt_novos" style="position:relative; z-index:1;" >
-							        		<a href="javascript:;" onclick="matrizDistribuicao.mostrarOpcoes();" ><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0"/>Opções<img src="${pageContext.request.contextPath}/images/p7PM_dark_south.gif" width="14" height="8" border="0" class="setaMuda" /></a>
-						        		<div class="opcoesEstudos" >
-								            <ul>
-									               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.distribuicaoVendaMedia();"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
-									               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.gerarEstudoManual();"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
-									               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
-									               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.dividirEstudo();"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
-									               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.estudoComplementarShow();" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
-									               <li><a href="javascript:;" onmouseover="$(this).parent().mouseout(function() {});" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
-								           </ul>
-          							 	</div>
-       	  					</div>
-						        	
-		         	  		<span class="bt_novos">
-			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();">
-		         	  			<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
-				         	  				Finalizar Matriz de Distribui&ccedil&atildeo
-		         	  			</img>
-			         	  			</a>
-		         	  		</span>	
 		         	  		
-<!-- 		         	  		<span class="bt_novos"> -->
-<!-- 						         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();"> -->
-<%-- 								        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0"> --%>
-<!-- 								         	 Reabrir Itens -->
-<!-- 						        		</img> -->
-<!-- 						        	</a> -->
-<!-- 		         	  		</span>	 -->
-		         	  		
-		         	  		<span class="bt_novos">
-			         	  			<a id="linkReabrir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_estudo();" rel="tipsy" title="Reabrir Estudo">
-							        		<img id="imgReabrirEst" src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />
-							        			Reabrir Estudo
-		         	  			</img>
-							        	</a>
-		         	  		</span>
-		         	  		
-		         	  		<span class="bt_novos">
-			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analise()" rel="tipsy" title="Analisar Estudo">
-		         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-			         	  						An&aacutelise
-		         	  			</img>
-			         	  			</a>
-		         	  		</span>
-		         	  		
-		         	  		<span class="bt_novos">
+		         	  		<span class="bt_arq">
 			         	  			<input type="checkbox" id="selTodos" name="Todos" onclick="matrizDistribuicao.checkUncheckLancamentos()">
 		         	  				Selecionar Todos
-		         	  			</input>
+		         	  			
 		         	  		</span>
 				 </br>	
 					
 				<div>
 					<table width="650" border="0" align="left">
-						<tr>
-							<td align="left">
-								<span class="bt_novos" style="float:left;">
-									<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-								    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" >Arquivo</img>
-							   	 	</a>
-							   	</span>
-							</td>
-							<td>
-								<span class="bt_novos" title="Imprimir">
-									<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-								    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
-							    	</a>
-								</span>
-							</td>
-							<td align="left">
-								<span class="bt_novos">
-											<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_duplicarLinha();"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
-								</span>
-							</td>
-							<td>
-								<span class="bt_novos" id="spanGerarEstudoAutomatico"><a id="linkGerarEstudoAutomatico" href="#" onclick=""><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Gera&ccedil;&atilde;o Autom&aacute;tica</a></span>
-							</td>
-						</tr>
+						
 						<tr>
 							<td colspan="4">
 								<b>Total previsto na matriz para estudos gerados:</b> &nbsp;<span id="totalGerado"></span>, &nbsp;<b>liberados:&nbsp;</b> <span id="totalLiberado"></span>
