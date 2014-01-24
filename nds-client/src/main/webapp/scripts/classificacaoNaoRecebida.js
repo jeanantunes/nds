@@ -88,12 +88,12 @@
 
 			params.push({
 				name : "filtro.cotaDto.numeroCota",
-				value : $('#cotasQueRecebem_numeroCota').val()
+				value : $('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).val()
 			});
 			
 			params.push({
 				name : "filtro.cotaDto.nomePessoa",
-				value : $('#cotasQueRecebem_nomeCota').val()
+				value : $('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).val()
 			});
 			
 			params.push({
@@ -157,8 +157,8 @@
 						
 						if (options !== undefined) {
 							if (options.workspace === undefined) {
-								$("." + this.gridName).flexOptions(options);
-								$("." + this.gridName).flexReload();
+								$("." + this.gridName, classificacaoNaoRecebidaController.workspace).flexOptions(options);
+								$("." + this.gridName, classificacaoNaoRecebidaController.workspace).flexReload();
 							}else {
 								$("." + this.gridName, options.workspace).flexOptions(options);
 								$("." + this.gridName, options.workspace).flexReload();
@@ -191,7 +191,7 @@
 				if(idForm === undefined){
 					return null;
 				}else {
-					filtro = $('#' + idForm).serializeArray();
+					filtro = $('#' + idForm, classificacaoNaoRecebidaController.workspace).serializeArray();
 					
 					for ( var index in filtro) {
 						if (filtro[index].value === "on") {
@@ -229,11 +229,11 @@
 						}
 
 						if (result.rows.length === 0) {
-							$('#porClassificacaoGerarXLS').hide();
-							$('#porClassificacaoGerarPDF').hide();
+							$('#porClassificacaoGerarXLS', classificacaoNaoRecebidaController.workspace).hide();
+							$('#porClassificacaoGerarPDF', classificacaoNaoRecebidaController.workspace).hide();
 						}else {
-							$('#porClassificacaoGerarXLS').show();
-							$('#porClassificacaoGerarPDF').show();
+							$('#porClassificacaoGerarXLS', classificacaoNaoRecebidaController.workspace).show();
+							$('#porClassificacaoGerarPDF', classificacaoNaoRecebidaController.workspace).show();
 						}
 						
 						$.each(result.rows, function(index, row) {
@@ -379,11 +379,11 @@
 						}
 
 						if (result.rows.length === 0) {
-							$('#porCotaGerarXLS').hide();
-							$('#porCotaGerarPDF').hide();
+							$('#porCotaGerarXLS', classificacaoNaoRecebidaController.workspace).hide();
+							$('#porCotaGerarPDF', classificacaoNaoRecebidaController.workspace).hide();
 						}else {
-							$('#porCotaGerarXLS').show();
-							$('#porCotaGerarPDF').show();
+							$('#porCotaGerarXLS', classificacaoNaoRecebidaController.workspace).show();
+							$('#porCotaGerarPDF', classificacaoNaoRecebidaController.workspace).show();
 						}
 						
 						$.each(result.rows, function(index, row) {
@@ -477,7 +477,7 @@
 					}
 				},
 				init : 
-					$(".classificacaoBGrid").flexigrid({
+					$(".classificacaoBGrid", classificacaoNaoRecebidaController.workspace).flexigrid({
 						colModel : [ {
 							display : 'Classificação',
 							name : 'descricao',
@@ -500,7 +500,7 @@
 		
 		$(document).ready(function(){
 			
-			mostraFiltroPorClassificacao();
+			classificacaoNaoRecebidaController.mostraFiltroPorClassificacao();
 			focusSelectRefField($("#radio", classificacaoNaoRecebidaController.workspace));
 			$("#radio", classificacaoNaoRecebidaController.workspace).attr("checked", true);
 			
@@ -798,6 +798,45 @@
 			delay : 0,
 		});
 	},
+	
+	mostraFiltroPorCota : function (){
+		$('#porCota_numeroCota', classificacaoNaoRecebidaController.workspace).val(null);
+		$('#porCota_nomeCota', classificacaoNaoRecebidaController.workspace).val(null);
+		$('#classificacaoNaoRecebida_filtroPorCota', classificacaoNaoRecebidaController.workspace).show();
+		$('#classificacaoNaoRecebida_filtroPorClassificacao', classificacaoNaoRecebidaController.workspace).hide();
+		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
+		$('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).val('');
+		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).val('');
+	},
+
+	mostraFiltroPorClassificacao : function(){
+		$('#selectClassificacao', classificacaoNaoRecebidaController.workspace).val(null);
+		$('#classificacaoNaoRecebida_filtroPorCota', classificacaoNaoRecebidaController.workspace).hide();
+		$('#classificacaoNaoRecebida_filtroPorClassificacao', classificacaoNaoRecebidaController.workspace).show();
+		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).hide();	
+		$('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).val('');
+		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).val('');
+	},
+	
+	excluirClassificacao : function() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+		$( "#dialog-excluir" ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					$("#effect").show("highlight", {}, 1000, callback);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	}
 	
 }, BaseController);
 
