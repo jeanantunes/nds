@@ -581,7 +581,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		} else if (cotaEstudo.isCotaExcecaoSegmento()) {
 		    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento.getCodigo());
 		}
-		if (cotaEstudo.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO.name()) && !cotaEstudo.isMix()) {
+		if (cotaEstudo.getTipoDistribuicao() != null && 
+				cotaEstudo.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO.name()) && 
+				!cotaEstudo.isMix()) {
 		    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao.getCodigo());
 		    cota.setReparte(null);
 		    continue;
