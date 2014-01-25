@@ -268,8 +268,7 @@ public class ProdutoEdicaoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		ProdutoEdicaoDTO dto =
-			produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
+		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
