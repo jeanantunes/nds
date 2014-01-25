@@ -48,7 +48,7 @@ public class DetalheNotaFiscal implements Serializable {
 	/**
 	 * Encargos financeiros
 	 */
-	@OneToOne(optional = false, mappedBy = "produtoServico")
+	@OneToOne(optional = false, mappedBy = "detalheNotaFiscal")
 	@PrimaryKeyJoinColumn
 	@NFEExportType
 	@XmlElement(name="imposto")
