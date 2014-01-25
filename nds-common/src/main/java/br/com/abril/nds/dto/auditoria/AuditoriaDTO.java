@@ -6,7 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.enums.TipoOperacaoSQL;
 
-import com.google.gson.annotations.SerializedName;
+//import com.google.gson.annotations.SerializedName;
 
 /**
  * Representa a auditoria de dados de uma determinada entidade.
@@ -18,10 +18,10 @@ public class AuditoriaDTO implements Serializable {
 
 	private static final long serialVersionUID = -4274656580261284880L;
 
-	@SerializedName("_id")
+	//@SerializedName("_id")
 	private String idAuditoria;
 
-	@SerializedName("_rev")
+	//@SerializedName("_rev")
 	private String revisao;
 
 	private String entidadeAuditada;
