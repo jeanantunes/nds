@@ -11,6 +11,9 @@
 	src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/geracaoNFe.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+
 <style type="text/css">
 fieldset label {
 	width: auto;

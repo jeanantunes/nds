@@ -12,7 +12,7 @@ import br.com.abril.nds.model.fiscal.nota.CNPJEmitente;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 
 public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 	
@@ -53,7 +53,7 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		}
 		
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setEndereco(new NotaFicalEndereco());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setEndereco(new NotaFiscalEndereco());
 		}
 		
 		// Dados do Distribuidor

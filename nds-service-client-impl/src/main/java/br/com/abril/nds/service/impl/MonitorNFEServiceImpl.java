@@ -52,7 +52,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -266,7 +266,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 		
 		String documento 	= identificacaoEmitente.getDocumento().getDocumento();
-		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
+		NotaFiscalEndereco endereco 	= identificacaoEmitente.getEndereco();
 		Telefone telefone 	= identificacaoEmitente.getTelefone();
 	
 		String emissorNome 							 = identificacaoEmitente.getNome();
@@ -384,7 +384,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		String documento 			= identificacaoDestinatario.getDocumento().getDocumento();
 		
-		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
+		NotaFiscalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 		
 		boolean indPessoaJuridica = false;
@@ -490,7 +490,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		InformacaoTransporte informacaoTransporte = notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte();
 		
-		Endereco endereco = informacaoTransporte.getEndereco();
+		NotaFiscalEndereco endereco = informacaoTransporte.getEndereco();
 		
 		Veiculo veiculo = informacaoTransporte.getVeiculo();
 		

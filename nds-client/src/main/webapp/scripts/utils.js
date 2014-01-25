@@ -650,7 +650,7 @@ var handler = {
 		keyup:function(e) {
 			delete handler.keys[e.which];
 		}
-}
+};
 
 /**
  * Objeto para gerenciar pageRefresh
@@ -757,6 +757,22 @@ function insertTelaAnalise(divToHide, divToShow, estudo){
 	
 }
 
+/**
+ * @returns intervalo de datas validos (true) ou invalidos (false)
+ */
+function validarDatas(dataInicial, dataFinal) {
+	
+	var dataSemFormatacao_1 = parseInt(dataInicial.split("/")[2].toString() + dataInicial.split("/")[1].toString() + dataInicial.split("/")[0].toString());
+	var dataSemFormatacao_2 = parseInt(dataFinal.split("/")[2].toString() + dataFinal.split("/")[1].toString() + dataFinal.split("/")[0].toString());
+	 
+	 if (dataSemFormatacao_2 > dataSemFormatacao_1){
+	   return true;
+	 }else{
+		 return false;		
+	 }
+    
+    return false;
+}
 
 //simply visual, let's you know when the correct iframe is selected
 /*$(window).on("focus", function(e) {

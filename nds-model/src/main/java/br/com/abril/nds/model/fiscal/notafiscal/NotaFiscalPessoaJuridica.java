@@ -27,7 +27,7 @@ public class NotaFiscalPessoaJuridica extends NotaFiscalPessoa implements Serial
 	
 	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name="NOTA_FICAL_ENDERECO_ID", unique=true)
-	private NotaFicalEndereco notaFicalEndereco;
+	private NotaFiscalEndereco notaFicalEndereco;
 
 	public String getRazaoSocial() {
 		return razaoSocial;
@@ -61,11 +61,11 @@ public class NotaFiscalPessoaJuridica extends NotaFiscalPessoa implements Serial
 		this.inscricaoEstadual = inscricaoEstadual;
 	}
 
-	public NotaFicalEndereco getNotaFicalEndereco() {
+	public NotaFiscalEndereco getNotaFicalEndereco() {
 		return notaFicalEndereco;
 	}
 
-	public void setNotaFicalEndereco(NotaFicalEndereco notaFicalEndereco) {
+	public void setNotaFicalEndereco(NotaFiscalEndereco notaFicalEndereco) {
 		this.notaFicalEndereco = notaFicalEndereco;
 	}
 

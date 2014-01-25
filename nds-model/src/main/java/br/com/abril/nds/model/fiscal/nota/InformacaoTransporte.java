@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -59,7 +59,7 @@ public class InformacaoTransporte implements Serializable {
 	@OneToOne
 	@JoinColumn(name="ENDERECO_ID_TRANS")
 	@NFEExportType
-	private Endereco endereco;
+	private NotaFiscalEndereco endereco;
 	
 	/**
 	 * xMun
@@ -130,7 +130,7 @@ public class InformacaoTransporte implements Serializable {
 	 *
 	 * @return Endereco
 	 */
-	public Endereco getEndereco() {
+	public NotaFiscalEndereco getEndereco() {
 		return endereco;
 	}
 
@@ -138,7 +138,7 @@ public class InformacaoTransporte implements Serializable {
 	 * Atribuí endereco
 	 * @param endereco 
 	 */
-	public void setEndereco(Endereco endereco) {
+	public void setEndereco(NotaFiscalEndereco endereco) {
 		this.endereco = endereco;
 	}
 
