@@ -314,9 +314,16 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select ")
-		   .append(" cota.numeroCota as numeroCota, cota.pessoa.nome as nomeCota, ")
+		   .append(" cota.numeroCota as numeroCota, ")
+		   .append(" case when pessoa.cpf is not null then pessoa.nome else coalesce(pessoa.nomeFantasia, pessoa.razaoSocial) end as nomeCota, ")
 		   .append(" coalesce(cota.parametroDistribuicao.procuracaoRecebida, false) as procuracaoAssinada ")
-		   .append(" from Entregador e join e.rota.roteiro.roteirizacao.box.cotas cota ")
+		   .append(" from Entregador e ")
+		   .append(" join e.rota rota ")
+		   .append(" join rota.rotaPDVs rotaPdv ")
+		   .append(" join rotaPdv.pdv pdv ")
+		   .append(" join pdv.cota cota ")
+		   .append(" join cota.pessoa pessoa ")
+		   
 		   .append(" where e.id = :idEntregador ");
 		
 		retorno.setTotalRegistros(obterQtdRegistrosCotaAtendidaPaginacao(hql.toString(), idEntregador).intValue());
