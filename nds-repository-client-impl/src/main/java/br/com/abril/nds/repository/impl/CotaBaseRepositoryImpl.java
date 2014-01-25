@@ -390,5 +390,17 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         
 		return query.list();
 	}
+	
+	@Override
+	public boolean cotaTemCotaBase(Long idCota){
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select count(b.id) from CotaBase b where b.cota.id = :idCota ");
+		
+		query.setParameter("idCota", idCota);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
 
 }

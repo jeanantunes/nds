@@ -18,6 +18,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#edicaoProdutoInput", lancamentoNovoController.workspace).numeric();
 		$("#diferencaProdutoInput", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInput1", lancamentoNovoController.workspace).numeric();
+		$("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).numeric();
 		$("#diferencaInput1", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInputNota", lancamentoNovoController.workspace).numeric();
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).mask("99/99/9999");
@@ -127,6 +128,9 @@ var lancamentoNovoController = $.extend(true, {
 		$("#cotaInput1", lancamentoNovoController.workspace).val("");
 		$('#rateioIDInputHidden1', lancamentoNovoController.workspace).val("");
 		$("#nomeInput1", lancamentoNovoController.workspace).val("");
+		$("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val("");
+		$('#rateioIDInputHiddenAlteracaoReparte', lancamentoNovoController.workspace).val("");
+		$("#nomeInputAlteracaoReparte", lancamentoNovoController.workspace).val("");
 		$("#reparteText1", lancamentoNovoController.workspace).text("");
 		$("#diferencaInput1", lancamentoNovoController.workspace).val("");
 		$("#reparteAtualText1", lancamentoNovoController.workspace).text("");
@@ -344,9 +348,9 @@ var lancamentoNovoController = $.extend(true, {
 
 		$.each(result.rateios, function(linhaAtual, rateio) {
 			
-			$("#cotaInput1", lancamentoNovoController.workspace).val(rateio.numeroCota);
-			$("#nomeInput1", lancamentoNovoController.workspace).val(rateio.nomeCota);
-			$("#rateioIDInputHidden1", lancamentoNovoController.workspace).val(rateio.idRateio);
+			$("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.numeroCota);
+			$("#nomeInputAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.nomeCota);
+			$("#rateioIDInputHiddenAlteracaoReparte", lancamentoNovoController.workspace).val(rateio.idRateio);
 		});
 		
 		lancamentoNovoController.carregarProdutoAlteracaoReparte(result.diferenca);
@@ -427,13 +431,13 @@ var lancamentoNovoController = $.extend(true, {
 				if(linhaAtual > 0){
 					
 					  var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual +1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
-								'<td><input type="text" name="cotaInput" maxlength="10" id="cotaInput'+ (linhaAtual +1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual +1) +', nomeInput'+ (linhaAtual +1) +', true, lancamentoNovoController.buscarReparteAtualCota,lancamentoNovoController.erroPesquisaCota,'+(linhaAtual +1)+');" style="width:60px;" />'
+								'<td><input type="text" name="cotaInput" maxlength="10" id="cotaInput'+ (linhaAtual +1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual +1) +', nomeInput'+ (linhaAtual +1) +', true, lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual +1)+'),lancamentoNovoController.erroPesquisaCota,'+(linhaAtual +1)+');" style="width:60px;" />'
 								+'<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden'+ (linhaAtual +1) +' " />'
 								+'</td>' +
 								'<td>'+
 								     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual+1) +'" style="width:300px;" '+
 								         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual+1) +');" ' +
-								         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual+1) +', nomeInput'+ (linhaAtual+1) +', lancamentoNovoController.buscarReparteAtualCota,lancamentoNovoController.erroPesquisaCota,'+(linhaAtual+1)+');" ' +
+								         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual+1) +', nomeInput'+ (linhaAtual+1) +', lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1)+'),lancamentoNovoController.erroPesquisaCota,'+(linhaAtual+1)+');" ' +
 								     '/>'+
 								'</td>' +
 								'<td align="center" id="reparteText'+ (linhaAtual+1) +'"></td>' +
@@ -629,54 +633,94 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "pacotePadrao", value:pacotePadrao}
 		 ];
 		
-		var linhasDaGrid = $('#grid_1 tr',this.workspace);
+		var qntReparteRateio = 0;
 		
 		if (lancamentoNovoController.isTipoDiferencaAlteracaoReparte(tipoDiferenca)) {
 			
-			linhasDaGrid = $('#gridAlteracaoReparteCota tr', this.workspace);
-		}
-		
-		var qntReparteRateio = 0;
-		
-		$.each(linhasDaGrid, function(index, value) {
+			var linhasDaGrid = $('#gridAlteracaoReparteCota tr', this.workspace);
+			
+			$.each(linhasDaGrid, function(index, value) {
 
-			var linha = $(value);
-			
-			var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
-			
-			var idRateioCota =  $(linha.find("td")[0],this.workspace).find('input[name="rateioIDInputHidden"]').val();
-			
-			var nomeCota = $(linha.find("td")[1],this.workspace).find('input[name="nomeInput"]').val();
-			
-			var reparte = $(linha.find("td")[2],this.workspace).html();
-			
-			var diferenca = $(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val();
-			
-			if (lancamentoNovoController.isTipoDiferencaAlteracaoReparte(tipoDiferenca)) {
+				var linha = $(value);
 				
-				diferenca = $("#diferencaProdutoInput", this.workspace).val();
+				var numeroCota = $(linha.find("td")[0],this.workspace).find('input[id="cotaInputAlteracaoReparte"]').val();
+				
+				var idRateioCota =  $(linha.find("td")[0],this.workspace).find('input[id="rateioIDInputHiddenAlteracaoReparte"]').val();
+				
+				var nomeCota = $(linha.find("td")[1],this.workspace).find('input[id="nomeInputAlteracaoReparte"]').val();
+				
+				var reparte = $(linha.find("td")[2],this.workspace).html();
+				
+				var diferenca = $("#diferencaProdutoInput", this.workspace).val();
+	
+				var reparteAtual = $(linha.find("td")[4],this.workspace).html();
+				
 				reparte = $("#alteracaoReparteProduto", this.workspace).html();
-			}
-			
-			var reparteAtual = $(linha.find("td")[4],this.workspace).html();
-			
-			if( numeroCota == undefined || numeroCota == '' 
-					|| diferenca == undefined || diferenca == ''){
 				
-				return;
-			}
+				if (numeroCota == undefined 
+						|| numeroCota == '' 
+						|| diferenca == undefined 
+						|| diferenca == '') {
+					
+					return;
+				}
+				
+				data.push({name: "rateioCotas["+index+"].id", value: index});
+				data.push({name: "rateioCotas["+index+"].idDiferenca", value:lancamentoNovoController.idDiferenca});
+				data.push({name: "rateioCotas["+index+"].numeroCota", value: numeroCota });
+				data.push({name: "rateioCotas["+index+"].nomeCota", value: nomeCota});
+				data.push({name: "rateioCotas["+index+"].reparteCota", value: reparte });
+				data.push({name: "rateioCotas["+index+"].quantidade", value: diferenca});
+				data.push({name: "rateioCotas["+index+"].reparteAtualCota", value: reparteAtual});
+				data.push({name: "rateioCotas["+index+"].idRateio", value: idRateioCota });
+				
+				qntReparteRateio += eval(diferenca);
+			});
 			
-			data.push({name: "rateioCotas["+index+"].id", value: index});
-			data.push({name: "rateioCotas["+index+"].idDiferenca", value:lancamentoNovoController.idDiferenca});
-			data.push({name: "rateioCotas["+index+"].numeroCota", value: numeroCota });
-			data.push({name: "rateioCotas["+index+"].nomeCota", value: nomeCota});
-			data.push({name: "rateioCotas["+index+"].reparteCota", value: reparte });
-			data.push({name: "rateioCotas["+index+"].quantidade", value: diferenca});
-			data.push({name: "rateioCotas["+index+"].reparteAtualCota", value: reparteAtual});
-			data.push({name: "rateioCotas["+index+"].idRateio", value: idRateioCota });
+		} else {
+		
+			var linhasDaGrid = $('#grid_1 tr',this.workspace);
 			
-			qntReparteRateio += eval(diferenca);
-		});
+			$.each(linhasDaGrid, function(index, value) {
+	
+				var linha = $(value);
+				
+				var numeroCota = $(linha.find("td")[0],this.workspace).find('input[name="cotaInput"]').val();
+				
+				var idRateioCota =  $(linha.find("td")[0],this.workspace).find('input[name="rateioIDInputHidden"]').val();
+				
+				var nomeCota = $(linha.find("td")[1],this.workspace).find('input[name="nomeInput"]').val();
+				
+				var reparte = $(linha.find("td")[2],this.workspace).html();
+				
+				var diferenca = $(linha.find("td")[3],this.workspace).find('input[name="diferencaInput"]').val();
+				
+				if (lancamentoNovoController.isTipoDiferencaAlteracaoReparte(tipoDiferenca)) {
+					
+					diferenca = $("#diferencaProdutoInput", this.workspace).val();
+					reparte = $("#alteracaoReparteProduto", this.workspace).html();
+				}
+				
+				var reparteAtual = $(linha.find("td")[4],this.workspace).html();
+				
+				if( numeroCota == undefined || numeroCota == '' 
+						|| diferenca == undefined || diferenca == ''){
+					
+					return;
+				}
+				
+				data.push({name: "rateioCotas["+index+"].id", value: index});
+				data.push({name: "rateioCotas["+index+"].idDiferenca", value:lancamentoNovoController.idDiferenca});
+				data.push({name: "rateioCotas["+index+"].numeroCota", value: numeroCota });
+				data.push({name: "rateioCotas["+index+"].nomeCota", value: nomeCota});
+				data.push({name: "rateioCotas["+index+"].reparteCota", value: reparte });
+				data.push({name: "rateioCotas["+index+"].quantidade", value: diferenca});
+				data.push({name: "rateioCotas["+index+"].reparteAtualCota", value: reparteAtual});
+				data.push({name: "rateioCotas["+index+"].idRateio", value: idRateioCota });
+				
+				qntReparteRateio += eval(diferenca);
+			});
+		}
 		
 		data.push({name: "qntReparteRateio", value: qntReparteRateio});
 		
@@ -1013,7 +1057,7 @@ var lancamentoNovoController = $.extend(true, {
 		}
 	},
 	
-	buscarReparteAtualCota : function(result,idDiv){
+	buscarReparteAtualCota : function(idDiv){
 	
 		$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).focus();
 		
@@ -1098,7 +1142,8 @@ var lancamentoNovoController = $.extend(true, {
 		$('#nomeInput1', lancamentoNovoController.workspace).val('');
 		$('#diferencaInput1', lancamentoNovoController.workspace).val('');
 		$('#reparteText1', lancamentoNovoController.workspace).text('');
-		$('#reparteAtualText1', lancamentoNovoController.workspace).text('');
+		$('#cotaInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
+		$('#nomeInputAlteracaoReparte', lancamentoNovoController.workspace).val('');
 	},
 	
 	limparProduto : function() {
@@ -1384,7 +1429,7 @@ var lancamentoNovoController = $.extend(true, {
 			[
 			 	{name: "codigoProduto", value: $("#codigoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
 			 	{name: "numeroEdicao", value: $("#edicaoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
-			 	{name: "numeroCota", value: $("#cotaInput1", lancamentoNovoController.workspace).val()}
+			 	{name: "numeroCota", value: $("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val()}
 			],
 			function(result) {
 				
@@ -1409,7 +1454,7 @@ var lancamentoNovoController = $.extend(true, {
 			[
 			 	{name: "codigoProduto", value: $("#codigoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
 			 	{name: "numeroEdicao", value: $("#edicaoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val()},
-			 	{name: "numeroCota", value: $("#cotaInput1", lancamentoNovoController.workspace).val()}
+			 	{name: "numeroCota", value: $("#cotaInputAlteracaoReparte", lancamentoNovoController.workspace).val()}
 			],
 			function(result) {
 				

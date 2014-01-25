@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
+import br.com.abril.nds.client.vo.RegistroDiaOperacaoFornecedorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
@@ -302,7 +303,10 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * Retorna via json a lista de dias de distribuição e recolhimento do fornecedor
 	 */
 	public void recarregarDiasDistribuidorFornecedorGrid() {
-		result.use(FlexiGridJson.class).from(distribuicaoFornecedorService.buscarDiasOperacaoFornecedor()).serialize();
+		
+		List<RegistroDiaOperacaoFornecedorVO> registros = distribuicaoFornecedorService.buscarDiasOperacaoFornecedor();
+		
+		result.use(Results.json()).withoutRoot().from(registros).include("fornecedor","fornecedor.juridica").serialize();
 	}
 	
 	/**

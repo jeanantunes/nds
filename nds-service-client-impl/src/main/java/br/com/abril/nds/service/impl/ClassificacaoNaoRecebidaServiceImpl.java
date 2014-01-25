@@ -87,9 +87,6 @@ public class ClassificacaoNaoRecebidaServiceImpl implements	ClassificacaoNaoRece
 		case INATIVO:
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota com status INATIVO.");
 			
-		case PENDENTE:
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota com status PENDENTE.");
-			
 		default:
 			FiltroClassificacaoNaoRecebidaDTO filtro = new FiltroClassificacaoNaoRecebidaDTO();
 			CotaDTO cotadto = new CotaDTO();

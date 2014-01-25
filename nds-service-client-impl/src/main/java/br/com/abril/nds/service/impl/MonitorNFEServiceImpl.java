@@ -490,7 +490,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		InformacaoTransporte informacaoTransporte = notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte();
 		
-		Endereco endereco = informacaoTransporte.getEndereco();
+		NotaFiscalEndereco endereco = informacaoTransporte.getEndereco();
 		
 		Veiculo veiculo = informacaoTransporte.getVeiculo();
 		

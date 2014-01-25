@@ -3468,7 +3468,7 @@ public class Fixture {
 
 	public static InformacaoTransporte informacaoTransporte(
 			String documento,
-			Endereco endereco,
+			NotaFiscalEndereco endereco,
 			String inscricaoEstadual,
 			Integer modalidadeFrente,
 			String municipio,

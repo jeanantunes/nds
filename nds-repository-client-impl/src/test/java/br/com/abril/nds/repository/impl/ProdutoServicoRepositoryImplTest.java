@@ -300,7 +300,7 @@ public class ProdutoServicoRepositoryImplTest extends
 
 		String documentoTranposrte = "564645664";
 
-		Endereco enderecoTransporte = Fixture.criarEndereco(
+		NotaFiscalEndereco enderecoTransporte = Fixture.criarEnderecoNotaFiscal(
 				TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", "4585",
 				"Jrd Brasil", "Piuí", "MG", 3543402);
 
