@@ -684,7 +684,7 @@ public class RoteirizacaoController extends BaseController {
 			
 			FileExporter.to("roteirizacao", fileType)
 				.inHTTPResponse(
-					this.getNDSFileHeader(), filtroSessao, null, 
+					this.getNDSFileHeader(), filtroSessao, 
 					lista, ConsultaRoteirizacaoDTO.class, this.response);
 		
 		} else {
@@ -694,9 +694,12 @@ public class RoteirizacaoController extends BaseController {
 			
 			FileExporter.to("roteirizacao", fileType)
 				.inHTTPResponse(
-					this.getNDSFileHeader(), filtroSessao, null, 
-					listaConsultaRoteirizacaoSumarizado, ConsultaRoteirizacaoSumarizadoPorCotaVO.class, this.response);
+					this.getNDSFileHeader(), filtroSessao, 
+					listaConsultaRoteirizacaoSumarizado, 
+					ConsultaRoteirizacaoSumarizadoPorCotaVO.class, this.response);
 		}
+		
+		this.result.nothing();
 	}
 	
 	
@@ -787,7 +790,8 @@ public class RoteirizacaoController extends BaseController {
 			
 			lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 			
-			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista,ConsultaRoteirizacaoDTO.class, this.response);
+			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, 
+					lista, ConsultaRoteirizacaoDTO.class, this.response);
 			
 		} catch (Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
@@ -1410,8 +1414,21 @@ public class RoteirizacaoController extends BaseController {
 	}
 	
 	@Post("/transferirPDVs")
-    public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, Long idRotaNova, Integer ordemRota, List<Long> pdvs){
-						        
+    public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, String _idRotaNova, Integer ordemRota, List<Long> pdvs){
+		
+		Long idRotaNova = null;
+		Integer novaOrdem = null;
+		
+		if (_idRotaNova != null){
+			if (_idRotaNova.contains("_")){
+				
+				novaOrdem = Integer.parseInt(_idRotaNova.replaceFirst("_", ""));
+			} else {
+				
+				idRotaNova = Long.parseLong(_idRotaNova);
+			}
+		}
+		
         RotaRoteirizacaoDTO rotaAnterior = this.getRotaDTOSessaoPeloID(idRotaAnterior, idRoteiro);
         
         List<PdvRoteirizacaoDTO> pdvsTransferencia = new ArrayList<PdvRoteirizacaoDTO>(pdvs.size());
@@ -1425,8 +1442,13 @@ public class RoteirizacaoController extends BaseController {
         RotaRoteirizacaoDTO rotaNovaDTO;
         
         try {
-        
-        	rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
+        	if (idRotaNova == null){
+        		
+        		rotaNovaDTO = this.getRotaDTOSessaoPelaOrdem(novaOrdem, idRoteiro);
+        	} else {
+        		
+        		rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
+        	}
         
         } catch (ValidacaoException ve) {
         	
