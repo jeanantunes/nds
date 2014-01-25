@@ -132,20 +132,20 @@ public class Identificacao implements Serializable {
 		PRODUCAO(1), 
 		HOMOLOGACAO(2);
 
-		private Integer tipoAmbiente;
+		private Integer id;
 		
-		TipoAmbiente(Integer tipoAmbiente) {
-			this.tipoAmbiente = tipoAmbiente;
+		TipoAmbiente(Integer id) {
+			this.id = id;
 		}
 		
 		@Override
 		public Integer getIntValue() {
-			return tipoAmbiente.intValue();
+			return id.intValue();
 		}
 
 		@Override
 		public int getId() {
-			return tipoAmbiente.intValue();
+			return id.intValue();
 		}
 
 	}

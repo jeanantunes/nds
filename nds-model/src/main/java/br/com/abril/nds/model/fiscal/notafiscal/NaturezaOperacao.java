@@ -7,7 +7,7 @@ import javax.persistence.Id;
 
 @Embeddable
 public class NaturezaOperacao {
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name="ID")
@@ -56,6 +56,14 @@ public class NaturezaOperacao {
 		this.cfopOutrosEstado = cfopForaEstado;
 	}
 
+	public String getCfopOutrosEstado() {
+		return cfopOutrosEstado;
+	}
+
+	public void setCfopOutrosEstado(String cfopOutrosEstado) {
+		this.cfopOutrosEstado = cfopOutrosEstado;
+	}
+	
 	@Override
 	public String toString() {
 		return "NaturezaOperacao [id=" + id + ", descricao=" + descricao

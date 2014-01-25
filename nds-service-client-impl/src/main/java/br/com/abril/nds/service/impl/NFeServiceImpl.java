@@ -54,7 +54,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
@@ -293,7 +293,7 @@ public class NFeServiceImpl implements NFeService {
 		IdentificacaoEmitente identificacaoEmitente = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente();
 
 		String documento 	= identificacaoEmitente.getDocumento().getDocumento();
-		NotaFicalEndereco endereco 	= identificacaoEmitente.getEndereco();
+		NotaFiscalEndereco endereco 	= identificacaoEmitente.getEndereco();
 		Telefone telefone 	= identificacaoEmitente.getTelefone();
 
 		String emissorNome 							 = identificacaoEmitente.getNome();
@@ -411,7 +411,7 @@ public class NFeServiceImpl implements NFeService {
 		IdentificacaoDestinatario identificacaoDestinatario = notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario();
 
 		String documento			= identificacaoDestinatario.getDocumento().getDocumento();
-		NotaFicalEndereco endereco = identificacaoDestinatario.getEndereco();
+		NotaFiscalEndereco endereco = identificacaoDestinatario.getEndereco();
 		Telefone telefone = identificacaoDestinatario.getTelefone();
 
 		boolean indPessoaJuridica = false;

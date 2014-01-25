@@ -57,7 +57,7 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
@@ -234,7 +234,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		String documento = "";
 		String email = "";
 
-		NotaFicalEndereco enderecoDestinatario = Fixture.criarEnderecoNotaFiscal(
+		NotaFiscalEndereco enderecoDestinatario = Fixture.criarEnderecoNotaFiscal(
 				TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras",
 				"4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ", 3543402);
 
@@ -256,7 +256,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		String cnae = "";
 		String documentoEmitente = "";
 
-		NotaFicalEndereco enderecoEmitente = Fixture.criarEnderecoNotaFiscal(
+		NotaFiscalEndereco enderecoEmitente = Fixture.criarEnderecoNotaFiscal(
 				TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585",
 				"Jrd Brasil", "Santana do Livramento", "RJ", 6);
 

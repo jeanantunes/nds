@@ -10,13 +10,13 @@ import org.hibernate.engine.spi.SessionImplementor;
 
 import br.com.abril.nds.integracao.persistence.PersistentEnum;
 import br.com.abril.nds.integracao.persistence.PersistentEnumUserType;
-import br.com.abril.nds.model.fiscal.nota.Identificacao.TipoAmbiente;
+import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario;
 
-public class RegimeTributarioUserType extends PersistentEnumUserType<TipoAmbiente> {
+public class RegimeTributarioUserType extends PersistentEnumUserType<RegimeTributario> {
 	
 	@Override
-    public Class<TipoAmbiente> returnedClass() {
-        return TipoAmbiente.class;
+    public Class<RegimeTributario> returnedClass() {
+        return RegimeTributario.class;
     }
 	
 	@Override

@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
@@ -64,7 +64,7 @@ public class NotaFiscalNds {
 		
 		
 		if(notaFiscal.getEmissor().getNotaFicalEndereco() == null) {
-			notaFiscal.getEmissor().setNotaFicalEndereco(new NotaFicalEndereco());
+			notaFiscal.getEmissor().setNotaFicalEndereco(new NotaFiscalEndereco());
 		}
 		
 		if(notaFiscalValoresCalculados == null) {

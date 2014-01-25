@@ -28,7 +28,7 @@ import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente.RegimeTributario
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 
 public class NotaFiscalBuilder implements Serializable {
 	
@@ -95,7 +95,7 @@ public class NotaFiscalBuilder implements Serializable {
 		}
 		
 		if(notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco() == null) {
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setEndereco(new NotaFicalEndereco());
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoEmitente().setEndereco(new NotaFiscalEndereco());
 		}
 		
 		// Dados do Distribuidor

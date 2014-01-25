@@ -21,7 +21,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 @Entity
 @Table(name="NOTA_FISCAL_ENDERECO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NotaFicalEndereco implements Serializable {
+public class NotaFiscalEndereco implements Serializable {
 	
 	private static final long serialVersionUID = 7384512437561238172L;
 
@@ -232,7 +232,7 @@ public class NotaFicalEndereco implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		NotaFicalEndereco other = (NotaFicalEndereco) obj;
+		NotaFiscalEndereco other = (NotaFiscalEndereco) obj;
 		if (this.getCep() == null) {
 			if (other.cep != null)
 				return false;

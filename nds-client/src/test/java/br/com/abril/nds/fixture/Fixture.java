@@ -211,7 +211,7 @@ import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
@@ -2380,11 +2380,11 @@ public class Fixture {
 		return endereco;
 	}
 	
-	public static NotaFicalEndereco criarEnderecoNotaFiscal(TipoEndereco tipoEndereco, String cep,
+	public static NotaFiscalEndereco criarEnderecoNotaFiscal(TipoEndereco tipoEndereco, String cep,
 			 String logradouro, String numero, 
 			 String bairro, String cidade, String uf,Integer codigoCidadeIBGE) {
 
-		NotaFicalEndereco endereco = new NotaFicalEndereco();
+		NotaFiscalEndereco endereco = new NotaFiscalEndereco();
 		
 		endereco.setBairro(bairro);
 		// endereco.setCep(cep);
@@ -3537,7 +3537,7 @@ public class Fixture {
 	public static IdentificacaoEmitente identificacaoEmitente(
 			String cnae,
 			String documento,
-			NotaFicalEndereco endereco,
+			NotaFiscalEndereco endereco,
 			String inscricaoEstadual,
 			String inscricaoEstadualSubstituto,
 			String inscricaoMunicipal,
@@ -3569,7 +3569,7 @@ public class Fixture {
 	public static IdentificacaoDestinatario identificacaoDestinatario(
 			String documento,
 			String email,
-			NotaFicalEndereco endereco,
+			NotaFiscalEndereco endereco,
 			String inscricaoEstadual,
 			String inscricaoSuframa,
 			String nome,

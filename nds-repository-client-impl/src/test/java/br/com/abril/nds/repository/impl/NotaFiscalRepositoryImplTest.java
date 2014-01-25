@@ -54,7 +54,7 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -122,7 +122,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		String documento 	= "";
 		String email 		= "";
 		
-		NotaFicalEndereco enderecoDestinatario 	= 
+		NotaFiscalEndereco enderecoDestinatario 	= 
 				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", "4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ",1);
 		
 		save(enderecoDestinatario);
@@ -149,7 +149,7 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 		String cnae = "";
 		String documentoEmitente = "";
 		
-		NotaFicalEndereco enderecoEmitente = 
+		NotaFiscalEndereco enderecoEmitente = 
 				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585", "Jrd Brasil", "Santana do Livramento", "RJ",2);
 		
 		save(enderecoEmitente);
