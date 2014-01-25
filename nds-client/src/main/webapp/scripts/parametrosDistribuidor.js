@@ -61,12 +61,12 @@ var parametrosDistribuidorController = $.extend(true, {
 				var startTag = '<table width="441" border="0" cellpadding="0" cellspacing="1" id="tableDiasDistribuidorFornecedor"><tr class="header_table"><td>Fornecedor</td><td align="center">Lançamento</td><td align="center">Recolhimento</td><td align="center">&nbsp;</td></tr>';
 				var endTag = '</table>';
 				var newTable = startTag;
-				$.each(resultado.rows, function(index, row) {
+				$.each(resultado, function(index, row) {
 					newTable += '<tr class="class_linha_1"><td width="139">' + 
-					row.cell.fornecedor.juridica.nomeFantasia + '</td><td width="144" align="center">' + 
-					row.cell.diasLancamento + '</td><td width="125" align="center">' + 
-					row.cell.diasRecolhimento + 
-					'</td><td width="28" align="center"><a href="javascript:;" onclick="parametrosDistribuidorController.excluirDiasDistribuidorFornecedor(' + row.cell.fornecedor.id + ')" ><img src="'+ contextPath +'/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td></tr>';
+					row.fornecedor.juridica.nomeFantasia + '</td><td width="144" align="center">' + 
+					row.diasLancamento + '</td><td width="125" align="center">' + 
+					row.diasRecolhimento + 
+					'</td><td width="28" align="center"><a href="javascript:;" onclick="parametrosDistribuidorController.excluirDiasDistribuidorFornecedor(' + row.fornecedor.id + ')" ><img src="'+ contextPath +'/images/ico_excluir.gif" width="15" height="15" alt="Excluir" /></a></td></tr>';
 				});
 				newTable += endTag;
 				$('#spanDiasDistribuidorFornecedor', this.workspace).html(newTable);

@@ -391,7 +391,7 @@ var fixacaoReparteController = $.extend(true, {
 		
 		
 		if((data.mensagem == undefined) || (data.mensagens.listaMensagens[0] != "Não é possivel fixar reparte para cota tipo[Alternativo].")){
-			$('#fixacaoReparte_porCota').show();
+			$('.porCota').show();
 			$('.fixacaoCotaGrid').show();
 		}
 	
@@ -713,15 +713,15 @@ var fixacaoReparteController = $.extend(true, {
 	//funcao de exibicao de grid
 	escondeGridCota:function(){
 
-		$('#fixacaoReparte_porCota').hide();
-		$('#fixacaoReparte_fixacaoProduto').hide();
+		$('.porCota').hide();
+		$('.porExcessao').hide();
 	},
 
 	//funcao de exibicao de grid
 	exibeGridProduto:function(){
 
-		$('#fixacaoReparte_fixacaoProduto').show();
-		$('#fixacaoReparte_porCota').hide();
+		$('.porExcessao').show();
+		$('.porCota').hide();
 	},
 
 	//Funcao de pre-processamento da chamada postJSON que preenche a grid de historico
@@ -753,7 +753,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 			$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexReload();
 		}else{
-			$('#fixacaoReparte_fixacaoProduto').hide();
+			$('.porExcessao').hide();
 			exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
 		}
 	},
@@ -766,7 +766,7 @@ var fixacaoReparteController = $.extend(true, {
 //			fixacaoReparteController.escondeGridCota();
 			// fazer exibir grid cota
 			
-			$('#fixacaoReparte_porCota').show();
+			$('.porCota').show();
 			
 			$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
 				url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",

@@ -1,56 +1,15 @@
 <head>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
-<script type="text/javascript" src="scripts/consultaCota.js"></script>
 <script type="text/javascript" src="scripts/autoCompleteController.js"></script>
 <script type="text/javascript" src="scripts/classificacaoNaoRecebida.js" ></script>
 <script language="javascript" type="text/javascript">
 
 var	pesquisaCota = new PesquisaCota();
-var consultaCota = new ConsultaCota();
 
 $(function() {
 
 	classificacaoNaoRecebidaController.init();
 });
-
-function excluirClassificacao() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
-	$( "#dialog-excluir" ).dialog({
-		resizable: false,
-		height:170,
-		width:380,
-		modal: true,
-		buttons: {
-			"Confirmar": function() {
-				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);
-			},
-			"Cancelar": function() {
-				$( this ).dialog( "close" );
-			}
-		}
-	});
-};		
-
-function mostraFiltroPorCota(){
-	$('#porCota_numeroCota').val(null);
-	$('#porCota_nomeCota').val(null);
-	$('#classificacaoNaoRecebida_filtroPorCota').show();
-	$('#classificacaoNaoRecebida_filtroPorClassificacao').hide();
-	$('#classificacaoNaoRecebida_porClassificacao').hide();
-	$('#cotasQueRecebem_numeroCota').val('');
-	$('#cotasQueRecebem_nomeCota').val('');
-}
-
-function mostraFiltroPorClassificacao(){
-	$('#selectClassificacao').val(null);
-	$('#classificacaoNaoRecebida_filtroPorCota').hide();
-	$('#classificacaoNaoRecebida_filtroPorClassificacao').show();
-	$('#classificacaoNaoRecebida_porCota').hide();	
-	$('#cotasQueRecebem_numeroCota').val('');
-	$('#cotasQueRecebem_nomeCota').val('');
-}
 </script>
 
 </head>
@@ -84,13 +43,13 @@ function mostraFiltroPorClassificacao(){
 				<b>Classificação Não Recebida < evento > com < status >.</b></p>
 	</div-->
     	
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset" style="width: 953px!important;">
    	    <legend> Pesquisar Classifica&ccedil;&atilde;o N&atilde;o Recebida</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
-            <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraFiltroPorClassificacao();" /></td>
+            <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="classificacaoNaoRecebidaController.mostraFiltroPorClassificacao();" /></td>
             <td width="90">Classifica&ccedil;&atilde;o</td>
-            <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="mostraFiltroPorCota();" /></td>
+            <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="classificacaoNaoRecebidaController.mostraFiltroPorCota();" /></td>
             <td width="37">Cota</td>
             <td width="757">
             <form id="filtroPrincipalClassificacao">
