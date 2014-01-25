@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -172,7 +174,8 @@ public class ItemNotaFiscalBuilder  {
 		detalheNotaFiscal.getProdutoServico().setDescricaoProduto(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getDescricao());
 		Long codigoBarras = null;
 		try {
-			codigoBarras = Long.parseLong(movimentoEstoqueCota.getProdutoEdicao().getCodigoDeBarras());
+			String cb = movimentoEstoqueCota.getProdutoEdicao().getCodigoDeBarras();
+			codigoBarras = Long.parseLong(StringUtils.leftPad(cb, 13, '0').substring(0, 13));
 		} catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido: "+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() +" / "+ movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao());
 		}
@@ -182,6 +185,11 @@ public class ItemNotaFiscalBuilder  {
 		detalheNotaFiscal.getProdutoServico().setUnidade(movimentoEstoqueCota.getProdutoEdicao().getProduto().getTipoProduto().getNcm().getUnidadeMedida());
 		detalheNotaFiscal.getProdutoServico().setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
 		detalheNotaFiscal.getProdutoServico().setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
+		//FIXME: Ajustar o codigo Excessao do ipi
+		detalheNotaFiscal.getProdutoServico().setExtipi(0L);
+		//FIXME: Ajustar CFOP
+		detalheNotaFiscal.getProdutoServico().setCfop(0);
+		
 		movimentoEstoqueCota.setNotaFiscalEmitida(true);
 		
 		if(detalheNotaFiscal.getEncargoFinanceiro() == null) {

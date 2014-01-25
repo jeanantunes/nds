@@ -39,7 +39,7 @@ public abstract class EncargoFinanceiro implements Serializable {
         @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),
         @JoinColumn(name="PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA")
     })
-	private DetalheNotaFiscal produtoServico;
+	private DetalheNotaFiscal detalheNotaFiscal;
 	
 	@Embedded
 	@NFEExportType(secaoPadrao = TipoSecao.Q)
@@ -57,6 +57,10 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@NFEExportType
 	private COFINSST cofinsSt;
 
+	@Embedded
+	@NFEExportType(secaoPadrao = TipoSecao.S)
+	private ICMS icms;
+	
 	/**
 	 * @return the id
 	 */
@@ -102,15 +106,15 @@ public abstract class EncargoFinanceiro implements Serializable {
 	/**
 	 * @return the produtoServico
 	 */
-	public DetalheNotaFiscal getProdutoServico() {
-		return produtoServico;
+	public DetalheNotaFiscal getDetalheNotaFiscal() {
+		return detalheNotaFiscal;
 	}
 
 	/**
 	 * @param produtoServico the produtoServico to set
 	 */
-	public void setProdutoServico(DetalheNotaFiscal produtoServico) {
-		this.produtoServico = produtoServico;
+	public void setDetalheNotaFiscal(DetalheNotaFiscal detalheNotaFiscal) {
+		this.detalheNotaFiscal = detalheNotaFiscal;
 	}
 
 	/* (non-Javadoc)
@@ -170,6 +174,14 @@ public abstract class EncargoFinanceiro implements Serializable {
 	 */
 	public void setCofinsSt(COFINSST cofinsSt) {
 		this.cofinsSt = cofinsSt;
+	}
+
+	public ICMS getIcms() {
+		return icms;
+	}
+
+	public void setIcms(ICMS icms) {
+		this.icms = icms;
 	}
 
 }

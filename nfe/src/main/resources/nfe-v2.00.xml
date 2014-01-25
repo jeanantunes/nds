@@ -3,13 +3,13 @@
     <infNFe Id="NFe00000000000000000000000000000000000000000000" versao="2.00">
         <ide>
             <cUF>35</cUF>
-            <cNF>00000000</cNF>
+            <cNF>55840084</cNF>
             <natOp>Remessa de mercadoria em consignação mercantil ou industrial</natOp>
             <indPag>0</indPag>
             <mod>55</mod>
             <serie>1</serie>
-            <nNF>2673891</nNF>
-            <dEmi>2014-01-22</dEmi>
+            <nNF>1917462</nNF>
+            <dEmi>2014-01-23</dEmi>
             <tpNF>1</tpNF>
             <cMunFG>3550308</cMunFG>
             <tpImp>2</tpImp>
@@ -41,80 +41,74 @@
             <CRT>3</CRT>
         </emit>
         <dest>
-            <CPF>96672358820</CPF>
-            <xNome>WOLMAR NETTO RIBEIRO</xNome>
+            <CPF>96375892872</CPF>
+            <xNome>HIRONI SHIMABUKURO</xNome>
             <enderDest>
-                <xLgr>ENGENHEIRO ARTUR SEGURADO</xLgr>
-                <nro>25</nro>
-                <xBairro>JARDIM LEONOR</xBairro>
-                <cMun>3509502</cMun>
+                <xLgr>HERMANO RIBEIRO DA SILVA</xLgr>
+                <nro>206</nro>
+                <xBairro>JARDIM EULINA</xBairro>
+                <cMun>3550308</cMun>
                 <xMun>CAMPINAS</xMun>
                 <UF>SP</UF>
-                <CEP>13041070</CEP>
+                <CEP>13063510</CEP>
             </enderDest>
-            <IE>244989941114</IE>
+            <IE>123</IE>
         </dest>
         <det nItem="1">
             <prod>
                 <cProd>42974001</cProd>
-                <cEAN>12345678</cEAN>
+                <cEAN>9771808967000</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
-                <EXTIPI>11</EXTIPI>
+                <EXTIPI>12</EXTIPI>
                 <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
                 <qCom>2</qCom>
                 <vUnCom>2.3100</vUnCom>
                 <vProd>4.62</vProd>
-                <cEANTrib>00000000</cEANTrib>
-                <uTrib>123</uTrib>
-                <qTrib>456</qTrib>
-                <vUnTrib>789</vUnTrib>
-                <vFrete>1</vFrete>
-                <vSeg>2</vSeg>
-                <vDesc>3</vDesc>
-                <vOutro>4</vOutro>
+                <cEANTrib>9771808967000</cEANTrib>
+                <uTrib>KG</uTrib>
+                <qTrib>2</qTrib>
+                <vUnTrib>4.62</vUnTrib>
                 <indTot>1</indTot>
             </prod>
             <imposto>
-            	<ICMS>
-					<ICMS00>
-						<orig>0</orig>
-						<CST>00</CST>
-						<modBC>0</modBC>
-						<vBC>10000000.00</vBC>
-						<pICMS>18.00</pICMS>
-						<vICMS>1800000.00</vICMS>
-					</ICMS00>
-				</ICMS>
-            	<PIS>
-					<PISAliq>
-						<CST>01</CST>
-						<vBC>10000000.00</vBC>
-						<pPIS>0.65</pPIS>
-						<vPIS>65000</vPIS>
-					</PISAliq>
-				</PIS>
-				<COFINS>
-					<COFINSAliq>
-						<CST>01</CST>
-						<vBC>10000000.00</vBC>
-						<pCOFINS>2.00</pCOFINS>
-						<vCOFINS>200000.00</vCOFINS>
-					</COFINSAliq>
-				</COFINS>
+                <ICMS>
+                	<ICMS40>
+                		<orig>1</orig>
+                		<CST>41</CST>	
+                	</ICMS40>
+                </ICMS>
+                <PIS>
+                	<PISAliq>
+                		<CST>01</CST>
+                		<vBC>0.00</vBC>
+                		<pPIS>0.00</pPIS>
+                		<vPIS>0.00</vPIS>
+                	</PISAliq>
+                </PIS>
+                <COFINS>
+                	<COFINSAliq>
+                		<CST>01</CST>
+                		<vBC>0.00</vBC>
+                		<pCOFINS>0.00</pCOFINS>
+                		<vCOFINS>0.00</vCOFINS>
+                	</COFINSAliq>
+                </COFINS>
             </imposto>
         </det>
-        <!--
         <det nItem="2">
             <prod>
                 <cProd>95860001</cProd>
+                <cEAN>9770104470009</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>1</qCom>
+                <qCom>3</qCom>
                 <vUnCom>2.3100</vUnCom>
-                <vProd>2.3100</vProd>
+                <vProd>6.9300</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -126,12 +120,15 @@
         <det nItem="3">
             <prod>
                 <cProd>42976001</cProd>
+                <cEAN>9771676805008</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>6</qCom>
+                <qCom>2</qCom>
                 <vUnCom>3.0800</vUnCom>
-                <vProd>18.4800</vProd>
+                <vProd>6.1600</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -143,12 +140,15 @@
         <det nItem="4">
             <prod>
                 <cProd>42957001</cProd>
+                <cEAN>9771807774005</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>2</qCom>
+                <qCom>4</qCom>
                 <vUnCom>0.7700</vUnCom>
-                <vProd>1.5400</vProd>
+                <vProd>3.0800</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -159,13 +159,16 @@
         </det>
         <det nItem="5">
             <prod>
-                <cProd>21819001</cProd>
+                <cProd>18037001</cProd>
+                <cEAN>9771807675005</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>3</qCom>
-                <vUnCom>10.7030</vUnCom>
-                <vProd>32.1090</vProd>
+                <qCom>1</qCom>
+                <vUnCom>2.2330</vUnCom>
+                <vProd>2.2330</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -176,13 +179,16 @@
         </det>
         <det nItem="6">
             <prod>
-                <cProd>61310001</cProd>
+                <cProd>96070001</cProd>
+                <cEAN>9770104479002</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>2</qCom>
-                <vUnCom>8.3930</vUnCom>
-                <vProd>16.7860</vProd>
+                <qCom>4</qCom>
+                <vUnCom>3.0800</vUnCom>
+                <vProd>12.3200</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -193,13 +199,16 @@
         </det>
         <det nItem="7">
             <prod>
-                <cProd>42964001</cProd>
+                <cProd>21819001</cProd>
+                <cEAN>9771415327006</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>3</qCom>
-                <vUnCom>1.4630</vUnCom>
-                <vProd>4.3890</vProd>
+                <qCom>2</qCom>
+                <vUnCom>10.7030</vUnCom>
+                <vProd>21.4060</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -210,13 +219,16 @@
         </det>
         <det nItem="8">
             <prod>
-                <cProd>12519001</cProd>
+                <cProd>61310001</cProd>
+                <cEAN>9770104396002</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
                 <qCom>13</qCom>
-                <vUnCom>1.5323</vUnCom>
-                <vProd>19.9199</vProd>
+                <vUnCom>8.3930</vUnCom>
+                <vProd>109.1090</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -227,13 +239,16 @@
         </det>
         <det nItem="9">
             <prod>
-                <cProd>15559001</cProd>
+                <cProd>13486001</cProd>
+                <cEAN>9771808772000</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>12</qCom>
-                <vUnCom>1.5323</vUnCom>
-                <vProd>18.3876</vProd>
+                <qCom>1</qCom>
+                <vUnCom>3.2340</vUnCom>
+                <vProd>3.2340</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -244,13 +259,16 @@
         </det>
         <det nItem="10">
             <prod>
-                <cProd>30950001</cProd>
+                <cProd>42964001</cProd>
+                <cEAN>9771679129002</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>3</qCom>
-                <vUnCom>2.3870</vUnCom>
-                <vProd>7.1610</vProd>
+                <qCom>7</qCom>
+                <vUnCom>1.4630</vUnCom>
+                <vProd>10.2410</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -261,13 +279,16 @@
         </det>
         <det nItem="11">
             <prod>
-                <cProd>30569001</cProd>
+                <cProd>12519001</cProd>
+                <cEAN>9771517017003</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>3</qCom>
-                <vUnCom>2.3870</vUnCom>
-                <vProd>7.1610</vProd>
+                <qCom>30</qCom>
+                <vUnCom>1.5323</vUnCom>
+                <vProd>45.9690</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -278,13 +299,16 @@
         </det>
         <det nItem="12">
             <prod>
-                <cProd>65210001</cProd>
+                <cProd>15559001</cProd>
+                <cEAN>9771415974002</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>1</qCom>
-                <vUnCom>11.5500</vUnCom>
-                <vProd>11.5500</vProd>
+                <qCom>32</qCom>
+                <vUnCom>1.5323</vUnCom>
+                <vProd>49.0336</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -295,13 +319,16 @@
         </det>
         <det nItem="13">
             <prod>
-                <cProd>00000114</cProd>
+                <cProd>17454001</cProd>
+                <cEAN>9771807156009</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>6</qCom>
-                <vUnCom>6.9300</vUnCom>
-                <vProd>41.5800</vProd>
+                <qCom>5</qCom>
+                <vUnCom>9.1630</vUnCom>
+                <vProd>45.8150</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -312,13 +339,16 @@
         </det>
         <det nItem="14">
             <prod>
-                <cProd>00000441</cProd>
+                <cProd>65210001</cProd>
+                <cEAN>9770104170008</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>3</qCom>
-                <vUnCom>9.2400</vUnCom>
-                <vProd>27.7200</vProd>
+                <qCom>8</qCom>
+                <vUnCom>11.5500</vUnCom>
+                <vProd>92.4000</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -329,13 +359,16 @@
         </det>
         <det nItem="15">
             <prod>
-                <cProd>34441001</cProd>
+                <cProd>00000114</cProd>
+                <cEAN>9770104144009</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
-                <qCom>2</qCom>
-                <vUnCom>13.8600</vUnCom>
-                <vProd>27.7200</vProd>
+                <qCom>14</qCom>
+                <vUnCom>6.9300</vUnCom>
+                <vProd>97.0200</vProd>
             </prod>
             <imposto>
                 <cofins>
@@ -346,9 +379,72 @@
         </det>
         <det nItem="16">
             <prod>
-                <cProd>31291001</cProd>
+                <cProd>00000441</cProd>
+                <cEAN>9770009850005</cEAN>
                 <xProd>Revistas</xProd>
                 <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
+                <uCom>KG</uCom>
+                <qCom>10</qCom>
+                <vUnCom>9.2400</vUnCom>
+                <vProd>92.4000</vProd>
+            </prod>
+            <imposto>
+                <cofins>
+                    <cst>1</cst>
+                    <percentualAliquota>3.0</percentualAliquota>
+                </cofins>
+            </imposto>
+        </det>
+        <det nItem="17">
+            <prod>
+                <cProd>34441001</cProd>
+                <cEAN>9771045121005</cEAN>
+                <xProd>Revistas</xProd>
+                <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
+                <uCom>KG</uCom>
+                <qCom>6</qCom>
+                <vUnCom>13.8600</vUnCom>
+                <vProd>83.1600</vProd>
+            </prod>
+            <imposto>
+                <cofins>
+                    <cst>1</cst>
+                    <percentualAliquota>3.0</percentualAliquota>
+                </cofins>
+            </imposto>
+        </det>
+        <det nItem="18">
+            <prod>
+                <cProd>32935001</cProd>
+                <cEAN>9772236776004</cEAN>
+                <xProd>Revistas</xProd>
+                <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
+                <uCom>KG</uCom>
+                <qCom>2</qCom>
+                <vUnCom>1.9250</vUnCom>
+                <vProd>3.8500</vProd>
+            </prod>
+            <imposto>
+                <cofins>
+                    <cst>1</cst>
+                    <percentualAliquota>3.0</percentualAliquota>
+                </cofins>
+            </imposto>
+        </det>
+        <det nItem="19">
+            <prod>
+                <cProd>31291001</cProd>
+                <cEAN>9772316335008</cEAN>
+                <xProd>Revistas</xProd>
+                <NCM>49029000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
                 <qCom>3</qCom>
                 <vUnCom>5.3823</vUnCom>
@@ -361,11 +457,14 @@
                 </cofins>
             </imposto>
         </det>
-        <det nItem="17">
+        <det nItem="20">
             <prod>
                 <cProd>43538001</cProd>
+                <cEAN>9788580739176</cEAN>
                 <xProd>Livro</xProd>
                 <NCM>49019000</NCM>
+                <EXTIPI>12</EXTIPI>
+                <CFOP>1101</CFOP>
                 <uCom>KG</uCom>
                 <qCom>2</qCom>
                 <vUnCom>15.3923</vUnCom>
@@ -378,83 +477,8 @@
                 </cofins>
             </imposto>
         </det>
-        <det nItem="18">
-            <prod>
-                <cProd>33582012</cProd>
-                <xProd>Fasciculos</xProd>
-                <NCM>49019100</NCM>
-                <uCom>KG</uCom>
-                <qCom>1</qCom>
-                <vUnCom>29.2523</vUnCom>
-                <vProd>29.2523</vProd>
-            </prod>
-            <imposto>
-                <cofins>
-                    <cst>1</cst>
-                    <percentualAliquota>3.0</percentualAliquota>
-                </cofins>
-            </imposto>
-        </det> -->
-        <total>
-			<ICMSTot>
-				<vBC>20000000.00</vBC>
-				<vICMS>18.00</vICMS>
-				<vBCST>0</vBCST>
-				<vST>0</vST>
-				<vProd>20000000.00</vProd>
-				<vFrete>0</vFrete>
-				<vSeg>0</vSeg>
-				<vDesc>0</vDesc>
-				<vII>0</vII>
-				<vIPI>0</vIPI>
-				<vPIS>130000.00</vPIS>
-				<vCOFINS>400000.00</vCOFINS>
-				<vOutro>0</vOutro>
-				<vNF>20000000.00</vNF>
-			</ICMSTot>
-		</total>
-        <transp>
-			<modFrete>0</modFrete>
-		</transp>
-		<cobr></cobr>
-		<infAdic></infAdic>
-		<compra></compra>
-		<cana>
-			<safra>1234</safra>
-			<ref>10/2321</ref>
-			<forDia dia="2">
-				<qtde>1</qtde>
-			</forDia>
-			<qTotMes>5</qTotMes>
-			<qTotAnt>3</qTotAnt>
-			<qTotGer>4</qTotGer>
-			<deduc>
-				<xDed>8</xDed>
-				<vDed>9</vDed>
-			</deduc>
-			<vFor>7</vFor>
-			<vTotDed>10</vTotDed>
-			<vLiqFor>11</vLiqFor>
-		</cana>
+        <trans>
+            <mdFrente>1</mdFrente>
+        </trans>
     </infNFe>
-    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
-		<SignedInfo>
-			<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></CanonicalizationMethod>
-			<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></SignatureMethod>
-			<Reference URI="#NFe35080599999090910270550010000000015180051273">
-				<Transforms>
-					<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></Transform>
-					<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></Transform>
-				</Transforms>
-				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></DigestMethod>
-				<DigestValue>xhTSDMH61e9uqe04lnoHT4ZzLSY=</DigestValue>
-			</Reference>
-		</SignedInfo>
-		<SignatureValue>Iz5Z3PLQbzZt9jnBtr6xsmHZMOu/3plXG9xxfFjRCQYGnD1rjlhzBGrqt026Ca2VHHM/bHNepi6FuFkAi595GScKVuHREUotzifE2OIjgavvTOrMwbXG7+0LYgkwPFiPCao2S33UpZe7MneaxcmKQGKQZw1fP8fsWmaQ4cczZT8=</SignatureValue>
-		<KeyInfo>
-			<X509Data>
-				<X509Certificate>MIIEuzCCA6OgAwIBAgIDMTMxMA0GCSqGSIb3DQEBBQUAMIGSMQswCQYDVQQGEwJCUjELMAkGA1UECBMCUlMxFTATBgNVBAcTDFBvcnRvIEFsZWdyZTEdMBsGA1UEChMUVGVzdGUgUHJvamV0byBORmUgUlMxHTAbBgNVBAsTFFRlc3RlIFByb2pldG8gTkZlIFJTMSEwHwYDVQQDExhORmUgLSBBQyBJbnRlcm1lZGlhcmlhIDEwHhcNMDgwNDI4MDkwMTAyWhcNMDkwNDMwMjM1OTU5WjCBnjELMAkGA1UECBMCUlMxHTAbBgNVBAsTFFRlc3RlIFByb2pldG8gTkZlIFJTMR0wGwYDVQQKExRUZXN0ZSBQcm9qZXRvIE5GZSBSUzEVMBMGA1UEBxMMUE9SVE8gQUxFR1JFMQswCQYDVQQGEwJCUjEtMCsGA1UEAxMkTkZlIC0gQXNzb2NpYWNhbyBORi1lOjk5OTk5MDkwOTEwMjcwMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDh6RRv0bj4RYX+tDQrZRb5opa77LBVVs+6LphIfSF3TSWPfnKh0+xLlBFdmnB5YGgbbW9Uon6pZQTfaC8jZhRhI5eFRRofY/Ugoeo0NGt6PcIQNZQd6lLQ/ASd1qWwjqJoEa7udriKjy3h351Mf1bng1VxS1urqC3Dn39ZWIEwQIDAQABo4IBjjCCAYowIgYDVR0jAQEABBgwFoAUPT5TqhNWAm+ZpcVsvB7malDBjEQwDwYDVR0TAQH/BAUwAwEBADAPBgNVHQ8BAf8EBQMDAOAAMAwGA1UdIAEBAAQCMAAwgbwGA1UdEQEBAASBsTCBrqA4BgVgTAEDBKAvBC0wNzA4MTk1MTE1MTk0NTMxMDg3MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDCgHQYFYEwBAwKgFAQSRmVybmFuZG8gQ2FudG8gQWx0oBkGBWBMAQMDoBAEDjk5OTk5MDkwOTEwMjcwoBcGBWBMAQMHoA4EDDAwMDAwMDAwMDAwMIEfZmVybmFuZG8tYWx0QHByb2NlcmdzLnJzLmdvdi5icjAgBgNVHSUBAf8EFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwUwYDVR0fAQEABEkwRzBFoEOgQYY/aHR0cDovL25mZWNlcnRpZmljYWRvLnNlZmF6LnJzLmdvdi5ici9MQ1IvQUNJbnRlcm1lZGlhcmlhMzguY3JsMA0GCSqGSIb3DQEBBQUAA4IBAQCNPpaZ3Byu3/70nObXE8NiM53j1ddIFXsb+v2ghCVd4ffExv3hYc+/a3lfgV8H/WfQsdSCTzS2cHrd4Aasr/eXfclVDmf2hcWz+R7iysOHuT6B6r+DvV3JcMdJJCDdynR5REa+zViMnVZo1G3KuceQ7/y5X3WFNVq4kwHvonJ9oExsWyw8rTwUK5bsjz0A2yEwXkmkJIngnF41sP31+9jCImiqkXcmsesFhxzX7iurAQAQCZOm7iwMWxQKcAjXCZrgSZWRQy6mU224sX3HTArHahmLJ9Iw+WYAua5qBJsiN6PC7v5tfhrEQFpcG39yMnOecxvkkPolDUyBa7d7xwgm</X509Certificate>
-			</X509Data>
-		</KeyInfo>
-	</Signature>
 </NFe>

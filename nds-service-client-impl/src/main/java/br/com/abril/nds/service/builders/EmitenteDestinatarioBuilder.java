@@ -88,7 +88,8 @@ public class EmitenteDestinatarioBuilder {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setBairro(cota.getEnderecoPrincipal().getEndereco().getBairro());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCep(cota.getEnderecoPrincipal().getEndereco().getCep());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCidade(cota.getEnderecoPrincipal().getEndereco().getCidade());
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(cota.getEnderecoPrincipal().getEndereco().getCodigoCidadeIBGE().longValue());
+		//FIXME: Ajustar para trazer o codigo do municipio
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(cota.getEnderecoPrincipal().getEndereco().getUf());
 		
 		if(cota.getEnderecoPrincipal().getEndereco().getCodigoUf() != null) {
