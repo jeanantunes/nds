@@ -288,23 +288,32 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#obterUltimoHistoricoInativo(Long)
+	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#obterUltimoHistorico(Long, SituacaoCadastro)
 	 */
-	public HistoricoSituacaoCota obterUltimoHistoricoInativo(Integer numeroCota){
+	public HistoricoSituacaoCota obterUltimoHistorico(Integer numeroCota, SituacaoCadastro situacaoCadastro){
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select h from HistoricoSituacaoCota h JOIN h.cota cota ")
 		   .append(" where cota.numeroCota = :numeroCota ")
 		   .append(" and h.processado = true ")
-		   .append(" and cota.situacaoCadastro = h.novaSituacao ")
-		   .append(" and cota.situacaoCadastro = :situacaoCadastro ")
-		   .append(" order by cota.inicioAtividade, h.dataEdicao desc ");
+		   .append(" and cota.situacaoCadastro = h.novaSituacao ");
+		
+		if (situacaoCadastro != null){
+			
+			hql.append(" and cota.situacaoCadastro = :situacaoCadastro ");
+		}
+		
+		hql.append(" order by cota.inicioAtividade, h.dataEdicao desc ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("situacaoCadastro", SituacaoCadastro.INATIVO);
+		
+		if (situacaoCadastro != null){
+			
+			query.setParameter("situacaoCadastro", situacaoCadastro);
+		}
 		
 		query.setMaxResults(1);
 		

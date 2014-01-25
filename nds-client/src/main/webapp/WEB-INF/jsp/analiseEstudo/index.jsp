@@ -21,6 +21,13 @@ $(function(){
 
 <body>
 <form name="form" id="form">
+<div class="areaBts">
+  <div class="area">
+      <div class="" style='display:none;'></div>
+  </div>
+</div>
+<br clear="all" />
+  <br />
 
 <div class="corpo">
     <div class="container">

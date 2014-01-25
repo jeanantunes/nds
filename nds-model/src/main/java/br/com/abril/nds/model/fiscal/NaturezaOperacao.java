@@ -19,7 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -75,7 +74,7 @@ public class NaturezaOperacao implements Serializable {
 	    joinColumns = @JoinColumn(name = "PROCESSO_NFE_ID"))
 	@Column(name = "PROCESSO")
 	private Set<Processo> processo;
-	
+
 	@Column(name = "CONTRIBUINTE", nullable = false)
 	private boolean contribuinte;
 	
@@ -173,7 +172,15 @@ public class NaturezaOperacao implements Serializable {
 	public void setProcesso(Set<Processo> processo) {
 		this.processo = processo;
 	}
+	
+	public List<TipoMovimento> getTipoMovimento() {
+		return tipoMovimento;
+	}
 
+	public void setTipoMovimento(List<TipoMovimento> tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

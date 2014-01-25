@@ -209,7 +209,7 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresRetencoesTributos;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -12418,7 +12418,7 @@ public class DataLoader {
 		String documento 	= "";
 		String email 		= "";
 		
-		NotaFicalEndereco enderecoDestinatario 	= 
+		NotaFiscalEndereco enderecoDestinatario 	= 
 				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852123", "Rua das paineiras", "4585", "Jrd Limeira", "Pedra de Guaratiba", "RJ",3543402);
 		
 		session.save(enderecoDestinatario);
@@ -12445,7 +12445,7 @@ public class DataLoader {
 		String cnae = "";
 		String documentoEmitente = "";
 		
-		NotaFicalEndereco enderecoEmitente= 
+		NotaFiscalEndereco enderecoEmitente= 
 				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852345", "Rua Laranjeiras", "4585", "Jrd Brasil", "Santana do Livramento", "RJ",6);
 		
 		session.save(enderecoEmitente);
@@ -12498,8 +12498,8 @@ public class DataLoader {
 		String documentoTranposrte = "564645664";
 	
 		
-		Endereco enderecoTransporte = 
-				Fixture.criarEndereco(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", "4585", "Jrd Brasil", "Piuí", "MG",3543402);
+		NotaFiscalEndereco enderecoTransporte = 
+				Fixture.criarEnderecoNotaFiscal(TipoEndereco.COMERCIAL, "13852345", "Rua Maracuja", "4585", "Jrd Brasil", "Piuí", "MG",3543402);
 		
 		session.save(enderecoTransporte);
 		

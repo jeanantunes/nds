@@ -478,7 +478,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 					params: caracteristicaDistribuicaoController.getDadosFiltroPesquisaDetalhe()
 				});
 				
-				$("#divPesquisaSimplesGrid").hide();
+				$(".divPesquisaSimplesGrid").hide();
 				$(".pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexReload();
 		}
 		
@@ -497,7 +497,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 					params: caracteristicaDistribuicaoController.getDadosFiltroPesquisaDetalhe()
 				});
 				
-				$("#divPesquisaDetalheGrid").hide();
+				$(".divPesquisaDetalheGrid").hide();
 				$(".pesquisaSimplesGrid",caracteristicaDistribuicaoController.workspace).flexReload();
 		}
 			
@@ -555,19 +555,19 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	},
 	
 	exibeGridSimples:function(){
-		$('#divPesquisaSimplesGrid').show();
+		$('.divPesquisaSimplesGrid').show();
 		
 	},
 	escondeGridSimples:function(){
-		$("#divPesquisaSimplesGrid").hide();
+		$(".divPesquisaSimplesGrid").hide();
 		
 	},
 	exibeGridDetalhe:function(){
-		$('#divPesquisaDetalheGrid').show();
+		$('.divPesquisaDetalheGrid').show();
 	},
 	escondeGridDetalhe:function(){
 		
-		$('#divPesquisaDetalheGrid').hide();
+		$('.divPesquisaDetalheGrid').hide();
 	},
 	exibeGridDetalheModal:function(){
 		$('#divPesquisaDetalheModal').show();

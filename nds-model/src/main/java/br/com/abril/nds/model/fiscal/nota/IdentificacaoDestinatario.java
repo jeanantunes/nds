@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -67,7 +67,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	@NFEExportType
 	@XmlElement(name="enderDest")
-	private NotaFicalEndereco endereco;
+	private NotaFiscalEndereco endereco;
 	
 	/**
 	 * IE
@@ -213,7 +213,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @return the endereco
 	 */
-	public NotaFicalEndereco getEndereco() {
+	public NotaFiscalEndereco getEndereco() {
 		return endereco;
 	}
 
@@ -221,7 +221,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	/**
 	 * @param endereco the endereco to set
 	 */
-	public void setEndereco(NotaFicalEndereco endereco) {
+	public void setEndereco(NotaFiscalEndereco endereco) {
 		this.endereco = endereco;
 	}
 

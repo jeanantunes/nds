@@ -276,18 +276,37 @@ public class MixCotaProdutoRepositoryImpl extends
 		return list;
 	}
 
+	@Override
 	public boolean existeMixCotaProdutoCadastrado(Long idProduto, Long idCota){
-		StringBuilder hql = new StringBuilder("");
+		
+		StringBuilder hql = new StringBuilder("select count (m.id) ");
 
-		hql.append("")
-				.append(" from MixCotaProduto m  ")
-				.append(" where m.produto.id = :idProduto ")
-				.append(" and m.cota.id = :idCota ");
-				
+		hql.append(" from MixCotaProduto m, Produto p ")
+		   .append(" where m.codigoICD = p.codigoICD  ");
+		
+		if (idProduto != null){
+			
+			hql.append(" and m.produto.id = :idProduto ");
+		}
+		
+		if (idCota != null){
+			
+			hql.append(" and m.cota.id = :idCota ");
+		}
+		
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("idProduto", idProduto);
-		query.setParameter("idCota", idCota);
-		return query.list().size() >0;
+		
+		if (idProduto != null){
+			
+			query.setParameter("idProduto", idProduto);
+		}
+		
+		if (idCota != null){
+			
+			query.setParameter("idCota", idCota);
+		}
+		
+		return (Long) query.uniqueResult() > 0;
 	}
 
 	@Override

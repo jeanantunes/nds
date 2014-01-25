@@ -23,7 +23,7 @@ import org.hibernate.annotations.Type;
 
 import br.com.abril.nds.integracao.persistence.PersistentEnum;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFicalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
@@ -108,7 +108,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	@NFEExportType
 	@XmlElement(name="enderEmit")
-	private NotaFicalEndereco endereco;
+	private NotaFiscalEndereco endereco;
 	
 	/**
 	 * IE
@@ -336,7 +336,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @return the endereco
 	 */
-	public NotaFicalEndereco getEndereco() {
+	public NotaFiscalEndereco getEndereco() {
 		return endereco;
 	}
 
@@ -345,7 +345,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @param endereco the endereco to set
 	 */
-	public void setEndereco(NotaFicalEndereco endereco) {
+	public void setEndereco(NotaFiscalEndereco endereco) {
 		this.endereco = endereco;
 	}
 

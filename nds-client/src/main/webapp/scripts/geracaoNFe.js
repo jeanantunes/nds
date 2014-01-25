@@ -405,6 +405,21 @@ var geracaoNFeController = $.extend({
 			});
 		}
 		
+		var mensagens = []; 
+		if($("#geracaoNfe-filtro-movimentoDe").val() == '' || $("#geracaoNfe-filtro-movimentoAte").val() == ''){
+			mensagens.push('A data de movimento não nula');
+			exibirMensagem('WARNING', mensagens);
+			return false;
+		}else{
+			var retorno = validarDatas($("#geracaoNfe-filtro-movimentoDe").val(), $("#geracaoNfe-filtro-movimentoAte").val());
+			
+			if(retorno){			
+				mensagens.push('A data de movimento final não pode ser maior que a data inicial');
+				exibirMensagem('WARNING', mensagens);
+				return false;
+			}
+		}
+		
 		var grid;
 		
 		if($('input[name=tipoDestinatario]:checked').val() == 'FORNECEDOR'){

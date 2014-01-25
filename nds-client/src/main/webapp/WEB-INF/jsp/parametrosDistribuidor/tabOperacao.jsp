@@ -337,36 +337,36 @@
                 <td>&nbsp;</td>
               </tr>
             </table>
-            <table width="390" border="0" cellspacing="1" cellpadding="0">
-              <tr class="header_table">
-                <td align="center">&nbsp;</td>
-                <td align="center">Recebimento</td>
-                <td align="center">Encalhe</td>
-              </tr>
-              <tr>
-                <td width="123" align="center" class="class_linha_1">Conferência Cega</td>
-                <td width="115" align="center">
-                      <c:if test="${parametrosDistribuidor.conferenciaCegaRecebimento}">
-                          <input name="parametrosDistribuidor.conferenciaCegaRecebimento" 
-                            type="checkbox" id="conferenciaCegaRecebimento" checked="checked" />
-                      </c:if>
-                      <c:if test="${not parametrosDistribuidor.conferenciaCegaRecebimento}">
-                          <input name="parametrosDistribuidor.conferenciaCegaRecebimento" 
-                            type="checkbox" id="conferenciaCegaRecebimento"/>
-                      </c:if>         
-                </td>
-                <td width="148" align="center">
-                      <c:if test="${parametrosDistribuidor.conferenciaCegaEncalhe}">
-                          <input name="parametrosDistribuidor.conferenciaCegaEncalhe" 
-                             type="checkbox" id="conferenciaCegaEncalhe" checked="checked" />
-                      </c:if>
-                      <c:if test="${not parametrosDistribuidor.conferenciaCegaEncalhe}">
-                          <input name="parametrosDistribuidor.conferenciaCegaEncalhe" 
-                             type="checkbox" id="conferenciaCegaEncalhe" />
-                      </c:if>           
-                </td>
-              </tr>
-            </table>
+<!--             <table width="390" border="0" cellspacing="1" cellpadding="0"> -->
+<!--               <tr class="header_table"> -->
+<!--                 <td align="center">&nbsp;</td> -->
+<!--                 <td align="center">Recebimento</td> -->
+<!--                 <td align="center">Encalhe</td> -->
+<!--               </tr> -->
+<!--               <tr> -->
+<!--                 <td width="123" align="center" class="class_linha_1">Conferência Cega</td> -->
+<!--                 <td width="115" align="center"> -->
+<%--                       <c:if test="${parametrosDistribuidor.conferenciaCegaRecebimento}"> --%>
+<!--                           <input name="parametrosDistribuidor.conferenciaCegaRecebimento"  -->
+<!--                             type="checkbox" id="conferenciaCegaRecebimento" checked="checked" /> -->
+<%--                       </c:if> --%>
+<%--                       <c:if test="${not parametrosDistribuidor.conferenciaCegaRecebimento}"> --%>
+<!--                           <input name="parametrosDistribuidor.conferenciaCegaRecebimento"  -->
+<!--                             type="checkbox" id="conferenciaCegaRecebimento"/> -->
+<%--                       </c:if>          --%>
+<!--                 </td> -->
+<!--                 <td width="148" align="center"> -->
+<%--                       <c:if test="${parametrosDistribuidor.conferenciaCegaEncalhe}"> --%>
+<!--                           <input name="parametrosDistribuidor.conferenciaCegaEncalhe"  -->
+<!--                              type="checkbox" id="conferenciaCegaEncalhe" checked="checked" /> -->
+<%--                       </c:if> --%>
+<%--                       <c:if test="${not parametrosDistribuidor.conferenciaCegaEncalhe}"> --%>
+<!--                           <input name="parametrosDistribuidor.conferenciaCegaEncalhe"  -->
+<!--                              type="checkbox" id="conferenciaCegaEncalhe" /> -->
+<%--                       </c:if>            --%>
+<!--                 </td> -->
+<!--               </tr> -->
+<!--             </table> -->
           </fieldset>
           <fieldset style="width:420px!important; margin-bottom:5px;">
                     <legend>Chamadão</legend>
