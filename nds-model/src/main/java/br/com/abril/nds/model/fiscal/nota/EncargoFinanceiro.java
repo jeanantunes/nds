@@ -56,10 +56,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@Embedded
 	@NFEExportType
 	private COFINSST cofinsSt;
-
-	@Embedded
-	@NFEExportType(secaoPadrao = TipoSecao.S)
-	private ICMS icms;
 	
 	/**
 	 * @return the id
@@ -174,14 +170,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 	 */
 	public void setCofinsSt(COFINSST cofinsSt) {
 		this.cofinsSt = cofinsSt;
-	}
-
-	public ICMS getIcms() {
-		return icms;
-	}
-
-	public void setIcms(ICMS icms) {
-		this.icms = icms;
 	}
 
 }
