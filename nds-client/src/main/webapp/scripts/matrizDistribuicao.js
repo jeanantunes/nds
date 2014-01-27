@@ -216,7 +216,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         row.cell.suplem = parseInt(row.cell.suplem, 10) || 0;
         row.cell.estoque = parseInt(row.cell.estoque, 10) || 0;
 
-<<<<<<< HEAD
         
         var reparte =0;
         var repDist = 0;
