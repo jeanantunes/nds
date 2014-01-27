@@ -25,11 +25,13 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.RestricoesAcesso;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.PermissaoService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -62,6 +64,9 @@ public class GruposAcessoController extends BaseController {
 	private UsuarioService usuarioService;
 
 	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
 	private PermissaoService permissaoService;
 
 	@Autowired
@@ -85,20 +90,54 @@ public class GruposAcessoController extends BaseController {
 		List<AcessoDTO> permissoes = new ArrayList<AcessoDTO>();
 
 		for(Permissao p : Permissao.values()) {
+			AcessoDTO dto = null;
+
 			if(!p.isPermissaoAlteracao()) {
-				permissoes.add(new AcessoDTO(p));
+				dto = new AcessoDTO(p);
 			} else if(p.isPermissaoAlteracao() && !p.isPermissaoMenu() && p.getPermissaoPai()!=null) {
-				AcessoDTO dto = new AcessoDTO();
+				dto = new AcessoDTO();
 				dto.setAlteracao(p);
 				dto.setDescricao(p.getDescricao());
 				dto.setPai(p.getPermissaoPai());
 				dto.setObservacao(p.getObservacao());
+			}
+
+			if (dto != null) {
+
+				if (p.getRestricoesAcesso() != null) {
+				
+					this.tratarRestricoesAcesso(p.getRestricoesAcesso(), dto);
+				}
+
 				permissoes.add(dto);
 			}
 		}		
 
 		result.use(FlexiGridJson.class).from(permissoes).total(permissoes.size()).page(1).serialize();
 		
+	}
+	
+	private void tratarRestricoesAcesso(RestricoesAcesso restricao, AcessoDTO dto) {
+		
+		switch (restricao) {
+
+		case CONF_CEGA_RECEBIMENTO_FISICO:
+			this.tratarRestricaoAcessoConferenciaCegaRecebimentoFisico(dto);
+			break;
+		case CONF_CEGA_FECHAMENTO_ENCALHE:
+			this.tratarRestricaoAcessoConferenciaCegaFechamentoEncalhe(dto);
+			break;
+		default:
+			break;
+		}		
+	}
+	
+	private void tratarRestricaoAcessoConferenciaCegaRecebimentoFisico(AcessoDTO dto) {
+		dto.setHabilitado(this.distribuidorService.isConferenciaCegaRecebimentoFisico());
+	}
+	
+	private void tratarRestricaoAcessoConferenciaCegaFechamentoEncalhe(AcessoDTO dto) {
+		dto.setHabilitado(this.distribuidorService.isConferenciaCegaFechamentoEncalhe());
 	}
 	
 	/**
