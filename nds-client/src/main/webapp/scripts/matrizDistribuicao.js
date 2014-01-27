@@ -221,20 +221,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         var reparte =0;
         var repDist = 0;
         
-        if(row.cell.estoque!=null && row.cell.estoque > 0) {
+        if((row.cell.estoque!=null && row.cell.estoque > 0) || row.cell.periodo > 1) {
         	reparte =row.cell.estoque;
         	repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.estoque);
         }else {
             reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
             repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte - row.cell.promo);
 	    }
-
-        // var reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
-        //var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : ((row.cell.estoque + row.cell.reparte) - row.cell.promo);
-=======
-        var reparte = (row.cell.reparte) - row.cell.promo;
-        var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : reparte;
->>>>>>> DGBti/master
 
         row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i, liberado);
 
