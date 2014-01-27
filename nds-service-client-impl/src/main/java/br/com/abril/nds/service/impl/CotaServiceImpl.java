@@ -50,6 +50,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -102,6 +103,7 @@ import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
@@ -185,6 +187,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private PdvRepository pdvRepository;
+	
+	@Autowired
+	private GrupoRepository grupoRepository;
 	
 	@Autowired
 	private ReferenciaCotaRepository referenciaCotaRepository;
@@ -2528,6 +2533,15 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
 		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
+	}
+	
+	@Transactional(readOnly = true)
+	public boolean isCotaOperacaoDiferenciada(Integer numeroCota){
+		
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+
+		return (diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty());
+		
 	}
 	
 	@Transactional(readOnly = true)

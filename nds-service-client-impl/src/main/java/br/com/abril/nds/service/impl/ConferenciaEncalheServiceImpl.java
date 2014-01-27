@@ -14,12 +14,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -411,10 +409,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ChamadaEncalhe ce = cec.getChamadaEncalhe();
 		
 		Date dataRecolhimentoCE = ce.getDataRecolhimento();
+		
+		Date primeiroDiaEncalheOperacaoDiferenciada = obterDataPrimeiroDiaEncalheOperacaoDiferenciada(numeroCota, dataRecolhimentoCE);
+		
+		isDataRecolhimentoValida(dataOperacao, primeiroDiaEncalheOperacaoDiferenciada, produtoEdicao.getId(), true);
+		
+		return cec;
+		
+	}
+
+	@Transactional(readOnly=true)
+	public Date obterDataPrimeiroDiaEncalheOperacaoDiferenciada(Integer numeroCota, Date dataRecolhimentoCE) {
+		
 		DiaSemana inicioSemana = distribuidorService.inicioSemana();
 		
 		List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada = 
-				obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(numeroCota, dataRecolhimentoCE, inicioSemana.getCodigoDiaSemana());
+				obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(
+						numeroCota, 
+						dataRecolhimentoCE, 
+						inicioSemana.getCodigoDiaSemana());
 		
 		identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(diasSemanaRecolhimentoOperacaoDiferenciada);
 		
@@ -427,12 +440,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 		
-		isDataRecolhimentoValida(dataOperacao, primeiraDataRecolhimento, produtoEdicao.getId(), true);
-		
-		return cec;
-		
+		return primeiraDataRecolhimento;
 	}
-
+	
 	
 	/**
 	 * Identifica o primeiro qual o primeiro dia de recolhimento na semana 
@@ -835,14 +845,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional(readOnly = true)
-	public boolean isCotaOperacaoDiferenciada(Integer numeroCota){
-		
-		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
-
-		return (diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty());
-		
-	}
 	
 	@Transactional(readOnly = true)
 	public void verificarCotaOperacaoDiferenciada(Integer numeroCota) {
@@ -1063,7 +1065,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 	    	ChamadaEncalheCota chamadaEncalheCota = null;
 	    	
-	    	if(isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
 	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 	    	} else {
 				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1168,7 +1170,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 	    	ChamadaEncalheCota chamadaEncalheCota = null;
 	    	
-	    	if(isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
 	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 	    	} else {
 				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
@@ -1287,7 +1289,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 		    	ChamadaEncalheCota chamadaEncalheCota = null;
 		    	
-		    	if(isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
 		    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
 		    	} else {
 					chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);

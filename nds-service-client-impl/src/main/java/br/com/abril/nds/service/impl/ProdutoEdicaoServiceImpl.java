@@ -67,6 +67,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -151,6 +152,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Value("${data_cabalistica}")
 	private String dataCabalistica;
@@ -329,7 +333,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 				this.conferenciaEncalheService.isDataRecolhimentoValida(
 					dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId(), 
-					conferenciaEncalheService.isCotaOperacaoDiferenciada(numeroCota));
+					cotaService.isCotaOperacaoDiferenciada(numeroCota));
 				
 				produtosEdicaoValidos.add(produtoEdicao);
 				
