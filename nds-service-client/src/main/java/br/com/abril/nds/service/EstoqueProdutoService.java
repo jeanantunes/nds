@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
@@ -31,4 +32,6 @@ public interface EstoqueProdutoService {
 			FiltroEstoqueProdutosRecolhimento filtro);
 
 	Set<ItemDTO<Integer, Integer>> obterSemanasProdutosFechados();
+	
+	BigInteger buscarQtdEstoquePorProduto(String codigoProduto, Long numeroEdicao);
 }

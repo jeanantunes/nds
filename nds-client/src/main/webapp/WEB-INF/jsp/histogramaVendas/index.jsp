@@ -44,7 +44,7 @@
     </span>
 
     <span class="bt_novos">
-      <a href="javascript:;" onclick="$('.ui-tabs-selected').children('.ui-icon-close').click();" rel="tipsy" title="Cancelar">
+      <a href="javascript:;" onclick="$('.ui-tabs-selected', histogramaVendasController.workspace).children('.ui-icon-close').click();" rel="tipsy" title="Cancelar">
         <img src="images/ico_excluir.gif" hspace="5" border="0" />
       </a>
     </span>
@@ -68,21 +68,21 @@
         <table width="960" border="0" cellpadding="2" cellspacing="1">
           <tr>
             <td width="20">
-              <input name="filtroPor" type="radio" id="radio" value="" checked="checked" onclick="filtroTodas();" />
+              <input name="filtroPor" type="radio" id="radio" value="" checked="checked" onclick="histogramaVendasController.filtroTodas();" />
             </td>
             <td width="103">
               <label for="radio"> <strong>Todas as Cotas</strong>
               </label>
             </td>
             <td width="20">
-              <input type="radio" name="filtroPor" id="histogramaVenda_pracaSede" value="0" onclick="filtroSede();"  />
+              <input type="radio" name="filtroPor" id="histogramaVenda_pracaSede" value="0" onclick="histogramaVendasController.filtroSede();"  />
             </td>
             <td width="70">
               <label for="radio3"> <strong>Pra&ccedil;a Sede</strong>
               </label>
             </td>
             <td width="20">
-              <input type="radio" name="filtroPor" id="histogramaVenda_pracaAtendida" value="2" onclick="filtroAtendida();"  />
+              <input type="radio" name="filtroPor" id="histogramaVenda_pracaAtendida" value="2" onclick="histogramaVendasController.filtroAtendida();"  />
             </td>
             <td width="98">
               <label for="radio4">
@@ -90,7 +90,7 @@
               </label>
             </td>
             <td width="20">
-              <input id="inserirComponentes" name="inserirComponentes" type="checkbox" value="checked" onclick="$('.filtroComponentes').toggle();" />
+              <input id="inserirComponentes" name="inserirComponentes" type="checkbox" value="checked" onclick="$('.filtroComponentes', histogramaVendasController.workspace).toggle();" />
             </td>
             <td width="558">
               <table width="552" border="0" cellpadding="2" cellspacing="1">

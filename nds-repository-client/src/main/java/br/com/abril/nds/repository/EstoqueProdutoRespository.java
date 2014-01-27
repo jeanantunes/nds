@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 			FiltroEstoqueProdutosRecolhimento filtro);
 
 	List<Date> obterDatasRecProdutosFechados();
+
+	BigInteger buscarQtdEstoquePorProduto(String codigoProduto, Long numeroEdicao);
 }
