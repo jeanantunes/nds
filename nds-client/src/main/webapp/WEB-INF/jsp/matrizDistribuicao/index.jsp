@@ -47,24 +47,6 @@ var lancamentosSelecionados = [];
 .dialog-detalhe-produto { display:none; }
 .dialog-confirm-balanceamento { display:none; }
 
-.gridLinhaDestacada {
-  background:#F00; 
-  font-weight:bold; 
-  color:#fff;
-}
-
-.gridLinhaDestacada:hover {
-   color:#000;
-}
-
-.gridLinhaDestacada a {
-   color:#fff;
-}
-
-.gridLinhaDestacada a:hover {
-   color:#000;
-}
-
 .fieldFiltroMatriz{margin-top:27px; width:1100px!important; margin-right:0px!important;}
 .fieldGridMatriz{width:1100px;}
 

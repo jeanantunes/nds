@@ -154,9 +154,8 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				
 				hql += " and hsc.id = (";
 				hql += " select max(_h.id) from HistoricoSituacaoCota _h ";
-				hql += " where _h.dataInicioValidade <= (";
-				hql += " select dataOperacao from Distribuidor ";
-				hql += ") and _h.cota.id = hsc.cota.id ";
+				hql += " where _h.processado = true ";
+				hql += " and _h.cota.id = hsc.cota.id ";
 				hql += ")";
 			}
 		}
