@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
  * Interface para o repositório de histórico de status da cota.
@@ -38,10 +39,11 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	 * Retorna o ultimo histórico de status da cota inativo 
 	 * 
 	 * @param numeroCota - número da cota
+	 * @param situacaoCadastro
 	 * 
 	 * @return HistoricoSituacaoCota 
 	 */
-	HistoricoSituacaoCota obterUltimoHistoricoInativo(Integer numeroCota);
+	HistoricoSituacaoCota obterUltimoHistorico(Integer numeroCota, SituacaoCadastro situacaoCadastro);
 
 	/**
 	 * Busca última suspensão de cota realizada em determinado dia

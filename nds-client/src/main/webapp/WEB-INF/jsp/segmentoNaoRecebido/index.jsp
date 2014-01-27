@@ -34,6 +34,47 @@
 	<p>Confirma esta inclusão?</p>
 </div>
 
+<div class="areaBts">
+  <div class="area">
+    <div class="porSegmento" style="display:none;">
+      <span class="bt_novos">
+        <a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirCotaSegmentoNaoRecebido()" rel="tipsy" title="Confirmar">
+          <img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+        </a>
+      </span>
+      <span class="bt_novos" style="float:right;">
+        <a href="javascript:;" onclick="segmentoNaoRecebidoController.limparListaCotas()" rel="tipsy" title="Limpar">
+        </a>
+      </span>
+      <span class="bt_arq">
+        <a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=cotas_nao_recebem_segmento" rel="tipsy" title="Gerar Arquivo">
+          <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+        </a>
+      </span>
+            
+      <span class="bt_arq">
+        <a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=cotas_nao_recebem_segmento" rel="tipsy" title="Imprimir">
+          <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+        </a>
+      </span>
+    </div>
+    <div class="porCota" style="display:none;">
+      <span class="bt_novos" >             
+        <a href="javascript:;" onclick="$('#workspace').tabs('addTab', 'Exceção de Segmentos e Parciais', '${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/chamarTelaExcecaoSegmentoParcias')" rel="tipsy" title="Exceções Segmentos e Parciais"> 
+          <img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />
+        </a>
+      </span>
+      <span class="bt_novos">
+        <a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirSegmento()" rel="tipsy" title="Confirmar">
+          <img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+        </a>
+      </span>
+        
+    </div>
+  </div>
+      
+</div>
+
 
 <div class="corpo">
     <br clear="all"/>
@@ -114,17 +155,11 @@
       <div class="grids">
       
       <div class="porSegmento" id="segmentoNaoRecebido_porSegmento" style="display:none;">
-      <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
+        <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
        	  <legend>Cotas que Não Recebem Segmento</legend>
         
         	<table class="segmentoNaoRecebidaGrid"></table>
-            
-            
-            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=cotas_nao_recebem_segmento" ><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-            
-            <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=cotas_nao_recebem_segmento"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-            
-      </fieldset>
+        </fieldset>
 
 	<!-- GRID COTA PARA SELE�ÃO E INCLUSÃO NO SEGMENTO NÃO RECEBIDO -->
       <fieldset class="classFieldset" style="float:left; width:300px!important;">
@@ -151,9 +186,7 @@
 
        	<table class="segmentosGrid"></table>
              
-      <!-- Confirmar a inclusão das cotas no segmento não recebido -->
-      <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirCotaSegmentoNaoRecebido()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
-      <span class="bt_novos" title="Limpar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.limparListaCotas()">Limpar</a></span>
+      
         
       </fieldset>
       </div>
@@ -164,10 +197,7 @@
         
         	<table class="segmentoCotaGrid"></table>
             
-      		 <span class="bt_novos" title="Exceções Segmentos e Parciais">            	
-            	<a href="javascript:;" onclick="$('#workspace').tabs('addTab', 'Exceção de Segmentos e Parciais', '${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/chamarTelaExcecaoSegmentoParcias')"> 
-            		<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a>
-            </span>
+      		 
         
       </fieldset>
       <fieldset class="classFieldset" style="float:left; width:300px!important;">
@@ -184,8 +214,7 @@
           <br />
 
        	<table class="segmentosBGrid"></table>
-      <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirSegmento()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
-        
+     
       </fieldset>
       </div>
       </div>

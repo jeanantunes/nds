@@ -192,7 +192,7 @@ public class TipoDescontoCotaController extends BaseController {
 		
 		List<TipoDescontoDTO> listaTipoDescontoGeral  = descontoService.buscarTipoDesconto(filtroSessao);
 		
-		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaTipoDescontoGeral, TipoDescontoDTO.class, this.httpServletResponse);
+		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoGeral, TipoDescontoDTO.class, this.httpServletResponse);
 
 	}
 	
@@ -202,7 +202,7 @@ public class TipoDescontoCotaController extends BaseController {
 		
 		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtroSessao);
 		
-		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaDescontoCotaEspecifica,TipoDescontoCotaDTO.class, this.httpServletResponse);
+		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaDescontoCotaEspecifica,TipoDescontoCotaDTO.class, this.httpServletResponse);
 	}
 	
 	private void exportarDescontoProduto(FileType fileType) throws IOException{
@@ -211,7 +211,7 @@ public class TipoDescontoCotaController extends BaseController {
 		
 		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtroSessao);
 		
-		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
+		FileExporter.to("consulta-tipo-desconto-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, listaTipoDescontoProduto, TipoDescontoProdutoDTO.class, this.httpServletResponse);
 	}
 
 	@Get
@@ -231,7 +231,9 @@ public class TipoDescontoCotaController extends BaseController {
 			case PRODUTO:
 				exportarDescontoProduto(fileType);
 				break;
-		}		
+		}	
+		
+		result.nothing();
 	}
 	
 	/*

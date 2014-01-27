@@ -542,7 +542,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 		} else {
 			
-			this.conferenciaEncalheService.verificarCotaOperacaoDiferenciada(numeroCota);
+			//this.conferenciaEncalheService.verificarCotaOperacaoDiferenciada(numeroCota);
 			
 			if(this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota)) {
 				

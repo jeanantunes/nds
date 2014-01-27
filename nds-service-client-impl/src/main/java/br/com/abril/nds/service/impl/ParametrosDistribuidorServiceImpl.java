@@ -678,8 +678,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(parametrosDistribuidor.isDiaRecolhimentoQuarto());
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(parametrosDistribuidor.isDiaRecolhimentoQuinto());
 		parametrosRecolhimentoDistribuidor.setPermiteRecolherDiasPosteriores(parametrosDistribuidor.isLimiteCEProximaSemana());
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(parametrosDistribuidor.isConferenciaCegaEncalhe());
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(parametrosDistribuidor.isConferenciaCegaRecebimento());
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(Boolean.TRUE);
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(Boolean.TRUE);
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
 		distribuidor.setCapacidadeDistribuicao((parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento() != null)

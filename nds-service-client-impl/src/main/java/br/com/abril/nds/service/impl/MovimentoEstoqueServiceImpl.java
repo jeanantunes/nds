@@ -561,7 +561,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 				estoqueProduto.setQtde(BigInteger.ZERO);
 			}
-			
+
+			estoqueProduto.setQtde(estoqueProduto.getQtde() != null ? estoqueProduto.getQtde() : BigInteger.ZERO);
+
 			TipoEstoque tipoEstoque = tipoMovimentoEstoque.getGrupoMovimentoEstoque().getTipoEstoque();
 			
 			if (TipoEstoque.COTA.equals(tipoEstoque)) {

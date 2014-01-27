@@ -532,6 +532,9 @@ var fechamentoEncalheController = $.extend(true, {
 								
 								_this.dialog("close");
 								
+								window.open(contextPath + "/devolucao/fechamentoEncalhe/imprimirBoletosCotasAusentes", 
+										"_blank");
+								
 								fechamentoEncalheController.emitirBoletosFechamentoEncalhe();
 
 								return;

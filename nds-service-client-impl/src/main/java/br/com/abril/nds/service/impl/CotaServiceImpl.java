@@ -1389,13 +1389,15 @@ public class CotaServiceImpl implements CotaService {
 		if(cotaDto.getIdCota()!= null){
 			cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
 		}
-				
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		boolean incluirPDV = false;
 		//Flag indica criação de uma nova cota
 		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
-			cota.setInicioAtividade(distribuidorService.obterDataOperacaoDistribuidor());
+			cota.setInicioAtividade(dataOperacao);
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 			cota.setTipoCota(TipoCota.CONSIGNADO);
 			incluirPDV = true;
@@ -1430,13 +1432,14 @@ public class CotaServiceImpl implements CotaService {
 	    	
 		    HistoricoSituacaoCota hsc = new HistoricoSituacaoCota();
 			hsc.setCota(cota);
-			hsc.setDataEdicao(new Date());
-			hsc.setDataInicioValidade(new Date());
+			hsc.setDataEdicao(dataOperacao);
+			hsc.setDataInicioValidade(dataOperacao);
 			hsc.setTipoEdicao(TipoEdicao.INCLUSAO);
 			hsc.setResponsavel(usuarioService.getUsuarioLogado());
 			hsc.setSituacaoAnterior(cota.getSituacaoCadastro());
 			hsc.setNovaSituacao(cota.getSituacaoCadastro());
 			hsc.setDescricao("Cota nova.");
+			hsc.setProcessado(true);
 			
 			historicoSituacaoCotaRepository.adicionar(hsc);
 			
@@ -1653,6 +1656,10 @@ public class CotaServiceImpl implements CotaService {
 			if((cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty())){
 				mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
 			}
+		}
+		
+		if(cotaDto.getTipoDistribuicaoCota() == null){
+			mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
 		}
 				
 		if (!mensagensValidacao.isEmpty()){
@@ -2060,7 +2067,7 @@ public class CotaServiceImpl implements CotaService {
 	private boolean isParametroDistribuidoNumeroCotaValido(Integer  numeroCota){
 		
 		HistoricoSituacaoCota historicoSituacaoCota  = 
-			this.historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+			this.historicoSituacaoCotaRepository.obterUltimoHistorico(numeroCota, SituacaoCadastro.INATIVO);
 		
 		if (historicoSituacaoCota == null) {
 			

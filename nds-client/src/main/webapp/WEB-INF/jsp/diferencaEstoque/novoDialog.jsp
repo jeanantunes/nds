@@ -47,16 +47,16 @@
 					</tr>
 					<tr id="trCota1">
 						<td>
-							<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="10"
-								onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, null,lancamentoNovoController.erroPesquisaCota,1);"/>
+							<input type="text" name="cotaInput" id="cotaInputAlteracaoReparte" style="width:60px;" maxlength="10"
+								onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInputAlteracaoReparte, nomeInputAlteracaoReparte, true, null,lancamentoNovoController.erroPesquisaCota,1);"/>
 							
-							<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
+							<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHiddenAlteracaoReparte"/>
 							
 						</td>
 						<td>
-							<input type="text" name="nomeInput" id="nomeInput1" style="width:300px;" maxlength="255"
-								onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
-								onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1,null,lancamentoNovoController.erroPesquisaCota,1);"/>
+							<input type="text" name="nomeInput" id="nomeInputAlteracaoReparte" style="width:300px;" maxlength="255"
+								onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInputAlteracaoReparte);" 
+								onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInputAlteracaoReparte, nomeInput1,null,lancamentoNovoController.erroPesquisaCota,1);"/>
 						</td>
 					</tr>
 				</table>
@@ -90,20 +90,20 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="text" id="codigoProdutoInput" style="width:75px;" maxlength="30"
-							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+						<input type="text" id="codigoProdutoInputAlteracaoReparte" style="width:75px;" maxlength="30"
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInputAlteracaoReparte, nomeProdutoInputAlteracaoReparte, edicaoProdutoInputAlteracaoReparte, true);"/>
 					</td>
 					<td>
-						<input type="text" id="nomeProdutoInput" style="width:130px;" maxlength="60"
-							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInput, true);"
-							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
+						<input type="text" id="nomeProdutoInputAlteracaoReparte" style="width:130px;" maxlength="60"
+							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInputAlteracaoReparte, true);"
+							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInputAlteracaoReparte, nomeProdutoInputAlteracaoReparte, edicaoProdutoInputAlteracaoReparte, true);"/>
 					</td>
 					<td align="center">
-						<input type="text" id="edicaoProdutoInput" onblur="lancamentoNovoController.buscarReparteCotaProduto();" style="width:80px;" maxlength="255" />
+						<input type="text" id="edicaoProdutoInputAlteracaoReparte" onblur="lancamentoNovoController.buscarReparteCotaProduto();" style="width:80px;" maxlength="255" />
 					</td>
 					<td align="right" id="alteracaoReparteProduto"></td>
 					<td align="center">
-						<input id="diferencaProdutoInput" onblur="lancamentoNovoController.atualizarSaldoConsignado();" style="width: 60px; text-align: center;" maxlength="10" />
+						<input id="diferencaProdutoInputAlteracaoReparte" onblur="lancamentoNovoController.atualizarSaldoConsignado();" style="width: 60px; text-align: center;" maxlength="10" />
 					</td>
 					<td align="center" id="saldoConsignado"></td>
 				</tr>
@@ -213,7 +213,7 @@
 						<tr id="trCota1">
 							<td>
 								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="10"
-									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota,lancamentoNovoController.erroPesquisaCota,1);"/>
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota,1);"/>
 								
 								<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
 								
@@ -221,7 +221,7 @@
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:300px;" maxlength="255"
 									onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
-									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, lancamentoNovoController.buscarReparteAtualCota,lancamentoNovoController.erroPesquisaCota,1);"/>
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota,1);"/>
 							</td>
 							<td align="center" id="reparteText1"></td>
 							<td align="center">

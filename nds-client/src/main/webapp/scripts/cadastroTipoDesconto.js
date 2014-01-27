@@ -60,76 +60,67 @@ var tipoDescontoController = $.extend(true,  {
 	},
 			
 	mostra_geral:function(){
-		
-		tipoDescontoController.tipoDescontoSelecionado = "GERAL";
-		
-		$( '#tpoGeral' ,this.workspace).show();
-		$( '#tpoEspecifico' ,this.workspace).hide();
-		$( '#tpoProduto' ,this.workspace).hide();
+		this.preMostra("GERAL");
 		$( '.especifico' ,this.workspace).hide();
 		$( '.produto' ,this.workspace).hide();
 		
 		tipoDescontoController.exibirExportacao(false);
-		
 		$(".grids",this.workspace).show();
 	},
 	
 	mostra_especifico:function(){
-		
-		tipoDescontoController.tipoDescontoSelecionado = "ESPECIFICO";
-		
-		$( '#tpoGeral' ,this.workspace).hide();
-		$( '#tpoEspecifico' ,this.workspace).show();
+		this.preMostra("ESPECIFICO");
 		$( '.especifico' ,this.workspace).show();
-		$( '#tpoProduto' ,this.workspace).hide();
 		$( '.produto' ,this.workspace).hide();
 		
-		tipoDescontoController.exibirExportacao(false);
-		
+		tipoDescontoController.exibirExportacao(false);		
 		$(".grids",this.workspace).show();
 	},
 	
 	mostra_produto:function(){
-		
-		tipoDescontoController.tipoDescontoSelecionado = "PRODUTO";
-		
-		$( '#tpoGeral' ,this.workspace).hide();
-		$( '#tpoEspecifico' ,this.workspace).hide();
+		this.preMostra("PRODUTO");
 		$( '.especifico' ,this.workspace).hide();
-		$( '#tpoProduto' ,this.workspace).show();
 		$( '.produto' ,this.workspace).show();
 		
 		tipoDescontoController.exibirExportacao(false);
-		
 		$(".grids",this.workspace).show();
+	},
+	
+	preMostra:function(tipo){
+		tipoDescontoController.exibirExportacao(false);
+		tipoDescontoController.exibirNovo(false);
+		tipoDescontoController.exibirTipoGrid(false);
+		tipoDescontoController.tipoDescontoSelecionado = tipo;
+		tipoDescontoController.exibirNovo(true);
 	},
 	
 	exibirExportacao:function(isExibir){
 		
-		if(tipoDescontoController.tipoDescontoSelecionado =="PRODUTO"){
 			if(isExibir == true){
-				$("#idExportacaoProduto",this.workspace).show();	
+				$("#idExportacao" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
 			}else{
-				$("#idExportacaoProduto",this.workspace).hide();
+				$("#idExportacao" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
 			}
-		}
-		
-		if(tipoDescontoController.tipoDescontoSelecionado =="GERAL"){
-			if(isExibir == true){
-				$("#idExportacaoGeral",this.workspace).show();	
-			}else{
-				$("#idExportacaoGeral",this.workspace).hide();
-			}
-		}
-		
-		if(tipoDescontoController.tipoDescontoSelecionado =="ESPECIFICO"){
-			if(isExibir == true){
-				$("#idExportacaoEspecifico",this.workspace).show();	
-			}else{
-				$("#idExportacaoEspecifico",this.workspace).hide();
-			}
-		}
+			
 	},
+	exibirTipoGrid:function(isExibir){
+		
+		if(isExibir == true){
+			$("#tpo" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
+		}else{
+			$("#tpo" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
+		}
+		
+	},
+	exibirNovo:function(isExibir){
+		
+		if(isExibir == true){
+			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).show();	
+		}else{
+			$("#panelBts" + tipoDescontoController.tipoDescontoSelecionado,this.workspace).hide();
+		}
+		
+},
 	
 	executarPreProcessamento:function(resultado) {				
 		
@@ -196,6 +187,7 @@ var tipoDescontoController = $.extend(true,  {
 		$(".grids",this.workspace).show();
 		
 		tipoDescontoController.exibirExportacao(true);
+		tipoDescontoController.exibirTipoGrid(true);
 		
 		return resultado;
 	},

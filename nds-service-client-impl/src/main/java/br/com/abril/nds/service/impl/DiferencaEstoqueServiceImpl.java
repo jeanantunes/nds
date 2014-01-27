@@ -1309,7 +1309,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 				if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao()) 
 						&& diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())
-						&& diferencaCadastrada.getTipoDirecionamento().equals(diferenca.getTipoDirecionamento())) {
+						&& diferencaCadastrada.getTipoDirecionamento().equals(diferenca.getTipoDirecionamento())
+						&& diferencaCadastrada.getTipoEstoque().equals(diferenca.getTipoEstoque())) {
 					
 					idDiferenca = diferencaCadastrada.getId();
 					
@@ -1349,7 +1350,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto())  
 						&& diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao()) 
 						&& diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca())
-						&& diferencaVoCadastrada.getTipoDirecionamento().equals(diferencaVO.getTipoDirecionamento())) {
+						&& diferencaVoCadastrada.getTipoDirecionamento().equals(diferencaVO.getTipoDirecionamento())
+						&& diferencaVoCadastrada.getTipoEstoque().equals(diferencaVO.getTipoEstoque())) {
 				
 					BigInteger quantidade = diferencaVoCadastrada.getQuantidade();
 					

@@ -22,9 +22,7 @@ public class EMS2021Test extends RouteTestTemplate {
 	public void test() {
 		
 		getRoute().execute("test");
-		
-		return;
-		
+
 	}
 	
 }
