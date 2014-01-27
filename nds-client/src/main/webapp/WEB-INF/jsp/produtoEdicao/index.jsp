@@ -159,7 +159,7 @@ fieldset {
 								
 								<tr>
 									<td>Fornecedor:</td>
-									<td colspan="5"><input type="text" name="nomeFornecedor" id="produtoEdicaoController-nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
+									<td colspan="5"><input type="text" name="produtoEdicaoDTO.nomeFornecedor" id="produtoEdicaoController-nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
 								</tr>
 								<tr>
 									<td>Situa&ccedil;&atilde;o:</td>
@@ -192,7 +192,7 @@ fieldset {
 									</td>
 									<td>N&ordm; Lancto:</td>
 									<td>
-	                                    <input type="text" name="numeroLancamento" id="produtoEdicaoController-numeroLancamento" readonly="true" style="width:50px; background-color:buttonface;" maxlength="9" />
+	                                    <input type="text" name="produtoEdicaoDTO.numeroLancamento" id="produtoEdicaoController-numeroLancamento" readonly="true" style="width:50px; background-color:buttonface;" maxlength="9" />
                                     </td>
 								</tr>
 								<tr>
@@ -267,7 +267,7 @@ fieldset {
 					        <td width="60">Previsto:</td>
 					        <td width="90"><input style="width: 70px; float: left;" id="produtoEdicaoController-dataRecolhimentoPrevisto" name="produtoEdicaoDTO.dataRecolhimentoPrevisto" type="text"></td>
 					        <td width="30" align="right">Real:</td>
-					        <td width="90"><input style="width: 70px; text-align: right;" id="produtoEdicaoController-dataRecolhimentoReal" disabled="disabled" name="dataRecolhimentoReal" type="text"></td>
+					        <td width="90"><input style="width: 70px; text-align: right;" id="produtoEdicaoController-dataRecolhimentoReal" disabled="disabled" name="precoPrevisto.dataRecolhimentoReal" type="text"></td>
 					        <td width="170" align="right">Semana de Recolhimento:</td>
 					        <td width="180"><input style="width: 70px; float: left;" id="produtoEdicaoController-semanaRecolhimento" disabled="disabled" name="semanaRecolhimento" type="text"></td>
 					      </tr>
@@ -310,7 +310,7 @@ fieldset {
 								<tr>
 									<td width="145">Firma F&iacute;sica:</td>
 									<td width="193">
-										<select name="produtoEdicaoDTO.categoria.codigo" id="produtoEdicaoController-categoria" style="width:180px;" >
+										<select name="produtoEdicaoDTO.grupoProduto.codigo" id="produtoEdicaoController-categoria" style="width:180px;" >
 											<option value="">Selecione</option>
 					                        <c:forEach items="${listaGrupoProduto}" var="categoria">
 												<option value="${categoria.key}" >${categoria.value}</option>

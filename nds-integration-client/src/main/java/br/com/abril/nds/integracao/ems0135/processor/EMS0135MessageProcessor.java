@@ -67,16 +67,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	public void processMessage(Message message) {
 		
 		EMS0135Input input = (EMS0135Input) message.getBody();
-	
-		// Validar código do distribuidor:
-//		Distribuidor distribuidor = this.distribuidorService.obter();
-//		if(!distribuidor.getCodigoDistribuidorDinap().equals(
-//				input.getDistribuidor().toString())){			
-//			this.ndsiLoggerFactory.getLogger().logWarning(message,
-//					EventoExecucaoEnum.RELACIONAMENTO, 
-//					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
-//			return;
-//		}
 
 		NotaFiscalEntradaFornecedor notafiscalEntrada = null;
 
@@ -168,12 +158,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		PessoaJuridica emitente = this.obterPessoaJuridica( input.getCnpjEmissor() );
 		
-// Comentado pelo Cesar "PunkPop" no dia de hoje :-)		
-//		PessoaJuridica emitente = this.obterPessoaJuridica( parametroSistemaService.buscarParametroPorTipoParametro(TipoParametroSistema.CNPJ_PJ_IMPORTACAO_NRE).getValor() );
-		
 		notafiscalEntrada.setEmitente(emitente);
-		//Alteracao autorizada pelo Eduardo
-		//notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS));		
+		
 		notafiscalEntrada.setTipoNotaFiscal(obterTipoNotaFiscal(GrupoNotaFiscal.NF_REMESSA_MERCADORIA_CONSIGNACAO, TipoUsuarioNotaFiscal.TREELOG, TipoUsuarioNotaFiscal.DISTRIBUIDOR));		
 		notafiscalEntrada.setEmitida(true);	
 				
@@ -184,7 +170,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		
 		List<EMS0135InputItem> items =  input.getItems();
-//		boolean ItemNotFound = false;
 
 		for(EMS0135InputItem imputItem : items) {
 					
@@ -194,12 +179,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto, edicao);
 			if (produtoEdicao == null) {
 				
-				// Validar código do distribuidor:
-//				this.ndsiLoggerFactory.getLogger().logError(message,
-//						EventoExecucaoEnum.HIERARQUIA, 
-//						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
-//						) ;
-//				ItemNotFound = true;
 				
 				//Trac 784
 				Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
@@ -279,10 +258,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			}
 			nfEntrada.getItens().add(item);
 		}
-		
-//		if (ItemNotFound) {
-//			return null;				
-//		}
 		
 		return nfEntrada;
 	}

@@ -77,7 +77,7 @@
 	        	<table class="pessoasGrid"></table>
 	      </fieldset>
       </div>
-
+      <input type="hidden" id="_edicao"/>
 	
 	<jsp:include page="novoEntregador.jsp" />
 </body>
