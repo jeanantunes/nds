@@ -15,12 +15,19 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	private static final long serialVersionUID = -2655294342766612808L;
 	
 	private Integer distribuidor;
+	
 	private Date dataEmissao;
+	
 	private Long notaFiscal;
+	
 	private String serieNotaFiscal;
+	
 	private String chaveAcessoNF;
+	
 	private String cnpjEmissor;
+	
 	private String numeroNotaEnvio;
+	
 	private List<EMS0135InputItem> item = new ArrayList<EMS0135InputItem>();
 	
 	@Field(offset = 1, length = 7)
