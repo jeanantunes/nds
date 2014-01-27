@@ -645,6 +645,8 @@ var produtoController = $.extend(true, {
 
 		produtoController.valorComboGerAuto = produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto");
 		
+		var codigoTipoDesconto = $("#comboTipoDesconto", produtoController.workspace).val();
+		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.codigoICD",value:$("#codigoProdutoICDCadastro", produtoController.workspace).val()},
@@ -663,7 +665,7 @@ var produtoController = $.extend(true, {
         			   {name:"produto.segmentacao.formaFisica",value:$("#segmentacaoFormaFisica", produtoController.workspace).val()},
         			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
-        			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
+        			   {name:"codigoTipoDesconto",value:codigoTipoDesconto ? codigoTipoDesconto : ''},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.desconto",value:floatValue($("#percentualDesconto", produtoController.workspace).val())},
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
@@ -751,7 +753,7 @@ var produtoController = $.extend(true, {
 	
 	formatarCampoGeracaoAutomatica : function (campo){
 		
-		var valFormatado = null;
+		var valFormatado = '';
 		
 		if($(campo).attr('checked') == "checked"){
 			valFormatado = true;
@@ -763,7 +765,7 @@ var produtoController = $.extend(true, {
 	
 	formatarCampoComboGeracaoAutomatica : function (campo){
 		
-		var valFormatado = null;
+		var valFormatado = '';
 		
 		if($(campo).val() == 0){
 			valFormatado = true;

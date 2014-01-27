@@ -688,7 +688,7 @@ var cotaBaseController = $.extend(true, {
 						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota.trim()});
 					}
 					dto.push({name : 'idCotaNova' , value : $("#idCota").val().trim()});
-					dto.push({name : 'indiceAjuste' , value :indiceAjuste});
+					dto.push({name : 'indiceAjuste' , value : floatToPrice(indiceAjuste)});
 					dto.push({name : 'cotasBaseCadastradas' , value : $("#cotasBaseHidden").find('div').text().trim()});
 					
 					$.postJSON(contextPath + "/cadastro/cotaBase/confirmarCotasBase",

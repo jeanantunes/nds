@@ -33,13 +33,13 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Código", alignment = Alignment.CENTER, exhibitionOrder = 2, fontSize = 9, widthPercent = 7)
 	private String codigoProduto;
 	
-	@Export(label = "Produto", exhibitionOrder = 3, fontSize = 9, widthPercent = 20)
+	@Export(label = "Produto", exhibitionOrder = 3, fontSize = 9, widthPercent = 18)
 	private String descricaoProduto;
 	
 	@Export(label = "Edição", alignment = Alignment.CENTER, exhibitionOrder = 4, fontSize = 9, widthPercent = 6)
 	private String numeroEdicao;
 	
-	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize = 9, widthPercent = 10)
+	@Export(label = "Preço Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 5, fontSize = 9, widthPercent = 5)
 	private String precoVenda;
 	
 	private String pacotePadrao;
@@ -56,7 +56,7 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Status", exhibitionOrder = 10, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
 	private String statusAprovacao;
 	
-	@Export(label = "Status Integracao", exhibitionOrder = 11, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 15)
+	@Export(label = "Status Integracao", exhibitionOrder = 11, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 13)
 	private String statusIntegracao;
 	
 	private String motivoAprovacao;

@@ -751,6 +751,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setCaracteristicaProduto(dto.getCaracteristicaProduto());
 			produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
 			produtoEdicao.setPeb(dto.getPeb());	
+			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
 			produtoEdicao.setGrupoProduto(dto.getGrupoProduto());
 
 			// Reparte:
@@ -797,7 +798,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 
 		//Campos editáveis, independente da Origem
-        produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto());
+		produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto().getId() == null ? null : dto.getTipoClassificacaoProduto());
         produtoEdicao.setPrecoVenda(dto.getPrecoVenda()==null?dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
@@ -1147,7 +1148,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setModoTela(ModoTela.NOVO);
 		}
 
-		if (dto.getTipoSegmentoProdutoId() == null){
+		if (dto.getTipoSegmentoProdutoId() == null && produto.getTipoSegmentoProduto() != null){
 			dto.setTipoSegmentoProdutoId(produto.getTipoSegmentoProduto().getId());
 		}
 				
