@@ -1505,6 +1505,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			exibirMensagem("WARNING",["Favor gerar um estudo."]);
 			return;
 		} else {
+			$(".areaBts").hide();
 			// Deve ir direto para EMS 2031
 			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
 		}
