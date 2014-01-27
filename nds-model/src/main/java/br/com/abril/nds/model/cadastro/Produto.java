@@ -173,8 +173,8 @@ public class Produto implements Serializable {
 	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
 	
-	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
-	private Boolean isGeracaoAutomatica;
+	@Column(name = "GERACAO_AUTOMATICA", nullable = true, columnDefinition="boolean default false")
+	private Boolean isGeracaoAutomatica = false;
 	
 	//@JoinColumn(name = "EDITOR_ID")
 //	@OneToMany
