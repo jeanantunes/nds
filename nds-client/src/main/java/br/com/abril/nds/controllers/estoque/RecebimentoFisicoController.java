@@ -1272,7 +1272,7 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		List<Fornecedor> fornecedores = 
 			this.fornecedorService.obterFornecedoresPorSituacaoEOrigem(
-				SituacaoCadastro.ATIVO, Origem.MANUAL);
+				SituacaoCadastro.ATIVO, null);
 		
 		if (fornecedores != null) {
 			result.include("listafornecedores", fornecedores);

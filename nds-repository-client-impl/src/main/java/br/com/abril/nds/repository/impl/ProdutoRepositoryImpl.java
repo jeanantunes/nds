@@ -82,7 +82,20 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	
 	@Override
 	public Produto obterProdutoPorCodigoProdin(String codigoProduto) {
-        return (Produto) getSession().createCriteria(Produto.class).add(Restrictions.eq("codigo", leftPad(codigoProduto, 8, "0"))).uniqueResult();
+		
+		String hql = "from Produto produto "
+				   + " where produto.codigo = :codigo ";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigo", leftPad(codigoProduto, 8, "0"));
+		
+		query.setMaxResults(1);
+		
+		return (Produto) query.uniqueResult();
+		
+		
+    //    return (Produto) getSession().createCriteria(Produto.class).add(Restrictions.eq("codigo", leftPad(codigoProduto, 8, "0"))).uniqueResult();
 	}
 	
 	@Override

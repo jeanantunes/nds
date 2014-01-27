@@ -100,13 +100,17 @@ public class FornecedorRepositoryImpl extends
 
 		String hql = "from Fornecedor fornecedor "
 				+ " join fetch fornecedor.juridica "
-				+ " where fornecedor.situacaoCadastro = :situacaoCadastro "
-				+ " and fornecedor.origem = :origem ";
+				+ " where fornecedor.situacaoCadastro = :situacaoCadastro ";
+	
+		if(origem != null)
+			hql += " and fornecedor.origem = :origem ";
 
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("situacaoCadastro", situacaoCadastro);
-		query.setParameter("origem", origem);
+		
+		if(origem != null)
+			query.setParameter("origem", origem);
 
 		return query.list();
 	}
