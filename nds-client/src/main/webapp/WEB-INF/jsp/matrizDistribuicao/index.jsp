@@ -119,7 +119,7 @@ var lancamentosSelecionados = [];
        	  					</div>
 						        	
 		         	  		<span class="bt_novos">
-			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();" rel="tipsy" title="Finalizar Matriz de Distribui&ccedil&atildeo">
+			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();"  title="Finalizar Matriz de Distribui&ccedil&atildeo">
 		         	  					<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0"/>
 			         	  			</a>
 		         	  		</span>	
