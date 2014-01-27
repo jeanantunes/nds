@@ -1,4 +1,3 @@
-
 var tipoFormaCobranca = null;
 var idPolitica = null;
 
@@ -1025,6 +1024,10 @@ var parametroCobrancaController = $.extend(true,
 					$("#nomeCota_"+indexAnterior, parametroCobrancaController.workspace).val() == ""){
 				
 				return;
+			}
+			
+			if (indexAnterior === ""){
+				indexAnterior = -1;
 			}
 			
 			if (!indexAnterior && indexAnterior != 0){

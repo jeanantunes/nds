@@ -8,7 +8,7 @@ package br.com.abril.nds.model.cadastro;
 public enum Sexo {
 	MASCULINO(1,"Masculino"),
 	FEMININO(2,"Feminino"),
-	GLS(4,"Gls"),
+	GLSBT(4,"GLSBT"),
 	TODOS(5,"Todos");
 	
 	private Integer codigo;
@@ -28,5 +28,4 @@ public enum Sexo {
 	public String getDescricao() {
 		return descricao;
 	}
-
 }

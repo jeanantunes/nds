@@ -2,6 +2,8 @@ package br.com.abril.nds.service.exception;
 
 public class ChamadaEncalheCotaInexistenteException extends Exception {
 
+    private static final long serialVersionUID = -1691288872231105679L;
+
 	public ChamadaEncalheCotaInexistenteException() {
 		super();
 	}

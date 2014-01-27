@@ -207,7 +207,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		Date dataAntecipacao = infoEncalheDTO.getDataAntecipacao();
 		
-		if(dataAntecipacao.compareTo(new Date()) <= 0){
+		if(dataAntecipacao.compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) <= 0){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
 		}
@@ -252,7 +252,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 				continue;
 			}
 			
-			cota  = cotaRepository.obterPorNumerDaCota(dto.getNumeroCota());
+			cota  = cotaRepository.obterPorNumeroDaCota(dto.getNumeroCota());
 			chamadaEncalheCota = new ChamadaEncalheCota();
 			chamadaEncalheCota.setChamadaEncalhe(chamadaEncalhe);
 			chamadaEncalheCota.setFechado(Boolean.FALSE);

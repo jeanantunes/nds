@@ -485,6 +485,4 @@ public class IdentificacaoEmitente implements Serializable {
 				+ (telefone != null ? "telefone=" + telefone : "") + "]";
 	}
 
-	
-
 }

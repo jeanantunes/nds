@@ -13,6 +13,7 @@ public class FiltroConsultaFixacaoProdutoDTO extends FiltroDTO{
 	private String codigoCota;
 	private Long idFixacao;
 	private PaginacaoVO paginacaoVO;
+	private Long idProduto;
 	
 	public PaginacaoVO getPaginacaoVO() {
 		return paginacaoVO;
@@ -50,7 +51,10 @@ public class FiltroConsultaFixacaoProdutoDTO extends FiltroDTO{
 	public void setIdFixacao(Long idFixacao) {
 		this.idFixacao = idFixacao;
 	}
-	
-
-	
+	public Long getIdProduto() {
+		return idProduto;
+	}
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
 }

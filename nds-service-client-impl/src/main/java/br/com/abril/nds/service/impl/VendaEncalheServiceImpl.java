@@ -939,7 +939,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 										Usuario usuario, Date dataVencimentoDebito,
 										ProdutoEdicao produtoEdicao) {
 
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		ValoresAplicados valoresAplicados = this.obterValoresAplicados(cota, produtoEdicao);
 		
@@ -1474,8 +1474,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			Date dataOperacao, int qtdDiasEncalheAtrasadoAceitavel){
 		
 		List<ChamadaEncalhe> chamadas = 
-				chamadaEncalheRepository.obterChamadaEncalhePorProdutoEdicao(
-						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO) ;
+				chamadaEncalheRepository.obterChamadasEncalhe(
+						produtoEdicao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO, null) ;
 		
 		if(chamadas.isEmpty()) {
 			return true;

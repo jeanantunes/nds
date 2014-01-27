@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,9 +49,8 @@ public class PeriodoLancamentoParcial {
 	@Column(name = "TIPO", nullable = false)
 	private TipoLancamentoParcial tipo;
 
-	@OneToOne(optional = false, cascade=CascadeType.REMOVE)
-	@JoinColumn(name = "LANCAMENTO_ID")
-	private Lancamento lancamento;
+	@OneToMany(mappedBy="periodoLancamentoParcial", cascade=CascadeType.REMOVE)
+	private List<Lancamento> lancamentos;
 	
 	/** Número do Período do lançamento parcial. */
 	@Column(name = "NUMERO_PERIODO", nullable = false)
@@ -63,7 +63,90 @@ public class PeriodoLancamentoParcial {
 	public PeriodoLancamentoParcial() {
 		
 	}
-
+	/**
+	 * Retorna o lançamento do periodo que não é redistribuição.
+	 * @return lancamento
+	 */
+	public Lancamento getLancamentoPeriodoParcial(){
+		
+		if(this.lancamentos == null ){
+			return null;
+		}
+		
+		for(Lancamento item : this.lancamentos){
+			if(TipoLancamento.LANCAMENTO.equals(item.getTipoLancamento())){
+				return item;
+			}
+		}
+		return null;
+	}
+	
+	public Lancamento getUltimoLancamento() {
+		
+		if(this.lancamentos == null || this.lancamentos.isEmpty()) {
+			return null;
+		}
+		
+		Lancamento maiorLancamento = null;
+		
+		Integer maiorNumeroLancamento = null;
+		
+		for (Lancamento item : this.lancamentos) {
+			
+			if (maiorNumeroLancamento == null
+					|| maiorNumeroLancamento < item.getNumeroLancamento()) {
+				
+				maiorNumeroLancamento = item.getNumeroLancamento();
+				
+				maiorLancamento = item;
+			}
+		}
+		
+		return maiorLancamento;
+	}
+	
+	public Lancamento getLancamentoAnterior(Integer numeroLancamento) {
+		
+		if(this.lancamentos == null || this.lancamentos.isEmpty()) {
+			return null;
+		}
+		
+		if (numeroLancamento == 1) {
+			return null;
+		}
+		
+		Integer numeroLancamentoAnterior = numeroLancamento - 1;
+		
+		for (Lancamento lancamento : this.lancamentos) {
+			
+			if (lancamento.getNumeroLancamento().equals(numeroLancamentoAnterior)) {
+				
+				return lancamento;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Lancamento getLancamentoPosterior(Integer numeroLancamento) {
+		
+		if(this.lancamentos == null || this.lancamentos.isEmpty()) {
+			return null;
+		}
+		
+		Integer numeroLancamentoPosterior = numeroLancamento + 1;
+		
+		for (Lancamento lancamento : this.lancamentos) {
+			
+			if (lancamento.getNumeroLancamento().equals(numeroLancamentoPosterior)) {
+				
+				return lancamento;
+			}
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -118,21 +201,21 @@ public class PeriodoLancamentoParcial {
 	public void setTipo(TipoLancamentoParcial tipo) {
 		this.tipo = tipo;
 	}
-
-	/**
-	 * @return the lancamento
-	 */
-	public Lancamento getLancamento() {
-		return lancamento;
-	}
-
-	/**
-	 * @param lancamento the lancamento to set
-	 */
-	public void setLancamento(Lancamento lancamento) {
-		this.lancamento = lancamento;
-	}
 	
+	/**
+	 * @return the lancamentos
+	 */
+	public List<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	/**
+	 * @param lancamentos the lancamentos to set
+	 */
+	public void setLancamentos(List<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
+	}
+
 	public Integer getNumeroPeriodo() {
 		return numeroPeriodo;
 	}

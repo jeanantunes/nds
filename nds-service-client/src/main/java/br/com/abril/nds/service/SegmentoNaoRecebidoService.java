@@ -12,14 +12,10 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 public interface SegmentoNaoRecebidoService {
 
-	List<TipoSegmentoProduto> obterTipoSegmentoProduto();
-	
 	List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro);
 
 	void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId);
 		
-	TipoSegmentoProduto obterTipoProdutoSegmentoPorId(Long id);
-	
 	void inserirCotasSegmentoNaoRecebido(List<SegmentoNaoRecebido> segmentoNaoRecebido);
 	
 	List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro);

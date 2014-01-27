@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -60,6 +62,7 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -101,14 +104,14 @@ public class CotaController extends BaseController {
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
-	public static final int[] vetor =  {1};
+	public static final String SENHA_USUARIO_IMPRIMIR = "SENHA_USUARIO_IMPRIMIR";
 	
 	public static final FileType[] extensoesAceitas = 
 		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
 	
 	@Autowired
 	private Result result;
-	
+
 	@Autowired
 	private br.com.caelum.vraptor.Validator validator;
 
@@ -148,6 +151,9 @@ public class CotaController extends BaseController {
 	@Autowired
 	private FileService fileService;
 	
+	@Autowired
+	private UsuarioService usuarioService;
+
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
 	private static final String NOME_DEFAULT_TERMO_ADESAO = "termo_adesao.pdf";
@@ -155,6 +161,7 @@ public class CotaController extends BaseController {
 	private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
 
 	@Path("/")
+
 	public void index() {
 		
 		this.financeiroController.preCarregamento();
@@ -190,11 +197,12 @@ public class CotaController extends BaseController {
 	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
 	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
+
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
 	public void verificarTipoConvencional(Long idCota) {
-		
+
 		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
 		
 		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
@@ -311,6 +319,16 @@ public class CotaController extends BaseController {
 	}
 	
 	/**
+	 * Metodo a ser ultilizado pelo componente autocomplete.js
+	 * @param codigo
+	 */
+	@Post
+	public void pesquisarPorNumeroAutoComplete(String codigo) {
+		
+		pesquisarPorNumero(new Integer(codigo));
+	}
+	
+	/**
 	 * Efetua consulta de cota pelo número informado
 	 * 
 	 * @param numeroCota - número da cota
@@ -340,10 +358,13 @@ public class CotaController extends BaseController {
 			}
 			
 			cotaVO.setSituacaoCadastro(cota.getSituacaoCadastro());
+
 			if (cota.getSituacaoCadastro() != null) {
-
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
-
+			}
+			
+			if (cota.getTipoDistribuicaoCota() != null){
+				cotaVO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota());
 			}
 
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
@@ -381,6 +402,16 @@ public class CotaController extends BaseController {
 		}
 		
 		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
+	}
+
+	/**
+	 * Metodo utilizado para componente autocomplet.js
+	 * @param nome
+	 */
+	@Post
+	public void autoCompletarPorNomeAutoComplete(String nome) {
+		
+		autoCompletarPorNome(nome);
 	}
 
 	/**
@@ -428,6 +459,7 @@ public class CotaController extends BaseController {
 		    CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 		    if (cota.getSituacaoCadastro() != null) {
 		    	cotaVO.setStatus(cota.getSituacaoCadastro().toString());	
+		    	cotaVO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().toString());
 			}
 		    
 		    cotasVO.add(cotaVO);
@@ -441,6 +473,16 @@ public class CotaController extends BaseController {
 		
 		    this.result.use(Results.json()).from(cotasVO.get(0), "result").recursive().serialize();
 		}
+	}
+	
+	/**
+	 * Metodo a ser ultilizado pelo componente autocomplet.js 
+	 * @param nome
+	 */
+	@Post
+	public void pesquisarPorNomeAutoComplete(String nome) {
+		
+		pesquisarPorNome(nome);
 	}
 	
 	/**
@@ -575,9 +617,9 @@ public class CotaController extends BaseController {
 	private List<ItemDTO<String, String>> getListaClassificacao(){
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
-		
+
 		for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
-			
+
 			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
 		}
 		
@@ -780,6 +822,7 @@ public class CotaController extends BaseController {
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
+
 	
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
@@ -800,6 +843,20 @@ public class CotaController extends BaseController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * Salva os dados dos fornecedores, associa os fornecedores a cota informada.
 	 * 
@@ -814,6 +871,26 @@ public class CotaController extends BaseController {
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	@Post
+	public void apagarTipoCota(Long idCota, String tipoCota){
+		
+		Logger logger = Logger.getLogger(CotaController.class.getName());
+		logger.info("-->CotaController.apagarTipoCota");
+		cotaService.apagarTipoCota(idCota,  tipoCota);
+		
+		
+		String mensagemSucess;
+		
+		if(tipoCota.equalsIgnoreCase("convencional")){
+			mensagemSucess = "Mix da Cota apagado com sucesso!";
+		}else{
+			mensagemSucess = "Fixação da Cota apagada com sucesso!";
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagemSucess),
+				Constantes.PARAM_MSGS).recursive().serialize();	
 	}
 	
 	/**
@@ -1048,7 +1125,7 @@ public class CotaController extends BaseController {
 	@Post
 	@Path("/pesquisarCotas")
 	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
-							   String logradouro, String bairro, String municipio,
+							   String logradouro, String bairro, String municipio,String status,
 			 				   String sortname, int page, int rp){
 		
 		if (numeroCpfCnpj != null) {
@@ -1059,7 +1136,7 @@ public class CotaController extends BaseController {
 		
 		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
 		    
-		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
+		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio, status);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -1070,6 +1147,13 @@ public class CotaController extends BaseController {
 	
 	@Get
 	public void exportar(FileType fileType) throws IOException {
+
+		Object attribute = session.getAttribute(SENHA_USUARIO_IMPRIMIR);
+		if(attribute==null || this.validarSenhaUsuarioLogado((String)attribute)==false){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Senha inválida.");
+		}
+		
+		session.removeAttribute(SENHA_USUARIO_IMPRIMIR);
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 				
@@ -1089,10 +1173,35 @@ public class CotaController extends BaseController {
 		
 		List<CotaVO> listaCotasVO = getListaCotaVO(listaCotas);
 		
-		FileExporter.to("cotas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("cotas", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaCotasVO, CotaVO.class, this.httpResponse);
 		
 		result.nothing();
+	}
+
+	@Post
+	public void validarSenha(String confirmarSenhaInput) throws IOException {
+		
+		Boolean valido = validarSenhaUsuarioLogado(confirmarSenhaInput);
+		
+		session.setAttribute(SENHA_USUARIO_IMPRIMIR,confirmarSenhaInput);
+		
+		result.use(Results.json()).from(valido.toString(), "senhaValida").recursive().serialize();
+	}
+
+	private Boolean validarSenhaUsuarioLogado(String confirmarSenhaInput) {
+		Boolean valido=Boolean.TRUE;
+		
+		
+		if(StringUtils.isEmpty(confirmarSenhaInput)){
+			valido=Boolean.FALSE;
+		}else {
+			String md5 = Util.md5(confirmarSenhaInput);
+			if(this.usuarioService.getUsuarioLogado().getSenha().equals(md5)==false){
+				valido=Boolean.FALSE;
+			}
+		}
+		return valido;
 	}
 	
 	/**
@@ -1704,4 +1813,3 @@ public class CotaController extends BaseController {
 	}
 	
 }
-

@@ -528,6 +528,7 @@ public class EntregadorController extends BaseController {
 		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_ENDERECOS_REMOVER_SESSAO);
+		this.session.removeAttribute(LISTA_ENDERECOS_EXIBICAO);
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		

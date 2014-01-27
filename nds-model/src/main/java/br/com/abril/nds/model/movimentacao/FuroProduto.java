@@ -102,6 +102,4 @@ public class FuroProduto {
 		this.dataLancamentoDistribuidor = dataLancamentoDistribuidor;
 	}
 	
-	
-
 }

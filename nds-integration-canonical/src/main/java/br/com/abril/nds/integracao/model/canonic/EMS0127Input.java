@@ -150,8 +150,8 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 		return numeroSemanaReferencia;
 	}
 
-	public void setNumeroSemanaReferencia(Integer numeroSemanaReferencia) {
-		this.numeroSemanaReferencia = numeroSemanaReferencia;
+	public void setNumeroSemanaReferencia(Integer nuemroSemanaReferencia) {
+		this.numeroSemanaReferencia = nuemroSemanaReferencia;
 	}
 
 	public Long getNumeroControle() {

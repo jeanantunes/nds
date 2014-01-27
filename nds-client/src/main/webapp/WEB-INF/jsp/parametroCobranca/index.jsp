@@ -363,8 +363,8 @@
 		  			</td>
 		  			<td>
 		  				<input type="text" id="nomeCota_" style="width: 495px;" 
-		  					onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCota_');" 
-		  					onblur="pesquisaCota.pesquisarPorNomeCota('#numeroCota_', '#nomeCota_');"/>
+		  					onkeyup="parametroCobrancaController.onkeyupCampoNome('');" 
+		  					onblur="parametroCobrancaController.onblurCampoNome('');"/>
 		  			</td>
 		  		</tr>
 		  	</table>

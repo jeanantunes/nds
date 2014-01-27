@@ -176,6 +176,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Produto REVISTA nao encontrado.");
 
+
 //			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
 		return tipoProduto;
@@ -265,7 +266,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		this.getSession().persist(produto);
 
 	}
- 
+
 	private void validarDescontoLogistico(Message message, String codigoPublicacao, int tipoDescontoInt) {
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
 		String msg = "TipoDesconto: "+tipoDescontoInt+" não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;

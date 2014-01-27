@@ -13,16 +13,24 @@ public class EMS0135InputItem extends IntegracaoDocumentDetail implements Serial
 	private static final long serialVersionUID = 7027560778379484156L;
 	
 	private Date dataLancamento;
-	private Integer pacotePadrao;
-	private Integer qtdExemplar;
-	private String codigoProduto;
-	private String nomeProduto;
-	private Long edicao;
-	private Double preco;
-	private Double desconto;
-	private String codigoBarras;
-	private Long codigoSiscorp;
 	
+	private Integer pacotePadrao;
+	
+	private Integer qtdExemplar;
+	
+	private String codigoProduto;
+	
+	private String nomeProduto;
+	
+	private Long edicao;
+	
+	private Double preco;
+	
+	private Double desconto;
+	
+	private String codigoBarras;
+	
+	private Long codigoSiscorp;
 
 	
 	@Field(offset = 25, length = 8)

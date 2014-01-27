@@ -176,7 +176,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository
 				.obterNegociacaoPorCota(filtro);
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		Date data = DateUtil.removerTimestamp(new Date());
 
 		FormaCobranca formaCobrancaPrincipal = 
@@ -246,7 +246,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			msgs.add("Cota da negociação não encontrada.");
 		} else {
 
-			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 			if (cota == null) {
 
@@ -462,6 +462,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				}
 			}
 
+		}
+
+		if (formaCobranca != null) {
+
 			this.formaCobrancaRepository.adicionar(formaCobranca);
 			
 			if (formaCobranca.getConcentracaoCobrancaCota() != null){
@@ -476,7 +480,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		Negociacao negociacao = new Negociacao();
 		negociacao.setAtivarCotaAposParcela(ativarCotaAposParcela);
 		negociacao.setCobrancasOriginarias(cobrancasOriginarias);
-		negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida);
+		negociacao.setComissaoParaSaldoDivida(comissaoParaSaldoDivida == null ? BigDecimal.ZERO : comissaoParaSaldoDivida);
 		negociacao.setIsentaEncargos(isentaEncargos);
 		negociacao.setNegociacaoAvulsa(negociacaoAvulsa);
 		negociacao.setFormaCobranca(formaCobranca);
@@ -541,10 +545,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			BigDecimal valorDividaParaComissao, Usuario usuarioResponsavel,
 			Integer ativarCotaAposParcela, BigDecimal comissaoParaSaldoDivida,
 			FormaCobranca formaCobranca) {
+		
+		List<TipoCobranca> tiposCobranca = Arrays.asList(TipoCobranca.DINHEIRO, TipoCobranca.OUTROS);
 
 		// caso não tenha parcelas e nem comissão para saldo preenchidos
-		if ((parcelas == null || parcelas.isEmpty())
-				&& comissaoParaSaldoDivida == null) {
+		if ((formaCobranca != null && !tiposCobranca.contains(formaCobranca.getTipoCobranca())) && 
+				((parcelas == null || parcelas.isEmpty()) && comissaoParaSaldoDivida == null)) {
 
 			msgs.add("Forma de pagamento é obrigatória.");
 		}
@@ -914,7 +920,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		
 		
 		BigDecimal valorParcelasModificadas =  BigDecimal.ZERO;
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();	
 		int qtdParcelasModificadas = 0;
 		for (CalculaParcelasVO calculaParcelasVO : parcelas) {
@@ -1025,7 +1031,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 	 */
 	private BigDecimal obterValorMinimoEmissao(Integer numeroCota){
 		
-        Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+        Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		BigDecimal valorMinimoCobranca = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getValorMininoCobranca():null;
 		
@@ -1098,7 +1104,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		BigDecimal somaEncargo = BigDecimal.ZERO;
 
 		Date dataBase = new Date();
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
 		
 		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();	

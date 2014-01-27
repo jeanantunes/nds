@@ -22,9 +22,6 @@ public class EMS0128Test extends RouteTestTemplate {
 	public void test() {
 		
 		getRoute().execute("test");
-		
-		return;
-		
 	}
 	
 }

@@ -63,6 +63,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -72,8 +73,10 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.CotaUnificacaoRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -84,12 +87,15 @@ import br.com.abril.nds.service.BoletoEmailService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.EstudoCotaService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -163,6 +169,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private EstudoService estudoService;
+	
+	@Autowired
+	private EstudoRepository estudoRepository;
+	
+	@Autowired
+	private EstudoCotaService estudoCotaService;
+	
+	@Autowired
+	private ParciaisService parciaisService;
 	
 	@Autowired
 	protected BoletoEmailService boletoEmailService;
@@ -675,7 +696,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
 		if (cota == null) {
-				
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
 		}
 		
@@ -779,36 +799,62 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	 * ao distribuidor de forma juramentada.
 	 * 
 	 */
-	private void gerarMovimentosDeEstoqueProdutosJuramentados(Date dataEncalhe, Usuario usuario, Date dataOperacao){
+	private void processarMovimentosProdutosJuramentados(Date dataEncalhe, Usuario usuario, Date dataOperacao){
 		
 		List<MovimentoEstoqueCotaGenericoDTO> listaMovimentoEstoqueCota = 
 				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataEncalhe);
 		
-		
-		TipoMovimentoEstoque tipoMovEstoqueRecebJornaleiroJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
-		
 		TipoMovimentoEstoque tipoMovEstoqueEnvioJornaleiroJuramentado = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
 		
-		for(MovimentoEstoqueCotaGenericoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota) {
-			
-			movimentoEstoqueService.gerarMovimentoCota(
-					null, 
-					movimentoEstoqueCota.getIdProdutoEdicao(), 
-					movimentoEstoqueCota.getIdCota(), 
-					usuario.getId(), 
-					movimentoEstoqueCota.getQtde(), 
-					tipoMovEstoqueRecebJornaleiroJuramentado,
-					dataOperacao);
-			
+		for(MovimentoEstoqueCotaGenericoDTO item : listaMovimentoEstoqueCota) {
+						
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					null, 
-					movimentoEstoqueCota.getIdProdutoEdicao(), 
+					item.getIdProdutoEdicao(), 
 					usuario.getId(), 
-					movimentoEstoqueCota.getQtde(), 
+					item.getQtde(), 
 					tipoMovEstoqueEnvioJornaleiroJuramentado);
 			
+			this.processarEstudoCotaLancamentoParcial(item);
 		}
 		
+	}
+	
+	/*
+	 Cria estudo e estudo cota para os proximos lançamentos parciais juramentado
+	 */
+	private void processarEstudoCotaLancamentoParcial(MovimentoEstoqueCotaGenericoDTO item) {
+		
+		Lancamento lancamentoParcial = lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getIdChamadaEncalhe());
+		
+		if(lancamentoParcial == null){
+			return;
+		}
+		
+		Lancamento proximoLancamentoPeriodo = parciaisService.getProximoLancamentoPeriodo(lancamentoParcial);
+		
+		if(proximoLancamentoPeriodo == null){
+			return;
+		}
+		
+		Estudo estudo = proximoLancamentoPeriodo.getEstudo();
+		
+		if(estudo == null){
+			estudo = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(), 
+											   item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor());
+		}
+		else{
+			
+			BigInteger reparteEstudo = estudo.getQtdeReparte().add(item.getQtde());
+			estudo.setQtdeReparte(reparteEstudo);
+			
+			estudo = estudoRepository.merge(estudo);
+		}
+		
+		Cota cota = new Cota();
+		cota.setId(item.getIdCota());
+		
+		estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item.getQtde(), cota);	
 	}
 
 	@Override
@@ -819,7 +865,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, List<FechamentoFisicoLogicoDTO> listaEncalheSessao)  {
+	public Set<String> encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, 
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao, boolean cobrarCotas)  {
 
 		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true, true);
 		
@@ -855,10 +902,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				gerarMovimentoFaltasSobras(item, usuario);
 				
+				this.tratarAtualizacaoProximoLancamentoParcial(item, usuario, item.getFisico());
 			}
 		}
 		
-		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario, this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		this.processarMovimentosProdutosJuramentados(dataEncalhe, usuario, this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		if(ObrigacaoFiscal.COTA_TOTAL.equals(distribuidorRepository.obrigacaoFiscal())
 				|| ObrigacaoFiscal.COTA_NFE_VENDA.equals(distribuidorRepository.obrigacaoFiscal())) {
@@ -866,12 +914,37 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		//cobra cotas as demais cotas, no caso, as não ausentes e com unificação
-		try {
+		Set<String> nossoNumero = new HashSet<String>();
+		
+		if (cobrarCotas){
+			try {
+				
+				this.gerarCobrancaService.gerarCobranca(null, usuario.getId(), nossoNumero);
+			} catch (GerarCobrancaValidacaoException e) {
+				
+				throw new ValidacaoException(e.getValidacaoVO());
+			}
+		}
+		
+		return nossoNumero;
+	}
+
+	private void tratarAtualizacaoProximoLancamentoParcial(FechamentoFisicoLogicoDTO item,
+														   Usuario usuario,
+														   Long encalheFisico) {
+		
+		if (!item.isParcial()) {
 			
-			this.gerarCobrancaService.gerarCobranca(null, usuario.getId(), null);
-		} catch (GerarCobrancaValidacaoException e) {
+			return;
+		}
+		
+		Lancamento lancamentoParcial =
+			lancamentoRepository.obterLancamentoParcialChamadaEncalhe(item.getChamadaEncalheId());
+		
+		if (lancamentoParcial != null) {
 			
-			throw new ValidacaoException(e.getValidacaoVO());
+			this.parciaisService.atualizarReparteDoProximoLancamentoPeriodo(
+				lancamentoParcial, usuario, BigInteger.valueOf(encalheFisico));
 		}
 	}
 
