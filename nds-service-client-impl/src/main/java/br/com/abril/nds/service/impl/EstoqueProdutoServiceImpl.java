@@ -1,11 +1,13 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,5 +107,13 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 		}
 		
 		return ret;
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public BigInteger buscarQtdEstoquePorProduto(String codigoProduto, Long numeroEdicao) {
+		
+		return this.estoqueProdutoRespository.buscarQtdEstoquePorProduto(
+			StringUtils.leftPad(codigoProduto, 8, '0'), numeroEdicao);
 	}
 }
