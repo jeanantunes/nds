@@ -353,10 +353,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	if (qtdEdicoesAbertas > 1) {
 	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
 	}
-
+    
+	Lancamento lancamentoEdicao = lancamentoService.obterPorId(idLancamento);
+	
+	
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 	produto.setNumeroEdicao(numeroEdicao);
 	produto.setIdLancamento(idLancamento);
+	produto.setDataLancamento(lancamentoEdicao.getDataLancamentoDistribuidor());
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 

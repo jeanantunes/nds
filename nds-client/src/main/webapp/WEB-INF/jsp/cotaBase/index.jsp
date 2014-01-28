@@ -142,7 +142,7 @@ $(function(){
 
 <div id="dialog-foto-pdv" title="Foto PDV" style="display:none;">
   <fieldset style="width:630px!important;">
-   	<legend>Nome: Banca da Vila</legend>
+   	<legend>Nome: <span id="idNomePdv"></span></legend>
     	<img src="${pageContext.request.contextPath}/images/pdv/no_image.jpeg" id="idImagem" name="idImagem" width="630" height="400" />
 	</fieldset>
 </div>
