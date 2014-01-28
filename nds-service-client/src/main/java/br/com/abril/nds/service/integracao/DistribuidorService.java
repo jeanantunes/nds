@@ -158,4 +158,6 @@ public interface DistribuidorService {
 	
 	boolean isConferenciaCegaRecebimentoFisico();
 	
+	boolean isConferenciaCegaFechamentoEncalhe();
+	
 }

@@ -1,5 +1,4 @@
 <head>
-
 <script type="text/javascript" src="scripts/cotaBase.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script language="javascript" type="text/javascript">

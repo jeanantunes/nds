@@ -26,4 +26,12 @@ public interface SegmentoNaoRecebidoService {
 	
 	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(Cota cota);
 
+	/**
+	 * Obtem o segmetos não recebidos das cotas base da cota passada via parametro.
+	 * @param idCota
+	 * @return
+	 */
+	public abstract List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosCotaBase(
+			Long idCota);
+
 }

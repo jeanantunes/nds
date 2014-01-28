@@ -615,4 +615,12 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return this.distribuidorRepository.isConferenciaCegaRecebimentoFisico();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isConferenciaCegaFechamentoEncalhe() {
+		
+		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
+	}
 }
