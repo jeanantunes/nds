@@ -26,6 +26,25 @@ var parametroCobrancaController = $.extend(true,
 			$("#taxaMulta", this.workspace).numeric();
 			$("#valorMulta", this.workspace).numeric();
 			$("#taxaJuros", this.workspace).numeric();
+			
+			$("#taxaMulta", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
+			$("#taxaJuros", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
+			$("#valorMulta", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
 			parametroCobrancaController.carregarFormasEmissao(null,"");
 		},
 		
@@ -375,6 +394,10 @@ var parametroCobrancaController = $.extend(true,
 			}else{
 				$('.formPgto', this.workspace).hide();
 			}
+			
+			$("#taxaMulta", this.workspace).val("");
+			$("#taxaJuros", this.workspace).val("");
+			$("#valorMulta", this.workspace).val("");
 			
 			parametroCobrancaController.obterDadosBancarios($("#dBanco", this.workspace).val());
 		},

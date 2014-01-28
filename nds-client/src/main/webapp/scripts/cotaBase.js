@@ -781,8 +781,22 @@ var cotaBaseController = $.extend(true, {
 							 {name:"modoTela", value: ModoTela.CADASTRO_COTA.value}], 
 							 function(result){						
 								if(result.pdvDTO.pathImagem) {
-				                    $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                    $("#idImagem", "#dialog-foto-pdv").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                    
 				                }
+								
+								$("#idNomePdv", "#dialog-foto-pdv").html(result.pdvDTO.nomePDV);
+								$( "#dialog-foto-pdv" ).dialog({
+									resizable: false,
+									height:540,
+									width:670,
+									modal: true,
+									buttons: {
+										"Fechar": function() {
+											$( this ).dialog( "close" );
+										},
+									}
+								});
 						
 					},null,true);
 					
@@ -793,17 +807,7 @@ var cotaBaseController = $.extend(true, {
 		);
 		
 
-		$( "#dialog-foto-pdv" ).dialog({
-			resizable: false,
-			height:540,
-			width:670,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
-		});
+		
 	},	
 
 	detalhesEquivalente : function(numeroCota, nomeCota) {
