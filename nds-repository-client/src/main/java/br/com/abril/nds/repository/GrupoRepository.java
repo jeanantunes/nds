@@ -27,7 +27,7 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 
 	String obterNomeGrupoPorCota(Long id, Long idGrupoIgnorar);
 
-	String obterNomeGrupoPorMunicipio(String municipio);
+	String obterNomeGrupoPorMunicipio(String municipio, Long idGrupoIgnorar);
 
 	Set<Long> obterIdsCotasGrupo(Long idGrupo);
 
