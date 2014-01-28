@@ -219,7 +219,7 @@ $(function(){
 			<tr>
 			    <td>Fornecedor Padrão:</td>
 				<td>
-					<div id="fornecedoresPadrao" />
+					<select id="fornecedorPadrao" style="width: 220px;"></select>
 				</td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
