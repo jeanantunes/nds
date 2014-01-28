@@ -2253,6 +2253,8 @@ public class ConferenciaEncalheController extends BaseController {
 	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, String quantidade, 
 														  boolean adicionarGrid, boolean indConferenciaContingencia) {
 		
+		Integer numeroCota = getNumeroCotaFromSession();
+		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -2332,7 +2334,8 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 
 		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
-				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
+				                                                            conferenciaEncalheDTO.getDataRecolhimento(),
+				                                                            numeroCota,
 				                                                            produtoEdicao.getId());
 				
 		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento : null);

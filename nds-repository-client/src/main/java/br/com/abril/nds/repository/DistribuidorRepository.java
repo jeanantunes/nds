@@ -161,4 +161,5 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
 			OperacaoDistribuidor operacaoDistribuidor);
 
+	boolean isConferenciaCegaFechamentoEncalhe();
 }

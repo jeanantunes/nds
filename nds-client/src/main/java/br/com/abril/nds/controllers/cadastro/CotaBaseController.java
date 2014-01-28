@@ -135,7 +135,7 @@ public class CotaBaseController extends BaseController {
 		
 		Integer diasRestantes = (int) ((m1 - m2) / (24*60*60*1000));
 		
-		return diasRestantes.toString();
+		return (diasRestantes > 0)?diasRestantes.toString():"0";
 	}
 
 	private void tratarFiltroPesquisaCota(Integer numeroCota) {
@@ -275,7 +275,7 @@ public class CotaBaseController extends BaseController {
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
 		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
 		if(cotaBase != null){
-			listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaBaseService.obterCotaNova(numeroCota, true),dto );			
+			listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaBaseService.obterCotaNova(numeroCota, true),dto );	
 		}
 		return listaCotaBase;
 	}
@@ -416,10 +416,13 @@ public class CotaBaseController extends BaseController {
 	
 	@Post
 	@Path("/segmentosRecebidos")
-	public void segmentosRecebidos(Integer idCota){
+	public void segmentosRecebidos(Integer numeroCota){
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		List<SegmentoNaoRecebeCotaDTO> listaSegmentosNaoRecebidos = this.segmentoNaoRecebidoService.
-				obterSegmentosNaoRecebidosCadastradosNaCota(this.cotaService.obterPorNumeroDaCota(idCota));		
+				obterSegmentosNaoRecebidosCadastradosNaCota(cota);		
+		
+		listaSegmentosNaoRecebidos.addAll(this.segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosCotaBase(cota.getId()));
 		
 		if(listaSegmentosNaoRecebidos.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");

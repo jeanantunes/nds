@@ -143,7 +143,7 @@ public enum Permissao {
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_RECEBIMENTO_FISICO_ALTERACAO, true, null),
 	
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO_CONF_CEGA("Recebimento Físico (Conferência Cega)", 						Permissao.ROLE_ESTOQUE, null, false,
-		"As colunas 'Reparte Previsto', 'Diferença', 'Valor Total' e 'Valor Total com Desconto' e o botões 'Confirmar' e 'Replicar' não estarão visíveis."),
+		"As colunas 'Reparte Previsto', 'Diferença', 'Valor Total' e 'Valor Total com Desconto' e o botões 'Confirmar' e 'Replicar' não estarão visíveis.", RestricoesAcesso.CONF_CEGA_RECEBIMENTO_FISICO),
 	
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO("Lançamento Faltas e Sobras",							Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO, true, null),
@@ -223,7 +223,7 @@ public enum Permissao {
 	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE("Fechamento Encalhe",											   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO, true, null),
 	
 	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA("Fechamento Encalhe (Conferência Cega)", 				Permissao.ROLE_RECOLHIMENTO, null, false,
-		"As colunas 'Exemplar Devolução', 'Total R$', 'Diferença' e os botões 'Confirmar' e 'Cotas Ausentes' não estarão visíveis."),
+		"As colunas 'Exemplar Devolução', 'Total R$', 'Diferença' e os botões 'Confirmar' e 'Cotas Ausentes' não estarão visíveis.", RestricoesAcesso.CONF_CEGA_FECHAMENTO_ENCALHE),
 	
 	ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO("Fechamento CE - Integração",							Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO("Fechamento CE - Integração",								   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO, true, null),
@@ -361,6 +361,7 @@ public enum Permissao {
 	private boolean isPermissaoAlteracao;
 	private boolean isPermissaoMenu;
 	private String observacao;
+	private RestricoesAcesso restricoesAcesso;
 	
 	/**
 	 * Define permissão de vizualização
@@ -379,7 +380,26 @@ public enum Permissao {
 		this.isPermissaoMenu = isPermissaoMenu;
 		this.observacao = observacao;
 	}
-		
+	
+	/**
+	 * Define permissão de vizualização
+	 * 
+	 * @param descricao
+	 * @param permissaoPai - define  a permissão "Pai" para fins de agrupamento
+	 * @param permissaoAlteracao - caso seja uma permissão de tela é necessário definir a permissão de "Alteração" da tela
+	 * @param isPermissaoMenu - define se a permissão será apresentada no menu
+	 * @param observacao - será exibido em um tooltip ao parar o mouse sobre a regra
+	 */
+	private Permissao(String descricao, Permissao permissaoPai, Permissao permissaoAlteracao, boolean isPermissaoMenu,
+			String observacao, RestricoesAcesso restricoesAcesso) {
+		this.descricao = descricao;
+		this.permissaoPai = permissaoPai;
+		this.permissaoAlteracao = permissaoAlteracao;
+		this.isPermissaoMenu = isPermissaoMenu;
+		this.observacao = observacao;
+		this.restricoesAcesso = restricoesAcesso;
+	}
+
 	/**
 	 * Define permissão de alteração
 	 * 
@@ -451,4 +471,10 @@ public enum Permissao {
 		this.observacao = observacao;
 	}
 
+	/**
+	 * @return the restricoesAcesso
+	 */
+	public RestricoesAcesso getRestricoesAcesso() {
+		return restricoesAcesso;
+	}
 }

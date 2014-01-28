@@ -68,7 +68,7 @@ public class CotaUnificacaoServiceImpl implements CotaUnificacaoService {
 		} else {
 			
 			cotaUnificacao = new CotaUnificacao();
-			cotaUnificacao.setCota(this.cotaRepository.obterPorNumerDaCota(numeroCotaCentralizadora));
+			cotaUnificacao.setCota(this.cotaRepository.obterPorNumeroDaCota(numeroCotaCentralizadora));
 			cotaUnificacao.setDataUnificacao(new Date());
 		}
 		

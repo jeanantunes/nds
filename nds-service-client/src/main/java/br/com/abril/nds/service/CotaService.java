@@ -47,6 +47,15 @@ import br.com.abril.nds.util.Intervalo;
 public interface CotaService {
 
 	/**
+	 * Retorna true se a cota possuir operação diferenciada
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	boolean isCotaOperacaoDiferenciada(Integer numeroCota);
+	
+	/**
 	 *
 	 * Retorna uma lista de Cotas em função dos filtros informado.
 	 *

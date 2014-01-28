@@ -63,7 +63,6 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.envio.nota.StatusNotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -2198,7 +2197,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaTipoDTO> obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
+	public List<CotaTipoDTO> obterCotaPorTipo(TipoDistribuicaoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -2209,7 +2208,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" when 'F' then pessoa.nome ");
 		hql.append(" when 'J' then pessoa.razaoSocial end as nome,");
 		hql.append(" endereco.cidade as municipio, ");
-		hql.append(" endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
+		
+		hql.append(" concat( ");
+		hql.append(" coalesce(endereco.logradouro, ''), "); 
+		hql.append(" coalesce(', '  || endereco.numero, ''), ");
+		hql.append(" coalesce(' - ' || endereco.bairro, ''), ");
+		hql.append(" coalesce(' / ' || endereco.uf, '') ");
+		hql.append(" ) as endereco ");
 		
 		gerarWhereFromObterCotaPorTipo(hql);
 		
@@ -2238,7 +2243,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
 		hql.append(" and enderecoCota.principal=true ");		
-		hql.append(" and pdv.segmentacao.tipoCaracteristica=:tipoCota");
+		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota");
 				
 	}
 
@@ -2265,7 +2270,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	}
 
 	@Override
-	public int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota) {
+	public int obterCountCotaPorTipo(TipoDistribuicaoCota tipoCota) {
 		
 		StringBuilder hql = new StringBuilder();
 		

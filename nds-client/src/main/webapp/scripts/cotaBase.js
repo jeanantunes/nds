@@ -1,3 +1,8 @@
+var ModoTela = {
+    CADASTRO_COTA : {value: 'CADASTRO_COTA'},
+    HISTORICO_TITULARIDADE : {value: 'HISTORICO_TITULARIDADE'}
+};
+
 var cotaBaseController = $.extend(true, {
 	
 	init : function(){
@@ -399,7 +404,7 @@ var cotaBaseController = $.extend(true, {
 			}else{
 				
 				row.cell.nomeCota = '<div style="text-align: left; width: 90px;" id="nomeCotaGrid'+index+'" >'+
-									'<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+row.cell.numeroCota+')">'+row.cell.nomeCota+'</a>'+
+									'<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+row.cell.numeroCota+','+row.cell.idCota+')">'+row.cell.nomeCota+'</a>'+
 									'</div>';
 				
 				linkSegmento = '<a href="javascript:;" onclick="cotaBaseController.segmentosNaoRecebidos('+ row.cell.numeroCota +');" style="cursor:pointer">' +
@@ -764,7 +769,7 @@ var cotaBaseController = $.extend(true, {
 	},		
 
 
-	fotoPdv : function(numeroCota) {
+	fotoPdv : function(numeroCota, idCota) {
 		
 		$.postJSON(contextPath + "/cadastro/cotaBase/obterIdPDVPrincipal",
 				{"numeroCota":numeroCota}, 
@@ -772,12 +777,26 @@ var cotaBaseController = $.extend(true, {
 					
 					$.postJSON(contextPath + "/cadastro/pdv/editar",
 							[{name:"idPdv", value:idPDVPrincipal},
-							 {name:"idCota", value:null},
-							 {name:"modoTela", value: ModoTela.CADASTRO_COTA}], 
+							 {name:"idCota", value:idCota},
+							 {name:"modoTela", value: ModoTela.CADASTRO_COTA.value}], 
 							 function(result){						
 								if(result.pdvDTO.pathImagem) {
-				                    $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                    $("#idImagem", "#dialog-foto-pdv").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                    
 				                }
+								
+								$("#idNomePdv", "#dialog-foto-pdv").html(result.pdvDTO.nomePDV);
+								$( "#dialog-foto-pdv" ).dialog({
+									resizable: false,
+									height:540,
+									width:670,
+									modal: true,
+									buttons: {
+										"Fechar": function() {
+											$( this ).dialog( "close" );
+										},
+									}
+								});
 						
 					},null,true);
 					
@@ -788,17 +807,7 @@ var cotaBaseController = $.extend(true, {
 		);
 		
 
-		$( "#dialog-foto-pdv" ).dialog({
-			resizable: false,
-			height:540,
-			width:670,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
-		});
+		
 	},	
 
 	detalhesEquivalente : function(numeroCota, nomeCota) {
@@ -827,12 +836,12 @@ var cotaBaseController = $.extend(true, {
 		});
 	},
 	
-	segmentosNaoRecebidos : function(idCota){
+	segmentosNaoRecebidos : function(numeroCota){
 		
 		$("#consultaSegmentosGrid").flexOptions({
 			url: contextPath + "/cadastro/cotaBase/segmentosRecebidos",
 			dataType : 'json',
-			params: [{name: 'idCota' , value: idCota}]
+			params: [{name: 'numeroCota' , value: numeroCota}]
 		});
 		
 		$("#consultaSegmentosGrid").flexReload();

@@ -142,7 +142,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 					}
 					
 				} catch (NoDocumentException ex ) {
-						
+					ex.printStackTrace();	
 				}			
 			}
 			

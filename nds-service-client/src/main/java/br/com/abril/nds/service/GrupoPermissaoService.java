@@ -6,6 +6,7 @@ import br.com.abril.nds.client.vo.ResultadoGrupoVO;
 import br.com.abril.nds.dto.GrupoPermissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaGrupoDTO;
 import br.com.abril.nds.model.seguranca.GrupoPermissao;
+import br.com.abril.nds.model.seguranca.Permissao;
 
 /**
  * @author InfoA2
@@ -21,5 +22,7 @@ public interface GrupoPermissaoService {
 	public List<GrupoPermissaoDTO> listarDTOs();
 
 	public void excluir(Long codigoGrupo);
+	
+	public void removerGrupoPermissaoPermissao(Permissao permissao);
 
 }

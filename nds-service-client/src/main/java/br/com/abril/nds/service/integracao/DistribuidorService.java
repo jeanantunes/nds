@@ -123,14 +123,21 @@ public interface DistribuidorService {
 	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
 	
 	/**
-	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
+	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia 
+	 * divergente da data de Recolhimento prevista
+	 * 
 	 * @param dataConferencia
 	 * @param dataRecolhimento
+	 * @param numeroCota
 	 * @param idProdutoEdicao
 	 * 
 	 * @return Integer
 	 */
-	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long idProdutoEdicao);
+	Integer obterDiaDeRecolhimentoDaData(
+			Date dataConferencia, 
+			Date dataRecolhimento, 
+			Integer numeroCota, 
+			Long idProdutoEdicao);
 	
 	/**
 	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz
@@ -150,5 +157,7 @@ public interface DistribuidorService {
 	boolean verificaDesbloqueioProcessosLancamentosEstudos();
 	
 	boolean isConferenciaCegaRecebimentoFisico();
+	
+	boolean isConferenciaCegaFechamentoEncalhe();
 	
 }
