@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.ems0140.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.SessionFactory;
@@ -22,16 +24,19 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private SessionFactory sessionFactoryGfs;
 	
-	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
+		List<Object> objs = new ArrayList<Object>();
+		Object dummyObj = new Object();
+		objs.add(dummyObj);
 		
+		tempVar.set(objs);
 	}
 
 	@Override
 	public void processMessage(Message message) {
-		EMS0140Input input = new EMS0140Input();
-		input.get_id();
+		EMS0140Input input = (EMS0140Input) message.getBody();
+		
 	}
 
 	@Override

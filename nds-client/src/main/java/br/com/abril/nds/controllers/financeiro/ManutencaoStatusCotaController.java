@@ -471,14 +471,14 @@ public class ManutencaoStatusCotaController extends BaseController {
 			    if (qtde == null || qtde == 0){
 			    	
 			    	msgs.add(
-			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
+			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadastrado!");
 			    }
 			    
 			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
 			    if (qtde == null || qtde == 0){
 			    	
 			    	msgs.add(
-			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
+			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadastrado!");
 			    }
 			    
 				if (this.distribuidorService.utilizaGarantiaPdv()){

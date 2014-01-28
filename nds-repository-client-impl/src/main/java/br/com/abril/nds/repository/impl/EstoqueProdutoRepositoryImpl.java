@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -204,5 +205,22 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		query.setParameter("statusFechado", StatusLancamento.FECHADO);
 		
 		return query.list();
+	}
+	
+	@Override
+	public BigInteger buscarQtdEstoquePorProduto(String codigoProduto, Long numeroEdicao) {
+		
+		StringBuilder hql = new StringBuilder("select coalesce(e.qtde,0) ");
+		hql.append(" from EstoqueProduto e ")
+		   .append(" join e.produtoEdicao pe ")
+		   .append(" join pe.produto p ")
+		   .append(" where p.codigo = :codigoProduto ")
+		   .append(" and pe.numeroEdicao = :numeroEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return (BigInteger) query.uniqueResult();
 	}
 }

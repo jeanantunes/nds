@@ -5,6 +5,9 @@ import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -376,6 +379,270 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
+
+	
+	private class DiaSemanaRecolhimento {
+		
+		public Date data;
+		public DiaSemana diaSemana;
+		public boolean indOperacaoDiferenciada;
+		public boolean indDiaProgramadoRecolhimento;
+		public boolean indPrimeiroDiaRecolhimento;
+		
+	}
+	
+	
+	/**
+	 * Valida a existência de chamada de encalhe de acordo 
+	 * com a cota de operação diferenciada e produtoEdicao 
+	 * cuja dataRecolhimento esteja dentro da faixa aceitavel 
+	 * para cota de operação diferenciada.
+	 * 
+	 * @param cota
+	 * @param produtoEdicao
+	 *  
+	 * @return ChamadaEncalheCota
+	 */
+	private ChamadaEncalheCota validarChamadaEncalheOperacaoDiferenciada(Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		Integer numeroCota = cota.getNumeroCota();
+		
+		ChamadaEncalheCota cec = obterChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+		ChamadaEncalhe ce = cec.getChamadaEncalhe();
+		
+		Date dataRecolhimentoCE = ce.getDataRecolhimento();
+		
+		Date primeiroDiaEncalheOperacaoDiferenciada = obterDataPrimeiroDiaEncalheOperacaoDiferenciada(numeroCota, dataRecolhimentoCE);
+		
+		if(produtoEdicao.isParcial()
+				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
+			
+			if(primeiroDiaEncalheOperacaoDiferenciada.compareTo(dataOperacao)!=0) {
+
+				ProdutoEdicao pEdicao = produtoEdicaoRepository.buscarPorId(produtoEdicao.getId());
+				
+				if(pEdicao == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
+				}
+				
+				String nomeProdutoEdicao = pEdicao.getProduto().getNome();
+				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						" Não é possível realiza a conferência do produto edição parcial [" + nomeProdutoEdicao  + "]. " +
+						" Data de operação excedendo ou fora do primeiro dia de recolhimento de operação diferenciada. "   );		
+				
+			}
+			
+			
+		} else {
+			
+			isDataRecolhimentoValida(dataOperacao, primeiroDiaEncalheOperacaoDiferenciada, produtoEdicao.getId(), true);
+			
+		}
+		
+		
+		return cec;
+		
+	}
+
+	@Transactional(readOnly=true)
+	public Date obterDataPrimeiroDiaEncalheOperacaoDiferenciada(Integer numeroCota, Date dataRecolhimentoCE) {
+		
+		DiaSemana inicioSemana = distribuidorService.inicioSemana();
+		
+		List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada = 
+				obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(
+						numeroCota, 
+						dataRecolhimentoCE, 
+						inicioSemana.getCodigoDiaSemana());
+		
+		identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(diasSemanaRecolhimentoOperacaoDiferenciada);
+		
+		Date primeiraDataRecolhimento = null;
+		
+		for(DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
+			if(dia.indPrimeiroDiaRecolhimento){
+				primeiraDataRecolhimento = dia.data;
+				break;
+			}
+		}
+		
+		return primeiraDataRecolhimento;
+	}
+	
+	
+	/**
+	 * Identifica o primeiro qual o primeiro dia de recolhimento na semana 
+	 * da cota de operacao diferenciada.
+	 * 
+	 * @param diasSemanaRecolhimentoOperacaoDiferenciada
+	 */
+	private void identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada) {
+		
+		//Se o dia programado de recolhimento for também dia de operação diferenciada então este
+		//é o primeiro dia de recolhimento
+		for(DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
+			if(dia.indDiaProgramadoRecolhimento && dia.indOperacaoDiferenciada) {
+				dia.indPrimeiroDiaRecolhimento = true;
+				return;
+			}
+		}
+		
+		int counter = 0;
+		int ownerPosition = -1;
+		boolean ceFound = false;
+		
+		Collections.reverse(diasSemanaRecolhimentoOperacaoDiferenciada);
+		
+		for(DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
+			
+			if(dia.indDiaProgramadoRecolhimento) {
+				ceFound = true;
+			}
+			
+			if(dia.indOperacaoDiferenciada) {
+				ownerPosition = counter;
+			}
+			
+			if(ceFound && ownerPosition!=-1){
+				break;
+			}
+			
+			++counter;
+			
+		}
+		
+		diasSemanaRecolhimentoOperacaoDiferenciada.get(ownerPosition).indPrimeiroDiaRecolhimento = true;
+		
+		Collections.reverse(diasSemanaRecolhimentoOperacaoDiferenciada);
+		
+	}
+	
+	/**
+	 * Retorna uma lista ordenada de objetos com informações sobre
+	 * as datas da semana de recolhimento da operação diferenciada
+	 * sendo esta semana baseada na data de recolhimento informada 
+	 * por parâmetro.
+	 * 
+	 * @param numeroCota
+	 * @param dataRecolhimentoCE
+	 * @param primeiroDiaDaSemanaDistribuidor
+	 * 
+	 * @return List - DiaSemanaRecolhimento
+	 */
+	private List<DiaSemanaRecolhimento> obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(
+			Integer numeroCota, 
+			Date dataRecolhimentoCE, 
+			Integer primeiroDiaDaSemanaDistribuidor) {
+		
+		List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
+		
+		List<DiaSemanaRecolhimento> listaDiaSemanaRecolhimento = new ArrayList<>();
+
+		Calendar cData = Calendar.getInstance();
+		cData.setTime(dataRecolhimentoCE);
+		cData.setFirstDayOfWeek(primeiroDiaDaSemanaDistribuidor);
+		
+		Integer diaSemanaRecolhimentoProgramado = cData.get(Calendar.DAY_OF_WEEK);
+		
+		for(DiaSemana dia : DiaSemana.values()) {
+			
+			cData.set(Calendar.DAY_OF_WEEK, dia.getCodigoDiaSemana());
+			
+			DiaSemanaRecolhimento diaSemanaRecolhimento = new DiaSemanaRecolhimento();
+			diaSemanaRecolhimento.diaSemana = dia;
+			diaSemanaRecolhimento.data = cData.getTime();
+			diaSemanaRecolhimento.indDiaProgramadoRecolhimento = (diaSemanaRecolhimentoProgramado.intValue() == dia.getCodigoDiaSemana());
+			diaSemanaRecolhimento.indOperacaoDiferenciada = diasSemanaOperacaoDiferenciada.contains(dia);
+			diaSemanaRecolhimento.indPrimeiroDiaRecolhimento = false;
+			
+			listaDiaSemanaRecolhimento.add(diaSemanaRecolhimento);
+			
+		}
+		
+		Collections.sort(listaDiaSemanaRecolhimento, new Comparator<DiaSemanaRecolhimento>(){
+
+			@Override
+			public int compare(DiaSemanaRecolhimento o1,
+					DiaSemanaRecolhimento o2) {
+				return o1.data.compareTo(o2.data);
+			}
+			
+		});
+		
+		
+		return listaDiaSemanaRecolhimento;
+
+	}
+	
+	/**
+	 * Retorna a chamada de encalhe do produto edição e cota em questão.
+	 * 
+	 * @param cota
+	 * @param produtoEdicao
+	 * 
+	 * @return ChamadaEncalheCota
+	 */
+	private ChamadaEncalheCota obterChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		boolean postergado = false;
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		ChamadaEncalheCota chamadaEncalheCota = null;
+
+		chamadaEncalheCota =
+				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
+																		produtoEdicao.getId(), 
+																		postergado,
+																		dataOperacao);
+		if(chamadaEncalheCota == null){
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
+					" Este produto edição não possui CE. "   );				
+		
+		} 
+			
+		
+		return chamadaEncalheCota;
+		
+	}
+	
+	/**
+	 * Retorna a chamada de encalhe do produto edição parcial e cota em questão.
+	 * 
+	 * @param cota
+	 * @param produtoEdicao
+	 * 
+	 * @return ChamadaEncalheCota
+	 */
+	private ChamadaEncalheCota obterChamadaEncalheParaCotaProdutoEdicaoParcial(Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		boolean postergado = false;
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		ChamadaEncalheCota chamadaEncalheCota = null;
+			
+		chamadaEncalheCota = 
+				chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(),postergado,dataOperacao);
+		
+		if(chamadaEncalheCota == null ) {
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
+					" Este produto edição não possui CE. "   );
+			
+		}
+			
+		
+		return chamadaEncalheCota;
+		
+	}
+	
+	
 	/**
 	 * Valida a existência de chamada de encalhe de acordo com a
 	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
@@ -392,49 +659,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 *  
 	 * @return ChamadaEncalhe
 	 */
-	private ChamadaEncalheCota validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
-
-		boolean postergado = false;
-		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+	private ChamadaEncalheCota validarChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
+		
 		ChamadaEncalheCota chamadaEncalheCota = null;
 		
 		if(produtoEdicao.isParcial()
-				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), dataOperacao)) {
-			
-			chamadaEncalheCota = 
-					chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(),postergado,dataOperacao);
-			
-			if(chamadaEncalheCota == null ) {
-				
-				throw new ValidacaoException(
-						TipoMensagem.WARNING, 
-						" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
-						" Este produto edição não possui CE. "   );
-				
-			}
+				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
+			chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicaoParcial(cota, produtoEdicao);
+		} else {
+			chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+		}
+
+		
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		if(produtoEdicao.isParcial()) {
+		
+			return chamadaEncalheCota;
 			
 		} else {
-
-			chamadaEncalheCota =
-					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
-																			produtoEdicao.getId(), 
-																			postergado,
-																			dataOperacao);
-			if(chamadaEncalheCota == null){
-				
-				throw new ValidacaoException(
-						TipoMensagem.WARNING, 
-						" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
-						" Este produto edição não possui CE. "   );				
+		
+			isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId(), false);
 			
-			} else {
-				
-				isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId());
-			
-			}
-		}
+		}	
 		
 		return chamadaEncalheCota;
+		
 	}
 	
 	/**
@@ -455,11 +706,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * recolhido na data de operação informada.
 	 *    
 	 * @param dataOperacao
-	 * @param dataRecolhimento
+	 * @param dataPrimeiroRecolhimento
 	 * @param idProdutoEdicao
+	 * @param indOperacaoDiferenciada
 	 */
 	@Transactional(readOnly = true)
-	public void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao) {
+	public void isDataRecolhimentoValida(Date dataOperacao, Date dataPrimeiroRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
@@ -469,19 +721,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
 	
-		boolean recolhimentoMaiorQueDataOperacao = dataRecolhimento.compareTo(dataOperacao) > 0;
+		if(!indOperacaoDiferenciada) {
+			
+			boolean recolhimentoMaiorQueDataOperacao = dataPrimeiroRecolhimento.compareTo(dataOperacao) > 0;
 
-		if(recolhimentoMaiorQueDataOperacao) {
-				
-			throw new ValidacaoException(
-					TipoMensagem.WARNING, 
-					"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br> " +
-					"Não é permitida antecipação de produtos pelo distribuidor. "   );
+			if(recolhimentoMaiorQueDataOperacao) {
 					
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br> " +
+						"Não é permitida antecipação de produtos pelo distribuidor. "   );
+						
+			}
+			
 		}
 		
 		List<Date> datasRecolhimento = 
-				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataRecolhimento,
+				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataPrimeiroRecolhimento,
 																			   this.obterIdsFornecedorDoProduto(produtoEdicao));
 		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
 			throw new ValidacaoException(
@@ -498,10 +754,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		throw new ValidacaoException(
-				TipoMensagem.WARNING, 
-				" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
-				" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
+		if(indOperacaoDiferenciada) {
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
+					" Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. "   );		
+		} else {
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
+					" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
+		}
 
 	}
 	
@@ -655,6 +918,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
 	@Transactional(readOnly = true)
 	public void verificarCotaOperacaoDiferenciada(Integer numeroCota) {
 		
@@ -716,12 +980,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(controleConferenciaEncalheCota != null) {
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
-			
-			for(ConferenciaEncalheDTO item : listaConferenciaEncalheDTO){
-				Integer diaSemanaRecolhimento = 
-						distribuidorService.obterDiaDeRecolhimentoDaData(item.getDataConferencia(),item.getDataRecolhimento() ,item.getIdProdutoEdicao());
-				item.setDia(diaSemanaRecolhimento);
-			}
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
@@ -878,7 +1136,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		    Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		    
-			ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+	    	ChamadaEncalheCota chamadaEncalheCota = null;
+	    	
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
+	    	} else {
+				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+	    	}
 			
 			if( chamadaEncalheCota != null) {
 				
@@ -977,7 +1241,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		    Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		    
-			ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+	    	ChamadaEncalheCota chamadaEncalheCota = null;
+	    	
+	    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+	    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
+	    	} else {
+				chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+	    	}
 			
 			if( chamadaEncalheCota != null) {
 				
@@ -1090,7 +1360,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 		    for (ProdutoEdicao produtoEdicao : produtosEdicao) {
 		    
-				ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+		    	ChamadaEncalheCota chamadaEncalheCota = null;
+		    	
+		    	if(cotaService.isCotaOperacaoDiferenciada(cota.getNumeroCota())){
+		    		chamadaEncalheCota = this.validarChamadaEncalheOperacaoDiferenciada(cota, produtoEdicao);
+		    	} else {
+					chamadaEncalheCota = this.validarChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+		    	}
 				
 				if( chamadaEncalheCota != null) {
 					
@@ -2444,6 +2720,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			MovimentoEstoque movimentoEstoque,
 			ChamadaEncalheCota chamadaEncalheCota) {
 		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(
+				dataOperacao, 
+                conferenciaEncalheDTO.getDataRecolhimento(),
+                numeroCota,
+                conferenciaEncalheDTO.getIdProdutoEdicao());
+		
 		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
@@ -2468,6 +2752,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		conferenciaEncalhe.setData(dataCriacao);
 		
+		conferenciaEncalhe.setDiaRecolhimento(diaRecolhimento);
+		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		
 		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
@@ -2478,11 +2764,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	/**
-	 * Obtém a ChamadaEncalheCota de acordo com a cota e idProdutoEdicao 
-	 * cuja dataRecolhimento da chamada de encalhe seja maior ou igual ao 
-	 * parâmetro dataRecolhimentoReferencia, sendo que este parâmetro é igual
-	 * a dataOperação - qtdDiasEncalheAtrasadoAceitavel(parâmetro do distribuidor).  
-	 * 
+	 * Obtém a ChamadaEncalheCota de acordo com a cota, idProdutoEdicao 
+	 * e dataRecolhimento informados.
+	 *  
 	 * @param numeroCota
 	 * @param dataRecolhimentoReferencia
 	 * @param idProdutoEdicao
@@ -2491,17 +2775,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private ChamadaEncalheCota obterChamadaEncalheCotaParaConfEncalhe(
 			Integer numeroCota,
-			Date dataRecolhimentoReferencia,
+			Date dataRecolhimento,
 			Long idProdutoEdicao) {
 		
 		boolean postergado = false;
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
-		ChamadaEncalheCota chamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, idProdutoEdicao, postergado, dataRecolhimentoReferencia);
-		
-		return chamadaEncalheCota;
+		return chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, idProdutoEdicao, postergado, dataRecolhimento);
 		
 	}
 	
