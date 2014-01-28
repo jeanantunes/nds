@@ -416,7 +416,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Date primeiroDiaEncalheOperacaoDiferenciada = obterDataPrimeiroDiaEncalheOperacaoDiferenciada(numeroCota, dataRecolhimentoCE);
 		
-		isDataRecolhimentoValida(dataOperacao, primeiroDiaEncalheOperacaoDiferenciada, produtoEdicao.getId(), true);
+		if(produtoEdicao.isParcial()
+				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
+			
+			if(primeiroDiaEncalheOperacaoDiferenciada.compareTo(dataOperacao)!=0) {
+
+				ProdutoEdicao pEdicao = produtoEdicaoRepository.buscarPorId(produtoEdicao.getId());
+				
+				if(pEdicao == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
+				}
+				
+				String nomeProdutoEdicao = pEdicao.getProduto().getNome();
+				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						" Não é possível realiza a conferência do produto edição parcial [" + nomeProdutoEdicao  + "]. " +
+						" Data de operação excedendo ou fora do primeiro dia de recolhimento de operação diferenciada. "   );		
+				
+			}
+			
+			
+		} else {
+			
+			isDataRecolhimentoValida(dataOperacao, primeiroDiaEncalheOperacaoDiferenciada, produtoEdicao.getId(), true);
+			
+		}
+		
 		
 		return cec;
 		
@@ -565,39 +591,52 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean postergado = false;
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		ChamadaEncalheCota chamadaEncalheCota = null;
-		
-		if(produtoEdicao.isParcial()
-				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), dataOperacao)) {
-			
-			chamadaEncalheCota = 
-					chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(),postergado,dataOperacao);
-			
-			if(chamadaEncalheCota == null ) {
-				
-				throw new ValidacaoException(
-						TipoMensagem.WARNING, 
-						" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
-						" Este produto edição não possui CE. "   );
-				
-			}
-			
-		} else {
 
-			chamadaEncalheCota =
-					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
-																			produtoEdicao.getId(), 
-																			postergado,
-																			dataOperacao);
-			if(chamadaEncalheCota == null){
-				
-				throw new ValidacaoException(
-						TipoMensagem.WARNING, 
-						" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
-						" Este produto edição não possui CE. "   );				
+		chamadaEncalheCota =
+				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
+																		produtoEdicao.getId(), 
+																		postergado,
+																		dataOperacao);
+		if(chamadaEncalheCota == null){
 			
-			} 
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
+					" Este produto edição não possui CE. "   );				
+		
+		} 
+			
+		
+		return chamadaEncalheCota;
+		
+	}
+	
+	/**
+	 * Retorna a chamada de encalhe do produto edição parcial e cota em questão.
+	 * 
+	 * @param cota
+	 * @param produtoEdicao
+	 * 
+	 * @return ChamadaEncalheCota
+	 */
+	private ChamadaEncalheCota obterChamadaEncalheParaCotaProdutoEdicaoParcial(Cota cota, ProdutoEdicao produtoEdicao) {
+		
+		boolean postergado = false;
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		ChamadaEncalheCota chamadaEncalheCota = null;
+			
+		chamadaEncalheCota = 
+				chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(),postergado,dataOperacao);
+		
+		if(chamadaEncalheCota == null ) {
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
+					" Este produto edição não possui CE. "   );
 			
 		}
+			
 		
 		return chamadaEncalheCota;
 		
@@ -622,7 +661,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private ChamadaEncalheCota validarChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 		
-		ChamadaEncalheCota chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+		ChamadaEncalheCota chamadaEncalheCota = null;
+		
+		if(produtoEdicao.isParcial()
+				&& !isPeriodoLancamentoRecolhimentoFinal(produtoEdicao.getId(), cota.getId(), distribuidorService.obterDataOperacaoDistribuidor())) {
+			chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicaoParcial(cota, produtoEdicao);
+		} else {
+			chamadaEncalheCota = obterChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+		}
+
+		
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -706,10 +754,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		throw new ValidacaoException(
-				TipoMensagem.WARNING, 
-				" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
-				" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
+		if(indOperacaoDiferenciada) {
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
+					" Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. "   );		
+		} else {
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
+					" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
+		}
 
 	}
 	
