@@ -19,6 +19,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -109,14 +110,14 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Override
 	@Transactional
-	public List<CotaTipoDTO> obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
+	public List<CotaTipoDTO> obterCotaPorTipo(TipoDistribuicaoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
 
 		return cotaRepository.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
 	}
 
 	@Override
 	@Transactional
-	public int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota) {
+	public int obterCountCotaPorTipo(TipoDistribuicaoCota tipoCota) {
 		return cotaRepository.obterCountCotaPorTipo(tipoCota);
 	}
 	

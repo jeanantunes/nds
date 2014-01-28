@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -52,6 +53,17 @@ public interface ConferenciaEncalheService {
 	 */
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
 	
+	
+	/**
+	 * Obtém o primeiro dia de recolhimento para da data de
+	 * CE programada da cota de operação diferenciada em questão.
+	 * 
+	 * @param numeroCota
+	 * @param dataRecolhimentoCE
+	 * 
+	 * @return Date
+	 */
+	public Date obterDataPrimeiroDiaEncalheOperacaoDiferenciada(Integer numeroCota, Date dataRecolhimentoCE);
 	
 	/**
 	 * Verifica se a cota informada possui operação diferenciada. 
@@ -260,7 +272,7 @@ public interface ConferenciaEncalheService {
 	
 	boolean isLancamentoParcial(Long idProdutoEdicao);
 	
-	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao);
+	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada);
 
 	BigDecimal obterValorTotalDesconto(Integer numeroCota, Date dataOperacao);
 

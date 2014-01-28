@@ -756,10 +756,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 				
 			}
 			
-			dia = this.distribuidorService.obterDiaDeRecolhimentoDaData(
-					produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento(), produtoEdicaoSlip.getIdProdutoEdicao());
- 
-			produtoEdicaoSlip.setDia(dia);
+			dia = produtoEdicaoSlip.getDia();
 			
 			String ordinal = ((dia != null) ? this.getDiaMesOrdinal(dia) + " DIA" : "PRODUTOS ANTECIPADOS");
 		
