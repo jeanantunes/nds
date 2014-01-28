@@ -425,7 +425,7 @@ function limparLstExcecao1(){
                           </tr>
                           <tr>
                             <td>Data Lançamento:</td>
-                            <td>${ produtoEdicao.dataLancamentoFormatada }</td>
+                            <td id="dataLancamento">${ produtoEdicao.dataLancamentoFormatada }</td>
                           </tr>
                           <tr>
                             <td>Data Recolhimento:</td>
