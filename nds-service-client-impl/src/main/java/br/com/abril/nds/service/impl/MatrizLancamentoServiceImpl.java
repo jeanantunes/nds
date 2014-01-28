@@ -44,6 +44,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstrategiaRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
@@ -78,6 +79,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
     private EstrategiaRepository estrategiaRepository;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -1658,8 +1662,17 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		if (listaDistribuicaoFornecedor == null || listaDistribuicaoFornecedor.isEmpty()) {
 			
+			List<String> mensagens = new ArrayList<String>();
+			
+			mensagens.add("Dias de distribuição para os fornecedores não encontrados!");
+			mensagens.add("Cadastre dias de distruibuição para os Fornecedores:");
+			for (Long idFornecedor:listaIdsFornecedores) {
+				mensagens.add(fornecedorRepository.obterNome(idFornecedor).toFormattedString());
+			}
+			mensagens.add("Para continuar desmarque os fornecedores da lista e refaça sua pesquisa.");
+			 
 			throw new ValidacaoException(
-				TipoMensagem.WARNING , "Dias de distribuição para os fornecedores não encontrados!");
+				TipoMensagem.WARNING ,mensagens);
 		}
 		
 		Map<Long, Set<Integer>> codigosDiaSemanaPorFornecedor = new HashMap<Long, Set<Integer>>();
@@ -1930,6 +1943,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
 		}
+	}
+
+	public FornecedorRepository getFornecedorRepository() {
+		return fornecedorRepository;
+	}
+
+	public void setFornecedorRepository(FornecedorRepository fornecedorRepository) {
+		this.fornecedorRepository = fornecedorRepository;
 	}
 	
 }
