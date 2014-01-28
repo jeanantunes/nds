@@ -229,9 +229,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 
     montarComboBox : function(result,name,onChange) {
 		
+    	var desabilitar = "";
+    	if ($("#" + name, parametroCobrancaCotaController.workspace).attr("disabled")){
+    		desabilitar = "disabled='disabled'";
+    	}
+    	
 		var options = "";
 		
-		options += "<select name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
+		options += "<select " + desabilitar + " name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
 		options += "<option value=''>Selecione</option>";
 		$.each(result, function(index, row) {
 			options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
@@ -300,7 +305,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var comboFornecedoresPadrao =  parametroCobrancaCotaController.montarComboBox(result,"fornecedorPadrao","");
 		
-	    $("#fornecedoresPadrao", this.workspace).html(comboFornecedoresPadrao);
+	    $("#fornecedorPadrao", this.workspace).html(comboFornecedoresPadrao);
 	},
 
     mostrarGrid : function(idCota) {
@@ -358,6 +363,18 @@ var parametroCobrancaCotaController = $.extend(true, {
             
             	row.cell.acao = linkEditar + linkExcluir;
             } else {
+            	
+            	$.each($("#formFinanceiro input", parametroCobrancaCotaController.workspace),
+            		function(idx, item){
+            			$(item).attr("disabled", "disabled");
+            		}
+            	);
+            	
+            	$.each($("#formFinanceiro select", parametroCobrancaCotaController.workspace),
+            		function(idx, item){
+            			$(item).attr("disabled", "disabled");
+            		}
+            	);
             	
             	row.cell.acao = '';
             }
