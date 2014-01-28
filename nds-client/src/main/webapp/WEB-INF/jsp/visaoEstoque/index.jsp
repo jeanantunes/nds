@@ -52,7 +52,7 @@
 	          		<select name="filtro.idFornecedor" style="width: 250px;" id="visaoEstoque_filtro_idFornecedor">
 						<option selected="selected" value="-1"></option>
 						<c:forEach items="${listFornecedores}" var="fornecedor">
-							<option value="${fornecedor.id}">${fornecedor.juridica.razaoSocial}</option>
+							<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
 						</c:forEach>
 					</select>
 	          	</td>

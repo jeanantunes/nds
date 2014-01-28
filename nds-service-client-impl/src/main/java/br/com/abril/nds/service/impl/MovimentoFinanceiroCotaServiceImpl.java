@@ -257,6 +257,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				);
 	}
 	
+	@Transactional
 	public List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos() {
 		List<GrupoMovimentoFinaceiro> gruposMovimentosFinanceiros = new ArrayList<GrupoMovimentoFinaceiro>();
 		
