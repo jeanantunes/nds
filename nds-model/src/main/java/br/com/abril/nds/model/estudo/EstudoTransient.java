@@ -2,6 +2,7 @@ package br.com.abril.nds.model.estudo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ public class EstudoTransient extends Estudo {
     private BigInteger reservaAjuste;
     private BigInteger reservaAjusteInicial;
     private DistribuicaoVendaMediaDTO distribuicaoVendaMediaDTO;
+    
+    private Date dataLancamento;
 
     public EstudoTransient() {
 	excedenteDistribuir = BigDecimal.ZERO;
@@ -266,6 +269,14 @@ public class EstudoTransient extends Estudo {
     public void setCotasSoComEdicaoAberta(LinkedList<CotaEstudo> cotasSoComEdicaoAberta) {
         this.cotasSoComEdicaoAberta = cotasSoComEdicaoAberta;
     }
+    
+    public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
 
     @Override
     public String toString() {
@@ -292,4 +303,5 @@ public class EstudoTransient extends Estudo {
 	 
 	 return string;
     }
+
 }

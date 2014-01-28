@@ -34,6 +34,7 @@ import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -395,9 +396,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	    }
 	    if (vo.getCnpj() == null || vo.getCnpj().trim().isEmpty()) {
 	        erros.add("É necessário informar o CNPJ!");
+	    }else{
+	    	this.pessoaService.validarCNPJ(vo.getCnpj());
 	    }
-	    
-	    this.pessoaService.validarCNPJ(vo.getCnpj());
 	    
 	    if (vo.getInscricaoEstadual() == null || vo.getInscricaoEstadual().trim().isEmpty()) {
 	        erros.add("É necessário informar a Insc. Estadual!");
@@ -548,7 +549,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();
 	}
 
-	public void obterCotas(Long idGrupo, TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
+	public void obterCotas(Long idGrupo, TipoDistribuicaoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder) {
 		
 		int total =  grupoService.obterCountCotaPorTipo(tipoCota);
 		

@@ -41,6 +41,9 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
 		cota.setReparteCalculado(null);
 	    }
 	}
+	
+	estudo.setDataLancamento(estudo.getProdutoEdicaoEstudo().getDataLancamento());
+	
 	estudoAlgoritmoService.gravarEstudo(estudo);
     }
 }

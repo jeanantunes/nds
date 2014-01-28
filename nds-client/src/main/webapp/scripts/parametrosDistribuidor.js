@@ -196,13 +196,12 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraDe', value: $('#prazoAvisoPrevioValidadeGarantiaSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
-<<<<<<< HEAD
 			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.possuiRegimeEspecialDispensaInterna', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.numeroDispositivoLegal', value: $('#numeroDispositivoLegal', this.workspace).val()},
 			{name:'parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial', value: $('#dataLimiteVigenciaRegimeEspecial', this.workspace).val()},
-=======
+
 			//Grid Distribuicao
 			{name:'parametrosDistribuidor.geracaoAutomaticaEstudo', value: $('#geracaoAutomaticaEstudo', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.vendaMediaMais', value: $('#vendaMediaMais', this.workspace).val()},
@@ -251,7 +250,6 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.listPercentualExcedente[2].eficiencia', value: $('#listPercentualExcedente2\\.eficiencia').val()},
 			{name:'parametrosDistribuidor.listPercentualExcedente[2].venda', value: $('#listPercentualExcedente2\\.venda').val()},
 			{name:'parametrosDistribuidor.listPercentualExcedente[2].pdv', value: $('#listPercentualExcedente2\\.pdv').val()},
->>>>>>> DGBti/master
 			
 		];
 		
@@ -759,7 +757,7 @@ var parametrosDistribuidorController = $.extend(true, {
 	
 	desabilitarItens : function() {
 
-		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [7] );
+		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [8] );
 		$("#chamadaoDiasSuspensao", this.workspace).disable();
 		$("#chamadaoValorConsignado", this.workspace).disable();
 		

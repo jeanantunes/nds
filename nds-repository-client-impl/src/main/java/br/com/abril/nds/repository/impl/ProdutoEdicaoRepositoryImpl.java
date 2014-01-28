@@ -1119,9 +1119,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 					" cota2_.numero_cota as COTA_ID, " +
 					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
 					" sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
-					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
-					" estoqueProdutoCota.VERSAO as VERSAO585_ " +
-
+					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA " +
 
 					" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
 					" 	left outer join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
