@@ -3,11 +3,11 @@ package br.com.abril.nds.model.fiscal.notafiscal;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-@Entity
+@DiscriminatorValue(value = "F")
 public class NotaFiscalPessoaFisica extends NotaFiscalPessoa implements Serializable {
 	
 	private static final long serialVersionUID = 8373385180282371004L;

@@ -35,7 +35,6 @@ import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -53,6 +52,7 @@ import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -267,7 +267,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		String documento 	= identificacaoEmitente.getDocumento().getDocumento();
 		NotaFiscalEndereco endereco 	= identificacaoEmitente.getEndereco();
-		Telefone telefone 	= identificacaoEmitente.getTelefone();
+		NotaFiscalTelefone telefone 	= identificacaoEmitente.getTelefone();
 	
 		String emissorNome 							 = identificacaoEmitente.getNome();
 		
@@ -300,7 +300,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String emissorTelefone 		= "";
 		
 		if(telefone != null) {
-			String ddd = (telefone.getDdd() == null) ? "()" : "("+telefone.getDdd()+")" ;
+			String ddd = (telefone.getDDD() == null) ? "()" : "("+telefone.getDDD()+")" ;
 			String phone = (telefone.getNumero() == null) ? "" : telefone.getNumero().toString();
 			emissorTelefone = ddd + phone;	
 		}

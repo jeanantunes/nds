@@ -2,6 +2,7 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
@@ -21,9 +22,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.Type;
 
 import br.com.abril.nds.integracao.persistence.PersistentEnum;
-import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -103,7 +104,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@XmlElement(name="xFant")
 	private String nomeFantasia;
 	
-	@OneToOne(optional=false, fetch=FetchType.LAZY)
+	@OneToOne(optional=false, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="ENDERECO_ID_EMITENTE", updatable=true, insertable=true)
 	@NFEExportType
 	@XmlElement(name="enderEmit")
@@ -157,7 +158,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@OneToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE", updatable=true, insertable=true)
 	@NFEExportType
-	private Telefone telefone;
+	private NotaFiscalTelefone telefone;
 	
 	
 	/**
@@ -353,7 +354,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @return the telefone
 	 */
-	public Telefone getTelefone() {
+	public NotaFiscalTelefone getTelefone() {
 		return telefone;
 	}
 
@@ -362,7 +363,7 @@ public class IdentificacaoEmitente implements Serializable {
 	/**
 	 * @param telefone the telefone to set
 	 */
-	public void setTelefone(Telefone telefone) {
+	public void setTelefone(NotaFiscalTelefone telefone) {
 		this.telefone = telefone;
 	}
 

@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
@@ -31,10 +33,13 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalInformacoes;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 
 public class NotaFiscalBuilder implements Serializable {
 	
 	private static final long serialVersionUID = 176874569807919538L;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalBuilder.class);
 	
 	// builder header Nota fiscal
 	public static NotaFiscalNds montarHeaderNotaFiscal(NotaFiscalNds notaFiscal, Cota cota){
@@ -46,15 +51,11 @@ public class NotaFiscalBuilder implements Serializable {
 			
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
 			
-			/**
-			 *notaFiscal.getEmissor().setNome(pessoaJuridica.getRazaoSocial());
-			notaFiscal.getEmissor().setNomeFantasia(pessoaJuridica.getNomeFantasia() == null ?  cota.getPessoa().getNome() : pessoaJuridica.getNomeFantasia());
-			notaFiscal.getEmissor().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
-			notaFiscal.getEmissor().setCnpj(pessoaJuridica.getCnpj());
+			notaFiscal.getEmissor().setNome(pessoaJuridica.getRazaoSocial());
 			notaFiscal.getEmissor().setEmail(pessoaJuridica.getEmail()); 
-			 * 
-			 */
-			
+//			notaFiscal.getEmissor().setNomeFantasia(pessoaJuridica.getNomeFantasia() == null ?  cota.getPessoa().getNome() : pessoaJuridica.getNomeFantasia());
+//			notaFiscal.getEmissor().setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+//			notaFiscal.getEmissor().setCnpj(pessoaJuridica.getCnpj());
 			
 		} else if (cota.getPessoa() instanceof PessoaFisica) {
 			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
@@ -109,18 +110,27 @@ public class NotaFiscalBuilder implements Serializable {
 		}
 		
 		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone() == null){			
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setTelefone(new Telefone());
+			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setTelefone(new NotaFiscalTelefone());
 		}
 		
 		// verificar o telefone do distribuidor
 		
 		for (TelefoneDistribuidor telefone : distribuidor.getTelefones()) {
 			
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
-			notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDdd(telefone.getTelefone().getDdd());
-			
-			break;
+			if(telefone.getTelefone() != null) {
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setNumero(telefone.getTelefone().getNumero());
+				notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setDDD(telefone.getTelefone().getDdd());
+				
+				if(telefone.getTelefone().getRamal() != null) {
+					try {
+						notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone().setRamal(telefone.getTelefone().getRamal());
+					} catch (Exception e) {
+						LOGGER.error(new StringBuilder("Erro ao fazer parse do ramal.").append(telefone.getTelefone().getDdd()).append(" ").append(telefone.getTelefone().getNumero()).toString());
+					}
+				}
+				
+				break;
+			}
 		}
 		
 		// Dados do Distribuidor
