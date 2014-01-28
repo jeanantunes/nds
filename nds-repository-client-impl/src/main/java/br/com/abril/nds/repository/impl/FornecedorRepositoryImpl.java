@@ -327,6 +327,21 @@ public class FornecedorRepositoryImpl extends
 		return  criteria.list();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public ItemDTO<Long, String> obterNome(Long id){
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.createAlias("juridica","juridica");
+		
+		criteria.add(Restrictions.idEq(id));
+		
+		
+		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		return  (ItemDTO<Long, String>) criteria.uniqueResult();
+	}
+	
 
 	/**
 	 * {@inheritDoc}
