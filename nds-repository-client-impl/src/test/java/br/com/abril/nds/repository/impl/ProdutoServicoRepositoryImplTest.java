@@ -15,7 +15,6 @@ import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -59,6 +58,7 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 
@@ -269,7 +269,7 @@ public class ProdutoServicoRepositoryImplTest extends
 		String nomeFantasiaEmitente = "";
 		NotaFiscalPessoa pessoaEmitenteReferencia = null;
 		RegimeTributario regimeTributario = null;
-		Telefone telefoneEmitente = null;
+		NotaFiscalTelefone telefoneEmitente = null;
 
 		IdentificacaoEmitente identificacaoEmitente = Fixture
 				.identificacaoEmitente(cnae, documentoEmitente,

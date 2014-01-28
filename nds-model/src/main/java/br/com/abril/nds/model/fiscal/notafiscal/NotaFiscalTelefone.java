@@ -23,13 +23,16 @@ public class NotaFiscalTelefone implements Serializable {
 	private String tipoTelefone;
 	
 	@Column(name = "DDI", nullable = false)
-	private Long DDI;
+	private String DDI;
 	
 	@Column(name = "DDD", nullable = false)
-	private Long DDD;
+	private String DDD;
 	
 	@Column(name = "NUMERO", nullable = false)
-	private Long numero;
+	private String numero;
+	
+	@Column(name = "RAMAL", nullable = true)
+	private String ramal;
 
 	public Long getId() {
 		return id;
@@ -47,28 +50,36 @@ public class NotaFiscalTelefone implements Serializable {
 		this.tipoTelefone = tipoTelefone;
 	}
 
-	public Long getDDI() {
+	public String getDDI() {
 		return DDI;
 	}
 
-	public void setDDI(Long dDI) {
+	public void setDDI(String dDI) {
 		DDI = dDI;
 	}
 
-	public Long getDDD() {
+	public String getDDD() {
 		return DDD;
 	}
 
-	public void setDDD(Long dDD) {
+	public void setDDD(String dDD) {
 		DDD = dDD;
 	}
 
-	public Long getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
-	public void setNumero(Long numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
+	}
+	
+	public String getRamal() {
+		return ramal;
+	}
+
+	public void setRamal(String ramal) {
+		this.ramal = ramal;
 	}
 
 	@Override

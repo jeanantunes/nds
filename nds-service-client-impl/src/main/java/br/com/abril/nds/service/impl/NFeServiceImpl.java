@@ -55,6 +55,7 @@ import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
@@ -294,7 +295,7 @@ public class NFeServiceImpl implements NFeService {
 
 		String documento 	= identificacaoEmitente.getDocumento().getDocumento();
 		NotaFiscalEndereco endereco 	= identificacaoEmitente.getEndereco();
-		Telefone telefone 	= identificacaoEmitente.getTelefone();
+		NotaFiscalTelefone telefone 	= identificacaoEmitente.getTelefone();
 
 		String emissorNome 							 = identificacaoEmitente.getNome();
 
@@ -328,7 +329,7 @@ public class NFeServiceImpl implements NFeService {
 		String emissorTelefone 		= "";
 
 		if(telefone != null) {
-			String ddd = (telefone.getDdd() == null) ? "()" : "("+telefone.getDdd()+")" ;
+			String ddd = (telefone.getDDD() == null) ? "()" : "("+telefone.getDDD()+")" ;
 			String phone = (telefone.getNumero() == null) ? "" : telefone.getNumero().toString();
 			emissorTelefone = ddd + phone;	
 		}

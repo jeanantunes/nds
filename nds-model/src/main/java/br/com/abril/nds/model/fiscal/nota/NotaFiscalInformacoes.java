@@ -130,7 +130,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique=true, insertable=false, updatable=false)
 	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
 	
-	@Column(name = "INFORMACOES_COMPLEMENTARES")
+	@Column(name = "INFORMACOES_ADICIONAIS")
 	private	String informacoesComplementares;
 	
 	/**

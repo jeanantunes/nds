@@ -240,6 +240,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @return MovimentosEstoqueCotaSaldoDTO
 	 */
 	@Override
+	@Transactional
 	public MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota){
 		
 		List<MovimentoEstoqueCota> listaMovimentosEstoqueCotaReparte = new ArrayList<MovimentoEstoqueCota>();
@@ -394,6 +395,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return listaMovimentoCotaEnvio;
 	}
 
+	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
 		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true, null);
@@ -420,6 +422,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 
 		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false, false, true, null);
@@ -1060,6 +1063,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	/*
 	 * Atualiza o estoque do produto da cota juramentado.
 	 */
+	@Transactional
 	public EstoqueProdutoCotaJuramentado atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
 														TipoMovimentoEstoque tipoMovimentoEstoque) {
 
@@ -1249,6 +1253,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @see br.com.abril.nds.service.MovimentoEstoqueService#devolucaoRecolhimentoNotaCancelada(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
 	 */
 	@Override
+	@Transactional
 	public void devolucaoRecolhimentoNotaCancelada(NotaFiscal notaFiscalCancelada) {
 
 		TipoMovimentoEstoque tipoMovimento = this.tipoMovimentoEstoqueRepository.
@@ -1275,6 +1280,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 	
 	@Override
+	@Transactional
 	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
 		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
 	}
@@ -1388,6 +1394,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao) {
 		
 		return movimentoEstoqueRepository.obterUltimoMovimentoRecebimentoFisico(idProdutoEdicao, tipoMovimento, dataOperacao);

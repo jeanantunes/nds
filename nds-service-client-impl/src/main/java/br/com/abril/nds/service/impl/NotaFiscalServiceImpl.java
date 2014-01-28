@@ -1225,6 +1225,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * br.com.abril.nds.util.Intervalo, java.util.List, java.util.List)
 	 */
 	@Override
+	@Transactional
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
@@ -1644,6 +1645,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 *            movimento estoque cota
 	 * @return
 	 */
+	@Transactional
 	public List<NotaFiscalReferenciada> obterNotasReferenciadas(
 			List<ItemNotaFiscalSaida> listaItensNotaFiscal) {
 
@@ -1751,6 +1753,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 	
 	@Override
+	@Transactional
 	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		
 		LOGGER.info("obter informações da cota sumarizadas...");
@@ -1763,25 +1766,28 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	@Override
+	@Transactional
 	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
 	@Override
+	@Transactional
 	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		return notaFiscalNdsRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	}
 
 	@Override
+	@Transactional
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		LOGGER.info("obter informações dos forncedores sumarizados...");
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
+	@Transactional
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
-
 	
 }
