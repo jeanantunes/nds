@@ -1,4 +1,3 @@
-<<<<<<< HEAD:nds-client/src/main/webapp/WEB-INF/jsp/parametrosDistribuidor/tabCadastro.jsp
 <div id="tabCadastro">
 	<br/>
 	<fieldset style="width: 380px !important; float: left; margin-left:10px;">
@@ -84,93 +83,6 @@
 
 	<fieldset
 		style="width: 440px !important; margin-bottom: 5px; float: left;">
-
-=======
-<div id="tabCadastroFiscal">
-	<br/>
-	<fieldset style="width: 380px !important; float: left; margin-left:10px;">
-		<legend>Cadastro Distribuidor</legend>
-		<table width="370" border="0" cellpadding="2" cellspacing="1"
-			class="filtro">
-			<tr>
-				<td width="139">Razão Social:</td>
-				<td width="220">
-					<input type="text" name="razaoSocial"
-						   id="razaoSocial" style="width: 220px;" maxlength="255"
-						   value="${parametrosDistribuidor.razaoSocial}" />
-				</td>
-			</tr>
-			<tr>
-				<td>Nome Fantasia:</td>
-				<td>
-					<input type="text" name="nomeFantasia"
-						   id="nomeFantasia" style="width: 220px;" maxlength="255"
-						   value="${parametrosDistribuidor.nomeFantasia}" />
-				</td>
-			</tr>
-			
-			<tr>
-				<td colspan="2">
-					<div id="div_imagem_logotipo"></div>
-				</td>
-			</tr>
-			<tr>
-				<td>Logo:</td>
-				<td>
-					<input type="file" name="logo" id="logo" onchange="parametrosDistribuidorController.salvarLogo();" />
-				</td>
-			</tr>
-			<tr>
-				<td>CNPJ:</td>
-				<td>
-					<input type="text" name="cnpj"
-						   id="cnpj" style="width: 220px;" maxlength="255"
-						   value="${parametrosDistribuidor.cnpj}" />
-				</td>
-			</tr>
-			<tr>
-				<td>Insc. Estadual:</td>
-				<td><input type="text" name="inscricaoEstadual"
-						   id="inscricaoEstadual" style="width: 220px;" maxlength="14"
-						   value="${parametrosDistribuidor.inscricaoEstadual}" />
-				</td>
-			</tr>
-			<tr>
-				<td>Insc. Municipal:</td>
-				<td>
-					<input type="text" name="inscricaoMunicipal"
-						   id="inscricaoMunicipal" style="width: 220px;" maxlength="15"
-						   value="${parametrosDistribuidor.inscricaoMunicipal}" />
-				</td>
-			</tr>
-			<tr>
-				<td>E-mail:</td>
-				<td>
-					<input type="text" name="email" id="email" maxlength="255"
-						   style="width: 220px;" value="${parametrosDistribuidor.email}" />
-				</td>
-			</tr>
-			<tr>
-				<td>Cód. Distribuidor Dinap:</td>
-				<td>
-					<input type="text" name="codigoDistribuidorDinap"
-						   id="codigoDistribuidorDinap" style="width: 220px;" maxlength="255"
-						   value="${parametrosDistribuidor.codigoDistribuidorDinap}" />
-				</td>
-			</tr>
-			<tr>
-				<td>Cód. Distribuidor FC:</td>
-				<td>
-					<input type="text" name="codigoDistribuidorFC"
-						   id="codigoDistribuidorFC" style="width: 220px;" maxlength="255"
-						   value="${parametrosDistribuidor.codigoDistribuidorFC}" />
-				</td>
-			</tr>
-		</table>
-	</fieldset>
-	<fieldset
-		style="width: 440px !important; margin-bottom: 5px; float: left;">
->>>>>>> DGBti/master:nds-client/src/main/webapp/WEB-INF/jsp/parametrosDistribuidor/tabCadastroFiscal.jsp
 		<legend>Endereço</legend>
 		<table width="443" cellpadding="2" cellspacing="2"
 			style="text-align: left">
