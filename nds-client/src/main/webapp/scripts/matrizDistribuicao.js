@@ -141,24 +141,24 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.onSuccessPesquisa = function() {
 		
-		$(T.lancamentos).each(function(i,lancamento){
+		$(T.lancamentos, _workspace).each(function(i,lancamento){
 			 var index = i + 1;
 			 var id = '#row' + index;
 			 
-			 $(id).removeClass("erow");
+			 $(id, _workspace).removeClass("erow");
 			 
 			 if (T.lancamentos[i].idCopia != null) {
 				 
 				 for (var j=0; j < 12; j++) {
-					 $($(id).children()[j]).html("");
+					 $($(id, _workspace).children()[j]).html("");
 				 }
 			 }
 			 
 			 if (T.lancamentos[i].idRow % 2 == 0) {
-				 $(id).addClass("gridLinha");
+				 $(id, _workspace).addClass("gridLinha");
 			 }
 			 
-			 $("#inputRepDistrib" + i).removeAttr('disabled');
+			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
 				if (T.lancamentos[i].dataFinMatDistrib != undefined) {
 					T.finalizaItem(i);
 			 }				 
@@ -216,8 +216,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         row.cell.suplem = parseInt(row.cell.suplem, 10) || 0;
         row.cell.estoque = parseInt(row.cell.estoque, 10) || 0;
 
-        var reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
-        var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : ((row.cell.estoque + row.cell.reparte) - row.cell.promo);
+        var reparte = (row.cell.reparte) - row.cell.promo;
+        var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : reparte;
 
         row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i, liberado);
 
@@ -1493,6 +1493,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			exibirMensagem("WARNING",["Favor gerar um estudo."]);
 			return;
 		} else {
+			$(".areaBts").hide();
 			// Deve ir direto para EMS 2031
 			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
 		}

@@ -128,6 +128,9 @@ obterColunasGridPesquisaSemCota:function(){
 	
 	configurarFlexiGrid : function(colunas) {
 		
+		$(".grids", manutencaoStatusCotaController.workspace).empty();
+		$(".grids", manutencaoStatusCotaController.workspace).append($("<table>").attr("class", "manutencaoStatusCotaGrid"));
+		
 		$(".manutencaoStatusCotaGrid", manutencaoStatusCotaController.workspace).flexigrid({
 			onSuccess: function() {bloquearItensEdicao(manutencaoStatusCotaController.workspace);},
 			preProcess: manutencaoStatusCotaController.executarPreProcessamento,
