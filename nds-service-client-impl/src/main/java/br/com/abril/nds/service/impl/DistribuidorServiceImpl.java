@@ -32,6 +32,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -54,6 +55,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private CotaService cotaService;
+	
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -435,36 +440,51 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * Obtem o dia de recolhimento do distribuidor para a data de 
 	 * Conferencia divergente da data de Recolhimento prevista
 	 * 
-	 * @param dataConferencia
+	 * @param dataOperacaoConferencia
 	 * @param dataRecolhimento
-	 * @param produtoEdicao
-	 * @return Integer
+	 * @param numeroCota
+	 * @param produtoEdicaoId
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long produtoEdicaoId){
+	public Integer obterDiaDeRecolhimentoDaData(
+			Date dataOperacaoConferencia, 
+			Date dataRecolhimento, 
+			Integer numeroCota, 
+			Long produtoEdicaoId ){
+		
+		boolean indCotaOperacaoDiferenciada = cotaService.isCotaOperacaoDiferenciada(numeroCota);
+		
+		Date dataPrimeiroDiaRecolhimento = null;
+		
+		if(indCotaOperacaoDiferenciada) {
+			dataPrimeiroDiaRecolhimento = conferenciaEncalheService.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(numeroCota, dataRecolhimento);
+		} else {
+			dataPrimeiroDiaRecolhimento = dataRecolhimento;
+		}
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
 		
-		if (dataRecolhimento.compareTo(dataConferencia) > 0) {
+		if(!indCotaOperacaoDiferenciada) {
+
+			if (dataRecolhimento.compareTo(dataOperacaoConferencia) > 0) {
+				return null;
+			} else if (dataRecolhimento.compareTo(dataOperacaoConferencia) == 0) {
+				return 1;
+			} 
 			
-			return null;
-		
-		} else if (dataRecolhimento.compareTo(dataConferencia) == 0) {
-			
-			return 1;
-		} 
+		}
 
 		Long[] listaIdsFornecedores = this.conferenciaEncalheService.obterIdsFornecedorDoProduto(produtoEdicao);
 
 		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,
 				                                                                                                                listaIdsFornecedores);
 		
-		Map<Integer,Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento, diasSemanaDistribuidorOpera);
+		Map<Integer, Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataPrimeiroDiaRecolhimento, diasSemanaDistribuidorOpera);
 		
 		for(Integer dia : mapDataRecolhimentoValida.keySet()) {
 			
-			if(mapDataRecolhimentoValida.get(dia).compareTo(dataConferencia) == 0) {
+			if(mapDataRecolhimentoValida.get(dia).compareTo(dataOperacaoConferencia) == 0) {
 				
 				return dia;
 			}
@@ -472,6 +492,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 
 		return 0;
 	}
+	
 	
 	/**
 	 * Retorna um mapa com as data de recolhimento possíveis tendo como chave
@@ -484,7 +505,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * 
 	 * @return Map<Integer,Date>
 	 */
-	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento,List<Integer> diasSemanaDistribuidorOpera) {
+	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento, List<Integer> diasSemanaDistribuidorOpera) {
 		
 		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
 		
@@ -594,4 +615,12 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return this.distribuidorRepository.isConferenciaCegaRecebimentoFisico();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isConferenciaCegaFechamentoEncalhe() {
+		
+		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
+	}
 }

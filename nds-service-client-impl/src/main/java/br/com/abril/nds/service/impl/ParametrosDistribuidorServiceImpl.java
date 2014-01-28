@@ -64,6 +64,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
 import br.com.abril.nds.repository.DistribuidorGridDistribuicaoRepository;
@@ -80,6 +81,7 @@ import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -157,6 +159,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
+	
+	@Autowired
+	private GrupoPermissaoService grupoPermissaoService;
 	
 	@PostConstruct
 	public void initCouchDbClient() {
@@ -688,8 +693,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(parametrosDistribuidor.isDiaRecolhimentoQuarto());
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(parametrosDistribuidor.isDiaRecolhimentoQuinto());
 		parametrosRecolhimentoDistribuidor.setPermiteRecolherDiasPosteriores(parametrosDistribuidor.isLimiteCEProximaSemana());
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(Boolean.TRUE);
-		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(Boolean.TRUE);
+
+		this.tratarDadosConferenciaCega(parametrosRecolhimentoDistribuidor, parametrosDistribuidor);
+		
 		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
 		
 		distribuidor.setCapacidadeDistribuicao((parametrosDistribuidor.getCapacidadeManuseioHomemHoraLancamento() != null)
@@ -1024,6 +1030,22 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.salvarLogo(imgLogotipo, imgContentType);
 		
 		this.gravarTelefoneDistribuidor(distribuidor, parametrosDistribuidor.getNumeroTelefone(), parametrosDistribuidor.getNumeroDDD());
+	}
+	
+	private void tratarDadosConferenciaCega(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
+				   							ParametrosDistribuidorVO parametrosDistribuidor) {
+
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaEncalhe(parametrosDistribuidor.isConferenciaCegaEncalhe());
+		parametrosRecolhimentoDistribuidor.setConferenciaCegaRecebimento(parametrosDistribuidor.isConferenciaCegaRecebimento());
+		
+		if (!parametrosDistribuidor.isConferenciaCegaEncalhe()) {
+			this.grupoPermissaoService.removerGrupoPermissaoPermissao(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_CONF_CEGA);
+		}
+		
+		if (!parametrosDistribuidor.isConferenciaCegaRecebimento()) {
+			this.grupoPermissaoService.removerGrupoPermissaoPermissao(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_CONF_CEGA);
+		}
+
 	}
 	
 	private DistribuidorGridDistribuicao gravarGridDistribuicao(

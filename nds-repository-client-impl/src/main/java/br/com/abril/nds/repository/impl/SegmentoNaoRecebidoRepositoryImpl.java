@@ -319,5 +319,47 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 
 	return query.list();
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCotaBase(Long idCota) {
+
+    	StringBuilder hql = new StringBuilder();
+
+    	// FIELDS
+    	hql.append(" SELECT ");
+    	hql.append(" segmentoNaoRecebido.id as segmentoNaoRecebidoId, "); // Id Segmento
+    	hql.append(" tipoSegmentoProduto.descricao as nomeSegmento "); // Nome Segmento
+
+    	// FROM
+    	hql.append(" FROM ");
+    	hql.append(" SegmentoNaoRecebido as segmentoNaoRecebido ");
+    	hql.append(" JOIN segmentoNaoRecebido.cota as cota ");
+    	hql.append(" JOIN segmentoNaoRecebido.tipoSegmentoProduto as tipoSegmentoProduto ");
+    	
+    	hql.append(" ,CotaBaseCota as cotaBaseCota  ");
+    	
+    	hql.append(" JOIN cotaBaseCota.cotaBase as cotaBase ");
+
+
+    	// WHERE
+    	hql.append(" WHERE ");
+    	
+    	hql.append(" cotaBaseCota.cota = cota ");
+    	hql.append(" and cotaBase.cota.id = :idCota");
+    	
+    	hql.append(" and cotaBaseCota.ativo = true ");
+    	hql.append(" group by segmentoNaoRecebido.id");
+
+    	hql.append(" order by nomeSegmento");
+
+    	Query query = getSession().createQuery(hql.toString());
+
+    	query.setParameter("idCota", idCota);
+
+    	query.setResultTransformer(new AliasToBeanResultTransformer(SegmentoNaoRecebeCotaDTO.class));
+
+    	return query.list();
+        }
 
 }

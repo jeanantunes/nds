@@ -213,10 +213,11 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao.setPrecoPrevisto(new BigDecimal(imputItem.getPreco()));
 				produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
 				this.getSession().persist(produtoEdicao);
-				
+
 				Date dataAtual = new Date();
-				Date dataLancamento = DateUtil.adicionarDias(dataAtual, 2);
-				Date dataRecolhimento = DateUtil.adicionarDias(dataAtual, produto.getPeb());
+				Date dataLancamento = imputItem.getDataLancamento();
+				dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
+				Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
 				Lancamento lancamento = new Lancamento();
 				lancamento.setDataCriacao(dataAtual);
 				lancamento.setDataLancamentoPrevista(dataLancamento);

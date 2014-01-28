@@ -130,9 +130,9 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("select p ");
-		hql.append("from Produto p, HistoricoDescontoProduto hdp ");
-		hql.append("where p.id = hdp.produto.id ");
-		hql.append("and hdp.desconto.id = :idDesconto ");
+		hql.append("from HistoricoDescontoProduto hdp ");
+		hql.append("join hdp.produto p ");
+		hql.append("where p.id = :idDesconto ");
 		
 		Query q = getSession().createQuery(hql.toString());
 		
