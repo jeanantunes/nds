@@ -190,6 +190,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.produto.nome as nomeProduto,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
+		hql.append(" conferencia.dia as diaRecolhimento,			");
+		
 		
 		hql.append(" coalesce(conferencia.movimentoEstoqueCota.valoresAplicados.precoComDesconto,  conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda, 0) as precoVenda,	");
 		
@@ -513,6 +515,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
 		
+		hql.append(" CONF_ENCALHE.DIA_RECOLHIMENTO AS dia,           			");
+		
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
 		
 		hql.append(" CASE WHEN ");
@@ -601,6 +605,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
+		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("isContagemPacote", StandardBasicTypes.BOOLEAN);
 		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);

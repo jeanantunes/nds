@@ -55,32 +55,6 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	private DistribuidorService distribuidorService;
 	
 	
-	private void carregarDiaRecolhimento(List<ConsultaEncalheDTO> listaConsultaEncalhe) {
-		
-		if(listaConsultaEncalhe == null || listaConsultaEncalhe.isEmpty()) {
-			return;
-		}
-		
-		for(ConsultaEncalheDTO consultaEncalhe : listaConsultaEncalhe) {
-			
-			Date dataConferencia = consultaEncalhe.getDataMovimento();
-			
-			Date dataRecolhimento = consultaEncalhe.getDataDoRecolhimentoDistribuidor();
-			
-			if(dataRecolhimento != null && dataConferencia != null) {
-
-				Integer dia = distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, consultaEncalhe.getIdProdutoEdicao());
-				
-				consultaEncalhe.setRecolhimento(dia);				
-			} else {
-				
-				consultaEncalhe.setRecolhimento(1);
-			}
-			
-		}
-		
-	}
-	
 	
 	/*
 	 * (non-Javadoc)
@@ -92,8 +66,6 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		InfoConsultaEncalheDTO info = new InfoConsultaEncalheDTO();
 		
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
-		
-		carregarDiaRecolhimento(listaConsultaEncalhe);
 		
 		Integer qtdeConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
 		
