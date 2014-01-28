@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
@@ -97,6 +98,10 @@ public class DistribuicaoManualController extends BaseController {
 		estudo.setDataCadastro(new Date());
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		estudo.setLiberado(false);
+		
+		Lancamento lancEdicao = lancamentoService.obterPorId(estudoDTO.getLancamentoId());
+		
+		estudo.setDataLancamento(lancEdicao.getDataLancamentoDistribuidor());
 		
 		try {
 		    estudo.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));

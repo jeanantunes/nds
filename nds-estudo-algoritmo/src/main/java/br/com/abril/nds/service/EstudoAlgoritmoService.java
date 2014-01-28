@@ -235,6 +235,7 @@ public class EstudoAlgoritmoService {
 	log.debug("Iniciando execução do estudo.");
 	EstudoTransient estudo = new EstudoTransient();
 	estudo.setDataCadastro(new Date());
+	estudo.setDataLancamento(produto.getDataLancamento());
 	estudo.setStatusEstudo("ESTUDO_FECHADO");
 	estudo.setUsuario(usuario);
 	estudo.setProdutoEdicaoEstudo(produto);
