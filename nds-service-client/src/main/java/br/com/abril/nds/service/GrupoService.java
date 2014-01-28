@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 
 
@@ -25,12 +26,12 @@ public interface GrupoService {
 	 * 
 	 * @return
 	 */
-	List<CotaTipoDTO> obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page, Integer rp, String sortname, String sortorder);
+	List<CotaTipoDTO> obterCotaPorTipo(TipoDistribuicaoCota tipoCota, Integer page, Integer rp, String sortname, String sortorder);
 
 	/**
 	 * Obtém quantidade retornada pela consuta de cota por tipo
 	 */
-	int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota);
+	int obterCountCotaPorTipo(TipoDistribuicaoCota tipoCota);
 
 	/**
 	 * Retorna Municipios e a quantidade de cotas para cada - resultado paginado
