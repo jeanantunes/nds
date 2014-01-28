@@ -153,4 +153,6 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	Origem obterOrigemCadastroFornecedor(Long idFornecedor);
 
 	List<Fornecedor> obterFornecedoresDesc();
+
+	public abstract ItemDTO<Long, String> obterNome(Long id);
 }
