@@ -434,7 +434,7 @@ public class Identificacao implements Serializable {
 	private String versaoSistemaEmissao;
 	
 	@ManyToOne
-	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID")
+	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID", updatable=true, insertable=true)
 	private NaturezaOperacao tipoNotaFiscal;
 	
 	/**

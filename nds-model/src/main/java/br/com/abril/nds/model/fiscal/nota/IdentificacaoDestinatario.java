@@ -2,18 +2,17 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.cadastro.Telefone;
@@ -33,10 +32,9 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	private static final long serialVersionUID = -3558149602330018787L;
 	
-	@ManyToOne(optional = true, fetch=FetchType.LAZY)
-	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA", updatable=true, insertable=true)
 	private NotaFiscalPessoa pessoaDestinatarioReferencia;
-	
 	
 	/**
 	 * CNPJ CPF
@@ -64,7 +62,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	private String nomeFantasia;
 	
 	@OneToOne(optional=false, fetch=FetchType.LAZY)
-	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
+	@JoinColumn(name="ENDERECO_ID_DESTINATARIO", updatable=true, insertable=true)
 	@NFEExportType
 	@XmlElement(name="enderDest")
 	private NotaFiscalEndereco endereco;
@@ -91,7 +89,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	private String email;
 	
 	@OneToOne(optional=true, fetch=FetchType.LAZY)
-	@JoinColumn(name="TELEFONE_ID_DESTINATARIO")
+	@JoinColumn(name="TELEFONE_ID_DESTINATARIO", updatable=true, insertable=true)
 	@NFEExportType
 	private Telefone telefone;
 	

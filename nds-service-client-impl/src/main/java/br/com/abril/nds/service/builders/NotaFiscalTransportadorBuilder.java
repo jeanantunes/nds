@@ -1,11 +1,11 @@
 package br.com.abril.nds.service.builders;
 
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
-import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 
 public class NotaFiscalTransportadorBuilder {
 	
-	public static NotaFiscalNds montarTransportador(NotaFiscalNds notaFiscal, NaturezaOperacao naturezaOperacao){
+	public static NotaFiscal montarTransportador(NotaFiscal notaFiscal, NaturezaOperacao naturezaOperacao){
 		
 		NaturezaOperacao naOperacao = new NaturezaOperacao();
 		
@@ -15,6 +15,16 @@ public class NotaFiscalTransportadorBuilder {
 		naOperacao.setDescricao(naturezaOperacao.getDescricao());
 		// notaFiscal.setNaturezaOperacao(naOperacao);
 		
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setBairro("Osasco");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCep("08250000");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setNumero("158");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCidade("Sãp Paulo");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoPais(0L);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoUf(0L);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setComplemento("XXXX");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setPais("Brasil");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setTipoLogradouro("Rua");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setUf("SP");
 		return notaFiscal;
 	}
 	

@@ -3,13 +3,11 @@ package br.com.abril.nds.model.fiscal.notafiscal;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
-@Entity
-@Table(name="NOTA_FISCAL_PESSOA")
+@MappedSuperclass
 public abstract class NotaFiscalPessoa implements Serializable {
 	
 	private static final long serialVersionUID = -4659540498651547848L;

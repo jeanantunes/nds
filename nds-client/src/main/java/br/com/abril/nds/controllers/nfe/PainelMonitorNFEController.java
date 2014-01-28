@@ -30,7 +30,6 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.MonitorNFEService;
-import br.com.abril.nds.service.NotaFiscalNdsService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;

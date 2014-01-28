@@ -579,16 +579,25 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 
 		
 		// Tipo de Nota:		
-		if(filtro.getListIdFornecedor() != null) {
-			hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
-			hql.append(" FROM NaturezaOperacao no");
+		if(filtro.getIdNaturezaOperacao() != null) {
+			
+			/**
+			 *hql.append(" AND mec.tipoMovimento.id in (SELECT tm.id ");
+				hql.append(" FROM NaturezaOperacao no");
 			hql.append(" JOIN no.tipoMovimento tm");
-			hql.append(" WHERE no.id in(:tipoNota))");
+			hql.append(" WHERE no.id in(:tipoNota))"); 
+			 */
+			
 		}
 		
 		// Data Emissão:	...		
 		if(filtro.getDataEmissao() != null) {
-			hql.append(" ");
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao =:dataEmissao ");
+		}
+		
+		// Intervalo data de Movimento...
+		if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
+			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal");
 		}
 		
 		// Intervalo de Cota:
@@ -641,7 +650,10 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		
 		// tipo da nota fiscal		
 		if(filtro.getIdNaturezaOperacao() !=null && !"".equals(filtro.getIdNaturezaOperacao())) {
-			query.setParameter("tipoNota", filtro.getIdNaturezaOperacao());
+			
+			/**
+			 * query.setParameter("tipoNota", filtro.getIdNaturezaOperacao()); 
+			 */
 		}
 		
 		// forncedor id		

@@ -6,7 +6,9 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Embeddable
@@ -35,15 +37,12 @@ public class NotaFiscalBase implements Serializable {
 	@Column(name = "DATA_EMISSAO", nullable = false)
 	private Date dataEmissao;
 	
-	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name = "NOTA_FISCAL_EMISSOR_PESSOA_ID")
-	private NotaFiscalPessoaJuridica emissor;
+	private NotaFiscalPessoa emissor;
 	
-	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name="EMITENTE_DESTINARIO_PESSOA_ID", unique=true)
 	private NotaFiscalPessoa emitenteDestinario;
 	
-	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name="NOTA_FISCAL_TRANSPORTADOR_PESSOA_ID", unique=true)
 	private NotaFiscalPessoa notaFiscalTransportador;
 
@@ -102,11 +101,11 @@ public class NotaFiscalBase implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
-	public NotaFiscalPessoaJuridica getEmissor() {
+	public NotaFiscalPessoa getEmissor() {
 		return emissor;
 	}
 
-	public void setEmissor(NotaFiscalPessoaJuridica emissor) {
+	public void setEmissor(NotaFiscalPessoa emissor) {
 		this.emissor = emissor;
 	}
 

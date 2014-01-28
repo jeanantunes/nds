@@ -147,7 +147,7 @@ var impressaoNfeController = $.extend(true, {
 
 		impressaoNfeController.filtroNotasImprimirNFe = [];
 		
-		params = [ 	{name:'filtro.tipoNFe', value:$('#tipoNFe', impressaoNfeController.workspace).val()},
+		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataEmissao', value:$('#dataEmissao', impressaoNfeController.workspace).val()},

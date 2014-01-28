@@ -47,6 +47,7 @@ public class Telefone implements Serializable {
 	
 	@Column(name = "DDD")
 	private String ddd;
+	
 	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "PESSOA_ID")

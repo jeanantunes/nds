@@ -7,12 +7,13 @@ import java.util.List;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;;
 
 
 public class FaturaBuilder {
 	
-	public static void montarFaturaNotaFiscal (br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds notaFiscal, List<MovimentoEstoqueCota> movimentosEstoqueCota){
+	public static void montarFaturaNotaFiscal (NotaFiscal notaFiscal, List<MovimentoEstoqueCota> movimentosEstoqueCota){
 		
 		List<NotaFiscalFatura> faturas = new ArrayList<NotaFiscalFatura>();
 		

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
@@ -13,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -21,6 +23,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.model.cadastro.Processo;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalValorCalculado;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 
@@ -122,6 +125,13 @@ public class NotaFiscalInformacoes implements Serializable {
 	@XmlTransient
 	@Column(name = "NOTA_IMPRESSA", nullable = false)
 	private boolean notaImpressa;
+	
+	@OneToOne(cascade=CascadeType.MERGE)
+	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique=true, insertable=false, updatable=false)
+	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
+	
+	@Column(name = "INFORMACOES_COMPLEMENTARES")
+	private	String informacoesComplementares;
 	
 	/**
 	 * Construtor padrão.
@@ -317,6 +327,23 @@ public class NotaFiscalInformacoes implements Serializable {
 	 */
 	public void setNotaImpressa(boolean notaImpressa) {
 		this.notaImpressa = notaImpressa;
+	}
+	
+	public NotaFiscalValorCalculado getNotaFiscalValoresCalculados() {
+		return notaFiscalValoresCalculados;
+	}
+
+	public void setNotaFiscalValoresCalculados(
+			NotaFiscalValorCalculado notaFiscalValoresCalculados) {
+		this.notaFiscalValoresCalculados = notaFiscalValoresCalculados;
+	}
+
+	public String getInformacoesComplementares() {
+		return informacoesComplementares;
+	}
+
+	public void setInformacoesComplementares(String informacoesComplementares) {
+		this.informacoesComplementares = informacoesComplementares;
 	}
 	
 }
