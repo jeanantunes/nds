@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -173,6 +174,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		List<TipoClassificacaoProduto> classificacoes = tipoClassificacaoProdutoService.obterTodos();
 		
+		comboClassificacao.clear();
 		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
 			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
@@ -236,13 +238,13 @@ public class ProdutoEdicaoController extends BaseController {
 	
 		// Pesquisar:
 		Integer qtd = produtoEdicaoService.countPesquisarEdicoes(
-				filtro.getCodigo(), filtro.getNome(), intervaloLancamento, 
+				StringUtils.leftPad(filtro.getCodigo(), 8, '0'), filtro.getNome(), intervaloLancamento, 
 				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde).intValue();
 		
 		if(qtd > 0) {		
 			
 			List<ProdutoEdicaoDTO> lst = 
-					produtoEdicaoService.pesquisarEdicoes(filtro.getCodigo(), filtro.getNome(), 
+					produtoEdicaoService.pesquisarEdicoes(StringUtils.leftPad(filtro.getCodigo(), 8, '0'), filtro.getNome(), 
 							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
 							brinde, sortorder, sortname, page, rp);
 			
@@ -266,82 +268,23 @@ public class ProdutoEdicaoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		ProdutoEdicaoDTO dto =
-			produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
+		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
 	
 	@Post
 	public void salvar(UploadedFile imagemCapa,
-			String codigoProduto, Long idProdutoEdicao,
-			String codigoProdutoEdicao, String nomeComercialProduto,Integer peb,
-			Long numeroEdicao, int pacotePadrao,
-			TipoLancamento tipoLancamento,
-			String precoPrevisto, String precoVenda,GrupoProduto categoria,
-			Date dataLancamento, Date dataRecolhimento,
-			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
-			BigInteger repartePrevisto, BigInteger repartePromocional,
-			String codigoDeBarras, String codigoDeBarrasCorporativo,
-			String desconto, String descricaoDesconto,Long peso, 
-			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
-			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
-            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario, ModoTela modoTela,boolean istrac29) {
+			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
 			
-		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
-		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
-		BigDecimal vlDesconto = (desconto!= null) ? new BigDecimal(desconto.replace(",", ".")) :null;
-		
-		// DTO para transportar os dados:
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		
-		dto.setModoTela(modoTela);
-		dto.setId(idProdutoEdicao);
-		dto.setNomeComercialProduto(nomeComercialProduto);
-		dto.setPeb( (peb == null)?0:peb);
-		dto.setCaracteristicaProduto(descricaoProduto);
-		dto.setNumeroEdicao(numeroEdicao);
-		dto.setCodigoProduto(codigoProdutoEdicao);
-		dto.setPacotePadrao(pacotePadrao);
-		dto.setTipoLancamento(tipoLancamento);
-		dto.setPrecoPrevisto(pPrevisto);
-		dto.setPrecoVenda(pVenda);
-		dto.setDataLancamento(dataLancamento);
-		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
-		dto.setDataRecolhimentoReal(dataRecolhimento); 
-		dto.setDataRecolhimentoPrevisto(dataRecolhimentoPrevisto);
-		dto.setDataRecolhimentoDistribuidor(dataRecolhimentoPrevisto);
-		dto.setRepartePrevisto(repartePrevisto);
-		dto.setRepartePromocional(repartePromocional);
-		dto.setCodigoDeBarras(codigoDeBarras);
-		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
-		dto.setDesconto(vlDesconto);
-		dto.setDescricaoDesconto(descricaoDesconto);
-		dto.setPeso(peso);
-		dto.setLargura(largura == null ? 0 : largura.floatValue());
-		dto.setComprimento(comprimento == null ? 0 : comprimento.floatValue());
-		dto.setEspessura(espessura == null ? 0 : espessura.floatValue());
-		dto.setChamadaCapa(chamadaCapa);
-		dto.setParcial(parcial);
-		dto.setPossuiBrinde(possuiBrinde);
-		dto.setNumeroLancamento(numeroLancamento);
-		dto.setIdBrinde(descricaoBrinde);
-		dto.setBoletimInformativo(boletimInformativo);
-		dto.setGrupoProduto(categoria);
-		
-		//Segmentação
-		dto.setClasseSocial(classeSocial);
-		dto.setFaixaEtaria(faixaEtaria);
-		dto.setSexo(sexo);
-		dto.setTemaPrincipal(temaPrincipal);
-		dto.setTemaSecundario(temaSecundario);
-		
+		produtoEdicaoDTO.setModoTela(modoTela);
+		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoReal());
+
 		ValidacaoVO vo = null;
 		 
 		try {
 			
-			this.validarProdutoEdicao(dto, codigoProduto, modoTela);
+			this.validarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), modoTela);
 			
 			// Dados da Imagem:
 			String contentType = null;
@@ -354,7 +297,7 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream,istrac29);
+			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, produtoEdicaoDTO.getCodigoProduto(), contentType, imgInputStream,istrac29);
 			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 			
@@ -364,7 +307,7 @@ public class ProdutoEdicaoController extends BaseController {
 
 		} catch (Throwable e) {
 			
-			vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage());
+			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
 		
 		} finally {
 			
@@ -574,7 +517,7 @@ public class ProdutoEdicaoController extends BaseController {
 			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
 		}
 		
-		if (pe == null || (pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
+		if (pe == null || pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL)) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -619,7 +562,7 @@ public class ProdutoEdicaoController extends BaseController {
 			if (dto.getDesconto() == null){
 				listaMensagens.add("Por favor, digite um valor válido para o 'Desconto %'!");
 			}
-			if (dto.getTipoClassificacaoProduto().getId() == null){
+			if (dto.getTipoClassificacaoProduto() == null || dto.getTipoClassificacaoProduto().getId() == null){
 				listaMensagens.add("Por favor, selecione um valor válido para a 'Classificação'");
 			}
 			

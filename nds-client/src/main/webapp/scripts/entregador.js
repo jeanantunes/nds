@@ -250,7 +250,9 @@ var entregadorController = $.extend(true, {
 	},
 	
 	editarEntregador: function(idEntregador) {
-
+		
+		$("#_edicao", this.workspace).val(idEntregador);
+		
 		$.postJSON(
 			contextPath + '/cadastro/entregador/editarEntregador',
 			{'idEntregador' : idEntregador},
@@ -698,7 +700,7 @@ var entregadorController = $.extend(true, {
 	
 	pesquisarCotas: function(){
 		
-		var idEntregador = $("#idEntregadorPF", this.workspace).val() == "" ? $("#idEntregadorPJ", this.workspace).val() : $("#idEntregadorPF", this.workspace).val();
+		var idEntregador = $("#_edicao", this.workspace).val();
 		
 		$.postJSON(
 			contextPath + '/cadastro/entregador/carregarAbaCota',
@@ -852,12 +854,6 @@ var entregadorController = $.extend(true, {
 					//$("#inscricaoEstadual", this.workspace).val(result.inscricaoEstadual).mask("999.999.999.999");
 					$("#emailPJ", this.workspace).val(result.email);	
 
-				} else {
-
-					if ($("#razaoSocial", this.workspace).val() != '') {
-
-						$("#razaoSocial", this.workspace).focus();
-					}
 				}
 			},
 			function(result) {

@@ -1191,7 +1191,7 @@ var roteirizacao = $.extend(true, {
             sortorder: "asc",
             url: contextPath + '/cadastro/roteirizacao/recarregarCotasRota',
             onSubmit    : function(){
-                $('.cotasRotaGrid').flexOptions({params: [
+                $('.cotasRotaGrid', roteirizacao.workspace).flexOptions({params: [
                     {name:'idRoteiro', value: roteirizacao.idRoteiro},
                     {name:'idRota', value: roteirizacao.idRota},
                     {name:'ordemRota', value: roteirizacao.ordemRotaSelecionada}
@@ -2809,7 +2809,7 @@ var roteirizacao = $.extend(true, {
                     opts += "<option value='' selected='selected'>Selecione... </option>";
                     
                     $.each(result, function(index, value){
-                        opts += "<option value='"+ value.id +"'>" + value.nome + "</option>";
+                        opts += "<option value='"+ (value.id ? value.id : "_" + value.ordem) +"'>" + value.nome + "</option>";
                     });
 
                     $(selector, roteirizacao.workspace).append(opts);
@@ -2822,7 +2822,7 @@ var roteirizacao = $.extend(true, {
         
     	var params = [{name: 'idRotaAnterior', value: roteirizacao.idRota},
                       {name: 'idRoteiro', 	   value: roteirizacao.idRoteiro},
-                      {name: 'idRotaNova', 	   value: $("#selectNovaRota", roteirizacao.workspace).val()},
+                      {name: '_idRotaNova',    value: $("#selectNovaRota", roteirizacao.workspace).val()},
                       {name: 'ordemRota',      value: roteirizacao.ordemRotaSelecionada}
                      ];
         

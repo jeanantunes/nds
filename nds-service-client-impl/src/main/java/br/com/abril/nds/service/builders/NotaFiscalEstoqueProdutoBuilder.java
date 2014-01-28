@@ -20,11 +20,17 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 	
 	// builder header Nota fiscal
 	public static NotaFiscalNds montarHeaderNotaFiscal(NotaFiscalNds notaFiscal, EstoqueProduto estoqueProduto){
-		notaFiscal.getEmissor().setRazaoSocial("pessoa Juridica");
+		
+		/**
+		 *notaFiscal.getEmissor().setRazaoSocial("pessoa Juridica");
 		notaFiscal.getEmissor().setNomeFantasia("Teste teste teste teste");
 		notaFiscal.getEmissor().setInscricaoEstadual("pessoaJuridica.getInscricaoEstadual()");
 		notaFiscal.getEmissor().setCnpj("301852668001160");
-		notaFiscal.getEmissor().setEmail("teste@teste.com");
+		notaFiscal.getEmissor().setEmail("teste@teste.com"); 
+		 * 
+		 */
+		
+		
 		return notaFiscal;
 	}
 
@@ -33,7 +39,9 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 	public static NotaFiscalNds popularDadosDistribuidor(NotaFiscalNds notaFiscal, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro){
 		
 		// Dados do Distribuidor
-		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
+		/**
+		 * 
+		 * notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
 		notaFiscal.getEmissor().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
 		notaFiscal.getEmissor().setCnpj(distribuidor.getJuridica().getCnpj());
 		
@@ -42,6 +50,8 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		notaFiscal.getEmissor().getNotaFicalEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
 		notaFiscal.getEmissor().getNotaFicalEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
 		notaFiscal.getEmissor().getNotaFicalEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
+		 */
+		
 		
 		return notaFiscal;
 	}

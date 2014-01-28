@@ -9,7 +9,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -73,8 +72,8 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	private static final long serialVersionUID = 4715921368300274189L;
 	
-	@ManyToOne(optional = true, fetch=FetchType.LAZY)
-	@JoinColumn(name = "PESSOA_EMITENTE_ID_REFERENCIADA")
+	@OneToOne(optional=true, fetch=FetchType.LAZY)
+	@JoinColumn(name = "PESSOA_EMITENTE_ID_REFERENCIADA",updatable=true, insertable=true)
 	private NotaFiscalPessoa pessoaEmitenteReferencia;
 	
 	/**
@@ -105,7 +104,7 @@ public class IdentificacaoEmitente implements Serializable {
 	private String nomeFantasia;
 	
 	@OneToOne(optional=false, fetch=FetchType.LAZY)
-	@JoinColumn(name="ENDERECO_ID_EMITENTE")
+	@JoinColumn(name="ENDERECO_ID_EMITENTE", updatable=true, insertable=true)
 	@NFEExportType
 	@XmlElement(name="enderEmit")
 	private NotaFiscalEndereco endereco;
@@ -156,7 +155,7 @@ public class IdentificacaoEmitente implements Serializable {
 	private Integer regimeTributarioXML;
 	
 	@OneToOne(optional=true, fetch=FetchType.LAZY)
-	@JoinColumn(name="TELEFONE_ID_EMITENTE")
+	@JoinColumn(name="TELEFONE_ID_EMITENTE", updatable=true, insertable=true)
 	@NFEExportType
 	private Telefone telefone;
 	

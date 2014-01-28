@@ -76,7 +76,7 @@ public class RetornoNFEController extends BaseController {
 		
 		try {
 			
-			listaNotas = FileImportUtil.importArquivosModificadosEm( pathNFEImportacao.getValor(), dataReferencia, FileType.XML);
+			listaNotas = FileImportUtil.importArquivosModificadosEm(pathNFEImportacao.getValor(), dataReferencia, FileType.XML);
 		
 		} catch (FileNotFoundException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O diretório parametrizado não é válido"));
@@ -86,9 +86,7 @@ public class RetornoNFEController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foi encontrado nenhuma nota para a data informada"));
 		}
 				
-		List<RetornoNFEDTO> listaNotasRetorno = 
-				this.notaFiscalService.processarRetornoNotaFiscal(
-						this.gerarParseListaNotasRetorno(listaNotas));
+		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas));
 						
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		

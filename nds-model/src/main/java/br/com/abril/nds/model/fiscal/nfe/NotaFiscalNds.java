@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalBase;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalFatura;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
@@ -60,11 +59,6 @@ public class NotaFiscalNds {
 		
 		if(notaFiscal.getEmissor() == null) {
 			notaFiscal.setEmissor(new NotaFiscalPessoaJuridica());
-		}
-		
-		
-		if(notaFiscal.getEmissor().getNotaFicalEndereco() == null) {
-			notaFiscal.getEmissor().setNotaFicalEndereco(new NotaFiscalEndereco());
 		}
 		
 		if(notaFiscalValoresCalculados == null) {
@@ -136,11 +130,11 @@ public class NotaFiscalNds {
 		this.notaFiscal.setDataEmissao(dataEmissao);
 	}
 	
-	public NotaFiscalPessoaJuridica getEmissor() {
+	public NotaFiscalPessoa getEmissor() {
 		return this.notaFiscal.getEmissor();
 	}
 
-	public void setEmissor(NotaFiscalPessoaJuridica emissor) {
+	public void setEmissor(NotaFiscalPessoa emissor) {
 		this.notaFiscal.setEmissor(emissor);
 	}
 
