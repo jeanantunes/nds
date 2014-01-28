@@ -19,7 +19,7 @@ public class ConferenciaEncalheServiceImplTest {
 	@Test
 	public void test() {
 		
-		when(service.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(Matchers.anyInt(), Matchers.any(Date.class))).thenCallRealMethod();
+//		when(service.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(Matchers.anyInt(), Matchers.any(Date.class))).thenCallRealMethod();
 		
 	}
 	
