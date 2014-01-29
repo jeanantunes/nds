@@ -248,7 +248,7 @@ fieldset {
 									<td width="60">Previsto:</td>
 									<td width="90"><input type="text" name="produtoEdicaoDTO.dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px;" /></td>
 									<td width="30">Real:</td>
-									<td width="120"><input type="text" name="dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:center;" disabled="disabled" /></td>
+									<td width="120"><input type="text" name="produtoEdicaoDTO.dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:center;" disabled="disabled" /></td>
 									
 									<td width="50">
 										<a id="idLinkMostrarPeriodos" href="javascript:;" 
