@@ -6,7 +6,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +19,6 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Entity
 @Table(name = "NOTA_FISCAL_NOVO")
-@SequenceGenerator(name = "NOTA_FISCAL_SEQ", initialValue = 1, allocationSize = 1)
 @XmlRootElement(name="NFe", namespace="http://www.portalfiscal.inf.br/nfe") 
 @XmlType(name="NotaFiscalNds")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -35,7 +33,7 @@ public class NotaFiscal implements Serializable {
 	 * ID
 	 */
 	@Id
-	@GeneratedValue(generator = "NOTA_FISCAL_SEQ")
+	@GeneratedValue
 	@NFEExport(secao = TipoSecao.B, posicao = 1, mascara="00000000")
 	@XmlTransient
 	private Long id;

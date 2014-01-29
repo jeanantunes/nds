@@ -155,7 +155,7 @@ public class IdentificacaoEmitente implements Serializable {
 	@XmlElement(name="CRT")
 	private Integer regimeTributarioXML;
 	
-	@OneToOne(optional=true, fetch=FetchType.LAZY)
+	@OneToOne(optional=true, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="TELEFONE_ID_EMITENTE", updatable=true, insertable=true)
 	@NFEExportType
 	private NotaFiscalTelefone telefone;
