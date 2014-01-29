@@ -98,9 +98,10 @@ public class FornecedorRepositoryImpl extends
 	public List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, 
 																Origem origem) {
 
-		String hql = "from Fornecedor fornecedor "
-				+ " join fetch fornecedor.juridica "
-				+ " where fornecedor.situacaoCadastro = :situacaoCadastro ";
+		String hql = "select fornecedor from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica juridica "
+				+ " where fornecedor.situacaoCadastro = :situacaoCadastro "
+				+ " and fornecedor.fornecedorUnificador is null ";
 	
 		if(origem != null)
 			hql += " and fornecedor.origem = :origem ";
