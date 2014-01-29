@@ -888,7 +888,7 @@ var regiaoController = $.extend(true, {
 		});
 	},
 	
-	// FUNCTION - REGI�O AUTOM�TICA - GRID PRINCIPAL
+	// FUNCTION - REGIÃO AUTOMÁTICA - GRID PRINCIPAL
 	addCotasRegAutomatica : function() {
 		
 		$('#qtdCotasRanking').val("");
@@ -910,32 +910,32 @@ var regiaoController = $.extend(true, {
 				$("#nMaioresGrid").flexAddData(clearData);
 			},
 			buttons : {
-				"Confirmar" : function() {
-					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
-					
-					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
-						url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
-						dataType : 'json',
-							params: [{name: "filtro.id", value: idRegiaoSelecionada}]
-					});
-					
-					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
-					$(".faixaGrid", regiaoController.workspace).flexReload();
-					$(this).dialog("close");
-
-					regiaoController.limparCamposAddAutomatica();
-					
-					//limpando grid utilizado
-					clearData = {
-					        total: 0,    
-					        page:1,
-					        rows: []
-					};
-					
-					$("#nMaioresGrid").flexAddData(clearData);
-					
-				},
-				"Cancelar" : function() {
+//				"Confirmar" : function() {
+//					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
+//
+//					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
+//						url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+//						dataType : 'json',
+//							params: [{name: "filtro.id", value: idRegiaoSelecionada}]
+//					});
+//
+//					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
+//					$(".faixaGrid", regiaoController.workspace).flexReload();
+//					$(this).dialog("close");
+//
+//					regiaoController.limparCamposAddAutomatica();
+//
+//					//limpando grid utilizado
+//					clearData = {
+//					        total: 0,
+//					        page:1,
+//					        rows: []
+//					};
+//
+//					$("#nMaioresGrid").flexAddData(clearData);
+//
+//				},
+				"Voltar" : function() {
 					$(this).dialog("close");
 					regiaoController.limparCamposAddAutomatica();
 

@@ -140,12 +140,13 @@ var desenglobacaoController = $.extend(true, {
             desenglobacaoController.porCota();
         });
 
-        $('#btnInserirCotaEnglobada').click(function(e){
-            
+        $('#btnInserirCotaEnglobada').button().click(function(e){
         	desenglobacaoController.addCotaParaEnglobar(e);
-        	
         });
-        
+
+        $('#tableCotasEnglobadas').on('change', 'input[name*="porcentagemCota"]', function(){
+            return $('#percentualDesengloba').val($('#tableCotasEnglobadas').find('input[name*="porcentagemCota"]').map(function(){return this.value*1;}).toArray().reduce(function(a,b){return a+b;}));
+        });
         
         desenglobacaoController.Url = {},
 
@@ -353,7 +354,7 @@ var desenglobacaoController = $.extend(true, {
         desenglobacaoController.res=alterando;
 
         $('#tableCotasEnglobadas').empty();
-        $('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa,#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa').val('');
+        $('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa,#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa,#percentualDesengloba').val('');
 
         $("#dialog-novo-desenglobacao").dialog({
             resizable: false,
@@ -476,6 +477,8 @@ var desenglobacaoController = $.extend(true, {
 	        $('#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa,#inserirEnglobadaPorcentagemCota').val('');
 	        
 	        indexInput++;
+
+            $('#percentualDesengloba').val($('#tableCotasEnglobadas').find('input[name*="porcentagemCota"]').map(function(){return this.value*1;}).toArray().reduce(function(a,b){return a+b;}));
     	}
     },
     

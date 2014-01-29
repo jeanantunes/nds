@@ -98,9 +98,10 @@
                 <td width="11%">Classifica&ccedil;&atilde;o:</td>
                 <td width="25%">
 	                <select name="select" id="filtroClassificacaoMix" style="width:160px;">
-				            <c:forEach items="${classificacao}" var="tipoClassificacao">
-								<option value="<c:out value="${tipoClassificacao.descricao}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
-							</c:forEach>
+                        <option value="">SELECIONE</option>
+                        <c:forEach items="${classificacao}" var="tipoClassificacao">
+                            <option value="<c:out value="${tipoClassificacao.descricao}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
+                        </c:forEach>
 	          		</select>
                 </td>
                 <td width="14%"><span class="bt_pesquisar"><a href="javascript:;" onclick="mixCotaProdutoController.pesquisarPorProduto()">Pesquisar</a></span></td>
