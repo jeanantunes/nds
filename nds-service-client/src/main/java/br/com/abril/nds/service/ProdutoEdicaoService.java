@@ -110,7 +110,7 @@ public interface ProdutoEdicaoService {
 	 * @return
 	 */
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int page, int maxResults);
 	
@@ -123,7 +123,7 @@ public interface ProdutoEdicaoService {
 	 * @return
 	 */
 	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
 	/**
