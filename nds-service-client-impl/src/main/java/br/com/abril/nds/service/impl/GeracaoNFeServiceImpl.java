@@ -146,7 +146,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Transactional(rollbackFor=Throwable.class)
 	public List<NotaFiscal> gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
-		
+		/**
+		 * metodo para gerar nota.
+		 */
 		List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
