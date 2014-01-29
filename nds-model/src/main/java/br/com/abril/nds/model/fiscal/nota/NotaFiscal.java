@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,7 +34,7 @@ public class NotaFiscal implements Serializable {
 	 * ID
 	 */
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@NFEExport(secao = TipoSecao.B, posicao = 1, mascara="00000000")
 	@XmlTransient
 	private Long id;

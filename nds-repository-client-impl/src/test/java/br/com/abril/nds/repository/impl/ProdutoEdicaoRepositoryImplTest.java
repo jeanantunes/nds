@@ -318,8 +318,8 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	public void pesquisarEdicoesPreco() {
 		
 		Intervalo<Double> preco = new Intervalo<Double>();
-		preco.setDe(new Double(1));
-		preco.setAte(new Double(10));
+		preco.setDe(1.0);
+		preco.setAte(10.0);
 		
 		List<ProdutoEdicaoDTO> produtoEdicaoDTOs =
 			produtoEdicaoRepository.pesquisarEdicoes(null, null, null, preco, null, null, false, null, null, 0, 0);

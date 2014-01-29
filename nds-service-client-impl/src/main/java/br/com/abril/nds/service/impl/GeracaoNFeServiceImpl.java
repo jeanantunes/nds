@@ -173,14 +173,13 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
 		
 		for (NotaFiscal notaFiscal : notas) {
-			
-			notaFiscalRepository.merge(notaFiscal);
+			Long id = notaFiscalRepository.adicionar(notaFiscal);
+			notaFiscal.setId(id);
 		}
 		
-		notaFiscalRepository.flush();
-		notaFiscalRepository.clear();
-		
 		//this.notaFiscalNdsRepository.salvarNotasFiscais(listaNotaFiscal, notas);
+		
+		this.notaFiscalService.exportarNotasFiscais(notas);
 		
 		return notas;
 	}
