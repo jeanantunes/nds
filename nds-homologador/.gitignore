@@ -1,0 +1,15 @@
+.settings
+.classpath
+.project
+.metadata
+bin
+target
+META-INF/
+.svn*
+/NDS_replica.eap
+.DS_Store
+*.ldb
+*.swp
+packages
+node_modules
+*.jasper
