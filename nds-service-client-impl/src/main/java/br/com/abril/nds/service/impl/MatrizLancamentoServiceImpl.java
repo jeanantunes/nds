@@ -18,7 +18,6 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -657,7 +656,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		List <Long> porFornenedor;
 		
-		
 		for(int i =0; i<idFornenedores.size();i++){
 			
 			porFornenedor = new ArrayList<Long>();
@@ -692,6 +690,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			}
 		}
+		
+		filtro.setIdsFornecedores(idFornenedores);
 		
 		return balanceamentoLancamento;
 	}
