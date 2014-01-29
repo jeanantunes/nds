@@ -93,9 +93,6 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		query.setMaxResults(1);
 		
 		return (Produto) query.uniqueResult();
-		
-		
-    //    return (Produto) getSession().createCriteria(Produto.class).add(Restrictions.eq("codigo", leftPad(codigoProduto, 8, "0"))).uniqueResult();
 	}
 	
 	@Override
