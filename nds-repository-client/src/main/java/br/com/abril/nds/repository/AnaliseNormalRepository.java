@@ -6,7 +6,6 @@ import br.com.abril.nds.dto.AnaliseNormalDTO;
 import br.com.abril.nds.dto.filtro.AnaliseNormalQueryDTO;
 import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface AnaliseNormalRepository {
 

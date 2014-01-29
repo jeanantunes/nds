@@ -354,7 +354,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco, StatusLancamento statusLancamento, 
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<Double> preco, StatusLancamento statusLancamento, 
 												   String codigoDeBarras, boolean brinde, String sortorder, String sortname, int page, int maxResults) {
 
 		final int initialResult = ((page * maxResults) - maxResults);
@@ -367,7 +367,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	//Parse por conta do merge.
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco, 
+	public Long countPesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<Double> preco, 
 									  StatusLancamento statusLancamento, String codigoDeBarras, boolean brinde) {
 
 		Integer count = this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
