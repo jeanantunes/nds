@@ -32,10 +32,10 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.cadastro.DistribuidorPercentualExcedente;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
@@ -76,6 +76,7 @@ import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.repository.RegimeTributarioRepository;
 import br.com.abril.nds.repository.TelefoneDistribuidorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
@@ -162,6 +163,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private GrupoPermissaoService grupoPermissaoService;
+	
+	@Autowired
+	private RegimeTributarioRepository regimeTributarioRepository;
 	
 	@PostConstruct
 	public void initCouchDbClient() {
@@ -1472,8 +1476,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	@Override
 	@Transactional
 	public List<NotaFiscalTipoEmissao> obterTiposEmissoesNotaFiscalDistribuidor() {
+		
 		List<NotaFiscalTipoEmissao> tiposEmissaoNotaFiscal = new ArrayList<>();
 		tiposEmissaoNotaFiscal.addAll(distribuidorService.obter().getTiposEmissoesNotaFiscalDistribuidor());
+		
 		return tiposEmissaoNotaFiscal;
 	}
 
@@ -1481,6 +1487,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	public List<String> obterEstadosAtendidosPeloDistribuidor() {
 		
 		return enderecoRepository.obterUFsCotas();
-		
 	}
+
 }

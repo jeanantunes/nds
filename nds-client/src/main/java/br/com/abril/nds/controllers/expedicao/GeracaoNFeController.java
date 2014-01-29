@@ -257,9 +257,7 @@ public class GeracaoNFeController extends BaseController {
 	public void gerarNotasFiscais(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, boolean todasCotasSuspensa){
 		try {
 
-			List<NotaFiscal> notas = this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
-			
-			this.notaFiscalService.exportarNotasFiscais(notas);
+			this.geracaoNFeService.gerarNotaFiscal(filtro, idCotasSuspensas, null);
 			
 		} catch (IOException ioe){
 			throw new ValidacaoException(TipoMensagem.WARNING, ioe.getMessage());

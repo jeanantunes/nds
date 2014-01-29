@@ -20,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
-import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
 import br.com.abril.nds.client.vo.RegistroDiaOperacaoFornecedorVO;
+import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
@@ -32,11 +32,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.fiscal.notafiscal.RegimeTributario;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.RegimeTributarioRepository;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
@@ -83,6 +84,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Autowired
+	private RegimeTributarioRepository regimeTributarioRepository;
+	
+	@Autowired
 	private HttpSession session;
 	
 	@Autowired
@@ -116,8 +120,9 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
+		result.include("listaTipoPrestador", this.carregarComboTipoPrestador());
 		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
-		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
+//		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
 		result.include("listaTiposNotaFiscal", parametrosDistribuidorService.obterTiposNotaFiscalDistribuidor());
 		result.include("listaTiposEmissaoNotaFiscal", parametrosDistribuidorService.obterTiposEmissoesNotaFiscalDistribuidor());
 		result.include("listaEstadosAnuencia", parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor());
@@ -133,22 +138,27 @@ public class ParametrosDistribuidorController extends BaseController {
 		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
-	private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
+	private List<RegimeTributario> carregarComboRegimeTributario() {
+		
+		return regimeTributarioRepository.buscarTodos();
+	}
 
-		List<ItemDTO<TipoAtividade, String>> listaRegimeTributario =
+	private List<ItemDTO<TipoAtividade, String>> carregarComboTipoPrestador() {
+
+		List<ItemDTO<TipoAtividade, String>> listaTipoPrestador =
 			new ArrayList<ItemDTO<TipoAtividade, String>>();
 		
-		listaRegimeTributario.add(
+		listaTipoPrestador.add(
 			new ItemDTO<TipoAtividade, String>(TipoAtividade.PRESTADOR_SERVICO,
 											   TipoAtividade.PRESTADOR_SERVICO.getDescricao()));
 		
-		listaRegimeTributario.add(
+		listaTipoPrestador.add(
 			new ItemDTO<TipoAtividade, String>(TipoAtividade.MERCANTIL,
 											   TipoAtividade.MERCANTIL.getDescricao()));
 		
-		return listaRegimeTributario;
+		return listaTipoPrestador;
 	}
-	
+	/*
 	private List<ItemDTO<ObrigacaoFiscal, String>> carregarComboObrigacaoFiscal() {
 
 		List<ItemDTO<ObrigacaoFiscal, String>> listaObrigacaoFiscal =
@@ -167,7 +177,7 @@ public class ParametrosDistribuidorController extends BaseController {
 												 ObrigacaoFiscal.DEVOLUCAO_FORNECEDOR.getDescricao()));
 		
 		return listaObrigacaoFiscal;
-	}
+	}*/
 	
 	private void buscarLogoArmazenarSessao() {
 

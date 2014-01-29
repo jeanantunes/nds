@@ -173,14 +173,13 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
 		
 		for (NotaFiscal notaFiscal : notas) {
-			
-			notaFiscalRepository.merge(notaFiscal);
+			Long id = notaFiscalRepository.adicionar(notaFiscal);
+			notaFiscal.setId(id);
 		}
 		
-		notaFiscalRepository.flush();
-		notaFiscalRepository.clear();
-		
 		//this.notaFiscalNdsRepository.salvarNotasFiscais(listaNotaFiscal, notas);
+		
+		this.notaFiscalService.exportarNotasFiscais(notas);
 		
 		return notas;
 	}
@@ -216,7 +215,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
 			
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesComplementares("XXXXX");
+			//FIXME: Ajustar o valor do campo para valores parametrizados
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("XXXXX");
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
 			notasFiscais.add(notaFiscal);
@@ -253,7 +253,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculadosEstoqueProduto(notaFiscal, estoque);
 			
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesComplementares("ssss");
+			//FIXME: Ajustar o valor do campo para valores parametrizados 
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("ssss");
 		}	
 	}
 	
