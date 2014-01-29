@@ -89,6 +89,10 @@ public class VisaoEstoqueController extends BaseController {
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
 		
+		if(this.session.getAttribute(LISTA_CONFERENCIA_CEGA)!=null) {
+		 this.session.removeAttribute(LISTA_CONFERENCIA_CEGA);
+		}
+		
 		tratarErro(validarDadosConsulta(filtro));
 		
 		this.atualizarDataMovimentacao(filtro);
@@ -102,7 +106,17 @@ public class VisaoEstoqueController extends BaseController {
 	}
 
 	@Path("/pesquisarDetalhe.json")
-	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {		
+	public void pesquisarDetalhe(FiltroConsultaVisaoEstoque filtro, String sortname, String sortorder, int rp, int page) {
+		
+		if(this.session.getAttribute(LISTA_CONFERENCIA_CEGA)!=null) {
+			 this.session.removeAttribute(LISTA_CONFERENCIA_CEGA);
+		}
+		
+        tratarErro(validarDadosConsulta(filtro));
+		
+		this.atualizarDataMovimentacao(filtro);
+		
+		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		if("undefined".equalsIgnoreCase(sortorder)){
 			sortorder = null;
@@ -171,7 +185,11 @@ public class VisaoEstoqueController extends BaseController {
 	@Path("/transferir")
 	public void transferir(FiltroConsultaVisaoEstoque filtro) {
 		
+        tratarErro(validarDadosConsulta(filtro));
+		
 		this.atualizarDataMovimentacao(filtro);
+		
+		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		TipoEstoque entrada  = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoqueSelecionado());
 		TipoEstoque saida = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
@@ -211,7 +229,11 @@ public class VisaoEstoqueController extends BaseController {
 	@Path("/inventario")
 	public void inventario(FiltroConsultaVisaoEstoque filtro) {
 
+        tratarErro(validarDadosConsulta(filtro));
+		
 		this.atualizarDataMovimentacao(filtro);
+		
+		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		TipoEstoque tipoEstoque = Util.getEnumByStringValue(TipoEstoque.values(), filtro.getTipoEstoque());
 		
@@ -296,6 +318,9 @@ public class VisaoEstoqueController extends BaseController {
 	@Path("/exportarConferenciaCega")
 	public void exportarConferenciaCega(FileType fileType) throws IOException {
 		
+		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
+		
+		gerarDadosConferenciaCega(filtro);
 		List<VisaoEstoqueConferenciaCegaVO> listaExport = (List<VisaoEstoqueConferenciaCegaVO>) this.session.getAttribute(LISTA_CONFERENCIA_CEGA);
 		
 		if (listaExport == null || listaExport.isEmpty()) {
