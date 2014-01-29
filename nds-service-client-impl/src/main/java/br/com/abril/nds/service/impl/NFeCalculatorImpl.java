@@ -90,10 +90,10 @@ public class NFeCalculatorImpl implements NFeCalculator {
 	 */
 	protected void validate(BigDecimal aliquota, BigDecimal valorBaseCalculo) {
 		if (aliquota==null) {
-			throw new IllegalArgumentException("Valor da aliquota n�o pode ser nulo");
+			throw new IllegalArgumentException("Valor da aliquota não pode ser nulo");
 		}
 		if (valorBaseCalculo==null) {
-			throw new IllegalArgumentException("Valor da base de c�lculo n�o pode ser nulo");
+			throw new IllegalArgumentException("Valor da base de cálculo não pode ser nulo");
 		}
 	}
 	

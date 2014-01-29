@@ -211,7 +211,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
 			
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesComplementares("XXXXX");
+			//FIXME: Ajustar o valor do campo para valores parametrizados
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("XXXXX");
 			FaturaBuilder.montarFaturaNotaFiscal(notaFiscal, movimentosEstoqueCota);
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculados(notaFiscal, cota);
 			notasFiscais.add(notaFiscal);
@@ -248,7 +249,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			
 			NotaFiscalValoresCalculadosBuilder.montarValoresCalculadosEstoqueProduto(notaFiscal, estoque);
 			
-			notaFiscal.getNotaFiscalInformacoes().setInformacoesComplementares("ssss");
+			//FIXME: Ajustar o valor do campo para valores parametrizados 
+			notaFiscal.getNotaFiscalInformacoes().setInformacoesAdicionais("ssss");
 		}	
 	}
 	

@@ -131,7 +131,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
 	
 	@Column(name = "INFORMACOES_ADICIONAIS")
-	private	String informacoesComplementares;
+	private	String informacoesAdicionais;
 	
 	/**
 	 * Construtor padrão.
@@ -338,12 +338,12 @@ public class NotaFiscalInformacoes implements Serializable {
 		this.notaFiscalValoresCalculados = notaFiscalValoresCalculados;
 	}
 
-	public String getInformacoesComplementares() {
-		return informacoesComplementares;
+	public String getInformacoesAdicionais() {
+		return informacoesAdicionais;
 	}
 
-	public void setInformacoesComplementares(String informacoesComplementares) {
-		this.informacoesComplementares = informacoesComplementares;
+	public void setInformacoesAdicionais(String informacoesAdicionais) {
+		this.informacoesAdicionais = informacoesAdicionais;
 	}
 	
 }

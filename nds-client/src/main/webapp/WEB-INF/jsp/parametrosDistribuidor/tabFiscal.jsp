@@ -9,6 +9,19 @@
 				<td>
 					<table width="100%" border="0" cellspacing="2" cellpadding="0">
 						<tr>
+							<td width="35%">Tipo Prestador:</td>
+							<td><select name="regimeTributario" id="regimeTributario"
+								style="width: 150px;">
+									<%-- <option selected="selected"></option> --%>
+									<c:forEach var="tipoPrestador"
+										items="${listaTipoPrestador}">
+										<option value="${tipoPrestador.key}">${tipoPrestador.value}</option>
+									</c:forEach>
+							</select></td>
+							<td width="35%"></td>
+							<td></td>
+						</tr>
+						<tr>
 							<td width="35%">Regime Tributário:</td>
 							<td><select name="regimeTributario" id="regimeTributario"
 								style="width: 150px;">
