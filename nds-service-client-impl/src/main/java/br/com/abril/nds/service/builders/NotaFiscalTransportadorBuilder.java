@@ -18,6 +18,7 @@ public class NotaFiscalTransportadorBuilder {
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setBairro("Osasco");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCep("08250000");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setNumero("158");
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoCidadeIBGE(3550308L);
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCidade("Sãp Paulo");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoPais(0L);
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoUf(0L);

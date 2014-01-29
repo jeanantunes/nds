@@ -157,6 +157,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCep(distribuidor.getEnderecoDistribuidor().getEndereco().getCep().replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoPais(1058L);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setCodigoCidadeIBGE(3550308L);
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setPais("Brasil");
 		
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getTelefone();
@@ -247,6 +248,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setBairro("Osasco");
 		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCep("08250000");
 		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setNumero("158");
+		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoCidadeIBGE(3550308L);
 		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCidade("Sãp Paulo");
 		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoPais(0L);
 		notaFiscal2.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCodigoUf(0L);

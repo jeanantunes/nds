@@ -144,7 +144,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	 */
 	@Override
 	@Transactional(rollbackFor=Throwable.class)
-	public void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
+	public List<NotaFiscal> gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException {
 		
 		
 		List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
@@ -175,9 +175,12 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			notaFiscalRepository.merge(notaFiscal);
 		}
 		
+		notaFiscalRepository.flush();
+		notaFiscalRepository.clear();
+		
 		//this.notaFiscalNdsRepository.salvarNotasFiscais(listaNotaFiscal, notas);
 		
-		this.notaFiscalService.exportarNotasFiscais(notas);
+		return notas;
 	}
 
 	private void gerarNotasFiscaisCotas(FiltroViewNotaFiscalDTO filtro,

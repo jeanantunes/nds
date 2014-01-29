@@ -2,6 +2,7 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
@@ -56,8 +57,8 @@ public class InformacaoTransporte implements Serializable {
 	@NFEExport(secao = TipoSecao.X03, posicao = 1, tamanho = 14)
 	private String inscricaoEstadual;
 
-	@OneToOne
-	@JoinColumn(name="ENDERECO_ID_TRANS")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="ENDERECO_ID_TRANS", updatable=true, insertable=true)
 	@NFEExportType
 	private NotaFiscalEndereco endereco;
 	

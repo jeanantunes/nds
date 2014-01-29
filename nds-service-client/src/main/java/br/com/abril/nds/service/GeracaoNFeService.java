@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.FornecedorExemplaresDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
 public interface GeracaoNFeService {
@@ -28,7 +29,7 @@ public interface GeracaoNFeService {
 	 * @return 
 	 *  
 	 */
-	public abstract void gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException;
+	List<NotaFiscal> gerarNotaFiscal(FiltroViewNotaFiscalDTO filtro, List<Long> idCotasSuspensas, Condicao condicao) throws FileNotFoundException, IOException;
 
 
 	List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
