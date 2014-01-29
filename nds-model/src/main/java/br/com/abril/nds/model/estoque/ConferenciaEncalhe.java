@@ -61,6 +61,9 @@ public class ConferenciaEncalhe implements Serializable {
 	@JoinColumn(name = "CONTROLE_CONFERENCIA_ENCALHE_COTA_ID")
 	private ControleConferenciaEncalheCota controleConferenciaEncalheCota;
 
+	@Column(name = "DIA_RECOLHIMENTO")
+	private Integer diaRecolhimento;
+	
 	@Column(name = "OBSERVACAO")
 	private String observacao;
 	
@@ -299,6 +302,14 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
+	}
+
+	public Integer getDiaRecolhimento() {
+		return diaRecolhimento;
+	}
+
+	public void setDiaRecolhimento(Integer diaRecolhimento) {
+		this.diaRecolhimento = diaRecolhimento;
 	}
 
 }

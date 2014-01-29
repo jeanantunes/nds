@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,6 @@ import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -199,11 +199,13 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Post
 	@Path("/analiseHistograma")
-	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String labelComponente,String labelElemento,String classificacaoLabel){
+	public void  analiseHistograma(String edicoes,String segmento,
+			String codigoProduto,String nomeProduto,String labelComponente,
+			String labelElemento,String classificacaoLabel){
+		
 		String[] nrEdicoes = edicoes.split(",");
 		
 		int reparteTotalDistribuidor = 0;
-		ProdutoEdicao produtoEdicao = null;
 		String enumeratedList = null;
 		
 		if(nrEdicoes.length==1){
@@ -212,10 +214,16 @@ public class HistogramaVendasController extends BaseController {
 			enumeratedList = StringUtils.join(nrEdicoes, " - ");
 		}
 		
+		BigInteger qtd = null;
 		for (int j = 0; j < nrEdicoes.length; j++) {
-			produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, nrEdicoes[j]);
 			
-			reparteTotalDistribuidor += this.estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId()).getQtde().intValue();
+			qtd = this.estoqueProdutoService.buscarQtdEstoquePorProduto(
+					codigoProduto, Long.parseLong(nrEdicoes[j]));
+			
+			if (qtd != null){
+				
+				reparteTotalDistribuidor += qtd.intValue();
+			}
 		}
 		
 		result.include("filtroUtilizado", getFiltroSessao());

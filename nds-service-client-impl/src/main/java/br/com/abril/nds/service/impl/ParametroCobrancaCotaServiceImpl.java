@@ -769,9 +769,21 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			for (CotaUnificacao unificacao : unis){
 				
+				List<FormaCobranca> lis = 
+					this.formaCobrancaRepository.obterFormasCobrancaCota(unificacao.getCota());
+				
+				boolean paramDistrib = false;
+				if (lis == null || lis.isEmpty()){
+					
+					lis = new ArrayList<>();
+					FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaRepository.obterFormaCobranca();
+					lis.add(formaCobrancaDistribuidor);
+					paramDistrib = true;
+				}
+				
 				this.criarDTODadosFormasCobrancas(formasCobrancaDTO, 
-					this.formaCobrancaRepository.obterFormasCobrancaCota(unificacao.getCota()),
-					false,
+					lis,
+					paramDistrib,
 					"Unificada na cota " + unificacao.getCota().getNumeroCota());
 			}
 		}
@@ -785,7 +797,22 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				formasCobranca.add(formaCobrancaDistribuidor);
 			}
 			
-			this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, true, null);
+			if (this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())){
+				
+				this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, true, "Unificadora");
+			} else {
+			
+				CotaUnificacao c = this.cotaUnificacaoRepository.obterCotaUnificacaoPorCotaCentralizadora(cota.getNumeroCota());
+				
+				if (c != null){
+					
+					this.criarDTODadosFormasCobrancas(
+						formasCobrancaDTO, formasCobranca, true, "Unificada na cota " + c.getCota().getNumeroCota());
+				} else {
+				
+					this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, true, "Unificada na cota ");
+				}
+			}
 		}
 		
 		return formasCobrancaDTO;

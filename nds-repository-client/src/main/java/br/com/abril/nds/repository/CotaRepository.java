@@ -30,7 +30,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -259,10 +258,10 @@ public interface CotaRepository extends Repository<Cota, Long> {
     Set<Cota> obterCotasPorFornecedor(Long idFornecedor);
 
     List<CotaTipoDTO> obterCotaPorTipo(
-            TipoCaracteristicaSegmentacaoPDV tipoCota, Integer page,
+    		TipoDistribuicaoCota tipoCota, Integer page,
             Integer rp, String sortname, String sortorder);
 
-    int obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV tipoCota);
+    int obterCountCotaPorTipo(TipoDistribuicaoCota tipoCota);
 
     /**
      * Retorna Municipios e a quantidade de cotas para cada - resultado paginado

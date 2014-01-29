@@ -20,7 +20,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -36,8 +35,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
  * @created 14-fev-2012 11:35:31
  */
 @Entity
-@Table(name = "ESTUDO", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
+@Table(name = "ESTUDO")
 @SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
 public class Estudo implements Serializable {
 	

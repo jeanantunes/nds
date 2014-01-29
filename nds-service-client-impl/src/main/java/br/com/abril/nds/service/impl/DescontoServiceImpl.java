@@ -946,8 +946,14 @@ public class DescontoServiceImpl implements DescontoService {
 			
 			for(ProdutoEdicao produtoEdicao : produtosEdicoes) {
 				
-				HistoricoDescontoProdutoEdicao hdpe = historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
+				HistoricoDescontoProdutoEdicao hdpe = 
+					historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
 				historicoDescontoProdutoEdicaoRepository.remover(hdpe);
+				
+				DescontoCotaProdutoExcessao dcpe = 
+					descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+							TipoDesconto.PRODUTO, desconto, null, null, null, produtoEdicao);
+				this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
 				
 				produtoEdicao.setDescontoProdutoEdicao(null);
 				
@@ -960,6 +966,10 @@ public class DescontoServiceImpl implements DescontoService {
 				HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);				
 				historicoDescontoProdutoRepository.remover(hdp);
 				
+				DescontoCotaProdutoExcessao dcpe = 
+						descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+								TipoDesconto.PRODUTO, desconto, null, null, produto, null);
+					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
 			}
 			
 			
@@ -967,6 +977,15 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				dpl.setDesconto(null);
 				descontoProximosLancamentosRepository.merge(dpl);
+			}
+			
+			Set<DescontoCotaProdutoExcessao> dcpe = 
+				this.descontoProdutoEdicaoExcessaoRepository.obterDescontoProdutoEdicaoExcessao(
+					TipoDesconto.PRODUTO, null, null, null);
+			
+			for (DescontoCotaProdutoExcessao d : dcpe){
+				
+				this.descontoProdutoEdicaoExcessaoRepository.remover(d);
 			}
 			
 			if( (produtos != null && produtos.isEmpty()) 

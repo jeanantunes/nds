@@ -1,36 +1,40 @@
-var edicoesEscolhidas_HistogramaVenda = new Array();
-var nomeProduto='';
-var descricaoTipoSegmento='';
-var codigoProduto_HistogramaVenda="";
-var descricaoTipoClassificacao_histogramaVenda="";
-
-function checkEdicao(check){
-	//console.log(check.checked);
-	
-	var obj = jQuery.parseJSON(check.value);
-	
-	if(edicoesEscolhidas_HistogramaVenda.indexOf(obj.edicao)>-1){
-		
-		var len = edicoesEscolhidas_HistogramaVenda.length;
-		
-		//remover do array
-		edicoesEscolhidas_HistogramaVenda.splice(edicoesEscolhidas_HistogramaVenda.indexOf(obj.edicao),1);
-		//liberar os checkboxs para remarcação
-		if(len==6)
-			$(".checkEdicao").removeAttr("disabled");
-		
-	}else{
-		//Adicionar no array
-		edicoesEscolhidas_HistogramaVenda.push(obj.edicao);
-		//Verfificar se alcançou 6, case seja 6, desabilitar todos os checks
-		if(edicoesEscolhidas_HistogramaVenda.length==6){
-			$(".checkEdicao:not(:checked)").attr("disabled","disabled");
-		}
-	}
-	//console.log(edicoesEscolhidas.toString());
-}
-
 var histogramaVendasController = $.extend(true, { 
+	
+	edicoesEscolhidas_HistogramaVenda: new Array(),
+	nomeProduto: '',
+	descricaoTipoSegmento: '',
+	codigoProduto_HistogramaVenda: "",
+	descricaoTipoClassificacao_histogramaVenda: "",
+	
+	checkEdicao : function(check){
+		//console.log(check.checked);
+		
+		var obj = jQuery.parseJSON(check.value);
+		
+		if(histogramaVendasController.edicoesEscolhidas_HistogramaVenda.indexOf(obj.edicao)>-1){
+			
+			var len = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
+			
+			//remover do array
+			histogramaVendasController.edicoesEscolhidas_HistogramaVenda.splice(
+				histogramaVendasController.edicoesEscolhidas_HistogramaVenda.indexOf(obj.edicao),1);
+			
+			//liberar os checkboxs para remarcação
+			if(len==6){
+				$(".checkEdicao", histogramaVendasController.workspace).removeAttr("disabled");
+			}
+			
+		}else{
+			//Adicionar no array
+			histogramaVendasController.edicoesEscolhidas_HistogramaVenda.push(obj.edicao);
+			
+			//Verfificar se alcançou 6, case seja 6, desabilitar todos os checks
+			if(histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length==6){
+				$(".checkEdicao:not(:checked)", histogramaVendasController.workspace).attr("disabled","disabled");
+			}
+		}
+		//console.log(edicoesEscolhidas.toString());
+	},
 	
 	iniciarGrid: function(){
 		
@@ -59,10 +63,10 @@ var histogramaVendasController = $.extend(true, {
 				
 				$.each(data.rows, function(index, value) {						
 
-					nomeProduto=value.cell.nomeProduto;
-					descricaoTipoSegmento=value.cell.descricaoTipoSegmento;
-					codigoProduto_HistogramaVenda=value.cell.codigoProduto;
-					descricaoTipoClassificacao_histogramaVenda=value.cell.descricaoTipoClassificacao;
+					histogramaVendasController.nomeProduto=value.cell.nomeProduto;
+					histogramaVendasController.descricaoTipoSegmento=value.cell.descricaoTipoSegmento;
+					histogramaVendasController.codigoProduto_HistogramaVenda=value.cell.codigoProduto;
+					histogramaVendasController.descricaoTipoClassificacao_histogramaVenda=value.cell.descricaoTipoClassificacao;
 					
 					var objString = 
 						'{"codigo":"'+ value.cell.codigoProduto
@@ -72,11 +76,12 @@ var histogramaVendasController = $.extend(true, {
 					+ '"}'; 
 					
 					//verificando se já estão escolhidas 6 edicoes para analise do histograma
-					var disabled=(edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":"";
-					value.cell.sel = "<input type='checkbox'  class='checkEdicao' value='"+objString+"' "+disabled+" onclick='checkEdicao(this)'/>";
+					var disabled=
+						(histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":"";
+					value.cell.sel = "<input type='checkbox'  class='checkEdicao' value='"+objString+"' "+disabled+" onclick='histogramaVendasController.checkEdicao(this)'/>";
 					
 					//setando atributo para capa
-					value.cell.capa = "<a onmouseover='popup_detalhes("+value.cell.codigoProduto+","+value.cell.edicao+");' onmouseout='popup_detalhes_close();' href='javascript:void(0);'><img src='images/ico_detalhes.png'  /></a>";
+					value.cell.capa = "<a onmouseover='histogramaVendasController.popup_detalhes("+value.cell.codigoProduto+","+value.cell.edicao+");' onmouseout='histogramaVendasController.popup_detalhes_close();' href='javascript:void(0);'><img src='images/ico_detalhes.png'  /></a>";
 				});
 				
 				return data;
@@ -161,40 +166,55 @@ var histogramaVendasController = $.extend(true, {
 	},
 	
 	realizarAnalise:function(){
-		if(edicoesEscolhidas_HistogramaVenda.length==0){
+		if(histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length==0){
 			exibirMensagem("WARNING", ["Selecione ao menos uma edição."]);
 			return;
 		}
 		
 		var labelComponente="",labelElemento="";
-		if($("#inserirComponentes").is(":checked") && $("#componente").val()!="-1" && $("#elemento").val()!="-1"){
-			labelComponente=$("#componente").children("option:selected:first").text();
-			labelElemento=$("#elemento").children("option:selected:first").text();
+		if($("#inserirComponentes", histogramaVendasController.workspace).is(":checked") && 
+				$("#componente", histogramaVendasController.workspace).val()!="-1" && 
+				$("#elemento", histogramaVendasController.workspace).val()!="-1"){
 			
+			labelComponente=
+				$("#componente", histogramaVendasController.workspace).children("option:selected:first").text();
+			
+			labelElemento=
+				$("#elemento", histogramaVendasController.workspace).children("option:selected:first").text();
 		}
 
-        var classificacoes = $('table#edicaoProdCadastradosGrid:visible input[type="checkbox"]:checked').closest('tr').find('td[abbr="descricaoTipoClassificacao"]').map(function(){return $(this).text();}).toArray();
+        var classificacoes = 
+        	$('table#edicaoProdCadastradosGrid:visible input[type="checkbox"]:checked', histogramaVendasController.workspace)
+        		.closest('tr').find('td[abbr="descricaoTipoClassificacao"]').map(function(){return $(this).text();}).toArray();
         var uniqueClassificacoes = [];
         $.each(classificacoes, function(i, el){
             if($.inArray(el, uniqueClassificacoes) === -1) uniqueClassificacoes.push(el);
         });
 
-		var data = {"edicoes":edicoesEscolhidas_HistogramaVenda.sort().toString(),
-				"segmento":descricaoTipoSegmento,
-				"nomeProduto":nomeProduto,
-				"codigoProduto":codigoProduto_HistogramaVenda,
+		var data = {"edicoes":histogramaVendasController.edicoesEscolhidas_HistogramaVenda.sort().toString(),
+				"segmento":histogramaVendasController.descricaoTipoSegmento,
+				"nomeProduto":histogramaVendasController.nomeProduto,
+				"codigoProduto":histogramaVendasController.codigoProduto_HistogramaVenda,
 				"classificacaoLabel":uniqueClassificacoes.join(', '),
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
 		
-		$.post(contextPath + "/distribuicao/histogramaVendas/analiseHistograma", data, function(data){
-	      if(data){ 
-	    	  $("#histogramaVendasContent").hide();
-	    	  $('#analiseHistogramaVendasContent').html(data);
-	    	  
-	    	  anaLiseHistogramaController.iniciarGridAnalise();
-	      }
-	    });
+		$.post(contextPath + "/distribuicao/histogramaVendas/analiseHistograma", data, 
+			function(data){
+				
+				if (data.mensagens){
+					
+					exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+					return;
+				}
+				
+				if(data){ 
+					$("#histogramaVendasContent", histogramaVendasController.workspace).hide();
+					$('#analiseHistogramaVendasContent', histogramaVendasController.workspace).html(data);
+					anaLiseHistogramaController.iniciarGridAnalise();
+				}
+	    	}
+		);
 		
 	},
 	
@@ -202,14 +222,14 @@ var histogramaVendasController = $.extend(true, {
 		
 		var autoComplete = new AutoCompleteController(histogramaVendasController.workspace);
 		
-		$('#produto').keyup(function () {
+		$('#produto', histogramaVendasController.workspace).keyup(function () {
 			
 			autoComplete.autoCompletar("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigo','#produto');
 		});
 		
 		autoComplete.limparCampoOnChange('#produto', new Array('#codigo','#edicao'));
 		
-		$('#codigo').change(function () {
+		$('#codigo', histogramaVendasController.workspace).change(function () {
 			
 			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#codigo','#produto');
 		});
@@ -219,15 +239,15 @@ var histogramaVendasController = $.extend(true, {
 		this.iniciarGrid();
 		
 		//
-		$("#componente").change(function(){
+		$("#componente", histogramaVendasController.workspace).change(function(){
 			
-			if ($('#componente').val() !== "-1") {
+			if ($('#componente', histogramaVendasController.workspace).val() !== "-1") {
 			  carregarCombo(contextPath + "/distribuicao/histogramaVendas/carregarElementos", 
-					  {"componente":$("#componente").val()},
-			            $("#elemento", this.workspace), null, null);
+					  {"componente":$("#componente", histogramaVendasController.workspace).val()},
+			            $("#elemento", histogramaVendasController.workspace), null, null);
 			}else{
-				$('#elemento').html('');
-				$('#elemento').append("<option value='-1'>Selecione...</option>");
+				$('#elemento', histogramaVendasController.workspace).html('');
+				$('#elemento', histogramaVendasController.workspace).append("<option value='-1'>Selecione...</option>");
 			}
 		});
 	},
@@ -236,7 +256,7 @@ var histogramaVendasController = $.extend(true, {
 		var selector = "",
 			formData = new Array();
 		
-		if ($('#inserirComponentes').is(':checked')) {
+		if ($('#inserirComponentes', histogramaVendasController.workspace).is(':checked')) {
 			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
 		}else {
 			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
@@ -247,7 +267,7 @@ var histogramaVendasController = $.extend(true, {
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		
-		formData.push({name:"classificacaoId", value:$("#idTipoClassificacaoProduto").val()});
+		formData.push({name:"classificacaoId", value:$("#idTipoClassificacaoProduto", histogramaVendasController.workspace).val()});
 		
 		return formData;
 	},
@@ -262,80 +282,80 @@ var histogramaVendasController = $.extend(true, {
 		
 		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexReload();
 		
-		edicoesEscolhidas_HistogramaVenda = new Array();
-		nomeProduto='';
-		descricaoTipoSegmento='';
-		codigoProduto_HistogramaVenda="";
-		descricaoTipoClassificacao_histogramaVenda="";
+		histogramaVendasController.edicoesEscolhidas_HistogramaVenda = new Array();
+		histogramaVendasController.nomeProduto='';
+		histogramaVendasController.descricaoTipoSegmento='';
+		histogramaVendasController.codigoProduto_HistogramaVenda="";
+		histogramaVendasController.descricaoTipoClassificacao_histogramaVenda="";
 
+	}, 
+	
+	popup_detalhes : function(codigoProduto,numeroEdicao) {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		//histogramaVendasController.getCapaEdicao(codigo,edicao);
+		$( "#dialog-detalhes", histogramaVendasController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: false,
+			open : function(event, ui) {
+				
+				$("#imagemCapaEdicao", histogramaVendasController.workspace).one('load', function() {
+						$("#imagemCapaEdicao", histogramaVendasController.workspace).show();
+						$("#loadingCapa", histogramaVendasController.workspace).hide();
+					}).each(function() {
+					  if(this.complete) $(this).load();
+					});
+				
+				var randomnumber=Math.floor(Math.random()*11);
+				
+				$("#imagemCapaEdicao", histogramaVendasController.workspace)
+						.attr("src",contextPath
+										+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+										+ codigoProduto
+										+ "&numeroEdicao="
+										+ numeroEdicao);
+			},
+			close:function(event, ui){
+				$("#imagemCapaEdicao", histogramaVendasController.workspace).removeAttr("src").hide();
+				$("#loadingCapa", histogramaVendasController.workspace).show();
+			}
+		});
+	},
+
+	popup_detalhes_close : function() {
+	  $( "#dialog-detalhes", histogramaVendasController.workspace).dialog( "close" );
+	  
+	},
+	
+	filtroTodas : function(){
+		$('.filtroTodas', histogramaVendasController.workspace).show();
+		$('.filtroPracaSede', histogramaVendasController.workspace).hide();
+		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
+		$('.filtroComponentes', histogramaVendasController.workspace).hide();
+	},
+	
+	filtroSede : function(){
+		$('.filtroTodas', histogramaVendasController.workspace).hide();
+		$('.filtroPracaSede', histogramaVendasController.workspace).show();
+		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
+		$('.filtroComponentes', histogramaVendasController.workspace).hide();
+		$('#inserirComponentes', histogramaVendasController.workspace).attr('checked', false);
+	},
+	
+	filtroAtendida : function(){
+		$('.filtroTodas', histogramaVendasController.workspace).hide();
+		$('.filtroPracaSede', histogramaVendasController.workspace).hide();
+		$('.filtroPracaAtendida', histogramaVendasController.workspace).show();
+		$('.filtroComponentes', histogramaVendasController.workspace).hide();
+		$('#inserirComponentes', histogramaVendasController.workspace).attr('checked', false);
+	},
+	
+	filtroComponentes : function(){
+		$('.filtroTodas', histogramaVendasController.workspace).hide();
+		$('.filtroPracaSede', histogramaVendasController.workspace).hide();
+		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
+		$('.filtroComponentes', histogramaVendasController.workspace).show();
 	}
-
-
 });
-	
-	
-function popup_detalhes(codigoProduto,numeroEdicao) {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	//histogramaVendasController.getCapaEdicao(codigo,edicao);
-	$( "#dialog-detalhes" ).dialog({
-		resizable: false,
-		height:'auto',
-		width:'auto',
-		modal: false,
-		open : function(event, ui) {
-			
-			$("#imagemCapaEdicao").one('load', function() {
-					$("#imagemCapaEdicao").show();
-					$("#loadingCapa").hide();
-				}).each(function() {
-				  if(this.complete) $(this).load();
-				});
-			
-			var randomnumber=Math.floor(Math.random()*11);
-			
-			$("#imagemCapaEdicao")
-					.attr("src",contextPath
-									+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
-									+ codigoProduto
-									+ "&numeroEdicao="
-									+ numeroEdicao);
-		},
-		close:function(event, ui){
-			$("#imagemCapaEdicao").removeAttr("src").hide();
-			$("#loadingCapa").show();
-		}
-	});
-};
-
-function popup_detalhes_close() {
-  $( "#dialog-detalhes" ).dialog( "close" );
-  
-}
-
-function filtroTodas(){
-	$('.filtroTodas').show();
-	$('.filtroPracaSede').hide();
-	$('.filtroPracaAtendida').hide();
-	$('.filtroComponentes').hide();
-}
-function filtroSede(){
-	$('.filtroTodas').hide();
-	$('.filtroPracaSede').show();
-	$('.filtroPracaAtendida').hide();
-	$('.filtroComponentes').hide();
-	$('#inserirComponentes').attr('checked', false);
-}
-function filtroAtendida(){
-	$('.filtroTodas').hide();
-	$('.filtroPracaSede').hide();
-	$('.filtroPracaAtendida').show();
-	$('.filtroComponentes').hide();
-	$('#inserirComponentes').attr('checked', false);
-}
-function filtroComponentes(){
-	$('.filtroTodas').hide();
-	$('.filtroPracaSede').hide();
-	$('.filtroPracaAtendida').hide();
-	$('.filtroComponentes').show();
-}
 //@ sourceURL=historicoVenda.js

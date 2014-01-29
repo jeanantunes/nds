@@ -51,6 +51,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
@@ -109,7 +110,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	private Box box;
 
-	@Before
+//	@Before
 	public void setup() {
 		abril = Fixture.editoraAbril();
 		save(abril);
@@ -1258,44 +1259,44 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterCotaPorTipoPorNumCota(){
-		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 1, 2, "numCota", "asc");
+		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO, 1, 2, "numCota", "asc");
 		Assert.assertNotNull(lista);
 	}
 	
 	@Test
 	public void obterCotaPorTipoPorNome(){
-		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 1, 2, "nome", "asc");
+		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO, 1, 2, "nome", "asc");
 		Assert.assertNotNull(lista);
 	}
 
 	@Test
 	public void obterCotaPorTipoPorMunicipio(){
-		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 1, 2, "municipio", "asc");
+		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO, 1, 2, "municipio", "asc");
 		Assert.assertNotNull(lista);
 	}
 	
 	@Test
 	public void obterCotaPorTipoPorEndereco(){
-		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 1, 2, "endereco", "asc");
+		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO, 1, 2, "endereco", "asc");
 		Assert.assertNotNull(lista);
 	}
 	
 	@Test
 	public void obterCotaSortOrderDesc(){
-		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 1, 2, "numCota", "desc");
+		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO, 1, 2, "numCota", "desc");
 		Assert.assertNotNull(lista);
 	}
 	
 	@Test
 	public void obterCotaNulo(){
-		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO, 1, 2, null, null);
+		List<CotaTipoDTO> lista = cotaRepository.obterCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO, 1, 2, null, null);
 		Assert.assertNotNull(lista);
 	}
 	
 	@SuppressWarnings("unused")
 	@Test
 	public void obterCountCotaPorTipo(){
-		int count = cotaRepository.obterCountCotaPorTipo(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO);
+		int count = cotaRepository.obterCountCotaPorTipo(TipoDistribuicaoCota.ALTERNATIVO);
 	}
 	
 	@Test

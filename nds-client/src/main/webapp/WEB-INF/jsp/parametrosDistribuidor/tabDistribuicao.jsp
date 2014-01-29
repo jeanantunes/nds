@@ -1,4 +1,4 @@
-<div id="tabDistribuicao" style="width: 1030px; margin: auto;">
+<div id="tabDistribuicao" style="width: 1030px">
 	<br clear="all" />
 	<fieldset style="width: 260px;">
 		<legend>Distribuição</legend>
@@ -47,7 +47,7 @@
 		</table>
 	</fieldset>
 
-	<fieldset style="width: 350px; margin-left: 10px;">
+	<fieldset style="width: 350px;">
 		<legend>Tabela de Classificação da Cota</legend>
 
 		<table width="345" border="0" cellpadding="0" cellspacing="1">
@@ -149,7 +149,7 @@
 		</table>
 	</fieldset>
 
-	<fieldset style="width: 290px; margin-left: 10px;">
+	<fieldset style="width: 290px;">
 		<legend>% Percentual de Excedente</legend>
 
 		<table width="284" border="0" cellpadding="0" cellspacing="1">

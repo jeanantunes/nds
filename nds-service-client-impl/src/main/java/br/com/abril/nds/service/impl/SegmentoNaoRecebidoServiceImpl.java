@@ -79,5 +79,15 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 			Cota cota) {
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
 	}
+	
+	@Override
+	@Transactional
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosCotaBase(
+			Long idCota) {
+		
+		
+		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCotaBase(idCota);
+	}
+	 
 
 }
