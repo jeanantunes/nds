@@ -317,9 +317,9 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	@Test
 	public void pesquisarEdicoesPreco() {
 		
-		Intervalo<BigDecimal> preco = new Intervalo<BigDecimal>();
-		preco.setDe(BigDecimal.ONE);
-		preco.setAte(BigDecimal.TEN);
+		Intervalo<Double> preco = new Intervalo<Double>();
+		preco.setDe(1.0);
+		preco.setAte(10.0);
 		
 		List<ProdutoEdicaoDTO> produtoEdicaoDTOs =
 			produtoEdicaoRepository.pesquisarEdicoes(null, null, null, preco, null, null, false, null, null, 0, 0);
