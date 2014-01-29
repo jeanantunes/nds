@@ -24,7 +24,8 @@ public abstract class AbstractRepository extends CouchDBRepositoryImpl {
 		} catch (Exception e) {
 			
 		}
-		return sessionFactory.openSession();
+		return null;
+		//return sessionFactory.openSession();
 	}
 	
 }

@@ -213,6 +213,7 @@ import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.ParametroSistema;
@@ -3545,7 +3546,7 @@ public class Fixture {
 			String nomeFantasia,
 			NotaFiscalPessoa pessoaEmitenteReferencia,
 			RegimeTributario regimeTributario,
-			Telefone telefone) {
+			NotaFiscalTelefone telefone) {
 		
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 		

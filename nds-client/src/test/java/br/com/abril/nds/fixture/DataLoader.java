@@ -213,6 +213,7 @@ import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoa;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalTelefone;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
@@ -12403,7 +12404,7 @@ public class DataLoader {
 		String nomeFantasiaEmitente = "";
 		NotaFiscalPessoa pessoaEmitenteReferencia = null;
 		RegimeTributario regimeTributario = null;
-		Telefone telefoneEmitente = null;
+		NotaFiscalTelefone telefoneEmitente = null;
 		
 		
 		

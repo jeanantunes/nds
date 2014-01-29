@@ -1753,6 +1753,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 	
 	@Override
+	@Transactional
 	public List<CotaExemplaresDTO> consultaCotaExemplareSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		
 		LOGGER.info("obter informações da cota sumarizadas...");
@@ -1765,25 +1766,28 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	}
 
 	@Override
+	@Transactional
 	public Long consultaCotaExemplareSumarizadoQtd(FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalNdsRepository.consultaCotaExemplaresSumarizadosQtd(filtro);
 	}
 
 	@Override
+	@Transactional
 	public List<ItemDTO<Long, String>> obterNaturezasOperacoesPorTipoDestinatario(TipoDestinatario tipoDestinatario) {
 		return notaFiscalNdsRepository.obterNaturezasOperacoesPorTipoDestinatario(tipoDestinatario);
 	}
 
 	@Override
+	@Transactional
 	public List<FornecedorExemplaresDTO> consultaFornecedorExemplarSumarizado(FiltroViewNotaFiscalDTO filtro) {
 		LOGGER.info("obter informações dos forncedores sumarizados...");
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplarSumarizado(filtro);
 	}
 
 	@Override
+	@Transactional
 	public Long consultaFornecedorExemplaresSumarizadosQtd(FiltroViewNotaFiscalDTO filtro) {
 		return this.notaFiscalNdsRepository.consultaFornecedorExemplaresSumarizadosQtd(filtro);
 	}
-
 	
 }
