@@ -489,6 +489,7 @@
 				<module>nds-client</module>
 				<module>nds-server</module>
 				<module>nds-estudo-algoritmo</module>
+				<module>nds-homologador</module>
 <!-- 			<module>nds-test</module> -->
 			</modules>
 		</profile>
@@ -530,6 +531,7 @@
 				<module>nds-service-client</module>
 				<module>nds-service-client-impl</module>
 				<module>nds-service-server</module>
+				<module>nds-homologador</module>
 			</modules>
 		</profile>
 	</profiles>
