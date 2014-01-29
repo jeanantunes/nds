@@ -34,6 +34,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 public class Identificacao implements Serializable {
 	
 	/*
+	 * Isso sera utilizado na versão 3.10
 	@Transient
 	@XmlTransient
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ") {
