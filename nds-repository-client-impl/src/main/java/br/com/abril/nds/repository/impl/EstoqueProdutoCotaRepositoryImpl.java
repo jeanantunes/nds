@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -176,7 +177,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto){
 		
 		StringBuilder sql = new StringBuilder("");
 
@@ -195,6 +196,9 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		sql.append("	join produto on produto.ID = produto_edicao.PRODUTO_ID");
 		sql.append("	left join tipo_classificacao_produto tcp on tcp.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID");
 		sql.append(" where produto.codigo_icd = :produtoBusca ");
+        if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+            sql.append(" and tcp.id = :classificacaoProduto ");
+        }
 		sql.append("    group by produto_edicao.NUMERO_EDICAO ");
 		sql.append("    order by produto_edicao.NUMERO_EDICAO desc ");
 		sql.append("    limit 6");
@@ -202,7 +206,10 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("produtoBusca", produto.getCodigoICD());
-		query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
+        if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+            query.setParameter("classificacaoProduto", classificacaoProduto);
+        }
+        query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 		
 		return query.list();
 	}
