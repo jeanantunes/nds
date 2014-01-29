@@ -281,8 +281,6 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		query.setParameter("id", dadosRetornoNFE.getIdNotaFiscal());
 		query.setParameter("chave", dadosRetornoNFE.getChaveAcesso());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(NotaFiscal.class));
-		
 		return (NotaFiscal) query.uniqueResult();
 		
 	}
