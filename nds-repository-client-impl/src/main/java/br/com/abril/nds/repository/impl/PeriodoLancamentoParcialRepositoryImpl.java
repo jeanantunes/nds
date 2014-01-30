@@ -7,9 +7,11 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
@@ -498,6 +500,8 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" and lancamento.tipoLancamento =:tipoLancamento ");
 		hql.append(" and periodoLancamentoParcial.numeroPeriodo > :numeroPeriodo");
 		
+		hql.append(" order by periodoLancamentoParcial.numeroPeriodo asc ");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idLancamentoParcial", idLancamentoParcial);
@@ -543,5 +547,63 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		BigInteger retorno = (BigInteger) query.uniqueResult() ; 
 		
 		return ( retorno != null && retorno.intValue() > 0);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PeriodoLancamentoParcial obterPeriodoAnterior(Date dataRecolhimento, Long idProdutoEdicao) {
+
+		String sql = String.format(this.obterConsultaObtencaoPeriodo(), "<", "desc");
+		
+		return this.obterPeriodoProximo(sql, dataRecolhimento, idProdutoEdicao);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PeriodoLancamentoParcial obterPeriodoPosterior(Date dataRecolhimento, Long idProdutoEdicao) {
+
+		String sql = String.format(this.obterConsultaObtencaoPeriodo(), ">", "asc");
+		
+		return this.obterPeriodoProximo(sql, dataRecolhimento, idProdutoEdicao);
+	}
+	
+	private PeriodoLancamentoParcial obterPeriodoProximo(String sql, Date dataRecolhimento, Long idProdutoEdicao) {
+
+		SQLQuery query = getSession().createSQLQuery(sql);
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.addEntity(PeriodoLancamentoParcial.class);
+		
+		query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
+		
+		query.setMaxResults(1);
+		
+		return (PeriodoLancamentoParcial) query.uniqueResult();
+	}
+
+	private String obterConsultaObtencaoPeriodo() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select plp.*   							");
+        sql.append(" from lancamento l                          ");
+	  	sql.append(" join produto_edicao pe                     ");
+        sql.append(" on pe.ID=l.PRODUTO_EDICAO_ID               ");
+        sql.append(" join lancamento_parcial lp                 ");
+        sql.append(" on lp.PRODUTO_EDICAO_ID=pe.ID              ");
+        sql.append(" join periodo_lancamento_parcial plp        ");
+        sql.append(" on  plp.LANCAMENTO_PARCIAL_ID=lp.ID        ");
+		sql.append(" and plp.ID=l.PERIODO_LANCAMENTO_PARCIAL_ID ");
+		sql.append(" where pe.ID = :idProdutoEdicao             ");
+        sql.append(" and l.DATA_REC_DISTRIB %s :dataRecolhimento");
+		sql.append(" order by l.DATA_REC_DISTRIB %s             ");
+
+		return sql.toString();
 	}
 }
