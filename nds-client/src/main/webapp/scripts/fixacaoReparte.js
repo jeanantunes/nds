@@ -731,6 +731,11 @@ var fixacaoReparteController = $.extend(true, {
 			$("#statusDestaque").text(result.rows[0].cell.status);
 			$("#historicoXLS").show();
 			$("#historicoPDF").show();
+
+            for (var i = 0 ; i < result.rows.length; i++) {
+                result.rows[i].cell["reparte"] = result.rows[i].cell["reparte"] | 0;
+                result.rows[i].cell["venda"] = result.rows[i].cell["venda"] | 0;
+            }
 		}else{
 			$("#historicoXLS").hide();
 			$("#historicoPDF").hide();
@@ -821,6 +826,7 @@ var fixacaoReparteController = $.extend(true, {
 
 			var data = [];
 			data.push({name:'filtro.codigoProduto',value: $("#codigoModalFixacao").val()});
+			data.push({name:'filtro.classificacaoProduto',value: $("#selectModal").val()});
 			data.push({name:'filtro.nomeCota',	value: $("#spanNomeProduto").text()});
 			data.push({name:'filtro.cota',	value: $("#spanCodigoProduto").text()});
 

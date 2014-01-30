@@ -75,7 +75,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, null, false);
+		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, null, false);
 		save(produtoEdicaoVeja);
 		
 		usuario = Fixture.usuarioJoao();
@@ -167,7 +167,7 @@ public class FechamentoDiarioRepositoryImplTest extends AbstractRepositoryImplTe
 		Assert.assertNotNull(consolidadoSuplementar);
 		
 		FechamentoDiarioLancamentoSuplementar historicoMovimentoSuplementar 
-				= Fixture.historicoFechamentoDiarioLancamentoSuplementar(produtoEdicaoVeja, new Long(10));
+				= Fixture.historicoFechamentoDiarioLancamentoSuplementar(produtoEdicaoVeja, Long.valueOf(10));
 		historicoMovimentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 		
 		historicoMovimentoSuplementar = merge(historicoMovimentoSuplementar);

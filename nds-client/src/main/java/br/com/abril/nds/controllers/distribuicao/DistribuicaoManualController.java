@@ -99,10 +99,6 @@ public class DistribuicaoManualController extends BaseController {
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		estudo.setLiberado(false);
 		
-		Lancamento lancEdicao = lancamentoService.obterPorId(estudoDTO.getLancamentoId());
-		
-		estudo.setDataLancamento(lancEdicao.getDataLancamentoDistribuidor());
-		
 		try {
 		    estudo.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));
 		} catch (ParseException e) {

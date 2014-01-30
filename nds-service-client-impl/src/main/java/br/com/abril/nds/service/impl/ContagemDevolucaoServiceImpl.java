@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -638,9 +639,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			
 		}
 		
-		for(Fornecedor fornecedor : mapaFornecedorListaContagemDevolucao.keySet()) {
+		for(Entry<Fornecedor, List<ContagemDevolucaoDTO>> entry : mapaFornecedorListaContagemDevolucao.entrySet()) {
 			
-			gerarNotaFiscalParcial(fornecedor, mapaFornecedorListaContagemDevolucao.get(fornecedor));
+			gerarNotaFiscalParcial(entry.getKey(), entry.getValue());
 			
 		}
 		

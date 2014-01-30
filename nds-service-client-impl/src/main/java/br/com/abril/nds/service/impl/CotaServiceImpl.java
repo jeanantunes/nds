@@ -2002,12 +2002,12 @@ public class CotaServiceImpl implements CotaService {
 					alteraNumeroCota(cota);
 				}
 			}
-			else{
+			//else{
 				//Verifica se é edicao da cota
-				if(!cota.getId().equals(idCota)){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
-				}
-			}	
+				//if(!cota.getId().equals(idCota)){
+					//throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
+				//}
+			//}	
 			
 			//Verifica se cota possui dívidas em aberto
 			BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(cota.getId());
@@ -2763,39 +2763,40 @@ public class CotaServiceImpl implements CotaService {
 
 			if(dto.getEd1Reparte().equals("0")){
 				dto.setEd1Reparte("");
-			}
-			if(dto.getEd1Venda().equals("0")){
-				dto.setEd1Venda("");
-			}
+                if(dto.getEd1Venda().equals("0")){
+                    dto.setEd1Venda("");
+                }
+            }
 			if(dto.getEd2Reparte().equals("0")){
 				dto.setEd2Reparte("");
-			}
-			if(dto.getEd2Venda().equals("0")){
-				dto.setEd2Venda("");
-			}
+                if(dto.getEd2Venda().equals("0")){
+                    dto.setEd2Venda("");
+                }
+            }
 			if(dto.getEd3Reparte().equals("0")){
 				dto.setEd3Reparte("");
-			}
-			if(dto.getEd3Venda().equals("0")){
-				dto.setEd3Venda("");
-			}
+                if(dto.getEd3Venda().equals("0")){
+                    dto.setEd3Venda("");
+                }
+            }
 			if(dto.getEd4Reparte().equals("0")){
 				dto.setEd4Reparte("");
-			}
-			if(dto.getEd4Venda().equals("0")){
-				dto.setEd4Venda("");
-			}
+                if(dto.getEd4Venda().equals("0")){
+                    dto.setEd4Venda("");
+                }
+            }
 			if(dto.getEd5Reparte().equals("0")){
 				dto.setEd5Reparte("");
-			}
-			if(dto.getEd5Venda().equals("0")){
-				dto.setEd5Venda("");
-			}
+                if(dto.getEd5Venda().equals("0")){
+                    dto.setEd5Venda("");
+                }
+            }
 			if(dto.getEd6Reparte().equals("0")){
 				dto.setEd6Reparte("");
-			}if(dto.getEd6Venda().equals("0")){
-				dto.setEd6Venda("");
-			}
+                if(dto.getEd6Venda().equals("0")){
+                    dto.setEd6Venda("");
+                }
+            }
 			if(dto.getReparteMedio() == 0){
 				dto.setReparteMedio(null);
 			}

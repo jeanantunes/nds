@@ -140,17 +140,17 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		produto.setEditor(abril);
 		save(produto);
 
-		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, null, false);
+		produtoEdicaoVeja = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produto, null, false);
 		save(produtoEdicaoVeja);
 		//////
 		
 		//////
-		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, new Long(100), TributacaoFiscal. TRIBUTADO);
+		Produto produtoComDesconto = Fixture.produto("8001", "Novo", "Novo", PeriodicidadeProduto.ANUAL, tipoProduto, 5, 5, Long.valueOf(100), TributacaoFiscal. TRIBUTADO);
 		produtoComDesconto.addFornecedor(dinap);
 		produtoComDesconto.setEditor(abril);
 		save(produtoComDesconto);
 
-		produtoEdicaoComDesconto = Fixture.produtoEdicao(2L, 10, 14, new Long(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoComDesconto, null, false);
+		produtoEdicaoComDesconto = Fixture.produtoEdicao(2L, 10, 14, Long.valueOf(100), BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoComDesconto, null, false);
 		save(produtoEdicaoComDesconto);
 		//////
 		
@@ -317,9 +317,9 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	@Test
 	public void pesquisarEdicoesPreco() {
 		
-		Intervalo<BigDecimal> preco = new Intervalo<BigDecimal>();
-		preco.setDe(BigDecimal.ONE);
-		preco.setAte(BigDecimal.TEN);
+		Intervalo<Double> preco = new Intervalo<Double>();
+		preco.setDe(1.0);
+		preco.setAte(10.0);
 		
 		List<ProdutoEdicaoDTO> produtoEdicaoDTOs =
 			produtoEdicaoRepository.pesquisarEdicoes(null, null, null, preco, null, null, false, null, null, 0, 0);

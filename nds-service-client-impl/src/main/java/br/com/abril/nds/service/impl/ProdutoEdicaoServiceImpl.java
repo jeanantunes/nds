@@ -354,7 +354,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco, StatusLancamento statusLancamento, 
+	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<Double> preco, StatusLancamento statusLancamento, 
 												   String codigoDeBarras, boolean brinde, String sortorder, String sortname, int page, int maxResults) {
 
 		final int initialResult = ((page * maxResults) - maxResults);
@@ -367,7 +367,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	//Parse por conta do merge.
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco, 
+	public Long countPesquisarEdicoes(String codigoProduto, String nome, Intervalo<Date> dataLancamento, Intervalo<Double> preco, 
 									  StatusLancamento statusLancamento, String codigoDeBarras, boolean brinde) {
 
 		Integer count = this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
@@ -807,7 +807,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         produtoEdicao.setPrecoVenda(dto.getPrecoVenda()==null?dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
-		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():new Long("0"));
+		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():Long.valueOf("0"));
 		produtoEdicao.setPossuiBrinde(false);
 		produtoEdicao.setBrinde(null);
 
@@ -1223,6 +1223,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			dto.setTipoLancamento(uLancamento.getTipoLancamento());
 			
+			Date dataLancamento = null;
+			
 			if(uLancamento.getPeriodoLancamentoParcial()!= null){
 				
 				LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicao.getId());
@@ -1242,10 +1244,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial(); 
 				
 				if(primeiroPeriodo!= null && lancamento != null){
-					dto.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
+					dataLancamento = lancamento.getDataLancamentoDistribuidor();
 				}
 				else{
-					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+					dataLancamento = uLancamento.getDataLancamentoDistribuidor();
 				}
 				
 				PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
@@ -1261,13 +1263,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			}else{
 				
-				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				dataLancamento = uLancamento.getDataLancamentoDistribuidor();
 				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
 
 				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
 				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 			}
 
+			dto.setDataLancamento(DateUtil.parseDataPTBR(this.dataCabalistica).compareTo(dataLancamento) == 0 ? null : dataLancamento);
 			dto.setRepartePrevisto(uLancamento.getReparte());
 			dto.setRepartePromocional(uLancamento.getRepartePromocional());
 			
@@ -1461,7 +1464,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
-	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, new Long(numeroEdicao)));
+	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, Long.valueOf(numeroEdicao)));
 	}
 
     @Override

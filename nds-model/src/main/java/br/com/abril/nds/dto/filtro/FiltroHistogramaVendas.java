@@ -53,42 +53,6 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 		}
 	}
 	
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		
-		FiltroHistogramaVendas otherFiltro = (FiltroHistogramaVendas)obj;
-		
-		String[] values = { this.getFiltroPor(), this.getInserirComponentes(),
-				this.getComponente(), this.getElemento(), this.getCodigo(),
-				this.getProduto(), this.getEdicao() };
-		
-		String[] otherValues = { otherFiltro.getFiltroPor(), otherFiltro.getInserirComponentes(),
-				otherFiltro.getComponente(), otherFiltro.getElemento(), otherFiltro.getCodigo(),
-				otherFiltro.getProduto(), otherFiltro.getEdicao() };
-		
-		
-		for (int i = 0; i < values.length; i++) {
-			String v = values[i];
-			String otherValue = otherValues[i];
-			
-			if (v == null) {
-				if (otherValue != null)
-					return false;
-			} else if (!v.equals(otherValue))
-				return false;
-			
-		}
-		
-		return true;
-	}
-	
 	public String getFiltroPor() {
 		return filtroPor;
 	}
@@ -154,5 +118,76 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 
 	public void setIdProduto(Long idProduto) {
 		this.idProduto = idProduto;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+		result = prime * result
+				+ ((componente == null) ? 0 : componente.hashCode());
+		result = prime * result + ((edicao == null) ? 0 : edicao.hashCode());
+		result = prime * result
+				+ ((elemento == null) ? 0 : elemento.hashCode());
+		result = prime * result
+				+ ((filtroPor == null) ? 0 : filtroPor.hashCode());
+		result = prime
+				* result
+				+ ((inserirComponentes == null) ? 0 : inserirComponentes
+						.hashCode());
+		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroHistogramaVendas other = (FiltroHistogramaVendas) obj;
+		if (codigo == null) {
+			if (other.codigo != null)
+				return false;
+		} else if (!codigo.equals(other.codigo))
+			return false;
+		if (componente == null) {
+			if (other.componente != null)
+				return false;
+		} else if (!componente.equals(other.componente))
+			return false;
+		if (edicao == null) {
+			if (other.edicao != null)
+				return false;
+		} else if (!edicao.equals(other.edicao))
+			return false;
+		if (elemento == null) {
+			if (other.elemento != null)
+				return false;
+		} else if (!elemento.equals(other.elemento))
+			return false;
+		if (filtroPor == null) {
+			if (other.filtroPor != null)
+				return false;
+		} else if (!filtroPor.equals(other.filtroPor))
+			return false;
+		if (inserirComponentes == null) {
+			if (other.inserirComponentes != null)
+				return false;
+		} else if (!inserirComponentes.equals(other.inserirComponentes))
+			return false;
+		if (produto == null) {
+			if (other.produto != null)
+				return false;
+		} else if (!produto.equals(other.produto))
+			return false;
+		return true;
 	}
 }

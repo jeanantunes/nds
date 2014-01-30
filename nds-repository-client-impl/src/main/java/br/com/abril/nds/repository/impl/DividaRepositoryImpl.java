@@ -80,9 +80,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String, Object> param = getParametrosConsultaDividas(filtro, true);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		return (long) query.list().size();
 	}
@@ -101,9 +99,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String, Object> param = getParametrosConsultaDividas(filtro,false);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
 		
@@ -124,9 +120,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String, Object> param = getParametrosConsultaDividas(filtro,true);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
 		
@@ -491,15 +485,13 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String,Object> params = new HashMap<>();
 		
-		HashMap<String, List<?>> paramsList = new HashMap<>();
-		
-		tratarFiltro(sql,params,paramsList,filtro);
+		tratarFiltro(sql,params,filtro);
 
 		sql.append(" UNION ALL ");
 		
 		sql.append(this.getSqlInadimplenciaBoletosAntecipados(filtro));
 
-		paramsList.put("gruposMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()));
+		params.put("gruposMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()));
 		
 		params.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		
@@ -522,15 +514,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.addScalar("situacao")
 				.addScalar("dividaAcumulada");
 		
-		for(String key : params.keySet()){
-			
-			query.setParameter(key, params.get(key));
-		}
-		
-		for(String key : paramsList.keySet()){
-			
-			query.setParameterList(key, paramsList.get(key));
-		}
+
+		setParameters(query, params);
 		
         if(filtro.getPaginacao()!= null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			
@@ -544,7 +529,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		return query.list();
 	}	
 		
-	private void tratarFiltro(StringBuilder sql, HashMap<String, Object> params, HashMap<String, List<?>> paramsList, FiltroCotaInadimplenteDTO filtro) {
+	private void tratarFiltro(StringBuilder sql, HashMap<String, Object> params, FiltroCotaInadimplenteDTO filtro) {
 		
 		boolean whereUtilizado = false;
 		
@@ -599,7 +584,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			whereUtilizado = true;
 
 			sql.append(" DIVIDA_.STATUS in (:statusDivida) ");
-			paramsList.put("statusDivida", this.parseListaStatusDivida(filtro.getStatusDivida()));
+			params.put("statusDivida", this.parseListaStatusDivida(filtro.getStatusDivida()));
 
 			boolean pesquisaVencidosNaoPagos = false;
 			
@@ -705,9 +690,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
-		HashMap<String, List<?>> paramsList = new HashMap<>();
-		
-		tratarFiltro(sql,params,paramsList,filtro);
+		tratarFiltro(sql,params,filtro);
 
 		sql.append(" ) ");
 		
@@ -722,13 +705,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		for(String key : params.keySet()){
-			query.setParameter(key, params.get(key));
-		}
-		
-		for(String key : paramsList.keySet()){
-			query.setParameterList(key, paramsList.get(key));
-		}
+		setParameters(query, params);
 		
 		return ((BigInteger) query.uniqueResult()).longValue();
 	}
@@ -744,9 +721,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
         HashMap<String,Object> params = new HashMap<String, Object>();
 		
-		HashMap<String, List<?>> paramsList = new HashMap<>();
-		
-		tratarFiltro(sql,params,paramsList,filtro);
+		tratarFiltro(sql,params,filtro);
 		
         sql.append(" UNION ALL ");
         
@@ -757,13 +732,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		for(String key : params.keySet()){
-			query.setParameter(key, params.get(key));
-		}
-		
-		for(String key : paramsList.keySet()){
-			query.setParameterList(key, paramsList.get(key));
-		}
+		setParameters(query, params);
 		
 		return ((BigInteger) query.uniqueResult()).longValue();
 	}
@@ -780,9 +749,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
         HashMap<String,Object> params = new HashMap<String, Object>();
 		
-		HashMap<String, List<?>> paramsList = new HashMap<>();
-		
-		tratarFiltro(sql,params,paramsList,filtro);
+		tratarFiltro(sql,params,filtro);
 		
         sql.append(" UNION ALL ");
         
@@ -793,13 +760,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		for(String key : params.keySet()){
-			query.setParameter(key, params.get(key));
-		}
-		
-		for(String key : paramsList.keySet()){
-			query.setParameterList(key, paramsList.get(key));
-		}
+		setParameters(query, params);
 		
 		if (query.uniqueResult() == null)
 			return 0.0;

@@ -53,7 +53,7 @@ public class CorrecaoVendas {
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
 	    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
-		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
 		    correcaoIndividual.executar(produtoEdicao);
 
 		    totalReparte = totalReparte.add(produtoEdicao.getReparte());

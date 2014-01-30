@@ -112,7 +112,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		List<FixacaoReparteDTO> resultado = null;
 		if(filtroProduto != null && filtroProduto.getCodigoProduto()!=null){
 			Produto produto = produtoService.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
-			 resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto) ;
+			 resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto, filtroProduto.getClassificacaoProduto()) ;
 		}
 		return resultado; 
 	}
@@ -121,7 +121,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
-		Cota cota = cotaRepository.obterPorNumeroDaCota(new Integer(filtroCota.getCota()));
+		Cota cota = cotaRepository.obterPorNumeroDaCota(Integer.valueOf(filtroCota.getCota()));
 		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
 		return resultado; 
 	}

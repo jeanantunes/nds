@@ -55,7 +55,7 @@ public class FileOutputRouter extends AbstractRepository implements ContentBased
 					return null;
 				}
 			});
-		} catch(Throwable e) {
+		} catch(Exception e) {
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 			e.printStackTrace();
 		}

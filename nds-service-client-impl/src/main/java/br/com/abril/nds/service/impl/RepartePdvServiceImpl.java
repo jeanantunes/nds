@@ -85,8 +85,8 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			repartePDVRepository.merge(repartePDV);
 		}
 
-		mixCotaProduto.setReparteMinimo(new Long(soma));
-		mixCotaProduto.setReparteMaximo(new Long(soma));
+		mixCotaProduto.setReparteMinimo(Long.valueOf(soma));
+		mixCotaProduto.setReparteMaximo(Long.valueOf(soma));
         mixCotaProduto.setDataHora(new Date());
         mixCotaProdutoRepository.alterar(mixCotaProduto);
 	}

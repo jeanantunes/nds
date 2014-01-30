@@ -1291,6 +1291,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(
 			Set<Diferenca> listaDiferencas,
 			Diferenca diferenca) {
@@ -1334,6 +1335,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public Set<DiferencaVO> verificarDiferencasVOIguais(
 			Set<DiferencaVO> listaNovaDiferencaVO, DiferencaVO diferencaVO) {
 		
@@ -1367,6 +1369,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public Map<Long, List<RateioCotaVO>> insercaoDeNovosValoresNaMesmaCota(
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados,
 			List<RateioCotaVO> listaNovosRateios) {
@@ -1396,6 +1399,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public Map<Long, List<RateioCotaVO>> verificarSeExisteListaNoMapa(
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
 			RateioCotaVO rateioCotaVO) {
@@ -1432,6 +1436,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public DiferencaVO verificarDiferencaComListaSessao(
 			Set<DiferencaVO> listaNovasDiferencasVO, DiferencaVO diferencaVO,
 			Long idDiferenca) {
@@ -1449,6 +1454,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	@Override
+	@Transactional
 	public Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
 			RateioCotaVO rateioCotaVO) {
