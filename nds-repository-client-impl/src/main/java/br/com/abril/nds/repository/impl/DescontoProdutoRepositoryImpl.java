@@ -152,8 +152,6 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
 		
 		StringBuilder sql = new StringBuilder();
-			
-		sql = new StringBuilder();
 		sql.append("  SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome ")
 			.append(" FROM COTA c ")
 			.append(" JOIN PESSOA p ON (c.PESSOA_ID=p.ID) ")
@@ -168,14 +166,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 			.append(" LEFT OUTER JOIN DESCONTO_PROXIMOS_LANCAMENTOS dpl ON dpl.id = dlc.desconto_lancamento_id ")
 			.append(" WHERE dpl.DESCONTO_ID = :descontoID ")
 			.append(" GROUP BY numeroCota ");
-/*
-		if (sortname != null && !sortname.isEmpty()) { 
 
-			sql.append(" order by ");
-			sql.append(sortname);
-			sql.append(" ");
-			sql.append(sortorder != null ? sortorder : "");
-		}*/
 		sql.append(" order by numeroCota " + ordenacao.name() + " ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());

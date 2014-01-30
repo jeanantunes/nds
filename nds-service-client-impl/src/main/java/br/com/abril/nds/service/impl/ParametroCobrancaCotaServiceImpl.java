@@ -822,15 +822,15 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			List<FormaCobranca> formasCobranca, boolean isParametroDistribuidor,
 			String descUnificacao){
 		
-		String strConcentracoes="";
-		String strFornecedores="";
-		Set<ConcentracaoCobrancaCota> concentracoes = new HashSet<ConcentracaoCobrancaCota>();
-		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		StringBuilder strConcentracoes;
+		StringBuilder strFornecedores;
+		Set<ConcentracaoCobrancaCota> concentracoes;
+		Set<Fornecedor> fornecedores;
 		
 		for(FormaCobranca formaCobrancaItem:formasCobranca){
 			
-			strConcentracoes="";
-			strFornecedores="";
+			strConcentracoes = new StringBuilder();
+			strFornecedores = new StringBuilder();
 			
 			concentracoes = formaCobrancaItem.getConcentracaoCobrancaCota();
 			fornecedores = formaCobrancaItem.getFornecedores();
@@ -838,37 +838,38 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			if(formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 				if ((concentracoes!=null)&&(!concentracoes.isEmpty())){
 					for (ConcentracaoCobrancaCota itemConcentracao:concentracoes){
-						if (!"".equals(strConcentracoes)){
-							strConcentracoes = strConcentracoes + "/";
+						if (strConcentracoes.length()>0){
+							strConcentracoes.append("/");
 						}
-						strConcentracoes = strConcentracoes + itemConcentracao.getDiaSemana().getDescricaoDiaSemana();
+						strConcentracoes .append(itemConcentracao.getDiaSemana().getDescricaoDiaSemana());
 					}
 				}				
 			}
 			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiasDoMes().get(0);
+				strConcentracoes .append("Todo dia ").append(formaCobrancaItem.getDiasDoMes().get(0));
 			}	
 			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
-				strConcentracoes = "Todo dia "+formaCobrancaItem.getDiasDoMes().get(0)+" e "+formaCobrancaItem.getDiasDoMes().get(1);
+				strConcentracoes .append("Todo dia ").append(formaCobrancaItem.getDiasDoMes().get(0));
+				strConcentracoes .append(" e ").append(formaCobrancaItem.getDiasDoMes().get(1));
 			}
 			else if (formaCobrancaItem.getTipoFormaCobranca()==TipoFormaCobranca.DIARIA){
-				strConcentracoes = "Diariamente";
+				strConcentracoes .append("Diariamente");
 			}
 			
 			if ((fornecedores!=null)&&(!fornecedores.isEmpty())){
 				for (Fornecedor itemFornecedor:fornecedores){
-					if (!"".equals(strFornecedores)){
-						strFornecedores = strFornecedores + "/";
+					if (strFornecedores.length()>0){
+						strFornecedores.append("/");
 					}
-					strFornecedores = strFornecedores + itemFornecedor.getJuridica().getRazaoSocial();
+					strFornecedores.append(itemFornecedor.getJuridica().getRazaoSocial());
 				}
 			}
 			
 			formasCobrancaDTO.add(
 				new FormaCobrancaDTO(
 					formaCobrancaItem.getId(),
-					strFornecedores,
-					strConcentracoes,
+					strFornecedores.toString(),
+					strConcentracoes.toString(),
 					(formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
 					(formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():""),
 					isParametroDistribuidor,

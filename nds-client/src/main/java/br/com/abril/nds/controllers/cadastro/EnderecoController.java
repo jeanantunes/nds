@@ -171,8 +171,6 @@ public class EnderecoController extends BaseController {
 			
 			listaEndereco.removeAll(enderecosRemovidos);
 		}
-		
-		TableModel<CellModel> tableModelEndereco = new TableModel<CellModel>();
 
 		if (sortname != null) {
 
@@ -183,7 +181,7 @@ public class EnderecoController extends BaseController {
 			PaginacaoUtil.ordenarEmMemoria(listaEndereco, ordenacao, sortname);
 		}
 
-		tableModelEndereco = getTableModelListaEndereco(listaEndereco);
+		TableModel<CellModel> tableModelEndereco = getTableModelListaEndereco(listaEndereco);
 
 		this.result.use(Results.json()).from(tableModelEndereco, "result").recursive().serialize();
 	}
