@@ -286,12 +286,6 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 
-//<<<<<<< HEAD
-//=======
-//
-//        Date dataAtual = DateUtil.adicionarHMS(distribuidorRepository.obterDataOperacaoDistribuidor());
-//>>>>>>> DGBti/master
-
 		Distribuidor distribuidor = distribuidorRepository.obter(); 
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
