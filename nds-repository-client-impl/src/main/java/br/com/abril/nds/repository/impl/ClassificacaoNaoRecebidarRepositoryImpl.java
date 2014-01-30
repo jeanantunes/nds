@@ -227,11 +227,5 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
-	
-	private void setParameters(Query query, Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
-	}
 
 }

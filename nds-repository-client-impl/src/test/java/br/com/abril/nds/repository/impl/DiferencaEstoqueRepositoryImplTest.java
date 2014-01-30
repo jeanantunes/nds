@@ -347,7 +347,7 @@ public class DiferencaEstoqueRepositoryImplTest extends AbstractRepositoryImplTe
 		save(produto);
 		
 		ProdutoEdicao produtoEdicao = 
-			Fixture.produtoEdicao(1L, 1, 1, new Long(10000), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOP", produto, null, false);
+			Fixture.produtoEdicao(1L, 1, 1, Long.valueOf(10000), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOP", produto, null, false);
 		
 		save(produtoEdicao);
 		

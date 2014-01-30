@@ -68,7 +68,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 
 	Query query = getSession().createQuery(hql.toString());
 
-	setParameters(query);
+	setParameters(query, parameters);
 
 	query.setResultTransformer(new AliasToBeanResultTransformer(CotaNaoRecebeSegmentoDTO.class));
 
@@ -120,7 +120,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 
 	Query query = getSession().createQuery(hql.toString());
 
-	setParameters(query);
+	setParameters(query, parameters);
 
 	query.setResultTransformer(new AliasToBeanResultTransformer(SegmentoNaoRecebeCotaDTO.class));
 
@@ -146,8 +146,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	    return false;
 	}
 	Query query = this.getSession().createQuery(hql.toString());
-	setParameters(query);
-
+	setParameters(query, parameters);
+	
 	Long id = (Long) query.uniqueResult();
 	if (id != null && !id.equals(0)) {
 	    return true;
@@ -199,7 +199,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 
 	Query query = this.getSession().createQuery(hql.toString());
 
-	setParameters(query);
+	setParameters(query,parameters);
 
 	query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 
@@ -256,7 +256,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 
 	Query query = this.getSession().createQuery(hql.toString());
 
-	setParameters(query);
+	setParameters(query,parameters);
 
 	query.setResultTransformer(new AliasToBeanResultTransformer(TipoSegmentoProduto.class));
 
@@ -282,11 +282,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	}
     }
 
-    private void setParameters(Query query) {
-	for (String key : parameters.keySet()) {
-	    query.setParameter(key, parameters.get(key));
-	}
-    }
+    
 
     @SuppressWarnings("unchecked")
     @Override
