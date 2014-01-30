@@ -229,14 +229,19 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
  
         StringBuilder hql = new StringBuilder();
         
-        hql.append(" select hdcpe.id as id ");
-        hql.append(" from HistoricoDescontoCotaProdutoExcessao hdcpe ");
-        hql.append(" join hdcpe.desconto desconto ");
-        hql.append(" join hdcpe.cota c ");
-        hql.append(" join hdcpe.fornecedor as fornecedor ");
+        hql.append("	select	");
         
-        hql.append(" where hdcpe.produto.id is null and  hdcpe.produtoEdicao.id is null ");
-		
+        hql.append("	desconto.id, c.id	");
+        
+	    hql.append("	from DescontoCotaProdutoExcessao dcpe ");
+        hql.append("	join dcpe.desconto desconto ");
+        hql.append("	join dcpe.usuario usuario ");
+        hql.append("	join dcpe.cota c ");
+        hql.append("	join c.pessoa as pessoa ");
+        hql.append("	join dcpe.fornecedor as fornecedor ");
+        hql.append("	join fornecedor.juridica as juridica ");
+        
+        hql.append(" where dcpe.produto is null and  dcpe.produtoEdicao is null ");
         
         HashMap<String, Object> param = new HashMap<String, Object>();
 		if(filtro.getNumeroCota() != null) {
@@ -245,7 +250,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 			param.put("numeroCota", filtro.getNumeroCota());
 		}
 		
-		hql.append(" group by desconto.id ");
+		hql.append(" group by c.id, desconto.id  ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		

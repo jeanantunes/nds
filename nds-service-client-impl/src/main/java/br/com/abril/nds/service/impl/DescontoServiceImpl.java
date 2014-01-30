@@ -990,12 +990,19 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				HistoricoDescontoProdutoEdicao hdpe = 
 					historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
-				historicoDescontoProdutoEdicaoRepository.remover(hdpe);
+				
+				if(hdpe!=null) {
+					historicoDescontoProdutoEdicaoRepository.remover(hdpe);
+				}
 				
 				DescontoCotaProdutoExcessao dcpe = 
 					descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 							TipoDesconto.PRODUTO, desconto, null, null, null, produtoEdicao);
-				this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
+				
+				if(dcpe!=null) {
+					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
+				}
+				
 				
 				produtoEdicao.setDescontoProdutoEdicao(null);
 				
@@ -1005,34 +1012,43 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				produto.setDescontoProduto(null);
 				
-				HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);				
-				historicoDescontoProdutoRepository.remover(hdp);
+				HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);
+				if(hdp!=null) {
+					historicoDescontoProdutoRepository.remover(hdp);
+				}
 				
 				DescontoCotaProdutoExcessao dcpe = 
 						descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 								TipoDesconto.PRODUTO, desconto, null, null, produto, null);
+				if(dcpe!=null) {
 					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
+				}
 			}
 			
-			
-			for(DescontoProximosLancamentos dpl : descontoProximosLancamentos) {
+			if(descontoProximosLancamentos!=null && !descontoProximosLancamentos.isEmpty()) {
+
+				for(DescontoProximosLancamentos dpl : descontoProximosLancamentos) {
+					dpl.setDesconto(null);
+					descontoProximosLancamentosRepository.merge(dpl);
+				}
 				
-				dpl.setDesconto(null);
-				descontoProximosLancamentosRepository.merge(dpl);
 			}
 			
 			Set<DescontoCotaProdutoExcessao> dcpe = 
 				this.descontoProdutoEdicaoExcessaoRepository.obterDescontoProdutoEdicaoExcessao(
 					TipoDesconto.PRODUTO, null, null, null);
 			
-			for (DescontoCotaProdutoExcessao d : dcpe){
+			if(dcpe!=null && !dcpe.isEmpty()) {
+
+				for (DescontoCotaProdutoExcessao d : dcpe){
+					this.descontoProdutoEdicaoExcessaoRepository.remover(d);
+				}
 				
-				this.descontoProdutoEdicaoExcessaoRepository.remover(d);
 			}
 			
-			if( (produtos != null && produtos.isEmpty()) 
-					&& (produtosEdicoes != null && produtosEdicoes.isEmpty())
-					&& (descontoProximosLancamentos != null && descontoProximosLancamentos.isEmpty())) {
+			if( (produtos != null && !produtos.isEmpty()) 
+					|| (produtosEdicoes != null && !produtosEdicoes.isEmpty())
+					|| (descontoProximosLancamentos != null && !descontoProximosLancamentos.isEmpty())) {
 				
 				descontoRepository.removerPorId(idDesconto);
 			}
