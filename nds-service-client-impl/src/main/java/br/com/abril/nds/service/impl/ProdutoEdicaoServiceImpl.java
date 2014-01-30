@@ -807,7 +807,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         produtoEdicao.setPrecoVenda(dto.getPrecoVenda()==null?dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
-		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():new Long("0"));
+		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():Long.valueOf("0"));
 		produtoEdicao.setPossuiBrinde(false);
 		produtoEdicao.setBrinde(null);
 
@@ -1464,7 +1464,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
-	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, new Long(numeroEdicao)));
+	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, Long.valueOf(numeroEdicao)));
 	}
 
     @Override

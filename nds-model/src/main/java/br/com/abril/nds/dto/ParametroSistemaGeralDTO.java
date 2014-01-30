@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.util.StringUtils;
 
@@ -71,10 +72,10 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	public List<ParametroSistema> getParametrosSistema() {
 		
 		List<ParametroSistema> lst = new ArrayList<ParametroSistema>();
-		for (TipoParametroSistema tps : params.keySet()) {
+		for (Entry<TipoParametroSistema, String> entry : params.entrySet()) {
 			ParametroSistema ps = new ParametroSistema();
-			ps.setTipoParametroSistema(tps);
-			ps.setValor(StringUtils.trimWhitespace(params.get(tps)));
+			ps.setTipoParametroSistema(entry.getKey());
+			ps.setValor(StringUtils.trimWhitespace(entry.getValue()));
 			lst.add(ps);
 		}
 		

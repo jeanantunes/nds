@@ -111,7 +111,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		produto.addFornecedor(fornecedor);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L, 12,1 , new Long(900), new BigDecimal(8), new BigDecimal(10), 
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L, 12,1 , Long.valueOf(900), new BigDecimal(8), new BigDecimal(10), 
 				"ABCDEFGHIJKLMNOPQ", produto, null, false);
 		save(produtoEdicao);
 				
@@ -239,7 +239,7 @@ public class ConsolidadoFinanceiroCotaRepositoryImplTest extends AbstractReposit
 		produto.addFornecedor(fornecedor);
 		save(produto);
 		
-		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L, 12,1 , new Long(900), new BigDecimal(8), new BigDecimal(10), 
+		ProdutoEdicao produtoEdicao = Fixture.produtoEdicao(234L, 12,1 , Long.valueOf(900), new BigDecimal(8), new BigDecimal(10), 
 				"ABCDEFGHIJKLMNOPA", produto, null, false);
 		save(produtoEdicao);
 				

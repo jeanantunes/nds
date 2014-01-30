@@ -160,9 +160,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
 		Query query =  getSession().createQuery(hql.toString());
 				
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				TipoDescontoCotaDTO.class));
@@ -210,9 +208,7 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		return query.list().size();
 	}

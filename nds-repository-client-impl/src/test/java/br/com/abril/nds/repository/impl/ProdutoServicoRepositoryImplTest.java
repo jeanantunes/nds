@@ -94,13 +94,13 @@ public class ProdutoServicoRepositoryImplTest extends
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.ANUAL;
 		int produtoPeb = 1;
 		int produtoPacotePadrao = 1;
-		Long produtoPeso = new Long(10000);
+		Long produtoPeso = Long.valueOf(10000);
 
 		String codigoProdutoEdicao = contador + "";
-		Long numeroEdicao = new Long(contador);
+		Long numeroEdicao = Long.valueOf(contador);
 		int pacotePadrao = 1;
 		int peb = 1;
-		Long peso = new Long(0);
+		Long peso = Long.valueOf(0);
 		BigDecimal precoCusto = BigDecimal.ZERO;
 		BigDecimal precoVenda = BigDecimal.ZERO;
 		String codigoDeBarras = contador + "";
@@ -145,12 +145,12 @@ public class ProdutoServicoRepositoryImplTest extends
 				valorUnitario);
 		
 		save(produtoServico);
-		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoProdutoCromo, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		Produto cromoBrasileirao = Fixture.produto("3333", "Cromo Brasileirão", "Cromo Brasileirão", PeriodicidadeProduto.ANUAL, tipoProdutoCromo, 5, 5, Long.valueOf(10000), TributacaoFiscal. TRIBUTADO);
 		cromoBrasileirao.addFornecedor(fornecedorDinap);
 		save(cromoBrasileirao);
 		
 		ProdutoEdicao cromoBrasileiraoEd1 = Fixture.produtoEdicao("COD_FF", 1L, 5, 30,
-				new Long(50), new BigDecimal(100), new BigDecimal(100), "3333", cromoBrasileirao, null, false,"Cromo Brasileirão");
+				Long.valueOf(50), new BigDecimal(100), new BigDecimal(100), "3333", cromoBrasileirao, null, false,"Cromo Brasileirão");
 		
 		save(cromoBrasileiraoEd1);
 		

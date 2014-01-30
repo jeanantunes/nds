@@ -75,7 +75,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		Produto produtoVeja = Fixture.produtoVeja(tipoProduto);
 		
 		ProdutoEdicao produtoEdicaoVeja = Fixture.produtoEdicao(
-			2L, 10, 10, new Long(100), new BigDecimal(10), new BigDecimal(10), 
+			2L, 10, 10, Long.valueOf(100), new BigDecimal(10), new BigDecimal(10), 
 			"55201", produtoVeja, new BigDecimal(10), false
 		);
 		
@@ -109,7 +109,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		Produto produtoQuatroRodas = Fixture.produtoQuatroRodas(tipoProduto);
 		
 		ProdutoEdicao produtoEdicaoQuatroRodas = Fixture.produtoEdicao(
-			2L, 10, 10, new Long(100), new BigDecimal(10), new BigDecimal(10), 
+			2L, 10, 10, Long.valueOf(100), new BigDecimal(10), new BigDecimal(10), 
 			"55201", produtoQuatroRodas, new BigDecimal(10), false
 		);
 
@@ -126,7 +126,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		Produto produtoInfoExame = Fixture.produtoInfoExame(tipoProduto);
 		
 		ProdutoEdicao produtoEdicaoInfoExame = Fixture.produtoEdicao(
-			2L, 10, 10, new Long(100), new BigDecimal(10), new BigDecimal(10), 
+			2L, 10, 10, Long.valueOf(100), new BigDecimal(10), new BigDecimal(10), 
 			"55201", produtoInfoExame, new BigDecimal(10), false
 		);
 		
@@ -143,7 +143,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		Produto produtoCapricho = Fixture.produtoCapricho(tipoProduto);
 		
 		produtoEdicaoCapricho = Fixture.produtoEdicao(
-			2L, 10, 10, new Long(100), new BigDecimal(10), new BigDecimal(10), 
+			2L, 10, 10, Long.valueOf(100), new BigDecimal(10), new BigDecimal(10), 
 			"55201", produtoCapricho, new BigDecimal(10), false
 		);
 		
@@ -160,7 +160,7 @@ public class DescontoProdutoRepositoryImplTest extends AbstractRepositoryImplTes
 		Produto produtoSuperInteressante = Fixture.produtoSuperInteressante(tipoProduto);
 		
 		ProdutoEdicao produtoEdicaoSuperInteressante = Fixture.produtoEdicao(
-			2L, 10, 10, new Long(100), new BigDecimal(10), new BigDecimal(10), 
+			2L, 10, 10, Long.valueOf(100), new BigDecimal(10), new BigDecimal(10), 
 			"55201", produtoSuperInteressante, new BigDecimal(10), false
 		);
 		

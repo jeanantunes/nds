@@ -408,7 +408,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		politica.setAtivo(true);
 		politica.setDistribuidor(distribuidorRepository.obter());
-		politica.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
+		politica.setFatorVencimento(Integer.valueOf(parametroCobrancaDTO.getFatorVencimento().toString()));
 		politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
 		
 		formaCobranca.setDiasDoMes(parametroCobrancaDTO.getDiasDoMes());

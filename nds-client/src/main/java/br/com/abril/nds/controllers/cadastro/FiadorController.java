@@ -496,7 +496,7 @@ public class FiadorController extends BaseController {
 		Map<Integer, TelefoneAssociacaoDTO> listaTelefone = (Map<Integer, TelefoneAssociacaoDTO>) 
 				this.httpSession.getAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		
-		if (listaTelefone == null || listaTelefone.keySet().isEmpty()){
+		if (listaTelefone == null || listaTelefone.isEmpty()){
 			
 			List<TelefoneAssociacaoDTO> list = (List<TelefoneAssociacaoDTO>) 
 					this.httpSession.getAttribute(LISTA_TELEFONES_EXIBICAO);
