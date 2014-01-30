@@ -104,7 +104,7 @@ public class CotaController extends BaseController {
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
 	
-	public static final String SENHA_USUARIO_IMPRIMIR = "SENHA_USUARIO_IMPRIMIR";
+	//public static final String SENHA_USUARIO_IMPRIMIR = "SENHA_USUARIO_IMPRIMIR";
 	
 	public static final FileType[] extensoesAceitas = 
 		{FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF, FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG};
@@ -1148,12 +1148,12 @@ public class CotaController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 
-		Object attribute = session.getAttribute(SENHA_USUARIO_IMPRIMIR);
-		if(attribute==null || this.validarSenhaUsuarioLogado((String)attribute)==false){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Senha inválida.");
-		}
+		//Object attribute = session.getAttribute(SENHA_USUARIO_IMPRIMIR);
+		//if(attribute==null || this.validarSenhaUsuarioLogado((String)attribute)==false){
+			//throw new ValidacaoException(TipoMensagem.WARNING, "Senha inválida.");
+		//}
 		
-		session.removeAttribute(SENHA_USUARIO_IMPRIMIR);
+		//session.removeAttribute(SENHA_USUARIO_IMPRIMIR);
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 				
@@ -1177,6 +1177,8 @@ public class CotaController extends BaseController {
 				listaCotasVO, CotaVO.class, this.httpResponse);
 		
 		result.nothing();
+		//Boolean valido = true;
+		//result.use(Results.json()).from(valido.toString(), "senhaValida").recursive().serialize();
 	}
 
 	@Post
@@ -1184,7 +1186,7 @@ public class CotaController extends BaseController {
 		
 		Boolean valido = validarSenhaUsuarioLogado(confirmarSenhaInput);
 		
-		session.setAttribute(SENHA_USUARIO_IMPRIMIR,confirmarSenhaInput);
+		//session.setAttribute(SENHA_USUARIO_IMPRIMIR,confirmarSenhaInput);
 		
 		result.use(Results.json()).from(valido.toString(), "senhaValida").recursive().serialize();
 	}

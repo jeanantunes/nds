@@ -858,45 +858,10 @@ var MANTER_COTA = $.extend(true, {
     		return;
     	}
     	if(type){
-    		//$("#dialog-confirmarSenha").dialog({
-        		//title: "Confirmação",
-                //resizable: false,
-                //height:'auto',
-                //width:300,
-                //modal: true,
-                //open:function(){$("#confirmarSenhaInput").val("");},
-                //buttons: {
-                    //"Confirmar": function() {
-
-                        URL = contextPath +"/cadastro/cota/exportar?fileType="+type;
-                        //dialog=this;
-    					//$.postJSON(contextPath + "/cadastro/cota/validarSenha", {confirmarSenhaInput:$("#confirmarSenhaInput").val()},
-    							//function(result){
-
-    							//if(result && result.mensagens){
-		    		                        //exibirMensagem(
-		    		                        		//result.mensagens.tipoMensagem,
-		    		                        		//result.mensagens.listaMensagens
-		    		                        //);
-		    		                        //return;
-		    		                        
-		    		                //}
-		    		                
-		    		                //if(result.senhaValida=="true"){
-		    		                	window.location.href=URL;
-		    		                	$("#confirmarSenhaInput").val("");
-		    		                //}else{
-		    		                	//exibirMensagemDialog("WARNING",["Senha inválida."]);
-		    		                //}
-    		            //});
-                        
-                        
-                    //},
-                    //"Cancelar": function() {
-                        //$( this, this.workspace ).dialog( "close" );
-                    //}
-                //},
-            //});
+    		
+    		window.location = contextPath + "/cadastro/cota/exportar?fileType="+type;
+    		//$.getJSON(contextPath + "/cadastro/cota/exportar?fileType="+type,null, null);
+    		
     	}
     },
     
