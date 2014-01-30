@@ -19,6 +19,19 @@ import br.com.abril.nds.model.seguranca.Usuario;
 public interface ParciaisService {
 
 	/**
+	 * Cria um novo período parcial para determinada edição de um produto, 
+	 * a partir de uma data de recolhimento definida pelo usuário. 
+	 * 
+	 * @param idProdutoEdicao
+	 *            - identificador do produto edição
+	 * @param qtdePeriodos
+	 *            - Quantidade de períodos
+	 * @param usuario
+	 *            - Usuário
+	 */
+	void inserirNovoPeriodo(Long idProdutoEdicao, Date dataRecolhimento, Usuario usuario);
+	
+	/**
 	 * Cria novos período parcial para determinada edição de um produto
 	 * 
 	 * @param idProdutoEdicao
