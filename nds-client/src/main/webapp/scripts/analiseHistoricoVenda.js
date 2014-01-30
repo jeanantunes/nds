@@ -5,9 +5,11 @@ var analiseHistoricoVendaController = $.extend(true, {
 		var flexGridService = new FlexGridService();
 		
 		// EXPORTAÇÃO
-		$('#analiseHistoricoVendaXLS').attr('href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=XLS");
+		$('#analiseHistoricoVendaXLS', analiseHistoricoVendaController.workspace).attr(
+				'href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=XLS");
 		
-		$('#analiseHistoricoVendaPDF').attr('href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=PDF");
+		$('#analiseHistoricoVendaPDF', analiseHistoricoVendaController.workspace).attr(
+				'href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=PDF");
 		
 		analiseHistoricoVendaController.Grids = {
 				BaseHistoricoGrid : flexGridService.GridFactory.createGrid({
@@ -171,18 +173,18 @@ var analiseHistoricoVendaController = $.extend(true, {
 						width : 690,
 						height : 200
 					}
-				}),
+				})
 		};
 	},
 	
 	popularPopUpInformacoesCota : function(cotaDto){
 		if(cotaDto){
-		       $('#popUpNumeroCota').text(cotaDto.numeroCota);
-		       $('#popUpNomePessoa').text(cotaDto.nomePessoa);
-		       $('#popUpTipoCota').text(cotaDto.tipoDistribuicaoCota);
-		       $('#popUpRanking').text(cotaDto.rankId);
-		       $('#popUpFaturamentoCota').text(cotaDto.faturamentoFormatado);
-		       $('#popUpData').text(cotaDto.dataGeracaoFormat);
+		       $('#popUpNumeroCota', analiseHistoricoVendaController.workspace).text(cotaDto.numeroCota);
+		       $('#popUpNomePessoa', analiseHistoricoVendaController.workspace).text(cotaDto.nomePessoa);
+		       $('#popUpTipoCota', analiseHistoricoVendaController.workspace).text(cotaDto.tipoDistribuicaoCota);
+		       $('#popUpRanking', analiseHistoricoVendaController.workspace).text(cotaDto.rankId);
+		       $('#popUpFaturamentoCota', analiseHistoricoVendaController.workspace).text(cotaDto.faturamentoFormatado);
+		       $('#popUpData', analiseHistoricoVendaController.workspace).text(cotaDto.dataGeracaoFormat);
 		  }
 	},
 	
@@ -326,7 +328,7 @@ var analiseHistoricoVendaController = $.extend(true, {
 		        '<td width="32" align="right">' + resumo.ed6Venda + '</span></td>' +
 		        '<td width="15" >&nbsp;</td>';
 		 
-		 $('#rodapeAnaliseHistorico').html(html);
+		 $('#rodapeAnaliseHistorico', analiseHistoricoVendaController.workspace).html(html);
 		 
 		 return result;
 	},
@@ -336,9 +338,9 @@ var analiseHistoricoVendaController = $.extend(true, {
 			reparteMedio = 0,
 			vendaMedia = 0;
 
-		if (typeof edicoesEscolhidas_HistogramaVenda !== "undefined") {
+		if (typeof histogramaVendasController.edicoesEscolhidas_HistogramaVenda !== "undefined") {
 			// EMS 2029
-			 qtdEdicoes = edicoesEscolhidas_HistogramaVenda.length;
+			 qtdEdicoes = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
 		}else{
 			// EMS 2028
 			qtdEdicoes = historicoVendaController.Grids.EdicaoSelecionadaGrid.tableModel.rows.length;

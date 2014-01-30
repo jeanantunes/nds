@@ -768,12 +768,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.mostrarBotoesAcao = function() {
 		
-		$(".areaBts").find(".bt_novos", _workspace).show();
+		$(".areaBts",_workspace).find(".bt_novos", _workspace).show();
 	},
 	
 	this.esconderBotoesAcao = function() {
 		
-		$(".areaBts").find(".bt_novos", _workspace).hide();
+		$(".areaBts",_workspace).find(".bt_novos", _workspace).hide();
 	},
 	
 	

@@ -98,15 +98,20 @@ public class FornecedorRepositoryImpl extends
 	public List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, 
 																Origem origem) {
 
-		String hql = "from Fornecedor fornecedor "
-				+ " join fetch fornecedor.juridica "
+		String hql = "select fornecedor from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica juridica "
 				+ " where fornecedor.situacaoCadastro = :situacaoCadastro "
-				+ " and fornecedor.origem = :origem ";
+				+ " and fornecedor.fornecedorUnificador is null ";
+	
+		if(origem != null)
+			hql += " and fornecedor.origem = :origem ";
 
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("situacaoCadastro", situacaoCadastro);
-		query.setParameter("origem", origem);
+		
+		if(origem != null)
+			query.setParameter("origem", origem);
 
 		return query.list();
 	}
@@ -325,6 +330,21 @@ public class FornecedorRepositoryImpl extends
 		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
 		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
 		return  criteria.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public ItemDTO<Long, String> obterNome(Long id){
+		Criteria criteria = getSession().createCriteria(Fornecedor.class);
+		
+		criteria.createAlias("juridica","juridica");
+		
+		criteria.add(Restrictions.idEq(id));
+		
+		
+		criteria.setProjection(Projections.projectionList().add(Projections.id(), "key").add(Projections.property("juridica.razaoSocial"), "value"));
+		criteria.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		return  (ItemDTO<Long, String>) criteria.uniqueResult();
 	}
 	
 

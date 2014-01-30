@@ -211,12 +211,12 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(FiltroProdutoDTO filtro,
-			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
-			BigDecimal precoAte , StatusLancamento situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, Double precoDe,
+			Double precoAte , StatusLancamento situacaoLancamento,
 			String codigoDeBarras, boolean brinde, ModoTela modoTela,
             String sortorder, String sortname, int page, int rp) {
 		
-		Intervalo<BigDecimal> intervaloPreco = null;
+		Intervalo<Double> intervaloPreco = null;
 		Intervalo<Date> intervaloLancamento = null;
 		
 		// Validar:
@@ -236,7 +236,7 @@ public class ProdutoEdicaoController extends BaseController {
 			if(precoDe.compareTo(precoAte) > 0){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
-			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
+			intervaloPreco = new Intervalo<Double>(precoDe, precoAte);
 		}	
 	
 		// Pesquisar:
@@ -308,7 +308,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			vo = e.getValidacao();
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
 		
@@ -400,7 +400,7 @@ public class ProdutoEdicaoController extends BaseController {
 				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false);
 				
 			} 
-			catch (Throwable e) {
+			catch (Exception e) {
 				
 				listaMensagem.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
 			

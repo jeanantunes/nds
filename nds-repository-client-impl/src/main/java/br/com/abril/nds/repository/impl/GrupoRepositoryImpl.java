@@ -137,7 +137,7 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	}
 	
 	@Override
-	public String obterNomeGrupoPorMunicipio(String municipio) {
+	public String obterNomeGrupoPorMunicipio(String municipio, Long idGrupoIgnorar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -145,9 +145,18 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		   .append(" join grupoCota.municipios mun ")
 		   .append(" where :municipio in (mun) ");
 		
+		if (idGrupoIgnorar != null){
+			
+			hql.append(" and grupoCota.id != :idGrupoIgnorar ");
+		}
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("municipio", municipio);
+		if (idGrupoIgnorar != null){
+			
+			query.setParameter("idGrupoIgnorar", idGrupoIgnorar);
+		}
 		
 		return (String) query.uniqueResult();
 	}

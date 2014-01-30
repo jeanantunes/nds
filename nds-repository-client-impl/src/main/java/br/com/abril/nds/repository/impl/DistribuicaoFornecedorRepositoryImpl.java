@@ -148,9 +148,9 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryMode
 			criteria = this.getSession().createCriteria(DistribuicaoFornecedor.class);
 
 			// Antes de inserir, exclui todos os registros do fornecedor, para sobrescrever os dias de lançamento e recolhimento
-			if (fornecedor == null || !fornecedor.equals(distribuicaoFornecedor.getFornecedor())) {
+			if (fornecedor == null || !fornecedor.getId().equals(distribuicaoFornecedor.getFornecedor().getId())) {
 				fornecedor = distribuicaoFornecedor.getFornecedor();
-				criteria.add(Restrictions.eq("fornecedor", fornecedor));
+				criteria.add(Restrictions.eq("fornecedor.id", fornecedor.getId()));
 				listaExclusao = criteria.list();
 				for (DistribuicaoFornecedor registro : listaExclusao) {
 					this.getSession().delete(registro);

@@ -56,39 +56,67 @@ public class FiltroAreaInfluenciaGeradorFluxoDTO {
 	}
 
 	@Override
-	public boolean equals(Object object) {
-		if (this == object)
-			return true;
-		
-		if (object == null) 
-			return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((areaInfluenciaId == null) ? 0 : areaInfluenciaId.hashCode());
+		result = prime * result + (cotasAtivas ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((geradorFluxoPrincipalId == null) ? 0
+						: geradorFluxoPrincipalId.hashCode());
+		result = prime
+				* result
+				+ ((geradorFluxoSecundarioId == null) ? 0
+						: geradorFluxoSecundarioId.hashCode());
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result
+				+ ((numeroCota == null) ? 0 : numeroCota.hashCode());
+		return result;
+	}
 
-		if (this.getClass() != object.getClass())
-			return false;
-		
-		FiltroAreaInfluenciaGeradorFluxoDTO other = (FiltroAreaInfluenciaGeradorFluxoDTO) object;
-		
-		String novoNomeCota = "";
-		String nomeCota = "";
-		
-		if (other.getNomeCota() != null) {
-			novoNomeCota = other.getNomeCota(); 	
-		}
-		
-		if (this.getNomeCota() != null) {
-			nomeCota = this.getNomeCota();
-		}
-		
-		if (this.getNumeroCota() == other.getNumeroCota() &&
-			nomeCota.equals(novoNomeCota) &&
-			this.getAreaInfluenciaId() == other.getAreaInfluenciaId() &&
-			this.getGeradorFluxoPrincipalId() == other.getGeradorFluxoPrincipalId() &&
-			this.getGeradorFluxoSecundarioId() == other.getGeradorFluxoSecundarioId() &&
-			this.isCotasAtivas() == other.isCotasAtivas()) {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}else {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroAreaInfluenciaGeradorFluxoDTO other = (FiltroAreaInfluenciaGeradorFluxoDTO) obj;
+		if (areaInfluenciaId == null) {
+			if (other.areaInfluenciaId != null)
+				return false;
+		} else if (!areaInfluenciaId.equals(other.areaInfluenciaId))
+			return false;
+		if (cotasAtivas != other.cotasAtivas)
+			return false;
+		if (geradorFluxoPrincipalId == null) {
+			if (other.geradorFluxoPrincipalId != null)
+				return false;
+		} else if (!geradorFluxoPrincipalId
+				.equals(other.geradorFluxoPrincipalId))
+			return false;
+		if (geradorFluxoSecundarioId == null) {
+			if (other.geradorFluxoSecundarioId != null)
+				return false;
+		} else if (!geradorFluxoSecundarioId
+				.equals(other.geradorFluxoSecundarioId))
+			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (numeroCota == null) {
+			if (other.numeroCota != null)
+				return false;
+		} else if (!numeroCota.equals(other.numeroCota))
+			return false;
+		return true;
 	}
 	
 	

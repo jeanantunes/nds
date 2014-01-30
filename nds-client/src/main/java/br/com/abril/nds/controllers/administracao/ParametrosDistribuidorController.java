@@ -387,9 +387,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	    }
 	    if (vo.getCnpj() == null || vo.getCnpj().trim().isEmpty()) {
 	        erros.add("É necessário informar o CNPJ!");
+	    }else{
+	    	this.pessoaService.validarCNPJ(vo.getCnpj());
 	    }
-	    
-	    this.pessoaService.validarCNPJ(vo.getCnpj());
 	    
 	    if (vo.getInscricaoEstadual() == null || vo.getInscricaoEstadual().trim().isEmpty()) {
 	        erros.add("É necessário informar a Insc. Estadual!");

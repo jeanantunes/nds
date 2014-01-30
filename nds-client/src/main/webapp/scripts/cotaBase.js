@@ -479,7 +479,7 @@ var cotaBaseController = $.extend(true, {
 	
 	atribuirDadosCota:function(resultado, index){
 		
-		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+')">'+resultado.nomeCota+'</a>';
+		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+','+resultado.idCota+')">'+resultado.nomeCota+'</a>';
 		$("#nomeCotaGrid"+index, cotaBaseController.workspace).html(linkFotoPDV);
 		
  		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text(resultado.tipoPDV);
@@ -781,8 +781,24 @@ var cotaBaseController = $.extend(true, {
 							 {name:"modoTela", value: ModoTela.CADASTRO_COTA.value}], 
 							 function(result){						
 								if(result.pdvDTO.pathImagem) {
-				                    $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                    $("#idImagem", "#dialog-foto-pdv").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                    
+				                }else{
+				                	 $("#idImagem", "#dialog-foto-pdv").attr("src",contextPath + "/images/pdv/no_image.jpeg");
 				                }
+								
+								$("#idNomePdv", "#dialog-foto-pdv").html(result.pdvDTO.nomePDV);
+								$( "#dialog-foto-pdv" ).dialog({
+									resizable: false,
+									height:540,
+									width:670,
+									modal: true,
+									buttons: {
+										"Fechar": function() {
+											$( this ).dialog( "close" );
+										},
+									}
+								});
 						
 					},null,true);
 					
@@ -793,17 +809,7 @@ var cotaBaseController = $.extend(true, {
 		);
 		
 
-		$( "#dialog-foto-pdv" ).dialog({
-			resizable: false,
-			height:540,
-			width:670,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-				},
-			}
-		});
+		
 	},	
 
 	detalhesEquivalente : function(numeroCota, nomeCota) {

@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -333,7 +335,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Path("gerarEstudo")
     @Post
-    public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento) throws Exception {
+    public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao, Long idLancamento, String dataLancamento) throws Exception {
 	EstudoTransient estudo = null;
 	int qtdEdicoesAbertas = 0;
 
@@ -353,10 +355,17 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	if (qtdEdicoesAbertas > 1) {
 	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
 	}
-
+    
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 	produto.setNumeroEdicao(numeroEdicao);
 	produto.setIdLancamento(idLancamento);
+	
+	try {
+		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
+		} catch (ParseException e) {
+		    throw new Exception("Data de lançamento em formato incorreto.");
+		}
+	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 

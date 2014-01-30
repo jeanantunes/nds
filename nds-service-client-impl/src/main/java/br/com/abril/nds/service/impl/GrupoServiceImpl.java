@@ -220,7 +220,7 @@ public class GrupoServiceImpl implements GrupoService {
 					if (cota.getEnderecoPrincipal() != null){
 						
 						nomeGrupo = this.grupoRepository.obterNomeGrupoPorMunicipio(
-							cota.getEnderecoPrincipal().getEndereco().getCidade());
+							cota.getEnderecoPrincipal().getEndereco().getCidade(), null);
 					}
 				}
 				
@@ -235,7 +235,7 @@ public class GrupoServiceImpl implements GrupoService {
 			
 			for (String municipio : municipios){
 				
-				String nomeGrupo = this.grupoRepository.obterNomeGrupoPorMunicipio(municipio);
+				String nomeGrupo = this.grupoRepository.obterNomeGrupoPorMunicipio(municipio, idGrupo);
 				
 				if (nomeGrupo == null){
 					

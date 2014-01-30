@@ -11,64 +11,6 @@ $(function() {
   historicoVendaController.init();
 });
 
-var allFilters = ".filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotas, .filtroPercVenda, .filtroTodasAsCotas";
-
-function filtroTodasAsCotas(){
-  $(allFilters).hide();
-  $(".filtroTodasAsCotas").show();
-  
-}
-
-function filtroReparte(){
-  $(allFilters).hide();
-  $('.filtroQtdeReparte').show();
-  
-  this.limparInputsFiltro(false, false, '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', '#componente', '#elemento', '#numeroCota', '#nomePessoa');
-}
-  
-function filtroVenda(){
-  $(allFilters).hide();
-  $('.filtroQtdeVenda').show();
-  
-  this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', false, false, '#percentualVenda', '#componente', '#elemento', '#numeroCota', '#nomePessoa');
-  }
-  
-function filtroComponentes(){
-  $(allFilters).hide();
-  $('.filtroComponentes').show();
-  
-  this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', false, false, '#numeroCota', '#nomePessoa');
-  }
-  
-function filtroCotas(){
-
-  $(allFilters).hide();
-  $('.filtroCotas').show();
-  
-  this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', '#componente', '#elemento', false, false);
-  }
-  
-function filtroPercVenda(){
-
-  $(allFilters).hide();
-  $('.filtroPercVenda').show();
-  
-  this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', '#qtdVendaFinal', false, '#componente', '#elemento', '#numeroCota', '#nomePessoa');
-  }
-  
-function limparInputsFiltro(input1, input2, input3, input4, input5, input6, input7, input8, input9){
-  $(input1).val("");
-  $(input2).val("");
-  $(input3).val("");
-  $(input4).val("");
-  $(input5).val("");
-  $(input6).val("");
-  $(input7).val("");
-  $(input8).val("");
-  $(input9).val("");
-  }
-
-
 </script>
 <style type="text/css">
 .filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotas, .filtroPercVenda, .filtroTodasAsCotas{display:none;}
@@ -191,7 +133,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
                 <table width="410" border="0" cellpadding="2" cellspacing="1">
                   <tr>
                     <td width="20">
-                      <input type="radio" name="filtroPor" id="radio3" value="radio" onclick="filtroReparte();" />
+                      <input type="radio" name="filtroPor" id="radio3" value="radio" onclick="historicoVendaController.filtroReparte();" />
                     </td>
                     <td width="87">
                       <label for="radio3"> <strong>Qtde Reparte:</strong>
@@ -217,7 +159,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
                   </tr>
                   <tr>
                     <td>
-                      <input type="radio" name="filtroPor" id="radio4" value="radio" onclick="filtroVenda();" />
+                      <input type="radio" name="filtroPor" id="radio4" value="radio" onclick="historicoVendaController.filtroVenda();" />
                     </td>
                     <td>
                       <label for="radio4">
@@ -244,7 +186,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
                   </tr>
                   <tr>
                     <td>
-                      <input type="radio" name="filtroPor" id="radio5" value="radio" onclick="filtroPercVenda();" />
+                      <input type="radio" name="filtroPor" id="radio5" value="radio" onclick="historicoVendaController.filtroPercVenda();" />
                     </td>
                     <td>
                       <label for="radio5">
@@ -270,7 +212,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
                 <table width="410" border="0" cellpadding="2" cellspacing="1">
                   <tr>
                     <td width="20">
-                      <input type="radio" name="filtroPor" id="radio9" value="radio" onclick="filtroComponentes();" />
+                      <input type="radio" name="filtroPor" id="radio9" value="radio" onclick="historicoVendaController.filtroComponentes();" />
                     </td>
                     <td width="69">
                       <label for="radio9">
@@ -309,7 +251,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
                 <table width="410" border="0" cellpadding="2" cellspacing="1">
                   <tr>
                     <td width="20">
-                      <input type="radio" name="filtroPor" id="radio6" value="radio" onclick="filtroCotas();" />
+                      <input type="radio" name="filtroPor" id="radio6" value="radio" onclick="historicoVendaController.filtroCotas();" />
                     </td>
                     <td width="27">
                       <label for="radio6">
@@ -338,7 +280,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
                 <table width="410" border="0" cellpadding="2" cellspacing="1">
                   <tr>
                     <td width="20">
-                      <input type="radio" name="filtroPor" id="todasAsCotasFiltro" value="radio" onclick="filtroTodasAsCotas()" />
+                      <input type="radio" name="filtroPor" id="todasAsCotasFiltro" value="radio" onclick="historicoVendaController.filtroTodasAsCotas()" />
                     </td>
                     <td>
                       <label for="todasAsCotasFiltro">

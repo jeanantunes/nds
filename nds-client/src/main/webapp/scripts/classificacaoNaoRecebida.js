@@ -804,7 +804,7 @@
 		$('#porCota_nomeCota', classificacaoNaoRecebidaController.workspace).val(null);
 		$('#classificacaoNaoRecebida_filtroPorCota', classificacaoNaoRecebidaController.workspace).show();
 		$('#classificacaoNaoRecebida_filtroPorClassificacao', classificacaoNaoRecebidaController.workspace).hide();
-		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
+		$('.porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
 		$('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).val('');
 		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).val('');
 	},
@@ -813,7 +813,7 @@
 		$('#selectClassificacao', classificacaoNaoRecebidaController.workspace).val(null);
 		$('#classificacaoNaoRecebida_filtroPorCota', classificacaoNaoRecebidaController.workspace).hide();
 		$('#classificacaoNaoRecebida_filtroPorClassificacao', classificacaoNaoRecebidaController.workspace).show();
-		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).hide();	
+		$('.porCota', classificacaoNaoRecebidaController.workspace).hide();	
 		$('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).val('');
 		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).val('');
 	},
