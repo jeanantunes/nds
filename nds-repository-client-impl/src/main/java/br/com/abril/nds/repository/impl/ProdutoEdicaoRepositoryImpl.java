@@ -1111,7 +1111,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" from " +
 				" ( select DISTINCT " +
 				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
-				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida) /:qtdEdicoes) else 0 end as vdEsmag," +
+				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
 				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
