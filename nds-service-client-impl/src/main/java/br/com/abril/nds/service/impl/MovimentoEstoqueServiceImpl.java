@@ -202,6 +202,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 			
+			if (estudoCota.getQtdeEfetiva() == null || BigInteger.ZERO.equals(estudoCota.getQtdeEfetiva())) {
+				
+				continue;
+			}
+
 			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,

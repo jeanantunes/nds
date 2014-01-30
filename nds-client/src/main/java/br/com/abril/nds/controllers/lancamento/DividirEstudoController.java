@@ -228,6 +228,8 @@ public class DividirEstudoController extends BaseController {
 	    else if (TipoMensagem.WARNING.equals(tipoMensagem))
 	    	throw new ValidacaoException(new ValidacaoVO(tipoMensagem, mensagensValidacao));
 	}
+	
+	this.result.nothing();
 
     }
 
