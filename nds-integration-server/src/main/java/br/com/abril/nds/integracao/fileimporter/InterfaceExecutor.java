@@ -178,7 +178,7 @@ public class InterfaceExecutor {
 			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			this.processadoComSucesso = false;
 			t.printStackTrace();
 		} finally {
@@ -306,7 +306,7 @@ public class InterfaceExecutor {
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.SUCESSO, null);
 					arquivo.delete();
 					
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.FALHA, e.getMessage());
 					e.printStackTrace();
@@ -486,7 +486,7 @@ public class InterfaceExecutor {
 				saveOrUpdate(couchDbClient, doc);
 			}
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		

@@ -53,7 +53,7 @@ public class ValidacaoInterceptor implements Interceptor {
 		try {			
 			stack.next(method, resourceInstance);
 			
-		} catch (Throwable throwable ) {
+		} catch (Exception throwable ) {
 			
 			logger.error(throwable.getMessage(), throwable);
 			

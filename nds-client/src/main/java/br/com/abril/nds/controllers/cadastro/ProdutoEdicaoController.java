@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -86,6 +86,9 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Autowired
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Autowired
 	private ProdutoService prodService;
@@ -305,7 +308,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			vo = e.getValidacao();
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
 		
@@ -397,7 +400,7 @@ public class ProdutoEdicaoController extends BaseController {
 				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false);
 				
 			} 
-			catch (Throwable e) {
+			catch (Exception e) {
 				
 				listaMensagem.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
 			
@@ -491,6 +494,24 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		if(codigoProduto == null) {
 			listaMensagens.add("Código do produto inválido!");
+		}
+		
+		if(dto.getDataLancamentoPrevisto()!=null) {
+			if (!this.calendarioService.isDiaUtil(dto.getDataLancamentoPrevisto())) {
+				listaMensagens.add("Data de lançamento prevista inválida!");
+			}
+		}
+		
+		if(dto.getDataLancamento()!=null) {
+			if (!this.calendarioService.isDiaUtil(dto.getDataLancamento())) {
+				listaMensagens.add("Data de lançamento inválida!");
+			}
+		}
+		
+		if(dto.getDataRecolhimentoPrevisto()!=null) {
+			if (!this.calendarioService.isDiaUtil(dto.getDataRecolhimentoPrevisto())) {
+				listaMensagens.add("Data de recolhimento inválida!");
+			}
 		}
 		
 		if(dto.getId()!=null) {
