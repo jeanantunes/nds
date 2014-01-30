@@ -101,9 +101,9 @@ var lancamentosSelecionados = [];
        	  					</div>
 						        	
 		         	  		<span class="bt_novos">
-			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();"  title="Finalizar Matriz de Distribui&ccedil&atildeo">
-		         	  					<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0"/>
-			         	  			</a>
+			         	  			<!-- a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();"  title="Finalizar Matriz de Distribui&ccedil&atildeo"  -->
+		         	  					<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" disabled/>
+			         	  			<!--/a -->
 		         	  		</span>	
 		         	  		
 <!-- 		         	  		<span class="bt_novos"> -->
@@ -225,11 +225,11 @@ var lancamentosSelecionados = [];
 			       	   	<span align="center"><h3>MATRIZ FINALIZADA</h3></span>
 						<br clear="all" />
 						<span class="bt_novos">
-				         	<!-- a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();" -->
-						        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" disabled>
+				         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();">
+						        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
 						         	 Reabrir Matriz
 						        </img>
-				         	<!-- /a  -->
+				         	</a>
 				     	</span>		    
 			    	</div> 
 			      
