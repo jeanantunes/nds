@@ -106,7 +106,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 							return null;
 						}
 					});
-				} catch(Throwable e) {
+				} catch(Exception e) {
 					ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 					e.printStackTrace();
 				}
