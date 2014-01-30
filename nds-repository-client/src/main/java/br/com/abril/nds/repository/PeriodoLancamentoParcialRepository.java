@@ -100,5 +100,27 @@ public interface PeriodoLancamentoParcialRepository extends
 	List<PeriodoLancamentoParcial> obterProximosPeriodos(Integer numeroPeriodo,Long idLancamentoParcial) ;
 	
 	boolean isLancamentoConferenciaEncalheCotaPeriodoFinal(Long idProdutoEdicao,Long idCota,Date dataRecolhimento);
+	
+	/**
+	 * Obtém o primeiro período antes da data de recolhimento especificada.
+	 * 
+	 * @param dataRecolhimento
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return PeriodoLancamentoParcial
+	 */
+	PeriodoLancamentoParcial obterPeriodoAnterior(Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Obtém o primeiro período após a data de recolhimento especificada.
+	 * 
+	 * @param dataRecolhimento
+	 * 
+	 * @param idProdutoEdicao
+	 * 
+	 * @return PeriodoLancamentoParcial
+	 */
+	PeriodoLancamentoParcial obterPeriodoPosterior(Date dataRecolhimento, Long idProdutoEdicao);
 }
 

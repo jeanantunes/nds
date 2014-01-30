@@ -15,43 +15,49 @@ var ParciaisController = $.extend(true, {
 	idLancamentoRedistribuicao:null,
 	
 	init : function() {
-		$( "#dataLancamentoEd", this.workspace).datepicker({
+		$( "#dataLancamentoEd", ParciaisController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataRecolhimentoEd", this.workspace).datepicker({
+		$( "#dataRecolhimentoEd", ParciaisController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataInicial", this.workspace).datepicker({
+		$( "#dataInicial", ParciaisController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-		$( "#dataFinal", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$( "#lancamentoNovaRed", this.workspace).datepicker({
+		$( "#dataFinal", ParciaisController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
 		
-		$('#dataLancamentoEd', this.workspace).mask("99/99/9999");
-		$('#dataRecolhimentoEd', this.workspace).mask("99/99/9999");
-		$('#dataInicial', this.workspace).mask("99/99/9999");
-		$('#dataFinal', this.workspace).mask("99/99/9999");
-		$('#lancamentoNovaRed', this.workspace).mask("99/99/9999");
+		$( "#lancamentoNovaRed", ParciaisController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$( "#dataRecolhimentoManual", ParciaisController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly: true
+		});
+		
+		$('#dataLancamentoEd', ParciaisController.workspace).mask("99/99/9999");
+		$('#dataRecolhimentoEd', ParciaisController.workspace).mask("99/99/9999");
+		$('#dataInicial', ParciaisController.workspace).mask("99/99/9999");
+		$('#dataFinal', ParciaisController.workspace).mask("99/99/9999");
+		$('#lancamentoNovaRed', ParciaisController.workspace).mask("99/99/9999");
 
-		$("#nomeProduto", this.workspace).autocomplete({source: ""});
-		$("#edicaoProduto", this.workspace).autocomplete({source: ""});
+		$("#nomeProduto", ParciaisController.workspace).autocomplete({source: ""});
+		$("#edicaoProduto", ParciaisController.workspace).autocomplete({source: ""});
 		
-		this.inicializarGrids();
+		ParciaisController.inicializarGrids();
 	},
 	
 	/**
@@ -59,45 +65,45 @@ var ParciaisController = $.extend(true, {
 	 */
 	cliquePesquisar : function() {
 		
-		if(this.get('codigoProduto').length!=0 && this.get('edicaoProduto').length!=0) {
-			$('#painelLancamentos',this.workspace).hide();
-			$('#painelPeriodos',this.workspace).show();	
+		if(ParciaisController.get('codigoProduto').length!=0 && ParciaisController.get('edicaoProduto').length!=0) {
+			$('#painelLancamentos',ParciaisController.workspace).hide();
+			$('#painelPeriodos',ParciaisController.workspace).show();	
 			
 			
-			this.codigoProduto = this.get('codigoProduto');
-			this.numEdicao = this.get('edicaoProduto');
+			ParciaisController.codigoProduto = ParciaisController.get('codigoProduto');
+			ParciaisController.numEdicao = ParciaisController.get('edicaoProduto');
 			
-			this.pesquisarPeriodosParciais();
+			ParciaisController.pesquisarPeriodosParciais();
 		} else {
-			$('#painelPeriodos',this.workspace).hide();
-			$('#painelLancamentos',this.workspace).show();
-			this.pesquisarLancamentosParciais();
+			$('#painelPeriodos',ParciaisController.workspace).hide();
+			$('#painelLancamentos',ParciaisController.workspace).show();
+			ParciaisController.pesquisarLancamentosParciais();
 		}		
 	},
 	
 	pesquisarLancamentosParciais : function() {
 		
-		$(".parciaisGrid",this.workspace).flexOptions({			
+		$(".parciaisGrid",ParciaisController.workspace).flexOptions({			
 			url : contextPath + "/parciais/pesquisarParciais",
 			dataType : 'json',
-			preProcess: this.processaRetornoPesquisaParciais,
-			params:this.getDados()
+			preProcess: ParciaisController.processaRetornoPesquisaParciais,
+			params:ParciaisController.getDados()
 		});
 		
-		$(".parciaisGrid", this.workspace).flexReload();
+		$(".parciaisGrid", ParciaisController.workspace).flexReload();
 	},
 	
 	pesquisarPeriodosParciais : function() {
 		
-		$(".periodosGrid",this.workspace).flexOptions({
-			onSuccess: function() {bloquearItensEdicao(this.workspace);},
+		$(".periodosGrid",ParciaisController.workspace).flexOptions({
+			onSuccess: function() {bloquearItensEdicao(ParciaisController.workspace);},
 			url : contextPath + "/parciais/pesquisarPeriodosParciais",
 			dataType : 'json',
-			preProcess: this.processaRetornoPeriodosParciais,
-			params:this.getDados()
+			preProcess: ParciaisController.processaRetornoPeriodosParciais,
+			params:ParciaisController.getDados()
 		});
 		
-		$(".periodosGrid",this.workspace).flexReload();
+		$(".periodosGrid",ParciaisController.workspace).flexReload();
 		
 	},
 
@@ -108,15 +114,15 @@ var ParciaisController = $.extend(true, {
 		data.push({name: 'filtro.codigoProduto',	value: codigoProduto});
 		data.push({name: 'filtro.edicaoProduto',	value: numEdicao});
 		
-		$(".parciaisPopGrid",this.workspace).flexOptions({	
-			onSuccess: function() {bloquearItensEdicao(this.workspace);},
+		$(".parciaisPopGrid",ParciaisController.workspace).flexOptions({	
+			onSuccess: function() {bloquearItensEdicao(ParciaisController.workspace);},
 			url : contextPath + "/parciais/pesquisarPeriodosParciais",
 			dataType : 'json',
-			preProcess: this.processaRetornoPeriodosParciaisModal,
+			preProcess: ParciaisController.processaRetornoPeriodosParciaisModal,
 			params:data
 		});
 		
-		$(".parciaisPopGrid",this.workspace).flexReload();
+		$(".parciaisPopGrid",ParciaisController.workspace).flexReload();
 		
 	},
 	
@@ -126,45 +132,60 @@ var ParciaisController = $.extend(true, {
 	
 		data.push({name: 'idPeriodo',	value: idPeriodo});
 		
-		$(".parciaisRedistribuicaoGrid",this.workspace).flexOptions({	
-			onSuccess: function() {bloquearItensEdicao(this.workspace);},
+		$(".parciaisRedistribuicaoGrid",ParciaisController.workspace).flexOptions({	
+			onSuccess: function() {bloquearItensEdicao(ParciaisController.workspace);},
 			url : contextPath + "/parciais/pesquisarRedistribuicao",
 			dataType : 'json',
-			preProcess: this.processaRetornoRedistribuicaoPeriodo,
+			preProcess: ParciaisController.processaRetornoRedistribuicaoPeriodo,
 			params:data
 		});
 		
-		$(".parciaisRedistribuicaoGrid",this.workspace).flexReload();
+		$(".parciaisRedistribuicaoGrid",ParciaisController.workspace).flexReload();
 	},
 
-	inserirPeriodos : function(modal) {
-		$.postJSON(contextPath + "/parciais/inserirPeriodos",
-				this.getDadosNovosPeriodo(),
-				function(result){
-					$( "#dialog-novo",this.workspace).dialog( "close" );
-					if(modal)
-						$(".parciaisPopGrid",this.workspace).flexReload();
-					else
-						$(".periodosGrid",this.workspace).flexReload();
-				},
-				null, 
-				true,
-				"dialog-detalhes");
-		
-		
+	inserirPeriodo : function(modal) {
+		$.postJSON(contextPath + "/parciais/inserirPeriodo",
+			ParciaisController.getDadosNovoPeriodoManual(),
+			function(result){
+				$( "#dialog-novo-manual",ParciaisController.workspace).dialog( "close" );
+				if(modal)
+					$(".parciaisPopGrid",ParciaisController.workspace).flexReload();
+				else
+					$(".periodosGrid",ParciaisController.workspace).flexReload();
+			},
+			null, 
+			true,
+			"dialog-detalhes"
+		);
 	},
 
+	gerarPeriodosParcias : function(modal) {
+		$.postJSON(contextPath + "/parciais/gerarPeriodosParcias",
+			ParciaisController.getDadosNovosPeriodo(),
+			function(result){
+				$( "#dialog-novo",ParciaisController.workspace).dialog( "close" );
+				if(modal)
+					$(".parciaisPopGrid",ParciaisController.workspace).flexReload();
+				else
+					$(".periodosGrid",ParciaisController.workspace).flexReload();
+			},
+			null, 
+			true,
+			"dialog-detalhes"
+		);
+	},
+	
 	processaRetornoPesquisaParciais : function(result) {
 		
-		$('#exportacaoPeriodos',this.workspace).hide();
+		$('#exportacaoPeriodos',ParciaisController.workspace).hide();
 		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 		
 		if(result.rows.length==0) {
-			$("#exportacao",this.workspace).hide();
+			$("#exportacao",ParciaisController.workspace).hide();
 		} else {
-			$("#exportacao",this.workspace).show();
+			$("#exportacao",ParciaisController.workspace).show();
 		}
 		
 		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoPrincipal(index,row);} );
@@ -174,16 +195,16 @@ var ParciaisController = $.extend(true, {
 	
 	processaRetornoPeriodosParciais : function(result) {
 		
-		$("#exportacao",this.workspace).hide();
+		$("#exportacao",ParciaisController.workspace).hide();
 		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 			
 		
 		if(result.rows.length==0) {
-			$('#exportacaoPeriodos',this.workspace).hide();
+			$('#exportacaoPeriodos',ParciaisController.workspace).hide();
 		} else {
-			$('#exportacaoPeriodos',this.workspace).show();
+			$('#exportacaoPeriodos',ParciaisController.workspace).show();
 			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		var indexUtimoRegistro = result.rows.length -1 ;
@@ -202,15 +223,15 @@ var ParciaisController = $.extend(true, {
 				exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens, "dialog-detalhes");
 					
 		if(result.rows.length==0) {
-			$('#exportacaoPeriodosModal',this.workspace).hide();
+			$('#exportacaoPeriodosModal',ParciaisController.workspace).hide();
 		} else {
-			$('#exportacaoPeriodosModal',this.workspace).show();
+			$('#exportacaoPeriodosModal',ParciaisController.workspace).show();
 		}
 		
 		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
-			$("#btnIncluirPeriodosModal",this.workspace).hide();
+			$("#btnIncluirPeriodosModal",ParciaisController.workspace).hide();
 		else
-			$("#btnIncluirPeriodosModal",this.workspace).show();		
+			$("#btnIncluirPeriodosModal",ParciaisController.workspace).show();		
 		
 		var indexUtimoRegistro = result.rows.length -1 ;
 		var isExcluir = false;
@@ -252,13 +273,13 @@ var ParciaisController = $.extend(true, {
 	
 		var data = [];
 		
-		data.push({name:'filtro.codigoProduto',		value: this.get("codigoProduto")});
-		data.push({name:'filtro.nomeProduto',		value: this.get("nomeProduto")});
-		data.push({name:'filtro.edicaoProduto',		value: this.get("edicaoProduto")});
-		data.push({name:'filtro.idFornecedor',		value: this.get("idFornecedor")});
-		data.push({name:'filtro.dataInicial',		value: this.get("dataInicial")});
-		data.push({name:'filtro.dataFinal',			value: this.get("dataFinal")});
-		data.push({name:'filtro.status',			value: this.get("status")});
+		data.push({name:'filtro.codigoProduto',		value: ParciaisController.get("codigoProduto")});
+		data.push({name:'filtro.nomeProduto',		value: ParciaisController.get("nomeProduto")});
+		data.push({name:'filtro.edicaoProduto',		value: ParciaisController.get("edicaoProduto")});
+		data.push({name:'filtro.idFornecedor',		value: ParciaisController.get("idFornecedor")});
+		data.push({name:'filtro.dataInicial',		value: ParciaisController.get("dataInicial")});
+		data.push({name:'filtro.dataFinal',			value: ParciaisController.get("dataFinal")});
+		data.push({name:'filtro.status',			value: ParciaisController.get("status")});
 		
 		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected').text()});
 		
@@ -269,9 +290,19 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'peb',				value: this.get("peb")});
-		data.push({name:'qtde',				value: this.get("qtde")});
-		data.push({name:'idProdutoEdicao',	value: this.idProdutoEdicao});
+		data.push({name:'peb',				value: ParciaisController.get("peb")});
+		data.push({name:'qtde',				value: ParciaisController.get("qtde")});
+		data.push({name:'idProdutoEdicao',	value: ParciaisController.idProdutoEdicao});
+		
+		return data;
+	},
+	
+	getDadosNovoPeriodoManual: function() {
+		
+		var data = [];
+
+		data.push({name:'dataRecolhimento',	value: ParciaisController.get("dataRecolhimentoManual")});
+		data.push({name:'idProdutoEdicao',	value: ParciaisController.idProdutoEdicao});
 		
 		return data;
 	},
@@ -280,9 +311,9 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'codigoProduto',		value: this.codigoProduto});
-		data.push({name:'edicaoProduto',		value: this.numEdicao});
-		data.push({name:'periodos',				value: this.get("qtde")});
+		data.push({name:'codigoProduto',		value: ParciaisController.codigoProduto});
+		data.push({name:'edicaoProduto',		value: ParciaisController.numEdicao});
+		data.push({name:'periodos',				value: ParciaisController.get("qtde")});
 		return data;
 	},
 	
@@ -290,9 +321,9 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'dataLancamento',		value: this.get('dataLancamentoEd')});
-		data.push({name:'dataRecolhimento',		value: this.get('dataRecolhimentoEd')});
-		data.push({name:'idLancamento',			value: this.idLancamento});	
+		data.push({name:'dataLancamento',		value: ParciaisController.get('dataLancamentoEd')});
+		data.push({name:'dataRecolhimento',		value: ParciaisController.get('dataRecolhimentoEd')});
+		data.push({name:'idLancamento',			value: ParciaisController.idLancamento});	
 		
 		return data;
 	},
@@ -301,20 +332,40 @@ var ParciaisController = $.extend(true, {
 	
 		var data = [];
 		
-		data.push({name:'redistribuicaoDTO.dataLancamento',		value: this.get('lancamentoNovaRed')});
-		data.push({name:'redistribuicaoDTO.dataRecolhimento',	value: $("#dataRecolhimentoRed",this.workspace).text()});
-		data.push({name:'redistribuicaoDTO.idPeriodo',			value: this.idPeriodo});	
+		data.push({name:'redistribuicaoDTO.dataLancamento',		value: ParciaisController.get('lancamentoNovaRed')});
+		data.push({name:'redistribuicaoDTO.dataRecolhimento',	value: $("#dataRecolhimentoRed",ParciaisController.workspace).text()});
+		data.push({name:'redistribuicaoDTO.idPeriodo',			value: ParciaisController.idPeriodo});	
 		
+		return data;
+	},
+	
+	getDatasEdicaoPeriodoParaValidacao : function() {
+		
+		var data = [];
+		
+		data.push({name:'dataLancamento',		value: ParciaisController.get('dataLancamentoEd')});
+		data.push({name:'dataRecolhimento',		value: ParciaisController.get('dataRecolhimentoEd')});
+		
+		return data;
+	},
+	
+	getDatasNovaRedistribuicaoParaValidacao : function() {
+		
+		var data = [];
+		
+		data.push({name:'dataLancamento',		value: ParciaisController.get('lancamentoNovaRed')});
+		data.push({name:'dataRecolhimento',		value: $("#dataRecolhimentoRed",ParciaisController.workspace).text()});
+
 		return data;
 	},
 	
 	carregaPeb : function(periodos) {
 		
-		this.set('qtde',periodos);
-		this.set('peb','');
+		ParciaisController.set('qtde',periodos);
+		ParciaisController.set('peb','');
 		
 		$.postJSON(contextPath + "/parciais/obterPebDoProduto",
-				this.getDadosParaPeb(),
+				ParciaisController.getDadosParaPeb(),
 				function(result){ParciaisController.set('peb',result);},
 				null, 
 				true,
@@ -386,79 +437,79 @@ var ParciaisController = $.extend(true, {
 	},
 	carregarRedistribuicao:function(idPeriodo,numeroPeriodo,dataLancamento, dataRecolhimento){
 		
-		$('#codigoProdutoRed',this.workspace).text(this.codigoProduto);
-		$('#nomeProdutoRed',this.workspace).text(this.nomeProduto);
-		$('#numEdicaoRed',this.workspace).text(this.numEdicao);
-		$('#dataLancamentoRed',this.workspace).text(dataLancamento);
-		$('#dataRecolhimentoRed',this.workspace).text(dataRecolhimento);
-		$('#numeroPeriodoRed',this.workspace).text(numeroPeriodo);
+		$('#codigoProdutoRed',ParciaisController.workspace).text(ParciaisController.codigoProduto);
+		$('#nomeProdutoRed',ParciaisController.workspace).text(ParciaisController.nomeProduto);
+		$('#numEdicaoRed',ParciaisController.workspace).text(ParciaisController.numEdicao);
+		$('#dataLancamentoRed',ParciaisController.workspace).text(dataLancamento);
+		$('#dataRecolhimentoRed',ParciaisController.workspace).text(dataRecolhimento);
+		$('#numeroPeriodoRed',ParciaisController.workspace).text(numeroPeriodo);
 		
-		this.idPeriodo = idPeriodo;
+		ParciaisController.idPeriodo = idPeriodo;
 		
-		this.pesquisarRedistribuicaoPeriodo(idPeriodo);
+		ParciaisController.pesquisarRedistribuicaoPeriodo(idPeriodo);
 		
-		this.popup_redistribuicao();
+		ParciaisController.popup_redistribuicao();
 	},
 	
 	carregarDetalhes : function(idProdutoEdicao , dataLancamento, dataRecolhimento, codigoProduto, 
 			nomeProduto, numEdicao, nomeFornecedor, precoCapa, statusParcial) {
 				
-		this.idProdutoEdicao = idProdutoEdicao;
-		this.dataLancamento = dataLancamento;
-		this.dataRecolhimento = dataRecolhimento;
-		this.codigoProduto = codigoProduto;
-		this.nomeProduto = nomeProduto;
-		this.numEdicao = numEdicao;
-		this.nomeFornecedor = nomeFornecedor;
-		this.precoCapa = precoCapa;
-		this.statusParcial = statusParcial;
+		ParciaisController.idProdutoEdicao = idProdutoEdicao;
+		ParciaisController.dataLancamento = dataLancamento;
+		ParciaisController.dataRecolhimento = dataRecolhimento;
+		ParciaisController.codigoProduto = codigoProduto;
+		ParciaisController.nomeProduto = nomeProduto;
+		ParciaisController.numEdicao = numEdicao;
+		ParciaisController.nomeFornecedor = nomeFornecedor;
+		ParciaisController.precoCapa = precoCapa;
+		ParciaisController.statusParcial = statusParcial;
 		
 		
-		$('#codigoProdutoM',this.workspace).text(codigoProduto);
-		$('#nomeProdutoM',this.workspace).text(nomeProduto);
+		$('#codigoProdutoM',ParciaisController.workspace).text(codigoProduto);
+		$('#nomeProdutoM',ParciaisController.workspace).text(nomeProduto);
 		$('#numEdicaoM').text(numEdicao);
-		$('#nomeFornecedorM',this.workspace).text(nomeFornecedor);
-		$('#dataLancamentoM',this.workspace).text(dataLancamento);
-		$('#dataRecolhimentoM',this.workspace).text(dataRecolhimento);
+		$('#nomeFornecedorM',ParciaisController.workspace).text(nomeFornecedor);
+		$('#dataLancamentoM',ParciaisController.workspace).text(dataLancamento);
+		$('#dataRecolhimentoM',ParciaisController.workspace).text(dataRecolhimento);
 		
-		this.pesquisarPeriodosParciaisModal(codigoProduto,numEdicao);
+		ParciaisController.pesquisarPeriodosParciaisModal(codigoProduto,numEdicao);
 		
-		this.popup_detalhes();
+		ParciaisController.popup_detalhes();
 	},
 	
 	carregarEdicaoDetalhes : function(idLancamento, dataLancamento,dataRecolhimento) {
 		
-		this.idLancamento = idLancamento;
+		ParciaisController.idLancamento = idLancamento;
 		
-		$('#codigoProdutoEd',this.workspace).val(this.codigoProduto);
-		$('#nomeProdutoEd',this.workspace).val(this.nomeProduto);
-		$('#numEdicaoEd',this.workspace).val(this.numEdicao);
-		$('#nomeFornecedorEd',this.workspace).val(this.nomeFornecedor);
-		$('#dataLancamentoEd',this.workspace).val(dataLancamento);
-		$('#dataRecolhimentoEd',this.workspace).val(dataRecolhimento);
-		$('#precoCapaEd',this.workspace).val(this.precoCapa);
+		$('#codigoProdutoEd',ParciaisController.workspace).val(ParciaisController.codigoProduto);
+		$('#nomeProdutoEd',ParciaisController.workspace).val(ParciaisController.nomeProduto);
+		$('#numEdicaoEd',ParciaisController.workspace).val(ParciaisController.numEdicao);
+		$('#nomeFornecedorEd',ParciaisController.workspace).val(ParciaisController.nomeFornecedor);
+		$('#dataLancamentoEd',ParciaisController.workspace).datepicker("setDate", $.trim(dataLancamento));
+		$('#dataRecolhimentoEd',ParciaisController.workspace).datepicker("setDate", $.trim(dataRecolhimento));
+		$('#precoCapaEd',ParciaisController.workspace).val(ParciaisController.precoCapa);
 		
-		this.popup_edit_produto();
+		ParciaisController.popup_edit_produto();
 	},
 	
 	carregarEdicaoRedistribuicao:function(idLancamentoRedistribuicao,dataLancamento,dataRecolhimento){
 		
-		this.idLancamentoRedistribuicao = idLancamentoRedistribuicao;
-		this.set("lancamentoNovaRed",dataLancamento);
+		ParciaisController.idLancamentoRedistribuicao = idLancamentoRedistribuicao;
+		ParciaisController.set("lancamentoNovaRed",dataLancamento);
 		
-		this.popupNovaRedistribuicao(false);
+		ParciaisController.popupNovaRedistribuicao(false);
 	},
 	
 	carregarExclusaoPeriodo : function(idLancamento) {
 		
-		this.idLancamento = idLancamento;
+		ParciaisController.idLancamento = idLancamento;
 		
-		this.popup_excluir();
+		ParciaisController.popup_excluir();
 	},
 	
 	carregarExclusaoRedistribuicao : function(idLancamentoRedistribuicao) {
 		
-		$( "#dialog-excluir-redistribuicao", this.workspace).dialog({
+		$( "#dialog-excluir-redistribuicao", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -472,23 +523,23 @@ var ParciaisController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-excluir-redistribuicao", this.workspace).parents("form")
+				form: $("#dialog-excluir-redistribuicao", ParciaisController.workspace).parents("form")
 			});
 	},
 	
 	editarPeriodoParcial : function() {
 		
 		$.postJSON(contextPath + "/parciais/editarPeriodoParcial",
-				this.getDadosEdicaoPeriodo(),
+				ParciaisController.getDadosEdicaoPeriodo(),
 				function(result){
 
-					$( "#dialog-edit-produto", this.workspace).dialog( "close" );
+					$( "#dialog-edit-produto", ParciaisController.workspace).dialog( "close" );
 					
-					if($('#painelPeriodos',this.workspace).css('display')=='none') {
+					if($('#painelPeriodos',ParciaisController.workspace).css('display')=='none') {
 						exibirMensagemDialog('SUCCESS', ['Período alterado com sucesso.'], "dialog-detalhes");			
-						$(".parciaisPopGrid",this.workspace).flexReload();
+						$(".parciaisPopGrid",ParciaisController.workspace).flexReload();
 					} else {
-						$(".periodosGrid",this.workspace).flexReload();
+						$(".periodosGrid",ParciaisController.workspace).flexReload();
 						exibirMensagem('SUCCESS', ['Período alterado com sucesso.']);
 					}
 					
@@ -501,24 +552,24 @@ var ParciaisController = $.extend(true, {
 	excluirPeriodoParcial : function() {
 		
 		var data = [];		
-		data.push({name:'idLancamento',			value: this.idLancamento});	
+		data.push({name:'idLancamento',			value: ParciaisController.idLancamento});	
 		
 		$.postJSON(contextPath + "/parciais/excluirPeriodoParcial",
 				data,
 				function(result){
 			
-					if($('#painelPeriodos',this.workspace).css('display')=='none') {
+					if($('#painelPeriodos',ParciaisController.workspace).css('display')=='none') {
 						exibirMensagemDialog('SUCCESS', ['Período excluido com sucesso.'], "dialog-detalhes");			
-						$(".parciaisPopGrid",this.workspace).flexReload();
+						$(".parciaisPopGrid",ParciaisController.workspace).flexReload();
 					} else {
-						$(".periodosGrid",this.workspace).flexReload();
+						$(".periodosGrid",ParciaisController.workspace).flexReload();
 						exibirMensagem('SUCCESS', ['Período excluido com sucesso.']);
 					}
 					
-					$( "#dialog-excluir", this.workspace).dialog( "close" );					
+					$( "#dialog-excluir", ParciaisController.workspace).dialog( "close" );					
 				},	
 				function(result) {
-					$( "#dialog-excluir", this.workspace).dialog( "close"); 
+					$( "#dialog-excluir", ParciaisController.workspace).dialog( "close"); 
 				},
 				true,
 				'dialog-detalhes');	
@@ -528,10 +579,10 @@ var ParciaisController = $.extend(true, {
 	incluirNovaRedistribuicao:function(){
 			
 		$.postJSON(contextPath + "/parciais/incluirRedistribuicao",
-			this.getDadosNovaRedistribuicao(),
+			ParciaisController.getDadosNovaRedistribuicao(),
 			function(result){
 
-				$("#dialog-nova-redistribuicao", this.workspace).dialog( "close" );
+				$("#dialog-nova-redistribuicao", ParciaisController.workspace).dialog( "close" );
 				
 				ParciaisController.pesquisarRedistribuicaoPeriodo(ParciaisController.idPeriodo);			
 			},	
@@ -544,7 +595,7 @@ var ParciaisController = $.extend(true, {
 		
 		var data = [];
 		
-		data.push({name:'idPeriodo',value: this.idPeriodo});
+		data.push({name:'idPeriodo',value: ParciaisController.idPeriodo});
 		data.push({name:'idLancamentoRedistribuicao',value: idLancamentoRedistribuicao});
 		
 		$.postJSON(contextPath + "/parciais/excluirRedistribuicao",
@@ -561,14 +612,14 @@ var ParciaisController = $.extend(true, {
 	
 	editarRedistribuicao:function(){
 		
-		var data  = this.getDadosNovaRedistribuicao();
-		data.push({name:'redistribuicaoDTO.idLancamentoRedistribuicao',value: this.idLancamentoRedistribuicao});
+		var data  = ParciaisController.getDadosNovaRedistribuicao();
+		data.push({name:'redistribuicaoDTO.idLancamentoRedistribuicao',value: ParciaisController.idLancamentoRedistribuicao});
 		
 		$.postJSON(contextPath + "/parciais/editarRedistribuicao",
 			data,
 			function(result){
 
-				$("#dialog-nova-redistribuicao", this.workspace).dialog( "close" );
+				$("#dialog-nova-redistribuicao", ParciaisController.workspace).dialog( "close" );
 				
 				ParciaisController.pesquisarRedistribuicaoPeriodo(ParciaisController.idPeriodo);			
 			},	
@@ -577,20 +628,20 @@ var ParciaisController = $.extend(true, {
 			'dialog-nova-redistribuicao');		
 	},
 	
-	validarDiaUtil:function(){
+	validarDiaUtil:function(successCallback, datasValidacao){
 		
 		$.postJSON(contextPath + "/parciais/validarDiaUtil",
-			this.getDadosEdicaoPeriodo(),
+			datasValidacao,
 			function(result){
 				
 				if(result.length > 0){
 					
-					$("#mensagemAlertaDiaUtil",this.workspace).text(result);
+					$("#mensagemAlertaDiaUtil",ParciaisController.workspace).text(result);
 					
-					ParciaisController.popup_alert_dia_util();
+					ParciaisController.popup_alert_dia_util(successCallback);
 				}
 				else{
-					ParciaisController.editarPeriodoParcial();
+					successCallback();
 				}				
 			},	
 			null,
@@ -607,15 +658,15 @@ var ParciaisController = $.extend(true, {
 		data.push({name:'idProdutoEdicao',		value: idProdutoEdicao});
 		
 		
-		$(".parciaisVendaGrid",this.workspace).flexOptions({			
+		$(".parciaisVendaGrid",ParciaisController.workspace).flexOptions({			
 			url : contextPath + "/parciais/pesquisarParciaisVenda",
 			dataType : 'json',
 			params: data
 		});
 
-		$(".parciaisVendaGrid",this.workspace).flexReload();
+		$(".parciaisVendaGrid",ParciaisController.workspace).flexReload();
 
-		this.popup_detalheVendas();
+		ParciaisController.popup_detalheVendas();
 	},
 		
 	/**
@@ -627,7 +678,7 @@ var ParciaisController = $.extend(true, {
 	 */
 	set : function(campo,value) {
 				
-		var elemento = $("#" + campo ,this.workspace);
+		var elemento = $("#" + campo ,ParciaisController.workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			
@@ -648,7 +699,7 @@ var ParciaisController = $.extend(true, {
 	 */
 	get : function(campo) {
 		
-		var elemento = $("#" + campo, this.workspace);
+		var elemento = $("#" + campo, ParciaisController.workspace);
 		
 		if(elemento.attr('type') == 'checkbox') {
 			return (elemento.attr('checked') == 'checked') ;
@@ -659,40 +710,50 @@ var ParciaisController = $.extend(true, {
 	},
 	
 
-	popup : function(modal) {
+		popup : function(dialogID, confirmAction, modal) {
 		
-			ParciaisController.carregaPeb(null);
-		
-			$( "#dialog-novo",this.workspace).dialog({
+			$( dialogID, ParciaisController.workspace).dialog({
 				resizable: false,
 				height:200,
 				width:400,
 				modal: true,
 				
-				buttons:[ 
-				          {
-					           id:"bt_confirmar",
-					           text:"Confirmar", 
-					           click: function() {
-					        	   	ParciaisController.inserirPeriodos(modal);								
-					           }
-				           },
-				           {
-					           id:"bt_cancelar",
-					           text:"Cancelar", 
-					           click: function() {
-					        	   $( this ).dialog( "close" );
-					           }
-				           }
+				buttons:[{
+			           id:"bt_confirmar",
+			           text:"Confirmar", 
+			           click: function() {
+			        	   confirmAction(modal);
+			           }
+		           }, {
+			           id:"bt_cancelar",
+			           text:"Cancelar", 
+			           click: function() {
+			        	   $( this ).dialog( "close" );
+			           }
+		           }
 		        ],
-		        form: $("#dialog-novo", this.workspace).parents("form")
+		        form: $(dialogID, ParciaisController.workspace).parents("form")
 			
 			});
 		},
 		
+		popupInserirPeriodoAutomatico: function(isFromModal) {
+
+			ParciaisController.carregaPeb(null);
+			
+			ParciaisController.popup("#dialog-novo", ParciaisController.gerarPeriodosParcias, isFromModal);
+		},
+		
+		popupInserirPeriodoManual: function(isFromModal) {
+
+			$("#dataRecolhimentoManual").val("");
+
+			ParciaisController.popup("#dialog-novo-manual", ParciaisController.inserirPeriodo, isFromModal);
+		},
+		
 		popup_detalheVendas : function() {
 			
-			$( "#dialog-detalhe-venda", this.workspace).dialog({
+			$( "#dialog-detalhe-venda", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:450,
 				width:660,
@@ -703,14 +764,14 @@ var ParciaisController = $.extend(true, {
 						
 					},
 				},
-				form: $("#dialog-detalhe-venda", this.workspace).parents("form")
+				form: $("#dialog-detalhe-venda", ParciaisController.workspace).parents("form")
 			});
 		},
 		
 		popup_alterar : function() {
 			//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		
-			$( "#dialog-novo", this.workspace).dialog({
+			$( "#dialog-novo", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:200,
 				width:350,
@@ -724,14 +785,14 @@ var ParciaisController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-novo", this.workspace).parents("form")
+				form: $("#dialog-novo", ParciaisController.workspace).parents("form")
 			});	
 			      
 		},
 		
 		popup_excluir : function() {
 		
-			$( "#dialog-excluir", this.workspace).dialog({
+			$( "#dialog-excluir", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:170,
 				width:380,
@@ -745,13 +806,13 @@ var ParciaisController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-excluir", this.workspace).parents("form")
+				form: $("#dialog-excluir", ParciaisController.workspace).parents("form")
 			});
 		},
 	
 		popup_detalhes : function() {
 		
-			$( "#dialog-detalhes", this.workspace).dialog({
+			$( "#dialog-detalhes", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:510,
 				width:950,
@@ -761,13 +822,13 @@ var ParciaisController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-detalhes", this.workspace).parents("form")
+				form: $("#dialog-detalhes", ParciaisController.workspace).parents("form")
 			});
 		},
 		
 		popup_redistribuicao : function() {
 		
-			$( "#dialog-redistribuicao", this.workspace).dialog({
+			$( "#dialog-redistribuicao", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:550,
 				width:550,
@@ -777,13 +838,13 @@ var ParciaisController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-redistribuicao", this.workspace).parents("form")
+				form: $("#dialog-redistribuicao", ParciaisController.workspace).parents("form")
 			});
 		},
 		
 		popup_edit_produto : function() {
 		
-			$( "#dialog-edit-produto", this.workspace).dialog({
+			$( "#dialog-edit-produto", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:360,
 				width:500,
@@ -791,28 +852,30 @@ var ParciaisController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						
-						ParciaisController.validarDiaUtil();
-						
+						ParciaisController.validarDiaUtil(
+							ParciaisController.editarPeriodoParcial, 
+							ParciaisController.getDatasEdicaoPeriodoParaValidacao()
+						);						
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-edit-produto", this.workspace).parents("form")
+				form: $("#dialog-edit-produto", ParciaisController.workspace).parents("form")
 			});
 		},
 		
-		popup_alert_dia_util : function() {
+		popup_alert_dia_util : function(confirmAction) {
 		
-			$( "#dialog-edit-lancamento-dia-util", this.workspace).dialog({
+			$( "#dialog-edit-lancamento-dia-util", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:150,
 				width:500,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
-						
-						ParciaisController.editarPeriodoParcial();
+					
+						confirmAction();
 						
 						$( this ).dialog( "close" );
 					},
@@ -820,17 +883,17 @@ var ParciaisController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-edit-lancamento-dia-util", this.workspace).parents("form")
+				form: $("#dialog-edit-lancamento-dia-util", ParciaisController.workspace).parents("form")
 			});
 		},
 	
 		popupNovaRedistribuicao:function(isNovoItem){
 			
 			if(isNovoItem){
-				this.set("lancamentoNovaRed","");
+				ParciaisController.set("lancamentoNovaRed","");
 			}
 			
-			$( "#dialog-nova-redistribuicao", this.workspace).dialog({
+			$( "#dialog-nova-redistribuicao", ParciaisController.workspace).dialog({
 				resizable: false,
 				height:150,
 				width:300,
@@ -838,26 +901,32 @@ var ParciaisController = $.extend(true, {
 				buttons: {
 					"Confirmar": function() {
 						
-						if(isNovoItem){
-							ParciaisController.incluirNovaRedistribuicao();
-						}
-						else{
-							ParciaisController.editarRedistribuicao();
+						var successCallback;
+						var datasValidacao = ParciaisController.getDatasNovaRedistribuicaoParaValidacao();
+						
+						if (isNovoItem){
+							
+							successCallback = ParciaisController.incluirNovaRedistribuicao;
+						
+						} else{
+							
+							successCallback = ParciaisController.editarRedistribuicao;
 						}
 						
+						ParciaisController.validarDiaUtil(successCallback, datasValidacao);						
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#dialog-nova-redistribuicao", this.workspace).parents("form")
+				form: $("#dialog-nova-redistribuicao", ParciaisController.workspace).parents("form")
 			});
 		},
 		
 		inicializarGrids : function() {
 			
 
-			$(".parciaisGrid", this.workspace).flexigrid({
+			$(".parciaisGrid", ParciaisController.workspace).flexigrid({
 				colModel : [ {
 					display : 'Data Lancto',
 					name : 'dataLancamento',
@@ -917,10 +986,10 @@ var ParciaisController = $.extend(true, {
 				height : 'auto'
 		}); 	
 
-		$(".grids", this.workspace).show();	
+		$(".grids", ParciaisController.workspace).show();	
 
 
-		$(".periodosGrid", this.workspace).flexigrid({
+		$(".periodosGrid", ParciaisController.workspace).flexigrid({
 				colModel : [ {
 					display : 'Período',
 					name : 'numeroPeriodo',
@@ -1023,7 +1092,7 @@ var ParciaisController = $.extend(true, {
 				height : 255
 			}); 
 
-		$(".parciaisPopGrid", this.workspace).flexigrid({
+		$(".parciaisPopGrid", ParciaisController.workspace).flexigrid({
 				colModel : [{
 					display : 'Período',
 					name : 'numeroPeriodo',
@@ -1126,7 +1195,7 @@ var ParciaisController = $.extend(true, {
 			}); 
 			
 
-		$(".parciaisVendaGrid", this.workspace).flexigrid({
+		$(".parciaisVendaGrid", ParciaisController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
@@ -1169,7 +1238,7 @@ var ParciaisController = $.extend(true, {
 			height : 200
 		});
 		
-		$(".parciaisRedistribuicaoGrid", this.workspace).flexigrid({
+		$(".parciaisRedistribuicaoGrid", ParciaisController.workspace).flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'N. Lcto',

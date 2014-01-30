@@ -810,7 +810,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 						formasCobrancaDTO, formasCobranca, true, "Unificada na cota " + c.getCota().getNumeroCota());
 				} else {
 				
-					this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, true, "Unificada na cota ");
+					this.criarDTODadosFormasCobrancas(formasCobrancaDTO, formasCobranca, true, null);
 				}
 			}
 		}

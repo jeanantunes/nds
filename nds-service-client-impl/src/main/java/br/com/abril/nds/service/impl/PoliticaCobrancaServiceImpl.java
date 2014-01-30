@@ -30,6 +30,7 @@ import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -60,6 +61,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
 	 
 	    
 	/**
@@ -343,7 +347,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	@Transactional
 	public void postarPoliticaCobranca(ParametroCobrancaDTO parametroCobrancaDTO) {
 
-        PoliticaCobranca politica = null;
+		PoliticaCobranca politica = null;
 		FormaCobranca formaCobranca = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
 		Banco banco = null;
@@ -550,7 +554,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 
 	@Override
 	@Transactional
-	public void dasativarPoliticaCobranca(long idPolitica) {
+	public void dasativarPoliticaCobranca(Long idPolitica) {
 		
 		PoliticaCobranca pc = politicaCobrancaRepository.buscarPorId(idPolitica);
 		FormaCobranca fcDistrib = pc.getFormaCobranca();
@@ -565,6 +569,14 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				desativar = false;
 			}
 			
+		}
+		
+		//caso existam cotas que usam o parametro de cobranca do distribuidor
+		if (desativar && pc.isPrincipal()){
+			
+			desativar =
+				this.parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(
+						fcDistrib.getId());
 		}
 		
 		if(desativar) {
