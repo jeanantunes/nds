@@ -60,6 +60,7 @@ import br.com.abril.nds.repository.HistoricoDescontoProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -213,7 +214,7 @@ public class DescontoServiceImpl implements DescontoService {
 			break;
 
 		default:
-			throw new RuntimeException("Tipo de Desconto inválido!");
+            throw new RuntimeException("Tipo de Desconto inválido!");
 		}
 	}
 
@@ -233,11 +234,8 @@ public class DescontoServiceImpl implements DescontoService {
 		if(fornecedores != null && !fornecedores.isEmpty()) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
-			Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
-			
-			/*
-			 * Cria um desconto a ser utilizado em um ou mais fornecedores
-			 */
+            Date dataAtual = DateUtil.adicionarHMS(distribuidorRepository.obterDataOperacaoDistribuidor());
+
 			Desconto desconto =  new Desconto();
 			desconto.setDataAlteracao(dataAtual);
 			desconto.setTipoDesconto(TipoDesconto.GERAL);
@@ -288,7 +286,7 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 
-		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
+        Date dataAtual = DateUtil.adicionarHMS(distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		Distribuidor distribuidor = distribuidorRepository.obter(); 
 		
@@ -311,9 +309,9 @@ public class DescontoServiceImpl implements DescontoService {
 		desconto = descontoRepository.buscarPorId(idDesconto);
 		
 		for(Fornecedor fornecedor : fornecs) {
-			/*
-			 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
-			 */
+			                                                                                                            /*
+             * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+             */
 			DescontoCotaProdutoExcessao dpe = descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
 					TipoDesconto.ESPECIFICO, null, fornecedor, cota, null, null);
 			if(dpe != null) {
@@ -414,9 +412,9 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 				
-				/*
-				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
-				 */
+				                                                                                                            /*
+             * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+             */
 				for(Integer numeroCota : descontoDTO.getCotas()) {
 					
 					Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
@@ -483,9 +481,9 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(descontoDTO.getCodigoProduto(), descontoDTO.getEdicaoProduto());
 				
-				/*
-				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
-				 */
+				                                                                                                            /*
+             * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
+             */
 				for(Integer numeroCota : descontoDTO.getCotas()) {
 					
 					Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
@@ -771,37 +769,36 @@ public class DescontoServiceImpl implements DescontoService {
 		//this.processarDesconto(TipoDesconto.PRODUTO, null, cotas, produtos, valorDesconto, descontoPredominante);
 	}
 
-	/*
-	 * Efetua a validação da exclusão do desconto.
-	 * 
-	 * @param dataUltimaAlteracao - data da última alteração
-	 */
+	                                    /*
+     * Efetua a validação da exclusão do desconto.
+     * @param dataUltimaAlteracao - data da última alteração
+     */
 	private void validarExclusaoDesconto(Desconto desconto){
 
 		if(desconto.getDataAlteracao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) < 0)
-			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Desconto não pode ser excluido fora da data vigente!");
 				
 		if(desconto.isUsado())
-			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido pois já está sendo utilizado!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Desconto não pode ser excluido pois já está sendo utilizado!");
 			
 	}
 
-	/*
-	 * Valida a entrada de dados para inclusão de desconto por produto.
-	 * 
-	 * @param desconto - dados do desconto de produto
-	 */
+	                                    /*
+     * Valida a entrada de dados para inclusão de desconto por produto.
+     * @param desconto - dados do desconto de produto
+     */
 	private void validarEntradaDeDadosInclusaoDescontoPorProduto(DescontoProdutoDTO desconto) {
 
 		List<String> mensagens = new ArrayList<String>();
 
 		if (desconto.getCodigoProduto() == null || desconto.getCodigoProduto().isEmpty()) {
-			mensagens.add("O campo Código deve ser preenchido!");
+            mensagens.add("O campo Código deve ser preenchido!");
 		}
 
 		if(desconto.isIndProdutoEdicao()) {
 			if (desconto.getEdicaoProduto() == null && desconto.getQuantidadeEdicoes() == null) {
-				mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
+                mensagens.add("O campo Edição específica ou Edições deve ser preenchido!");
 			}
 		}
 
@@ -811,7 +808,7 @@ public class DescontoServiceImpl implements DescontoService {
 		if (desconto.getQuantidadeEdicoes() != null && 
 				quantidadeEdicoesExistentes < desconto.getQuantidadeEdicoes()) {
 
-			mensagens.add("O número máximo de edições que pode ser informado é: " + quantidadeEdicoesExistentes);
+            mensagens.add("O número máximo de edições que pode ser informado é: " + quantidadeEdicoesExistentes);
 		}
 
 		if (desconto.getDescontoProduto() == null) {
@@ -835,14 +832,12 @@ public class DescontoServiceImpl implements DescontoService {
 		}
 	}
 
-	/*
-	 * Obtém as cotas por id ou todas.
-	 * 
-	 * @param idsCotas - id's das cotas
-	 * @param isTodasCotas - flag para obter todas as cotas
-	 * 
-	 * @return {@link Set} de {@link Cota}
-	 */
+	                                    /*
+     * Obtém as cotas por id ou todas.
+     * @param idsCotas - id's das cotas
+     * @param isTodasCotas - flag para obter todas as cotas
+     * @return {@link Set} de {@link Cota}
+     */
 	private Set<Cota> obterCotas(List<Integer> idsCotas) {
 
 		Set<Cota> cotas = null;
@@ -863,12 +858,10 @@ public class DescontoServiceImpl implements DescontoService {
 		return cotas;
 	}
 
-	/*
-	 * 
-	 * Excluir um desconto do distribuidor e atualiza os descontos dos produtos edição
-	 * 
-	 * @param idDesconto - identificador do desconto a ser removido
-	 */
+	                                    /*
+     * Excluir um desconto do distribuidor e atualiza os descontos dos produtos edição
+     * @param idDesconto - identificador do desconto a ser removido
+     */
 	private void excluirDescontoDistribuidor(Long idDesconto){
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
@@ -924,12 +917,10 @@ public class DescontoServiceImpl implements DescontoService {
 
 	}
 
-	/*
-	 * 
-	 * Excluir um desconto da cota e atualiza os descontos dos produtos edição.
-	 * 
-	 * @param idDesconto - identificador do desconto a ser removido
-	 */
+	                                    /*
+     * Excluir um desconto da cota e atualiza os descontos dos produtos edição.
+     * @param idDesconto - identificador do desconto a ser removido
+     */
 	private void excluirDescontoProduto(Long idDesconto){
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
@@ -1027,13 +1018,13 @@ public class DescontoServiceImpl implements DescontoService {
                 
                 if (produtoEdicao != null) {
                 	
-                	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
+                produtoEdicaoSemDesconto += " / Edição: " + produtoEdicao.getNumeroEdicao();
                 }
             	
             	ValidacaoVO validacaoVO = 
                     new ValidacaoVO(
                     	TipoMensagem.ERROR, 
-                    		"Não existe desconto cadastrado para o Produto: " 
+                    "Não existe desconto cadastrado para o Produto: "
                     			+ produtoEdicaoSemDesconto);
             	
             	throw new ValidacaoException(validacaoVO);
@@ -1056,13 +1047,14 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional
 	public BigDecimal obterValorDescontoPorCotaProdutoEdicao(Lancamento lancamento, Long idCota, ProdutoEdicao produtoEdicao) {
-		Validate.notNull(idCota, "Cota não deve ser nula!");
+
+        Validate.notNull(idCota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
         Desconto desconto = null;
         if (produtoEdicao.getProduto().isPublicacao()) {
         	
             //Neste caso, o produto possui apenas um fornecedor
-            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+            // Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
             desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, idCota, produtoEdicao);
             
         } else {
@@ -1150,27 +1142,17 @@ public class DescontoServiceImpl implements DescontoService {
 	
 	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, long cotaId, long fornecedorId, long produtoId, long produtoEdicaoId) throws Exception {
 		
-		/**
-		 * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
-		 * 
-		 *  Para os itens abaixo prevalece a ordem de prioridade
-		 *  
-		 *  Prioridade  |	Produto	| ProdutoEdicao	| QuantidadeEdicoes	| Cota Especifica
-		 *  	1		|		X	|		X		|			X		|		X		
-		 *  	2		|		X	|		X		|					|		X		
-		 *  	3		|		X	|				|					|		X		
-		 *  	4		|		X	|		X		|			X		|				
-		 *  	5		|		X	|		X		|					|				
-		 *  	6		|		X	|				|					|				  	
-		 * 
-		 * LEGENDA:
-		 * c : Cota
-		 * f : Fornecedor
-		 * pe: ProdutoEdicao
-		 * p : Produto
-		 * pl: Próximo Lançamento
-		 * 
-		 */
+		                                                                        /**
+         * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
+         * 
+         * Para os itens abaixo prevalece a ordem de prioridade
+         * 
+         * Prioridade | Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica 1 | X | X | X | X 2 | X | X | | X
+         * 3 | X | | | X 4 | X | X | X | 5 | X | X | | 6 | X | | |
+         * 
+         * LEGENDA: c : Cota f : Fornecedor pe: ProdutoEdicao p : Produto pl: Próximo Lançamento
+         * 
+         */
 		
 		DescontoDTO descontoDTO = null;
 		
@@ -1189,9 +1171,9 @@ public class DescontoServiceImpl implements DescontoService {
 			return descontoDTO;
 		}
 		
-		/**
-		 * Desconto de ProdutoEdicao para cota específica
-		 */
+		                                                                        /**
+         * Desconto de ProdutoEdicao para cota específica
+         */
 		if(descontoDTO == null) {
 			
 			key = new StringBuilder()
@@ -1213,9 +1195,9 @@ public class DescontoServiceImpl implements DescontoService {
 			
 		}
 		
-		/**
-		 * Desconto de ProdutoEdicao para cota específica
-		 */
+		                                                                        /**
+         * Desconto de ProdutoEdicao para cota específica
+         */
 		if(descontoDTO == null) {
 			
 			key = new StringBuilder()
@@ -1235,9 +1217,9 @@ public class DescontoServiceImpl implements DescontoService {
 
 		}
 		
-		/**
-		 * Desconto de Produto para cota específica
-		 */
+		                                                                        /**
+         * Desconto de Produto para cota específica
+         */
 		if(descontoDTO == null) {
 			
 			key = new StringBuilder()
