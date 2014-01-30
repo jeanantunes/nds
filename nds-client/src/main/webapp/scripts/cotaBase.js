@@ -479,7 +479,7 @@ var cotaBaseController = $.extend(true, {
 	
 	atribuirDadosCota:function(resultado, index){
 		
-		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+')">'+resultado.nomeCota+'</a>';
+		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+','+resultado.idCota+')">'+resultado.nomeCota+'</a>';
 		$("#nomeCotaGrid"+index, cotaBaseController.workspace).html(linkFotoPDV);
 		
  		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text(resultado.tipoPDV);
@@ -783,6 +783,8 @@ var cotaBaseController = $.extend(true, {
 								if(result.pdvDTO.pathImagem) {
 				                    $("#idImagem", "#dialog-foto-pdv").attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
 				                    
+				                }else{
+				                	 $("#idImagem", "#dialog-foto-pdv").attr("src",contextPath + "/images/pdv/no_image.jpeg");
 				                }
 								
 								$("#idNomePdv", "#dialog-foto-pdv").html(result.pdvDTO.nomePDV);

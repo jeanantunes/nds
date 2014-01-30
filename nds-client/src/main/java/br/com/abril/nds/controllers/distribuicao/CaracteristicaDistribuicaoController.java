@@ -208,7 +208,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Post
 	public File exibirCapa(String codProduto, Long numeroEdicao){
 		  InputStream att;
-		  File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
+		  File file = new File("temp"+FileType.JPG.getExtension());
 		  try {
 		   att = capaService.getCapaInputStream(codProduto,numeroEdicao);
 		     

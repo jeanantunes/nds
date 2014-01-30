@@ -106,6 +106,16 @@ public class DateUtil {
 		
 		return false;
 	}
+	
+	public static boolean isDataInicialMaiorIgualDataFinal(Date dataInicial, Date dataFinal) {
+		
+		if (dataInicial != null && dataFinal != null) {
+			
+			return dataInicial.compareTo(dataFinal) > 0 || dataInicial.compareTo(dataFinal) == 0;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Avança o número de dias a data
@@ -187,8 +197,8 @@ public class DateUtil {
 	 * @return variável indicando se a data é sábado ou domingo
 	 */
 	public static boolean isSabadoDomingo(Calendar cal) {
-		return (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-				|| (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY);
+		return cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
+				|| cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 	}
 
 	public static Date parseData(String data, String formato) {

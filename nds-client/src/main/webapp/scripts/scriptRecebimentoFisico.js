@@ -2033,13 +2033,13 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	preparaValor : function(vr){
 		
-		if(vr.substr(vr.length-3,1)==","){
-			vr = this.replaceAll(vr,".","");
-			vr = this.replaceAll(vr,",",".");
-		}
-		if(vr.substr(vr.length-3,1)=="."){
-			vr = this.replaceAll(vr,",","");
-		}
+//		if(vr.substr(vr.length-3,1)==","){
+//			vr = this.replaceAll(vr,".","");
+//			vr = this.replaceAll(vr,",",".");
+//		}
+//		if(vr.substr(vr.length-3,1)=="."){
+//			vr = this.replaceAll(vr,",","");
+//		}
 		return vr;
 	},
 	

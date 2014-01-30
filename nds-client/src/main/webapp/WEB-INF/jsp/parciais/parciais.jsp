@@ -22,7 +22,7 @@
 #dialog-detalhes .flexigrid{width:880px!important;}
 #dialog-novo fieldset{width:250px!important;}
 
-#dialog-edit-produto, #dialog-detalhe-venda{display:none;}
+#dialog-edit-produto, #dialog-detalhe-venda, #dialog-novo-manual{display:none;}
 
 </style>
 
@@ -165,9 +165,16 @@
 				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
 				</span>
 		</div>   
-	
-	 <span id="btnIncluirPeriodosModal" class="bt_novos"><a href="javascript:;" isEdicao="true" onclick="ParciaisController.popup(true);" rel="tipsy" title="Incluir Novo Período"><img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Períodos" /></a></span>
-	
+	<span id="btnNovoPeriodoManualModal" class="bt_novos" title="Novo">
+ 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoManual(true);">
+ 			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Período" />
+ 		</a>
+ 	 </span>
+	 <span id="btnIncluirPeriodosModal" class="bt_novos">
+	 	<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoAutomatico(true);" rel="tipsy" title="Recalcular Períodos">
+	 		<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" alt="Incluir Períodos" />
+	 	</a>
+	 </span>	
 	
 	</div>
 </form>
@@ -195,6 +202,26 @@
 	        </table>
 	        
 	     </fieldset>
+	   
+	 </div>
+</form>
+
+<form id="idParciaisNovoManual">
+	<div id="dialog-novo-manual" title="Nova Parcial">
+	     <fieldset>
+	     	<legend>Novo Período</legend>
+			<table width="236" border="0" cellspacing="1" cellpadding="1">
+
+				<tr>
+					<td>Data Recolhimento:</td>
+					<td>
+						<input id="dataRecolhimentoManual" name="" type="text" style="width: 80px;" />
+					</td>
+				</tr>
+
+			</table>
+
+		</fieldset>
 	   
 	 </div>
 </form>
@@ -235,13 +262,19 @@
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						</a>
 					</span>
-						
-				 	<span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
-				 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popup(false);">
-				 			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
+
+				 	<span id="btnNovoPeriodoManual" class="bt_novos" title="Novo">
+				 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoManual(false);">
+				 			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" alt="Incluir Período" />
 				 		</a>
 				 	</span>
 				 	
+					<span id="btnIncluirPeriodos" class="bt_novos" title="Recalcular">
+				 		<a href="javascript:;" isEdicao="true" onclick="ParciaisController.popupInserirPeriodoAutomatico(false);">
+				 			<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" alt="Recalcular Períodos" />
+				 		</a>
+				 	</span>
+						
 				 </span>
 		</div>
 	</div>
