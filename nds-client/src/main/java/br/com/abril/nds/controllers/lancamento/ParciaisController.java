@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jrimum.utilix.text.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -25,7 +24,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
@@ -48,7 +46,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -318,11 +315,25 @@ public class ParciaisController extends BaseController {
 	 */
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
-	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
+	public void gerarPeriodosParcias(Integer peb, Integer qtde, Long idProdutoEdicao) {
 		
 		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado());
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
+	}
+	
+	/**
+	 * Insere períodos ao Lançamento Parcial
+	 */
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
+	public void inserirPeriodo(Date dataRecolhimento, Long idProdutoEdicao) {
+		
+		this.parciaisService.inserirNovoPeriodo(idProdutoEdicao, dataRecolhimento, getUsuarioLogado());
+		
+		ValidacaoVO successMessage = new ValidacaoVO(TipoMensagem.SUCCESS, "Período incluído com sucesso!");
+		
+		this.result.use(Results.json()).withoutRoot().from(successMessage).recursive().serialize();		
 	}
 	
 	/**
@@ -389,7 +400,7 @@ public class ParciaisController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 		
-		FileExporter.to("lancamentos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("lancamentos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaParciais, ParcialDTO.class, this.httpResponse);
 		
 		result.nothing();
@@ -419,7 +430,7 @@ public class ParciaisController extends BaseController {
 			filtro.setStatus(StatusLancamentoParcial.valueOf(filtro.getStatus()).toString());
 		}
 		
-		FileExporter.to("periodos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+		FileExporter.to("periodos_parciais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, 
 				listaPeriodos, PeriodoParcialDTO.class, this.httpResponse);
 		
 		result.nothing();
@@ -454,7 +465,7 @@ public class ParciaisController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 		}
 
-		FileExporter.to("detalhes_venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+		FileExporter.to("detalhes_venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null,
 				listaParcialVenda, ParcialVendaDTO.class, this.httpResponse);
 
 		result.nothing();
@@ -472,7 +483,7 @@ public class ParciaisController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void incluirRedistribuicao(RedistribuicaoParcialDTO redistribuicaoDTO){
-		
+
 		parciaisService.incluirRedistribuicaoParcial(redistribuicaoDTO);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),

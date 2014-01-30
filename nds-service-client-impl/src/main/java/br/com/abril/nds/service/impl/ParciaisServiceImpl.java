@@ -74,6 +74,160 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public void inserirNovoPeriodo(Long idProdutoEdicao, Date dataRecolhimento, Usuario usuario) {
+		
+		LancamentoParcial lancamentoParcial = this.lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(idProdutoEdicao);
+		
+		this.validarDataRecolhimentoPeriodoManual(lancamentoParcial, dataRecolhimento);
+		
+		PeriodoLancamentoParcial novoPeriodo = this.gerarPeriodoManual(lancamentoParcial, dataRecolhimento, idProdutoEdicao, usuario);
+		
+		this.reajustarNumerosLancamentoPeriodosPosteriores(lancamentoParcial, novoPeriodo);
+	}
+	
+	private void validarDataRecolhimentoPeriodoManual(LancamentoParcial lancamento, Date dataRecolhimento) {
+
+		if (!this.calendarioService.isDiaUtil(dataRecolhimento)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de lançamento não é um dia util.");
+		}
+
+		if (DateUtil.isDataInicialMaiorIgualDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A nova data de recolhimento não pode ser maior que a data de recolhimento final.");
+		}
+	}
+	
+	private PeriodoLancamentoParcial gerarPeriodoManual(LancamentoParcial lancamentoParcial, Date dataRecolhimento, Long idProdutoEdicao, Usuario usuario) {
+
+		PeriodoLancamentoParcial periodoPosterior = this.obterPeriodoPosterior(dataRecolhimento, idProdutoEdicao);
+		
+		PeriodoLancamentoParcial periodoAnterior = this.obterPeriodoAnterior(dataRecolhimento, idProdutoEdicao);
+		
+		TipoLancamentoParcial tipoLancamentoNovoPeriodo = TipoLancamentoParcial.PARCIAL;
+
+		Integer numeroPeriodo = null;
+		
+		Date dataLancamento = null;
+		
+		if (periodoAnterior == null) {
+
+			dataLancamento = lancamentoParcial.getLancamentoInicial();
+			
+			numeroPeriodo = BigInteger.ONE.intValue();
+		
+		} else {
+
+			Date dataRecolhimentoPeriodoAnterior = periodoAnterior.getUltimoLancamento().getDataRecolhimentoDistribuidor();
+			
+			dataLancamento = calcularDataLancamentoComFatorRelancamentoParcialDistribuidor(dataRecolhimentoPeriodoAnterior);
+
+			numeroPeriodo = periodoAnterior.getNumeroPeriodo() + BigInteger.ONE.intValue();
+		}
+		
+		if (periodoPosterior == null) {
+
+			tipoLancamentoNovoPeriodo = TipoLancamentoParcial.FINAL;
+		}
+
+		this.reajustarDataLancamentoPeriodoPosteriorPeriodoManual(periodoPosterior, dataRecolhimento);			
+
+		PeriodoLancamentoParcial novoPeriodo = this.gerarPeriodoParcial(lancamentoParcial, numeroPeriodo, tipoLancamentoNovoPeriodo);
+		
+		novoPeriodo = this.periodoLancamentoParcialRepository.merge(novoPeriodo);
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+
+		Lancamento lancamento = this.gerarLancamento(novoPeriodo, produtoEdicao, dataLancamento, dataRecolhimento, usuario);
+
+		this.lancamentoRepository.merge(lancamento);
+		
+		return novoPeriodo;
+	}
+	
+	private void reajustarDataLancamentoPeriodoPosteriorPeriodoManual(PeriodoLancamentoParcial periodoPosterior, Date dataRecolhimentoManual) {
+
+		Date novaDataLancamento = this.calcularDataLancamentoComFatorRelancamentoParcialDistribuidor(dataRecolhimentoManual);
+		
+		for (Lancamento lancamento : periodoPosterior.getLancamentos()) {
+
+			if (TipoLancamento.LANCAMENTO.equals(lancamento.getTipoLancamento())) {
+
+				lancamento.setDataLancamentoPrevista(novaDataLancamento);
+				lancamento.setDataLancamentoDistribuidor(novaDataLancamento);
+				
+				this.validarPebPeriodoPosteriorPeriodoManual(periodoPosterior);
+				
+				this.lancamentoRepository.merge(lancamento);
+			}
+			
+			if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
+					&& DateUtil.isDataInicialMaiorDataFinal(novaDataLancamento, lancamento.getDataLancamentoDistribuidor())) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING, "Existe redistribuição cadastrada.");
+			}
+		}
+	}
+
+	private Date calcularDataLancamentoComFatorRelancamentoParcialDistribuidor(Date dataRecolhimento) {
+
+		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
+		
+		return this.calendarioService.adicionarDiasUteis(dataRecolhimento, fatorRelancamentoParcial);
+	}
+	
+	private void reajustarNumerosLancamentoPeriodosPosteriores(LancamentoParcial lancamentoParcial, PeriodoLancamentoParcial novoPeriodo) {
+
+		Integer numeroLancamentoAnterior = novoPeriodo.getNumeroPeriodo() - 1;
+		
+		List<PeriodoLancamentoParcial> periodosPosteriores =
+				this.periodoLancamentoParcialRepository.obterProximosPeriodos(numeroLancamentoAnterior, lancamentoParcial.getId());
+
+		for (PeriodoLancamentoParcial periodo : periodosPosteriores) {
+
+			if (periodo.equals(novoPeriodo)) {
+				continue;
+			}
+
+			Integer novoNumeroPeriodo = periodo.getNumeroPeriodo() + 1;
+
+			periodo.setNumeroPeriodo(novoNumeroPeriodo);
+			
+			this.periodoLancamentoParcialRepository.merge(periodo);
+		}
+	}
+	
+	private PeriodoLancamentoParcial obterPeriodoPosterior(Date dataRecolhimento, Long idProdutoEdicao) {
+
+		PeriodoLancamentoParcial periodoPosterior = this.periodoLancamentoParcialRepository.obterPeriodoPosterior(dataRecolhimento, idProdutoEdicao);
+		
+		return periodoPosterior;
+	}
+	
+	private PeriodoLancamentoParcial obterPeriodoAnterior(Date dataRecolhimento, Long idProdutoEdicao) {
+
+		PeriodoLancamentoParcial periodoPosterior = this.periodoLancamentoParcialRepository.obterPeriodoAnterior(dataRecolhimento, idProdutoEdicao);
+		
+		return periodoPosterior;
+	}
+	
+	private void validarPebPeriodoPosteriorPeriodoManual(PeriodoLancamentoParcial periodoPosterior) {
+		
+		if (periodoPosterior == null) {
+			return;
+		}
+		
+		Date dataInicial = periodoPosterior.getPrimeiroLancamento().getDataLancamentoDistribuidor();
+		Date dataFinal = periodoPosterior.getUltimoLancamento().getDataRecolhimentoDistribuidor();
+		
+		if (DateUtil.obterDiferencaDias(dataInicial, dataFinal) <= 7) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não podem haver períodos com peb menor que 7 dias.");
+		}
+	}
+	
 	@Transactional
 	public void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos, Usuario usuario) {
 		
@@ -145,11 +299,9 @@ public class ParciaisServiceImpl implements ParciaisService{
 				dtRecolhimento = dtLancamento;
 				
 			} else {
-				
-				dtLancamento = DateUtil.adicionarDias(ultimoLancamento.getDataLancamentoDistribuidor(),peb + fatorRelancamentoParcial);
-				
+
 				dtLancamento = 
-						calendarioService.obterProximaDataDiaUtil(dtLancamento);
+						calendarioService.adicionarDiasUteis(ultimoLancamento.getDataRecolhimentoDistribuidor(), fatorRelancamentoParcial);
 				
 				dtRecolhimento = ultimoLancamento.getDataRecolhimentoDistribuidor();
 			}
@@ -322,7 +474,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=ValidacaoException.class)
 	public void alterarPeriodo(Long idLancamento, Date dataLancamento,
 			Date dataRecolhimento, Usuario usuario) {
 		
@@ -364,9 +516,46 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		lancamentoRepository.merge(lancamento);
 		
+		this.reajustarProximoPeriodo(proximoPeriodo,dataLancamento,dataRecolhimento);
+		
 		this.reajustarRedistribuicoes(periodo,dataLancamento,dataRecolhimento);
 	}
+	
+	private void reajustarProximoPeriodo(PeriodoLancamentoParcial proximoPeriodo,Date dataLancamento, Date dataRecolhimentoPeriodoAnterior) {
 
+		if (dataRecolhimentoPeriodoAnterior == null) {
+
+			return;
+		}
+		
+		int fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial().intValue();
+		
+		Date novaDataLancamento = this.calendarioService.adicionarDiasUteis(dataRecolhimentoPeriodoAnterior, fatorRelancamentoParcial);
+
+		Lancamento lancamento = proximoPeriodo.getPrimeiroLancamento();
+
+		lancamento.setDataLancamentoPrevista(novaDataLancamento);
+		lancamento.setDataLancamentoDistribuidor(novaDataLancamento);
+		
+		this.validarPebPeriodoPosteriorPeriodoManual(proximoPeriodo);
+		
+		this.validarRedistribuicoesComNovaDataLancamento(proximoPeriodo, novaDataLancamento);
+		
+		this.lancamentoRepository.merge(lancamento);
+	}
+
+	private void validarRedistribuicoesComNovaDataLancamento(PeriodoLancamentoParcial proximoPeriodo, Date novaDataLancamento) {
+		
+		for (Lancamento lancamento : proximoPeriodo.getLancamentos()) {
+
+			if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
+					&& DateUtil.isDataInicialMaiorIgualDataFinal(novaDataLancamento, lancamento.getDataLancamentoDistribuidor())) {
+
+				throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida. Existem redistribuiçoes no próximo período, com data anterior à nova.");
+			}
+		}
+	}
+	
 	@Override
 	@Transactional
 	public void reajustarRedistribuicoes(PeriodoLancamentoParcial periodo,Date dataLancamento, Date dataRecolhimento) {
@@ -469,10 +658,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING,"Para excluir todos os lançamentos parciais deve ser alterado o 'Regime Recolhimento' no cadastro de edição");
 		}
 		
+		PeriodoLancamentoParcial periodoAnterior = 
+				periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1,periodo.getLancamentoParcial().getId());
+		
 		if(TipoLancamentoParcial.FINAL.equals(periodo.getTipo())){
-			
-			PeriodoLancamentoParcial periodoAnterior = 
-					periodoLancamentoParcialRepository.obterPeriodoPorNumero(periodo.getNumeroPeriodo()-1,periodo.getLancamentoParcial().getId());
 			
 			if(periodoAnterior!= null){
 				
@@ -480,12 +669,14 @@ public class ParciaisServiceImpl implements ParciaisService{
 				
 				validarStatusLancamentoPeriodo(lancamentoPeriodo,"Lançamento não pode ser excluido! É necessário manter um período final");
 				
-				periodoAnterior.setTipo(TipoLancamentoParcial.FINAL);
-				
-				periodoLancamentoParcialRepository.merge(periodoAnterior);
+				periodoAnterior.setTipo(TipoLancamentoParcial.FINAL);			
 			}
 		}
-		
+
+		this.atualizarRecolhimentosPeriodoAnterior(periodoAnterior, periodo.getUltimoLancamento().getDataRecolhimentoDistribuidor());
+
+		periodoLancamentoParcialRepository.merge(periodoAnterior);
+
 		periodoLancamentoParcialRepository.remover(periodo);
 		
 		List<Lancamento> redistribuicoes = periodoLancamentoParcialRepository.obterRedistribuicoes(periodo.getId());
@@ -495,6 +686,15 @@ public class ParciaisServiceImpl implements ParciaisService{
 				excluirRedistribuicaoParcial(item.getId());
 			}
 			
+		}
+	}
+
+	private void atualizarRecolhimentosPeriodoAnterior(PeriodoLancamentoParcial periodoAnterior, Date dataRecolhimento) {
+
+		for (Lancamento lancamento : periodoAnterior.getLancamentos()) {
+
+			lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+			lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 		}
 	}
 
