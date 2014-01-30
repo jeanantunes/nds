@@ -205,7 +205,7 @@ public class HistogramaVendasController extends BaseController {
 		
 		String[] nrEdicoes = edicoes.split(",");
 		
-		int reparteTotalDistribuidor = 0;
+		
 		String enumeratedList = null;
 		
 		if(nrEdicoes.length==1){
@@ -214,16 +214,18 @@ public class HistogramaVendasController extends BaseController {
 			enumeratedList = StringUtils.join(nrEdicoes, " - ");
 		}
 		
-		BigInteger qtd = null;
+		List<Long> eds = new ArrayList<Long>();
 		for (int j = 0; j < nrEdicoes.length; j++) {
 			
-			qtd = this.estoqueProdutoService.buscarQtdEstoquePorProduto(
-					codigoProduto, Long.parseLong(nrEdicoes[j]));
-			
-			if (qtd != null){
-				
-				reparteTotalDistribuidor += qtd.intValue();
-			}
+			eds.add(Long.parseLong(nrEdicoes[j]));
+		}
+		
+		BigInteger totalDistrib = this.estoqueProdutoService.buscarQtdEstoquePorProduto(
+				codigoProduto, eds);
+		
+		int reparteTotalDistribuidor = 0;
+		if (totalDistrib != null){
+			reparteTotalDistribuidor = totalDistrib.intValue();
 		}
 		
 		result.include("filtroUtilizado", getFiltroSessao());

@@ -160,8 +160,8 @@ var histogramaVendasController = $.extend(true, {
 			showTableToggleBtn : true,
 			usepager : true,
 			useRp : true,
-			sortname : "codigoProduto",
-            sortorder : "asc"
+			sortname : "dataLancamento",
+            sortorder : "desc"
 		});
 	},
 	
@@ -263,7 +263,7 @@ var histogramaVendasController = $.extend(true, {
 		}
 		
 		
-		$(selector).each(function(idx,comp){
+		$(selector, histogramaVendasController.workspace).each(function(idx,comp){
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		
