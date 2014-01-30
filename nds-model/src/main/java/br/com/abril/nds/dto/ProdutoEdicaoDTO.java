@@ -793,13 +793,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	@Override
     public int compareTo(ProdutoEdicaoDTO o) {  
-        if (o.getNumeroEdicao() > this.getNumeroEdicao()) {  
-            return -1;  
-        } else if (o.getNumeroEdicao() < this.getNumeroEdicao()){  
-            return 1;  
-        } else {  
-            return 0;  
-        }  
+        return o.getNumeroEdicao().compareTo(this.getNumeroEdicao());
     }
 
 	public PeriodicidadeProduto getPeriodicidade() {
