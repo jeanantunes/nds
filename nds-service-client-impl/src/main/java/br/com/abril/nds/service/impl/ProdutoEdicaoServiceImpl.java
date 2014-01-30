@@ -1223,6 +1223,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			dto.setTipoLancamento(uLancamento.getTipoLancamento());
 			
+			Date dataLancamento = null;
+			
 			if(uLancamento.getPeriodoLancamentoParcial()!= null){
 				
 				LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(produtoEdicao.getId());
@@ -1242,10 +1244,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				Lancamento lancamento = primeiroPeriodo.getLancamentoPeriodoParcial(); 
 				
 				if(primeiroPeriodo!= null && lancamento != null){
-					dto.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
+					dataLancamento = lancamento.getDataLancamentoDistribuidor();
 				}
 				else{
-					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+					dataLancamento = uLancamento.getDataLancamentoDistribuidor();
 				}
 				
 				PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
@@ -1261,13 +1263,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 			}else{
 				
-				dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+				dataLancamento = uLancamento.getDataLancamentoDistribuidor();
 				dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
 
 				dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
 				dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 			}
 
+			dto.setDataLancamento(DateUtil.parseDataPTBR(this.dataCabalistica).compareTo(dataLancamento) == 0 ? null : dataLancamento);
 			dto.setRepartePrevisto(uLancamento.getReparte());
 			dto.setRepartePromocional(uLancamento.getRepartePromocional());
 			

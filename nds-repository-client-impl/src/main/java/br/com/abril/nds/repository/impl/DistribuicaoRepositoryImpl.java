@@ -41,7 +41,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" estoqueProd.QTDE as estoque,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-		.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
+		//.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
+		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
 		.append(" else ''")
 		.append(" end as liberado,")
@@ -70,14 +71,15 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and prodEdic.ATIVO = true")
 		.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
-		.append(" and lanc.EXPEDICAO_ID is null");
+		.append(" and lanc.EXPEDICAO_ID is null")
+	    .append(" and (plp.NUMERO_PERIODO is null or plp.NUMERO_PERIODO =1) ");
 		
 	 
 	 	if(filtro.getEstudoId()!=null){
 	 		sql.append(" and estudo.id = :estudoId");
 	 	}
 		if(filtro.getData()!=null){
-			sql.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
+			sql.append(" and lanc.DATA_LCTO_DISTRIBUIDOR = :dataLanctoPrev");
 		}
 		
 	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {

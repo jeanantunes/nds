@@ -2882,10 +2882,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
 		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
-		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia ");
+		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia, ");
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append(" produto.codigo as codigoProduto ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
 		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
@@ -2964,10 +2967,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
 		hql.append(" rankingFaturamento.faturamento as faturamento, ");
-		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as  dataGeracao ");
+		hql.append(" max(rankingFaturamento.dataGeracaoRank) as  dataGeracao ");
 		
 		hql.append(" FROM RankingFaturamento rankingFaturamento ");
-		hql.append(" INNER JOIN rankingFaturamento.rankingFaturamentoGerado as rankingFaturamentoGerado ");
 		hql.append(" RIGHT JOIN rankingFaturamento.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
