@@ -365,6 +365,15 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		
 		if(politica==null) {
+			
+			if (this.politicaCobrancaRepository.verificarPorTipoCobrancaPor(parametroCobrancaDTO.getTipoCobranca(),
+					parametroCobrancaDTO.getFornecedoresId(), parametroCobrancaDTO.getTipoFormaCobranca())){
+				
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Já existe parâmetro cadastrado para Tipo de Pagamento, Concentração de Pagamentos e Fornecedores escolhidos.");
+			}
+			
 			novaPolitica = true;
 			novaForma=true;
 			politica = new PoliticaCobranca();	
