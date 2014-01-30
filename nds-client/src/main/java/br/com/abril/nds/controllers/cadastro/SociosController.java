@@ -354,8 +354,6 @@ public class SociosController extends BaseController {
 		
 		List<SocioCadastrado> sociosExibir = this.obterListaSociosExibirSessao();
 		
-		Set<Long> sociosRemover = new HashSet<Long>();
-		
 		SocioCadastrado socioCadastradoRemover = null;
 		
 		for (int index = 0 ; index < sociosExibir.size() ; index++){
@@ -372,7 +370,7 @@ public class SociosController extends BaseController {
 		
 		this.httpSession.setAttribute(LISTA_SOCIOS_EXIBIR_SESSAO, sociosExibir);
 		
-		sociosRemover = this.obterListaSociosRemoverSessao();
+		Set<Long> sociosRemover = this.obterListaSociosRemoverSessao();
 		
 		if (socioCadastradoRemover != null && socioCadastradoRemover.getPessoa() != null && 
 				socioCadastradoRemover.getPessoa().getId() != null){

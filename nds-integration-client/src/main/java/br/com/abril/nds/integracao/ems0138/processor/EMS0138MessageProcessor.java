@@ -56,8 +56,6 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "MySQL : NDS : nds-client : root");
 		
 		EMS0138NotasCEIntegracao notasCEIntegracao = new EMS0138NotasCEIntegracao(); 
-		
-		List<NotaFiscal> notasFiscais = obterNotasFiscais();
 		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalhe = obterChamadasEncalhe(message);
 		
 		notasCEIntegracao.setTipoDocumento("EMS0139");

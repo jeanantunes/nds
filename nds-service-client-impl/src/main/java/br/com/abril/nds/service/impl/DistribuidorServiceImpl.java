@@ -405,9 +405,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		List<Date> datas = new ArrayList<>();
 		
-		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
-		
-		mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
+		Map<Integer,Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
 		
 		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
 			

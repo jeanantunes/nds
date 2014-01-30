@@ -121,7 +121,7 @@ public class EdicoesFechadasController extends BaseController {
 		FiltroEdicoesFechadasDTO filtro = carregarFiltro(sortorder, sortname, page, rp, sdf.parse(dataDe), sdf.parse(dataAte), idFornecedor);	
 
 		List<RegistroEdicoesFechadasVO> resultado = null;
-		BigInteger saldoTotal = new BigInteger("0");
+		BigInteger saldoTotal;
 		
 		Long count = null;
 		

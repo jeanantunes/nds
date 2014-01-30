@@ -2403,10 +2403,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
 			
 		}
-		
-		if(dataOperacao == null) {
-			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		}
 
 		boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 
 				(conferenciaEncalhe.getIdConferenciaEncalhe() < 0);
