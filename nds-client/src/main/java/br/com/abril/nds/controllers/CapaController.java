@@ -170,7 +170,7 @@ public class CapaController {
 	 public File getCapaEdicaoJson(String codigoProduto,String numeroEdicao){
 	  
 	  InputStream att = null;
-	  File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
+	  File file = new File("temp"+FileType.JPG.getExtension());
 	  try {
 	   att = capaService.getCapaInputStream(codigoProduto,Long.parseLong(numeroEdicao));
 	     
