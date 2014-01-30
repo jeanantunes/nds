@@ -81,6 +81,20 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((descricao == null) ? 0 : descricao.hashCode());
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result
+				+ ((ordenacaoColuna == null) ? 0 : ordenacaoColuna.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -89,10 +103,15 @@ public class FiltroConsultaPermissaoDTO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FiltroConsultaPermissaoDTO other = (FiltroConsultaPermissaoDTO) obj;
+		if (descricao == null) {
+			if (other.descricao != null)
+				return false;
+		} else if (!descricao.equals(other.descricao))
+			return false;
 		if (nome == null) {
 			if (other.nome != null)
 				return false;
-		} else if (!descricao.equals(other.descricao))
+		} else if (!nome.equals(other.nome))
 			return false;
 		if (ordenacaoColuna != other.ordenacaoColuna)
 			return false;

@@ -706,11 +706,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 private boolean compararObjEnderecoMdcNds(Endereco endereco, EMS0117Input input){
 		
-		if(endereco == null && input != null ){
-			return false;
+		if(endereco == null && input == null ){
+			return true;
 		}
 		
-		if(endereco != null && input == null ){
+		if(endereco == null ^ input == null ){
 			return false;
 		}
 		

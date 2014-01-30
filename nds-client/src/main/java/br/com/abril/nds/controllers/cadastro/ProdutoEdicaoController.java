@@ -305,7 +305,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			vo = e.getValidacao();
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
 		
@@ -397,7 +397,7 @@ public class ProdutoEdicaoController extends BaseController {
 				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream,false);
 				
 			} 
-			catch (Throwable e) {
+			catch (Exception e) {
 				
 				listaMensagem.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
 			
