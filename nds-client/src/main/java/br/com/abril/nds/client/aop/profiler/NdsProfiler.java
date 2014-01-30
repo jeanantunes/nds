@@ -25,9 +25,7 @@ public class NdsProfiler {
 		
 		Object output = pjp.proceed();
 		
-		long elapsedTime = System.currentTimeMillis() - start;
-		
-		msgRep = new StringBuilder("");			
+		long elapsedTime = System.currentTimeMillis() - start;	
 		StringBuilder str = new StringBuilder("")
 			.append("Repository: Tempo total da execução do método ")
 			.append(pjp.toShortString().replace("execution(", "").replace("))", ")"))

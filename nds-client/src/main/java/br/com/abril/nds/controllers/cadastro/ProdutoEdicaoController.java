@@ -337,8 +337,6 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
 				
-				List<String> mensagens = new ArrayList<>();
-				
 				if(prodEdicao.getCodigoProduto()==null || prodService.obterProdutoPorProdin(prodEdicao.getCodigoProduto())==null){
 					
 					if(prodEdicao.getCodigoProduto()!=null){
@@ -357,7 +355,7 @@ public class ProdutoEdicaoController extends BaseController {
 					
 					listaEdicaoDtoInvalidos.add(prodEdicao);
 				}else{
-					mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto(), null);	
+					List<String> mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto(), null);	
 					
 					if(!mensagens.isEmpty()){
 						
@@ -471,9 +469,7 @@ public class ProdutoEdicaoController extends BaseController {
 	 */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto, ModoTela modoTela) {
 		
-		List<String> listaMensagensValidacao = new ArrayList<String>();
-		
-		listaMensagensValidacao = validarDadosBasicosEdicao(dto, codigoProduto);
+		List<String> listaMensagensValidacao = validarDadosBasicosEdicao(dto, codigoProduto);
 		
 		if (!listaMensagensValidacao.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
