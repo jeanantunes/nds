@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
@@ -258,8 +259,8 @@ public class CotaController extends BaseController {
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
 		List<TelefoneAssociacaoDTO> lista = new ArrayList<TelefoneAssociacaoDTO>();
-		for (Integer key : map.keySet()){
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+		for (Entry<Integer, TelefoneAssociacaoDTO> entry : map.entrySet()){
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = entry.getValue();
 			
 			if(telefoneAssociacaoDTO.getTipoTelefone()!= null){
 				lista.add(telefoneAssociacaoDTO);
@@ -325,7 +326,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void pesquisarPorNumeroAutoComplete(String codigo) {
 		
-		pesquisarPorNumero(new Integer(codigo));
+		pesquisarPorNumero(Integer.valueOf(codigo));
 	}
 	
 	/**

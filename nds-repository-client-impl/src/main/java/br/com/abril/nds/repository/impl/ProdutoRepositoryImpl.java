@@ -227,14 +227,14 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		if (fornecedor != null && !fornecedor.isEmpty()) {
 			
 			hql.append(auxHql);
-			hql.append(" lower( fornecedorProd.juridica.razaoSocial ) like :fornecedor ");
+			hql.append(" lower( fornecedorProd.juridica.nomeFantasia ) like :fornecedor ");
 			auxHql = " and ";
 		}
 		
 		if (editor != null && !editor.isEmpty()) {
 			
 			hql.append(auxHql);
-			hql.append(" lower( editorProd.pessoaJuridica.razaoSocial ) like :nomeEditor ");
+			hql.append(" lower( editorProd.pessoaJuridica.nomeFantasia ) like :nomeEditor ");
 			auxHql = " and ";
 		}
 		

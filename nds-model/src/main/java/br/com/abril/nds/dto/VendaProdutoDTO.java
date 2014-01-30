@@ -52,7 +52,7 @@ public class VendaProdutoDTO implements Serializable {
 	@Export(label = "Chamada Capa", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String chamadaCapa;
 	
-	private Long numeroEstudo = new Long(0);
+	private Long numeroEstudo = Long.valueOf(0);
 	private PeriodicidadeProduto periodo;
 	private Integer periodoFormatado = 1;
 	

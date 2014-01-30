@@ -72,7 +72,7 @@ public class PainelOperacionalServiceImpl implements PainelOperacionalService{
 			switch (indicador.getTipoIndicador()) {
 				case JORNALEIROS:
 					
-					qtdTotalJornaleiros = new Integer(indicador.getValor());
+					qtdTotalJornaleiros = Integer.valueOf(indicador.getValor());
 				break;
 				case COBRANCA:
 					

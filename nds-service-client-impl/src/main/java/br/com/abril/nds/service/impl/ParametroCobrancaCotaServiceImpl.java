@@ -1273,7 +1273,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			ParametroCobrancaCota pcc = new ParametroCobrancaCota();
 		
 			pcc.setCota(cota);
-			pcc.setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
+			pcc.setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			pcc.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
 			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			pcc.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
@@ -1288,7 +1288,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaCotaRepository.adicionar(pcc);
 			cota.setParametroCobranca(pcc);
 		} else {
-			cota.getParametroCobranca().setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
+			cota.getParametroCobranca().setFatorVencimento(Integer.valueOf(""+ parametroCobranca.getFatorVencimento()));
 			cota.getParametroCobranca().setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
 		}
 		

@@ -848,7 +848,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
 			long id = (-1 * (idInicial++));
-			conferencia.setIdConferenciaEncalhe(new Long(id));
+			conferencia.setIdConferenciaEncalhe(Long.valueOf(id));
 			conferencia.setDia(obterQtdeDiaAposDataRecolhimentoDistribuidor(conferencia.getDataRecolhimento()));
 		}
 		
