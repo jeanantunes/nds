@@ -671,7 +671,7 @@ public class NFeServiceImpl implements NFeService {
 //			CFOPProduto 		= produtoServico.getCfop().toString();                            
 //
 //			//TODO: Acertar a unidade do produto
-//			unidadeProduto 		= null;//(unidade == null || unidade.isEmpty()) ? 0L : new Long(unidade);
+//			unidadeProduto 		= null;//(unidade == null || unidade.isEmpty()) ? 0L : Long.valueOf(unidade);
 //
 //			quantidadeProduto 	= null; //TODO: produtoServico.getQuantidade();              
 //			valorUnitarioProduto = produtoServico.getValorUnitario();

@@ -175,7 +175,7 @@ public class CotasAssociadasController extends BaseController{
 		if (add){
 			
 			AssociacaoCota associacaoCota = new AssociacaoCota();
-			associacaoCota.setReferencia(new Long((int)new Date().getTime()));
+			associacaoCota.setReferencia(Long.valueOf((int)new Date().getTime()));
 			associacaoCota.setNumeroCota(numeroCota);
 			associacaoCota.setNomeCota(nomeCota);
 			

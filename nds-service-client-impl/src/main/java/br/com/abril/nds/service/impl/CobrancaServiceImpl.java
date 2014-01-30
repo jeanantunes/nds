@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -931,15 +932,13 @@ public class CobrancaServiceImpl implements CobrancaService {
 		boolean jurosEncontrado = BigDecimalUtil.isMaiorQueZero(totaisBaixaFinanceira.getJuros());
 		boolean multaEncontrada = BigDecimalUtil.isMaiorQueZero(totaisBaixaFinanceira.getMulta());
 
-		BigDecimal totalDesconto = pagamento.getValorDesconto();	
-		
-		Set<Long> listaIdCobranca = map.keySet();
+		BigDecimal totalDesconto = pagamento.getValorDesconto();
 		
 		BigDecimal qtdCobrancas = new BigDecimal(cobrancas.size());
 		
-		for(Long idCobranca : listaIdCobranca) {
+		for(Entry<Long, ComposicaoBaixaFinanceira> entry : map.entrySet()) {
 			
-			ComposicaoBaixaFinanceira composicaoBaixaFinanceira = map.get(idCobranca);
+			ComposicaoBaixaFinanceira composicaoBaixaFinanceira = entry.getValue();
 			
 			if(jurosEncontrado) {
 				

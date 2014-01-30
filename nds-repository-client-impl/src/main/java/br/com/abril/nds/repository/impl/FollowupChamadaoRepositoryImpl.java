@@ -38,9 +38,7 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 
 		HashMap<String, Object> param = aplicarParametros(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupChamadaoDTO.class));

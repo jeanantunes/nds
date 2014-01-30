@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -45,7 +46,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		Query query =  getSession().createQuery(hql.toString());
 		
 		// Adicionando os valores dos parametros na query
-		setParameters(query);
+		super.setParameters(query,parameters);
 		
 		hql.append("ORDER BY cota.numeroCota asc");
 		
@@ -95,7 +96,7 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		Query query =  getSession().createQuery(hql.toString());
 		
 		// Adicionando os valores dos parametros na query
-		setParameters(query);
+		super.setParameters(query, parameters);
 		
 		/* Transforma o resultado da query a partir dos alias
 		 * onde cada alias é igual ao nome do atributo no DTO 
@@ -212,17 +213,6 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		}
 		
 		return hql;
-	}
-
-	/**
-	 * @param paramNumeroCota
-	 * @param paramNomeCota
-	 * @param query
-	 */
-	private void setParameters(Query query) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
 	}
 	
 	/**

@@ -192,7 +192,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		formaCobranca2 = Fixture.formaCobrancaBoleto(true, BigDecimal.TEN, true, banco, BigDecimal.ONE, BigDecimal.TEN, parametroCobrancaCota);
 		formaCobranca2.setId(null);
-		formaCobranca2.setDiasDoMes(Arrays.asList(new Integer(10), diaMes));
+		formaCobranca2.setDiasDoMes(Arrays.asList(Integer.valueOf(10), diaMes));
 		formaCobranca2.setPrincipal(false);
 		formaCobranca2.setAtiva(true);
 		formaCobranca2.setTipoFormaCobranca(TipoFormaCobranca.QUINZENAL);
@@ -319,7 +319,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		formaCobranca2 = Fixture.formaCobrancaBoleto(true, BigDecimal.TEN, true, banco, BigDecimal.ONE, BigDecimal.TEN, null);
 		formaCobranca2.setId(null);
-		formaCobranca2.setDiasDoMes(Arrays.asList(new Integer(16),new Integer(19)));
+		formaCobranca2.setDiasDoMes(Arrays.asList(Integer.valueOf(16),Integer.valueOf(19)));
 		formaCobranca2.setPrincipal(false);
 		formaCobranca2.setAtiva(true);
 		formaCobranca2.setTipoFormaCobranca(TipoFormaCobranca.QUINZENAL);
@@ -329,7 +329,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		formaCobranca3 = Fixture.formaCobrancaBoleto(true, BigDecimal.TEN, true, banco, BigDecimal.ONE, BigDecimal.TEN, null);
 		formaCobranca3.setId(null);
-		formaCobranca3.setDiasDoMes(Arrays.asList(new Integer(10)));
+		formaCobranca3.setDiasDoMes(Arrays.asList(Integer.valueOf(10)));
 		formaCobranca3.setPrincipal(true);
 		formaCobranca3.setAtiva(true);
 		formaCobranca3.setTipoFormaCobranca(TipoFormaCobranca.MENSAL);

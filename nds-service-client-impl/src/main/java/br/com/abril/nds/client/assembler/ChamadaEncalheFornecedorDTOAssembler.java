@@ -88,11 +88,7 @@ public class ChamadaEncalheFornecedorDTOAssembler {
             }
         }
         
-        List<ChamadasEncalheFornecedorDTO> chamadasEncalhe = new ArrayList<ChamadasEncalheFornecedorDTO>();
-        
-        for(Long key : mapaChamadasDTO.keySet()) {
-        	chamadasEncalhe.add(mapaChamadasDTO.get(key));
-        }
+        List<ChamadasEncalheFornecedorDTO> chamadasEncalhe = new ArrayList<ChamadasEncalheFornecedorDTO>(mapaChamadasDTO.values());
         
         return chamadasEncalhe;
         

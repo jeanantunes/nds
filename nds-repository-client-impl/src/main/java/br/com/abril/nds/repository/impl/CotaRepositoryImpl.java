@@ -578,9 +578,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		return (Long) query.uniqueResult();
 	}
 
@@ -598,9 +596,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
  
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		query.setMaxResults(1);
 
@@ -634,9 +630,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		if (filtro.getPaginacao() != null) {
 
@@ -2505,12 +2499,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 		
 		return query.list();
-	}
-
-	private void setParameters(Query query, Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
 	}
 
 	@SuppressWarnings("unchecked")
