@@ -225,11 +225,11 @@ var lancamentosSelecionados = [];
 			       	   	<span align="center"><h3>MATRIZ FINALIZADA</h3></span>
 						<br clear="all" />
 						<span class="bt_novos">
-				         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();">
-						        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
+				         	<!-- a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();" -->
+						        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0" disabled>
 						         	 Reabrir Matriz
 						        </img>
-				         	</a>
+				         	<!-- /a  -->
 				     	</span>		    
 			    	</div> 
 			      
