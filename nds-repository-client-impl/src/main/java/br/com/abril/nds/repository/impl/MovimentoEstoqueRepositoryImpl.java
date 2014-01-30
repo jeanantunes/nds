@@ -21,6 +21,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.util.Util;
 
 @Repository
 public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> 
@@ -46,37 +47,43 @@ implements MovimentoEstoqueRepository {
 		
 		StringBuilder hql = new StringBuilder("");
 		
-		hql.append(" select new " + ExtratoEdicaoDTO.class.getCanonicalName() );		
-		
-		hql.append(" ( m.id, m.tipoMovimento.id, m.data, m.tipoMovimento.descricao, ld.id, ");		
-		
-		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end), ");
-
-		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end) )  ");
-
+		hql.append(" select m.id as idMovimento, " +
+				   " tipoMovimento.id as idTipoMovimento, " +
+				   " m.data as dataMovimento, " +
+				   " tipoMovimento.descricao as descMovimento, " +
+				   " sum(case when tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end) as qtdEdicaoEntrada, " +
+				   " sum(case when tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end) as qtdEdicaoSaida, " +
+				   " ld.id as idLancamentoDiferenca ");		
+				
 		hql.append(" from MovimentoEstoque m ");
+		
+		hql.append(" join m.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join m.produtoEdicao produtoEdicao ");
+		
+		hql.append(" join produtoEdicao.produto produto ");
 		
 		hql.append(" left join m.lancamentoDiferenca ld ");
 			
-		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
+		hql.append(" where produtoEdicao.numeroEdicao = :numeroEdicao ");		
 
-		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");
+		hql.append(" and produto.codigo = :codigoProduto ");
 		
 		if (filtro != null && filtro.getGruposExcluidos() != null) {
-			hql.append(" and m.tipoMovimento.grupoMovimentoEstoque not in (:gruposExcluidos) ");
+			hql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposExcluidos) ");
 		}
 
 		if(statusAprovacao != null) {
 			hql.append(" and m.status = :statusAprovacao  ");
 		}
 		
-		hql.append(" group by m.produtoEdicao.id, m.data, m.tipoMovimento.id ");		
+		hql.append(" group by produtoEdicao.id, m.data, tipoMovimento.id ");		
 		
 		hql.append(" order by ");
 		
 		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.data else m.dataAprovacao end asc, "); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
 		
-		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.tipoMovimento.operacaoEstoque end asc, " ); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
+		hql.append(" case when m.origem = 'CARGA_INICIAL' then tipoMovimento.operacaoEstoque end asc, " ); // Diferencial para registros inseridos via carga todos tem a mesma data de criação
 		
 		hql.append(" m.id ");
 		
@@ -91,7 +98,7 @@ implements MovimentoEstoqueRepository {
 		query.setParameter("tipoOperacaoSaida", OperacaoEstoque.SAIDA);
 
 		query.setParameter("codigoProduto", codigoProduto);
-		
+		 
 		query.setParameter("numeroEdicao", numeroEdicao);
 		
 		if (filtro != null && filtro.getGruposExcluidos() != null) {
@@ -109,6 +116,8 @@ implements MovimentoEstoqueRepository {
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
+		
+		query.setResultTransformer(Transformers.aliasToBean(ExtratoEdicaoDTO.class));
 		
 		return query.list();
 	}

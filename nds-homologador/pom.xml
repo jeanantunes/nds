@@ -1,0 +1,160 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>br.com.abril.homologador</groupId>
+	<artifactId>nds-homologador</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<name>NDS - Homologador</name>
+	<description>Ferramenta de homologaçao automatizada do sistema nds</description>
+	
+	<parent>
+		<artifactId>nds</artifactId>
+		<groupId>br.com.abril</groupId>
+		<version>1.0</version>
+	</parent>
+	
+	<dependencies>
+
+	<dependency>
+       <groupId>org.kubek2k</groupId>
+       <artifactId>springockito-annotations</artifactId>
+       <version>1.0.9</version>
+       <scope>test</scope>
+     </dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-common</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-model</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.six2six</groupId>
+			<artifactId>fixture-factory</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-repository-client</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-repository-client-impl</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-service-client</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-service-client-impl</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-integration-client</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<type>jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+	</dependencies>
+
+ <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/integration/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+                            <includes>
+                                <include>**/integration/**</include>
+                            </includes>
+                        </configuration>
+					</execution>
+				</executions>
+			</plugin>
+            
+        </plugins>
+    </build>
+
+</project>

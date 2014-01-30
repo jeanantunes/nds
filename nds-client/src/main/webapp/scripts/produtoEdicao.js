@@ -540,8 +540,8 @@ var produtoEdicaoController =$.extend(true,  {
 			nomeProduto = $("#produtoEdicaoController-pNome",this.workspace).val();
 		}
 		var dataLancamentoDe = $("#produtoEdicaoController-pDateLanctoDe",this.workspace).val();	
-		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).floatValue();
-		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).floatValue();
+		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).val();
+		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).val();
 		var dataLancamentoAte = $("#produtoEdicaoController-pDateLanctoAte",this.workspace).val();
 		var situacaoLancamento = $("#produtoEdicaoController-pSituacaoLancamento",this.workspace).val();
 		var codigoDeBarras = $("#produtoEdicaoController-pCodigoDeBarras",this.workspace).val();
@@ -752,8 +752,8 @@ var produtoEdicaoController =$.extend(true,  {
 		}
 		var nomeProduto = $("#produtoEdicaoController-pNome",this.workspace).val();
 		var dataLancamentoDe = $("#produtoEdicaoController-pDateLanctoDe",this.workspace).val();	
-		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).floatValue();
-		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).floatValue();
+		var precoDe = $("#produtoEdicaoController-pPrecoDe",this.workspace).val();
+		var precoAte = $("#produtoEdicaoController-pPrecoAte",this.workspace).val();
 		var dataLancamentoAte = $("#produtoEdicaoController-pDateLanctoAte",this.workspace).val();
 		var situacaoLancamento = $("#produtoEdicaoController-pSituacaoLancamento",this.workspace).val();
 		var codigoDeBarras = $("#produtoEdicaoController-pCodigoDeBarras",this.workspace).val();
@@ -915,6 +915,11 @@ var produtoEdicaoController =$.extend(true,  {
 								 $("#produtoEdicaoController-dataLancamento").val("");
 								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
 								 $("#produtoEdicaoController-istrac29").val(true);
+							}
+							
+							if (!result.origemInterface) {
+								
+								$("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
 							}
 
 							if (redistribuicao) {

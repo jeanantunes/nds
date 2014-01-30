@@ -306,7 +306,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde,
 			String sortorder, String sortname, int initialResult, int maxResults) {
 			
@@ -343,7 +343,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -384,7 +384,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * @return
 	 */
 	private SQLQuery queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nome,
-			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
+			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde, String sortname, String sortorder) {
 		
 		hql.append("   from PRODUTO_EDICAO pe ");
@@ -454,8 +454,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		if (preco != null) {
-			query.setBigDecimal("precoDe", preco.getDe());
-			query.setBigDecimal("precoAte", preco.getAte());
+			query.setDouble("precoDe", preco.getDe());
+			query.setDouble("precoAte", preco.getAte());
 		}
 		
 		if (statusLancamento != null && !statusLancamento.equals(StatusLancamento.FURO)) {

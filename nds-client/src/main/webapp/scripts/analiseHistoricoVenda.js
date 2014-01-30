@@ -173,7 +173,7 @@ var analiseHistoricoVendaController = $.extend(true, {
 						width : 690,
 						height : 200
 					}
-				}),
+				})
 		};
 	},
 	
