@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -911,7 +912,7 @@ public class EntregadorController extends BaseController {
 			
 			try {
 				
-				if (new Double(getValorSemMascara(percentualComissao)) > 100) {
+				if (Double.valueOf(getValorSemMascara(percentualComissao)) > 100) {
 					listaMensagens.add("O valor máximo de percentual de comissão não pode ultrapassar 100%.");
 				}
 				
@@ -967,7 +968,7 @@ public class EntregadorController extends BaseController {
 	
 		Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 		
-		if (map.keySet().isEmpty()) {
+		if (map.isEmpty()) {
 			
 			listaMensagens.add("Pelo menos um telefone deve ser cadastrado para o entregador.");
 		
@@ -975,9 +976,9 @@ public class EntregadorController extends BaseController {
 			
 			boolean temPrincipal = false;
 			
-			for (Integer key : map.keySet()){
+			for (Entry<Integer, TelefoneAssociacaoDTO> entry : map.entrySet()){
 
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = entry.getValue();
 				
 				if (telefoneAssociacaoDTO.isPrincipal()) {
 					
@@ -1102,9 +1103,9 @@ public class EntregadorController extends BaseController {
 
 		List<TelefoneEntregador> lista = new ArrayList<TelefoneEntregador>();
 
-		for (Integer key : map.keySet()){
+		for (Entry<Integer, TelefoneAssociacaoDTO> entry : map.entrySet()){
 
-			TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+			TelefoneAssociacaoDTO telefoneAssociacaoDTO = entry.getValue();
 
 			if (telefoneAssociacaoDTO.getTipoTelefone() != null){
 				
@@ -1118,9 +1119,9 @@ public class EntregadorController extends BaseController {
                 telefoneEntregador.setTelefone(telefone);
 				telefoneEntregador.setTipoTelefone(telefoneAssociacaoDTO.getTipoTelefone());
 
-				if (key > 0) {
+				if (entry.getKey() > 0) {
 
-					telefoneEntregador.setId(key.longValue());
+					telefoneEntregador.setId(entry.getKey().longValue());
 				}
 				
 				lista.add(telefoneEntregador);

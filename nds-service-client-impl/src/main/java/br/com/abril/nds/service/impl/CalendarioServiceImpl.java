@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -585,16 +586,15 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		}
 
-		for (Integer codigoMes : mapaFeriadosPorMes.keySet()) {
+		for (Entry<Integer, List<CalendarioFeriadoDTO>> entry : mapaFeriadosPorMes.entrySet()) {
 
-			String descricaoMes = DateUtil.obterDecricaoMes(codigoMes);
+			String descricaoMes = DateUtil.obterDecricaoMes(entry.getKey());
 
 			CalendarioFeriadoWrapper cFeriadoWrapper = new CalendarioFeriadoWrapper();
 
 			cFeriadoWrapper.setDescricaoMes(descricaoMes);
 
-			cFeriadoWrapper.setListaCalendarioFeriado(mapaFeriadosPorMes
-					.get(codigoMes));
+			cFeriadoWrapper.setListaCalendarioFeriado(entry.getValue());
 
 			listaCalendarioFeriadoWrapper.add(cFeriadoWrapper);
 

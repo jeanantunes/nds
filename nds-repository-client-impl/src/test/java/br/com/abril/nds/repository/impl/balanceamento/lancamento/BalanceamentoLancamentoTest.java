@@ -117,28 +117,28 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		
 		save(cromoReiLeao);
 
-		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 1, 7, new Long(100),
+		ProdutoEdicao veja1 = Fixture.produtoEdicao(1L, 1, 7, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", veja, null, false);
 
 		veja1.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 1, 30, new Long(100),
+		ProdutoEdicao quatroRoda2 = Fixture.produtoEdicao(2L, 1, 30, Long.valueOf(100),
 				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPA", quatroRodas,
 				null, false);
 
 		quatroRoda2.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 1, 30, new Long(100),
+		ProdutoEdicao infoExame3 = Fixture.produtoEdicao(3L, 1, 30, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPB", infoExame, null, false);
 
 		infoExame3.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 1, 15, new Long(120),
+		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 1, 15, Long.valueOf(120),
 				BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPC", capricho, null, false);
 		
 		capricho1.setExpectativaVenda(BigDecimal.TEN);
 		
-		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 1, 60, new Long(10),
+		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 1, 60, Long.valueOf(10),
 				BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPD", cromoReiLeao, null, false);
 		
 		cromoReiLeao1.setExpectativaVenda(BigDecimal.TEN);

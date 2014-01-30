@@ -292,7 +292,7 @@ public class CadastroCalendarioController extends BaseController {
 
 		resposta.put("datasDestacar", mapaFeriados);
 		
-		resposta.put("anoVigencia", new Integer(anoVigencia));
+		resposta.put("anoVigencia", Integer.valueOf(anoVigencia));
 		
 		result.use(CustomJson.class).from(resposta).serialize();
 	

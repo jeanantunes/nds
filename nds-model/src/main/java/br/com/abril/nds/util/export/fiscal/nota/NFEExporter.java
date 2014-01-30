@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -328,8 +329,6 @@ public class NFEExporter {
 		
 		StringBuilder sBuilder = new StringBuilder();
 		
-		Set<TipoSecao> secoes = this.mapSecoes.keySet();
-		
 		ordenaListaNFEEporters();
 		
 		String primeiraSecao = null;
@@ -340,13 +339,13 @@ public class NFEExporter {
 			primeiraSecao = this.listaNFEExporters.get(this.indexListaNFEExporters).getPrimeiraSecao();
 		}
 		
-		for (TipoSecao secao : secoes) {
+		for (Entry<TipoSecao, List<CampoSecao>> entry : this.mapSecoes.entrySet()) {
 			
-			sBuilder.append(listaNFEExportersToString(primeiraSecao, secao));
+			sBuilder.append(listaNFEExportersToString(primeiraSecao, entry.getKey()));
 			
-			String sSecao = this.gerarStringSecao(secao);
+			String sSecao = this.gerarStringSecao(entry.getKey());
 			
-			List<CampoSecao> campos = this.mapSecoes.get(secao);
+			List<CampoSecao> campos = entry.getValue();
 			
 			for (CampoSecao campo : campos) {
 				

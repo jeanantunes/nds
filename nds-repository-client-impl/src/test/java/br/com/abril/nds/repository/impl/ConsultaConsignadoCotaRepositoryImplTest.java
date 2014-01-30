@@ -137,13 +137,13 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 		produtoQuatroRodas.setTributacaoFiscal(TributacaoFiscal.TRIBUTADO);
 
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20),
+				Long.valueOf(100), BigDecimal.TEN, new BigDecimal(20),
 				"111", produtoVeja, null, false, "Veja 1");
 		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao("COD_6", 1L, 9, 14,
-				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
+				Long.valueOf(150), new BigDecimal(9), new BigDecimal(13.5),
 				"116", produtoCapricho, null, false, "Capricho 1");
 		ProdutoEdicao produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao("COD_100", 1L, 9, 14,
-				new Long(150), new BigDecimal(9), new BigDecimal(13.5),
+				Long.valueOf(150), new BigDecimal(9), new BigDecimal(13.5),
 				"116", produtoQuatroRodas, null, false, "Quatro Rodas 1");
 		
 		super.save(ncmRevistas, tipoProdutoRevista, editoraAbril, produtoVeja, produtoCapricho, produtoQuatroRodas,

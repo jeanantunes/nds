@@ -896,13 +896,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//edicao = numero da edicao
 		if (StringUtils.isNotEmpty(filtro.getEdicao())) {
 			whereList.add(" produtoedi1_.numero_edicao = :numeroEdicao");
-			parameterMap.put("numeroEdicao",new Long(filtro.getEdicao()));
+			parameterMap.put("numeroEdicao",Long.valueOf(filtro.getEdicao()));
 		}
 
 		//classificação = classificação do produto
 		if (filtro.getIdTipoClassificacaoProduto() != null) {
 			whereList.add(" tipoclassi6_.id = :tipoClassificacaoProdutoId");
-			parameterMap.put("tipoClassificacaoProdutoId",new Long(filtro.getIdTipoClassificacaoProduto()));
+			parameterMap.put("tipoClassificacaoProdutoId",Long.valueOf(filtro.getIdTipoClassificacaoProduto()));
 		}		
 
 		// check opcao de componente e elemento
@@ -999,9 +999,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 
-		for (String key : parameterMap.keySet()) {
-			query.setParameter(key, parameterMap.get(key));
-		}
+		setParameters(query, parameterMap);
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 		configurarPaginacao(filtro,query);
 		List<EdicoesProdutosDTO> resultado = query.list();
@@ -1257,9 +1255,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameterList("nrEdicoes", edicoes);
 		query.setParameter("deMargem", de - 0.5);
 
-		for (String key : parameterMap.keySet()) {
-			query.setParameter(key, parameterMap.get(key));
-		}
+		setParameters(query, parameterMap);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistogramaDTO.class));
 
@@ -1365,11 +1361,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 
-	private void setParameters(Query query, Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
-	}
+
 
 	private String ordenarConsultaHistoricoVendaProdutoEdicao(FiltroHistoricoVendaDTO filtro) {
 

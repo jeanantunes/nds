@@ -66,7 +66,7 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 		produtoVeja.addFornecedor(fornecedorFC);
 		save(produtoVeja);
 
-		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 10, new Long(100),
+		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 10, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ",
 				produtoVeja, null, false);
 

@@ -185,7 +185,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		veja.addFornecedor(fornecedor);
 		save(veja);
 		
-		veja1 = Fixture.produtoEdicao(1L, 10, 7, new Long(100),
+		veja1 = Fixture.produtoEdicao(1L, 10, 7, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", veja, null, false);
 
 		save(veja1);
