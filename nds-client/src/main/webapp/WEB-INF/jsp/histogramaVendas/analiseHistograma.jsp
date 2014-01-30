@@ -16,9 +16,6 @@
 
 </div> 
 
-
-</script>
-
 <div id="dialog-alterar-faixa" title="Consulta de Cotas do Histograma de Venda" style="display:none;">
 <fieldset style="width:350px; margin-top:8px;">
   <legend>Alterar Faixa de Reparte</legend>
