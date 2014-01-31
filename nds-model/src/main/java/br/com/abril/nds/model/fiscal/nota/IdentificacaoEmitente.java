@@ -73,8 +73,8 @@ public class IdentificacaoEmitente implements Serializable {
 	 */
 	private static final long serialVersionUID = 4715921368300274189L;
 	
-	@OneToOne(optional=true, fetch=FetchType.LAZY)
-	@JoinColumn(name = "PESSOA_EMITENTE_ID_REFERENCIADA",updatable=true, insertable=true)
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "PESSOA_EMITENTE_ID_REFERENCIADA")
 	private NotaFiscalPessoa pessoaEmitenteReferencia;
 	
 	/**
