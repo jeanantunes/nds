@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -14,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
@@ -30,6 +30,7 @@ public class DetalheNotaFiscal implements Serializable {
 	 */
 	private static final long serialVersionUID = -1903373644705052365L;
 	
+	@XmlTransient
 	@EmbeddedId
 	@NFEExportType
 	private ProdutoServicoPK produtoServicoPK;
@@ -37,9 +38,6 @@ public class DetalheNotaFiscal implements Serializable {
 	@Transient
 	@XmlAttribute(name="nItem")
 	private Long sequencia;
-	
-	@JoinColumn(name="NOTA_FISCAL_ID")
-	private NotaFiscal notaFiscal;
 	
 	@Embedded
 	@XmlElement(name="prod")
@@ -110,31 +108,18 @@ public class DetalheNotaFiscal implements Serializable {
 	public void setEncargoFinanceiro(EncargoFinanceiro encargoFinanceiro) {
 		this.encargoFinanceiro = encargoFinanceiro;
 	}
-	
-	public NotaFiscal getNotaFiscal() {
-		return notaFiscal;
-	}
 
-	public void setNotaFiscal(NotaFiscal notaFiscal) {
-		this.notaFiscal = notaFiscal;
-	}
-	
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((produtoServicoPK == null) ? 0 : produtoServicoPK.hashCode());
+		result = prime * result + ((this.getEncargoFinanceiro() == null) ? 0 : this.getEncargoFinanceiro().hashCode());
+		result = prime * result + ((this.getProdutoServico() == null) ? 0 : this.getProdutoServico().hashCode());
+		result = prime * result + ((this.getProdutoServicoPK() == null) ? 0 : this.getProdutoServicoPK().hashCode());
+		result = prime * result + ((this.getSequencia() == null) ? 0 : this.getSequencia().hashCode());
 		return result;
 	}
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -144,11 +129,28 @@ public class DetalheNotaFiscal implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		DetalheNotaFiscal other = (DetalheNotaFiscal) obj;
-		if (produtoServicoPK == null) {
-			if (other.produtoServicoPK != null)
+		if (this.getEncargoFinanceiro() == null) {
+			if (other.getEncargoFinanceiro() != null)
 				return false;
-		} else if (!produtoServicoPK.equals(other.produtoServicoPK))
+		} else if (!this.getEncargoFinanceiro().equals(other.getEncargoFinanceiro()))
+			return false;
+		if (this.getProdutoServico() == null) {
+			if (other.getProdutoServico()  != null)
+				return false;
+		} else if (!this.getProdutoServico().equals(other.getProdutoServico()))
+			return false;
+		if (this.getProdutoServicoPK() == null) {
+			if (other.getProdutoServicoPK() != null)
+				return false;
+		} else if (!this.getProdutoServicoPK().equals(other.getProdutoServicoPK()))
+			return false;
+		if (this.getSequencia() == null) {
+			if (other.getSequencia() != null)
+				return false;
+		} else if (!this.getSequencia().equals(other.getSequencia()))
 			return false;
 		return true;
 	}
+	
+	
 }

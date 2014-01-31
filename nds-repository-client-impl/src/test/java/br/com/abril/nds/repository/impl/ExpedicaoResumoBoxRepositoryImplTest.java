@@ -166,22 +166,22 @@ public class ExpedicaoResumoBoxRepositoryImplTest extends AbstractRepositoryImpl
 		produtoCapricho.setEditor(abril);
 		save(produtoCapricho);
 		
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
 				null, false);
 		save(produtoEdicaoVeja1);
 		
-		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPA", produtoVeja,
 				null, false);
 		save(produtoEdicaoVeja2);
 		
-		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+		ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPB", produtoSuper, 
 				null, false);
 		save(produtoEdicaoSuper1);
 		
-		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14, new Long(150),
+		ProdutoEdicao produtoEdicaoCapricho1 = Fixture.produtoEdicao(1L, 9, 14, Long.valueOf(150),
 				new BigDecimal(9), new BigDecimal(13.5), "ABCDEFGHIJKLMNOPC", produtoCapricho,
 				null, false);
 		save(produtoEdicaoCapricho1);

@@ -86,9 +86,9 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		
 		PeriodicidadeProduto periodicidade = PeriodicidadeProduto.MENSAL;
 		
-		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
-		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
-		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
+		Produto produtoCE = Fixture.produto("00084", "Produto CE", "ProdutoCE", periodicidade, tipoProdutoRevista, 5, 5, Long.valueOf(10000), TributacaoFiscal. TRIBUTADO);
+		Produto produtoCE_2 = Fixture.produto("00085", "Produto CE 2", "ProdutoCE_2", periodicidade, tipoProdutoRevista, 5, 5, Long.valueOf(10000), TributacaoFiscal. TRIBUTADO);
+		Produto produtoCE_3 = Fixture.produto("00086", "Produto CE 3", "ProdutoCE_3", periodicidade, tipoProdutoRevista, 5, 5, Long.valueOf(10000), TributacaoFiscal. TRIBUTADO);
 		
 		produtoCE.addFornecedor(fornecedorDinap);
 		produtoCE_2.addFornecedor(fornecedorDinap);
@@ -96,15 +96,15 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 		
 		save(produtoCE, produtoCE_2, produtoCE_3);
 
-		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7, new Long(100),
+		produtoEdicaoCE = Fixture.produtoEdicao(84L, 10, 7, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPQ", produtoCE, null, false);
 
 		
-		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7, new Long(100),
+		produtoEdicaoCE_2 = Fixture.produtoEdicao(85L, 10, 7, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(18), "ABCDEFGHIJKLMNOPZ", produtoCE_2, null, false);
 
 		
-		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7, new Long(100),
+		produtoEdicaoCE_3 = Fixture.produtoEdicao(86L, 10, 7, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(90), "ABCDEFGHIJKLMNOPT", produtoCE_3, null, false);
 
 		

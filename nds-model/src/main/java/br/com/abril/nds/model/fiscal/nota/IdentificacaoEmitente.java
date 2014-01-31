@@ -105,7 +105,7 @@ public class IdentificacaoEmitente implements Serializable {
 	private String nomeFantasia;
 	
 	@OneToOne(optional=false, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinColumn(name="ENDERECO_ID_EMITENTE", updatable=true, insertable=true)
+	@JoinColumn(name="ENDERECO_ID_EMITENTE")
 	@NFEExportType
 	@XmlElement(name="enderEmit")
 	private NotaFiscalEndereco endereco;
@@ -366,166 +366,148 @@ public class IdentificacaoEmitente implements Serializable {
 	public void setTelefone(NotaFiscalTelefone telefone) {
 		this.telefone = telefone;
 	}
-
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((cnae == null) ? 0 : cnae.hashCode());
-		result = prime * result
-				+ ((documento == null) ? 0 : documento.hashCode());
-		result = prime * result
-				+ ((endereco == null) ? 0 : endereco.hashCode());
-		result = prime * result
-				+ ((inscricaoEstadual == null) ? 0 : inscricaoEstadual.hashCode());
-		result = prime
-				* result
-				+ ((inscricaoEstadualSubstituto == null) ? 0
-						: inscricaoEstadualSubstituto.hashCode());
-		result = prime
-				* result
-				+ ((inscricaoMunicipal == null) ? 0 : inscricaoMunicipal
-						.hashCode());
-		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-		result = prime * result
-				+ ((nomeFantasia == null) ? 0 : nomeFantasia.hashCode());
-		result = prime
-				* result
-				+ ((pessoaEmitenteReferencia == null) ? 0
-						: pessoaEmitenteReferencia.hashCode());
-		result = prime
-				* result
-				+ ((regimeTributario == null) ? 0 : regimeTributario.hashCode());
-		result = prime * result
-				+ ((telefone == null) ? 0 : telefone.hashCode());
+		result = prime * result + ((this.getCnae() == null) ? 0 : this.getCnae().hashCode());
+		result = prime * result + ((this.getDocumento() == null) ? 0 : this.getDocumento().hashCode());
+		result = prime * result + ((this.getEndereco() == null) ? 0 : this.getEndereco().hashCode());
+		result = prime * result + ((this.getInscricaoEstadual() == null) ? 0 : this.getInscricaoEstadual().hashCode());
+		result = prime * result + ((this.getInscricaoEstadualSubstituto() == null) ? 0 : this.getInscricaoEstadualSubstituto().hashCode());
+		result = prime * result + ((this.getInscricaoMunicipal() == null) ? 0 : this.getInscricaoMunicipal().hashCode());
+		result = prime * result + ((this.getNome() == null) ? 0 : this.getNome().hashCode());
+		result = prime * result + ((this.getNomeFantasia() == null) ? 0 : this.getNomeFantasia().hashCode());
+		result = prime * result + ((this.getPessoaEmitenteReferencia() == null) ? 0 : this.getPessoaEmitenteReferencia().hashCode());
+		result = prime * result + ((this.getRegimeTributario() == null) ? 0 : this.getRegimeTributario().hashCode());
+		result = prime * result + ((this.getTelefone() == null) ? 0 : this.getTelefone().hashCode());
 		return result;
 	}
-
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	
 	@Override
 	public boolean equals(Object obj) {
+		
 		if (this == obj) {
 			return true;
 		}
+		
 		if (obj == null) {
 			return false;
 		}
+		
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
+		
 		IdentificacaoEmitente other = (IdentificacaoEmitente) obj;
-		if (cnae == null) {
-			if (other.cnae != null) {
+		if (this.getCnae() == null) {
+			if (other.getCnae() != null) {
 				return false;
 			}
-		} else if (!cnae.equals(other.cnae)) {
+		} else if (!this.getCnae().equals(other.getCnae())) {
 			return false;
 		}
-		if (documento == null) {
-			if (other.documento != null) {
+		
+		if (this.getDocumento() == null) {
+			if (other.getDocumento() != null) {
 				return false;
 			}
-		} else if (!documento.equals(other.documento)) {
+		} else if (!this.getDocumento().equals(other.getDocumento())) {
 			return false;
 		}
-		if (endereco == null) {
-			if (other.endereco != null) {
+		
+		if (this.getEndereco() == null) {
+			if (other.getEndereco() != null) {
 				return false;
 			}
-		} else if (!endereco.equals(other.endereco)) {
+		} else if (!this.getEndereco().equals(other.getEndereco())) {
 			return false;
 		}
-		if (inscricaoEstadual == null) {
-			if (other.inscricaoEstadual != null) {
+
+		if (this.getInscricaoEstadual() == null) {
+			if (other.getInscricaoEstadual() != null) {
 				return false;
 			}
-		} else if (!inscricaoEstadual.equals(other.inscricaoEstadual)) {
+		} else if (!this.getInscricaoEstadual().equals(other.getInscricaoEstadual())) {
 			return false;
 		}
-		if (inscricaoEstadualSubstituto == null) {
-			if (other.inscricaoEstadualSubstituto != null) {
+		
+		if (this.getInscricaoEstadualSubstituto() == null) {
+			if (other.getInscricaoEstadualSubstituto() != null) {
 				return false;
 			}
-		} else if (!inscricaoEstadualSubstituto
-				.equals(other.inscricaoEstadualSubstituto)) {
+		} else if (!this.getInscricaoEstadualSubstituto()
+				.equals(other.getInscricaoEstadualSubstituto())) {
 			return false;
 		}
-		if (inscricaoMunicipal == null) {
-			if (other.inscricaoMunicipal != null) {
+		
+		if (this.getInscricaoMunicipal() == null) {
+			if (other.getInscricaoMunicipal() != null) {
 				return false;
 			}
-		} else if (!inscricaoMunicipal.equals(other.inscricaoMunicipal)) {
+		} else if (!this.getInscricaoMunicipal().equals(other.getInscricaoMunicipal())) {
 			return false;
 		}
-		if (nome == null) {
-			if (other.nome != null) {
+		
+		if (this.getNome() == null) {
+			if (other.getNome() != null) {
 				return false;
 			}
-		} else if (!nome.equals(other.nome)) {
+		} else if (!this.getNome().equals(other.getNome())) {
 			return false;
 		}
-		if (nomeFantasia == null) {
-			if (other.nomeFantasia != null) {
+		
+		if (this.getNomeFantasia() == null) {
+			if (other.getNomeFantasia() != null) {
 				return false;
 			}
-		} else if (!nomeFantasia.equals(other.nomeFantasia)) {
+		} else if (!this.getNomeFantasia().equals(other.getNomeFantasia())) {
 			return false;
 		}
-		if (pessoaEmitenteReferencia == null) {
-			if (other.pessoaEmitenteReferencia != null) {
+		
+		if (this.getPessoaEmitenteReferencia() == null) {
+			if (other.getPessoaEmitenteReferencia() != null) {
 				return false;
 			}
-		} else if (!pessoaEmitenteReferencia
-				.equals(other.pessoaEmitenteReferencia)) {
+		} else if (!this.getPessoaEmitenteReferencia()
+				.equals(other.getPessoaEmitenteReferencia())) {
 			return false;
 		}
-		if (regimeTributario != other.regimeTributario) {
+		
+		if (this.getRegimeTributario() != other.getRegimeTributario()) {
 			return false;
 		}
-		if (telefone == null) {
-			if (other.telefone != null) {
+		
+		if (this.getTelefone() == null) {
+			if (other.getTelefone() != null) {
 				return false;
 			}
-		} else if (!telefone.equals(other.telefone)) {
+		} else if (!this.getTelefone().equals(other.getTelefone())) {
 			return false;
 		}
+		
 		return true;
 	}
 
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "IdentificacaoEmitente ["
 				+ (pessoaEmitenteReferencia != null ? "pessoaEmitenteReferencia="
-						+ pessoaEmitenteReferencia + ", "
-						: "")
+				+ pessoaEmitenteReferencia + ", ": "")
 				+ (documento != null ? "documento=" + documento + ", " : "")
 				+ (nome != null ? "nome=" + nome + ", " : "")
-				+ (nomeFantasia != null ? "nomeFantasia=" + nomeFantasia + ", "
-						: "")
+				+ (nomeFantasia != null ? "nomeFantasia=" + nomeFantasia + ", ": "")
 				+ (inscricaoEstadual != null ? "inscricaoEstadual="
-						+ inscricaoEstadual + ", " : "")
+				+ inscricaoEstadual + ", " : "")
 				+ (inscricaoEstadualSubstituto != null ? "inscricaoEstadualSubstituto="
-						+ inscricaoEstadualSubstituto + ", "
-						: "")
+				+ inscricaoEstadualSubstituto + ", ": "")
 				+ (inscricaoMunicipal != null ? "inscricaoMunicipal="
-						+ inscricaoMunicipal + ", " : "")
+				+ inscricaoMunicipal + ", " : "")
 				+ (cnae != null ? "cnae=" + cnae + ", " : "")
 				+ (regimeTributario != null ? "regimeTributario="
-						+ regimeTributario + ", " : "")
+				+ regimeTributario + ", " : "")
 				+ (endereco != null ? "endereco=" + endereco + ", " : "")
 				+ (telefone != null ? "telefone=" + telefone : "") + "]";
 	}

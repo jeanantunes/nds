@@ -70,7 +70,7 @@ public class EmitenteDestinatarioBuilder {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setDocumento(documento);
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().setInscricaoEstadual("123");
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setId(cota.getEnderecoPrincipal().getEndereco().getId());
+		// notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setId(cota.getEnderecoPrincipal().getEndereco().getId());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setLogradouro(cota.getEnderecoPrincipal().getEndereco().getLogradouro());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setNumero(cota.getEnderecoPrincipal().getEndereco().getNumero());
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setComplemento(cota.getEnderecoPrincipal().getEndereco().getComplemento());
@@ -80,10 +80,15 @@ public class EmitenteDestinatarioBuilder {
 		//FIXME: Ajustar para trazer o codigo do municipio
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoCidadeIBGE(3550308L);
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setUf(cota.getEnderecoPrincipal().getEndereco().getUf());
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
+		//FIXME: Ajustar os campos codigo e nome do pais
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoPais(1058L);
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setPais("Brasil");
 		
 		if(cota.getEnderecoPrincipal().getEndereco().getCodigoUf() != null) {
 			Long codigoUF = Long.parseLong(cota.getEnderecoPrincipal().getEndereco().getCodigoUf());
-			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(codigoUF);
+			//FIXME: ajusgar o codigo do estado
+			notaFiscal2.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().setCodigoUf(35L);
 		}
 		
 		for (TelefoneCota telefone : cota.getEnderecoPrincipal().getCota().getTelefones()) {

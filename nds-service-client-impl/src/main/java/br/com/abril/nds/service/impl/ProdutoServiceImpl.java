@@ -429,11 +429,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 			ultimoCodigoRegional = ultimoCodigoRegional.replaceAll("[^\\d]", "0");
 		}
 		
-		ultimoCodigoRegional = new Long(Long.valueOf(ultimoCodigoRegional) + 1).toString();
+		ultimoCodigoRegional = Long.valueOf(Long.valueOf(ultimoCodigoRegional) + 1).toString();
 		
 		while (this.produtoRepository.existeProdutoRegional(ultimoCodigoRegional)){
 			
-			ultimoCodigoRegional = new Long(Long.valueOf(ultimoCodigoRegional) + 1).toString();
+			ultimoCodigoRegional = Long.valueOf(Long.valueOf(ultimoCodigoRegional) + 1).toString();
 		}
 		
 		return ultimoCodigoRegional;

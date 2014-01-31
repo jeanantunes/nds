@@ -223,27 +223,6 @@ public class NotaFiscalReferenciada implements Serializable {
 		this.chaveAcessoCTe = chaveAcessoCTe;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "NotaFiscalReferenciada ["
-				+ (pk != null ? "pk=" + pk + ", " : "")
-				+ (codigoUF != null ? "codigoUF=" + codigoUF + ", " : "")
-				+ (dataEmissao != null ? "dataEmissao=" + dataEmissao + ", "
-						: "")
-				+ (cnpj != null ? "cnpj=" + cnpj + ", " : "")
-				+ (modelo != null ? "modelo=" + modelo + ", " : "")
-				+ (serie != null ? "serie=" + serie + ", " : "")
-				+ (numeroDocumentoFiscal != null ? "numeroDocumentoFiscal="
-						+ numeroDocumentoFiscal + ", " : "")
-				+ (chaveAcessoCTe != null ? "chaveAcessoCTe=" + chaveAcessoCTe
-						: "") + "]";
-	}
-
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -251,23 +230,16 @@ public class NotaFiscalReferenciada implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((chaveAcessoCTe == null) ? 0 : chaveAcessoCTe.hashCode());
-		result = prime * result + ((cnpj == null) ? 0 : cnpj.hashCode());
-		result = prime * result
-				+ ((codigoUF == null) ? 0 : codigoUF.hashCode());
-		result = prime * result
-				+ ((dataEmissao == null) ? 0 : dataEmissao.hashCode());
-		result = prime * result + ((modelo == null) ? 0 : modelo.hashCode());
-		result = prime
-				* result
-				+ ((numeroDocumentoFiscal == null) ? 0 : numeroDocumentoFiscal
-						.hashCode());
-		result = prime * result + ((pk == null) ? 0 : pk.hashCode());
-		result = prime * result + ((serie == null) ? 0 : serie.hashCode());
+		result = prime * result + ((this.getChaveAcessoCTe() == null) ? 0 : this.getChaveAcessoCTe().hashCode());
+		result = prime * result + ((this.getCnpj() == null) ? 0 : this.getCnpj().hashCode());
+		result = prime * result + ((this.getCodigoUF() == null) ? 0 : this.getCodigoUF().hashCode());
+		result = prime * result + ((this.getDataEmissao() == null) ? 0 : this.getDataEmissao().hashCode());
+		result = prime * result + ((this.getModelo() == null) ? 0 : this.getModelo().hashCode());
+		result = prime * result + ((this.getNumeroDocumentoFiscal() == null) ? 0 : this.getNumeroDocumentoFiscal().hashCode());
+		result = prime * result + ((this.getPk() == null) ? 0 : this.getPk().hashCode());
+		result = prime * result + ((this.getSerie() == null) ? 0 : this.getSerie().hashCode());
 		return result;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -284,63 +256,82 @@ public class NotaFiscalReferenciada implements Serializable {
 			return false;
 		}
 		NotaFiscalReferenciada other = (NotaFiscalReferenciada) obj;
-		if (chaveAcessoCTe == null) {
-			if (other.chaveAcessoCTe != null) {
+		if (this.getChaveAcessoCTe() == null) {
+			if (other.getChaveAcessoCTe() != null) {
 				return false;
 			}
-		} else if (!chaveAcessoCTe.equals(other.chaveAcessoCTe)) {
+		} else if (!this.getChaveAcessoCTe().equals(other.getChaveAcessoCTe())) {
 			return false;
 		}
-		if (cnpj == null) {
-			if (other.cnpj != null) {
+		if (this.getCnpj() == null) {
+			if (other.getCnpj() != null) {
 				return false;
 			}
-		} else if (!cnpj.equals(other.cnpj)) {
+		} else if (!this.getCnpj().equals(other.getCnpj())) {
 			return false;
 		}
-		if (codigoUF == null) {
-			if (other.codigoUF != null) {
+		if (this.getCodigoUF() == null) {
+			if (other.getCodigoUF() != null) {
 				return false;
 			}
-		} else if (!codigoUF.equals(other.codigoUF)) {
+		} else if (!this.getCodigoUF().equals(other.getCodigoUF())) {
 			return false;
 		}
-		if (dataEmissao == null) {
-			if (other.dataEmissao != null) {
+		if (this.getDataEmissao() == null) {
+			if (other.getDataEmissao() != null) {
 				return false;
 			}
-		} else if (!dataEmissao.equals(other.dataEmissao)) {
+		} else if (!this.getDataEmissao().equals(other.getDataEmissao())) {
 			return false;
 		}
-		if (modelo == null) {
-			if (other.modelo != null) {
+		if (this.getModelo() == null) {
+			if (other.getModelo() != null) {
 				return false;
 			}
-		} else if (!modelo.equals(other.modelo)) {
+		} else if (!this.getModelo().equals(other.getModelo())) {
 			return false;
 		}
-		if (numeroDocumentoFiscal == null) {
-			if (other.numeroDocumentoFiscal != null) {
+		if (this.getNumeroDocumentoFiscal() == null) {
+			if (other.getNumeroDocumentoFiscal() != null) {
 				return false;
 			}
-		} else if (!numeroDocumentoFiscal.equals(other.numeroDocumentoFiscal)) {
+		} else if (!this.getNumeroDocumentoFiscal().equals(other.getNumeroDocumentoFiscal())) {
 			return false;
 		}
-		if (pk == null) {
-			if (other.pk != null) {
+		if (this.getPk() == null) {
+			if (other.getPk() != null) {
 				return false;
 			}
-		} else if (!pk.equals(other.pk)) {
+		} else if (!this.getPk().equals(other.getPk())) {
 			return false;
 		}
-		if (serie == null) {
-			if (other.serie != null) {
+		if (this.getSerie() == null) {
+			if (other.getSerie() != null) {
 				return false;
 			}
-		} else if (!serie.equals(other.serie)) {
+		} else if (!this.getSerie().equals(other.getSerie())) {
 			return false;
 		}
 		return true;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "NotaFiscalReferenciada ["
+				+ (pk != null ? "pk=" + pk + ", " : "")
+				+ (codigoUF != null ? "codigoUF=" + codigoUF + ", " : "")
+				+ (dataEmissao != null ? "dataEmissao=" + dataEmissao + ", ": "")
+				+ (cnpj != null ? "cnpj=" + cnpj + ", " : "")
+				+ (modelo != null ? "modelo=" + modelo + ", " : "")
+				+ (serie != null ? "serie=" + serie + ", " : "")
+				+ (numeroDocumentoFiscal != null ? "numeroDocumentoFiscal="
+				+ numeroDocumentoFiscal + ", " : "")
+				+ (chaveAcessoCTe != null ? "chaveAcessoCTe=" + chaveAcessoCTe: "") + "]";
 	}
 
 }

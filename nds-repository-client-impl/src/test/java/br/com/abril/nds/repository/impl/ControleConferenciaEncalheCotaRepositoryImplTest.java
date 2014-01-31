@@ -111,22 +111,22 @@ public class ControleConferenciaEncalheCotaRepositoryImplTest extends AbstractRe
 		save(cromoReiLeao);
 
 		veja1 = Fixture.produtoEdicao(1L, 10, 7,
-				new Long(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPA", veja, null, false);
+				Long.valueOf(100), BigDecimal.TEN, new BigDecimal(15), "ABCDEFGHIJKLMNOPA", veja, null, false);
 
 		quatroRoda2 = Fixture.produtoEdicao(2L, 15, 30,
-				new Long(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPB", 
+				Long.valueOf(100), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPB", 
 				quatroRodas, null, false);
 
 
 		ProdutoEdicao infoExame3 = Fixture.produtoEdicao( 3L, 5, 30,
-				new Long(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", infoExame, null, false);
+				Long.valueOf(100), BigDecimal.TEN, new BigDecimal(12), "ABCDEFGHIJKLMNOPC", infoExame, null, false);
 
 		ProdutoEdicao capricho1 = Fixture.produtoEdicao(1L, 10, 15,
-				new Long(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", capricho, null, false);
+				Long.valueOf(120), BigDecimal.TEN, BigDecimal.TEN, "ABCDEFGHIJKLMNOPD", capricho, null, false);
 
 		
 		ProdutoEdicao cromoReiLeao1 = Fixture.produtoEdicao(1L, 100, 60,
-				new Long(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", cromoReiLeao, null, false);
+				Long.valueOf(10), BigDecimal.ONE, new BigDecimal(1.5), "ABCDEFGHIJKLMNOPE", cromoReiLeao, null, false);
 		
 		save(veja1, quatroRoda2, infoExame3, capricho1, cromoReiLeao1);
 		

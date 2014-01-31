@@ -30,6 +30,7 @@ import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -60,6 +61,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
 	 
 	    
 	/**
@@ -343,7 +347,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	@Transactional
 	public void postarPoliticaCobranca(ParametroCobrancaDTO parametroCobrancaDTO) {
 
-        PoliticaCobranca politica = null;
+		PoliticaCobranca politica = null;
 		FormaCobranca formaCobranca = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
 		Banco banco = null;
@@ -361,6 +365,15 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		
 		if(politica==null) {
+			
+			if (this.politicaCobrancaRepository.verificarPorTipoCobrancaPor(parametroCobrancaDTO.getTipoCobranca(),
+					parametroCobrancaDTO.getFornecedoresId(), parametroCobrancaDTO.getTipoFormaCobranca())){
+				
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Já existe parâmetro cadastrado para Tipo de Pagamento, Concentração de Pagamentos e Fornecedores escolhidos.");
+			}
+			
 			novaPolitica = true;
 			novaForma=true;
 			politica = new PoliticaCobranca();	
@@ -404,7 +417,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		politica.setAtivo(true);
 		politica.setDistribuidor(distribuidorRepository.obter());
-		politica.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
+		politica.setFatorVencimento(Integer.valueOf(parametroCobrancaDTO.getFatorVencimento().toString()));
 		politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
 		
 		formaCobranca.setDiasDoMes(parametroCobrancaDTO.getDiasDoMes());
@@ -550,7 +563,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 
 	@Override
 	@Transactional
-	public void dasativarPoliticaCobranca(long idPolitica) {
+	public void dasativarPoliticaCobranca(Long idPolitica) {
 		
 		PoliticaCobranca pc = politicaCobrancaRepository.buscarPorId(idPolitica);
 		FormaCobranca fcDistrib = pc.getFormaCobranca();
@@ -565,6 +578,14 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				desativar = false;
 			}
 			
+		}
+		
+		//caso existam cotas que usam o parametro de cobranca do distribuidor
+		if (desativar && pc.isPrincipal()){
+			
+			desativar =
+				this.parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(
+						fcDistrib.getId());
 		}
 		
 		if(desativar) {

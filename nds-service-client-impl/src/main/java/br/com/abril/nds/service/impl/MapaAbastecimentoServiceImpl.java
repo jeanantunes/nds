@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,10 +147,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	private void preencheBoxNaoUtilizado(List<Integer> boxes, TreeMap<String, ProdutoMapaDTO> produtos) {
 		for(Integer keyBox : boxes) {
 	
-			for(String keyProduto : produtos.keySet()) {
+			for(Entry<String, ProdutoMapaDTO> entry : produtos.entrySet()) {
 	
-				if(!produtos.get(keyProduto).getBoxQtde().containsKey(keyBox))
-					produtos.get(keyProduto).getBoxQtde().put(keyBox, 0);
+				if(!entry.getValue().getBoxQtde().containsKey(keyBox))
+					entry.getValue().getBoxQtde().put(keyBox, 0);
 				}
 			}
 		}
@@ -205,9 +206,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 		}
 	
-		for(Integer keyBox : boxes.keySet()) {
+		for(Entry<Integer, HashMap<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
 	
-			preencheRotasNaoUtilizadas(rotas, boxes.get(keyBox));	
+			preencheRotasNaoUtilizadas(rotas, entry.getValue());	
 		}
 	
 		return boxes;
@@ -218,10 +219,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 		for(String keyRota : rotas) {
 	
-			for(String keyProduto : produtos.keySet()) {	
+			for(Entry<String, ProdutoMapaRotaDTO> entry : produtos.entrySet()) {	
 	
-				if(!produtos.get(keyProduto).getRotasQtde().containsKey(keyRota))
-					produtos.get(keyProduto).getRotasQtde().put(keyRota, 0);
+				if(!entry.getValue().getRotasQtde().containsKey(keyRota))
+					entry.getValue().getRotasQtde().put(keyRota, 0);
 			}
 		}
 	
@@ -304,10 +305,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 		for(String keyRota : rotas) {
 	
-			for(Integer keyBox : boxes.keySet()) {	
+			for(Entry<Integer, BoxRotasDTO> entry : boxes.entrySet()) {	
 	
-				if(!boxes.get(keyBox).getRotasQtde().containsKey(keyRota))
-					boxes.get(keyBox).getRotasQtde().put(keyRota, 0);
+				if(!entry.getValue().getRotasQtde().containsKey(keyRota))
+					entry.getValue().getRotasQtde().put(keyRota, 0);
 			}
 		}
 	

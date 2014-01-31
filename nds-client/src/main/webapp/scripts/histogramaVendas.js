@@ -84,6 +84,8 @@ var histogramaVendasController = $.extend(true, {
 					value.cell.capa = "<a onmouseover='histogramaVendasController.popup_detalhes("+value.cell.codigoProduto+","+value.cell.edicao+");' onmouseout='histogramaVendasController.popup_detalhes_close();' href='javascript:void(0);'><img src='images/ico_detalhes.png'  /></a>";
 				});
 				
+				$("#fieldsetEdicoesProduto", histogramaVendasController.workspace).show();
+				
 				return data;
 			},
 			colModel : [ {
@@ -160,8 +162,8 @@ var histogramaVendasController = $.extend(true, {
 			showTableToggleBtn : true,
 			usepager : true,
 			useRp : true,
-			sortname : "codigoProduto",
-            sortorder : "asc"
+			sortname : "dataLancamento",
+            sortorder : "desc"
 		});
 	},
 	
@@ -263,7 +265,7 @@ var histogramaVendasController = $.extend(true, {
 		}
 		
 		
-		$(selector).each(function(idx,comp){
+		$(selector, histogramaVendasController.workspace).each(function(idx,comp){
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		

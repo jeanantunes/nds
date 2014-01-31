@@ -465,15 +465,13 @@ public class RegiaoController extends BaseController {
 
 	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableModelRanking (FiltroRegiaoNMaioresRankingDTO filtro, List<RegiaoNMaiores_CotaDTO> cotasRanking) throws Exception {
 		
-		List<String> ids = new ArrayList<>();
-		List<RegiaoNMaiores_CotaDTO> ranking = new ArrayList<>();
+		List<RegiaoNMaiores_CotaDTO> ranking = null;
 		
-		ids = tratarCodigosENumeros(filtro);
+		List<String> ids = tratarCodigosENumeros(filtro);
 		Integer limite = filtro.getLimitePesquisa();
 		
 		if(ids != null){
 			ranking = regiaoService.rankingCotas(ids, limite);
-			cotasRanking = ranking;
 		}
 		
 		if (ranking == null || ranking.isEmpty()) {

@@ -176,8 +176,7 @@ public class EstoqueProduto implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime * result
-				+ ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
 		return result;
 	}
 
@@ -191,14 +190,14 @@ public class EstoqueProduto implements Serializable {
 			return false;
 		EstoqueProduto other = (EstoqueProduto) obj;
 		if (this.getId() == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!this.getId().equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
 		if (this.getProdutoEdicao() == null) {
-			if (other.produtoEdicao != null)
+			if (other.getProdutoEdicao() != null)
 				return false;
-		} else if (!this.getProdutoEdicao().equals(other.produtoEdicao))
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
 			return false;
 		return true;
 	}

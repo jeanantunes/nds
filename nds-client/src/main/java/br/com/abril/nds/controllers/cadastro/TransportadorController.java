@@ -323,7 +323,7 @@ public class TransportadorController extends BaseController {
 					id *= -1;
 				}
 				
-				motorista.setId(new Long(id));
+				motorista.setId(Long.valueOf(id));
 			}
 		}
 		
@@ -339,7 +339,7 @@ public class TransportadorController extends BaseController {
 					id *= -1;
 				}
 				
-				veiculo.setId(new Long(id));
+				veiculo.setId(Long.valueOf(id));
 			}
 		}
 	}
@@ -694,7 +694,7 @@ public class TransportadorController extends BaseController {
 		
 		if (veiculo.getId() == null){
 			
-			Long id = new Long((int) System.currentTimeMillis());
+			Long id = Long.valueOf((int) System.currentTimeMillis());
 			
 			veiculo.setId(id < 0 ? id : id *-1);
 		}
@@ -908,7 +908,7 @@ public class TransportadorController extends BaseController {
 		
 		if (motorista.getId() == null){
 			
-			Long id = new Long((int) System.currentTimeMillis());
+			Long id = Long.valueOf((int) System.currentTimeMillis());
 			
 			motorista.setId(id < 0 ? id : id * -1);
 		}
@@ -1387,7 +1387,7 @@ public class TransportadorController extends BaseController {
 				
 				int id  = (int)System.currentTimeMillis() * -1;
 				
-				veiculo.setId(new Long(id));
+				veiculo.setId(Long.valueOf(id));
 			}
 			
 			CellModelKeyValue<Veiculo> cellModel = new CellModelKeyValue<Veiculo>(
@@ -1417,7 +1417,7 @@ public class TransportadorController extends BaseController {
 				
 				int id  = (int)System.currentTimeMillis() * -1;
 				
-				motorista.setId(new Long(id));
+				motorista.setId(Long.valueOf(id));
 			}
 			
 			CellModelKeyValue<Motorista> cellModel = new CellModelKeyValue<Motorista>(

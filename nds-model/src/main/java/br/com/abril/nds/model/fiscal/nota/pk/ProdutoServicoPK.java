@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.util.TipoSecao;
@@ -19,6 +20,7 @@ public class ProdutoServicoPK implements Serializable {
 	 */
 	private static final long serialVersionUID = -5850135615091890662L;
 
+	@XmlTransient
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "NOTA_FISCAL_ID")
 	private NotaFiscal notaFiscal;
@@ -26,6 +28,7 @@ public class ProdutoServicoPK implements Serializable {
 	/**
 	 * nItem
 	 */
+	@XmlTransient
 	@Column(name = "SEQUENCIA", nullable = false)
 	@NFEExport(secao = TipoSecao.H, posicao = 0)
 	private Integer sequencia;
@@ -56,16 +59,28 @@ public class ProdutoServicoPK implements Serializable {
 	}
 	
 	/**
+	 * @return the sequencia
+	 */
+	public Integer getSequencia() {
+		return sequencia;
+	}
+
+	/**
+	 * @param sequencia the sequencia to set
+	 */
+	public void setSequencia(Integer sequencia) {
+		this.sequencia = sequencia;
+	}
+	
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((notaFiscal == null) ? 0 : notaFiscal.hashCode());
-		result = prime * result
-				+ ((sequencia == null) ? 0 : sequencia.hashCode());
+		result = prime * result + ((this.getNotaFiscal() == null) ? 0 : this.getNotaFiscal().hashCode());
+		result = prime * result + ((this.getSequencia() == null) ? 0 : this.getSequencia().hashCode());
 		return result;
 	}
 
@@ -81,31 +96,16 @@ public class ProdutoServicoPK implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoServicoPK other = (ProdutoServicoPK) obj;
-		if (notaFiscal == null) {
-			if (other.notaFiscal != null)
+		if (this.getNotaFiscal() == null) {
+			if (other.getNotaFiscal() != null)
 				return false;
-		} else if (!notaFiscal.equals(other.notaFiscal))
+		} else if (!this.getNotaFiscal().equals(other.getNotaFiscal()))
 			return false;
-		if (sequencia == null) {
-			if (other.sequencia != null)
+		if (this.getSequencia() == null) {
+			if (other.getSequencia() != null)
 				return false;
-		} else if (!sequencia.equals(other.sequencia))
+		} else if (!this.getSequencia().equals(other.getSequencia()))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the sequencia
-	 */
-	public Integer getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
-	}
-	
+	}	
 }

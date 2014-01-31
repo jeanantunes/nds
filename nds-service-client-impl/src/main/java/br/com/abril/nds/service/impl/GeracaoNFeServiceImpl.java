@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +57,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	private NotaFiscalService notaFiscalService;
 
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
-	
-	@Autowired
 	private CotaRepository cotaRepository;
 	
 	@Autowired
@@ -91,11 +89,11 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		if (idTipoNotaFiscal == null){
 			
-			tiposNota.addAll(this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
+			tiposNota.addAll(this.naturezaOperacaoRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
 					this.distribuidorRepository.tipoAtividade()));
 		} else {
 			
-			tiposNota.add(this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal));
+			tiposNota.add(this.naturezaOperacaoRepository.buscarPorId(idTipoNotaFiscal));
 		}
 		
 		List<SituacaoCadastro> situacoesCadastro = null;
@@ -117,20 +115,18 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		Map<Cota, QuantidadePrecoItemNotaDTO> cotasTotalItens = this.notaFiscalService.obterTotalItensNotaFiscalPorCotaEmLote(dadosConsultaLoteNotaFiscal);
 		
-		Set<Cota> cotas = cotasTotalItens.keySet();
-		
 		List<CotaExemplaresDTO> listaCotaExemplares = new ArrayList<CotaExemplaresDTO>();
 		
-		for (Cota cota : cotas) {
+		for (Entry<Cota, QuantidadePrecoItemNotaDTO> entry : cotasTotalItens.entrySet()) {
 			
 			CotaExemplaresDTO cotaExemplares = new CotaExemplaresDTO();
 			
-			cotaExemplares.setIdCota(cota.getId());
-			cotaExemplares.setExemplares(cotasTotalItens.get(cota).getQuantidade());
-			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
-			cotaExemplares.setNumeroCota(cota.getNumeroCota());
-			cotaExemplares.setTotal(cotasTotalItens.get(cota).getPreco());
-			cotaExemplares.setTotalDesconto(cotasTotalItens.get(cota).getPrecoComDesconto());
+			cotaExemplares.setIdCota(entry.getKey().getId());
+			cotaExemplares.setExemplares(entry.getValue().getQuantidade());
+			cotaExemplares.setNomeCota(entry.getKey().getPessoa().getNome());
+			cotaExemplares.setNumeroCota(entry.getKey().getNumeroCota());
+			cotaExemplares.setTotal(entry.getValue().getPreco());
+			cotaExemplares.setTotalDesconto(entry.getValue().getPrecoComDesconto());
 			
 			listaCotaExemplares.add(cotaExemplares);
 			
@@ -173,11 +169,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados itens para gerar nota.");
 		
 		for (NotaFiscal notaFiscal : notas) {
-			Long id = notaFiscalRepository.adicionar(notaFiscal);
-			notaFiscal.setId(id);
+			notaFiscalRepository.adicionar(notaFiscal);
 		}
-		
-		//this.notaFiscalNdsRepository.salvarNotasFiscais(listaNotaFiscal, notas);
 		
 		this.notaFiscalService.exportarNotasFiscais(notas);
 		

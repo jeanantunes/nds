@@ -603,11 +603,10 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 								                                                int initialResult, 
 								                                                int maxResults){
 	    
-	    List<ProcessamentoFinanceiroCotaDTO> informacoesProcessamentoFinanceiroCota = new ArrayList<ProcessamentoFinanceiroCotaDTO>();
 	    
 	    List<ProcessamentoFinanceiroCotaVO> processamentoFinanceiroVO = new ArrayList<ProcessamentoFinanceiroCotaVO>(); 
 	    
-	    informacoesProcessamentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterProcessamentoFinanceiroCota(numeroCota, 
+	    List<ProcessamentoFinanceiroCotaDTO> informacoesProcessamentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterProcessamentoFinanceiroCota(numeroCota, 
 	                                                                                                                     data, 
 	                                                                                                                     sortorder, 
 	                                                                                                                     sortname, 
@@ -805,7 +804,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     	
     	Map<Long,List<MovimentoEstoqueCota>> movEstAgrup = new HashMap<Long,List<MovimentoEstoqueCota>>();
 
-    	List<MovimentoEstoqueCota> mecs = new ArrayList<MovimentoEstoqueCota>();
+    	List<MovimentoEstoqueCota> mecs;
     	
     	for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
     		
@@ -1181,8 +1180,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
             								 Usuario usuario){	 
 
 	    //MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM FINANCEIRO AGUPADOS POR FORNECEDOR
-		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = new HashMap<Long,List<MovimentoEstoqueCota>>();
-		
+		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor;
 		boolean isConferenciaRealizada = this.controleConferenciaEncalheCotaRepository.isConferenciaEncalheCotaFinalizada(cota.getId(), dataOperacao);
 		
 		if(isConferenciaRealizada){

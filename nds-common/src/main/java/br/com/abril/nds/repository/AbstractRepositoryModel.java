@@ -1,8 +1,10 @@
 package br.com.abril.nds.repository;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -99,6 +101,20 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			
 		}
 		
-		return sessionFactory.openSession();
+		return null; // sessionFactory.openSession();
 	}
+	
+	protected void setParameters(Query query, Map<String, Object> parameters) {
+		for (Entry<String, Object> entry : parameters.entrySet()) {
+			
+			if(entry.getValue() instanceof List){
+				query.setParameterList(entry.getKey(), (Collection<?>) entry.getValue());
+			}else{
+				query.setParameter(entry.getKey(), entry.getValue());
+			}
+			
+		}
+	}
+	
+	
 }

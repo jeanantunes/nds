@@ -149,7 +149,6 @@ public class NotaFiscalBuilder implements Serializable {
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setDocumento(cnpj);
 		
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setId(distribuidor.getEnderecoDistribuidor().getEndereco().getId());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setNumero(distribuidor.getEnderecoDistribuidor().getEndereco().getNumero());
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());

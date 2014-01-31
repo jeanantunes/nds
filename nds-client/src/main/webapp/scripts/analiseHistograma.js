@@ -1,80 +1,10 @@
-function montarDados(){
-
-	var params = new Array();
-	
-	params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
-	for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
-		params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-		params.push({name : "edicoesSelecionadas["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-	}
-
-	//carregando popup superior para as edições
-	var url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
-	$.post(url, params, function(data){
-		if(data){
-						anaLiseHistogramaController.tempData = data;
-						
-						/* montando popup superior */ 
-						$("#voltarBaseAnalise").click(function(){
-							$("#analiseHistogramaVendasContent").show();
-							$("#analiseHistoricoVendasContent").hide();
-						});
-						
-						$("#analiseHistoricoPopUpNomeProduto").clear();
-						$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"><strong>Produto:</strong></td>');
-						
-						// tr numeroEdicao
-						$('#analiseHistoricoPopUpNumeroEdicao').html('')
-						.append('<td class="class_linha_1"><strong>Edição:</strong></td>');
-						
-						// tr dataLancamento
-						$('#analiseHistoricoPopUpDatalancamento').html('')
-						.append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
-						
-						// tr reparte
-						$('#analiseHistoricoPopUpReparte').html('')
-						.append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
-						
-						// tr venda
-						$('#analiseHistoricoPopUpVenda').html('')
-						.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
-						
-						var qtdEdicoesSelecionadas = anaLiseHistogramaController.tempData.rows.length;
-						
-						// carregando popUp_analiseHistoricoVenda
-						for (var int = qtdEdicoesSelecionadas - 1; int >= 0; int--) {
-							row = anaLiseHistogramaController.tempData.rows[int];
-							
-							$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
-							$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
-							$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
-							$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
-							$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
-						}
-						
-						qtdEdicoesSelecionadas = 6 - anaLiseHistogramaController.tempData.rows.length; 
-						
-						// por estética de layout, insiro elementos td vazios
-						for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
-							$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"></td>');
-							$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1"></td>');
-							$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2"></td>');
-							$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1"></td>');
-							$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1"></td>');
-						}
-						
-		}
-	});
-}
-
-var resultadoAnalise;
 var anaLiseHistogramaController = $.extend(true, {
 	MIN_FAIXA : 0, 
 	MAX_FAIXA : 999999,
 	tempData:null,
 	voltarFiltro:function(){
-		$("#analiseHistogramaVendasContent").clear();
-		$("#histogramaVendasContent").show();
+		$("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).clear();
+		$("#histogramaVendasContent", anaLiseHistogramaController.workspace).show();
 	},
 	
 	createInput : function createInput(id, value){
@@ -113,37 +43,42 @@ var anaLiseHistogramaController = $.extend(true, {
 	
 	buildResumoEstudo : function buildResumoEstudo(lastRow){
 		
-		$("#cotasAtivasCell").text(formatarMilhar(lastRow.cell.qtdeTotalCotasAtivas || 0));
-		$("#reparteDistribuidoCell").text(formatarMilhar(lastRow.cell.repTotal || 0 ));
-		$("#repMedioCell").text(floatToPrice(lastRow.cell.repMedio || 0));
-		$("#vdaMedioCell").text(floatToPrice(lastRow.cell.vdaMedio || 0));
-		$("#cotasEsmagadasCell").text(formatarMilhar(lastRow.cell.cotasEsmagadas || 0));
-		$("#vdaTotalCell").text(formatarMilhar(lastRow.cell.vdaTotal || 0));
-		$("#vendaEsmagadasCell").text(formatarMilhar(lastRow.cell.vendaEsmagadas || 0));
-		$("#encalheMedioCell").text(floatToPrice(lastRow.cell.encalheMedio || 0));
-		$("#cotasProdutoCell").text(formatarMilhar(lastRow.cell.qtdeCotas || 0));
+		$("#cotasAtivasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.qtdeTotalCotasAtivas || 0));
+		$("#reparteDistribuidoCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.repTotal || 0 ));
+		$("#repMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.repMedio || 0));
+		$("#vdaMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.vdaMedio || 0));
+		$("#cotasEsmagadasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.cotasEsmagadas || 0));
+		$("#vdaTotalCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.vdaTotal || 0));
+		$("#vendaEsmagadasCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.vendaEsmagadas || 0));
+		$("#encalheMedioCell", anaLiseHistogramaController.workspace).text(floatToPrice(lastRow.cell.encalheMedio || 0));
+		$("#cotasProdutoCell", anaLiseHistogramaController.workspace).text(formatarMilhar(lastRow.cell.qtdeCotas || 0));
 		
 		
 		var vdaTotal = parseInt(lastRow.cell.vdaTotal);
-		var repTotal = parseInt(lastRow.cell.repTotal);
+		//var repTotal = parseInt(lastRow.cell.repTotal);
 		
 		var qtdeCotas = parseInt(lastRow.cell.qtdeCotas);
 		//cotas ativas da faixa de venda
-		var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
+		//var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
 		//total de cotas ativas 
 		var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
 		
 		var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
 		
 		var eficVenda = floatToPrice(parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2));
-		$("#eficienciaDeVendaCell").text((eficVenda +"%").replace(".", ","));
+		
+		if (isNaN(eficVenda)){
+			eficVenda = 0;
+		}
+		
+		$("#eficienciaDeVendaCell", anaLiseHistogramaController.workspace).text((eficVenda +"%").replace(".", ","));
 		
 		var r = floatToPrice(parseFloat((qtdeCotas/qtdeTotalCotasAtivas)*100 ).toFixed(2));
-		$("#abrangenciaDistribuicaoCell").text((r +"%").replace(".", ","));
+		$("#abrangenciaDistribuicaoCell", anaLiseHistogramaController.workspace).text((r +"%").replace(".", ","));
 
 		r = parseFloat( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 ).toFixed(2);
 		
-		$("#abrangenciaVendaCell").text((r +"%").replace(".", ","));
+		$("#abrangenciaVendaCell", anaLiseHistogramaController.workspace).text((r +"%").replace(".", ","));
 		
 	},
 	
@@ -151,17 +86,17 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		var flexGridService = new FlexGridService();
 		
-		$('#a1').click(function(){
+		$('#a1', anaLiseHistogramaController.workspace).click(function(){
 
-			var abrangenciaDistribuicao = $("#abrangenciaDistribuicaoCell").text().replace("%","");
-			var abrangenciaVenda = $("#abrangenciaVendaCell").text().replace("%","");
-			var eficienciaVenda = $("#eficienciaDeVendaCell").text().replace("%","");
+			var abrangenciaDistribuicao = $("#abrangenciaDistribuicaoCell", anaLiseHistogramaController.workspace).text().replace("%","");
+			var abrangenciaVenda = $("#abrangenciaVendaCell", anaLiseHistogramaController.workspace).text().replace("%","");
+			var eficienciaVenda = $("#eficienciaDeVendaCell", anaLiseHistogramaController.workspace).text().replace("%","");
 			
 		    this.href = $(this).attr('data-href') + "?fileType=XLS&abrangenciaDistribuicao=" + '' + abrangenciaDistribuicao +''+'&abrangenciaVenda='+''+ abrangenciaVenda+''+'&eficienciaVenda='+''+ eficienciaVenda+'';;
 		});
 		
-		$('#alterarFaixaReparte').click(function(){
-			$( "#dialog-alterar-faixa" ).dialog({
+		$('#alterarFaixaReparte', anaLiseHistogramaController.workspace).click(function(){
+			$( "#dialog-alterar-faixa", anaLiseHistogramaController.workspace).dialog({
 				resizable: false,
 				height:340,
 				width:400,
@@ -170,7 +105,7 @@ var anaLiseHistogramaController = $.extend(true, {
 					var grids = anaLiseHistogramaController.Grids,
 						createInput = anaLiseHistogramaController.createInput,
 						createImgExcluir = anaLiseHistogramaController.createImgExcluir,
-						arrayFaixasVenda = $(".histogramafaixaVenda"),
+						arrayFaixasVenda = $(".histogramafaixaVenda", anaLiseHistogramaController.workspace),
 						faixaVenda = "",
 						rowId = 0,
 						faixaVendaDe = 0,
@@ -390,7 +325,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(','),
 			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico",
 			params = new Array(),
-			qtdEdicoes = edicoesEscolhidas_HistogramaVenda.length;
+			qtdEdicoes = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
 		
 		//popular lista de ID de cotas
 		$.each(idCotaArray, function(index, val) {
@@ -398,15 +333,15 @@ var anaLiseHistogramaController = $.extend(true, {
 		});
 		
 		for ( var int = 0; int < qtdEdicoes; int++) {
-			params.push({name : "listProdutoEdicaoDto["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-			params.push({name : "listProdutoEdicaoDto["+int+"].codigoProduto", value :  codigoProduto_HistogramaVenda});
+			params.push({name : "listProdutoEdicaoDto["+int+"].numeroEdicao", value : histogramaVendasController.edicoesEscolhidas_HistogramaVenda[int]});
+			params.push({name : "listProdutoEdicaoDto["+int+"].codigoProduto", value : histogramaVendasController.codigoProduto_HistogramaVenda});
 		}
 		
 		$.post(url, params, function(data){
 		      if(data){
-		    	  $("#analiseHistogramaVendasContent").hide();
-		    	  $("#analiseHistoricoVendasContent").html(data).show();
-		    	  montarDados();
+		    	  $("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).hide();
+		    	  $("#analiseHistoricoVendasContent", anaLiseHistogramaController.workspace).html(data).show();
+		    	  anaLiseHistogramaController.montarDados();
 		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
 		    	  
 		    	  if ($(resultadoAnalise[idx].cell.faixaVenda).text() === 'De 0 a 0') {
@@ -419,16 +354,16 @@ var anaLiseHistogramaController = $.extend(true, {
 
 	refazerHistograma:function(faixas){
 		var formData = new Array();
-		formData.push({name:"edicoes",value:edicoesEscolhidas_HistogramaVenda.sort().toString()});
+		formData.push({name:"edicoes",value:histogramaVendasController.edicoesEscolhidas_HistogramaVenda.sort().toString()});
 		formData.push({name:"faixasVenda",value:faixas});
-		formData.push({name:"codigoProduto",value:codigoProduto_HistogramaVenda});
+		formData.push({name:"codigoProduto",value:histogramaVendasController.codigoProduto_HistogramaVenda});
 		
-		$("#estudosAnaliseHistGrid").flexOptions({
+		$("#estudosAnaliseHistGrid", anaLiseHistogramaController.workspace).flexOptions({
 			url: contextPath + "/distribuicao/histogramaVendas/populateHistograma",
 			dataType : 'json',
 			params: formData
 		});
-		$("#estudosAnaliseHistGrid").flexReload();
+		$("#estudosAnaliseHistGrid", anaLiseHistogramaController.workspace).flexReload();
 	},
 	
 	alterarFaixaAte : function (rowId, event){
@@ -546,12 +481,10 @@ var anaLiseHistogramaController = $.extend(true, {
 			row.cell.faixaVendaAte = anaLiseHistogramaController.createInput(row.id, $(row.cell.faixaVendaAte).val());
 			row.cell.acao = anaLiseHistogramaController.createImgExcluir(row.id);
 		}
-	}
+	},
 	
-});
-
-function popup_divergencias() {
-		$( "#dialog-divergencia" ).dialog({
+	popup_divergencias : function() {
+		$( "#dialog-divergencia", anaLiseHistogramaController.workspace).dialog({
 			resizable: false,
 			height:360,
 			width:690,
@@ -562,9 +495,99 @@ function popup_divergencias() {
 				}
 			}
 		});
-	};
+	},
 	
-function divergencia(){
-	$('.classDivergencias').toggle();
-	}
+	divergencia : function(){
+		$('.classDivergencias', anaLiseHistogramaController.workspace).toggle();
+	},
+	
+	montarDados : function(){
+
+		var params = new Array();
+		
+		params.push({name : "filtro.produtoDto.codigoProduto", value : histogramaVendasController.codigoProduto_HistogramaVenda});
+		for ( var int = 0; int < histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length; int++) {
+			params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value : histogramaVendasController.edicoesEscolhidas_HistogramaVenda[int]});
+			params.push({name : "edicoesSelecionadas["+int+"].numeroEdicao", value : histogramaVendasController.edicoesEscolhidas_HistogramaVenda[int]});
+		}
+
+		//carregando popup superior para as edições
+		var url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
+		$.post(url, params, function(data){
+			if(data){
+							anaLiseHistogramaController.tempData = data;
+							
+							/* montando popup superior */ 
+							$("#voltarBaseAnalise", anaLiseHistogramaController.workspace).click(function(){
+								$("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).show();
+								$("#analiseHistoricoVendasContent", anaLiseHistogramaController.workspace).hide();
+							});
+							
+							$("#analiseHistoricoPopUpNomeProduto", anaLiseHistogramaController.workspace).clear();
+							$("#analiseHistoricoPopUpNomeProduto", anaLiseHistogramaController.workspace).append('<td class="class_linha_1"><strong>Produto:</strong></td>');
+							
+							// tr numeroEdicao
+							$('#analiseHistoricoPopUpNumeroEdicao', anaLiseHistogramaController.workspace).html('')
+							.append('<td class="class_linha_1"><strong>Edição:</strong></td>');
+							
+							// tr dataLancamento
+							$('#analiseHistoricoPopUpDatalancamento', anaLiseHistogramaController.workspace).html('')
+							.append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
+							
+							// tr reparte
+							$('#analiseHistoricoPopUpReparte', anaLiseHistogramaController.workspace).html('')
+							.append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
+							
+							// tr venda
+							$('#analiseHistoricoPopUpVenda', anaLiseHistogramaController.workspace).html('')
+							.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
+							
+							var qtdEdicoesSelecionadas = anaLiseHistogramaController.tempData.rows.length;
+							
+							// carregando popUp_analiseHistoricoVenda
+							for (var int = qtdEdicoesSelecionadas - 1; int >= 0; int--) {
+								row = anaLiseHistogramaController.tempData.rows[int];
+								
+								$("#analiseHistoricoPopUpNomeProduto", anaLiseHistogramaController.workspace).append(
+										'<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
+								
+								$("#analiseHistoricoPopUpNumeroEdicao", anaLiseHistogramaController.workspace).append(
+										'<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
+								
+								$("#analiseHistoricoPopUpDatalancamento", anaLiseHistogramaController.workspace).append(
+										'<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
+								
+								$("#analiseHistoricoPopUpReparte", anaLiseHistogramaController.workspace).append(
+										'<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
+								
+								$("#analiseHistoricoPopUpVenda", anaLiseHistogramaController.workspace).append(
+										'<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
+							}
+							
+							qtdEdicoesSelecionadas = 6 - anaLiseHistogramaController.tempData.rows.length; 
+							
+							// por estética de layout, insiro elementos td vazios
+							for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+								$("#analiseHistoricoPopUpNomeProduto", anaLiseHistogramaController.workspace).append(
+										'<td class="class_linha_1"></td>');
+								
+								$("#analiseHistoricoPopUpNumeroEdicao", anaLiseHistogramaController.workspace).append(
+										'<td class="class_linha_1"></td>');
+								
+								$("#analiseHistoricoPopUpDatalancamento", anaLiseHistogramaController.workspace).append(
+										'<td width="130" align="center" class="class_linha_2"></td>');
+								
+								$("#analiseHistoricoPopUpReparte", anaLiseHistogramaController.workspace).append(
+										'<td align="right" class="class_linha_1"></td>');
+								
+								$("#analiseHistoricoPopUpVenda", anaLiseHistogramaController.workspace).append(
+										'<td align="right" class="class_linha_1"></td>');
+							}
+							
+			}
+		});
+	},
+
+	resultadoAnalise: undefined
+});
 //@ sourceURL=analiseHistograma.js

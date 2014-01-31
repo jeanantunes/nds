@@ -76,7 +76,7 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 		save(produtoVeja);
 
 		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao("COD_1", 1L, 10, 14,
-				new Long(100), BigDecimal.TEN, new BigDecimal(20),
+				Long.valueOf(100), BigDecimal.TEN, new BigDecimal(20),
 				"111", produtoVeja, null, false, "Veja 1");
 		save(produtoEdicaoVeja1);
 

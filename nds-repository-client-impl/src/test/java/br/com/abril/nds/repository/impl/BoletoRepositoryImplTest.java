@@ -120,7 +120,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		produtoVeja.setEditor(abril);
 		save(produtoVeja);		
 				
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja, 
 				null, false);
 		save(produtoEdicaoVeja1);

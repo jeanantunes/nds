@@ -777,5 +777,35 @@ public class Identificacao implements Serializable {
 		this.localDestinoOperacao = localDestinoOperacao;
 		this.localDestinoOperacaoXML = localDestinoOperacao.getIntValue();
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getNumeroDocumentoFiscal() == null) ? 0 : this.getNumeroDocumentoFiscal().hashCode());
+		result = prime * result + ((this.getSerie()  == null) ? 0 : this.getSerie().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Identificacao other = (Identificacao) obj;
+		if (this.getNumeroDocumentoFiscal() == null) {
+			if (other.getNumeroDocumentoFiscal() != null)
+				return false;
+		} else if (!this.getNumeroDocumentoFiscal().equals(other.getNumeroDocumentoFiscal()))
+			return false;
+		if (this.getSerie() == null) {
+			if (other.getSerie() != null)
+				return false;
+		} else if (!this.getSerie().equals(other.getSerie()))
+			return false;
+		return true;
+	}
 }

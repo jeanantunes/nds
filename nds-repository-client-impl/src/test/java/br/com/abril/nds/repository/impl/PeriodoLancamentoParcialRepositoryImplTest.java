@@ -30,6 +30,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class PeriodoLancamentoParcialRepositoryImplTest extends
@@ -66,7 +67,7 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 		produtoVeja.addFornecedor(fornecedorFC);
 		save(produtoVeja);
 
-		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 10, new Long(100),
+		produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 10, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ",
 				produtoVeja, null, false);
 
@@ -349,4 +350,21 @@ public class PeriodoLancamentoParcialRepositoryImplTest extends
 		
 	}
 	
+	@Test
+	public void testeObterPeriodoAnterior() {
+		
+		PeriodoLancamentoParcial p =
+				this.periodoLancamentoParcialRepository.obterPeriodoAnterior(DateUtil.parseDataPTBR("13/06/2014"), 181881L);
+		
+		Assert.assertNotNull(p);
+	}
+	
+	@Test
+	public void testeObterPeriodoPosterior() {
+		
+		PeriodoLancamentoParcial p =
+				this.periodoLancamentoParcialRepository.obterPeriodoPosterior(DateUtil.parseDataPTBR("13/06/2014"), 181881L);
+		
+		Assert.assertNotNull(p);
+	}
 }

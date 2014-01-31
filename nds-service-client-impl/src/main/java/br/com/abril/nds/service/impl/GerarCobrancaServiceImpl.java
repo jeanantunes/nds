@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -484,9 +485,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 											  consolidadosCotaUnficacao);
 		}
 		
-		for (Cota cotaUnificadora : consolidadosCotaUnficacao.keySet()){
+		for (Entry<Cota, List<GerarCobrancaHelper>> entry : consolidadosCotaUnficacao.entrySet()){
 			
-			List<GerarCobrancaHelper> lista = consolidadosCotaUnficacao.get(cotaUnificadora);
+			List<GerarCobrancaHelper> lista = entry.getValue();
+			Cota cotaUnificadora =  entry.getKey();
 			
 			BigDecimal valor = BigDecimal.ZERO;
 			GerarCobrancaHelper helperPrincipal = null;
@@ -1422,15 +1424,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		map.put(TipoEmissaoDocumento.IMPRESSAO_NOTA_ENVIO, parametroDistribuicaoCota.getNotaEnvioImpresso());
 		map.put(TipoEmissaoDocumento.IMPRESSAO_SLIP, parametroDistribuicaoCota.getSlipImpresso());
 
-		Set<TipoEmissaoDocumento> documentosKeySet = map.keySet();
-
-		for (TipoEmissaoDocumento documento : documentosKeySet) {
+		for (Entry<TipoEmissaoDocumento, Boolean> entry : map.entrySet()) {
 			
-			Boolean value = map.get(documento);
+			Boolean value = entry.getValue();
 			
 			if (value == null) {
-
-				map.put(documento, this.parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaEnvioEmail(documento.getParametroEmissao()));
+				
+				entry.setValue(this.parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaEnvioEmail(entry.getKey().getParametroEmissao()));
 			}
 		}
 

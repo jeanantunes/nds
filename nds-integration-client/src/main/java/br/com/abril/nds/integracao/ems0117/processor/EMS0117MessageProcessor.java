@@ -515,7 +515,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 						}
 						
 						try {
-							ec.getEndereco().setNumero(new Integer(input.getNumLogradouro()).toString());
+							ec.getEndereco().setNumero(Integer.valueOf(input.getNumLogradouro()).toString());
 						} catch (Exception e) {
 							ec.getEndereco().setNumero(input.getNumLogradouro());
 						}
@@ -706,11 +706,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 private boolean compararObjEnderecoMdcNds(Endereco endereco, EMS0117Input input){
 		
-		if(endereco == null && input != null ){
-			return false;
+		if(endereco == null && input == null ){
+			return true;
 		}
 		
-		if(endereco != null && input == null ){
+		if(endereco == null ^ input == null ){
 			return false;
 		}
 		
@@ -737,7 +737,7 @@ private boolean compararObjEnderecoMdcNds(Endereco endereco, EMS0117Input input)
 		
 		String numeroMDC = "";
 		try {
-			numeroMDC = new Integer(input.getNumLogradouro()).toString();
+			numeroMDC = Integer.valueOf(input.getNumLogradouro()).toString();
 		} catch (Exception e) {
 			//Numero com carcater não numérico
 			numeroMDC = input.getNumLogradouro();

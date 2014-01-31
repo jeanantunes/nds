@@ -19,7 +19,6 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalNdsRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
@@ -269,19 +268,6 @@ public class NotaFiscalNdsRepositoryImpl extends AbstractRepositoryModel<NotaFis
 		return sqlQuery.list();
 		
 	}
-
-	public void salvarNotasFiscais(final List<br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds> notasFiscais, List<NotaFiscal> notasFiscais2) {
-		
-		for (br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds notaFiscal : notasFiscais) {
-			merge(notaFiscal);
-		}
-		
-		for (NotaFiscal notaFiscal : notasFiscais2) {
-			notaFiscalRepository.adicionar(notaFiscal);
-		}
-		
-	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")	

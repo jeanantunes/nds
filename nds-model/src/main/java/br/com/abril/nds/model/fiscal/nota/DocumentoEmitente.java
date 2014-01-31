@@ -21,5 +21,4 @@ public class DocumentoEmitente {
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
 }

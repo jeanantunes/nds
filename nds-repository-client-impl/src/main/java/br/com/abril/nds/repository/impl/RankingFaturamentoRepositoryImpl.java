@@ -22,8 +22,6 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	@Override
 	public void executeJobGerarRankingFaturamento() {
 		StringBuilder hql = new StringBuilder();
-		
-		hql = new StringBuilder();
 		hql.append(" INSERT INTO ranking_faturamento ( COTA_ID, FATURAMENTO ) ")
 		.append(" select cota_id, sum(fat) as faturamento ")
 		.append(" from (select l.data_rec_distrib, epc.cota_id,  ")

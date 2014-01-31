@@ -11,6 +11,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -69,7 +70,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	/**
 	 * DET -> PROD
 	 */
-	@OneToMany(mappedBy = "produtoServicoPK.notaFiscal")
+	@OneToMany(mappedBy="produtoServicoPK.notaFiscal", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@NFEExportType
 	@XmlElements(value={ @XmlElement(name="det") })
 	private List<DetalheNotaFiscal> detalhesNotaFiscal;
@@ -126,8 +127,8 @@ public class NotaFiscalInformacoes implements Serializable {
 	@Column(name = "NOTA_IMPRESSA", nullable = false)
 	private boolean notaImpressa;
 	
-	@OneToOne(cascade=CascadeType.MERGE)
-	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique=true, insertable=false, updatable=false)
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique=true)
 	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
 	
 	@Column(name = "INFORMACOES_ADICIONAIS")

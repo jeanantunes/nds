@@ -387,13 +387,13 @@ public class NotaFiscalRepositoryImplTest  extends AbstractRepositoryImplTest {
 			PeriodicidadeProduto periodicidade = PeriodicidadeProduto.ANUAL;
 			int produtoPeb = 1;
 			int produtoPacotePadrao = 1;
-			Long produtoPeso = new Long(100);
+			Long produtoPeso = Long.valueOf(100);
 
 			String codigoProdutoEdicao = contador+"";
-			Long numeroEdicao = new Long(contador);
+			Long numeroEdicao = Long.valueOf(contador);
 			int pacotePadrao = 1;
 			int peb = 1;
-			Long peso = new Long(0);
+			Long peso = Long.valueOf(0);
 			BigDecimal precoCusto = BigDecimal.ZERO;
 			BigDecimal precoVenda = BigDecimal.ZERO;
 			String codigoDeBarras = contador+"";

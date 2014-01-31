@@ -200,23 +200,4 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 		Assert.assertNotNull(tipoDescontoCotaDTOs); 
 	  }
 	
-	
-	@Test
-	public void testeObterUltimoDescontoValidoFornecedorCota(){
-		Fornecedor fornecedor = new Fornecedor();
-		Cota cota = new Cota();
-		fornecedor.setId(1L);
-		cota.setId(1L);
-		
-		DescontoCota descontoCota = descontoCotaRepository.buscarUltimoDescontoValido(fornecedor, cota);
-	 }
-	
-	@Test
-	public void testeObterUltimoDescontoValido(){
-		
-		DescontoCota descontoCota = descontoCotaRepository.buscarUltimoDescontoValido(desconto3.getId(),fornecedor1 , cota);
-		
-		Assert.assertNotNull(descontoCota);
-	}
-	
 }

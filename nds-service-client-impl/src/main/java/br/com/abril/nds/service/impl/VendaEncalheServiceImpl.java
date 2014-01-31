@@ -568,7 +568,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 															dataOperacao);
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
-		movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		
 		MovimentoEstoque movimentoEstoque = gerarMovimentoEstoqueVendaEncalheDistribuidor(vnd, usuario, produtoEdicao);
 		
@@ -711,7 +711,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 										   		   dataOperacao);
 		
 		movimentoEstoqueCota.setValoresAplicados(vendaProduto.getValoresAplicados());
-		movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+		movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		
 		MovimentoEstoque movimentoEstoque = 
 				gerarMovimentoEstoqueVendaSuplementarDistribuidor(produtoEdicao.getId(), vendaProduto.getCota().getId(),

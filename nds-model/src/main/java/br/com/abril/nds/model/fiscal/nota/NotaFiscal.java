@@ -73,6 +73,11 @@ public class NotaFiscal implements Serializable {
 		this.notaFiscalInformacoes = notaFiscalInformacoes;
 	}
 
+	/*
+	 * 
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -94,14 +99,14 @@ public class NotaFiscal implements Serializable {
 			return false;
 		NotaFiscal other = (NotaFiscal) obj;
 		if (this.getId() == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!this.getId().equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
 		if (this.getNotaFiscalInformacoes() == null) {
-			if (other.notaFiscalInformacoes != null)
+			if (other.getNotaFiscalInformacoes() != null)
 				return false;
-		} else if (!this.getNotaFiscalInformacoes().equals(other.notaFiscalInformacoes))
+		} else if (!this.getNotaFiscalInformacoes().equals(other.getNotaFiscalInformacoes()))
 			return false;
 		return true;
 	}

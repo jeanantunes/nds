@@ -208,18 +208,18 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 	}
 	
 	@Override
-	public BigInteger buscarQtdEstoquePorProduto(String codigoProduto, Long numeroEdicao) {
+	public BigInteger buscarQtdEstoquePorProduto(String codigoProduto, List<Long> numeroEdicao) {
 		
-		StringBuilder hql = new StringBuilder("select coalesce(e.qtde,0) ");
+		StringBuilder hql = new StringBuilder("select sum(coalesce(e.qtde,0)) ");
 		hql.append(" from EstoqueProduto e ")
 		   .append(" join e.produtoEdicao pe ")
 		   .append(" join pe.produto p ")
 		   .append(" where p.codigo = :codigoProduto ")
-		   .append(" and pe.numeroEdicao = :numeroEdicao ");
+		   .append(" and pe.numeroEdicao in (:numeroEdicao) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("codigoProduto", codigoProduto);
-		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameterList("numeroEdicao", numeroEdicao);
 		
 		return (BigInteger) query.uniqueResult();
 	}
