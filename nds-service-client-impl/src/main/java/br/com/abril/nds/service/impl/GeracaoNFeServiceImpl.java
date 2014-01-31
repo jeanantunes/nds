@@ -39,6 +39,7 @@ import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.SerieRepository;
 import br.com.abril.nds.service.GeracaoNFeService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.builders.EmitenteDestinatarioBuilder;
 import br.com.abril.nds.service.builders.FaturaBuilder;
 import br.com.abril.nds.service.builders.FaturaEstoqueProdutoNotaFiscalBuilder;
@@ -76,6 +77,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
 	@Autowired 
 	private NotaFiscalNdsRepository notaFiscalNdsRepository; 
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Override
 	@Transactional
@@ -185,6 +189,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		for (Cota cota : cotas) {
 			NotaFiscal notaFiscal = new NotaFiscal();
+			
+			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 			
 			// NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);

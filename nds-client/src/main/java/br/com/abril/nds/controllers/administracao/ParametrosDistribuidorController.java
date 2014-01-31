@@ -46,6 +46,7 @@ import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.service.integracao.RegimeTributarioService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -84,7 +85,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Autowired
-	private RegimeTributarioRepository regimeTributarioRepository;
+	private RegimeTributarioService regimeTributarioService;
 	
 	@Autowired
 	private HttpSession session;
@@ -140,7 +141,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	private List<ItemDTO<Long, String>>  carregarComboRegimeTributario() {
 		
-		List<RegimeTributario> regimesTributarios =  regimeTributarioRepository.buscarTodos();
+		List<RegimeTributario> regimesTributarios = regimeTributarioService.obterRegimesTributarios();
 		List<ItemDTO<Long, String>> listaRegimesTributarios = new ArrayList<ItemDTO<Long, String>>();
 		
 		for(RegimeTributario re : regimesTributarios) {

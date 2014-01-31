@@ -1484,6 +1484,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	}
 
 	@Override
+	@Transactional
 	public List<String> obterEstadosAtendidosPeloDistribuidor() {
 		
 		return enderecoRepository.obterUFsCotas();
