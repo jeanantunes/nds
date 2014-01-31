@@ -15,55 +15,33 @@ var retornoNFEController  = $.extend(true, {
 			colModel : [{
 				display : 'Num. Total de Arquivos',
 				name : 'numeroTotalArquivos',
-				width : 250,
-				sortable : true,
-				align : 'left',
+				width : 150,
+				sortable : false,
+				align : 'center',
 			}, {
 				display : 'Num. NF-e',
 				name : 'numeroNotasAprovadas',
-				width : 250,
-				sortable : true,
-				align : 'left',
+				width : 150,
+				sortable : false,
+				align : 'center',
 			}, {
 				display : 'Erros Consis.',
 				name : 'numeroNotasRejeitadas',
-				width : 250,
-				sortable : true,
-				align : 'left',
-			}],
-			
-		});
-		
-		/*
-		$(".gridRetornoNfe", retornoNFEController.workspace).flexigrid({
-			dataType : 'json',
-			colModel : [ {
-				display : 'Num. Total de Arquivos',
-				name : 'numeroTotalArquivos',
-				width : 220,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Num. NF-e',
-				name : 'numeroNotasAprovadas',
-				width : 220,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : 'Erros Consis.',
-				name : 'numeroNotasRejeitadas',
-				width : 220,
-				sortable : true,
-				align : 'left',
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
+				width : 150,
 				sortable : false,
 				align : 'center',
 			}],
+			dataType : 'json',
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
+			rp : 15,
+			showTableToggleBtn : false,
+			width : 550,
+			height : 100
+			
 		});
-		*/
+		
 	},
 	
 	initFiltroDatas : function() {
