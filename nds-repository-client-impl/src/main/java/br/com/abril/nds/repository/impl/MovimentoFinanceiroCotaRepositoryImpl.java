@@ -780,10 +780,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-		
+		setParameters(query, param);
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
 			
 			query.setFirstResult(paginacaoVO.getPosicaoInicial());
@@ -874,9 +871,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 	
 		query.setResultTransformer(Transformers.aliasToBean(MovimentoFinanceiroDTO.class));
 		
@@ -935,9 +930,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
 			
@@ -949,28 +942,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setResultTransformer(Transformers.aliasToBean(CotaTransportadorDTO.class));
 		
 		return Long.parseLong(String.valueOf(query.list()));
-		
-//		HashMap<String, Object> param = new HashMap<String, Object>();
-//		
-//		StringBuilder hql = new StringBuilder();
-//		hql.append("select count(transportador.id)");
-//		addFromJoinObterDadosTransportador(hql);
-//		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
-//		hql.append(" group by transportador.id ");
-//
-//		Query query = getSession().createQuery(hql.toString());
-//
-//		for(String key : param.keySet()){
-//			query.setParameter(key, param.get(key));
-//		}
-//		
-//		Long count = (Long) query.uniqueResult();
-//		
-//		if (count == null) {
-//			count = 0L;
-//		}
-//
-//		return count;
 	}
 		
 	@Override

@@ -80,9 +80,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ParcialDTO.class));
@@ -240,10 +238,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		
 		HashMap<String, Object> param = buscarParametrosLancamentosParciais(filtro);
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}	
-		
+		setParameters(query, param);
 		Long totalRegistros = (Long) query.uniqueResult();
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();

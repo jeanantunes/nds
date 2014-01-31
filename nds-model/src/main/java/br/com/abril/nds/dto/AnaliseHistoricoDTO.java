@@ -74,6 +74,10 @@ public class AnaliseHistoricoDTO {
 	
 	@Export(label = "VDA 6", alignment=Alignment.LEFT, exhibitionOrder = 18)
 	private String ed6Venda = "0";
+	
+	private String codigoProduto;
+	
+	private Long numeroEdicao;
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -243,6 +247,22 @@ public class AnaliseHistoricoDTO {
 	
 	public void setVendaMediaFormat(String vendaMediaFormatado) {
 		this.vendaMediaFormat = vendaMediaFormatado;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
 
 }

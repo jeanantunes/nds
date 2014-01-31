@@ -209,11 +209,11 @@ public class EntradaNFETerceirosRepositoryImplTest extends
 
 		Produto produtoCE = Fixture.produto("00086", "Produto CE 3",
 				"ProdutoCE_3", PeriodicidadeProduto.MENSAL, tipoProdutoRevista,
-				5, 5, new Long(10000), TributacaoFiscal.TRIBUTADO);
+				5, 5, Long.valueOf(10000), TributacaoFiscal.TRIBUTADO);
 		save(produtoCE);
 
 		ProdutoEdicao produtoEdicaoCE = Fixture.produtoEdicao("COD_PP", 86L,
-				10, 7, new Long(100), BigDecimal.TEN, new BigDecimal(90),
+				10, 7, Long.valueOf(100), BigDecimal.TEN, new BigDecimal(90),
 				"EZ8", produtoCE, null, false, "Produto CE 3");
 		save(produtoEdicaoCE);
 

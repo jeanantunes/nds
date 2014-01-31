@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.SerializationUtils;
@@ -279,10 +280,9 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 	private BigInteger obterSomaReparteFinal(Map<String, BigInteger> mapReparte, boolean comparaIgual, TipoClassificacaoEstudoCota... tipoClassificacao) {
 		
 		BigInteger repFinal = BigInteger.ZERO;
-		Iterator<String> classifiqIterator = mapReparte.keySet().iterator();
 		
-		while (classifiqIterator.hasNext()) {
-			String key = classifiqIterator.next();
+		for(Entry<String, BigInteger> entry :mapReparte.entrySet()){
+			String key = entry.getKey();
 			if(mapReparte.containsKey(key)) {
 				if (tipoClassificacao == null || tipoClassificacao.length == 0) {
 					repFinal = repFinal.add(mapReparte.get(key));
@@ -291,12 +291,12 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 					for (TipoClassificacaoEstudoCota tp:tipoClassificacao) {
 						if(comparaIgual) {
 							if (key.equals(tp.name())) {
-								repFinal = repFinal.add(mapReparte.get(key));
+								repFinal = repFinal.add(entry.getValue());
 							}
 						} 
 						else {
 							if (!key.equals(tp.name())) {
-								repFinal = repFinal.add(mapReparte.get(key));
+								repFinal = repFinal.add(entry.getValue());
 							}
 						}
 					}

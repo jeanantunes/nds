@@ -1338,8 +1338,6 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     private String calculaValorTotalRecibo(List<ItemSlipVendaEncalheDTO> itensRecibo){
     	
-    	String valorTotalFormatado = new String();
-    	
     	BigDecimal valorTotal = BigDecimal.ZERO;
     	
     	for (ItemSlipVendaEncalheDTO item : itensRecibo){
@@ -1347,9 +1345,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     		valorTotal = valorTotal.add(CurrencyUtil.converterValor(item.getTotal()));
     	}
     	
-    	valorTotalFormatado = CurrencyUtil.formatarValor(valorTotal);
-    	
-    	return valorTotalFormatado;
+    	return CurrencyUtil.formatarValor(valorTotal);
     }
     
     /**
@@ -1361,18 +1357,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      */
     private String calculaQuantidadeTotalRecibo(List<ItemSlipVendaEncalheDTO> itensRecibo){
     	
-        String qtdeTotalFormatado = new String();
-        
         BigInteger qtdeTotal = BigInteger.ZERO;
     	
         for (ItemSlipVendaEncalheDTO item : itensRecibo){
         	
         	qtdeTotal = qtdeTotal.add(new BigInteger(item.getQuantidade()));
     	}
-    	
-        qtdeTotalFormatado = qtdeTotal.toString();
         
-    	return qtdeTotalFormatado;
+    	return qtdeTotal.toString();
     }
 	
 	/**

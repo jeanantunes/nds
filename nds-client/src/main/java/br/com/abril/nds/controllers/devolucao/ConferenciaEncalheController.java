@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -310,11 +311,9 @@ public class ConferenciaEncalheController extends BaseController {
 				return;
 			}
 			
-			Set<Integer> cotasEmConferencia = new HashSet<>(mapaCotaConferidaUsuario.keySet()) ;
-		
-			for(Integer numeroCota : cotasEmConferencia) {
-				if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
-					mapaCotaConferidaUsuario.remove(numeroCota);
+			for(Entry<Integer, String> entry : mapaCotaConferidaUsuario.entrySet()) {
+				if( entry.getValue().equals(userSessionID) ) {
+					mapaCotaConferidaUsuario.remove(entry.getKey());
 				}
 			}
 		
@@ -1286,7 +1285,7 @@ public class ConferenciaEncalheController extends BaseController {
 			id *= -1;
 		}
 		
-		return new Long(id);
+		return Long.valueOf(id);
 		
 	}
 	
@@ -1614,10 +1613,8 @@ public class ConferenciaEncalheController extends BaseController {
 			    
 				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
 			}
-			
-			Box boxEncalhe = new Box();
 			Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
-			boxEncalhe = this.boxService.buscarPorId(idBox);
+			Box boxEncalhe = this.boxService.buscarPorId(idBox);
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			

@@ -159,11 +159,7 @@ public class PdvController extends BaseController {
 	@Post
 	@Path("/carregarGeradorFluxo")
 	public void carregarGeradorFluxo(List<Long> codigos, ModoTela modoTela, Long idPdv){
-	   PDV pdv =	 pdvService.obterPDVporId(idPdv);
-	   
-		  
-			
-		    List<ItemDTO<Long, String>> listaDescricao;
+	  	    List<ItemDTO<Long, String>> listaDescricao;
 		    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
 		    if (ModoTela.CADASTRO_COTA == modoTela) {
 		        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));

@@ -164,7 +164,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		}
 
 		if(isNumeroCotaPreenchido ){
-			query.setParameter("numeroCota", new Integer(cota.getCota()));
+			query.setParameter("numeroCota", Integer.valueOf(cota.getCota()));
 		}
 		 query.setParameter("tipoCota", TipoDistribuicaoCota.CONVENCIONAL);
 		 query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));

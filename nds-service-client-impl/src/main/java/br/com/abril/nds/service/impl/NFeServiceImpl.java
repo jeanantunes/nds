@@ -708,6 +708,90 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 
 	}
+//	private void carregarDadosDuplicatas(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
+//		List<Duplicata> faturas = new ArrayList<Duplicata>();
+//		danfe.setFaturas(faturas);	
+//	}
+//
+//	private void carregarDadosItensNfe(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
+//
+//		List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
+//
+//		List<ProdutoServico> produtosSevicos =  notaFiscal.getProdutosServicos();
+//
+//		String codigoProduto 		= "";
+//		String descricaoProduto 	= "";
+//		Long produtoEdicao 			= null;
+//		String NCMProduto 			= "";
+//		String CFOPProduto 			= "";
+//		String unidadeProduto 		= "";
+//		BigDecimal quantidadeProduto 	= BigDecimal.ZERO;
+//		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
+//		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
+//		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+//		String CSTProduto = "";
+//		String CSOSNProduto = "";
+//		BigDecimal baseCalculoProduto 	= BigDecimal.ZERO;
+//		BigDecimal aliquotaICMSProduto 	= BigDecimal.ZERO;
+//		BigDecimal valorICMSProduto 	= BigDecimal.ZERO;
+//		BigDecimal aliquotaIPIProduto 	= BigDecimal.ZERO;
+//		BigDecimal valorIPIProduto 		= BigDecimal.ZERO;
+//
+//		for(ProdutoServico produtoServico : produtosSevicos) {
+//
+////			String unidade = produtoServico.getUnidade();
+//
+//			codigoProduto 		= produtoServico.getCodigoProduto().toString();
+//			descricaoProduto 	= produtoServico.getDescricaoProduto();
+//			produtoEdicao		= produtoServico.getProdutoEdicao().getNumeroEdicao();
+//
+//			NCMProduto 			= produtoServico.getNcm().toString();
+//			CFOPProduto 		= produtoServico.getCfop().toString();                            
+//
+//			//TODO: Acertar a unidade do produto
+//			unidadeProduto 		= null;//(unidade == null || unidade.isEmpty()) ? 0L : Long.valueOf(unidade);
+//
+//			quantidadeProduto 	= null; //TODO: produtoServico.getQuantidade();              
+//			valorUnitarioProduto = produtoServico.getValorUnitario();
+//			valorTotalProduto 	= produtoServico.getValorTotalBruto();   
+//			valorDescontoProduto = produtoServico.getValorDesconto();
+//
+//			CSTProduto 			= ""; //TODO obter campo                                   
+//			CSOSNProduto 		= ""; //TODO obter campo                                    
+//			baseCalculoProduto 	= BigDecimal.ZERO;		//TODO obter campo           
+//			aliquotaICMSProduto = BigDecimal.ZERO;  //TODO obter campo         
+//			valorICMSProduto 	= BigDecimal.ZERO;      //TODO obter campo     
+//			aliquotaIPIProduto 	= BigDecimal.ZERO;      //TODO obter campo     
+//			valorIPIProduto 	= BigDecimal.ZERO;  //TODO obter campo         
+//
+//
+//			ItemImpressaoNfe item = new ItemImpressaoNfe();
+//
+//			item.setCodigoProduto(codigoProduto);
+//			item.setDescricaoProduto(descricaoProduto);
+//			item.setProdutoEdicao(produtoEdicao);
+//			item.setNCMProduto(NCMProduto);
+//			item.setCFOPProduto(CFOPProduto);
+//			item.setUnidadeProduto(unidadeProduto);
+//			item.setQuantidadeProduto(quantidadeProduto);
+//			item.setValorUnitarioProduto(valorUnitarioProduto);
+//			item.setValorTotalProduto(valorTotalProduto);
+//			item.setValorDescontoProduto(valorDescontoProduto);
+//			item.setCSTProduto(CSTProduto);
+//			item.setCSOSNProduto(CSOSNProduto);
+//			item.setBaseCalculoProduto(baseCalculoProduto);
+//			item.setAliquotaICMSProduto(aliquotaICMSProduto);
+//			item.setValorICMSProduto(valorICMSProduto);
+//			item.setAliquotaIPIProduto(aliquotaIPIProduto);
+//			item.setValorIPIProduto(valorIPIProduto);
+//
+//			listaItemImpressaoNfe.add(item);
+//
+//		}
+//
+//		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
+//
+//	}
 
 	protected URL obterDiretorioReports() {
 

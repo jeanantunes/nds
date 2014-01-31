@@ -896,13 +896,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//edicao = numero da edicao
 		if (StringUtils.isNotEmpty(filtro.getEdicao())) {
 			whereList.add(" produtoedi1_.numero_edicao = :numeroEdicao");
-			parameterMap.put("numeroEdicao",new Long(filtro.getEdicao()));
+			parameterMap.put("numeroEdicao",Long.valueOf(filtro.getEdicao()));
 		}
 
 		//classificação = classificação do produto
 		if (filtro.getIdTipoClassificacaoProduto() != null) {
 			whereList.add(" tipoclassi6_.id = :tipoClassificacaoProdutoId");
-			parameterMap.put("tipoClassificacaoProdutoId",new Long(filtro.getIdTipoClassificacaoProduto()));
+			parameterMap.put("tipoClassificacaoProdutoId",Long.valueOf(filtro.getIdTipoClassificacaoProduto()));
 		}		
 
 		// check opcao de componente e elemento
@@ -999,9 +999,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 
-		for (String key : parameterMap.keySet()) {
-			query.setParameter(key, parameterMap.get(key));
-		}
+		setParameters(query, parameterMap);
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 		configurarPaginacao(filtro,query);
 		List<EdicoesProdutosDTO> resultado = query.list();
@@ -1110,8 +1108,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select DISTINCT " +
-				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between 0.5 and 1 and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
-				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between 0.5 and 1 and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida) /6) else 0 end as vdEsmag," +
+				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
+				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
 				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
@@ -1255,10 +1253,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("produtoCodigo", codigoProduto);
 		query.setParameter("qtdEdicoes", edicoes.length);
 		query.setParameterList("nrEdicoes", edicoes);
+		query.setParameter("deMargem", de - 0.5);
 
-		for (String key : parameterMap.keySet()) {
-			query.setParameter(key, parameterMap.get(key));
-		}
+		setParameters(query, parameterMap);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistogramaDTO.class));
 
@@ -1364,11 +1361,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 
-	private void setParameters(Query query, Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
-	}
+
 
 	private String ordenarConsultaHistoricoVendaProdutoEdicao(FiltroHistoricoVendaDTO filtro) {
 

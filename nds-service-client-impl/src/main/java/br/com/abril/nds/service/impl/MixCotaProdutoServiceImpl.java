@@ -390,7 +390,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				mixCotaProdutoDTO.setItemValido(true);
 			}
 			
-			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
+			Cota cota = cotaService.obterPorNumeroDaCota(Integer.valueOf(mixCotaProdutoDTO.getNumeroCota()));
 			List<ClassificacaoNaoRecebidaDTO> classificacoesNaoRecebidasPelaCotaList = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(cota);
 			
 			for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
@@ -573,7 +573,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 
 			
-			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
+			Cota cota = cotaService.obterPorNumeroDaCota(Integer.valueOf(mixCotaProdutoDTO.getNumeroCota()));
 			
 			MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), mixCotaProdutoDTO.getCodigoICD(),mixCotaProdutoDTO.getClassificacaoProduto());
 			if (mixCotaProduto == null) {

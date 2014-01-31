@@ -1306,8 +1306,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 					
 					//caso todo o valor da conferencia tenha sido usado para quitação das negociações
 					if  (valorTotalEncalhe.compareTo(BigDecimal.ZERO) <= 0){
-						
-						valorTotalEncalhe = BigDecimal.ZERO;
 						break;
 					}
 					

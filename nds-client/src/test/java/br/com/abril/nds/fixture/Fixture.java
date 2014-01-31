@@ -336,78 +336,78 @@ public class Fixture {
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
 		return produto("1", "Veja", "Veja", PeriodicidadeProduto.SEMANAL,
-				tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoQuatroRodas(TipoProduto tipoProduto) {
 		return produto("2", "Quatro Rodas", "Quatro Rodas",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoInfoExame(TipoProduto tipoProduto) {
 		return produto("3", "Info Exame", "Info Exame",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 
 	public static Produto produtoCapricho(TipoProduto tipoProduto) {
 		return produto("4", "Capricho", "Capricho",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoSuperInteressante(TipoProduto tipoProduto) {
 		return produto("5",
 				"Superinteressante", "Superinteressante",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBoaForma(TipoProduto tipoProduto) {
 		return produto("6", "Boa Forma", "Boa Forma",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoBravo(TipoProduto tipoProduto) {
 		return produto("7", "Bravo", "Bravo",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoContigo(TipoProduto tipoProduto) {
 		return produto("8", "Contigo", "Contigo",
-				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.QUINZENAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCaras(TipoProduto tipoProduto) {
 		return produto("9", "Caras", "Caras",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoClaudia(TipoProduto tipoProduto) {
 		return produto("10", "Claudia", "Claudia",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCasaClaudia(TipoProduto tipoProduto) {
 		return produto("11", "Casa Claudia", "Casa Claudia",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoManequim(TipoProduto tipoProduto) {
 		return produto("12", "Manequim", "Manequim",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoNationalGeographic(TipoProduto tipoProduto) {
 		return produto("13", "National Geographic", "National Geographic",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoPlacar(TipoProduto tipoProduto) {
 		return produto("14", "Placar", "Placar",
-				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.MENSAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static Produto produtoCromoReiLeao(TipoProduto tipoProduto) {
 		return produto("15", "Cromo Rei Leao", "Cromo Rei Leao",
-				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, new Long(10), TributacaoFiscal. TRIBUTADO);
+				PeriodicidadeProduto.SEMANAL, tipoProduto, 5, 5, Long.valueOf(10), TributacaoFiscal. TRIBUTADO);
 	}
 	
 	public static TipoProduto tipoRevista(NCM ncm) {

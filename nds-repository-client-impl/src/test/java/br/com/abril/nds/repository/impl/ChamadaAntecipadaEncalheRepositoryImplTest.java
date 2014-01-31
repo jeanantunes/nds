@@ -163,12 +163,12 @@ public class ChamadaAntecipadaEncalheRepositoryImplTest extends AbstractReposito
 		produtoVeja.setEditor(editoraAbril);
 		save(produtoVeja);
 
-		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, new Long(100),
+		ProdutoEdicao produtoEdicaoVeja1 = Fixture.produtoEdicao(1L, 10, 14, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJKLMNOPQ", produtoVeja,
 				null, false);
 		save(produtoEdicaoVeja1);
 		
-		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, new Long(100),
+		ProdutoEdicao produtoEdicaoVeja2 = Fixture.produtoEdicao(2L, 10, 14, Long.valueOf(100),
 				BigDecimal.TEN, new BigDecimal(20), "ABCDEFGHIJOPA", produtoVeja,
 				null, false);
 		save(produtoEdicaoVeja2);

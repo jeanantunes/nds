@@ -916,6 +916,11 @@ var produtoEdicaoController =$.extend(true,  {
 								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
 								 $("#produtoEdicaoController-istrac29").val(true);
 							}
+							
+							if (!result.origemInterface) {
+								
+								$("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+							}
 
 							if (redistribuicao) {
 								

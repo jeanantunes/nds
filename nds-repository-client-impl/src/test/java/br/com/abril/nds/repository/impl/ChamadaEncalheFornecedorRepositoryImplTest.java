@@ -87,7 +87,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         produtoSuperInteressante.addFornecedor(fornecedorFC);
         save(produtoSuperInteressante);
         
-        ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao("36341001", 1L, 10, 14, new Long(100), BigDecimal.valueOf(7), BigDecimal.valueOf(9.9),
+        ProdutoEdicao produtoEdicaoSuper1 = Fixture.produtoEdicao("36341001", 1L, 10, 14, Long.valueOf(100), BigDecimal.valueOf(7), BigDecimal.valueOf(9.9),
                 "115", produtoSuperInteressante, null, false, "Super Int. 1");
         save(produtoEdicaoSuper1);
 
@@ -102,7 +102,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoInfoExame);
         
         ProdutoEdicao produtoEdicaoInfoExame1 = Fixture.produtoEdicao("29315013", 1L, 12, 30,
-                new Long(250), new BigDecimal(25), BigDecimal.valueOf(29.9),
+                Long.valueOf(250), new BigDecimal(25), BigDecimal.valueOf(29.9),
                 "117", produtoInfoExame, null, false, "Info Exame 1");
         save(produtoEdicaoInfoExame1);
         
@@ -117,7 +117,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoQuatroRodas);
         
         ProdutoEdicao produtoEdicaoQuatroRodas1 = Fixture.produtoEdicao("5198", 1L, 7, 30,
-                new Long(300), new BigDecimal(10), BigDecimal.valueOf(12.95),
+                Long.valueOf(300), new BigDecimal(10), BigDecimal.valueOf(12.95),
                 "118", produtoQuatroRodas, null, false, "Quatro Rodas 1");
         save(produtoEdicaoQuatroRodas1);
         
@@ -144,7 +144,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoBoaForma);
         
         ProdutoEdicao produtoEdicaoBoaForma1 = Fixture.produtoEdicao("21171001", 1L, 10, 30,
-                new Long(100), new BigDecimal(1.5), BigDecimal.valueOf(2.99),
+                Long.valueOf(100), new BigDecimal(1.5), BigDecimal.valueOf(2.99),
                 "119", produtoBoaForma, null, false, "Boa Forma 1");
         save(produtoEdicaoBoaForma1);
         
@@ -160,7 +160,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoBravo);
         
         ProdutoEdicao produtoEdicaoBravo1 = Fixture.produtoEdicao("COD_10", 1L, 10, 30,
-                new Long(120), BigDecimal.valueOf(17), BigDecimal.valueOf(19.99),
+                Long.valueOf(120), BigDecimal.valueOf(17), BigDecimal.valueOf(19.99),
                 "119", produtoBravo, null, false, "Bravo 1");
         save(produtoEdicaoBravo1);
         
@@ -175,7 +175,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoCaras);
         
         ProdutoEdicao produtoEdicaoCaras1 = Fixture.produtoEdicao("36168001", 1L, 15, 30,
-                new Long(200), BigDecimal.valueOf(7), BigDecimal.valueOf(8.9),
+                Long.valueOf(200), BigDecimal.valueOf(7), BigDecimal.valueOf(8.9),
                 "120", produtoCaras, null, false, "Caras 1");
         save(produtoEdicaoCaras1);
         
@@ -190,7 +190,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoCasaClaudia);
         
         ProdutoEdicao produtoEdicaoCasaClaudia1 = Fixture.produtoEdicao("24664001", 1L, 10, 30,
-                new Long(200),  BigDecimal.valueOf(2),  BigDecimal.valueOf(2.99),
+                Long.valueOf(200),  BigDecimal.valueOf(2),  BigDecimal.valueOf(2.99),
                 "121", produtoCasaClaudia, null, false, "Casa Claudia 1");
         save(produtoEdicaoCasaClaudia1);
         
@@ -205,7 +205,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoContigo);
         
         ProdutoEdicao produtoEdicaoContigo1 = Fixture.produtoEdicao("25745001", 1L, 10, 30,
-                new Long(100), BigDecimal.valueOf(3), BigDecimal.valueOf(4.99),
+                Long.valueOf(100), BigDecimal.valueOf(3), BigDecimal.valueOf(4.99),
                 "123", produtoContigo, null, false,"Contigo 1");
         save(produtoEdicaoContigo1);
         
@@ -220,7 +220,7 @@ public class ChamadaEncalheFornecedorRepositoryImplTest extends
         save(produtoManequim);
         
         ProdutoEdicao produtoEdicaoManequim1 = Fixture.produtoEdicao("111", 1L, 10, 30,
-                new Long(100), BigDecimal.valueOf(15), BigDecimal.valueOf(21.9),
+                Long.valueOf(100), BigDecimal.valueOf(15), BigDecimal.valueOf(21.9),
                 "124", produtoManequim, null, false, "Manequim 1");
         save(produtoEdicaoManequim1);
         

@@ -111,7 +111,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public BigInteger buscarQtdEstoquePorProduto(String codigoProduto, Long numeroEdicao) {
+	public BigInteger buscarQtdEstoquePorProduto(String codigoProduto, List<Long> numeroEdicao) {
 		
 		return this.estoqueProdutoRespository.buscarQtdEstoquePorProduto(
 			StringUtils.leftPad(codigoProduto, 8, '0'), numeroEdicao);

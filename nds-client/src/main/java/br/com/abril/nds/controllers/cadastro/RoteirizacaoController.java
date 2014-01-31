@@ -302,7 +302,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/iniciaTelaCotas")
 	public void iniciaTelaCotas(boolean boxEspecial) {
-		List<String> uf = new ArrayList<String>();
+		List<String> uf;
 		if(!boxEspecial) {
 			uf = enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
 		} else {
@@ -434,7 +434,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/buscalistaMunicipio")
 	public void buscalistaMunicipio(String uf, boolean boxEspecial) {
-		List<String> lista = new ArrayList<String>();
+		List<String> lista;
 		if(!boxEspecial) {
 			lista = enderecoService.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
 		} else {
@@ -446,7 +446,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/buscalistaBairro")
 	public void buscalistaBairro(String uf, String municipio, boolean boxEspecial) {
-		List<String> bairros = new ArrayList<String>();
+		List<String> bairros;
 		if(!boxEspecial) {
 			bairros = enderecoService.obterBairrosPDVSemRoteirizacao(uf, municipio);
 		} else {
@@ -783,12 +783,9 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/imprimirArquivo")
 	public void imprimirArquivo(Long boxId, Long roteiroId, Long rotaId, TipoRoteiro  tipoRoteiro, Integer numeroCota, Boolean pesquisaRoteizicaoPorCota , String sortname, String sortorder, 
 			int rp, int page, FileType fileType) {
-
-		List<ConsultaRoteirizacaoDTO> lista  = new ArrayList<ConsultaRoteirizacaoDTO>();
-		
 		try {
 			
-			lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
+			List<ConsultaRoteirizacaoDTO> lista = roteirizacaoService.buscarRoteirizacaoPorNumeroCota(numeroCota, tipoRoteiro, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page*rp - rp , rp);
 			
 			FileExporter.to("roteirizacao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, 
 					lista, ConsultaRoteirizacaoDTO.class, this.response);
