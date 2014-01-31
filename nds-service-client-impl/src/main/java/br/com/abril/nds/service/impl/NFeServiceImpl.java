@@ -574,7 +574,6 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
 		nfeImpressao.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
 
-
 	}
 
 	/**
