@@ -31,9 +31,7 @@ public class ConferenciaEncalheServiceImplTest {
     private GrupoRepository grupoRepository;
     
     @InjectMocks
-	private ConferenciaEncalheServiceImpl service;
-    
-    
+    private ConferenciaEncalheServiceImpl conferenciaEncalheService = new ConferenciaEncalheServiceImpl();
     
     @Before
     public void setUp(){
@@ -75,7 +73,8 @@ public class ConferenciaEncalheServiceImplTest {
     	//Quinta Feira
     	Date dataChamadaEncalhe = criarData(16, Calendar.JANUARY, 2014);
     	
-    	Date dataPrimeiroDiaRecolhimento = service.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(1, dataChamadaEncalhe);
+        Date dataPrimeiroDiaRecolhimento = conferenciaEncalheService.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(1,
+                dataChamadaEncalhe);
     	
     	Date dataRef = criarData(17, Calendar.JANUARY, 2014);
     	
