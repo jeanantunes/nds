@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.model.fiscal.nota.Status;
@@ -10,8 +11,10 @@ import br.com.abril.nds.model.fiscal.nota.Status;
  * @author Discover Technology
  *
  */
-public class RetornoNFEDTO {
+public class RetornoNFEDTO implements Serializable {
 
+	private static final long serialVersionUID = 9039066467977718266L;
+	
 	private Long idNotaFiscal;
 	private String cpfCnpj;
 	private String chaveAcesso;
