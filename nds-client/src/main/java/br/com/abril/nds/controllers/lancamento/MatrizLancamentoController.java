@@ -378,6 +378,9 @@ public class MatrizLancamentoController extends BaseController {
 		//F2
 		//filtro.getData(), balanceamentoLancamento.getMatrizLancamento(), getUsuarioLogado());
 		
+		filtro.setPaginacao(null);
+		filtro.setTotalRegistrosEncontrados(null);
+		
 		balanceamentoLancamento =
 			this.obterBalanceamentoLancamento(filtro);
 		

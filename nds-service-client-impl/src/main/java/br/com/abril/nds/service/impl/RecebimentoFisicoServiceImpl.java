@@ -1095,8 +1095,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			if(movimentoEstornoRepartePromocional != null)
 				qtdeRepartePromocional = movimentoEstornoRepartePromocional.getQtde();
 			
-			if(movimentoEstornoRepartePromocional != null)
-			
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					item.getProdutoEdicao().getId(), 
 					movimento.getUsuario().getId(), 
@@ -1138,9 +1136,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 															
 			Lancamento lancamento = lancamentoRepository.obterLancamentoPorItemRecebimento(itemRecebimento.getId());
 			
-			lancamento.getRecebimentos().remove(itemOriginal.getRecebimentoFisico());
-			
-			lancamentoRepository.alterar(lancamento);
+			if(lancamento != null) {
+				
+				lancamento.getRecebimentos().remove(itemOriginal.getRecebimentoFisico());
+				
+				lancamentoRepository.alterar(lancamento);
+			}
 			
 			itemOriginal.setRecebimentoFisico(null);
 			
