@@ -101,7 +101,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			
 		}
 		
-		return sessionFactory.openSession();
+		return null; // sessionFactory.openSession();
 	}
 	
 	protected void setParameters(Query query, Map<String, Object> parameters) {

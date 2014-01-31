@@ -444,35 +444,6 @@ public class Cota implements Serializable {
 	public void setBaseReferenciaCota(BaseReferenciaCota baseReferenciaCota) {
 		this.baseReferenciaCota = baseReferenciaCota;
 	}
-	
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Cota other = (Cota) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
 
 	/**
 	 * @return the parametroDistribuicao
@@ -657,5 +628,93 @@ public class Cota implements Serializable {
 	public void setCotasUnificacao(Set<CotaUnificacao> cotasUnificacao) {
 		this.cotasUnificacao = cotasUnificacao;
 	}
-	
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : getId().hashCode());
+		result = prime * result + ((this.getNumeroCota() == null) ? 0 : getNumeroCota().hashCode());
+		result = prime * result + ((this.getBox() == null) ? 0 : getBox().hashCode());
+		result = prime * result + ((this.getChamadaEncalheCotas() == null) ? 0 : getChamadaEncalheCotas().hashCode());
+		result = prime * result + ((this.getClassificacaoEspectativaFaturamento() == null) ? 0 : getClassificacaoEspectativaFaturamento().hashCode());
+		result = prime * result + ((this.getEnderecos() == null) ? 0 : getEnderecos().hashCode());
+		result = prime * result + ((this.getEstoqueProdutoCotas() == null) ? 0 : getEstoqueProdutoCotas().hashCode());
+		result = prime * result + ((this.getEstudoCotas() == null) ? 0 : getEstudoCotas().hashCode());
+		result = prime * result + ((this.getFornecedores() == null) ? 0 : getFornecedores().hashCode());
+		result = prime * result + ((this.getMovimentoEstoqueCotas() == null) ? 0 : getMovimentoEstoqueCotas().hashCode());
+		result = prime * result + ((this.getPessoa() == null) ? 0 : getPessoa().hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cota other = (Cota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getNumeroCota() == null) {
+			if (other.getNumeroCota() != null)
+				return false;
+		} else if (!this.getNumeroCota().equals(other.getNumeroCota()))
+			return false;
+		if (this.getBox() == null) {
+			if (other.getBox() != null)
+				return false;
+		} else if (!this.getBox().equals(other.getBox()))
+			return false;
+		if (this.getChamadaEncalheCotas() == null) {
+			if (other.getChamadaEncalheCotas() != null)
+				return false;
+		} else if (!this.getChamadaEncalheCotas().equals(other.getChamadaEncalheCotas()))
+			return false;
+		if (this.getClassificacaoEspectativaFaturamento() != other.getClassificacaoEspectativaFaturamento())
+			return false;
+		if (this.getEnderecos() == null) {
+			if (other.getEnderecos() != null)
+				return false;
+		} else if (!this.getEnderecos().equals(other.getEnderecos()))
+			return false;
+		if (this.getEstoqueProdutoCotas() == null) {
+			if (other.getEstoqueProdutoCota() != null)
+				return false;
+		} else if (!this.getEstoqueProdutoCotas().equals(other.getEstoqueProdutoCotas()))
+			return false;
+		if (this.getEstoqueProdutoCotas() == null) {
+			if (other.getEstoqueProdutoCotas() != null)
+				return false;
+		} else if (!this.getEstoqueProdutoCotas().equals(other.getEstoqueProdutoCotas()))
+			return false;
+		if (this.getEstudoCotas() == null) {
+			if (other.getEstudoCotas() != null)
+				return false;
+		} else if (!this.getEstudoCotas().equals(other.getEstudoCotas()))
+			return false;
+		if (this.getFornecedores() == null) {
+			if (other.getFornecedores() != null)
+				return false;
+		} else if (!this.getFornecedores().equals(other.getFornecedores()))
+			return false;
+		if (this.getMovimentoEstoqueCotas() == null) {
+			if (other.getMovimentoEstoqueCotas() != null)
+				return false;
+		} else if (!this.getMovimentoEstoqueCotas().equals(other.getMovimentoEstoqueCotas()))
+			return false;
+		if (this.getPessoa() == null) {
+			if (other.getPessoa() != null)
+				return false;
+		} else if (!this.getPessoa().equals(other.getPessoa()))
+			return false;
+		return true;
+	}
 }

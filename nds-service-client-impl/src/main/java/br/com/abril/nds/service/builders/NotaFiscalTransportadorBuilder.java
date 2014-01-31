@@ -2,6 +2,7 @@ package br.com.abril.nds.service.builders;
 
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
 
 public class NotaFiscalTransportadorBuilder {
 	
@@ -14,6 +15,7 @@ public class NotaFiscalTransportadorBuilder {
 		naOperacao.setCfopOutrosEstados(naturezaOperacao.getCfopOutrosEstados());
 		naOperacao.setDescricao(naturezaOperacao.getDescricao());
 		// notaFiscal.setNaturezaOperacao(naOperacao);
+		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().setEndereco(new NotaFiscalEndereco());
 		
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setBairro("Osasco");
 		notaFiscal.getNotaFiscalInformacoes().getInformacaoTransporte().getEndereco().setCep("08250000");

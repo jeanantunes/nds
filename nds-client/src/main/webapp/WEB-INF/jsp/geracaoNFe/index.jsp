@@ -1,18 +1,12 @@
 <input id="permissaoAlteracao" type="hidden"
 	value="${permissaoAlteracao}">
 
-<link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/geracaoNFe.js"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/utils.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/geracaoNFe.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 
 <style type="text/css">
 fieldset label {
@@ -108,15 +102,14 @@ $(function(){
 
 				</select></td>
 				<td width="95">Data Movimento:</td>
-				<td width="237"><input type="text"
-					id="geracaoNfe-filtro-movimentoDe" name="movimentoDe"
-					style="width: 76px;" class="input-date" />&nbsp;&nbsp;At&eacute;&nbsp;
-					<input type="text" id="geracaoNfe-filtro-movimentoAte"
-					name="movimentoAte" style="width: 76px;" class="input-date" /></td>
+				<td width="237">
+					<input type="text" id="geracaoNfe-filtro-movimentoDe" name="movimentoDe" style="width: 76px;" class="input-date" />&nbsp;&nbsp;At&eacute;&nbsp;
+					<input type="text" id="geracaoNfe-filtro-movimentoAte" name="movimentoAte" style="width: 76px;" class="input-date" />
+				</td>
 				<td width="80">Data Emissão:</td>
-				<td width="212"><input name="geracaoNfe-filtro-dataEmissao"
-					type="text" id="geracaoNfe-filtro-dataEmissao" style="width: 80px;"
-					class="input-date" /></td>
+				<td width="212">
+					<input name="geracaoNfe-filtro-dataEmissao" type="text" id="geracaoNfe-filtro-dataEmissao" style="width: 80px;" class="input-date" />
+				</td>
 			</tr>
 			<tr>
 				<td>Roteiro:</td>
@@ -177,9 +170,11 @@ $(function(){
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
-				<td><span class="bt_pesquisar"><a href="javascript:;"
-						id="geracaoNfe-filtro-btnPesquisar"
-						onclick="geracaoNFeController.pesquisar();"></a></span></td>
+				<td>
+					<span class="bt_pesquisar">
+						<a href="javascript:;" id="geracaoNfe-filtro-btnPesquisar" onclick="geracaoNFeController.pesquisar();"></a>
+					</span>
+				</td>
 			</tr>
 		</table>
 	</form>

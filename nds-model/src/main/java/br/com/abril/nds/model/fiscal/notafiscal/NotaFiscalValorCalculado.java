@@ -8,9 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @Entity
 @Table(name="NOTA_FISCAL_VALOR_CALCULADO")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class NotaFiscalValorCalculado implements Serializable {
 	
 	private static final long serialVersionUID = -5476612050904249652L;

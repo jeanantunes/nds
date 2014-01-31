@@ -15,6 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
@@ -22,6 +25,7 @@ import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
 @Entity
 @SequenceGenerator(name = "NOTA_FISCAL_ENCARGO_FINANCEIRO_SEQ", initialValue = 1, allocationSize = 1)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class EncargoFinanceiro implements Serializable {
 
 	/**
@@ -34,6 +38,7 @@ public abstract class EncargoFinanceiro implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@XmlTransient
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumns({
         @JoinColumn(name="NOTA_FISCAL_ID", referencedColumnName="NOTA_FISCAL_ID"),

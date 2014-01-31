@@ -33,7 +33,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	private static final long serialVersionUID = -3558149602330018787L;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA", updatable=true, insertable=true)
+	@JoinColumn(name = "PESSOA_DESTINATARIO_ID_REFERENCIA")
 	private NotaFiscalPessoa pessoaDestinatarioReferencia;
 	
 	/**
@@ -61,8 +61,8 @@ public class IdentificacaoDestinatario implements Serializable {
 	@XmlElement(name="xFant")
 	private String nomeFantasia;
 	
-	@OneToOne(optional=false, fetch=FetchType.LAZY)
-	@JoinColumn(name="ENDERECO_ID_DESTINATARIO", updatable=true, insertable=true)
+	@OneToOne(optional=false, fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="ENDERECO_ID_DESTINATARIO")
 	@NFEExportType
 	@XmlElement(name="enderDest")
 	private NotaFiscalEndereco endereco;

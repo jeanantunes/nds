@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -57,8 +58,8 @@ public class InformacaoTransporte implements Serializable {
 	@NFEExport(secao = TipoSecao.X03, posicao = 1, tamanho = 14)
 	private String inscricaoEstadual;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="ENDERECO_ID_TRANS", updatable=true, insertable=true)
+	@OneToOne(optional=false, fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name="ENDERECO_ID_TRANS")
 	@NFEExportType
 	private NotaFiscalEndereco endereco;
 	

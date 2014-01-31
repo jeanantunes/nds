@@ -277,7 +277,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						} else if (StatusProcessamentoInterno.RETORNADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
 
 							if (Status.AUTORIZADO.equals(informacaoEletronica.getRetornoComunicacaoEletronica().getStatus())
-									&& Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
+									|| Status.CANCELAMENTO_HOMOLOGADO.equals(dadosRetornoNFE.getStatus())) {
 
 								listaDadosRetornoNFEProcessados.add(dadosRetornoNFE);
 							}

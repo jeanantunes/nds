@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
+import br.com.abril.nds.dto.Duplicata;
 import br.com.abril.nds.dto.InfoNfeDTO;
 import br.com.abril.nds.dto.ItemImpressaoNfe;
 import br.com.abril.nds.dto.NfeDTO;
@@ -41,6 +42,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoEmitente;
@@ -621,6 +623,91 @@ public class NFeServiceImpl implements NFeService {
 	/* TODO : Sem a modelagem do conceito de duplicatas no sistema, refatorar após 
 	 * modelagem de dados e EMS relativa a calculo de duplicatas.
 	 */
+	private void carregarDadosDuplicatas(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
+		List<Duplicata> faturas = new ArrayList<Duplicata>();
+		danfe.setFaturas(faturas);	
+	}
+
+	private void carregarDadosItensNfe(NfeImpressaoDTO nfeImpressao, NotaFiscal notaFiscal) {
+
+		List<ItemImpressaoNfe> listaItemImpressaoNfe = new ArrayList<ItemImpressaoNfe>();
+
+		List<DetalheNotaFiscal> detalhesNotaFiscal = notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal();
+
+		String codigoProduto 		= "";
+		String descricaoProduto 	= "";
+		Long produtoEdicao 			= null;
+		String NCMProduto 			= "";
+		String CFOPProduto 			= "";
+		String unidadeProduto 		= "";
+		BigDecimal quantidadeProduto 	= BigDecimal.ZERO;
+		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
+		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
+		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+		String CSTProduto = "";
+		String CSOSNProduto = "";
+		BigDecimal baseCalculoProduto 	= BigDecimal.ZERO;
+		BigDecimal aliquotaICMSProduto 	= BigDecimal.ZERO;
+		BigDecimal valorICMSProduto 	= BigDecimal.ZERO;
+		BigDecimal aliquotaIPIProduto 	= BigDecimal.ZERO;
+		BigDecimal valorIPIProduto 		= BigDecimal.ZERO;
+
+		for(DetalheNotaFiscal dnf : detalhesNotaFiscal) {
+
+			String unidade = dnf.getProdutoServico().getUnidade();
+
+			codigoProduto 		= dnf.getProdutoServico().getCodigoProduto().toString();
+			descricaoProduto 	= dnf.getProdutoServico().getDescricaoProduto();
+			produtoEdicao		= dnf.getProdutoServico().getProdutoEdicao().getNumeroEdicao();
+
+			NCMProduto 			= dnf.getProdutoServico().getNcm().toString();
+			CFOPProduto 		= dnf.getProdutoServico().getCfop().toString();                            
+
+			//TODO: Acertar a unidade do produto
+			unidadeProduto 		= null;//(unidade == null || unidade.isEmpty()) ? 0L : new Long(unidade);
+
+			quantidadeProduto 	= null; //TODO: dnf.getProdutoServico().getQuantidade();              
+			valorUnitarioProduto = dnf.getProdutoServico().getValorUnitario();
+			valorTotalProduto 	= dnf.getProdutoServico().getValorTotalBruto();   
+			valorDescontoProduto = dnf.getProdutoServico().getValorDesconto();
+
+			CSTProduto 			= ""; //TODO obter campo                                   
+			CSOSNProduto 		= ""; //TODO obter campo                                    
+			baseCalculoProduto 	= BigDecimal.ZERO;		//TODO obter campo           
+			aliquotaICMSProduto = BigDecimal.ZERO;  //TODO obter campo         
+			valorICMSProduto 	= BigDecimal.ZERO;      //TODO obter campo     
+			aliquotaIPIProduto 	= BigDecimal.ZERO;      //TODO obter campo     
+			valorIPIProduto 	= BigDecimal.ZERO;  //TODO obter campo         
+
+
+			ItemImpressaoNfe item = new ItemImpressaoNfe();
+
+			item.setCodigoProduto(codigoProduto);
+			item.setDescricaoProduto(descricaoProduto);
+			item.setProdutoEdicao(produtoEdicao);
+			item.setNCMProduto(NCMProduto);
+			item.setCFOPProduto(CFOPProduto);
+			item.setUnidadeProduto(unidadeProduto);
+			item.setQuantidadeProduto(quantidadeProduto);
+			item.setValorUnitarioProduto(valorUnitarioProduto);
+			item.setValorTotalProduto(valorTotalProduto);
+			item.setValorDescontoProduto(valorDescontoProduto);
+			item.setCSTProduto(CSTProduto);
+			item.setCSOSNProduto(CSOSNProduto);
+			item.setBaseCalculoProduto(baseCalculoProduto);
+			item.setAliquotaICMSProduto(aliquotaICMSProduto);
+			item.setValorICMSProduto(valorICMSProduto);
+			item.setAliquotaIPIProduto(aliquotaIPIProduto);
+			item.setValorIPIProduto(valorIPIProduto);
+
+			listaItemImpressaoNfe.add(item);
+
+		}
+
+		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
+
+	}
+
 //	private void carregarDadosDuplicatas(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 //		List<Duplicata> faturas = new ArrayList<Duplicata>();
 //		danfe.setFaturas(faturas);	

@@ -429,47 +429,6 @@ public class Lancamento implements Serializable {
 	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
 		this.dataFinMatDistrib = dataFinMatDistrib;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime
-				* result
-				+ ((this.getNumeroLancamento() == null) ? 0 : this.getNumeroLancamento().hashCode());
-		result = prime * result
-				+ ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Lancamento other = (Lancamento) obj;
-		if (this.getId() == null) {
-			if (other.id != null)
-				return false;
-		} else if (!this.getId().equals(other.id))
-			return false;
-		if (this.getNumeroLancamento() == null) {
-			if (other.numeroLancamento != null)
-				return false;
-		} else if (!this.getNumeroLancamento().equals(other.numeroLancamento))
-			return false;
-		if (this.getProdutoEdicao() == null) {
-			if (other.produtoEdicao != null)
-				return false;
-		} else if (!this.getProdutoEdicao().equals(other.produtoEdicao))
-			return false;
-		return true;
-
-	}
 	
 	public void voltarStatusOriginal() {
 		
@@ -488,6 +447,44 @@ public class Lancamento implements Serializable {
 			
 			this.status = StatusLancamento.CONFIRMADO;
 		}
+
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getNumeroLancamento() == null) ? 0 : this.getNumeroLancamento().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lancamento other = (Lancamento) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getNumeroLancamento() == null) {
+			if (other.getNumeroLancamento() != null)
+				return false;
+		} else if (!this.getNumeroLancamento().equals(other.getNumeroLancamento()))
+			return false;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+			return false;
+		return true;
 
 	}
 }
