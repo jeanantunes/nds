@@ -1613,10 +1613,8 @@ public class ConferenciaEncalheController extends BaseController {
 			    
 				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
 			}
-			
-			Box boxEncalhe = new Box();
 			Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
-			boxEncalhe = this.boxService.buscarPorId(idBox);
+			Box boxEncalhe = this.boxService.buscarPorId(idBox);
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			

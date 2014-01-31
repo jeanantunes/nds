@@ -6,6 +6,7 @@ var descontoCotaController = $.extend(true,{
 		$("#selectFornecedor_option_especifico",this.workspace).clear();
 		
 		$("#numCotaEspecifico",this.workspace).val("");
+		$("#descontoEspecifico",this.workspace).val("");
 		$("#descontoEspecifico",this.workspace).justPercent("floatValue");
 		$("#descricaoCotaEspecifico",this.workspace).val("");
 		
