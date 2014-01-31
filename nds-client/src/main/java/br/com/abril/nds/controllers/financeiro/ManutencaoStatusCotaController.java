@@ -478,15 +478,13 @@ public class ManutencaoStatusCotaController extends BaseController {
 				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
 				
 			    if (qtde == null || qtde == 0){
-			    	msgs.add(indLeastOneNecessaryMsg ? "" : defaultMessage);
-			    	msgs.add("Um [Endereço] cadastrado!");
+			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Endereço] cadastrado!" : defaultMessage + " Um [Endereço] cadastrado!");
 			    	indLeastOneNecessaryMsg = true;
 			    }
 			    
 			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
 			    if (qtde == null || qtde == 0){
-			    	msgs.add(indLeastOneNecessaryMsg ? "" : defaultMessage);
-			    	msgs.add("Um [Telefone] cadastrado!");
+			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Telefone] cadastrado!" : defaultMessage + " Um [Telefone] cadastrado!");
 			    	indLeastOneNecessaryMsg = true;
 			    }
 			    
@@ -495,8 +493,7 @@ public class ManutencaoStatusCotaController extends BaseController {
 					qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
 					
 					if (qtde == null || qtde == 0){
-						msgs.add(indLeastOneNecessaryMsg ? "" : defaultMessage);
-						msgs.add("Uma [Garantia] cadastrada!");
+						msgs.add(indLeastOneNecessaryMsg ? "Uma [Garantia] cadastrada!" : defaultMessage + " Uma [Garantia] cadastrada!");
 						indLeastOneNecessaryMsg = true;
 					}
 				}
@@ -504,8 +501,7 @@ public class ManutencaoStatusCotaController extends BaseController {
 				qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
 				
 				if (qtde == null || qtde == 0){
-					msgs.add(indLeastOneNecessaryMsg ? "" : defaultMessage);
-					msgs.add("Uma [Roteirização] cadastrada!");
+					msgs.add(indLeastOneNecessaryMsg ? "Uma [Roteirização] cadastrada!" : defaultMessage + " Uma [Roteirização] cadastrada!");
 					indLeastOneNecessaryMsg = true;
 				}
 				
