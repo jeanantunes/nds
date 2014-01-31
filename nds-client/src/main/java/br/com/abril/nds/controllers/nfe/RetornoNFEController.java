@@ -92,9 +92,10 @@ public class RetornoNFEController extends BaseController {
 						
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
+		List<SumarizacaoNotaRetornoVO> sumarizacoes = new ArrayList<SumarizacaoNotaRetornoVO>();
 		SumarizacaoNotaRetornoVO sumarizacao = this.sumarizarNotasRetorno(listaNotasRetorno);
-		
-		this.result.use(CustomJson.class).from(sumarizacao).serialize();
+		sumarizacoes.add(sumarizacao);
+		result.use(FlexiGridJson.class).from(sumarizacoes).page(1).total(sumarizacoes.size()).serialize();
 	}
 	
 	

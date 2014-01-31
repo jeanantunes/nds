@@ -18,8 +18,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoRepository;
 
 /**
- * Classe de implementação referente a acesso de dados
- * para as pesquisas de desconto do distribuidor
+ * Classe de implementação referente a acesso de dados para as pesquisas de desconto do distribuidor
  * 
  * @author Discover Technology
  */
@@ -181,10 +180,11 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		sql.append("        f.ID as FORNECEDOR_ID, ");
 		sql.append("            D.VALOR as VALOR, ");
 		sql.append("            'Geral' as TIPO, ");
-		sql.append("            D.DATA_ALTERACAO ");
+        sql.append("            HDF.DATA_ALTERACAO ");
 		sql.append("    FROM ");
 		sql.append("        fornecedor f ");
-		sql.append("    JOIN DESCONTO D ON (D.ID = F.DESCONTO_ID) ");
+        sql.append("    JOIN DESCONTO D ON (D.ID = F.DESCONTO_ID)");
+        sql.append("     JOIN HISTORICO_DESCONTOS_FORNECEDORES HDF ON HDF.DESCONTO_ID = D.ID ");
 		sql.append("    JOIN COTA_FORNECEDOR CF ON (CF.FORNECEDOR_ID = F.ID) ");
 		sql.append("    WHERE ");
 		sql.append("        CF.COTA_ID = :idCota ");
@@ -195,16 +195,17 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		sql.append("                desconto_cota_produto_excessoes h ");
 		sql.append("            WHERE ");
 		sql.append("                h.COTA_ID = :idCota AND h.PRODUTO_ID is NULL ");
-		sql.append("            GROUP BY h.FORNECEDOR_ID) ");
+        sql.append("            GROUP BY h.FORNECEDOR_ID) group by f.id ");
 		sql.append(" UNION ALL ");
 		sql.append(" SELECT  ");
 		sql.append("        h.FORNECEDOR_ID, ");
 		sql.append("            d.VALOR as VALOR, ");
-		sql.append("            'Específico' as TIPO, ");
-		sql.append("            d.DATA_ALTERACAO ");
+        sql.append("            'Específico' as TIPO, ");
+        sql.append("            hdcpe.DATA_ALTERACAO ");
 		sql.append("    FROM ");
 		sql.append("        desconto_cota_produto_excessoes h ");
 		sql.append("		inner join desconto d on d.id = h.desconto_id ");
+        sql.append("        join historico_desconto_cota_produto_excessoes hdcpe on hdcpe.desconto_id = d.id ");
 		sql.append("    WHERE ");
 		sql.append("        h.COTA_ID = :idCota AND h.PRODUTO_ID is NULL ");
 		sql.append("            AND d.DATA_ALTERACAO = (SELECT  ");

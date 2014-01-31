@@ -138,9 +138,19 @@ public class ParametrosDistribuidorController extends BaseController {
 		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
-	private List<RegimeTributario> carregarComboRegimeTributario() {
+	private List<ItemDTO<Long, String>>  carregarComboRegimeTributario() {
 		
-		return regimeTributarioRepository.buscarTodos();
+		List<RegimeTributario> regimesTributarios =  regimeTributarioRepository.buscarTodos();
+		List<ItemDTO<Long, String>> listaRegimesTributarios = new ArrayList<ItemDTO<Long, String>>();
+		
+		for(RegimeTributario re : regimesTributarios) {
+			ItemDTO<Long, String> reKV = new ItemDTO<Long, String>();
+			reKV.setKey(re.getCodigo());
+			reKV.setValue(re.getDescricao());
+			listaRegimesTributarios.add(reKV);
+		}
+		
+		return listaRegimesTributarios;
 	}
 
 	private List<ItemDTO<TipoAtividade, String>> carregarComboTipoPrestador() {

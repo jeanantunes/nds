@@ -576,7 +576,6 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setTransportadoraPlacaVeiculo(transportadoraPlacaVeiculo);
 		nfeImpressao.setTransportadoraPlacaVeiculoUF(transportadoraPlacaVeiculoUF);
 
-
 	}
 
 	/**
@@ -708,6 +707,7 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 
 	}
+
 //	private void carregarDadosDuplicatas(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 //		List<Duplicata> faturas = new ArrayList<Duplicata>();
 //		danfe.setFaturas(faturas);	

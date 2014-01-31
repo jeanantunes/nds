@@ -25,7 +25,11 @@ public class RegimeTributario implements Serializable {
 	@Column(name="DESCRICAO")
 	private String descricao;
 	
-	private RegimeTributario(Long codigo, String descricao) {
+	public RegimeTributario() {
+		super();
+	}
+	
+	public RegimeTributario(Long codigo, String descricao) {
 		this.codigo = codigo;
 		this.descricao = descricao;
 	}
