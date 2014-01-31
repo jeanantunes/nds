@@ -653,6 +653,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
 				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
 		
+		if (resumoAVista.getSaldoAnterior()==null){resumoAVista.setSaldoAnterior(BigDecimal.ZERO);}
+		if (resumoAVista.getValorEntradas()==null){resumoAVista.setValorEntradas(BigDecimal.ZERO);}
+		if (resumoAVista.getValorSaidas()==null){resumoAVista.setValorSaidas(BigDecimal.ZERO);}
 		resumoAVista.setSaldoAtual(
 			resumoAVista.getSaldoAnterior().subtract(
 				resumoAVista.getValorEntradas()).add(resumoAVista.getValorSaidas()));
