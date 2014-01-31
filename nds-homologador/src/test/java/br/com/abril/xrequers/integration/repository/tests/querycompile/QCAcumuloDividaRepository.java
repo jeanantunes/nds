@@ -13,23 +13,25 @@ public class QCAcumuloDividaRepository extends AbstractRepositoryTest {
     
     @Test
     public void testQCObterAcumuloDividaPorMovimentoFinanceiroPendente() {
-        acumuloDividaRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(1L);
+        
+        this.acumuloDividaRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(1L);
     }
     
-
     @Test
     public void testQCObterAcumuloDividaPorDivida() {
-        acumuloDividaRepository.obterAcumuloDividaPorDivida(1L);
+        this.acumuloDividaRepository.obterAcumuloDividaPorDivida(1L);
     }
     
     @Test
     public void testQCObterNumeroMaximoAcumuloCota() {
-        acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
+        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
+        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
     }
     
     @Test
     public void testQCObterNumeroDeAcumulosDivida() {
-        acumuloDividaRepository.obterNumeroDeAcumulosDivida(1L);
+        this.acumuloDividaRepository.obterNumeroDeAcumulosDivida(1L);
+        this.acumuloDividaRepository.obterNumeroDeAcumulosDivida(1L);
     }
     
 }
