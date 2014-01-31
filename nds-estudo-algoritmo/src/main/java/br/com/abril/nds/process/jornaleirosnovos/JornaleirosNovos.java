@@ -35,7 +35,7 @@ public class JornaleirosNovos {
 
     public void executar(EstudoTransient estudo) throws Exception {
 
-	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
 	    HashMap<Long, CotaEstudo> mapCotas = new HashMap<>();
 	    for (CotaEstudo cota : estudo.getCotas()) {
 		mapCotas.put(cota.getId(), cota);

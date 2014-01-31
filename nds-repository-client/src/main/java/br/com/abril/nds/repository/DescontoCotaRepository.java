@@ -1,12 +1,15 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 
 /**
  * Interface que define as regras de acesso a dados
@@ -30,29 +33,7 @@ public interface DescontoCotaRepository extends Repository<DescontoCota, Long> {
 	 */
 	int obterQuantidadeDescontoCota(FiltroTipoDescontoCotaDTO filtro);
 
-	/**
-	 * Retorna o ultimo desconto válido da cota de um forncedor
-	 * 
-	 * @param idDesconto - identificador do ultimo desconto
-	 * 
-	 * @param fornecedor - fornecedor
-	 * 
-	 * @param cota - cota
-	 * 
-	 * @return DescontoCota
-	 */
-	DescontoCota buscarUltimoDescontoValido(Long idDesconto,Fornecedor fornecedor, Cota cota);
-	
-	/**
-	 * Retorna o ultimo desconto válido da cota de um forncedor
-	 * 
-	 * 
-	 * @param fornecedor - fornecedor
-	 * 
-	 * @param cota - cota
-	 * 
-	 * @return DescontoCota
-	 */
-	DescontoCota buscarUltimoDescontoValido(Fornecedor fornecedor, Cota cota);
+	Desconto buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, BigDecimal valorDesconto, Integer numeroCota);
 
+	
 }

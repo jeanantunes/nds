@@ -149,7 +149,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	
 	// removendo cotas fora da regiao
 	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
-	    cotas = validarComponentes(new LinkedList<CotaEstudo>(cotasComHistoricoMap.values()), estudo);
+	    validarComponentes(new LinkedList<CotaEstudo>(cotasComHistoricoMap.values()), estudo);
 	}
 	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {

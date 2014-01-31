@@ -787,7 +787,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Map<Long,List<EstudoCota>> estudosCota = new HashMap<Long, List<EstudoCota>>();
 
-        List<EstudoCota> estudos = new ArrayList<EstudoCota>();
+        List<EstudoCota> estudos = null;
     	
         for (EstudoCota estudo : estudosCotas){
     		
@@ -1118,7 +1118,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		List<NotaEnvio> listaNotaEnvio = new ArrayList<NotaEnvio>();
+		List<NotaEnvio> listaNotaEnvio = null;
 		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
 		situacoesCadastro.add(SituacaoCadastro.ATIVO);
 		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
@@ -1150,7 +1150,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			listaNotaEnvio = this.gerar(listaIdCotas, filtro, null,
 					null, null);
 		} catch (Exception e) {
-			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 			throw e;
 		} finally {
 			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");

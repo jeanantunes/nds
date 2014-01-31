@@ -20,7 +20,7 @@ public enum EventoExecucaoEnum {
 	REGISTRO_JA_EXISTENTE(6);
 		
 	private EventoExecucaoEnum(int codigo) {
-		this.codigo = new Long(codigo);
+		this.codigo = Long.valueOf(codigo);
 	}
 	
 	private Long codigo;

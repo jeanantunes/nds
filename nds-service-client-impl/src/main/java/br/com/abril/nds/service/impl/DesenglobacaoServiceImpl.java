@@ -158,7 +158,7 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 	    return false;
 	}
 
-	boolean res = desenglobacaoRepository.removerPorCotaDesenglobada(new Long(desenglobaDTO.get(0).getNumeroCotaDesenglobada()));
+	boolean res = desenglobacaoRepository.removerPorCotaDesenglobada(Long.valueOf(desenglobaDTO.get(0).getNumeroCotaDesenglobada()));
 	if(res){
 	    res = inserirDesenglobacao(desenglobaDTO, usuarioLogado);
 	}

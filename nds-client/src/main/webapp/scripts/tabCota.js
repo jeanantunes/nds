@@ -41,11 +41,12 @@ function TabCota(tabName) {
 		
 		/**GARANTIA**/
 		case 4: 
-			T.funcaoSalvar = function(callBack){
-				return tipoCotaGarantia.salva(callBack);
-			};
-			tipoCotaGarantia.onOpen(MANTER_COTA.tipoCotaSelecionada);
-			MANTER_COTA.confirmado = false;
+			// Disabilitado temporariamento por solicitação de negocio
+			//T.funcaoSalvar = function(callBack){
+			//	return tipoCotaGarantia.salva(callBack);
+			//};
+			//tipoCotaGarantia.onOpen(MANTER_COTA.tipoCotaSelecionada);
+			//MANTER_COTA.confirmado = false;
 			break;
 		
 		/**Fornecedor**/

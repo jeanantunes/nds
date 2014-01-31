@@ -848,7 +848,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
 			long id = (-1 * (idInicial++));
-			conferencia.setIdConferenciaEncalhe(new Long(id));
+			conferencia.setIdConferenciaEncalhe(Long.valueOf(id));
 			conferencia.setDia(obterQtdeDiaAposDataRecolhimentoDistribuidor(conferencia.getDataRecolhimento()));
 		}
 		
@@ -2402,10 +2402,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
 			
-		}
-		
-		if(dataOperacao == null) {
-			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 
 		boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 

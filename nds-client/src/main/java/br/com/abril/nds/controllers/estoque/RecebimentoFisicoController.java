@@ -661,30 +661,21 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		BigInteger qtdeExemplares = itemRecebimento.getRepartePrevisto() == null ? BigInteger.ZERO : itemRecebimento.getRepartePrevisto();
 		
-		BigInteger qtdePacote = itemRecebimento.getQtdPacote() == null ? BigInteger.ZERO : itemRecebimento.getQtdPacote();
-		
-		BigInteger qtdePacotePadrao = BigInteger.valueOf(itemRecebimento.getPacotePadrao());
-		
 		BigDecimal precoItem = itemRecebimento.getPrecoItem() == null ? 
 				(itemRecebimento.getPrecoCapa() == null ? BigDecimal.ZERO : itemRecebimento.getPrecoCapa()) :
 				itemRecebimento.getPrecoItem();
-		
-		BigDecimal valorTotal = BigDecimal.ZERO;
-		
+				
 		BigInteger qtdeTotalItens = null;
 		
 		if (itemRecebimento.getPacotePadrao() == 0){
 			
 			qtdeTotalItens = itemRecebimento.getRepartePrevisto() == null ? BigInteger.ZERO : itemRecebimento.getRepartePrevisto();
 		} else {
-			
-			if(!isRefresh)
-				qtdeTotalItens = qtdeExemplares; //qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
-			else
-				qtdeTotalItens = qtdeExemplares;
+			qtdeTotalItens = qtdeExemplares;
+		
 		}
 		
-		valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
+		BigDecimal valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
   
 		itemRecebimento.setValorTotal(valorTotal);
 		

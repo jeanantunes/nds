@@ -4,12 +4,16 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 /**
  * Vale desconto será mapeado como um "produto", conforme
@@ -25,37 +29,23 @@ public class ValeDesconto extends ProdutoEdicao {
 
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * Produto origem do vale desconto
-	 */
-	@ManyToOne
-	@JoinColumn(name = "PRODUTO_EDICAO_ID")
-	private ProdutoEdicao produtoOrigem;
+	@Enumerated(EnumType.STRING)
+	@Transient
+	private SituacaoTitulo situacaoTitulo;
+	
+	@Column(name="HISTORICO")
+	private String historico;
+	
+	@Column(name="VINCULAR_RECOLHIMENTO")
+	private boolean vincularRecolhimentoProdutosCuponados;
 	
 	/**
 	 * Produtos aos quais o vale desconto pode ser aplicado
 	 */
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinTable(name = "VALE_DESCONTO_PRODUTO", joinColumns = {@JoinColumn(name = "VALE_DESCONTO_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "PRODUTO_EDICAO_ID")})
 	private Set<ProdutoEdicao> produtosAplicacao = new HashSet<ProdutoEdicao>();
-
-	/**
-	 * @return the produtoOrigem
-	 */
-	public ProdutoEdicao getProdutoOrigem() {
-		return produtoOrigem;
-	}
-
-	/**
-	 * @param produtoOrigem the produtoOrigem to set
-	 */
-	public void setProdutoOrigem(ProdutoEdicao produtoOrigem) {
-		if (!produtoOrigem.isPermiteValeDesconto()) {
-			throw new IllegalArgumentException("Produto não permite vale desconto!");
-		}
-		this.produtoOrigem = produtoOrigem;
-	}
 
 	/**
 	 * @return the produtosAplicacao
@@ -127,4 +117,32 @@ public class ValeDesconto extends ProdutoEdicao {
 		super.setProduto(produto);
 	}
 
+	/**
+	 * @return the historico
+	 */
+	public String getHistorico() {
+		return historico;
+	}
+
+	/**
+	 * @param historico the historico to set
+	 */
+	public void setHistorico(String historico) {
+		this.historico = historico;
+	}
+
+	/**
+	 * @return the vincularRecolhimentoProdutosCuponados
+	 */
+	public boolean isVincularRecolhimentoProdutosCuponados() {
+		return vincularRecolhimentoProdutosCuponados;
+	}
+
+	/**
+	 * @param vincularRecolhimentoProdutosCuponados the vincularRecolhimentoProdutosCuponados to set
+	 */
+	public void setVincularRecolhimentoProdutosCuponados(
+			boolean vincularRecolhimentoProdutosCuponados) {
+		this.vincularRecolhimentoProdutosCuponados = vincularRecolhimentoProdutosCuponados;
+	}
 }

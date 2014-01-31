@@ -178,6 +178,10 @@ var descontoProdutoController = $.extend(true,{
 	
 	init: function(pesquisaCota){
 		
+		$("#quantidadeEdicoes",this.workspace).numeric();
+
+		$("#edicaoProduto",this.workspace).numeric();
+		
 		descontoProdutoController.pesquisaCota = pesquisaCota;
 		
 		$("#descontoProduto",this.workspace).justPercent();

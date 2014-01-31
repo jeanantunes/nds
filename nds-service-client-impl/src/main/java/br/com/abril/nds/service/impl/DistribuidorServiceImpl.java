@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -404,9 +405,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		List<Date> datas = new ArrayList<>();
 		
-		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
-		
-		mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
+		Map<Integer,Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
 		
 		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
 			
@@ -482,11 +481,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		Map<Integer, Date> mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataPrimeiroDiaRecolhimento, diasSemanaDistribuidorOpera);
 		
-		for(Integer dia : mapDataRecolhimentoValida.keySet()) {
+		for(Entry<Integer, Date> entry : mapDataRecolhimentoValida.entrySet()) {
 			
-			if(mapDataRecolhimentoValida.get(dia).compareTo(dataOperacaoConferencia) == 0) {
+			if(entry.getValue().compareTo(dataOperacaoConferencia) == 0) {
 				
-				return dia;
+				return entry.getKey();
 			}
 		}
 
