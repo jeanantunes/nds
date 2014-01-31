@@ -150,9 +150,9 @@ public class CotaDAO {
     private void traduzAjusteReparte(ResultSet rs, CotaEstudo cota) throws SQLException {
 	String formaAjuste = rs.getString("FORMA_AJUSTE");
 	if ((formaAjuste != null) && (!formaAjuste.isEmpty())) {
-	    if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA)) {
+	    if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA.name())) {
 		cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO").toBigInteger());
-	    } else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX)) {
+	    } else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX.name())) {
 		cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
 	    } else {
 		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
