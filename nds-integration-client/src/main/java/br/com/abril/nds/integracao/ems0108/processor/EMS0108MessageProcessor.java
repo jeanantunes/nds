@@ -275,7 +275,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 			if (null == lancamento) {
 				try {
-					lancamento = inserirLancamento(produtoEdicaoLancamento, input);
+					inserirLancamento(produtoEdicaoLancamento, input);
 				} catch (ParseException e) {
 					ndsiLoggerFactory.getLogger().logError(
 							message,

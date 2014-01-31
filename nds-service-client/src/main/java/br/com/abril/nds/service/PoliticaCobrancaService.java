@@ -75,7 +75,7 @@ public interface PoliticaCobrancaService {
 	 * Desativa uma politica de cobrança
 	 * @param idPolitica
 	 */
-	void dasativarPoliticaCobranca(long idPolitica);
+	void dasativarPoliticaCobranca(Long idPolitica);
 	
 	List<TipoCobranca> obterTiposCobrancaDistribuidor();
 

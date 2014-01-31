@@ -229,7 +229,6 @@ public class AjusteReparteController extends BaseController {
 	public void qtdAjustesSegmento (Integer nmCota){
 
 		if (nmCota == null){
-			nmCota = 0;
 			throw new ValidacaoException(TipoMensagem.WARNING, "Insira o número da cota.");
 		}else{
 		

@@ -478,9 +478,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		query.setMaxResults(1);
 
@@ -505,9 +503,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		return (Long) query.uniqueResult();
 	}
 
@@ -541,9 +537,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		HashMap<String, Object> param = getParametrosCotasProgramadaParaAntecipacaoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		if (filtro.getPaginacao() != null) {
 

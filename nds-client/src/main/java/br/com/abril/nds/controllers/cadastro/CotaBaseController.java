@@ -357,7 +357,7 @@ public class CotaBaseController extends BaseController {
 			
 			for (int i=0; i < cotasBaseCadastradasArr.length; i++) {
 				
-				numerosDeCotasBaseValidacao[i] = new Integer(cotasBaseCadastradasArr[i]);
+				numerosDeCotasBaseValidacao[i] = Integer.valueOf(cotasBaseCadastradasArr[i]);
 			}
 			
 		}

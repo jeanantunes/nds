@@ -780,18 +780,12 @@ public class MatrizLancamentoController extends BaseController {
 		
 		Double valorTotal = this.getValorTotal(listaProdutoLancamento);
 		
-		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO =
-			new LinkedList<ProdutoLancamentoVO>();
-	
-		listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
 		
 		listaProdutoLancamento =
 			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
 		
-		List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO =
-				new LinkedList<ProdutoLancamentoVO>();
-		
-		listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+		List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
 
 		TableModel<CellModelKeyValue<ProdutoLancamentoVO>> tm = new TableModel<CellModelKeyValue<ProdutoLancamentoVO>>();
 		List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue

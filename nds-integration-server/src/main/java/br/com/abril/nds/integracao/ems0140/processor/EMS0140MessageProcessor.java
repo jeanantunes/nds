@@ -35,7 +35,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void processMessage(Message message) {
-		EMS0140Input input = (EMS0140Input) message.getBody();
+		//EMS0140Input input = (EMS0140Input) message.getBody();
 		
 	}
 

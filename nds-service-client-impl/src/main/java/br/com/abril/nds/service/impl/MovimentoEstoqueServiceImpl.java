@@ -202,6 +202,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 			
+			if (estudoCota.getQtdeEfetiva() == null || BigInteger.ZERO.equals(estudoCota.getQtdeEfetiva())) {
+				
+				continue;
+			}
+
 			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
@@ -313,13 +318,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		if ( tipoMovimentoCota == null ) {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
-		
-		List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = 
-			new ArrayList<MovimentoEstoqueCota>();
 
 	    MovimentosEstoqueCotaSaldoDTO movimentosSaldo = this.getMovimentosEstoqueCotaSaldo(listaMovimentoCota);
 
-		listaMovimentoCotaEnvio = this.estornarMovimentosDaCotaAusente(movimentosSaldo.getMovimentosEstoqueCota(), 
+	    List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = this.estornarMovimentosDaCotaAusente(movimentosSaldo.getMovimentosEstoqueCota(), 
 											                           data, 
 											                           tipoMovimento, 
 											                           tipoMovimentoCota, 

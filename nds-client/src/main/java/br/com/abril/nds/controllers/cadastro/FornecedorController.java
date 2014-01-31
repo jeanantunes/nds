@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -519,7 +520,7 @@ public class FornecedorController extends BaseController {
     
     	Map<Integer, TelefoneAssociacaoDTO> map = this.obterTelefonesSalvarSessao();
 
-		if (map.keySet().isEmpty()) {
+		if (map.isEmpty()) {
 			
 			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para o fornecedor.");
 		
@@ -527,9 +528,9 @@ public class FornecedorController extends BaseController {
 			
 			boolean temPrincipal = false;
 			
-			for (Integer key : map.keySet()){
+			for (Entry<Integer, TelefoneAssociacaoDTO> entry : map.entrySet()){
 
-				TelefoneAssociacaoDTO telefoneAssociacaoDTO = map.get(key);
+				TelefoneAssociacaoDTO telefoneAssociacaoDTO = entry.getValue();
 				
 				if (telefoneAssociacaoDTO.isPrincipal()) {
 					

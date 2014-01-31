@@ -100,10 +100,10 @@ var lancamentosSelecionados = [];
   							 	</div>
        	  					</div>
 						        	
-		         	  		<span class="bt_novos">
-			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();"  title="Finalizar Matriz de Distribui&ccedil&atildeo">
-		         	  					<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0"/>
-			         	  			</a>
+		         	  		<span class="bt_novos" disabled>
+			         	  			<!-- a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();"  title="Finalizar Matriz de Distribui&ccedil&atildeo"  -->
+		         	  					<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+			         	  			<!--/a -->
 		         	  		</span>	
 		         	  		
 <!-- 		         	  		<span class="bt_novos"> -->

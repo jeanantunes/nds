@@ -578,9 +578,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 		return (Long) query.uniqueResult();
 	}
 
@@ -598,9 +596,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
  
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		query.setMaxResults(1);
 
@@ -634,9 +630,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
 
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
+		setParameters(query, param);
 
 		if (filtro.getPaginacao() != null) {
 
@@ -2507,12 +2501,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		return query.list();
 	}
 
-	private void setParameters(Query query, Map<String, Object> parameters) {
-		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasQuePossuemRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal,List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
@@ -2882,10 +2870,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
 		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
-		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia ");
+		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia, ");
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append(" produto.codigo as codigoProduto ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
 		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");

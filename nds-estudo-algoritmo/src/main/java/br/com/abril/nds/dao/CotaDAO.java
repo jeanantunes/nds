@@ -207,7 +207,7 @@ public class CotaDAO {
 		    cota.setNova(true);
 		}
 		if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
-		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(Long.valueOf(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
 			if (cota.isNova()) {
 			    cota.setClassificacao(ClassificacaoCota.CotaNova);
 			}

@@ -165,7 +165,7 @@
     </form>
 
     <!--  href="javascript:histogramaVendasController.pesquisarFiltro(); href="/Lancamento/analise_histograma.htm"" -->
-    <fieldset class="classFieldset" style="width: 960px !important;">
+    <fieldset class="classFieldset" style="width: 960px !important; display: none;" id="fieldsetEdicoesProduto">
       <legend>Edi&ccedil;&otilde;es do Produto</legend>
       <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
 

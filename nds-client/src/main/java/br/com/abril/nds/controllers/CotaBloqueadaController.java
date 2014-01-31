@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
@@ -92,11 +93,11 @@ public class CotaBloqueadaController extends BaseController {
 		
 		if (mapaCotaConferidaUsuario!=null && !mapaCotaConferidaUsuario.isEmpty()){
 		
-			for ( Integer numeroCota : mapaCotaConferidaUsuario.keySet()){
+			for ( Entry<Integer, String> entry : mapaCotaConferidaUsuario.entrySet()){
 				
-				Cota c = this.cotaService.obterPorNumeroDaCota(numeroCota);
+				Cota c = this.cotaService.obterPorNumeroDaCota(entry.getKey());
 				
-				String sessionId = mapaCotaConferidaUsuario.get(numeroCota);
+				String sessionId = entry.getValue();
 				
 				cbsVO.add(new CotaBloqueadaVO(mapaUsuarioConferencia.get(sessionId),
 						                      c.getNumeroCota(),
