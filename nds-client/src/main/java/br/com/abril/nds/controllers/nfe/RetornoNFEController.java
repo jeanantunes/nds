@@ -22,6 +22,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.FileImportUtil;
@@ -92,7 +94,7 @@ public class RetornoNFEController extends BaseController {
 		
 		SumarizacaoNotaRetornoVO sumarizacao = this.sumarizarNotasRetorno(listaNotasRetorno);
 		
-		this.result.use(Results.json()).from(sumarizacao, "sumarizacao").serialize();
+		this.result.use(CustomJson.class).from(sumarizacao).serialize();
 	}
 	
 	
