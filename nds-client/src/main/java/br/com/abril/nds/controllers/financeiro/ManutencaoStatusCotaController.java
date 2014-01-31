@@ -440,6 +440,19 @@ public class ManutencaoStatusCotaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha as informações do Status da Cota");
 		}
 		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota());
+			
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
+		}
+		
+		if(SituacaoCadastro.INATIVO.equals(cota.getSituacaoCadastro())){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível ativar uma cota com status Inativa!");
+		
+		}
+		
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		if (novoHistoricoSituacaoCota.getNovaSituacao() == null) {
@@ -454,13 +467,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 		} else {
 			
-			Cota cota = 
-				this.cotaService.obterPorNumeroDaCota(novoHistoricoSituacaoCota.getCota().getNumeroCota());
+			String defaultMessage = "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos: ";
 			
-			if (cota == null) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cota inexistente!");
-			}
+			boolean indLeastOneNecessaryMsg = false;
 			
 			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
 				
@@ -469,16 +478,14 @@ public class ManutencaoStatusCotaController extends BaseController {
 				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
 				
 			    if (qtde == null || qtde == 0){
-			    	
-			    	msgs.add(
-			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadastrado!");
+			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Endereço] cadastrado!" : defaultMessage + " Um [Endereço] cadastrado!");
+			    	indLeastOneNecessaryMsg = true;
 			    }
 			    
 			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
 			    if (qtde == null || qtde == 0){
-			    	
-			    	msgs.add(
-			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadastrado!");
+			    	msgs.add(indLeastOneNecessaryMsg ? "Um [Telefone] cadastrado!" : defaultMessage + " Um [Telefone] cadastrado!");
+			    	indLeastOneNecessaryMsg = true;
 			    }
 			    
 				if (this.distribuidorService.utilizaGarantiaPdv()){
@@ -486,18 +493,16 @@ public class ManutencaoStatusCotaController extends BaseController {
 					qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
 					
 					if (qtde == null || qtde == 0){
-						
-						msgs.add(
-							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
+						msgs.add(indLeastOneNecessaryMsg ? "Uma [Garantia] cadastrada!" : defaultMessage + " Uma [Garantia] cadastrada!");
+						indLeastOneNecessaryMsg = true;
 					}
 				}
 				
 				qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
 				
 				if (qtde == null || qtde == 0){
-					
-					msgs.add(
-						"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+					msgs.add(indLeastOneNecessaryMsg ? "Uma [Roteirização] cadastrada!" : defaultMessage + " Uma [Roteirização] cadastrada!");
+					indLeastOneNecessaryMsg = true;
 				}
 				
 				//segundo César, situação PENDENTE == cota nova

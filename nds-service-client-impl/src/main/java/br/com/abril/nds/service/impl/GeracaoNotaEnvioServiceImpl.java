@@ -129,7 +129,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
 				filtro.getIntervaloMovimento(), null);
-		
+
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
 		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
@@ -137,8 +137,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		} else {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitir(filtro);
 		}
-		
-
 	}
 
 	@Override
@@ -362,7 +360,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			    quantidadeResultante = BigInteger.ZERO;
 			}
 			
-			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
+			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva() == null ? BigInteger.ZERO : estudoCota.getQtdeEfetiva());
 
 			
 			ItemNotaEnvio itemNotaEnvio = null;
