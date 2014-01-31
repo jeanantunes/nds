@@ -184,7 +184,10 @@ fieldset {
 										<select name="produtoEdicaoDTO.tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
 											<option value="LANCAMENTO">Lan&ccedil;amento</option>
+											<option value="PARCIAL">Ed. Parcial</option>
+											<option value="RELANCAMENTO">Relan&ccedil;amento</option>
 											<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
+											<option value="SUPLEMENTAR">Suplementar</option>
 										</select>
 									</td>
 									<td>N&ordm; Lancto:</td>
