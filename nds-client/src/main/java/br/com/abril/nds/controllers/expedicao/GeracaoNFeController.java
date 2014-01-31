@@ -24,14 +24,13 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.NaturezaOperacaoRepository;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNFeService;
+import br.com.abril.nds.service.NaturezaOperacaoService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
@@ -86,7 +85,7 @@ public class GeracaoNFeController extends BaseController {
 	
 	
 	@Autowired
-	private NaturezaOperacaoRepository naturezaOperacaoRepository;
+	private NaturezaOperacaoService naturezaOperacaoService;
 	
 	private static final String FILTRO_SESSION_NOTA_FISCAL = "filtroNotaFiscal";
 	
@@ -171,8 +170,7 @@ public class GeracaoNFeController extends BaseController {
 		
 		filtro.setPaginacaoVO(paginacao);
 		
-
-		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
+		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoService.obterNaturezaOperacaoPorId(filtro.getIdNaturezaOperacao());
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		case COTA:

@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -99,6 +98,6 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			
 		}
 		
-		return sessionFactory.openSession();
+		return null; // sessionFactory.openSession();
 	}
 }

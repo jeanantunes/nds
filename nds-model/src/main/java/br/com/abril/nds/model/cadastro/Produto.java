@@ -626,14 +626,14 @@ public class Produto implements Serializable {
 			return false;
 		Produto other = (Produto) obj;
 		if (this.getCodigo() == null) {
-			if (other.codigo != null)
+			if (other.getCodigo() != null)
 				return false;
-		} else if (!this.getCodigo().equals(other.codigo))
+		} else if (!this.getCodigo().equals(other.getCodigo()))
 			return false;
 		if (this.getId() == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!this.getId().equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
 		return true;
 	}

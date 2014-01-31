@@ -5,11 +5,14 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
 @Embeddable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class InformacaoEletronica implements Serializable {
 
 	/**

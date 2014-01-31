@@ -10,7 +10,14 @@ function RetornoNFEController(){
 	
 };
 
-RetornoNFEController.prototype.path = contextPath +"/nfe/retornoNFe/";
+var retornoNFEController = $.extend(true, {
+	
+	path = contextPath +"/nfe/retornoNFe/";
+	
+}, BaseController);
+//@ sourceURL=impressaoNfe.js
+
+
 
 RetornoNFEController.prototype.pesquisarArquivos = function() {
 	
@@ -94,8 +101,34 @@ RetornoNFEController.prototype.limparTabela = function() {
 };
 
 
-
-
-
-
+RetornoNFEController.prototype.initFlexiGrids = function() {
+	$(".retornoPesqGrid", RetornoNFEController.workspace).flexigrid({
+		dataType : 'json',
+		colModel : [ {
+			display : 'Num. Total de Arquivos',
+			name : 'numeroArquivos',
+			width : 220,
+			sortable : true,
+			align : 'left',
+		}, {
+			display : 'Num. NF-e',
+			name : 'notasAprovadas',
+			width : 220,
+			sortable : true,
+			align : 'left',
+		}, {
+			display : 'Erros Consis.',
+			name : 'notasRejeitadas',
+			width : 220,
+			sortable : true,
+			align : 'left',
+		}, {
+			display : '',
+			name : 'sel',
+			width : 20,
+			sortable : false,
+			align : 'center',
+		}],
+	});
+};
 

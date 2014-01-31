@@ -45,6 +45,7 @@ public class ProdutoServico implements Serializable {
 	 */
 	private static final long serialVersionUID = 6402390731085431454L;
 
+	@XmlTransient
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
@@ -159,8 +160,6 @@ public class ProdutoServico implements Serializable {
 	@Column(name="VALOR_OUTROS", precision=18, scale=4, nullable=true)
 	private BigDecimal valorOutros;
 	
-	
-	
 	@ManyToMany
 	@JoinTable( joinColumns = {			
 			@JoinColumn(name = "PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA"),
@@ -170,9 +169,10 @@ public class ProdutoServico implements Serializable {
 			@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID", referencedColumnName="ID")
 	})
 	@Cascade(value = {CascadeType.ALL})
+	@XmlTransient
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
 	
-	@OneToMany
+	@OneToMany(cascade=javax.persistence.CascadeType.ALL)
 	@JoinTable(name = "NOTA_FISCAL_ITEM_NOTA_FISCAL_ORIGEM_ITEM", 
 			joinColumns = {
 				@JoinColumn(name = "PRODUTO_SERVICO_SEQUENCIA", referencedColumnName="SEQUENCIA"),
@@ -425,4 +425,53 @@ public class ProdutoServico implements Serializable {
 		this.origemItemNotaFiscal = origemItemNotaFiscal;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getCodigoBarras() == null) ? 0 : this.getCodigoBarras().hashCode());
+		result = prime * result + ((this.getCodigoProduto() == null) ? 0 : this.getCodigoProduto().hashCode());
+		result = prime * result + ((this.getListaMovimentoEstoqueCota() == null) ? 0 : this.getListaMovimentoEstoqueCota().hashCode());
+		result = prime * result + ((this.getOrigemItemNotaFiscal() == null) ? 0 : this.getOrigemItemNotaFiscal().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoServico other = (ProdutoServico) obj;
+		if (this.getCodigoBarras() == null) {
+			if (other.getCodigoBarras() != null)
+				return false;
+		} else if (!this.getCodigoBarras().equals(other.getCodigoBarras()))
+			return false;
+		if (this.getCodigoProduto() == null) {
+			if (other.getCodigoProduto() != null)
+				return false;
+		} else if (!this.getCodigoProduto().equals(other.getCodigoProduto()))
+			return false;
+		if (this.getListaMovimentoEstoqueCota() == null) {
+			if (other.getListaMovimentoEstoqueCota() != null)
+				return false;
+		} else if (!this.getListaMovimentoEstoqueCota()
+				.equals(other.getListaMovimentoEstoqueCota()))
+			return false;
+		if (this.getOrigemItemNotaFiscal() == null) {
+			if (other.getOrigemItemNotaFiscal() != null)
+				return false;
+		} else if (!this.getOrigemItemNotaFiscal().equals(other.getOrigemItemNotaFiscal()))
+			return false;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+			return false;
+		return true;
+	}
 }

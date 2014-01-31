@@ -234,17 +234,15 @@ public class NotaFiscalEndereco implements Serializable {
 			return false;
 		NotaFiscalEndereco other = (NotaFiscalEndereco) obj;
 		if (this.getCep() == null) {
-			if (other.cep != null)
+			if (other.getCep() != null)
 				return false;
-		} else if (!this.getCep().equals(other.cep))
+		} else if (!this.getCep().equals(other.getCep()))
 			return false;
 		if (this.getId() == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!this.getId().equals(other.id))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
 		return true;
 	}
-	
-	
 }
