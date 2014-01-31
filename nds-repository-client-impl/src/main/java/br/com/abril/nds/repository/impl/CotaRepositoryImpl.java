@@ -2074,8 +2074,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 					sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
 				}
 				
-				sql.append(
-				  "	    group by cota_.ID ");
+				sql.append(" group by cota_.ID ");
+				sql.append(" having SUM(ec_.QTDE_EFETIVA) > 0 ");
 		
 	}
 
@@ -2145,7 +2145,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	
 	private void orderByCotasComNotaEnvioEntre(StringBuilder sql,
 			String sortName, String sortOrder) {
-		
+
 		if("numeroCota".equals(sortName)) {
 			sql.append(" order by numeroCota " + sortOrder +", notaImpressa ");
 		}

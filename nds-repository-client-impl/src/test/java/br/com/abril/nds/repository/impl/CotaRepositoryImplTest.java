@@ -12,7 +12,6 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,6 +25,7 @@ import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO.OrdenacaoColuna;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.fixture.Fixture;
@@ -55,7 +55,6 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -1465,6 +1464,52 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		save(chamadaEncalheCota);
 	}
+
+	@Test
+	public void testeObterDadosCotasComNotaEnvioAEmitir() {
+		
+		this.cotaRepository.obterDadosCotasComNotaEnvioAEmitir(this.getFiltroVazio());
+	}
 	
+	@Test
+	public void obterDadosCotasComNotaEnvioEmitidas() {
+		
+		this.cotaRepository.obterDadosCotasComNotaEnvioEmitidas(this.getFiltroVazio());
+	}
+	
+	@Test
+	public void testeObterDadosCotasComNotaEnvioEmitidasEAEmitir() {
+		
+		this.cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitir(this.getFiltroVazio());
+	}
+	
+	@Test
+	public void testeObterDadosCotasComNotaEnvioAEmitirCount() {
+		
+		this.cotaRepository.obterDadosCotasComNotaEnvioAEmitirCount(this.getFiltroVazio());
+	}
+	
+	@Test
+	public void obterDadosCotasComNotaEnvioEmitidasCount() {
+		
+		this.cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(this.getFiltroVazio());
+	}
+	
+	@Test
+	public void testeObterDadosCotasComNotaEnvioEmitidasEAEmitirCount() {
+		
+		this.cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(this.getFiltroVazio());
+	}
+	
+	private FiltroConsultaNotaEnvioDTO getFiltroVazio() {
+
+		FiltroConsultaNotaEnvioDTO filtro = new FiltroConsultaNotaEnvioDTO();
+		
+		PaginacaoVO paginacao = new PaginacaoVO();
+		
+		filtro.setPaginacaoVO(paginacao);
+		
+		return filtro;
+	}
 
 }
