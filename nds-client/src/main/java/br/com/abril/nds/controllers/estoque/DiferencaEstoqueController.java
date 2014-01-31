@@ -1158,20 +1158,10 @@ public class DiferencaEstoqueController extends BaseController {
 		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
-		List<RateioCotaVO> listaRateiosCadastrados = null;
-		
 		if (mapaRateiosCadastrados == null) {
 
 			mapaRateiosCadastrados = new HashMap<Long, List<RateioCotaVO>>();
 
-		} else {
-			
-			listaRateiosCadastrados = mapaRateiosCadastrados.get(diferencaVO.getId());
-		}
-		
-		if (listaRateiosCadastrados == null || listaRateiosCadastrados.isEmpty()) {
-			
-			listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
 		}
 		
 		ProdutoEdicao produtoEdicao =

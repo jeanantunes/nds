@@ -14,6 +14,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Multiset.Entry;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
@@ -210,12 +212,7 @@ public class ImpressaoNFEController extends BaseController {
 	private void verificarFiltro(FiltroImpressaoNFEDTO filtro) {
 		if(!filtro.isFiltroValido()) {
 
-			List<String> listaMensagemValidacao = new ArrayList<String>();
-
-			HashMap<String, String> erros = filtro.validarFiltro();
-			for(Iterator<String> i = erros.keySet().iterator(); i.hasNext(); ) {
-				listaMensagemValidacao.add( erros.get( i.next() ) );
-			}
+			List<String> listaMensagemValidacao = new ArrayList<String>(filtro.validarFiltro().values());
 
 			if (!listaMensagemValidacao.isEmpty()) {
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);

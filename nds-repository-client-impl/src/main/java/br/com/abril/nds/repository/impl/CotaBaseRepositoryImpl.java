@@ -26,6 +26,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         
         // RETURNING FIELDS
         hql.append(" select ");        
+        hql.append(" cota.id as idCota, "); // NÚMERO DA COTA        
         hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV

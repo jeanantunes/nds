@@ -18,71 +18,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  */
 public interface CapaService {
 
-	public static final String DEFAULT_EXTENSION = ".jpg";
-	/**
-	 * Verifica se a edição do produto possui uma capa.
-	 * 
-	 * @param idProdutoEdicao
-	 *            Identificador do {@link ProdutoEdicao}
-	 * 
-	 * @return <code>true</code> Edição do produto tem uma capa.
-	 * 
-	 * @throws NoResultException
-	 *             {@link ProdutoEdicao} não encontrado.
-	 * @throws CouchDbException
-	 *             Erro ao acessar o Repositorio de arquivos.
-	 * @throws NoDocumentException Capa não encontrada no Repositorio de arquivos.
-	 */
-	public boolean hasCapa(long idProdutoEdicao);
-
-	/**
-	 * Verifica se a edição do produto possui uma capa.
-	 * 
-	 * @param codigoProduto
-	 *            Codigo do produto Prodin
-	 * @param numeroEdicao
-	 *            Numero da Edição Prodin
-	 * 
-	 * @return <code>true</code> Edição do produto tem uma capa.
-	 * 
-	 * @throws CouchDbException
-	 *             Erro ao acessar o Repositorio de arquivos.
-	  * @throws NoDocumentException Capa não encontrada no Repositorio de arquivos.            
-	 */
-	public boolean hasCapa(String codigoProduto, long numeroEdicao);
-
-	/**
-	 * Recupera a Capa da edição do produto.
-	 * 
-	 * @param idProdutoEdicao
-	 *            Identificador do {@link ProdutoEdicao}
-	 * 
-	 * @return {@link Attachment} da capa.
-	 * 
-	 * @throws NoResultException
-	 *             {@link ProdutoEdicao} não encontrado.
-	 * @throws CouchDbException
-	 *             Erro ao acessar o Repositorio de arquivos.
-	  * @throws NoDocumentException Capa não encontrada no Repositorio de arquivos.             
-	 */
-	public Attachment getCapa(long idProdutoEdicao);
-
-	/**
-	 * Recupera a Capa da edição do produto.
-	 * 
-	 * @param codigoProduto
-	 *            Codigo do produto Prodin
-	 * @param numeroEdicao
-	 *            Numero da Edição Prodin
-	 * 
-	 * @return {@link Attachment} da capa.
-	 * 
-	 * @throws CouchDbException
-	 *             Erro ao acessar o Repositorio de arquivos.
-	  * @throws NoDocumentException Capa não encontrada no Repositorio de arquivos.             
-	 */
-	public Attachment getCapa(String codigoProduto, long numeroEdicao);
-
 	/**
 	 * Recupera a Capa da edição do produto.
 	 * 
@@ -133,21 +68,7 @@ public interface CapaService {
 	public void saveCapa(String codigoProduto, long numeroEdicao,
 			Attachment attachment);
 
-	/**
-	 * Salva a capa para a edição do produto.
-	 * 
-	 * @param idProdutoEdicao
-	 *            Identificador do {@link ProdutoEdicao}
-	 * 
-	 * @param capa
-	 * 
-	 * @throws NoResultException
-	 *             {@link ProdutoEdicao} não encontrado.
-	 * @throws CouchDbException
-	 *             Erro ao acessar o Repositorio de arquivos.
-	  * @throws NoDocumentException Capa não encontrada no Repositorio de arquivos.             
-	 */
-	public void saveCapa(long idProdutoEdicao, Attachment capa);
+
 
 	/**
 	 * Salva a capa para a edição do produto.

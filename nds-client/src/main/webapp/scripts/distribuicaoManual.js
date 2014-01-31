@@ -111,7 +111,6 @@ var distribuicaoManual = $.extend(true, {
 			
 			exibirMensagemDialog('WARNING', ['Reparte acima de 5%. Posteriormente poderá ser liberado mediante senha de autorização!'], '');
 			
-			$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
 		} else {
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFFFF");
 		}

@@ -78,11 +78,11 @@ public class URLSecurityInterceptor implements Interceptor {
 			if(!(resourceInstance instanceof HomeController || resourceInstance instanceof InicialController) && !authorize)
 				throw new ValidacaoException(TipoMensagem.WARNING, "Acesso Negado.");
 
-		} catch (Throwable throwable ) {
+		} catch (Exception exception ) {
 
-			logger.error(throwable.getMessage(), throwable);
+			logger.error(exception.getMessage(), exception);
 
-			Throwable cause = ExceptionUtil.getRootCause(throwable);
+			Throwable cause = ExceptionUtil.getRootCause(exception);
 
 			if (cause instanceof ValidacaoException) {
 

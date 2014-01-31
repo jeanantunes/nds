@@ -315,36 +315,40 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	},
 	
 	recuperarNumeroEstudo: function(numeroEstudo){
-		
-		
-		if($("#codigoEstudo").val()==undefined && $(".pesquisaEstudo").val() == undefined){
-			
-			return;
-		}
-		
-		if(informacoesProdutoController.targetRecuperarEstudo){
-			
-			$(informacoesProdutoController.targetRecuperarEstudo).val(numeroEstudo);
-			if(informacoesProdutoController.methodEval){
-				window.eval('$(informacoesProdutoController.targetRecuperarEstudo).'+informacoesProdutoController.methodEval+'();');
-			}else{
-				$(informacoesProdutoController.targetRecuperarEstudo).blur();
-				
-			}
-		}else if ($(".pesquisaEstudo").val() != undefined) {
-			
-			$(".pesquisaEstudo").trigger(jQuery.Event("change"));
-			$(".pesquisaEstudo").val(numeroEstudo);
-			$(".pesquisaEstudo").focus();
-			
-		}
-		else {
-			
-			$("#codigoEstudo").val(numeroEstudo);
-			$("#codigoEstudo").focus();
-		}
-		
-		$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+
+        var matriz = [],
+            url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+            dadosResumo = {};
+
+        $.postJSON(url,
+            [{name : "id" , value : numeroEstudo}],
+            function(response){
+                // CALLBACK
+                // ONSUCESS
+                matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+                matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+                matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+                matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+                matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+                matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+                matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+                matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+
+                $('#workspace').tabs({load : function(event, ui) {
+
+                    histogramaPosEstudoController.dadosResumo = dadosResumo;
+                    histogramaPosEstudoController.matrizSelecionado = matriz;
+                    histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
+
+                    $('#workspace').tabs({load : function(event, ui) {}});
+                }});
+
+                var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
+                $('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
+            }
+        );
+
+		//$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
 	},
 	
 	

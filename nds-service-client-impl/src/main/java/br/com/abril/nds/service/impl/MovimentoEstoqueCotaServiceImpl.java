@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -307,13 +308,12 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE
 		);
 
-		Iterator<ProdutoEdicao> iterator = mapaSuplementar.keySet().iterator();
 
-		while (iterator.hasNext()) {
+		for (Entry<ProdutoEdicao, TransferenciaReparteSuplementarDTO> entry:mapaSuplementar.entrySet()) {
 
-			ProdutoEdicao produtoEdicao = iterator.next();
+			ProdutoEdicao produtoEdicao = entry.getKey();
 
-			TransferenciaReparteSuplementarDTO transferencia = mapaSuplementar.get(iterator);
+			TransferenciaReparteSuplementarDTO transferencia = entry.getValue();
 
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
 				produtoEdicao.getId(), usuario.getId(), 

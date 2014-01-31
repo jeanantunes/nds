@@ -530,14 +530,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 				
 		Query query =  getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			
-			if(param.get(key) instanceof List)
-				query.setParameterList(key, (List<Fornecedor>) param.get(key));
-			else					
-				query.setParameter(key, param.get(key));
-			
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				CotaEmissaoDTO.class));
@@ -578,9 +571,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));			
-		}
+		setParameters(query, param);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				CapaDTO.class));
@@ -732,9 +723,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));			
-		}
+		setParameters(query, param);
 		
 		if(datasControleFechamentoEncalhe!=null && !datasControleFechamentoEncalhe.isEmpty()) {
 			query.setParameterList("datasControleFechamentoEncalhe", datasControleFechamentoEncalhe, DateType.INSTANCE);

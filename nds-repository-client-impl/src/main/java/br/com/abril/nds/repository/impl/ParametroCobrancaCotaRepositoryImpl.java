@@ -48,4 +48,21 @@ public class ParametroCobrancaCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		return (ParametroCobrancaCota) query.uniqueResult();
 	}
+
+	@Override
+	public boolean verificarCotaSemParametroCobrancaPorFormaCobranca(Long id) {
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select case when count(c.id) > 0 then true else false end " +
+				"from Cota c " +
+				"left join c.parametroCobranca p " +
+				"join p.formasCobrancaCota f " +
+				"where f.id = :id " +
+				"and p.id is null ");
+		
+		query.setParameter("id", id);
+		
+		return (boolean) query.uniqueResult();
+	}
 }
