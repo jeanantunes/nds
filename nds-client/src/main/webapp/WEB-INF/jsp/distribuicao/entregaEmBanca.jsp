@@ -11,8 +11,8 @@
 												   							  'utilizaTermoAdesao', 'termoAdesaoRecebido')" />
 		    </td>
 		    <td width="245" height="39">
-		    	<div class="divUtilizaTermoAdesao">
-		    		<span class="bt_imprimir" style="display:block;">
+		    	<div class="divUtilizaTermoAdesao" style="display:none">
+		    		<span class="bt_imprimir" style="display:none;">
 		    			<a href="javascript:;" onclick="DISTRIB_COTA.downloadTermoAdesao();">Termo</a>
 		    		</span>
 	    		</div>
@@ -21,7 +21,7 @@
 	  	</table>
   	</div>
   	
-  	<div class="divUtilizaTermoAdesao">
+  	<div class="divUtilizaTermoAdesao" style="display:none">
 	  	<table width="415" border="0" cellspacing="1" cellpadding="1">
 		  <tr>
 		    <td width="130">Termo Adesão Recebido?</td>
@@ -32,7 +32,7 @@
 		  </tr>
 		</table>
 		
-		<div class="divTermoAdesaoRecebido">
+		<div class="divTermoAdesaoRecebido" style="display:none">
 			<table width="415" border="0" cellspacing="1" cellpadding="1">
 			  <tr>
 			    <td width="130">Arquivo:</td>

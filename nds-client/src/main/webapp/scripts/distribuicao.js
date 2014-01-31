@@ -493,10 +493,17 @@ function Distribuicao(tela) {
 				if (result.boolean){
 					
 					$(".divImpressaoTermoAdesao").show();
-					$(".divUtilizaTermoAdesao").show();
-					$(".divTermoAdesaoRecebido").show();
-				}
-				else{
+					
+					if(D.get("utilizaTermoAdesao")==true){
+					  $(".divUtilizaTermoAdesao").show();
+					  $(".divTermoAdesaoRecebido").show();
+					}else{
+					  $(".divUtilizaTermoAdesao").hide();
+					  $(".divTermoAdesaoRecebido").hide();
+					}
+					  
+					
+				}else{
 				
 				    $(".divImpressaoTermoAdesao").hide();
 				    $(".divUtilizaTermoAdesao").hide();
@@ -530,9 +537,14 @@ function Distribuicao(tela) {
 		
 		D.mostrarEsconderConteudoTipoEntrega(exibirDiv, "divConteudoEntregaBanca",
 											 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
-											 "utilizaTermoAdesao", "termoAdesaoRecebido", limparCampos);
+											 "utilizaTermoAdesao", limparCampos);
 		
 		D.distribuidorUtilizaTermoAdesao();
+		
+		D.mostrarEsconderConteudoTipoEntrega(false,
+				 "divUtilizaTermoAdesao", "divTermoAdesaoRecebido",
+				 "utilizaTermoAdesao", limparCampos);
+		
 	};
 	
 	this.mostrarEsconderConteudoEntregador = function(exibirDiv, limparCampos) {
