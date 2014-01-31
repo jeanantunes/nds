@@ -2212,6 +2212,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		gerarWhereFromObterCotaPorTipo(hql);
 		
+		hql.append(" group by cota.id ");
+		
 		gerarOrderByObterCotaPorTipo(hql, sortname, sortorder);
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -2231,14 +2233,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		hql.append(" from Cota cota ");
 		hql.append(" join cota.pessoa pessoa ");
-		hql.append(" join cota.pdvs pdv ");
-		hql.append(" join cota.enderecos enderecoCota ");
-		hql.append(" join enderecoCota.endereco endereco ");
+		hql.append(" left join cota.pdvs pdv ");
+		hql.append(" left join cota.enderecos enderecoCota ");
+		hql.append(" left join enderecoCota.endereco endereco ");
 		
-		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
-		hql.append(" and enderecoCota.principal=true ");		
-		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota");
-				
+		hql.append(" where (pdv.caracteristicas.pontoPrincipal=true or pdv.caracteristicas.pontoPrincipal is null) ");
+		hql.append(" and (enderecoCota.principal=true or enderecoCota.principal is null) ");		
+		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota ");
 	}
 
 	private void gerarOrderByObterCotaPorTipo(StringBuilder hql,
@@ -2268,7 +2269,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(cota.id) ");
+		hql.append(" select count(distinct cota.id) ");
 		
 		gerarWhereFromObterCotaPorTipo(hql);
 		

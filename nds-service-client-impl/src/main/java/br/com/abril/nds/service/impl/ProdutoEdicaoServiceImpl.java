@@ -1043,6 +1043,21 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
 	}
 
+	private void validarStatusProdutoEdicaoRedistribuicao(String status) {
+		
+		if( StatusLancamento.PLANEJADO.name().equals(status) 		||
+			StatusLancamento.CONFIRMADO.name().equals(status) 		||
+			StatusLancamento.EM_BALANCEAMENTO.name().equals(status) ||
+			StatusLancamento.BALANCEADO.name().equals(status) 		||
+			StatusLancamento.FURO.name().equals(status) 			||
+			StatusLancamento.EXPEDIDO.name().equals(status) ) {
+			return;
+		}
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "Situação do lançamento não permite cadastrar nova redistribuição!");
+		
+	}
+	
 	@Transactional(readOnly = true)
 	@Override
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicaoString, boolean redistribuicao, String situacaoProdutoEdicao) {
@@ -1126,13 +1141,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					"Regime de recolhimento parcial não permite cadastro de redistribuição!");
 			}
 			
-			if (!(dto.getStatusSituacao().equals(StatusLancamento.EM_BALANCEAMENTO.name())
-					|| dto.getStatusSituacao().equals(StatusLancamento.BALANCEADO.name())
-					|| dto.getStatusSituacao().equals(StatusLancamento.EXPEDIDO.name()))) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Situação do lançamento não permite cadastrar nova redistribuição!");
-			}
+			
+			validarStatusProdutoEdicaoRedistribuicao(dto.getStatusSituacao());
 			
 			dto.setTipoLancamento(TipoLancamento.REDISTRIBUICAO);
 			dto.setRepartePrevisto(null);
@@ -1325,7 +1335,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setDescricaoDesconto(produto.getDescricaoDesconto());
 		}
 		
-		Long ultimaEdicao = produtoEdicaoRepository.obterUltimoNumeroEdicao(codigoProduto);
+		Long ultimaEdicao = produtoEdicaoRepository.obterUltimoNumeroEdicao(produto.getId());
 		
 		if (ultimaEdicao == null) {
 			dto.setNumeroEdicao(1L);
