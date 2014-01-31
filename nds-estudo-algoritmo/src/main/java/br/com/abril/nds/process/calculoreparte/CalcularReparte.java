@@ -218,9 +218,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Fim do sub processo
 	// Se houver saldo no reparte total distribuido, não considerando-se o total de reparte juramentado:
 	// Indice de Sobra ou Falta = ( 'sum'ReparteCalculado Cota / ReparteCalculado) * ReparteCalculado Cota (não
-	List<CotaEstudo> cotas = new ArrayList<>();
-	cotas = new ArrayList<>();
-	cotas.addAll(estudo.getCotas());
+	List<CotaEstudo> cotas = estudo.getCotas();
 
 	Collections.sort(cotas, new Comparator<CotaEstudo>() {
 	    @Override

@@ -518,7 +518,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		List<DetalheInterfaceVO> lista = new ArrayList<DetalheInterfaceVO>();
 		DetalheInterfaceVO detalheInterfaceVO = null;
 		String info = null;
-		Map<String, String> mapaInformacoes = new HashMap<String, String>(); 
+		Map<String, String> mapaInformacoes; 
 		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensLogInterface(codigoLogExecucao)) {
 			info = logExecucaoMensagem.getMensagemInfo();
 			if (info == null) {
