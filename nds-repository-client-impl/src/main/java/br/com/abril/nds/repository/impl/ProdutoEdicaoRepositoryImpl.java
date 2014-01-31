@@ -719,17 +719,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public Long obterUltimoNumeroEdicao(String codigoProduto) {
+	public Long obterUltimoNumeroEdicao(Long idProduto) {
 
-		Criteria criteria =  getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");	
-
-		criteria.createCriteria("produto", "produto", Criteria.LEFT_JOIN);
-
-		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
-
-		criteria.setProjection( Projections.projectionList().add(Projections.max("produtoEdicao.numeroEdicao"), "numeroEdicao"));
-
-		return (Long) criteria.uniqueResult();
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select max(pe.numeroEdicao)	");
+		
+		hql.append(" from ProdutoEdicao pe			");
+		
+		hql.append(" inner join pe.produto p		");
+		
+		hql.append(" where p.id = :idProduto		");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProduto", idProduto);
+		
+		return (Long) query.uniqueResult();
+		
 	}
 
 	@SuppressWarnings("unchecked")
