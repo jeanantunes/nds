@@ -669,7 +669,7 @@ var MANTER_COTA = $.extend(true, {
     	var inputs_aba_enderecos 		= 'div[id=tabCota-2] :input';
     	var inputs_aba_telefones 		= 'div[id=tabCota-3] :input';
     	var inputs_aba_pdv 				= 'div[id=tabCota-4] :input';
-    	//var inputs_aba_garantia 		= 'div[id=tabCota-5] :input';
+    	var inputs_aba_garantia 		= 'div[id=tabCota-5] :input';
     	var inputs_aba_fornecedores 	= 'div[id=tabCota-6] :input';
     	var inputs_aba_desconto 		= 'div[id=tabCota-7] :input';
     	var inputs_aba_financeiro 		= 'div[id=tabCota-8] :input';
@@ -682,7 +682,7 @@ var MANTER_COTA = $.extend(true, {
     	inputAbas.push(inputs_aba_enderecos);
     	inputAbas.push(inputs_aba_telefones);
     	inputAbas.push(inputs_aba_pdv);
-    	//inputAbas.push(inputs_aba_garantia);
+    	inputAbas.push(inputs_aba_garantia);
     	inputAbas.push(inputs_aba_fornecedores);
     	inputAbas.push(inputs_aba_desconto);
     	inputAbas.push(inputs_aba_financeiro);
