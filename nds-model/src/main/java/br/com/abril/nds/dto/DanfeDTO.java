@@ -81,6 +81,8 @@ public class DanfeDTO implements Serializable{
 
 	private String destinatarioTelefone;
 
+	private String destinatarioPais;
+	
 	private BigDecimal valorBaseICMS;
 
 	private BigDecimal valorICMS;
@@ -441,6 +443,14 @@ public class DanfeDTO implements Serializable{
 
 	public void setDestinatarioTelefone(String destinatarioTelefone) {
 		this.destinatarioTelefone = destinatarioTelefone;
+	}
+	
+	public String getDestinatarioPais() {
+		return destinatarioPais;
+	}
+
+	public void setDestinatarioPais(String destinatarioPais) {
+		this.destinatarioPais = destinatarioPais;
 	}
 
 	public BigDecimal getValorBaseICMS() {
