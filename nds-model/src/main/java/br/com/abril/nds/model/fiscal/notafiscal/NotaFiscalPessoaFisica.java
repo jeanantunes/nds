@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+@Entity
 @DiscriminatorValue(value = "F")
 public class NotaFiscalPessoaFisica extends NotaFiscalPessoa implements Serializable {
 	
@@ -39,7 +41,7 @@ public class NotaFiscalPessoaFisica extends NotaFiscalPessoa implements Serializ
 	
 	@Override
 	public String getNome() {
-		return this.getNome();
+		return super.getNome();
 	}
 
 	public String getCpf() {

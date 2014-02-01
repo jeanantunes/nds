@@ -5,9 +5,11 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+@Entity
 @DiscriminatorValue(value = "J")
 public class NotaFiscalPessoaJuridica extends NotaFiscalPessoa implements Serializable {
 	
@@ -25,7 +27,7 @@ public class NotaFiscalPessoaJuridica extends NotaFiscalPessoa implements Serial
 	@Column(name="INSCRICAO_ESTADUAL")
 	private String inscricaoEstadual;
 	
-	@OneToOne(cascade=CascadeType.MERGE)
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="NOTA_FICAL_ENDERECO_ID", unique=true)
 	private NotaFiscalEndereco notaFicalEndereco;
 

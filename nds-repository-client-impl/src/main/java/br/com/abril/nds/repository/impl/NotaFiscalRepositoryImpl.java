@@ -125,8 +125,8 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoEmissao as tipoEmissao,")
 		.append(" notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento.documento as cnpjDestinatario,")
 		.append(" notaFiscal.notaFiscalInformacoes.statusProcessamentoInterno as statusNfe,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoNotaFiscal.descricao as tipoNfe,")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.tipoNotaFiscal.descricao as movimentoIntegracao")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as tipoNfe,")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as movimentoIntegracao")
 		.append(" FROM NotaFiscal as notaFiscal");
 
 		if(	(filtro.getBox()!=null) ||
