@@ -584,17 +584,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param listNotaFiscalReferenciada
 	 * @return
 	 */
-	private Identificacao carregaIdentificacao(NaturezaOperacao tipoNotaFiscal,
+	private Identificacao carregaIdentificacao(NaturezaOperacao naturezaOperacao,
 			Date dataEmissao,
 			List<NotaFiscalReferenciada> listNotaFiscalReferenciada) {
 
 		Identificacao identificacao = new Identificacao();
 		identificacao.setDataEmissao(dataEmissao);
-		identificacao.setTipoOperacao(tipoNotaFiscal.getTipoOperacao());
+		identificacao.setTipoOperacao(naturezaOperacao.getTipoOperacao());
 		//identificacao.setDescricaoNaturezaOperacao(tipoNotaFiscal.getNopDescricao());
 //		identificacao.setSerie(tipoNotaFiscal.getSerieNotaFiscal());
 //		identificacao.setNumeroDocumentoFiscal(serieRepository.next(tipoNotaFiscal.getSerieNotaFiscal()));
-		identificacao.setTipoNotaFiscal(tipoNotaFiscal);
+		identificacao.setNaturezaOperacao(naturezaOperacao);
 		// TODO indPag
 		identificacao.setFormaPagamento(FormaPagamento.A_VISTA);
 		identificacao.setTipoEmissao(TipoEmissao.NORMAL);

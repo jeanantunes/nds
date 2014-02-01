@@ -7,12 +7,11 @@
 		    
 		    <td width="20">
 		    	<input type="checkbox" id="${param.tela}utilizaTermoAdesao"
-		    		   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaTermoAdesao', 'divTermoAdesaoRecebido',
-												   							  'utilizaTermoAdesao', 'termoAdesaoRecebido')" />
+		    		   onclick="DISTRIB_COTA.mostrarEsconderDivUtilizaArquivo('divUtilizaTermoAdesao', 'divTermoAdesaoRecebido','utilizaTermoAdesao', 'termoAdesaoRecebido')" />
 		    </td>
 		    <td width="245" height="39">
 		    	<div class="divUtilizaTermoAdesao" style="display:none">
-		    		<span class="bt_imprimir" style="display:none;">
+		    		<span class="bt_imprimir">
 		    			<a href="javascript:;" onclick="DISTRIB_COTA.downloadTermoAdesao();">Termo</a>
 		    		</span>
 	    		</div>
