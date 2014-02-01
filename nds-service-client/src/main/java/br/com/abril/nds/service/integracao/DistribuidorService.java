@@ -20,7 +20,7 @@ import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 
 public interface DistribuidorService {
 	
-	public Distribuidor obter ();
+	public Distribuidor obter();
 	
 	public boolean isDistribuidor(Integer codigo);
 	

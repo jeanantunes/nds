@@ -435,8 +435,8 @@ public class Identificacao implements Serializable {
 	private String versaoSistemaEmissao;
 	
 	@ManyToOne
-	@JoinColumn(name = "TIPO_NOTA_FISCAL_ID", updatable=true, insertable=true)
-	private NaturezaOperacao tipoNotaFiscal;
+	@JoinColumn(name = "NATUREZA_OPERACAO_ID", updatable=true, insertable=true)
+	private NaturezaOperacao naturezaOperacao;
 	
 	/**
 	 * dEmi
@@ -689,15 +689,15 @@ public class Identificacao implements Serializable {
 	/**
 	 * @return the tipoNotaFiscal
 	 */
-	public NaturezaOperacao getTipoNotaFiscal() {
-		return tipoNotaFiscal;
+	public NaturezaOperacao getNaturezaOperacao() {
+		return naturezaOperacao;
 	}
 
 	/**
-	 * @param tipoNotaFiscal the tipoNotaFiscal to set
+	 * @param naturezaOperacao the tipoNotaFiscal to set
 	 */
-	public void setTipoNotaFiscal(NaturezaOperacao tipoNotaFiscal) {
-		this.tipoNotaFiscal = tipoNotaFiscal;
+	public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
+		this.naturezaOperacao = naturezaOperacao;
 	}
 
 	public Long getCodigoUf() {

@@ -27,6 +27,7 @@ public class NaturezaOperacaoBuilder {
 		}
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDescricaoNaturezaOperacao(naturezaOperacao.getDescricao());
+		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setNaturezaOperacao(naturezaOperacao);
 		
 	}
 	

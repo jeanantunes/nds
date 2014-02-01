@@ -2,11 +2,14 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.TipoSecao;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 
@@ -42,6 +46,11 @@ public class NotaFiscal implements Serializable {
 	@Embedded
 	@XmlElement(name="infNFe")
 	private NotaFiscalInformacoes notaFiscalInformacoes;
+	
+	@XmlTransient
+	@OneToOne
+	@JoinColumn(name="USUARIO_ID", nullable=false)
+	private Usuario usuario;
 	
 	
 	/**
@@ -71,6 +80,14 @@ public class NotaFiscal implements Serializable {
 
 	public void setNotaFiscalInformacoes(NotaFiscalInformacoes notaFiscalInformacoes) {
 		this.notaFiscalInformacoes = notaFiscalInformacoes;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	/*

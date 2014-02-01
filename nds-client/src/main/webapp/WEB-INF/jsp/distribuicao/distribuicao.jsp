@@ -119,8 +119,7 @@
 							<select id="${param.tela}tipoEntrega" name="select4"  style="width:155px"
 									onchange="DISTRIB_COTA.mostarPopUpAteracaoTipoEntrega(this.value);">
 								<option selected="selected">...</option>
-
-								<c:forEach items="${listaTipoEntrega}" var="item">
+								<c:forEach items="${listTipoEntrega}" var="item">
 									<option value="${item.key}">${item.value}</option>
 								</c:forEach>
 							</select>

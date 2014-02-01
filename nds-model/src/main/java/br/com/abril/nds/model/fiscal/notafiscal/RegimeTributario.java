@@ -1,12 +1,19 @@
 package br.com.abril.nds.model.fiscal.notafiscal;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.fiscal.nota.Aliquota;
 
 @Entity
 @Table(name="REGIME_TRIBUTARIO")
@@ -24,6 +31,11 @@ public class RegimeTributario implements Serializable {
 	
 	@Column(name="DESCRICAO")
 	private String descricao;
+	
+	@OneToMany
+	@JoinTable(name = "REGIME_TRIBUTARIO_ALIQUOTA", joinColumns = {@JoinColumn(name = "REGIME_TRIBUTARIO_ID")}, 
+		inverseJoinColumns = {@JoinColumn(name = "ALIQUOTA_ID")})
+	private List<Aliquota> aliquotas;
 	
 	public RegimeTributario() {
 		super();
