@@ -1988,7 +1988,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("	join estudo.produtoEdicao produtoEdicao ");
 		hql.append("	join produtoEdicao.produto produto ");		
 		hql.append("    join cota.pessoa pessoa ");
-		hql.append("    join cota.box box ");
+		hql.append("    left join cota.box box ");
 		hql.append("    join box.roteirizacao rtz ");
 		hql.append("    join rtz.roteiros roteiro ");
 		hql.append("    join roteiro.rotas rota ");
@@ -1997,8 +1997,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			hql.append("    join rota.entregador entregador ");
 		
 		hql.append("    left join roteiro.roteirizacao roteirizacao ");
-		
-		hql.append("   left join cota.box box ");
 		
 		
 		// Criado pelo Eduardo Punk Rock - Comentado para realizar a busca através da data de lançamento do distribuidor e não a data de movimento que foi gerada
@@ -2009,7 +2007,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		}*/
 		hql.append("	join estudo.lancamentos lancamento ");
 		
-		hql.append(" where 1=1 ");
+		hql.append(" where lancamento.status in (:status) ");
 
 		if(filtro.getDataDate() != null) {
 			// Criado pelo Eduardo Punk Rock - Comentado para realizar a busca através da data de lançamento do distribuidor e não a data de movimento que foi gerada
@@ -2059,8 +2057,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			hql.append(" and entregador.id =:idEntregador ");
 			param.put("idEntregador", filtro.getIdEntregador());
 		}
-		
-		hql.append(" and lancamento.status in (:status) ");
 		
 		statusLancamento.add(StatusLancamento.BALANCEADO);
 		statusLancamento.add(StatusLancamento.EXPEDIDO);
@@ -2371,8 +2367,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 			hql.append(" having sum(estudoCota.qtdeEfetiva) > 0 ");
 		}
-				
-		gerarOrdenacaoDadosAbastecimento(filtro, hql);
+		
+		if (filtro.getPaginacao() == null){
+			
+			hql.append(" order by box.codigo, roteiro.ordem, rota.ordem ");
+		} else {
+
+			gerarOrdenacaoDadosAbastecimento(filtro, hql);
+		}
 
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -2487,10 +2489,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.codigoDeBarras as codigoBarra, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
-		hql.append(" 		estudoCota.cota as cota ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
 		
-								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
 		
 		hql.append(" group by box.id, rota.descricaoRota ");
@@ -2575,8 +2575,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
 		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz, ");
-		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
-		hql.append(" 		estudoCota.cota as cota ");
+		hql.append(" 		lancamento.repartePromocional as materialPromocional ");
 		
 		
 		filtro.setUseSM(true);
