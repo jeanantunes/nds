@@ -231,9 +231,9 @@ public class RetornoNFEController extends BaseController {
 		
 		notaCancelamentoMerged.setChaveAcesso(arquivo01.getChaveAcesso());
 		
-		notaCancelamentoMerged.setIdNotaFiscal(
-				arquivo01.getIdNotaFiscal() != null ? 
-						arquivo01.getIdNotaFiscal() : arquivo02.getIdNotaFiscal());
+		notaCancelamentoMerged.setNumeroNotaFiscal(
+				arquivo01.getNumeroNotaFiscal() != null ? 
+						arquivo01.getNumeroNotaFiscal() : arquivo02.getNumeroNotaFiscal());
 		
 		notaCancelamentoMerged.setDataRecebimento(
 				arquivo01.getDataRecebimento() != null ?

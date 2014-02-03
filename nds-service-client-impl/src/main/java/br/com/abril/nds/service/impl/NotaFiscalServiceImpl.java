@@ -252,7 +252,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		for (RetornoNFEDTO dadosRetornoNFE : listaDadosRetornoNFE) {
 
-			if (dadosRetornoNFE.getIdNotaFiscal() != null) {
+			if (dadosRetornoNFE.getNumeroNotaFiscal() != null) {
 
 				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarNotaFiscalNumeroSerie(dadosRetornoNFE);
 
@@ -267,7 +267,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					if (cpfCnpjEmitente.equals(dadosRetornoNFE.getCpfCnpj())) {
 
 						if (StatusProcessamentoInterno.ENVIADA.equals(notaFiscal.getNotaFiscalInformacoes().getStatusProcessamentoInterno())) {
-
+							dadosRetornoNFE.setStatus(Status.AUTORIZADO);
 							if (Status.AUTORIZADO.equals(dadosRetornoNFE.getStatus())
 									|| Status.USO_DENEGADO.equals(dadosRetornoNFE.getStatus())) {
 
@@ -398,7 +398,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
 
-		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getIdNotaFiscal());
+		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getNumeroNotaFiscal());
 
 		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 

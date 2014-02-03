@@ -75,4 +75,31 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 		return notaImpressa;
 	}
 
+	public void setNumeroNota(Long numeroNota) {
+		this.numeroNota = numeroNota;
+	}
+
+	public void setIdCota(Long idCota) {
+		this.idCota = idCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	public void setTotalExemplares(BigInteger totalExemplares) {
+		this.totalExemplares = totalExemplares;
+	}
+
+	public void setVlrTotal(BigDecimal vlrTotal) {
+		this.vlrTotal = vlrTotal;
+	}
+
+	public void setVlrTotalDesconto(BigDecimal vlrTotalDesconto) {
+		this.vlrTotalDesconto = vlrTotalDesconto;
+	}
+
+	public void setNotaImpressa(boolean notaImpressa) {
+		this.notaImpressa = notaImpressa;
+	}
 }
