@@ -17,7 +17,7 @@
                 <li><a href="#tabCota-2">Endereços</a></li>
                 <li><a href="#tabCota-3">Telefones</a></li>
                 <li><a href="#tabCota-4">PDV</a></li>
-                <li disabled><!-- a href="#tabCota-5" -->Garantia<!--/a --></li>
+                <li style="background-color:#cccccc"><a href="#tabCota-5" style="background-color:#cccccc" hidden="true"></a><p style="background-color:#cccccc">Garantia</p></li>
                 <li><a href="#tabCota-6">Fornecedores</a></li>
                 <li><a href="#tabCota-7">Desconto</a></li>
                 <li><a href="#tabCota-8">Financeiro</a></li>
@@ -65,7 +65,7 @@
 		</div>
 		
 		<div id="tabCota-5">
-			<jsp:include page="../cotaGarantia/index.jsp"></jsp:include>
+			<!-- jsp:include page="../cotaGarantia/index.jsp" include -->
 		</div>
 		
 		<div id="tabCota-6">

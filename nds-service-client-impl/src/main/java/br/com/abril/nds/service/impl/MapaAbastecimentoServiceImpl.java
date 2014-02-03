@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -74,7 +76,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	* Gera Mapa para Impressão por box
 	*/
 	@Transactional
-	public TreeMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
+	public Map<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 		FiltroMapaAbastecimentoDTO filtro) {
 		
 		List<Integer> boxes = new ArrayList<Integer>();
@@ -144,7 +146,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	* @param boxes
 	* @param produtos
 	*/
-	private void preencheBoxNaoUtilizado(List<Integer> boxes, TreeMap<String, ProdutoMapaDTO> produtos) {
+	private void preencheBoxNaoUtilizado(List<Integer> boxes, Map<String, ProdutoMapaDTO> produtos) {
 		for(Integer keyBox : boxes) {
 	
 			for(Entry<String, ProdutoMapaDTO> entry : produtos.entrySet()) {
@@ -156,12 +158,12 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		}
 	
 	@Transactional
-	public HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
+	public Map<Integer, Map<String, ProdutoMapaRotaDTO>> obterMapaDeImpressaoPorBoxRota(
 			FiltroMapaAbastecimentoDTO filtro) {
 	
 		List<String> rotas = new ArrayList<String>();
 	
-		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> boxes = new HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> ();
+		Map<Integer, Map<String, ProdutoMapaRotaDTO>> boxes = new LinkedHashMap<Integer, Map<String, ProdutoMapaRotaDTO>> ();
 	
 		List<ProdutoAbastecimentoDTO> boxProdutoRota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoBoxRota(filtro);
 	
@@ -173,12 +175,14 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 			Integer keyBox = item.getCodigoBox();
 	
-			if(!boxes.containsKey(keyBox))
-				boxes.put(keyBox, new HashMap<String, ProdutoMapaRotaDTO>());
+			if(!boxes.containsKey(keyBox)){
+				boxes.put(keyBox, new LinkedHashMap<String, ProdutoMapaRotaDTO>());
+			}
 	
-			HashMap<String, ProdutoMapaRotaDTO> box = boxes.get(keyBox);
+			Map<String, ProdutoMapaRotaDTO> box = boxes.get(keyBox);
 	
-			if(!box.containsKey(item.getCodigoProduto()))
+			if(!box.containsKey(item.getCodigoProduto())){
+				
 				box.put(item.getCodigoProduto(),
 						new ProdutoMapaRotaDTO(item.getCodigoProduto(),
 								item.getNomeProduto(),
@@ -186,13 +190,16 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 								item.getCodigoBarra(),
 								item.getPrecoCapa(),
 								0,
-								new HashMap<String, Integer>()));
+								new LinkedHashMap<String, Integer>()));
+			}
 	
 			ProdutoMapaRotaDTO produto = box.get(item.getCodigoProduto());
 	
 	
-			if(!produto.getRotasQtde().containsKey(item.getCodigoRota()))
+			if(!produto.getRotasQtde().containsKey(item.getCodigoRota())){
+				
 				produto.getRotasQtde().put(item.getCodigoRota(),0);
+			}
 	
 			Integer qtdeAtual = produto.getRotasQtde().get(item.getCodigoRota());
 	
@@ -200,22 +207,24 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 			produto.setTotalReparte(produto.getTotalReparte() + item.getReparte());
 	
-			if(!rotas.contains(item.getCodigoRota()))
+			if(!rotas.contains(item.getCodigoRota())){
+				
 				rotas.add(item.getCodigoRota());
+			}
 	
 	
 		}
 	
-		for(Entry<Integer, HashMap<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
-	
-			preencheRotasNaoUtilizadas(rotas, entry.getValue());	
-		}
+//		for(Entry<Integer, Map<String, ProdutoMapaRotaDTO>> entry : boxes.entrySet()) {
+//	
+//			preencheRotasNaoUtilizadas(rotas, entry.getValue());	
+//		}
 	
 		return boxes;
 	}
 	
 	private void preencheRotasNaoUtilizadas(List<String> rotas,
-			HashMap<String, ProdutoMapaRotaDTO> produtos) {
+			Map<String, ProdutoMapaRotaDTO> produtos) {
 	
 		for(String keyRota : rotas) {
 	
@@ -246,31 +255,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getPrecoCapa(),
 				new HashMap<Integer, BoxRotasDTO>());
 		
-		
-		List<ProdutoAbastecimentoDTO> cotas = this.cotaRepository.obterCotaPorProdutoEdicaoData(filtro);
-		
-		if(cotas != null && !cotas.isEmpty()) {
-			peMapaDTO.setCotasSemRoteirizacao(new ArrayList<String>());
-		}
-		
-		for(ProdutoAbastecimentoDTO cota : cotas) {
-			String cotaString = cota.getCota().getNumeroCota() + " - " + cota.getCota().getPessoa().getNome();
-			
-			if(cota.getCota().getBox() == null) {
-				if(!peMapaDTO.getCotasSemRoteirizacao().contains(cotaString)) {
-					peMapaDTO.getCotasSemRoteirizacao().add(cotaString);
-				}
-				
-			}
-		}
-		
-		
-		
 		if(produtosBoxRota.size() == 0) {	
 			return null;
 		}
-	
-			
+		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
 			if(!peMapaDTO.getBoxes().containsKey(item.getCodigoBox()))
@@ -400,7 +388,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
 	
 			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
-			pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			
+			if (item.getReparte() != null){
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			}
 			
 			this.montarMapaReparteBox(pcMapaDTO, item);
 		}
@@ -428,7 +419,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			reparteBox = 0;
 		}
 		
-		reparteBox += item.getReparte();
+		if (item.getReparte() != null){
+			reparteBox += item.getReparte();
+		}
 		
 		pcMapaDTO.getBoxQtdes().put(nomeBox, reparteBox);
 	}
@@ -467,7 +460,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
 	
 			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
-			pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			
+			if (item.getReparte() != null){
+				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
+			}
 	
 		}
 	
