@@ -9,10 +9,10 @@ import java.util.Map;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-public class EstudoTransient extends Estudo {
+public class EstudoTransient extends EstudoGerado {
 
     private static final long serialVersionUID = 8058482081570920501L;
 

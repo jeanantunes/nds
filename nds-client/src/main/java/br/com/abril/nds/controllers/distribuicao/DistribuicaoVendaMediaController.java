@@ -31,7 +31,7 @@ import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import br.com.abril.nds.model.planejamento.Estrategia;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
@@ -119,7 +119,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar,
 	    String lancado, String promocional, String sobra, Long repDistrib, ProdutoDistribuicaoVO produtoDistribuicaoVO) {
 
-	Estudo estudo = null;
+	EstudoGerado estudo = null;
 	ProdutoEdicao produtoEdicao = null;
 
 	if (estudoId != null && estudoId != 0l) {

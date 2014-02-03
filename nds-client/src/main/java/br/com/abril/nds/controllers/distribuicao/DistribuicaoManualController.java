@@ -18,9 +18,8 @@ import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
@@ -91,7 +90,7 @@ public class DistribuicaoManualController extends BaseController {
     @Post
     @Path("/gravarEstudo")
     public void gravarEstudo(EstudoDTO estudoDTO, List<EstudoCotaDTO> estudoCotasDTO) throws Exception {
-    	Estudo estudo = new Estudo();
+    	EstudoGerado estudo = new EstudoGerado();
 		estudo.setProdutoEdicao(new ProdutoEdicao(estudoDTO.getProdutoEdicaoId()));
 		estudo.setReparteDistribuir(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
 		estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));

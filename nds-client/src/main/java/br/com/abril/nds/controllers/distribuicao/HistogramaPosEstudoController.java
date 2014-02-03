@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
+import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
@@ -17,7 +17,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
 import br.com.abril.nds.service.EstudoService;
@@ -84,7 +84,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	@Post
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
 		Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
-		Estudo estudo = estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
+		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
 		selecionado.setParcial(produtoEdicao.isParcial());
