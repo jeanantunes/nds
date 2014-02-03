@@ -6,7 +6,7 @@ var analiseParcialController = $.extend(true, {
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
-    inputReparteSugerido: '<input reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
+    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
     tipoExibicao : 'NORMAL',
 
     exibirMsg: function(tipo, texto) {
@@ -484,6 +484,8 @@ var analiseParcialController = $.extend(true, {
 
     preProcessGrid : function(resultado) {
 
+    	var disabled = $('#status_estudo').text()==='Não Liberado';
+    	
         if (resultado.mensagens) {
             analiseParcialController.exibirMsg(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
             return;
@@ -515,6 +517,7 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#numeroCota/g, numCota)
                             .replace(/#value/g, cell.reparteSugerido)
                             .replace(/#repEstudo/g, cell.reparteEstudo)
+                            .replace(/#disabled/g, disabled ? 'disabled':'')
                             .replace(/#redReparte/g, analiseParcialController.calculaPercentualReducaoReparte(cell.reparteEstudo, cell.reparteSugerido));
             cell.reparteSugerido = input;
             
