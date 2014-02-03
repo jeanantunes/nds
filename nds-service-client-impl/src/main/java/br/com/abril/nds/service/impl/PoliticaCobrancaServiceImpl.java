@@ -366,12 +366,12 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		if(politica==null) {
 			
-			if (this.politicaCobrancaRepository.verificarPorTipoCobrancaPor(parametroCobrancaDTO.getTipoCobranca(),
-					parametroCobrancaDTO.getFornecedoresId(), parametroCobrancaDTO.getTipoFormaCobranca())){
+			if (this.politicaCobrancaRepository.verificarPorTipoCobrancaPor(parametroCobrancaDTO.getTipoCobranca())){
 				
 				throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					"Já existe parâmetro cadastrado para Tipo de Pagamento, Concentração de Pagamentos e Fornecedores escolhidos.");
+					"Já existe parâmetro cadastrado para o Tipo de Pagamento " + 
+					parametroCobrancaDTO.getTipoCobranca().getDescricao());
 			}
 			
 			novaPolitica = true;
@@ -569,19 +569,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		FormaCobranca fcDistrib = pc.getFormaCobranca();
 		
 		boolean desativar = true;
-		for(FormaCobranca fc : formaCobrancaRepository.obterFormasCobrancaAtivaCotas(true)) {
-			
-			if(fc.getTipoCobranca().equals(fcDistrib.getTipoCobranca()) 
-					&& fc.getTipoFormaCobranca().equals(fcDistrib.getTipoFormaCobranca())
-					&& fc.getParametroCobrancaCota() != null) {
-				
-				desativar = false;
-			}
-			
-		}
 		
 		//caso existam cotas que usam o parametro de cobranca do distribuidor
-		if (desativar && pc.isPrincipal()){
+		if (pc.isPrincipal() || formaCobrancaRepository.obterFormasCobrancaAtivaCotas(true, fcDistrib.getId())){
 			
 			desativar =
 				this.parametroCobrancaCotaRepository.verificarCotaSemParametroCobrancaPorFormaCobranca(

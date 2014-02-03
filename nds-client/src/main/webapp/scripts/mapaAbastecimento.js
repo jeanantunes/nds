@@ -309,6 +309,14 @@
 				if(this.cell.codigoRota == undefined) {
 					this.cell.codigoRota = "Sem rota definida";
 				}
+				
+				if(!this.cell.reparte){
+					this.cell.reparte = 0;
+				}
+				
+				if (!this.cell.qtdeExms){
+					this.cell.qtdeExms = 0;
+				}
 			});	
 		}
 		return result;
