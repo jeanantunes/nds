@@ -2,16 +2,14 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
-
 import br.com.abril.nds.dto.AnaliseNormalDTO;
 import br.com.abril.nds.dto.filtro.AnaliseNormalQueryDTO;
 import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 
 public interface AnaliseNormalService {
 
-	Estudo buscarPorId(Long id);
+	EstudoGerado buscarPorId(Long id);
 
 	void atualizaReparte(Long estudoId, Long numeroCota, Long reparte);
 
