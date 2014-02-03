@@ -70,7 +70,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" left join prodEdicao.produto AS produto ");
 		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
 		hql.append(" left join produto.algoritmo AS algortm, ");
-		hql.append(" Estudo as estudoG ");
+		hql.append(" EstudoGerado as estudoG ");
 		hql.append(" left join estudoG.produtoEdicao ");
 		hql.append(" left join estudoG.usuario as usuarioEstudo ");
 		hql.append(" WHERE ");

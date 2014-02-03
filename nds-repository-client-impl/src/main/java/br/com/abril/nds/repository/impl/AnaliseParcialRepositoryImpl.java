@@ -69,7 +69,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  from estudo_cota ec ");
         sql.append("  left join cota c on (c.id = ec.cota_id) ");
         sql.append("  left join pessoa pes on (c.pessoa_id = pes.id) ");
-        sql.append("  left join estudo e on (e.id = ec.estudo_id) ");
+        sql.append("  left join estudo_gerado e on (e.id = ec.estudo_id) ");
         sql.append("  left join produto_edicao pe on (pe.id = e.produto_edicao_id) ");
         sql.append("  left join produto p on (p.id = pe.produto_id) ");
         sql.append("  left join (select cota_id cota_id, count(*) quantidade ");
@@ -308,7 +308,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         .append("       '' as periodo, ")
         .append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ")
         .append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ")
-        .append("  from estudo e ")
+        .append("  from estudo_gerado e ")
         .append("  join produto_edicao pe on pe.id = e.produto_edicao_id ")
         .append("  join produto p on p.id = pe.produto_id ")
         .append("  join lancamento l on l.produto_edicao_id = pe.id ")
@@ -459,7 +459,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("update estudo ");
+        sql.append("update estudo_gerado ");
         sql.append("   set reparte_distribuir = reparte_distribuir + ?, ");
         sql.append("       sobra = sobra - ? ");
         sql.append(" where id = ? ");
@@ -474,7 +474,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     @Override
     @Transactional
     public void liberar(Long id) {
-        SQLQuery query = getSession().createSQLQuery("update estudo set liberado = 1 where id = ? ");
+        SQLQuery query = getSession().createSQLQuery("update estudo_gerado set liberado = 1 where id = ? ");
         query.setLong(0, id);
         query.executeUpdate();
     }
@@ -677,7 +677,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     @Transactional
     public void atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
         StringBuilder sql = new StringBuilder();
-        sql.append("update estudo ");
+        sql.append("update estudo_gerado ");
         sql.append("   set sobra = sobra - (qtde_reparte - ?), ");
         sql.append("       qtde_reparte = ? ");
         sql.append(" where id = ? ");
