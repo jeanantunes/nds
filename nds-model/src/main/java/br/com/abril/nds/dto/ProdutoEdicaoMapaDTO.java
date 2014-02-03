@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 
 public class ProdutoEdicaoMapaDTO implements Serializable {
 
@@ -14,7 +13,6 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 	private String codigoDeBarras;
 	private String precoCapa;
 	private HashMap<Integer, BoxRotasDTO> boxes;
-	private List<String> cotasSemRoteirizacao; 
 	
 	public ProdutoEdicaoMapaDTO() {
 		
@@ -99,14 +97,6 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 	 */
 	public void setBoxes(HashMap<Integer, BoxRotasDTO> boxes) {
 		this.boxes = boxes;
-	}
-
-	public List<String> getCotasSemRoteirizacao() {
-		return cotasSemRoteirizacao;
-	}
-
-	public void setCotasSemRoteirizacao(List<String> cotasSemRoteirizacao) {
-		this.cotasSemRoteirizacao = cotasSemRoteirizacao;
 	}
 
 	public String getCodigoDeBarras() {

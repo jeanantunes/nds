@@ -34,56 +34,56 @@ public class ConferenciaEncalheServiceImplTest extends AbstractJUnit4SpringConte
     private GrupoRepository grupoRepository;
     
     @Autowired
-	private ConferenciaEncalheServiceImpl service;
+    private ConferenciaEncalheServiceImpl service;
     
     @Before
     public void setUp(){
-    	
-    	List<DiaSemana> listaDiasSemana = new ArrayList<DiaSemana>();
-    	
-    	listaDiasSemana.add(DiaSemana.SEGUNDA_FEIRA);
-    	listaDiasSemana.add(DiaSemana.QUARTA_FEIRA);
-    	listaDiasSemana.add(DiaSemana.SEXTA_FEIRA);
-    	
-    	when(distribuidorService.inicioSemana()).thenReturn(DiaSemana.QUARTA_FEIRA);
-    	
-    	when(grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt())).thenReturn(listaDiasSemana);
-    	
-    	
+        
+        final List<DiaSemana> listaDiasSemana = new ArrayList<DiaSemana>();
+        
+        listaDiasSemana.add(DiaSemana.SEGUNDA_FEIRA);
+        listaDiasSemana.add(DiaSemana.QUARTA_FEIRA);
+        listaDiasSemana.add(DiaSemana.SEXTA_FEIRA);
+        
+        when(this.distribuidorService.inicioSemana()).thenReturn(DiaSemana.QUARTA_FEIRA);
+        
+        when(this.grupoRepository.obterDiasOperacaoDiferenciadaCota(Matchers.anyInt())).thenReturn(listaDiasSemana);
+        
+        
     }
     
-    public static Date criarData(int dia, int mes, int ano) {
-		Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
-		return data.getTime();
-	}
+    public static Date criarData(final int dia, final int mes, final int ano) {
+        final Calendar data = criarCalendar(dia, mes, ano, 0, 0, 0);
+        return data.getTime();
+    }
     
-    private static Calendar criarCalendar(int dia, int mes, int ano, int hora,
-			int minuto, int segundo) {
-		Calendar data = Calendar.getInstance();
-		data.set(Calendar.DAY_OF_MONTH, dia);
-		data.set(Calendar.MONTH, mes);
-		data.set(Calendar.YEAR, ano);
-		data.set(Calendar.HOUR_OF_DAY, hora);
-		data.set(Calendar.MINUTE, minuto);
-		data.set(Calendar.SECOND, segundo);
-		data.clear(Calendar.MILLISECOND);
-		return data;
-	}
+    private static Calendar criarCalendar(final int dia, final int mes, final int ano, final int hora,
+            final int minuto, final int segundo) {
+        final Calendar data = Calendar.getInstance();
+        data.set(Calendar.DAY_OF_MONTH, dia);
+        data.set(Calendar.MONTH, mes);
+        data.set(Calendar.YEAR, ano);
+        data.set(Calendar.HOUR_OF_DAY, hora);
+        data.set(Calendar.MINUTE, minuto);
+        data.set(Calendar.SECOND, segundo);
+        data.clear(Calendar.MILLISECOND);
+        return data;
+    }
     
     @Test
     public void test_obter_data_primeiro_dia_encalhe_operacao_diferenciada() {
-    	
-    	//Quinta Feira
-    	Date dataChamadaEncalhe = criarData(16, Calendar.JANUARY, 2014);
-    	
-    	Date dataPrimeiroDiaRecolhimento = service.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(1, dataChamadaEncalhe);
-    	
-    	Date dataRef = criarData(17, Calendar.JANUARY, 2014);
-    	
-    	Assert.assertTrue("Data primeiro dia recolhimento deve ser igual a Sexta feira 17 de Janeiro de 2014", 
-    			dataRef.compareTo(dataPrimeiroDiaRecolhimento) == 0 );
-    	
-    	
+        
+        //Quinta Feira
+        final Date dataChamadaEncalhe = criarData(16, Calendar.JANUARY, 2014);
+        
+        final Date dataPrimeiroDiaRecolhimento = this.service.obterDataPrimeiroDiaEncalheOperacaoDiferenciada(1, dataChamadaEncalhe);
+        
+        final Date dataRef = criarData(17, Calendar.JANUARY, 2014);
+        
+        Assert.assertTrue("Data primeiro dia recolhimento deve ser igual a Sexta feira 17 de Janeiro de 2014", 
+                dataRef.compareTo(dataPrimeiroDiaRecolhimento) == 0 );
+        
+        
     }
-
+    
 }

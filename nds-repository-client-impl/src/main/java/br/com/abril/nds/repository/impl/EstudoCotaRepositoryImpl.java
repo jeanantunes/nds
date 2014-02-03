@@ -9,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.AbstractEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoCotaRepository;
@@ -213,7 +214,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
     @SuppressWarnings("unchecked")
     @Override
-    public List<EstudoCota> obterEstudoCotaPorEstudo(Estudo estudo) {
+    public List<EstudoCota> obterEstudoCotaPorEstudo(AbstractEstudo estudo) {
 
 	String hql = " from EstudoCota estudoCota where estudoCota.estudo = :estudo ";
 
@@ -226,7 +227,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
     
     @Override
     @Transactional
-    public void inserirProdutoBase(Estudo estudo) {
+    public void inserirProdutoBase(EstudoGerado estudo) {
 	StringBuilder sql = new StringBuilder();
 	sql.append("insert into estudo_produto_edicao_base ");
 	sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
@@ -237,4 +238,19 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
 	query.executeUpdate();
     }
+    
+    @Override
+	public void removerEstudosCotaPorEstudos(List<Long> listIdEstudos) {
+		
+		StringBuilder hql = new StringBuilder(" delete from EstudoCota ec ");
+		
+		hql.append(" where ec.estudo.id in (:listIdEstudos) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("listIdEstudos", listIdEstudos);
+		
+		query.executeUpdate();
+	}
+    
 }

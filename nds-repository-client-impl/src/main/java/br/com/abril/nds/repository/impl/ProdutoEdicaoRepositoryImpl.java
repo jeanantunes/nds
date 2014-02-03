@@ -189,7 +189,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         sql.append("         sum(coalesce(e.qtde_reparte, 0)) reparte_est,                   ");
         sql.append("         sum(coalesce(l.reparte_promocional, 0)) reparte_prom            ");
         sql.append("         from lancamento l                                               ");
-        sql.append("         left join estudo e on e.lancamento_id = l.id and e.liberado = 1 ");
+        sql.append("         left join estudo e on e.lancamento_id = l.id ");
         sql.append("         where l.produto_edicao_id = :idProdutoEdicao ) t                ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -719,17 +719,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public Long obterUltimoNumeroEdicao(String codigoProduto) {
+	public Long obterUltimoNumeroEdicao(Long idProduto) {
 
-		Criteria criteria =  getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");	
-
-		criteria.createCriteria("produto", "produto", Criteria.LEFT_JOIN);
-
-		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
-
-		criteria.setProjection( Projections.projectionList().add(Projections.max("produtoEdicao.numeroEdicao"), "numeroEdicao"));
-
-		return (Long) criteria.uniqueResult();
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select max(pe.numeroEdicao)	");
+		
+		hql.append(" from ProdutoEdicao pe			");
+		
+		hql.append(" inner join pe.produto p		");
+		
+		hql.append(" where p.id = :idProduto		");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProduto", idProduto);
+		
+		return (Long) query.uniqueResult();
+		
 	}
 
 	@SuppressWarnings("unchecked")

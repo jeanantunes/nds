@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 
@@ -210,21 +209,17 @@ public class PoliticaCobrancaRepositoryImpl extends AbstractRepositoryModel<Poli
 	}
 
 	@Override
-	public boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca,
-			List<Long> fornecedoresId, TipoFormaCobranca tipoFormaCobranca) {
+	public boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca) {
 		
 		Query query = this.getSession().createQuery(
 				"select case when count(p.id) > 0 then true else false end " +
 				"from PoliticaCobranca p " +
 				"join p.formaCobranca fc " +
-				"join fc.fornecedores forn " +
 				"where fc.tipoCobranca = :tipoCobranca " +
-				"and fc.tipoFormaCobranca = :tipoFormaCobranca " +
-				"and forn.id in (:fornecedoresId) ");
+				"and p.ativo = :indAtiva ");
 		
 		query.setParameter("tipoCobranca", tipoCobranca);
-		query.setParameter("tipoFormaCobranca", tipoFormaCobranca);
-		query.setParameterList("fornecedoresId", fornecedoresId);
+		query.setParameter("indAtiva", true);
 		
 		return (boolean) query.uniqueResult();
 	}
