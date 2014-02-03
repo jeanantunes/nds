@@ -1797,7 +1797,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "    	and tm.GRUPO_MOVIMENTO_ESTOQUE = 'RATEIO_REPARTE_COTA_AUSENTE'  "
 				+ "		and pdv_.ponto_principal = :principal ");
 		
-				if(StatusNotaEnvio.NAO_EMITIDA.equals(status)){
+				if(StatusNotaEnvio.NAO_EMITIDA.equals(status) || status == null){
 					sql.append( "  and mec.NOTA_ENVIO_ITEM_SEQUENCIA is null  ");
 				}
 				
