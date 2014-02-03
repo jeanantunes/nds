@@ -410,7 +410,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     atualizaReparte : function(input) {
-
+    	
         var $saldoreparte = $('#saldo_reparte');
         var saldoReparte = parseInt($saldoreparte.text());
         var $input_reparte = $(input);
@@ -419,7 +419,7 @@ var analiseParcialController = $.extend(true, {
         var reparteAtual = $input_reparte.attr('reparteAtual');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
-
+        
         if (reparteAtual != reparteDigitado) {
             var legendaText = $legenda.text();
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
@@ -433,7 +433,7 @@ var analiseParcialController = $.extend(true, {
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
                 success: function() {
-                    analiseParcialController.atualizaAbrangencia();
+                	analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
                     var reparteInicial = $input_reparte.attr('reparteInicial');
                     $input_reparte.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
@@ -484,7 +484,7 @@ var analiseParcialController = $.extend(true, {
 
     preProcessGrid : function(resultado) {
 
-    	var disabled = $('#status_estudo').text()==='Não Liberado';
+    	var disabled = $('#status_estudo').text()==='Liberado';
     	
         if (resultado.mensagens) {
             analiseParcialController.exibirMsg(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
@@ -1011,6 +1011,9 @@ var analiseParcialController = $.extend(true, {
                                 if(typeof(matrizDistribuicao)=="object"){
                                 	matrizDistribuicao.carregarGrid();
                                 }
+                                
+                                var disabled = $('#status_estudo').text()==='Liberado';    
+                                $('.reparteSugerido').attr('disabled','disabled');
                             });
                         },
                         "Cancelar": function() {
