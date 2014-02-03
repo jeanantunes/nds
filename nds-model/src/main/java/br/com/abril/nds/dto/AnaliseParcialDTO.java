@@ -41,7 +41,7 @@ public class AnaliseParcialDTO implements Serializable {
     @Export(label = "Último Reparte", alignment = Alignment.LEFT, exhibitionOrder = 9)
     private BigInteger ultimoReparte;
     
-    private boolean cotaNova;
+    private Boolean cotaNova;
     private String descricaoLegenda;
     private BigInteger reparteEstudo;
     private BigInteger reparteEstudoOrigemCopia;
@@ -270,11 +270,11 @@ public class AnaliseParcialDTO implements Serializable {
         this.edicoesBase = edicoesBase;
     }
 
-    public boolean isCotaNova() {
+    public Boolean isCotaNova() {
         return cotaNova;
     }
 
-    public void setCotaNova(boolean cotaNova) {
+    public void setCotaNova(Boolean cotaNova) {
         this.cotaNova = cotaNova;
     }
 
