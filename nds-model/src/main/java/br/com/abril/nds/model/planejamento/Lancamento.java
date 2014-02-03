@@ -43,7 +43,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
  */
 @Entity
 @Table(name = "LANCAMENTO", uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"DATA_LCTO_DISTRIBUIDOR", "PRODUTO_EDICAO_ID" })
+	@UniqueConstraint(columnNames = {"DATA_LCTO_DISTRIBUIDOR", "PRODUTO_EDICAO_ID", "PERIODO_LANCAMENTO_PARCIAL_ID" })
 })
 @SequenceGenerator(name = "LANCAMENTO_SEQ", initialValue = 1, allocationSize = 1)
 public class Lancamento implements Serializable {
