@@ -33,7 +33,6 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
@@ -73,7 +72,7 @@ import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
  * Implementação de serviços referentes ao recolhimento.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Service
 public class RecolhimentoServiceImpl implements RecolhimentoService {
@@ -161,7 +160,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
 		}
 		
 		Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos =
@@ -248,7 +247,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de recolhimento não informada!");
 		}
 		
 		Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento =
@@ -330,13 +329,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 		Long idLancamento = produtoRecolhimento.getIdLancamento();
 
-		// Monta Map e Set para controlar a atualização dos lançamentos
+        // Monta Map e Set para controlar a atualização dos lançamentos
 		
 		mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
 		
 		idsLancamento.add(idLancamento);
 		
-		// Monta Map para controlar a geração de chamada de encalhe
+        // Monta Map para controlar a geração de chamada de encalhe
 		
 		Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
 		
@@ -360,14 +359,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		Collections.sort(produtosRecolhimento, comparatorChain);
 	}
 	
-	/**
-	 * Método que atualiza as informações dos lançamentos.
-	 * 
-	 * @param idsLancamento - identificadores de lançamentos
-	 * @param usuario - usuário
-	 * @param mapaLancamentoRecolhimento - mapa de lancamentos e produtos de recolhimento
-	 * @param statusLancamento - status do lançamento
-	 */
+	    /**
+     * Método que atualiza as informações dos lançamentos.
+     * 
+     * @param idsLancamento - identificadores de lançamentos
+     * @param usuario - usuário
+     * @param mapaLancamentoRecolhimento - mapa de lancamentos e produtos de
+     *            recolhimento
+     * @param statusLancamento - status do lançamento
+     */
 	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
 									  Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento,
 									  StatusLancamento statusLancamento,
@@ -380,13 +380,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			if (listaLancamentos == null || listaLancamentos.isEmpty()) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Lançamento não encontrado!");
+ "Lançamento não encontrado!");
 			}
 			
 			if (idsLancamento.size() != listaLancamentos.size()) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Lançamento não encontrado!");
+ "Lançamento não encontrado!");
 			}
 			
 			ProdutoRecolhimentoDTO produtoRecolhimento = null;
@@ -424,21 +424,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					historicoLancamento.setDataEdicao(new Date());
 					historicoLancamento.setResponsavel(usuario);
 					
-					//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+                    // TODO: geração de historico desativada devido a criação de
+                    // trigger para realizar essa geração.
 					//this.historicoLancamentoRepository.merge(historicoLancamento);
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Monta a matriz de recolhimento com os recolhimentos confirmados.
-	 * 
-	 * @param matrizConfirmada - matriz de recolhimento confirmada
-	 * @param produtoRecolhimento - produto de recolhimento
-	 * @param lancamento - lançamento
-	 * @param novaData - nova data de recolhimento
-	 */
+	    /**
+     * Monta a matriz de recolhimento com os recolhimentos confirmados.
+     * 
+     * @param matrizConfirmada - matriz de recolhimento confirmada
+     * @param produtoRecolhimento - produto de recolhimento
+     * @param lancamento - lançamento
+     * @param novaData - nova data de recolhimento
+     */
 	private void montarMatrizRecolhimentosConfirmados(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada,
 													  ProdutoRecolhimentoDTO produtoRecolhimento,
 													  Lancamento lancamento,
@@ -467,12 +468,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		matrizConfirmada.put(novaData, produtosRecolhimento);
 	}
 	
-	/**
-	 * Gera as chamadas de encalhe para os produtos da matriz de balanceamento.
-	 * 
-	 * @param mapaDataRecolhimentoLancamentos - mapa de datas de recolhimento e identificadores de lancamentos.
-	 * @param numeroSemana - número da semana
-	 */
+	    /**
+     * Gera as chamadas de encalhe para os produtos da matriz de balanceamento.
+     * 
+     * @param mapaDataRecolhimentoLancamentos - mapa de datas de recolhimento e
+     *            identificadores de lancamentos.
+     * @param numeroSemana - número da semana
+     */
 	private void gerarChamadasEncalhe(Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
 			 						  Integer numeroSemana) {
 		
@@ -508,7 +510,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
-					throw new ValidacaoException(TipoMensagem.WARNING, "Estoque produto cota não encontrado!");
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Estoque produto cota não encontrado!");
 				}
 
 				ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
@@ -555,13 +557,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
-	/**
-	 * Método que cria uma chamada de encalhe para a cota.
-	 * 
-	 * @param qtdPrevista - quantidade prevista
-	 * @param cota - cota
-	 * @param chamadaEncalhe chamada de encalhe
-	 */
+	    /**
+     * Método que cria uma chamada de encalhe para a cota.
+     * 
+     * @param qtdPrevista - quantidade prevista
+     * @param cota - cota
+     * @param chamadaEncalhe chamada de encalhe
+     */
 	private void criarChamadaEncalheCota(BigInteger qtdPrevista,
 										 Cota cota, ChamadaEncalhe chamadaEncalhe) {
 		
@@ -639,15 +641,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return null;
 	}
 	
-	/**
-	 * Método que cria uma chamada de encalhe.
-	 * 
-	 * @param dataRecolhimento - data de recolhimento
-	 * @param produtoEdicao - produto edição
-	 * @param sequencia
-	 * 
-	 * @return chamada de encalhe
-	 */
+	    /**
+     * Método que cria uma chamada de encalhe.
+     * 
+     * @param dataRecolhimento - data de recolhimento
+     * @param produtoEdicao - produto edição
+     * @param sequencia
+     * 
+     * @return chamada de encalhe
+     */
 	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao, Integer sequencia) {
 		
 		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
@@ -660,9 +662,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return chamadaEncalhe;
 	}
 	
-	/**
-	 * Monta o DTO com as informações para realização do balanceamento.
-	 */
+	    /**
+     * Monta o DTO com as informações para realização do balanceamento.
+     */
 	private RecolhimentoDTO obterDadosRecolhimento(Integer anoNumeroSemana,
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento,
@@ -740,9 +742,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return dadosRecolhimento;
 	}
 
-	/**
-	 * Monta o perídodo de recolhimento de acordo com a semana informada.
-	 */
+	    /**
+     * Monta o perídodo de recolhimento de acordo com a semana informada.
+     */
 	@Override
 	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
@@ -766,9 +768,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return periodoRecolhimento;
 	}
 	
-	/**
-	 * Obtém as datas de recolhimento dos fornecedores informados.
-	 */
+	    /**
+     * Obtém as datas de recolhimento dos fornecedores informados.
+     */
 	@Transactional (readOnly = true)
 	public TreeSet<Date> obterDatasRecolhimentoFornecedor(Intervalo<Date> periodoRecolhimento,
 														   List<Long> listaIdsFornecedores) {
@@ -786,7 +788,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (listaDistribuicaoFornecedor == null || listaDistribuicaoFornecedor.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING ,
-										 //"Dias de recolhimento para os fornecedores não encontrados!");
+            // "Dias de recolhimento para os fornecedores não encontrados!");
 					                      "Cadastrar os dias de recolhimento para os fornecedores selecionados.");
 		}
 		
@@ -803,10 +805,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return datasRecolhimentoFornecedor;
 	}
 	
-	/**
-	 * Obtém as datas para recolhimento no período informado,
-	 * de acordo com os dias da semana informados.
-	 */
+	    /**
+     * Obtém as datas para recolhimento no período informado, de acordo com os
+     * dias da semana informados.
+     */
 	private TreeSet<Date> obterDatasRecolhimento(Intervalo<Date> periodoRecolhimento,
 											 	 Set<Integer> diasRecolhimentoSemana) {
 		
@@ -861,13 +863,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		if (this.calendarioService.isFeriadoSemOperacao(data)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
+                    "A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
 		}
 		
 		if (this.calendarioService.isFeriadoMunicipalSemOperacao(data)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
+                    "A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
 		}
 	}
 	
@@ -914,12 +916,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	}
 
 	private boolean validarDiaRecolhimentoFornecedor(Long idFornecedor, Date dataRecolhimento) {
-		
-		Fornecedor fornecedor = this.fornecedorService.obterPorId(idFornecedor);
-		
 		List<Integer> diasRecolhimentoFornecedor = 
-				this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
-						fornecedor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
+ this.distribuicaoFornecedorService
+                .obterCodigosDiaDistribuicaoFornecedor(idFornecedor, OperacaoDistribuidor.RECOLHIMENTO);
 		
 		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(dataRecolhimento);
 		
@@ -1225,11 +1224,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		map.put(dataRecolhimento, cotasOperacaoDiferenciada);
 	}
 	
-	/*
-	 * Obtém uma data de recolhimento de acordo com a datas de recolhimento da cota.
-	 * Primeiro tenta obter uma data maior que a data de recolhimento do lançamento.
-	 * Se não houver nenhuma pega a primeira data da cota, mesmo não sendo mais que a data do lançamento.
-	 */
+	    /*
+     * Obtém uma data de recolhimento de acordo com a datas de recolhimento da
+     * cota. Primeiro tenta obter uma data maior que a data de recolhimento do
+     * lançamento. Se não houver nenhuma pega a primeira data da cota, mesmo não
+     * sendo mais que a data do lançamento.
+     */
 	private Date obterDataRecolhimentoOperacaoDiferenciada(List<Date> datasRecolhimento,
 														   Date dataRecolhimento) {
 		
@@ -1445,11 +1445,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		if(recolhimento && reimpressao){
-			return "Existem lançamentos que já se econtram em processo de recolhimento!  A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
+            return "Existem lançamentos que já se econtram em processo de recolhimento!  A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
 		}else if(recolhimento){
-			return "Existem lançamentos que já se econtram em processo de recolhimento!";
+            return "Existem lançamentos que já se econtram em processo de recolhimento!";
 		}else if(reimpressao){
-			return "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
+            return "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.";
 		}else{
 			return "";
 		}
@@ -1464,13 +1464,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				if (!lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
 			
 					throw new ValidacaoException(TipoMensagem.WARNING,
-							"Existem lançamentos que já se econtram em processo de recolhimento!");
+                        "Existem lançamentos que já se econtram em processo de recolhimento!");
 				}
 		
 				if (this.lancamentoRepository.existeConferenciaEncalheParaLancamento(lancamento.getId(),TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO)) {
 			
 					throw new ValidacaoException(TipoMensagem.WARNING,
-							"A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
+                        "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
 				}
 		}
 	}
@@ -1491,7 +1491,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				String dataFormatada = DateUtil.formatarDataPTBR(dataConfirmada);
 				
 				mensagens.add("Para reabrir a matriz, a data (" + dataFormatada
-					+ ") deve ser maior que a data de operação!");
+                        + ") deve ser maior que a data de operação!");
 			}
 		}
 		

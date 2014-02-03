@@ -939,6 +939,8 @@ var produtoEdicaoController =$.extend(true,  {
 								
 								produtoEdicaoController.carregarLancamentosPeriodo(result.id);
 							}
+							
+							$("#produtoEdicaoController-idFornecedor").val(result.idFornecedor);
 						}
 					},
 					null,
