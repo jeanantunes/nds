@@ -653,9 +653,18 @@ public class ParametrosDistribuidorController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada!");
 			}
 			
-			TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session.getAttribute(TIPO_COTA);
-			
-			grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
+			if(session.getAttribute(TIPO_COTA)!=null && session.getAttribute(TIPO_COTA) instanceof TipoCaracteristicaSegmentacaoPDV){
+				TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session.getAttribute(TIPO_COTA);
+				grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
+			} else if(session.getAttribute(TIPO_COTA)!=null && session.getAttribute(TIPO_COTA) instanceof TipoDistribuicaoCota) {
+				TipoDistribuicaoCota tipoCota = (TipoDistribuicaoCota) session.getAttribute(TIPO_COTA);
+				
+				if(tipoCota.getDescTipoDistribuicaoCota().equalsIgnoreCase(TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO.getDescricao())){
+				 grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, TipoCaracteristicaSegmentacaoPDV.ALTERNATIVO);
+				}else{
+				 grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL);
+				}
+			}
 			
 		} else {
 			
