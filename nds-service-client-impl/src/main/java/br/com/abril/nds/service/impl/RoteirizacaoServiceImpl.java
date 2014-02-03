@@ -478,9 +478,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	@Transactional
 	@Override
 	public List<Roteiro> obterListaRoteiroPorBox(Long idBox, String descricaoRoteiro){
-		List<Roteiro> listaRoteiro = new ArrayList<Roteiro>();
-		listaRoteiro = this.roteiroRepository.buscarRoteiroDeBox(idBox, descricaoRoteiro);
-		return listaRoteiro;
+		return this.roteiroRepository.buscarRoteiroDeBox(idBox, descricaoRoteiro);
 	}
 	
 	/**

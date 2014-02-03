@@ -63,7 +63,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	@Transactional(readOnly=true)
 	public List<ConsignadoCotaDTO> obterMovimentoEstoqueCotaConsignado(FiltroConsolidadoConsignadoCotaDTO filtro){
 		
-		List<ConsignadoCotaDTO> consigadoDTO = new ArrayList<ConsignadoCotaDTO>();
+		List<ConsignadoCotaDTO> consigadoDTO;
 		
 		Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		

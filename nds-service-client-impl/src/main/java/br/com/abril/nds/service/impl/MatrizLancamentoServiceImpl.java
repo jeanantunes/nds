@@ -928,14 +928,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<ProdutoLancamentoDTO> produtosLancamentoDataEscolhida =
 			matrizLancamento.get(dataLancamentoEscolhida);
 		
-		List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceados =
-			new ArrayList<ProdutoLancamentoDTO>();
 		
 		BigInteger expectativaReparteDataEscolhida =
 			this.obterExpectativaReparteTotal(produtosLancamentoDataEscolhida);
 		
 		//TODO alterado para media
-		produtosLancamentoNaoBalanceados =
+		List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceados =
 			this.balancearProdutosLancamento(
 				matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
 				expectativaReparteDataEscolhida, dataLancamentoEscolhida,false,
@@ -1228,10 +1226,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 														   TreeSet<Date> datasDistribuicao,
 														   DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 														   Long idFornecedor) {
-		
-		BigInteger capacidadeDistribuicaoExcedenteMedia = 
-			this.obterCapacidadeDistribuicaoExcedenteMedia(
-				produtosLancamentoBalancear, datasDistribuicao, dadosBalanceamentoLancamento);
 		
 		Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual = null;
 		

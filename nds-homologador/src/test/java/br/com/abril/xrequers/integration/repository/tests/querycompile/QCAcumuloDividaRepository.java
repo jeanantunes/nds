@@ -7,28 +7,29 @@ import br.com.abril.nds.repository.AcumuloDividasRepository;
 import br.com.abril.xrequers.integration.repository.tests.AbstractRepositoryTest;
 
 public class QCAcumuloDividaRepository extends AbstractRepositoryTest {
-	
-	@Autowired
-	private AcumuloDividasRepository acumuloDividaRepository;
-	
-	@Test
-	public void testQCObterAcumuloDividaPorMovimentoFinanceiroPendente() {
-		this.acumuloDividaRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(1L);
-	}
-	
-	@Test
-	public void testQCObterAcumuloDividaPorDivida() {
-		this.acumuloDividaRepository.obterAcumuloDividaPorDivida(1L);
-	}
-	
-	@Test
-	public void testQCObterNumeroMaximoAcumuloCota() {
-		this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
-	}
-	
-	@Test
-	public void testQCObterNumeroDeAcumulosDivida() {
-		this.acumuloDividaRepository.obterNumeroDeAcumulosDivida(1L);
-	}
-	
+    
+    @Autowired
+    private AcumuloDividasRepository acumuloDividaRepository;
+    
+    @Test
+    public void testQCObterAcumuloDividaPorMovimentoFinanceiroPendente() {
+        this.acumuloDividaRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(1L);
+    }
+    
+    @Test
+    public void testQCObterAcumuloDividaPorDivida() {
+        this.acumuloDividaRepository.obterAcumuloDividaPorDivida(1L);
+    }
+    
+    @Test
+    public void testQCObterNumeroMaximoAcumuloCota() {
+        this.acumuloDividaRepository.obterNumeroMaximoAcumuloCota(1L);
+    }
+    
+    @Test
+    public void testQCObterNumeroDeAcumulosDivida() {
+
+        this.acumuloDividaRepository.obterNumeroDeAcumulosDivida(1L);
+    }
+    
 }

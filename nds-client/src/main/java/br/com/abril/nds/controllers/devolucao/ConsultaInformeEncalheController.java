@@ -399,7 +399,6 @@ public class ConsultaInformeEncalheController extends BaseController {
 					imgAdd++;
 				}
 				
-				indexImg += qtdImg;
 			}
 		} else {
 			

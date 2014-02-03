@@ -106,7 +106,7 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	 * @param exemplares the exemplares to set
 	 */
 	public void setExemplares(BigDecimal exemplares) {
-		this.exemplares = exemplares.longValue();
+		this.exemplares = exemplares == null ? 0L : exemplares.longValue();
 	}
 
 	/**

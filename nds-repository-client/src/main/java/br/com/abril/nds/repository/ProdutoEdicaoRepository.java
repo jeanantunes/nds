@@ -276,10 +276,11 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	
 	/**
 	 * Obtém o último número da edição
-	 * @param codigoProduto
-	 * @return
+	 * @param idProduto
+	 * 
+	 * @return numeroEdicao
 	 */
-	public Long obterUltimoNumeroEdicao(String codigoProduto);
+	public Long obterUltimoNumeroEdicao(Long idProduto);
 
 	/**
 	 * Retorna os produtoEdicao de distribuidores que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
