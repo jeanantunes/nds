@@ -28,8 +28,8 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusEstudo;
@@ -38,6 +38,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -60,6 +61,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
+
+    @Autowired
+    private EstudoGeradoRepository estudoGeradoRepository;
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -179,23 +183,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		historicoLancamento.setResponsavel(user);
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public ProdutoDistribuicaoVO obterProdutoDistribuicaoPorEstudo(
-			BigInteger idEstudo) {
-
-		if (idEstudo == null || idEstudo.intValue() == 0) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"O código do estudo deve ser informado!");
-		}
-
-		return distribuicaoRepository
-				.obterProdutoDistribuicaoPorEstudo(idEstudo);
-	}
-
-	private TotalizadorProdutoDistribuicaoVO getProdutoDistribuicaoVOTotalizado(
-			List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+    private TotalizadorProdutoDistribuicaoVO getProdutoDistribuicaoVOTotalizado(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 
 		Integer totalEstudoGerado = 0;
 		Integer totalEstudoLiberado = 0;
@@ -254,26 +242,29 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	public void reabrirEstudos(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 
 		List<Long> idsEstudos = new ArrayList<Long>();
-
-		for (ProdutoDistribuicaoVO vo : produtosDistribuicao) {
-			if (vo.getIdEstudo() != null) {
-				idsEstudos.add(vo.getIdEstudo().longValue());
-			}
-
-			if (vo.getIdLancamento() != null && vo.isItemFinalizado()) {
-
-				reabrirItemDistribuicao(vo.getIdLancamento().longValue());
-			}
+	
+		for (ProdutoDistribuicaoVO vo:produtosDistribuicao) {
+		    if (vo.getIdEstudo() != null) {
+			idsEstudos.add(vo.getIdEstudo().longValue());
+		    }
+	
+		    if (vo.getIdLancamento() != null && vo.isItemFinalizado()) {
+	
+			reabrirItemDistribuicao(vo.getIdLancamento().longValue());
+		    }
 		}
-
+	
 		if (idsEstudos == null || idsEstudos.isEmpty()) {
-
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-					"Não existe estudo para o(s) produto(s) selecionado!"));
+	
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o(s) produto(s) selecionado!"));
 		}
+	
+		estudoGeradoRepository.liberarEstudo(idsEstudos, false);
 
-		estudoRepository.liberarEstudo(idsEstudos, false);
-	}
+		estudoRepository.removerEstudos(idsEstudos);
+		
+		estudoCotaRepository.removerEstudosCotaPorEstudos(idsEstudos);
+    }
 
 	@Override
 	@Transactional
@@ -305,25 +296,17 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	private void removeEstudo(Long idEstudo) {
 
-		Estudo estudo = estudoRepository.buscarPorId(idEstudo);
+		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
+    
 		if (!estudo.isLiberado()) {
 
-			estudoRepository.remover(estudo);
+			estudoGeradoRepository.remover(estudo);
 
 		} else {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
 					"Este estudo já foi liberado, não é permitido excluí-lo!"));
 		}
 	}
-
-	// private void excluirLinhaDuplicada(Long idLancamento) {
-	//
-	// Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
-	//
-	// //ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
-	//
-	// lancamentoRepository.remover(lancamento);
-	// }
 
 	@Override
 	@Transactional
@@ -486,11 +469,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 		if (map.containsKey(idEstudo)) {
 
-			Estudo estudo = estudoRepository.buscarPorId(idEstudo.longValue());
+			EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo.longValue());
 			estudo.setDataAlteracao(new Date());
 			estudo.setReparteDistribuir(map.get(idEstudo));
-			estudoRepository.alterar(estudo);
+			estudoGeradoRepository.alterar(estudo);
 		}
+
 	}
 
 	private Map<BigInteger, BigInteger> obterMapaEstudoRepartDistrib(
@@ -528,136 +512,110 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			CopiaProporcionalDeDistribuicaoVO vo) {
 
 		if (vo.getIdEstudo() == null || vo.getIdEstudo().intValue() <= 0) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Pesquise um estudo valido.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Pesquise um estudo valido.");
 		}
-		if (vo.getReparteDistribuido() == null
-				|| vo.getReparteDistribuido().intValue() <= 0) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Produto sem valor de distribuição de reparte.");
+		if (vo.getReparteDistribuido() == null || vo.getReparteDistribuido().intValue() <= 0) {
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Produto sem valor de distribuição de reparte.");
 		}
-		Estudo estudo = estudoRepository.obterEstudoECotasPorIdEstudo(vo
-				.getIdEstudo());
+		EstudoGerado estudo = estudoGeradoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
 		if ((estudo == null) || (estudo.getEstudoCotas() == null)) {
-			throw new ValidacaoException(
-					TipoMensagem.WARNING,
-					"Não foi possível efetuar a cópia. Estudo inexistente ou não há cotas que receberam reparte.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível efetuar a cópia. Estudo inexistente ou não há cotas que receberam reparte.");
 		}
-
+	
 		estudo = criarCopiaDeEstudo(vo, estudo);
 		return estudo.getId();
+    }
+
+    private EstudoGerado obterCopiaDeEstudo(EstudoGerado estudo, Lancamento lancamento) {
+
+    EstudoGerado estudoCopia = new EstudoGerado();
+    
+	BeanUtils.copyProperties(estudo, estudoCopia, new String[] {"id", "lancamentoID", "lancamentos", "estudoCotas"});
+	estudoCopia.setDataAlteracao(new Date());
+	estudoCopia.setLiberado(false);
+	estudoCopia.setEstudoCotas(new HashSet<EstudoCota>());
+	estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
+	estudoCopia.setLancamentoID(lancamento.getId());
+    estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
+
+	Long id = estudoGeradoRepository.adicionar(estudoCopia);
+	estudoCopia = estudoGeradoRepository.buscarPorId(id);
+
+	return estudoCopia;
+    }
+
+    private LinkedList<EstudoCota> copiarListaDeCotas(LinkedList<EstudoCota> lista, EstudoGerado estudo, boolean isFixacao) {
+	LinkedList<EstudoCota> retorno = new LinkedList<>();
+	for (EstudoCota estudoCota : lista) {
+	    EstudoCota cota = new EstudoCota();
+	    BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "classificacao", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
+	    cota.setEstudo(estudo);
+	    cota.setClassificacao("");
+	    if (cota.getReparte() == null) {
+		cota.setReparte(BigInteger.ZERO);
+	    }
+	    retorno.add(cota);
 	}
+	return retorno;
+    }
 
-	private Estudo obterCopiaDeEstudo(Estudo estudo, Lancamento lancamento) {
-
-		Estudo estudoCopia = new Estudo();
-		BeanUtils.copyProperties(estudo, estudoCopia, new String[] { "id",
-				"lancamentoID", "lancamentos", "estudoCotas" });
-		estudoCopia.setDataAlteracao(new Date());
-		estudoCopia.setLiberado(false);
-		estudoCopia.setEstudoCotas(new HashSet<EstudoCota>());
-		estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
-		estudoCopia.setLancamentoID(lancamento.getId());
-		estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
-
-		Long id = estudoRepository.adicionar(estudoCopia);
-		estudoCopia = estudoRepository.buscarPorId(id);
-
-		return estudoCopia;
-	}
-
-	private LinkedList<EstudoCota> copiarListaDeCotas(
-			LinkedList<EstudoCota> lista, Estudo estudo, boolean isFixacao) {
-		LinkedList<EstudoCota> retorno = new LinkedList<>();
-		for (EstudoCota estudoCota : lista) {
-			EstudoCota cota = new EstudoCota();
-			BeanUtils.copyProperties(estudoCota, cota, new String[] { "id",
-					"estudo", "classificacao", "rateiosDiferenca",
-					"movimentosEstoqueCota", "itemNotaEnvios" });
-			cota.setEstudo(estudo);
-			cota.setClassificacao("");
-			if (cota.getReparte() == null) {
-				cota.setReparte(BigInteger.ZERO);
-			}
-			retorno.add(cota);
-		}
-		return retorno;
-	}
-
-	private Estudo criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo,
-			Estudo estudo) {
+    private EstudoGerado criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, EstudoGerado estudo) {
 
 		BigInteger totalFixacao = BigInteger.ZERO;
 		BigInteger totalMix = BigInteger.ZERO;
 		BigInteger totalReparte = BigInteger.ZERO;
-
-		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo
-				.getIdLancamento());
-		Estudo estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
+	
+		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
+		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
 		estudoCopia.setQtdeReparte(vo.getReparteDistribuido());
-		LinkedList<EstudoCota> cotasSelecionadas = new LinkedList<>(
-				estudo.getEstudoCotas());
-		ProdutoEdicao edicao = produtoEdicaoRepository
-				.obterProdutoEdicaoPorCodProdutoNumEdicao(
-						vo.getCodigoProduto(), vo.getNumeroEdicao().longValue());
+		LinkedList<EstudoCota> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
+		ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vo.getCodigoProduto(), vo.getNumeroEdicao().longValue());
 		Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(edicao);
-
-		cotasSelecionadas = copiarListaDeCotas(cotasSelecionadas, estudoCopia,
-				vo.isFixacao());
-
+	
+		cotasSelecionadas = copiarListaDeCotas(cotasSelecionadas, estudoCopia, vo.isFixacao());
+	
 		// validacoes de mix e classificacoes e segmentos nao recebidos
 		LinkedList<EstudoCota> cotas = new LinkedList<>();
 		for (EstudoCota cota : cotasSelecionadas) {
-			CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
-			if (cotaEstudo != null) {
-				if (cotaEstudo.getStatus() != null
-						&& cotaEstudo.getStatus().equals("SUSPENSO")) {
-					cota.setClassificacao(ClassificacaoCota.BancaSuspensa
-							.getCodigo());
-					cota.setReparte(null);
-					continue;
-				}
-				if (cotaEstudo.isCotaNaoRecebeClassificacao()) {
-					cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao
-							.getCodigo());
-					cota.setReparte(null);
-					continue;
-				}
-				if (cotaEstudo.isCotaNaoRecebeSegmento()
-						&& !cotaEstudo.isCotaExcecaoSegmento()) {
-					cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento
-							.getCodigo());
-					cota.setReparte(null);
-					continue;
-				} else if (cotaEstudo.isCotaExcecaoSegmento()) {
-					cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento
-							.getCodigo());
-				}
-				if (cotaEstudo.getTipoDistribuicao() != null
-						&& cotaEstudo.getTipoDistribuicao().equals(
-								TipoDistribuicaoCota.ALTERNATIVO.name())
-						&& !cotaEstudo.isMix()) {
-					cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao
-							.getCodigo());
-					cota.setReparte(null);
-					continue;
-				}
-				if (cotaEstudo.getClassificacao().equals(
-						ClassificacaoCota.CotaNaoRecebeDesseFornecedor)) {
-					cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor
-							.getCodigo());
-					cota.setReparte(null);
-					continue;
-				}
-				cotas.add(cota);
+		    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+		    if (cotaEstudo != null) {
+			if (cotaEstudo.getStatus() != null && cotaEstudo.getStatus().equals("SUSPENSO")) {
+			    cota.setClassificacao(ClassificacaoCota.BancaSuspensa.getCodigo());
+			    cota.setReparte(null);
+			    continue;
 			}
+			if (cotaEstudo.isCotaNaoRecebeClassificacao()) {
+			    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao.getCodigo());
+			    cota.setReparte(null);
+			    continue;
+			}
+			if (cotaEstudo.isCotaNaoRecebeSegmento() && !cotaEstudo.isCotaExcecaoSegmento()) {
+			    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento.getCodigo());
+			    cota.setReparte(null);
+			    continue;
+			} else if (cotaEstudo.isCotaExcecaoSegmento()) {
+			    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento.getCodigo());
+			}
+			if (cotaEstudo.getTipoDistribuicao() != null && 
+					cotaEstudo.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO.name()) && 
+					!cotaEstudo.isMix()) {
+			    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao.getCodigo());
+			    cota.setReparte(null);
+			    continue;
+			}
+	            if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaNaoRecebeDesseFornecedor)) {
+	                cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeDesseFornecedor.getCodigo());
+	                cota.setReparte(null);
+	                continue;
+	            }
+	            cotas.add(cota);
+		    }
 		}
-		// separando as cotas que passaram na validacao acima das cotas que por
-		// algum motivo nao entraram no estudo
+		// separando as cotas que passaram na validacao acima das cotas que por algum motivo nao entraram no estudo
 		for (EstudoCota cota : cotas) {
-			cotasSelecionadas.remove(cota);
+		    cotasSelecionadas.remove(cota);
 		}
-
+	
 		if (cotas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Não foi possivel efetuar a copia.");

@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
@@ -44,15 +45,15 @@ public class EstudoCota implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "QTDE_PREVISTA", nullable = true)
+    @Column(name = "QTDE_PREVISTA")
     private BigInteger qtdePrevista;
 
-    @Column(name = "QTDE_EFETIVA", nullable = false)
+    @Column(name = "QTDE_EFETIVA")
     private BigInteger qtdeEfetiva;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "ESTUDO_ID")
-    private Estudo estudo;
+    private AbstractEstudo estudo;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "COTA_ID")
@@ -81,6 +82,39 @@ public class EstudoCota implements Serializable {
 
     @Column(name = "CLASSIFICACAO")
     private String classificacao;
+    
+    @Column(name = "VENDA_MEDIA_NOMINAL")
+    private BigDecimal vendaMediaNominal;
+    
+    @Column(name = "REPARTE_JURAMENTADO_A_FATURAR")
+    private BigInteger reparteJuramentadoAFaturar;
+    
+    @Column(name = "QUANTIDADE_PDVS")
+    private Integer quantidadePDVS;
+    
+    @Column(name = "REPARTE_MAXIMO")
+    private BigInteger reparteMaximo;
+    
+    @Column(name = "VENDA_MEDIA_MAIS_N")
+    private Integer vendaMediaMaisN;
+    
+    @Column(name = "INDICE_CORRECAO_TENDENCIA")
+    private BigDecimal indiceCorrecaoTendencia;
+    
+    @Column(name = "INDICE_VENDA_CRESCENTE")
+    private BigDecimal indiceVendaCrescente;
+    
+    @Column(name = "PERCENTUAL_ENCALHE_MAXIMO")
+    private BigDecimal percentualEncalheMaximo;
+    
+    @Column(name = "MIX")
+    private Integer mix;
+    
+    @Column(name = "VENDA_MEDIA")
+    private BigDecimal vendaMedia;
+    
+    @Column(name = "COTA_NOVA")
+    private Boolean cotaNova;
     
     public enum TipoEstudoCota{
 		NORMAL,JURAMENTADO
@@ -118,11 +152,11 @@ public class EstudoCota implements Serializable {
 	this.qtdeEfetiva = qtdeEfetiva;
     }
 
-    public Estudo getEstudo() {
+    public AbstractEstudo getEstudo() {
 	return estudo;
     }
 
-    public void setEstudo(Estudo estudo) {
+    public void setEstudo(AbstractEstudo estudo) {
 	this.estudo = estudo;
     }
 
@@ -221,4 +255,93 @@ public class EstudoCota implements Serializable {
 	public void setTipoEstudo(TipoEstudoCota tipoEstudo) {
 		this.tipoEstudo = tipoEstudo;
 	}
+
+	public BigDecimal getVendaMediaNominal() {
+		return vendaMediaNominal;
+	}
+
+	public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
+		this.vendaMediaNominal = vendaMediaNominal;
+	}
+
+	public BigInteger getReparteJuramentadoAFaturar() {
+		return reparteJuramentadoAFaturar;
+	}
+
+	public void setReparteJuramentadoAFaturar(BigInteger reparteJuramentadoAFaturar) {
+		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
+	}
+
+	public Integer getQuantidadePDVS() {
+		return quantidadePDVS;
+	}
+
+	public void setQuantidadePDVS(Integer quantidadePDVS) {
+		this.quantidadePDVS = quantidadePDVS;
+	}
+
+	public BigInteger getReparteMaximo() {
+		return reparteMaximo;
+	}
+
+	public void setReparteMaximo(BigInteger reparteMaximo) {
+		this.reparteMaximo = reparteMaximo;
+	}
+
+	public Integer getVendaMediaMaisN() {
+		return vendaMediaMaisN;
+	}
+
+	public void setVendaMediaMaisN(Integer vendaMediaMaisN) {
+		this.vendaMediaMaisN = vendaMediaMaisN;
+	}
+
+	public BigDecimal getIndiceCorrecaoTendencia() {
+		return indiceCorrecaoTendencia;
+	}
+
+	public void setIndiceCorrecaoTendencia(BigDecimal indiceCorrecaoTendencia) {
+		this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
+	}
+
+	public BigDecimal getIndiceVendaCrescente() {
+		return indiceVendaCrescente;
+	}
+
+	public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
+		this.indiceVendaCrescente = indiceVendaCrescente;
+	}
+
+	public BigDecimal getPercentualEncalheMaximo() {
+		return percentualEncalheMaximo;
+	}
+
+	public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
+		this.percentualEncalheMaximo = percentualEncalheMaximo;
+	}
+
+	public Integer getMix() {
+		return mix;
+	}
+
+	public void setMix(Integer mix) {
+		this.mix = mix;
+	}
+
+	public BigDecimal getVendaMedia() {
+		return vendaMedia;
+	}
+
+	public void setVendaMedia(BigDecimal vendaMedia) {
+		this.vendaMedia = vendaMedia;
+	}
+
+	public Boolean getCotaNova() {
+		return cotaNova;
+	}
+
+	public void setCotaNova(Boolean cotaNova) {
+		this.cotaNova = cotaNova;
+	}
+	
 }
