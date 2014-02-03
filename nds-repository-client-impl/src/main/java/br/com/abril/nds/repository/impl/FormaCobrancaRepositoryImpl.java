@@ -385,20 +385,20 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa) {
+	public boolean obterFormasCobrancaAtivaCotas(Boolean ativa, Long idFormaCobranca) {
 		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select f ")
-			.append("from FormaCobranca f ")
-			.append("where f.ativa = :ativa  ");
-
-		Query query = super.getSession().createQuery(hql.toString());
+		Query query = super.getSession().createQuery(
+				"select case when count(f.id) > 0 then true else false end " +
+				"from FormaCobranca f " +
+				"join f.parametroCobrancaCota pc " +
+				"where f.ativa = :ativa " +
+				"and f.id = :idFormaCobranca ");
         
 		query.setParameter("ativa", ativa);
+		query.setParameter("idFormaCobranca", idFormaCobranca);
 
-		return query.list();
+		return (boolean) query.uniqueResult();
 	}
 
 	@Override
