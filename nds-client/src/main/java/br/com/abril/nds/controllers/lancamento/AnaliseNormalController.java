@@ -15,7 +15,7 @@ import br.com.abril.nds.dto.filtro.AnaliseNormalQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.service.AnaliseNormalService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -36,7 +36,7 @@ public class AnaliseNormalController extends BaseController{
 	
 	@Autowired
 	private AnaliseNormalService analiseNormalService;
-	
+
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -46,7 +46,7 @@ public class AnaliseNormalController extends BaseController{
 	
 	@Path("/")
 	public void index(Long id){
-		Estudo estudo = analiseNormalService.buscarPorId(id);
+		EstudoGerado estudo = analiseNormalService.buscarPorId(id);
 		result.include("estudo", estudo);
 		result.forwardTo("/WEB-INF/jsp/lancamento/analiseNormal.jsp");
 	}
@@ -96,7 +96,9 @@ public class AnaliseNormalController extends BaseController{
 	
 	@Path("/liberar")
 	public void liberar(Long id) {
+		
 		analiseNormalService.liberar(id);
+		
 		result.nothing();
 	}
 	

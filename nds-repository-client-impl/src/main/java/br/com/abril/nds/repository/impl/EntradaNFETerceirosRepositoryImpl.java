@@ -10,7 +10,6 @@ import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
 import br.com.abril.nds.dto.ItemNotaFiscalPendenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroEntradaNFETerceiros;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
@@ -44,7 +43,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN notaFiscalEntradaCotaCCE.tipoNotaFiscal as tipoNotaFiscalNF ");
 		hql.append("             WHERE controleConferenciaEncalheCota = controleConferenciaEncalheCotaNF  ");
 		hql.append("               AND tipoNotaFiscalNF.tipoOperacao = :tipoOperacaoEntrada ");
-		hql.append("               AND tipoNotaFiscalNF.grupoNotaFiscal = :complementar ");
+		// hql.append("               AND tipoNotaFiscalNF.grupoNotaFiscal = :complementar ");
 		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
 		hql.append("        COALESCE(fornecedorPessoa.razaoSocial, cotaPessoa.razaoSocial, cotaPessoa.nome) as nome, ");		
 		hql.append("        notaFiscalEntrada.valorBruto as valorNota, ");		
@@ -70,15 +69,16 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		
 		buscarParametros(filtro, query, false);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaEntradaNFETerceirosRecebidasDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEntradaNFETerceirosRecebidasDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) { 
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		}
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
+		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) { 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-		 
+		}
+		
 		return query.list();
 	}
 	
@@ -149,7 +149,9 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		}
 
 		if (!count || filtro.getTipoNota() != null && !FiltroEntradaNFETerceiros.TipoNota.TODAS.equals(filtro.getTipoNota())) {
-			query.setParameter("complementar", GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
+			// query.setParameter("complementar", GrupoNotaFiscal.NF_TERCEIRO_COMPLEMENTAR);
+			
+			// retirado temporiamente.....
 		}
 
 		if (filtro.getCota() != null) {
@@ -210,7 +212,7 @@ public class EntradaNFETerceirosRepositoryImpl extends AbstractRepositoryModel<N
 		hql.append("               LEFT JOIN notaFiscalEntradaCota.tipoNotaFiscal as tipoNotaFiscal ");
 		hql.append("             WHERE controleConferenciaEncalheCotaNF = controleConferenciaEncalheCota  ");
 		hql.append("               AND tipoNotaFiscal.tipoOperacao = :tipoOperacaoEntrada");
-		hql.append("               AND tipoNotaFiscal.grupoNotaFiscal = :complementar ");
+		// hql.append("               AND tipoNotaFiscal.grupoNotaFiscal = :complementar ");
 		hql.append("        ) = 0 THEN 'Entrada' ELSE 'Complementar' END  as tipoNotaFiscal, ");
 		hql.append("        ( ");
 		hql.append("             SELECT SUM(COALESCE(notaFiscalEntradaCota.valorNF, notaFiscalEntradaCota.valorProdutos, notaFiscalEntradaCota.valorLiquido, 0)) ");

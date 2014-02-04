@@ -4,8 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.AbstractEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -49,7 +50,9 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 
 	List<EstudoCota> obterEstudosCota(Long idEstudo);
 	
-	public List<EstudoCota> obterEstudoCotaPorEstudo(Estudo estudo);
+	public List<EstudoCota> obterEstudoCotaPorEstudo(AbstractEstudo estudo);
 
-	void inserirProdutoBase(Estudo estudo);
+	void inserirProdutoBase(EstudoGerado estudo);
+	
+	void removerEstudosCotaPorEstudos(List<Long> listIdEstudos);
 }

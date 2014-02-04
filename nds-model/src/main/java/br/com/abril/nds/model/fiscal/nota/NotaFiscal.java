@@ -2,7 +2,6 @@ package br.com.abril.nds.model.fiscal.nota;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -100,9 +99,7 @@ public class NotaFiscal implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
-		result = prime
-				* result
-				+ ((this.getNotaFiscalInformacoes() == null) ? 0 :this.getNotaFiscalInformacoes().hashCode());
+		result = prime * result + ((this.getNotaFiscalInformacoes() == null) ? 0 :this.getNotaFiscalInformacoes().hashCode());
 		return result;
 	}
 

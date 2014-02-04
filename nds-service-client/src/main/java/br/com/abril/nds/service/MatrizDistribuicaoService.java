@@ -17,8 +17,6 @@ public interface MatrizDistribuicaoService {
 	
 	public void excluirEstudos(List<ProdutoDistribuicaoVO> produtosDistribuicao);
 	
-	public ProdutoDistribuicaoVO obterProdutoDistribuicaoPorEstudo(BigInteger idEstudo);
-	
 	public Long confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO vo);
 	
 	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO FiltroDistribuicaoDTO, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
