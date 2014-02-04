@@ -28,7 +28,7 @@ public class EstudoPDV implements Serializable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "ESTUDO_ID")
-    private Estudo estudo;
+    private EstudoGerado estudo;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "COTA_ID")
@@ -49,11 +49,11 @@ public class EstudoPDV implements Serializable {
         this.id = id;
     }
 
-    public Estudo getEstudo() {
+    public EstudoGerado getEstudo() {
         return estudo;
     }
 
-    public void setEstudo(Estudo estudo) {
+    public void setEstudo(EstudoGerado estudo) {
         this.estudo = estudo;
     }
 

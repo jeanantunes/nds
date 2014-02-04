@@ -2,21 +2,19 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -24,10 +22,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.EstudoService;
@@ -45,6 +45,9 @@ import br.com.abril.nds.util.DateUtil;
 public class EstudoServiceImpl implements EstudoService {
 	
 	@Autowired
+	private EstudoGeradoRepository estudoGeradoRepository;
+	
+	@Autowired
 	private EstudoRepository estudoRepository;
 	
 	@Autowired
@@ -60,116 +63,49 @@ public class EstudoServiceImpl implements EstudoService {
     private LancamentoService lancamentoService;
 
 	@Transactional(readOnly = true)
-	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
-		
-		return this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
-	}
-
-	@Transactional(readOnly = true)
 	@Override
-	public Estudo obterEstudo(Long id) {
-		return this.estudoRepository.buscarPorId(id);
+	public EstudoGerado obterEstudo(Long id) {
+		return this.estudoGeradoRepository.buscarPorId(id);
 	}
 
 	@Override
 	@Transactional
-	public void gravarEstudo(Estudo estudo) {
+	public void gravarEstudo(EstudoGerado estudo) {
 	    
+		estudo.setId(this.obterUltimoAutoIncrement());
+		
 	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
-			//estudoCotaRepository.adicionar(estudoCota);
 	    }
 	    
-	    estudoRepository.adicionar(estudo);
-	}
-
-	@Override
-	@Transactional
-	public void excluirEstudosAnoPassado() {
-		
-		Calendar c = Calendar.getInstance();
-		
-		c.set(Calendar.HOUR_OF_DAY,   0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.MONTH, Calendar.JANUARY);
-		c.set(Calendar.YEAR, c.get(Calendar.YEAR) - 1);
-		
-		Date dataStart = c.getTime();
-		
-		c.set(Calendar.HOUR_OF_DAY,   23);
-		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 59);
-		c.set(Calendar.MONTH, Calendar.DECEMBER);
-		c.set(Calendar.DAY_OF_MONTH, 31);
-		
-		Date dataEnd = c.getTime();
-		
-		System.out.println(new SimpleDateFormat("dd/MM/yyyy").format(dataStart));
-		System.out.println(new SimpleDateFormat("dd/MM/yyyy").format(dataEnd));
-		
-		List<Estudo> listEstudos = estudoRepository.obterEstudosPorIntervaloData(dataStart, dataEnd);
-		
-		for (Estudo estudo:listEstudos) {
-			
-			try {
-				
-				estudoRepository.remover(estudo);
-			} catch (Exception e) {
-				
-				System.out.println("Erro ao excluir estudo:" + estudo.getId());
-				e.printStackTrace();
-			}
-			
-		}
+	    estudoGeradoRepository.adicionar(estudo);
 	}
 
 	@Override
 	@Transactional
 	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
-		return estudoRepository.obterResumoEstudo(estudoId);
+		return estudoGeradoRepository.obterResumoEstudo(estudoId);
 	}
 
 	@Override
 	@Transactional
 	public void excluirEstudo(long id) {
-		this.estudoRepository.removerPorId(id);
+		this.estudoGeradoRepository.removerPorId(id);
 	}
 
-	@Override
-	public void criarNovoEstudo(ProdutoDistribuicaoVO produto) {
-	    Estudo estudo = new Estudo();
-	    estudo.setLiberado(false);
-	    estudo.setReparteDistribuir(produto.getRepDistrib());
-	    estudo.setDataLancamento(produto.getDataLanctoSemFormatacao());
-	    estudo.setDataCadastro(new Date());
-	    estudo.setDistribuicaoPorMultiplos(0);
-	    estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
-	    estudo.setQtdeReparte(produto.getRepDistrib());
-	    estudo.setProdutoEdicao(new ProdutoEdicao(produto.getIdProdutoEdicao().longValue()));
-	    estudoRepository.adicionar(estudo);
-	    produto.setIdEstudo(BigInteger.valueOf(estudo.getId()));
-	}
-	
     @Transactional(readOnly = true)
-    public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
+    public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
 
-	return this.estudoRepository.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudoVO);
-    }
-
-    @Transactional(readOnly = true)
-    public Long obterMaxId() {
-	return this.estudoRepository.obterMaxId();
+	return this.estudoGeradoRepository.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudoVO);
     }
 
     @Transactional
-	public List<Long> salvarDivisao(Estudo estudoOriginal,List<Estudo> listEstudo,DivisaoEstudoDTO divisaoEstudo) {
+	public List<Long> salvarDivisao(EstudoGerado estudoOriginal,List<EstudoGerado> listEstudo,DivisaoEstudoDTO divisaoEstudo) {
 
 		List<Long> listIdEstudoAdicionado = null;
 
-		Estudo obterEstudo = this.obterEstudo(listEstudo.get(0).getId());
-		Estudo obterEstudo2 = this.obterEstudo(listEstudo.get(1).getId());
+		EstudoGerado obterEstudo = this.obterEstudo(listEstudo.get(0).getId());
+		EstudoGerado obterEstudo2 = this.obterEstudo(listEstudo.get(1).getId());
 		
 		if(obterEstudo!=null && obterEstudo2!=null ){
 			throw new ValidacaoException(TipoMensagem.WARNING, " Número dos estudo gerados já estão sendo utilizados.");
@@ -178,7 +114,7 @@ public class EstudoServiceImpl implements EstudoService {
 		if (listEstudo != null && !listEstudo.isEmpty()) {
 
 			// 2 estudo para ser salvo
-			Estudo segundoEstudo = listEstudo.get(1);
+			EstudoGerado segundoEstudo = listEstudo.get(1);
 
 			// verificando existencia de lancamentos na data de lancamento
 			// informada em tela para produto_edicao do estudo original
@@ -199,12 +135,10 @@ public class EstudoServiceImpl implements EstudoService {
 			int iEstudo = 0;
 			HashMap<Long,BigInteger> diffEstudosMap = new HashMap<Long,BigInteger>();
 
-			for (Estudo estudo : listEstudo) {
+			for (EstudoGerado estudo : listEstudo) {
 
 				estudo.setDataLancamento(null);
 				Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
-
-				int iEstudoCota = 0;
 				
 				for (EstudoCota ec : listEstudoCota) {
 					
@@ -243,8 +177,6 @@ public class EstudoServiceImpl implements EstudoService {
 						}
 						setEstudoCota.add(estudoCota);
 					}
-					
-					iEstudoCota++;
 				}
 
 				BigInteger somarReparteParaEstudo = BigInteger.ZERO;
@@ -266,7 +198,7 @@ public class EstudoServiceImpl implements EstudoService {
 				}
 				
 				
-				this.estudoRepository.adicionar(estudo);
+				this.estudoGeradoRepository.adicionar(estudo);
 				listIdEstudoAdicionado.add(estudo.getId());
 
 				iEstudo++;
@@ -278,40 +210,80 @@ public class EstudoServiceImpl implements EstudoService {
 		return listIdEstudoAdicionado;
 	}
 
-
-	@Override
-	@Transactional
-	public void alterarEstudo(Estudo estudo) {
-		this.estudoRepository.alterar(estudo);
-	}
-
 	@Override
 	@Transactional
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo) {
-		this.estudoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
+		this.estudoGeradoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Long obterUltimoAutoIncrement() {
-		return this.estudoRepository.obterUltimoAutoIncrement();
+		return this.estudoGeradoRepository.obterUltimoAutoIncrement();
 		
 	}
 
 	@Transactional
-	public Estudo criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento){
+	public EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento){
 		
 		Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
-		Estudo estudo = new Estudo();
+		EstudoGerado estudo = new EstudoGerado();
+		
+		estudo.setId(this.obterUltimoAutoIncrement());
 		estudo.setDataCadastro(dataOperacao);
 		estudo.setDataLancamento(dataLancamento);
 		estudo.setProdutoEdicao(produtoEdicao);
 		estudo.setQtdeReparte(quantidadeReparte);
 		estudo.setReparteDistribuir(quantidadeReparte);
+		estudo.setLiberado(true);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		
-		return estudoRepository.merge(estudo);
+		return estudoGeradoRepository.merge(estudo);
 	}
 	
+	@Transactional
+	public EstudoGerado liberar(Long idEstudoGerado) {
+		
+		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
+		
+		estudoGerado.setLiberado(true);
+		
+		this.estudoGeradoRepository.alterar(estudoGerado);
+		
+		this.estudoGeradoRepository.flush();
+		this.estudoGeradoRepository.clear();
+		
+		return estudoGerado;
+	}
+	
+	@Transactional
+	public Estudo criarEstudoLiberado(EstudoGerado estudoGerado) {
+
+		Estudo estudo = new Estudo();
+		
+		try {
+			
+			PropertyUtils.copyProperties(estudo, estudoGerado);
+			
+		} catch (Exception e) {
+
+			throw new RuntimeException(e);
+		}
+
+		this.estudoRepository.adicionar(estudo);
+
+		Lancamento lancamento = 
+			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+		
+		if (lancamento != null) {
+			
+			lancamento.setEstudo(estudo);
+			
+			this.lancamentoRepository.alterar(lancamento);
+		}
+		
+		return estudo;
+	}
 	
 }

@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,11 +10,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import br.com.abril.nds.converters.IntegerConverter;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
-import br.com.abril.nds.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
@@ -31,13 +25,18 @@ import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -90,7 +89,7 @@ public class AnaliseParcialController extends BaseController {
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
 
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
-        Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
+        Lancamento lancamento = lancamentoService.obterPorId(((EstudoGerado)estudo.getEstudo()).getLancamentoID());
 
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
@@ -240,6 +239,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/liberar")
     public void liberar(Long id) {
+    	
         analiseParcialService.liberar(id);
         result.nothing();
     }

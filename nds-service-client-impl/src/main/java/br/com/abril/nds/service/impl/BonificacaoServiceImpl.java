@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.model.planejamento.Bonificacao;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.BonificacaoRepository;
 import br.com.abril.nds.service.BonificacaoService;
 
@@ -20,13 +20,13 @@ public class BonificacaoServiceImpl implements BonificacaoService {
 	
 	@Override
 	@Transactional
-	public void salvarBonificacoes(Estudo estudo, List<BonificacaoDTO> bonificacaoDTOs) {
+	public void salvarBonificacoes(EstudoGerado estudo, List<BonificacaoDTO> bonificacaoDTOs) {
 		for (BonificacaoDTO bonificacaoDTO : bonificacaoDTOs) {
 			bonificacaoRepository.adicionar(extrairModel(estudo, bonificacaoDTO));
 		}
 	}
 
-	private Bonificacao extrairModel(Estudo estudo, BonificacaoDTO bonificacaoDTO) {
+	private Bonificacao extrairModel(EstudoGerado estudo, BonificacaoDTO bonificacaoDTO) {
 		Bonificacao bonificacao = new Bonificacao();
 		
 		bonificacao.setBonificacao(bonificacaoDTO.getBonificacao().intValue());
