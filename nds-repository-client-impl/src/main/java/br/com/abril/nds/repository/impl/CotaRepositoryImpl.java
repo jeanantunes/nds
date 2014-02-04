@@ -63,6 +63,7 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.envio.nota.StatusNotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -1689,10 +1690,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, false);	
 		
+		query.setParameterList("gruposFaltaSobra", this.getGruposSobraFalta());
+		query.setParameterList("gruposFalta", this.getGruposFalta());
+		query.setParameterList("gruposSobra", this.getGruposSobra());
+
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
-		return query.list();
-		
+		return query.list();		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1714,11 +1718,49 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, false);	
-		
+
+		query.setParameterList("gruposFaltaSobra", this.getGruposSobraFalta());
+		query.setParameterList("gruposFalta", this.getGruposFalta());
+		query.setParameterList("gruposSobra", this.getGruposSobra());
+
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
 		return query.list();
 		
+	}
+	
+	private List<String> getGruposSobraFalta() {
+		
+		return Arrays.asList(
+			GrupoMovimentoEstoque.FALTA_DE.name(),
+			GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+			GrupoMovimentoEstoque.FALTA_EM.name(),
+			GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+			GrupoMovimentoEstoque.SOBRA_DE.name(),
+			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+			GrupoMovimentoEstoque.SOBRA_EM.name(),
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.name()
+		);
+	}
+	
+	private List<String> getGruposFalta() {
+		
+		return Arrays.asList(
+			GrupoMovimentoEstoque.FALTA_DE.name(),
+			GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+			GrupoMovimentoEstoque.FALTA_EM.name(),
+			GrupoMovimentoEstoque.FALTA_EM_COTA.name()
+		);
+	}
+	
+	private List<String> getGruposSobra() {
+		
+		return Arrays.asList(
+			GrupoMovimentoEstoque.SOBRA_DE.name(),
+			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
+			GrupoMovimentoEstoque.SOBRA_EM.name(),
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.name()
+		);
 	}
 	
 	private void montarQueryReparteCotaAusente(FiltroConsultaNotaEnvioDTO filtro, 
@@ -1757,6 +1799,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	    inner join "
 				+ "	        PRODUTO_EDICAO pe_  "
 				+ "	            on mec.PRODUTO_EDICAO_ID=pe_.ID  "
+				+ " 			and lancamento_.PRODUTO_EDICAO_ID=pe_.ID "
 				+ "	    inner join "
 				+ "	        PRODUTO p_  "
 				+ "	            on pe_.PRODUTO_ID=p_.ID  "
@@ -1833,6 +1876,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				
 				if (filtro.getIdRota() != null){
 					sql.append(" and rota_.ID=:idRota  ");
+				}
+				
+				if (!filtro.isFiltroEspecial()) {
+					sql.append(" and roteiro_.TIPO_ROTEIRO!=:roteiroEspecial  ");
 				}
 				
 				if (filtro.getIntervaloMovimento() != null 
@@ -1948,6 +1995,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			sql.append(" and rota_.ID=:idRota  ");
 		}
 		
+		if (!filtro.isFiltroEspecial()) {
+			sql.append(" and roteiro_.TIPO_ROTEIRO!=:roteiroEspecial  ");
+		}
+		
 		if (filtro.getIntervaloMovimento() != null 
 				&& filtro.getIntervaloMovimento().getDe() != null 
 				&& filtro.getIntervaloMovimento().getAte() != null) {
@@ -1971,8 +2022,14 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
-				+ "	        SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) as total, "
+				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0)) - "
+				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0)) + "			
+				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0)) as exemplares, "	 		
+				+ "	        sum(pe_.PRECO_VENDA * ( "
+				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0) - " 
+				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0) + 		 "
+				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0)) "
+				+ "			) as total, " 
 				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa,	"
 				+ "			roteiro_.ordem ordemRoteiro, "
 				+ "			rota_.ordem ordemRota, "
@@ -1993,6 +2050,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	        LANCAMENTO lancamento_  "
 				+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
 				+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+				+ "	    left join "
+				+ "	        MOVIMENTO_ESTOQUE_COTA mec  "
+				+ "	            on mec.LANCAMENTO_ID=lancamento_.id "
+				+ "	            and mec.COTA_ID=cota_.ID "
+				+ "	    left join "
+				+ "	        TIPO_MOVIMENTO tipo_mov "
+				+ "	            on tipo_mov.ID=mec.TIPO_MOVIMENTO_ID "
 				+ "	    inner join "
 				+ "	        PRODUTO_EDICAO pe_  "
 				+ "	            on e_.PRODUTO_EDICAO_ID=pe_.ID  "
@@ -2061,6 +2125,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 					sql.append(" and rota_.ID=:idRota  ");
 				}
 				
+				if (!filtro.isFiltroEspecial()) {
+					sql.append(" and roteiro_.TIPO_ROTEIRO!=:roteiroEspecial  ");
+				}
+				
 				if (filtro.getIntervaloMovimento() != null 
 						&& filtro.getIntervaloMovimento().getDe() != null 
 						&& filtro.getIntervaloMovimento().getAte() != null) {
@@ -2121,6 +2189,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				&& filtro.getIntervaloMovimento().getAte() != null) {
 			query.setParameter("dataDe", filtro.getIntervaloMovimento().getDe());
 			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
+		}
+		
+		if (!filtro.isFiltroEspecial()) {
+			query.setParameter("roteiroEspecial", TipoRoteiro.ESPECIAL.name());
 		}
 		
 		if(!isCount) {
