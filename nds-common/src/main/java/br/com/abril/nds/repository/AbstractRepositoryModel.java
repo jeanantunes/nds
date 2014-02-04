@@ -58,6 +58,44 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		getSession().flush();
 	}
 	
+	
+	public void alterarPorId(K id, Map<String, String> campos) {
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append("UPDATE ");
+		hql.append(clazz.getCanonicalName());
+		hql.append(" SET ");
+		
+		int size = campos.size();
+		int counter = 0;
+		for(String c : campos.keySet()) {
+				
+			hql.append(c);
+			hql.append("=");
+			
+			if(campos.get(c) == null) {
+				hql.append("NULL");
+			} else {
+				hql.append("'");
+				hql.append(campos.get(c));
+				hql.append("'");
+				
+			}
+			
+			hql.append( ++counter == size ? "" : ", "   );
+			
+		}
+		
+		hql.append(" WHERE id = :id");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("id", id);		
+		query.executeUpdate();
+		getSession().flush();
+	}
+	
 	@Transactional
 	public void alterar(T entity) {
 		getSession().update(entity);
