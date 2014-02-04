@@ -331,17 +331,19 @@ public class EstudoServiceImpl implements EstudoService {
 			throw new RuntimeException(e);
 		}
 
-		try {
-			
-			this.estudoRepository.adicionar(estudo);
-			
-		} catch (Exception e) {
+		this.estudoRepository.adicionar(estudo);
 
-			throw new RuntimeException(e);
+		Lancamento lancamento = 
+			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+		
+		if (lancamento != null) {
+			
+			lancamento.setEstudo(estudo);
+			
+			this.lancamentoRepository.alterar(lancamento);
 		}
 		
 		return estudo;
 	}
-	
 	
 }
