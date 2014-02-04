@@ -647,9 +647,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	text: "Confirmar",
 			    	click: function() {
 					
+			    		$(this).dialog("close");
+			    		
 			    		funcao();
-						
-						$(this).dialog("close");
 			    	}
 			    },
 			    {
