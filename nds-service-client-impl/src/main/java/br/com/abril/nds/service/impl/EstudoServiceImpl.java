@@ -297,6 +297,7 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setProdutoEdicao(produtoEdicao);
 		estudo.setQtdeReparte(quantidadeReparte);
 		estudo.setReparteDistribuir(quantidadeReparte);
+		estudo.setLiberado(true);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		
 		return estudoGeradoRepository.merge(estudo);
