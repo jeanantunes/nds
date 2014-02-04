@@ -6,10 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 
 /**
  * Interface que define as regras de acesso a dados
@@ -25,11 +22,11 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	
 	List<Fornecedor> buscarFornecedoresQueUsamDescontoEspecifico(Desconto desconto);
 	
-	List<Produto> buscarProdutosQueUsamDescontoProduto(Desconto desconto);
+	List<Long> buscarProdutosQueUsamDescontoProduto(Desconto desconto);
 	
-	List<ProdutoEdicao> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto);
+	List<Long> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto);
 	
-	List<DescontoProximosLancamentos> buscarProximosLancamentosQueUsamDescontoProduto(Desconto desconto);
+	List<Long> buscarProximosLancamentosQueUsamDescontoProduto(Desconto desconto);
 	
 	Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor);
 
