@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -182,16 +183,37 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}
 	}
 	
+	/**
+	 * Fechamento de C.E.
+	 * @param diferencas
+	 */
 	@Post
 	@Path("fecharCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void fecharCE(){
+	public void fecharCE(Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		fechamentoCEIntegracaoService.fecharCE(filtro);
+		fechamentoCEIntegracaoService.fecharCE(filtro, diferencas);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
+		
+	}
+	
+	/**
+	 * Salva informações de C.E.
+	 * @param diferencas
+	 */
+	@Post
+	@Path("salvarCE")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
+	public void salvarCE(Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas){
+		
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		fechamentoCEIntegracaoService.salvarCE(filtro, diferencas);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Informações salvas com sucesso."),"result").recursive().serialize();
 		
 	}
 
