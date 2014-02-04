@@ -297,6 +297,7 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setProdutoEdicao(produtoEdicao);
 		estudo.setQtdeReparte(quantidadeReparte);
 		estudo.setReparteDistribuir(quantidadeReparte);
+		estudo.setLiberado(true);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		
 		return estudoGeradoRepository.merge(estudo);
@@ -331,17 +332,19 @@ public class EstudoServiceImpl implements EstudoService {
 			throw new RuntimeException(e);
 		}
 
-		try {
-			
-			this.estudoRepository.adicionar(estudo);
-			
-		} catch (Exception e) {
+		this.estudoRepository.adicionar(estudo);
 
-			throw new RuntimeException(e);
+		Lancamento lancamento = 
+			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+		
+		if (lancamento != null) {
+			
+			lancamento.setEstudo(estudo);
+			
+			this.lancamentoRepository.alterar(lancamento);
 		}
 		
 		return estudo;
 	}
-	
 	
 }
