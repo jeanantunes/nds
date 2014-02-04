@@ -572,9 +572,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	
 	private StringBuilder queryConsultaImpressaoNfe(FiltroImpressaoNFEDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
 		
-		hql.append(" FROM Cota cota, NotaFiscal notaFiscal ")
-			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal item ")
-			.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia pj ")
+		hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
+			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
+			.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
 			.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ");
 
 		

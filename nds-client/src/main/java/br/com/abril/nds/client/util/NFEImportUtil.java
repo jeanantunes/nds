@@ -12,7 +12,6 @@ import org.xml.sax.SAXException;
 
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.exception.ProcessamentoNFEException;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.inf.portalfiscal.nfe.TNFe;
 import br.inf.portalfiscal.nfe.TNfeProc;
@@ -148,7 +147,7 @@ public class NFEImportUtil {
 			String motivo = null;
 			Status status = null;
 
-			retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
+			retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
 			retornoNFEDTO.setCpfCnpj(cpfCnpj);
 			retornoNFEDTO.setChaveAcesso(chaveAcesso);
 			retornoNFEDTO.setProtocolo(protocolo);
@@ -197,7 +196,7 @@ public class NFEImportUtil {
 		String motivo = null;
 		Status status = Status.obterPeloCodigo(Integer.parseInt(nfeProc.getProtNFe().getInfProt().getCStat()));
 				
-		retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
+		retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
 		retornoNFEDTO.setCpfCnpj(cpfCnpj);
 		retornoNFEDTO.setChaveAcesso(chaveAcesso);
 		retornoNFEDTO.setProtocolo(protocolo);
@@ -237,7 +236,7 @@ public class NFEImportUtil {
 		String motivo = procCancNFe.getCancNFe().getInfCanc().getXJust();
 		Status status = Status.obterPeloCodigo(Integer.parseInt(procCancNFe.getRetCancNFe().getInfCanc().getCStat()));
 				
-		retornoNFEDTO.setIdNotaFiscal(idNotaFiscal);
+		retornoNFEDTO.setNumeroNotaFiscal(idNotaFiscal);
 		retornoNFEDTO.setCpfCnpj(cpfCnpj);
 		retornoNFEDTO.setChaveAcesso(chaveAcesso);
 		retornoNFEDTO.setProtocolo(protocolo);

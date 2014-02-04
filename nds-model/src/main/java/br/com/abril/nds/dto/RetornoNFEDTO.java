@@ -15,7 +15,7 @@ public class RetornoNFEDTO implements Serializable {
 
 	private static final long serialVersionUID = 9039066467977718266L;
 	
-	private Long idNotaFiscal;
+	private Long numeroNotaFiscal;
 	private String cpfCnpj;
 	private String chaveAcesso;
 	private Status status;
@@ -23,19 +23,14 @@ public class RetornoNFEDTO implements Serializable {
 	private String motivo;
 	private Date dataRecebimento;
 
-	/**
-	 * @return the idNotaFiscal
-	 */
-	public Long getIdNotaFiscal() {
-		return idNotaFiscal;
+	
+
+	public Long getNumeroNotaFiscal() {
+		return numeroNotaFiscal;
 	}
 
-	/**
-	 * @param idNotaFiscal
-	 *            the idNotaFiscal to set
-	 */
-	public void setIdNotaFiscal(Long idNotaFiscal) {
-		this.idNotaFiscal = idNotaFiscal;
+	public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+		this.numeroNotaFiscal = numeroNotaFiscal;
 	}
 
 	/**
