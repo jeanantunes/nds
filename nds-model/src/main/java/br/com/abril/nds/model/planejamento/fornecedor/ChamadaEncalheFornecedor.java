@@ -127,7 +127,7 @@ public class ChamadaEncalheFornecedor implements Serializable {
     
     @Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_INTEGRACAO_NFE")
-    private StatusIntegracaoNFE StatusIntegracaoNFE;
+    private StatusIntegracaoNFE statusIntegracaoNFE;
     
     /**
      * Será atribuido a data de Operação do Distribuidor
@@ -460,12 +460,18 @@ public class ChamadaEncalheFornecedor implements Serializable {
 		this.statusIntegracao = statusIntegracao;
 	}
 
+	/**
+	 * @return the statusIntegracaoNFE
+	 */
 	public StatusIntegracaoNFE getStatusIntegracaoNFE() {
-		return StatusIntegracaoNFE;
+		return statusIntegracaoNFE;
 	}
 
+	/**
+	 * @param statusIntegracaoNFE the statusIntegracaoNFE to set
+	 */
 	public void setStatusIntegracaoNFE(StatusIntegracaoNFE statusIntegracaoNFE) {
-		StatusIntegracaoNFE = statusIntegracaoNFE;
+		this.statusIntegracaoNFE = statusIntegracaoNFE;
 	}
 
 	public Date getDataFechamentoNDS() {
