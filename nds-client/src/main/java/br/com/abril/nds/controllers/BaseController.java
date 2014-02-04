@@ -37,6 +37,7 @@ public abstract class BaseController {
 	protected NDSFileHeader getNDSFileHeader(Date data) {
 		
 		return obterNDSFileHeader(data);
+		
 	}
 	
 	private NDSFileHeader obterNDSFileHeader(Date data){

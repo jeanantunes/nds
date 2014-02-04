@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
@@ -13,7 +14,19 @@ public interface FechamentoCEIntegracaoService {
 	
 	List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
-	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro);
+	/**
+	 * Fecha C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<String,ItemFechamentoCEIntegracaoDTO> diferencas);
+	
+	/**
+	 * Salva C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<String,ItemFechamentoCEIntegracaoDTO> diferencas);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 	

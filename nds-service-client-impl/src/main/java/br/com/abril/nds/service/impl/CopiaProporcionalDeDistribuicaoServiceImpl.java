@@ -23,12 +23,12 @@ import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.TipoClassificacaoEstudoCota;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
-import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CopiaProporcionalDeDistribuicaoService;
 import br.com.abril.nds.util.StringUtil;
@@ -37,7 +37,7 @@ import br.com.abril.nds.util.StringUtil;
 public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporcionalDeDistribuicaoService {
 	
 	@Autowired
-	private EstudoRepository estudoRepository;
+	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
@@ -81,7 +81,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		
 		validarCopiaProporcionalDeDistribuicao(vo);
 		
-		Estudo estudo = estudoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
+		EstudoGerado estudo = estudoGeradoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
 		
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
@@ -98,7 +98,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		}
 		
 		estudo.setProdutoEdicao(produtoEdicao);
-		estudoRepository.alterar(estudo);
+		estudoGeradoRepository.alterar((EstudoGerado)estudo);
 		
 		
 		return estudo.getId();
@@ -156,22 +156,22 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 		return mapClassifiqReparte;
 	}
 	
-	private Estudo obterCopiaDeEstudo(Estudo estudo) {
+	private EstudoGerado obterCopiaDeEstudo(EstudoGerado estudo) {
 		
-		Estudo estudoCopia = (Estudo)SerializationUtils.clone(estudo);
+		EstudoGerado estudoCopia = (EstudoGerado)SerializationUtils.clone(estudo);
 		estudoCopia.setId(null);
 		estudoCopia.setDataAlteracao(new Date());
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCota>());
 		
-		Long id = estudoRepository.adicionar(estudoCopia);
-		estudoCopia = estudoRepository.buscarPorId(id);
+		Long id = estudoGeradoRepository.adicionar(estudoCopia);
+		estudoCopia = estudoGeradoRepository.buscarPorId(id);
 	
 		return estudoCopia;
 	}
 	
-	private Estudo criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, Estudo estudo) {
+	private EstudoGerado criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, EstudoGerado estudo) {
 		
-		Estudo estudoCopia = obterCopiaDeEstudo(estudo);
+		EstudoGerado estudoCopia = obterCopiaDeEstudo(estudo);
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
 		

@@ -40,7 +40,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" estudo.liberado AS statusGeradoOuLiberado, ");
 		hql.append(" estudo.dataLancamento AS dataLancamento ");
 		
-		hql.append(" FROM Estudo estudo ");
+		hql.append(" FROM EstudoGerado estudo ");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
 		hql.append(" JOIN prodEdicao.produto as produto ");
 		hql.append(" left JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");

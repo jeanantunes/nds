@@ -4,11 +4,11 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -19,31 +19,26 @@ import br.com.abril.nds.model.planejamento.Estudo;
  */
 public interface EstudoService {
 	
-	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
-
-	Estudo obterEstudo(Long id);
+	EstudoGerado obterEstudo(Long id);
 	
-	void gravarEstudo(Estudo estudo);
-
-	public abstract void excluirEstudosAnoPassado();
+	void gravarEstudo(EstudoGerado estudo);
 	
-	Estudo criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento);
+	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento);
 
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
 	
 	void excluirEstudo(long id);
-
-	void criarNovoEstudo(ProdutoDistribuicaoVO produto);
 	
-	public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
-	
-	public Long obterMaxId();
+	public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
 
-	public List<Long> salvarDivisao(Estudo estudoOriginal, List<Estudo> listEstudo, DivisaoEstudoDTO divisaoEstudo);
-
-	public void alterarEstudo(Estudo estudo);
+	public List<Long> salvarDivisao(EstudoGerado estudoOriginal, List<EstudoGerado> listEstudo, DivisaoEstudoDTO divisaoEstudo);
 	
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
 	
 	public Long obterUltimoAutoIncrement();
+	
+	EstudoGerado liberar(Long idEstudoGerado);
+	
+	Estudo criarEstudoLiberado(EstudoGerado estudoGerado);
+	
 }

@@ -668,7 +668,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	  MOVIMENTO_ESTOQUE movimentoEstoque ");
 		sql.append(" 	  		on ( ");
 		sql.append("					movimentoEstoque.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append("	 	  			and movimentoEstoque.DATA between lancamento.DATA_LCTO_PREVISTA and lancamento.DATA_REC_PREVISTA ");
+		sql.append("	 	  			and movimentoEstoque.DATA between lancamento.DATA_LCTO_DISTRIBUIDOR and lancamento.DATA_REC_PREVISTA ");
 		sql.append("			) ");
 		sql.append(" inner join ");
 		sql.append(" 	  TIPO_MOVIMENTO tipoMovimento ");
@@ -1221,7 +1221,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" left join ");
 		sql.append(" ESTUDO estudo ");
 		sql.append(" on (estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append(" AND estudo.liberado = 1 ");
 		sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 
 		sql.append(" left join ");
