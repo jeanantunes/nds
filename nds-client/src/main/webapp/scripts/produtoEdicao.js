@@ -106,7 +106,7 @@ var produtoEdicaoController =$.extend(true,  {
 			select : function(event, ui) {
 				produtoEdicaoController.descricaoAtribuida = true;
 			},
-			minLength: 4,
+			minLength: 2,
 			delay : 0,
 		});
 	},
