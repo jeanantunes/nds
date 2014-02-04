@@ -26,6 +26,7 @@ import org.hibernate.annotations.CascadeType;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
+import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
 
 /**
  * Chamada de Encalhe do Fornecedor para retorno
@@ -123,6 +124,10 @@ public class ChamadaEncalheFornecedor implements Serializable {
     @Enumerated(EnumType.STRING)
 	@Column(name = "STATUS_INTEGRACAO")
     private StatusIntegracao statusIntegracao;
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_INTEGRACAO_NFE")
+    private StatusIntegracaoNFE StatusIntegracaoNFE;
     
     /**
      * Será atribuido a data de Operação do Distribuidor
@@ -453,6 +458,14 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
 	public void setStatusIntegracao(StatusIntegracao statusIntegracao) {
 		this.statusIntegracao = statusIntegracao;
+	}
+
+	public StatusIntegracaoNFE getStatusIntegracaoNFE() {
+		return StatusIntegracaoNFE;
+	}
+
+	public void setStatusIntegracaoNFE(StatusIntegracaoNFE statusIntegracaoNFE) {
+		StatusIntegracaoNFE = statusIntegracaoNFE;
 	}
 
 	public Date getDataFechamentoNDS() {

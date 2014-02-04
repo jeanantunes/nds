@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,14 +97,46 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 	}
 	
-	@Override
-	@Transactional
-	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro) {
+	/**
+	 * Aplica diferenças de quantidade informadas na C.E. Integração
+	 * @param chamadasFornecedor
+	 * @param diferencas
+	 */
+    private void aplicarDiferencasCEIntegracao(List<ChamadaEncalheFornecedor> chamadasFornecedor, 
+    		                                   Map<String,ItemFechamentoCEIntegracaoDTO> diferencas){
+		
+    	
+    	
+    	
+		
+	}
+	
+    /**
+     * Processa C.E. Integração
+     * @param filtro
+     * @param diferencas
+     * @param fechamento
+     */
+	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
+			                Map<String,ItemFechamentoCEIntegracaoDTO> diferencas, 
+			                boolean fechamento) {
 		
 		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
 		
 		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
 				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		
+		
+		
+		
+		
+		
+		this.aplicarDiferencasCEIntegracao(chamadasFornecedor, diferencas);
+		
+		
+		
+		
+		
 		
 		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
@@ -167,11 +200,37 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			cef.setTotalMargemInformado(totalMargemInformado);
 			cef.setTotalVendaApurada(totalVendaApurada);
 			cef.setTotalVendaInformada(totalVendaInformada);
-			cef.setStatusCeNDS(StatusCeNDS.FECHADO);
+			cef.setStatusCeNDS(fechamento?StatusCeNDS.FECHADO:StatusCeNDS.ABERTO);
 			cef.setDataFechamentoNDS(dataOperacao);
 			
 			chamadaEncalheFornecedorRepository.alterar(cef);
 		}
+	}
+	
+	/**
+	 * Fecha C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	@Override
+	@Transactional
+	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
+			             Map<String,ItemFechamentoCEIntegracaoDTO> diferencas) {
+		
+		this.processaCE(filtro, diferencas, true);
+	}
+	
+	/**
+	 * Salva C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	@Override
+	@Transactional
+	public void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, 
+			             Map<String,ItemFechamentoCEIntegracaoDTO> diferencas) {
+		
+		this.processaCE(filtro, diferencas, false);
 	}
 	
 	@Override
