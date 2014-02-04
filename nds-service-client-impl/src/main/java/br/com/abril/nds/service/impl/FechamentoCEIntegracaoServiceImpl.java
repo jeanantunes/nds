@@ -96,14 +96,23 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     private ItemChamadaEncalheFornecedor atualizarItem(ItemChamadaEncalheFornecedor item, 
     		                                           ItemFechamentoCEIntegracaoDTO itemDTO) {
     
-    	Long encalhe = itemDTO.getEncalhe().longValue();
+    	Long encalhe = 0l;
     	
-    	Long vendaParcial = itemDTO.getVenda().longValue();
-
-		encalhe = (encalhe == null) ? 0 : encalhe;
-		
-		vendaParcial = (vendaParcial == null) ? 0 : vendaParcial;
-		
+	    Long vendaParcial = 0l;
+	    
+    	if (itemDTO!=null){
+    		
+    	    encalhe = itemDTO.getEncalhe() == null?0l:itemDTO.getEncalhe().longValue();
+    	
+    	    vendaParcial = itemDTO.getVenda() == null?0l:itemDTO.getVenda().longValue();
+    	}
+    	else{
+    		
+    		encalhe = item.getQtdeDevolucaoInformada() == null?0l:item.getQtdeDevolucaoInformada();
+        	
+    	    vendaParcial = item.getQtdeVendaApurada() == null?0l:item.getQtdeVendaApurada();
+    	}
+    	
 		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
 			
 			item.setQtdeVendaApurada(vendaParcial);

@@ -613,11 +613,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			Fornecedor fornecedor = chamadaEncalheFornecedor.getFornecedor();
 			
-			if (chamadaEncalheFornecedor.getFornecedor().getBanco() == null) {
+			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
+			
+			if (banco == null) {
+				
 				throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor selecionado não possui banco vinculado!");
 			}
-			
-			Banco banco = chamadaEncalheFornecedor.getFornecedor().getBanco();
 			
 			String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
 					codigoDistribuidor, 
