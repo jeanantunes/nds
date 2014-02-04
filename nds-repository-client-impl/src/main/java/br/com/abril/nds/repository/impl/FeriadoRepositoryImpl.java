@@ -30,7 +30,7 @@ import br.com.abril.nds.util.DateUtil;
 public class FeriadoRepositoryImpl extends
 		AbstractRepositoryModel<Feriado, Long> implements FeriadoRepository {
 
-	    /**
+	                    /**
      * Construtor padrão.
      */
 	public FeriadoRepositoryImpl() {
@@ -232,7 +232,7 @@ public class FeriadoRepositoryImpl extends
 		super.alterar(entity);
 	}
 
-	    /**
+	                    /**
      * Verifica se já existe um feriado com repetição anual cadastrado com os
      * mesmo dia e mês e tipo do feriado recebido como parâmetro
      * 
@@ -341,17 +341,18 @@ public class FeriadoRepositoryImpl extends
 	}
     
     @Override
-    public boolean isOpera(Date data) {
+    public boolean isNaoOpera(Date data) {
         
         StringBuilder hql = new StringBuilder("select ");
-        hql.append(" count(f.ID) from FERIADO f ").append(" where f.DATA = :data")
-                .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) ")
-                .append(" and f.IND_OPERA = :indOpera)");
+        hql.append(" count(f.ID) from FERIADO f ").append(" where (f.DATA = :data")
+                .append(" or (day(f.DATA) = day(:data) and month(f.DATA) = month(:data) and f.IND_REPETE_ANUALMENTE = :repeteAnual")
+                .append(" )) and f.IND_OPERA = :indOpera");
         
         Query query = this.getSession().createSQLQuery(hql.toString());
         query.setParameter("data", data);
         
-        query.setParameter("indOpera", true);
+        query.setParameter("indOpera", false);
+        query.setParameter("repeteAnual", true);
         
         return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
     }

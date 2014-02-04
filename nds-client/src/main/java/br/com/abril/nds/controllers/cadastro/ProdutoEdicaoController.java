@@ -118,7 +118,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.carregarDadosCombo();
 	}
 
-	                        /**
+	                            /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
@@ -268,7 +268,8 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
-	public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, String idProdutoEdicao, String situacaoProdutoEdicao, boolean redistribuicao) {
+    public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, Long idProdutoEdicao, String situacaoProdutoEdicao,
+            boolean redistribuicao) {
 		
 		if (filtro.getCodigo() == null || filtro.getCodigo().trim().isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
@@ -473,7 +474,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	
 	
-	                        /**
+	                            /**
      * Valida o preenchimento dos campos obrigatórios.
      * 
      * @param dto
@@ -636,7 +637,7 @@ public class ProdutoEdicaoController extends BaseController {
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
-	                        /**
+	                            /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -664,7 +665,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(Results.json()).from(validacaoMap, "result").recursive().serialize();
 	}
 
-	                        /**
+	                            /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -696,7 +697,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                        /**
+	                            /**
      * Obtem detalhes de produto edição
      * 
      * @param idProdutoEdicao
@@ -717,7 +718,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                        /**
+	                            /**
      * Obtém todos os períodos de lançamento da edição do produto
      * 
      * @param produtoEdicaoId
@@ -764,7 +765,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 	}
 	
-	                        /**
+	                            /**
      * Popula e retorna Value Object com detalhes de produto edição
      * 
      * @param idProdutoEdicao

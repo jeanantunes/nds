@@ -184,7 +184,8 @@ var produtoEdicaoController =$.extend(true,  {
 	},	
 
 	init : function(){
-        
+		
+		
 		$(document).ready(function(){
 			
 			focusSelectRefField($("#produtoEdicaoController-pCodigoProduto", produtoEdicaoController.workspace));
@@ -705,7 +706,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	novaEdicao : function () {
-		produtoEdicaoController.popup("", "", false);
+		produtoEdicaoController.popup(null, null, false);
 	},
 	
 	editarEdicao:function (id, codigo, situacaoProdutoEdicao) {
@@ -900,15 +901,9 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-descricaoBrinde").val(result.idBrinde);
 							
 							//Segmentação
-							$("#produtoEdicaoController-classeSocial").val(result.classeSocial);
-							$("#produtoEdicaoController-sexo").val(result.sexo);
-							$("#produtoEdicaoController-faixaEtaria").val(result.faixaEtaria);
 							$("#produtoEdicaoController-tipoSegmento").val(result.tipoSegmentoProdutoId);
 
 							//Desativar Segmentação
-							$("#produtoEdicaoController-classeSocial").attr("disabled", true);
-							$("#produtoEdicaoController-sexo").attr("disabled", true);
-							$("#produtoEdicaoController-faixaEtaria").attr("disabled", true);
 							$("#produtoEdicaoController-tipoSegmento").attr("disabled", true);
 							
 							if(!result.dataLancamento){
@@ -917,9 +912,11 @@ var produtoEdicaoController =$.extend(true,  {
 								 $("#produtoEdicaoController-istrac29").val(true);
 							}
 							
-							if (!result.origemInterface) {
+							if (result.origem == "INTERFACE") {
 								
 								$("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
+							}else{
+								$("#produtoEdicaoController-dataLancamento").attr("disabled", true);
 							}
 
 							if (redistribuicao) {
@@ -956,6 +953,9 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamentoPrevisto", bloquearOrigemInterface);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePrevisto", bloquearOrigemInterface);
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-repartePromocional", bloquearOrigemInterface);
+		produtoEdicaoController.bloquearCampo("produtoEdicaoController-dataLancamento", !bloquearOrigemInterface);
+		
+		
 		
 		produtoEdicaoController.bloquearCampo("produtoEdicaoController-numeroEdicao", bloquear);
 		
@@ -983,9 +983,6 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-categoria option").not(":selected").attr("disabled", bloquear);
 		
 		//Segmentação
-	    $("#produtoEdicaoController-classeSocial option").not(":selected").attr("disabled", bloquear);
-	    $("#produtoEdicaoController-sexo option").not(":selected").attr("disabled", bloquear);
-	    $("#produtoEdicaoController-faixaEtaria option").not(":selected").attr("disabled", bloquear);
 	    $("#produtoEdicaoController-tipoSegmento option").not(":selected").attr("disabled", bloquear);
 	},
 	
@@ -1019,7 +1016,7 @@ var produtoEdicaoController =$.extend(true,  {
 			}
 			
 			if(row.cell.numeroPeriodo == undefined) {
-				row.cell.numeroPeriodo = "";
+				row.cell.numeroPeriodo = " - ";
 			}
 			
 			if(row.cell.reparte == undefined) {
@@ -1177,21 +1174,36 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	carregarImagemCapa:			function (idProdutoEdicao) {
-
-		var imgPath = (idProdutoEdicao == null || idProdutoEdicao == undefined)
-		? "" :  contextPath + '/capa/tratarNoImage/' + idProdutoEdicao + '?' + Math.random();
-		var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
+		var self = this;
 		$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
-		$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
+		$('#linkExclusaoCapa', this.workspace).unbind('click');
+		
+		if((idProdutoEdicao == null || idProdutoEdicao == undefined)){
+			this.semImagemCapa();
+			return;
+		}
+		var imgPath = contextPath + '/capa/'+ idProdutoEdicao + '?' + Math.random();
+		
+		var img = $("<img />").attr('src', imgPath).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
 		
 		img.load(function() {
+			$("#produtoEdicaoController-div_imagem_capa",self.workspace).append(img);
+			$('#linkExclusaoCapa', this.workspace).show();
+			$('#linkExclusaoCapa', this.workspace).bind('click',function() {
+				produtoEdicaoController.popup_excluir_capa();
+			});
 			
-			if (!(!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0)) {
-				$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
-				$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
-			}
+		}).error(function() {
+			self.semImagemCapa();
+			
 		});
 
+	},
+	semImagemCapa :function(){
+		var imgSemCapa = $("<img />").attr('src', contextPath + "/capa/getNoImage").attr('width', '144').attr('height', '185').attr('alt', 'Capa');
+        
+		$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(imgSemCapa);
+		$('#linkExclusaoCapa', this.workspace).hide();
 	},
 	
 	form_clear:function (formName) {
@@ -1220,7 +1232,8 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	carregarCapaTemporaria : function() {
-		
+		var self = this;
+		$("#linkExclusaoCapa", produtoEdicaoController.workspace).unbind();
 		$("#produtoEdicaoController-formUpload").ajaxSubmit({ 
 			
 			success: function(responseText, statusText, xhr, $form)  { 
@@ -1236,7 +1249,16 @@ var produtoEdicaoController =$.extend(true,  {
 					return;
 				}
 				
-				$("#produtoEdicaoController-div_imagem_capa > img").attr("src", contextPath + responseText.result);
+				
+				var img = $("<img />").attr('src', contextPath + responseText.result).attr('width', '144').attr('height', '185').attr('alt', 'Capa');
+				$("#produtoEdicaoController-div_imagem_capa",self.workspace).empty();
+				$("#produtoEdicaoController-div_imagem_capa",self.workspace).append(img);
+				$("#linkExclusaoCapa", self.workspace).show();
+				
+				$("#linkExclusaoCapa", self.workspace).bind('click',function() {
+					self.carregarImagemCapa(null);
+					$("#produtoEdicaoController-imagemCapa").val('');
+				});
 				
 			},
 			
@@ -1294,9 +1316,7 @@ var produtoEdicaoController =$.extend(true,  {
 								if (tipoMensagem && listaMensagens) {
 									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
 									if (tipoMensagem == "SUCCESS") { 
-										var img = $("<img />").attr('width', '144').attr('height', '185').attr('alt', 'Capa');
-										$("#produtoEdicaoController-div_imagem_capa",this.workspace).empty();
-										$("#produtoEdicaoController-div_imagem_capa",this.workspace).append(img);
+										produtoEdicaoController.carregarImagemCapa(null);
 									}
 								}
 							},

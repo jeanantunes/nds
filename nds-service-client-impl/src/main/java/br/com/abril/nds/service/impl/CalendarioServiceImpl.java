@@ -167,7 +167,7 @@ public class CalendarioServiceImpl implements CalendarioService {
         int codigoDiaCorrente = cal.get(Calendar.DAY_OF_WEEK);
         
         if (dias.contains(codigoDiaCorrente)) {
-            return this.feriadoRepository.isOpera(data);
+            return !this.feriadoRepository.isNaoOpera(data);
         }
         return false;
         
