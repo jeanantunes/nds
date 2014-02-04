@@ -872,10 +872,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " inner join PRODUTO_EDICAO produtoedi1_ on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoedi1_.ID  " +
 				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +	
 				 " inner join PRODUTO produto5_ on produtoedi1_.PRODUTO_ID=produto5_.ID  " +
-				 " inner join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
-				 " inner join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
+				 " left join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
+				 " left join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
 				 " inner join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID  " +
-				 " inner join BOX box on cota2_.BOX_ID=box.ID  " +
+				 " left join BOX box on cota2_.BOX_ID=box.ID  " +
 				 " ";
 
 
@@ -1305,28 +1305,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
-		hql.append(" sum(estoqueProduto.qtde) as repartePrevisto, ");
-		hql.append(" sum(estoqueProduto.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
+		hql.append(" sum(estoqueProduto.qtdeRecebida) as repartePrevisto, ");
+		hql.append(" sum(estoqueProduto.qtdeRecebida - coalesce(estoqueProduto.qtdeDevolvida, 0)) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		hql.append(" produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-		hql.append(" FROM EstoqueProduto estoqueProduto");
-		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
-		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		hql.append(" FROM EstoqueProdutoCota estoqueProduto");
+		//hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
+		//hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
 		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 
 		hql.append(" WHERE ");
-		hql.append(" tipoMovimento.id = 13 and ");
+		//hql.append(" tipoMovimento.id = 13 and ");
 
-		if (filtro.getProdutoDto() != null) {
-			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-				hql.append(" produto.codigoICD = :codigoProduto ");
-				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
-			}
-		}
+		hql.append(" produto.codigoICD = :codigoProduto ");
+		parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 
 		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
 			hql.append(" and produtoEdicao.numeroEdicao in (");
