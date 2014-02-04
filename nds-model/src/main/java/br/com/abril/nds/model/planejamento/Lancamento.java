@@ -113,7 +113,7 @@ public class Lancamento implements Serializable {
 	
 	@NotFound(action = NotFoundAction.IGNORE)
 	@ManyToOne(cascade = {CascadeType.ALL})
-	@JoinColumn(name = "ESTUDO_ID", insertable = false, updatable = false)
+	@JoinColumn(name = "ESTUDO_ID", insertable = true, updatable = true)
 	private Estudo estudo;
 	
 	@ManyToOne(optional = true)
