@@ -71,7 +71,7 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	 * @param ativa
 	 * @return
 	 */
-	List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa);
+	boolean obterFormasCobrancaAtivaCotas(Boolean ativa, Long idFormaCobranca);
 
 	void removerFormasCobrancaCota(Integer numeroCota);
 }

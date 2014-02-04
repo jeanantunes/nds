@@ -239,6 +239,7 @@ var MANTER_COTA = $.extend(true, {
     },
 
     carregarDistribuicao:function(){
+
         DISTRIB_COTA.definirModoTela(MANTER_COTA.modoTela, MANTER_COTA.idHistorico);
         if (MANTER_COTA.isModoTelaCadastroCota()) {
             TAB_COTA.funcaoSalvar = DISTRIB_COTA.salvar;
@@ -831,8 +832,11 @@ var MANTER_COTA = $.extend(true, {
     verificarEntregador : function(){
 
         if (MANTER_COTA.idCota && MANTER_COTA.idCota != ""){
+
+        	var param = {idCota:MANTER_COTA.idCota};
+        	
             $.postJSON(contextPath + "/cota/parametroCobrancaCota/verificarEntregador",
-                {name:"idCota", value: MANTER_COTA.idCota},
+            	param,
                 function (result){
                     if (result && result.boolean){
 
@@ -848,6 +852,8 @@ var MANTER_COTA = $.extend(true, {
                 true,
                 "dialog-cota"
             );
+            this.carregarDistribuicao();
+            MANTER_COTA.confirmado = false;
         }
     },
     

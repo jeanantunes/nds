@@ -120,7 +120,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 		data.push({name:'tipoCota',		value: $('#comboTipoCota', OperacaoDiferenciadaController.workspace).val() });
 		
-		$(".selCotasGrid", OperacaoDiferenciadaController.workspace).flexOptions({ params:data });		
+		$(".selCotasGrid", OperacaoDiferenciadaController.workspace).flexOptions({ params:data, newp:1 });		
 		$(".selCotasGrid", OperacaoDiferenciadaController.workspace).flexReload();
 	},
 	

@@ -9,20 +9,21 @@ import br.com.abril.nds.repository.AnaliseEstudoRepository;
 import br.com.abril.xrequers.integration.repository.tests.AbstractRepositoryTest;
 
 public class QCAnaliseEstudoRepository extends AbstractRepositoryTest {
-	
-	@Autowired
-	private AnaliseEstudoRepository analiseEstudoRepository;
-	
-	private FiltroAnaliseEstudoDTO filtro;
-	
-	@Before
-	public void setup() {
-		filtro = new FiltroAnaliseEstudoDTO();
-	}
-	
-	@Test
-	public void testQCAnaliseEstudoRepository() {
-		this.analiseEstudoRepository.buscarEstudos(filtro);
-	}
-	
+    
+    @Autowired
+    private AnaliseEstudoRepository analiseEstudoRepository;
+    
+    private FiltroAnaliseEstudoDTO filtro;
+    
+    @Before
+    public void setup() {
+
+        this.filtro = new FiltroAnaliseEstudoDTO();
+    }
+    
+    @Test
+    public void testQCAnaliseEstudoRepository() {
+        this.analiseEstudoRepository.buscarEstudos(this.filtro);
+    }
+    
 }

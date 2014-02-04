@@ -628,6 +628,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
 				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
 		
+		if (resumoConsignado.getSaldoAnterior()==null){resumoConsignado.setSaldoAnterior(BigDecimal.ZERO);}
+		if (resumoConsignado.getValorEntradas()==null){resumoConsignado.setValorEntradas(BigDecimal.ZERO);}
+		if (resumoConsignado.getValorSaidas()==null){resumoConsignado.setValorSaidas(BigDecimal.ZERO);}
 		resumoConsignado.setSaldoAtual(
 			resumoConsignado.getSaldoAnterior().subtract(
 				resumoConsignado.getValorEntradas()).add(resumoConsignado.getValorSaidas()));
@@ -650,6 +653,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
 				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
 		
+		if (resumoAVista.getSaldoAnterior()==null){resumoAVista.setSaldoAnterior(BigDecimal.ZERO);}
+		if (resumoAVista.getValorEntradas()==null){resumoAVista.setValorEntradas(BigDecimal.ZERO);}
+		if (resumoAVista.getValorSaidas()==null){resumoAVista.setValorSaidas(BigDecimal.ZERO);}
 		resumoAVista.setSaldoAtual(
 			resumoAVista.getSaldoAnterior().subtract(
 				resumoAVista.getValorEntradas()).add(resumoAVista.getValorSaidas()));

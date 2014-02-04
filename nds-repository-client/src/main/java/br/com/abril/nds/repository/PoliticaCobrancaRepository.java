@@ -5,7 +5,6 @@ import java.util.List;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -49,6 +48,5 @@ public interface PoliticaCobrancaRepository extends Repository<PoliticaCobranca,
 	
 	List<TipoCobranca> obterTiposCobrancaDistribuidor();
 
-	boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca,
-			List<Long> fornecedoresId, TipoFormaCobranca tipoFormaCobranca);
+	boolean verificarPorTipoCobrancaPor(TipoCobranca tipoCobranca);
 }

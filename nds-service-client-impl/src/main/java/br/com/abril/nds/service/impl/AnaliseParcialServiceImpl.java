@@ -3,31 +3,50 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import br.com.abril.nds.dto.*;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
+import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
+import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
+import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.RepartePDVDTO;
+import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.EstudoPDV;
-import br.com.abril.nds.repository.*;
-import br.com.abril.nds.service.InformacoesProdutoService;
-import br.com.abril.nds.service.RepartePdvService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoPDV;
+import br.com.abril.nds.repository.AnaliseParcialRepository;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
+import br.com.abril.nds.repository.EstudoPDVRepository;
+import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
+import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.InformacoesProdutoService;
+import br.com.abril.nds.service.RepartePdvService;
 
 @Service
 public class AnaliseParcialServiceImpl implements AnaliseParcialService {
@@ -39,7 +58,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     private AnaliseParcialRepository analiseParcialRepository;
 
     @Autowired
-    private EstudoRepository estudoRepository;
+    private EstudoGeradoRepository estudoGeradoRepository;
 
     @Autowired
     private CotaRepository cotaRepository;
@@ -59,14 +78,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Autowired
     private InformacoesProdutoService infoProdService;
     
-    private static final Logger log = LoggerFactory.getLogger(AnaliseParcialServiceImpl.class);
+    @Autowired
+	private EstudoService estudoService;
+    
     private Map<String, String> mapClassificacaoCota;
 
     @Override
     @Transactional
     public EstudoCota buscarPorId(Long id) {
         EstudoCota estudo = new EstudoCota();
-        estudo.setEstudo(estudoRepository.buscarPorId(id));
+        estudo.setEstudo(estudoGeradoRepository.buscarPorId(id));
         return estudo;
     }
 
@@ -216,8 +237,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public void liberar(Long id) {
-        analiseParcialRepository.liberar(id);
+    	
+    	estudoService.criarEstudoLiberado(estudoService.liberar(id));
     }
 
     @Override
@@ -232,7 +255,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     public BigDecimal calcularPercentualAbrangencia(Long estudoId) {
         int cotasAtivas = cotaRepository.obterCotasAtivas();
-        int cotasComReparte = estudoRepository.obterCotasComRepartePorIdEstudo(estudoId);
+        int cotasComReparte = estudoGeradoRepository.obterCotasComRepartePorIdEstudo(estudoId);
         return cotasAtivas == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(cotasComReparte)
                 .divide(BigDecimal.valueOf(cotasAtivas), 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
                 .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
@@ -242,7 +265,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa) {
 
-        Estudo estudo = estudoRepository.buscarPorId(estudoId);
+    	EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoId);
         Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
         Map<Long, PDV> pdvMap = new HashMap<>();
@@ -355,6 +378,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     public BigInteger atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
         analiseParcialRepository.atualizaReparteTotalESaldo(idEstudo, reparteTotal);
-        return estudoRepository.buscarPorId(idEstudo).getSobra();
+        return estudoGeradoRepository.buscarPorId(idEstudo).getSobra();
     }
 }
