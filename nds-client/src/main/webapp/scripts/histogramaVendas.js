@@ -38,7 +38,7 @@ var histogramaVendasController = $.extend(true, {
 	
 	iniciarGrid: function(){
 		
-		$(".edicaoProdCadastradosGrid",this.workspace).flexigrid({
+		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexigrid({
 			dataType : 'json',
 			preProcess: function (data){
 				$.each(data.rows, function(index,row){
@@ -62,11 +62,8 @@ var histogramaVendasController = $.extend(true, {
 				}
 				
 				$.each(data.rows, function(index, value) {						
-
-					histogramaVendasController.nomeProduto=value.cell.nomeProduto;
+					
 					histogramaVendasController.descricaoTipoSegmento=value.cell.descricaoTipoSegmento;
-					histogramaVendasController.codigoProduto_HistogramaVenda=value.cell.codigoProduto;
-					histogramaVendasController.descricaoTipoClassificacao_histogramaVenda=value.cell.descricaoTipoClassificacao;
 					
 					var objString = 
 						'{"codigo":"'+ value.cell.codigoProduto
@@ -261,11 +258,22 @@ var histogramaVendasController = $.extend(true, {
 		if ($('#inserirComponentes', histogramaVendasController.workspace).is(':checked')) {
 			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
 		}else {
-			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
+			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 		}
 		
 		
 		$(selector, histogramaVendasController.workspace).each(function(idx,comp){
+			
+			if (comp.type == 'radio'){
+				
+				if (comp.checked){
+					
+					formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
+				}
+				
+				return true;
+			}
+			
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		
@@ -285,10 +293,9 @@ var histogramaVendasController = $.extend(true, {
 		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexReload();
 		
 		histogramaVendasController.edicoesEscolhidas_HistogramaVenda = new Array();
-		histogramaVendasController.nomeProduto='';
-		histogramaVendasController.descricaoTipoSegmento='';
-		histogramaVendasController.codigoProduto_HistogramaVenda="";
-		histogramaVendasController.descricaoTipoClassificacao_histogramaVenda="";
+		histogramaVendasController.nomeProduto = $("#produto", histogramaVendasController.workspace).val();
+		histogramaVendasController.codigoProduto_HistogramaVenda = $("#codigo", histogramaVendasController.workspace).val();
+		histogramaVendasController.descricaoTipoClassificacao_histogramaVenda = $("#idTipoClassificacaoProduto", histogramaVendasController.workspace).val();
 
 	}, 
 	
@@ -360,4 +367,4 @@ var histogramaVendasController = $.extend(true, {
 		$('.filtroComponentes', histogramaVendasController.workspace).show();
 	}
 });
-//@ sourceURL=historicoVenda.js
+//@ sourceURL=histogramaVendas.js

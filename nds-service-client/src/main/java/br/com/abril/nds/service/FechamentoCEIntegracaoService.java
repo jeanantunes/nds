@@ -19,14 +19,14 @@ public interface FechamentoCEIntegracaoService {
 	 * @param filtro
 	 * @param diferencas
 	 */
-	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<String,ItemFechamentoCEIntegracaoDTO> diferencas);
+	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas);
 	
 	/**
 	 * Salva C.E. Integração
 	 * @param filtro
 	 * @param diferencas
 	 */
-	void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<String,ItemFechamentoCEIntegracaoDTO> diferencas);
+	void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 	

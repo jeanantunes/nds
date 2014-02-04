@@ -190,7 +190,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Post
 	@Path("fecharCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void fecharCE(Map<String,ItemFechamentoCEIntegracaoDTO> diferencas){
+	public void fecharCE(Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
@@ -207,7 +207,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Post
 	@Path("salvarCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void salvarCE(Map<String,ItemFechamentoCEIntegracaoDTO> diferencas){
+	public void salvarCE(Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		

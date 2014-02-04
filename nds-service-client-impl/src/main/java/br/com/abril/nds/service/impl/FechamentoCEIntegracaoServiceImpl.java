@@ -137,7 +137,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
      * @param fechamento
      */
 	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			                Map<String,ItemFechamentoCEIntegracaoDTO> diferencas, 
+			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas, 
 			                boolean fechamento) {
 		
 		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
@@ -197,8 +197,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf((itemFo.getQtdeDevolucaoApurada() == null) ? 0 : itemFo.getQtdeDevolucaoApurada()));
 				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf( (itemFo.getQtdeVendaApurada() == null) ? 0 : itemFo.getQtdeVendaApurada()));
 				
-				itemFo = this.atualizarItem(itemFo, 
-						                    diferencas.get(itemFo.getId().toString()));
+				itemFo = this.atualizarItem(itemFo, diferencas.get(itemFo.getId()));
 				
 			}
 			
@@ -223,7 +222,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Override
 	@Transactional
 	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			             Map<String,ItemFechamentoCEIntegracaoDTO> diferencas) {
+			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
 		this.processaCE(filtro, diferencas, true);
 	}
@@ -236,7 +235,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Override
 	@Transactional
 	public void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			             Map<String,ItemFechamentoCEIntegracaoDTO> diferencas) {
+			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
 		this.processaCE(filtro, diferencas, false);
 	}
