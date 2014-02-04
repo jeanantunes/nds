@@ -1,6 +1,8 @@
 package br.com.abril.xrequers.integration.repository.tests.uai;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,6 +14,42 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.xrequers.integration.repository.tests.ProdutoRepositoryTest;
 
 public class TestUAIProduto extends ProdutoRepositoryTest {
+	
+	
+	@Test
+	public void test_update_by_id_produto_campo_null() {
+		
+		Map<String, String> campos = new HashMap<>();
+		
+		campos.put("nome", "primeiro");
+		campos.put("nomeComercial", null);
+		
+		produtoRepository.alterarPorId(100L, campos);
+
+		Produto produto = this.produtoRepository.buscarPorId(100L);
+		
+		Assert.assertTrue("primeiro".equals(produto.getNome()));
+		Assert.assertNull(produto.getNomeComercial());
+
+		
+	}
+	
+	@Test
+	public void test_update_by_id_produto_() {
+		
+		Map<String, String> campos = new HashMap<>();
+		
+		campos.put("nome", "primeiro");
+		campos.put("nomeComercial", "segundo");
+		
+		produtoRepository.alterarPorId(100L, campos);
+
+		Produto produto = this.produtoRepository.buscarPorId(100L);
+		
+		Assert.assertTrue("primeiro".equals(produto.getNome()));
+		Assert.assertTrue("segundo".equals(produto.getNomeComercial()));
+		
+	}
 	
 	@Test
 	public void testInsertProduto() {
@@ -34,4 +72,11 @@ public class TestUAIProduto extends ProdutoRepositoryTest {
 		
 		Assert.assertNotNull(produto);
 	}
+	
+	
+	
+	
+	
+	
+	
 }
