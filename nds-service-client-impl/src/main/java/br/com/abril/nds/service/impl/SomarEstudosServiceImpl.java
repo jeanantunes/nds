@@ -13,11 +13,11 @@ import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
-import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.SomarEstudosService;
 
@@ -25,7 +25,7 @@ import br.com.abril.nds.service.SomarEstudosService;
 public class SomarEstudosServiceImpl implements SomarEstudosService {
 	
 	@Autowired
-	private EstudoRepository estudoRepository;
+	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
@@ -47,7 +47,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		}
 		
 		Long idEstudo = distribuicaoVO.getIdEstudo().longValue();
-		Estudo estudoBase = estudoRepository.buscarPorId(idEstudoBase);
+		EstudoGerado estudoBase = estudoGeradoRepository.buscarPorId(idEstudoBase);
 		
 		Map<Long,EstudoCota> mapEstudoCota = new HashMap<Long,EstudoCota>();
 		
@@ -74,7 +74,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		
 		
 		
-		Estudo estudo = estudoRepository.buscarPorId(idEstudo);
+		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
 		
 		if (estudo.getEstudoCotas() != null && !estudo.getEstudoCotas().isEmpty()) {
 			
@@ -114,8 +114,8 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){
 				estudo.setQtdeReparte(estudo.getQtdeReparte().add(estudoBase.getQtdeReparte()));				
 			}
-			estudoRepository.alterar(estudo);
-			estudoRepository.remover(estudoBase);
+			estudoGeradoRepository.alterar(estudo);
+			estudoGeradoRepository.remover(estudoBase);
 		}
 		
 	}
@@ -124,7 +124,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 	@Override
 	public Boolean verificarCoincidenciaEntreCotas(Long estudoBase,Long estudoSomado) {
 		
-		Long count = estudoRepository.countDeCotasEntreEstudos(estudoBase,estudoSomado);
+		Long count = estudoGeradoRepository.countDeCotasEntreEstudos(estudoBase,estudoSomado);
 		
 		return (count>0);
 	}

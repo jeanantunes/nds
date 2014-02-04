@@ -215,7 +215,11 @@ public class ParametrosDistribuidorController extends BaseController {
 			return new InputStreamDownload(imgLogotipo, null, null);
 		}
 		
-		return null;
+		this.gravarArquivoTemporario(
+			this.parametrosDistribuidorService.getLogotipoDistribuidor());
+		
+		return new InputStreamDownload(
+			this.getInputStreamArquivoTemporario(), null, null);
 	}
 
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
@@ -267,6 +271,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		} finally {
 			try { 
 				if (fos != null) {
+					fos.flush();
 					fos.close();
 				}
 			} catch (Exception e) {

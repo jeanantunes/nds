@@ -19,7 +19,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
@@ -94,7 +94,7 @@ public class DividirEstudoController extends BaseController {
 		mensagensValidacao.add("- O total da soma do percentual da divisão deve ser igual a 100% (1% do Estudo Original e 99% dos Estudos Divididos)!");
 	    } else {
 
-		Estudo estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
+	    EstudoGerado estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
 
 		if (estudoOriginal != null) {
 
@@ -170,28 +170,28 @@ public class DividirEstudoController extends BaseController {
 	String dataLancamentoSegundoEstudo = divisaoEstudo.getDataLancamentoSegundoEstudo();
 	divisaoEstudo.setDataDistribuicaoParaPesquisa(divisaoEstudo.getDataDistribuicao());
 	
-	List<Estudo> listEstudo = null; 
+	List<EstudoGerado> listEstudo = null; 
 	
 	if (dataLancamentoSegundoEstudo != null && !dataLancamentoSegundoEstudo.equalsIgnoreCase("")) {
 
 	    if (!dataLancamentoSegundoEstudo.equalsIgnoreCase(dataLancamentoPrimeiroEstudo)) {
 
-		Estudo estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
+	    EstudoGerado estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
 
-		Estudo primeiroEstudo = (Estudo)SerializationUtils.clone(estudoOriginal);
+	    EstudoGerado primeiroEstudo = (EstudoGerado)SerializationUtils.clone(estudoOriginal);
 		primeiroEstudo.setId(divisaoEstudo.getNumeroPrimeiroEstudo());
 //		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setQtdeReparte(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
  
-		Estudo segundoEstudo = (Estudo) SerializationUtils.clone(estudoOriginal);
+		EstudoGerado segundoEstudo = (EstudoGerado) SerializationUtils.clone(estudoOriginal);
 		segundoEstudo.setId(divisaoEstudo.getNumeroSegundoEstudo());
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setQtdeReparte(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
 
-		listEstudo = new ArrayList<Estudo>();
+		listEstudo = new ArrayList<EstudoGerado>();
 		listEstudo.add(primeiroEstudo);
 		listEstudo.add(segundoEstudo);
 

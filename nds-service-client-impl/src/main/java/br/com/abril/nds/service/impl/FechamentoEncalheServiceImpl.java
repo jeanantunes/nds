@@ -64,6 +64,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -839,22 +840,26 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		Estudo estudo = proximoLancamentoPeriodo.getEstudo();
 		
-		if(estudo == null){
-			estudo = estudoService.criarEstudo(proximoLancamentoPeriodo.getProdutoEdicao(), 
-											   item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor());
-		}
-		else{
+		if (estudo == null) {
+			
+			EstudoGerado estudoGerado = 
+				estudoService.criarEstudo(
+					proximoLancamentoPeriodo.getProdutoEdicao(), 
+						item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor());
+			
+			estudo = estudoService.criarEstudoLiberado(estudoGerado);
+			
+		} else {
 			
 			BigInteger reparteEstudo = estudo.getQtdeReparte().add(item.getQtde());
 			estudo.setQtdeReparte(reparteEstudo);
 			
-			estudo = estudoRepository.merge(estudo);
+			estudo = estudoRepository.merge((Estudo)estudo);
 		}
-		
-		Cota cota = new Cota();
-		cota.setId(item.getIdCota());
-		
-		estudoCotaService.criarEstudoCotaJuramentado(proximoLancamentoPeriodo.getProdutoEdicao(), estudo, item.getQtde(), cota);	
+
+		estudoCotaService.criarEstudoCotaJuramentado(
+			proximoLancamentoPeriodo.getProdutoEdicao(), 
+				estudo, item.getQtde(), new Cota(item.getIdCota()));	
 	}
 
 	@Override

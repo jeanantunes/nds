@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.crypto.dsig.Transform;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -16,17 +14,17 @@ import br.com.abril.nds.dto.filtro.AnaliseNormalQueryDTO;
 import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AnaliseNormalRepository;
 
 @Repository
 public class AnaliseNormalRepositoryImpl extends
-		AbstractRepositoryModel<Estudo, Long> implements
+		AbstractRepositoryModel<EstudoGerado, Long> implements
 		AnaliseNormalRepository {
 
 	public AnaliseNormalRepositoryImpl() {
-		super(Estudo.class);
+		super(EstudoGerado.class);
 	}
 
 	@Override
@@ -78,7 +76,7 @@ public class AnaliseNormalRepositoryImpl extends
 		sql.append(" from estudo_cota ec "
 				+ "	left join cota cota on cota.id=ec.cota_id "
 				+ "	left join pessoa p on cota.pessoa_id=p.id  "
-				+ "	left join estudo e on e.id=ec.estudo_id  "
+				+ "	left join estudo_gerado e on e.id=ec.estudo_id  "
 				+ "	left join produto_edicao pe on pe.id=e.produto_edicao_id "
 				+ "	left join produto prod on prod.id=pe.produto_id ");
 		if (queryDTO.isRankingFilteredSorted()) {
@@ -249,7 +247,7 @@ public class AnaliseNormalRepositoryImpl extends
 	private List<BigInteger> edicoesAnteriores(Long id) {
 		SQLQuery numerosQuery = getSession()
 				.createSQLQuery(
-						"select pe.numero_edicao from produto_edicao pe left join (select pe.produto_id,pe.numero_edicao from produto_edicao pe left join estudo e on e.produto_edicao_id=pe.id where e.id=?) as tupla on pe.produto_id=tupla.produto_id where pe.produto_id=tupla.produto_id and pe.numero_edicao <= tupla.numero_edicao order by pe.numero_edicao desc limit 6;");
+						"select pe.numero_edicao from produto_edicao pe left join (select pe.produto_id,pe.numero_edicao from produto_edicao pe left join estudo_gerado e on e.produto_edicao_id=pe.id where e.id=?) as tupla on pe.produto_id=tupla.produto_id where pe.produto_id=tupla.produto_id and pe.numero_edicao <= tupla.numero_edicao order by pe.numero_edicao desc limit 6;");
 		numerosQuery.setLong(0, id);
 		final List<BigInteger> list2 = numerosQuery.list();
 		return list2;
@@ -297,7 +295,7 @@ public class AnaliseNormalRepositoryImpl extends
 				+ "				pe.numero_edicao, "
 				+ "				e.data_lancamento "
 				+ "		from produto_edicao pe "
-				+ "			left join estudo e on e.produto_edicao_id=pe.id "
+				+ "			left join estudo_gerado e on e.produto_edicao_id=pe.id "
 				+ "		where e.id=?) as tupla on pe.produto_id=tupla.produto_id "
 				+ "	left join produto p on p.id=tupla.produto_id "
 				+ "	left join estudo_produto_edicao as epe on epe.produto_edicao_id=pe.id "
@@ -314,7 +312,7 @@ public class AnaliseNormalRepositoryImpl extends
 	@Override
 	public void liberarEstudo(Long id) {
 		SQLQuery query = getSession().createSQLQuery(
-				"update estudo set liberado = 1 where id = ?");
+				"update estudo_gerado set liberado = 1 where id = ?");
 		query.setLong(0, id);
 		query.executeUpdate();
 	}

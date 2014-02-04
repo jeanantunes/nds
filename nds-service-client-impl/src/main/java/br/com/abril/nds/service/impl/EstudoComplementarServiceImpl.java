@@ -22,12 +22,12 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
-import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
@@ -38,7 +38,7 @@ import br.com.abril.nds.service.EstudoComplementarService;
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
 
     @Autowired
-    EstudoRepository estudoRepository;
+    EstudoGeradoRepository estudoGeradoRepository;
 
     @Autowired
     ProdutoRepository produtoRepository;
@@ -61,7 +61,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(
 	    long idEstudoBase) {
 	EstudoComplementarDTO estudoComplDto = null;
-	Estudo estudo = estudoRepository.buscarPorId(idEstudoBase);
+	EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudoBase);
 
 	if (estudo == null) {
 	    throw new ValidacaoException(TipoMensagem.WARNING, "Estudo " + idEstudoBase + " não encontrado.");
@@ -126,9 +126,9 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	BigInteger reparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
 	BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
 
-	Estudo estudo = estudoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
+	EstudoGerado estudo = estudoGeradoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
 
-	Estudo estudo1 = new Estudo();
+	EstudoGerado estudo1 = new EstudoGerado();
 	BeanUtils.copyProperties(estudo, estudo1, new String[] {"id", "lancamentos", "estudoCotas"});
 	estudo1.setLiberado(false);
 	estudo1.setProdutoEdicao(new ProdutoEdicao(estudoComplementarVO.getIdProdutoEdicao()));
@@ -137,7 +137,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
 
 	// Gera Novo Estudo
-	estudoRepository.adicionar(estudo1);
+	estudoGeradoRepository.adicionar(estudo1);
 	
 	List<EstudoCota> cotas = new ArrayList<>();
 
