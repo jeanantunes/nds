@@ -167,6 +167,8 @@
 										$span = $($span).addClass("conferencia_encalhe");
 									}else if (url.indexOf("/estoque/diferenca/lancamento") >= 0) {
 										$span = $($span).addClass("lancamento_faltas_sobras");
+									}else if (url.indexOf("/matrizLancamento") >= 0) {
+										$span = $($span).addClass("matriz_lancamento");
 									}
 									
 									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
@@ -190,6 +192,7 @@
 												var indAbaConferenciaEncalhe = $(this).parent().find('.conferencia_encalhe').index() > -1;
 												var indAbaLancamentoFaltasSobras = $(this).parent().find('.lancamento_faltas_sobras').index() > -1;
 												var indAbaConferenciaEncalheContigencia = $(this).parent().find('.conferencia_encalhe_contigencia').index() > -1;
+												var indAbaMatrizLancamento = $(this).parent().find('.matriz_lancamento').index() > -1;
 												
 												if(indAbaConferenciaEncalhe) {
 													
@@ -215,7 +218,16 @@
 													}
 													
 													ConferenciaEncalheCont.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
-												
+													
+												} else if (indAbaMatrizLancamento) {
+													
+													balanceamentoLancamento.verificarBalanceamentosAlterados(
+														function() {
+															
+															$("#workspace").tabs("remove", index);
+														}
+													);
+													
 												} else {
 													
 													$(self).tabs("remove", index);
