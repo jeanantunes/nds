@@ -2,11 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
-import br.com.abril.nds.dto.TipoDescontoDTO;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.dto.filtro.FiltroConsultaHistoricoDescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
 
 /**
@@ -16,29 +12,25 @@ import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExce
  * @author Discover Technology
  */
 public interface HistoricoDescontoCotaProdutoRepository extends Repository<HistoricoDescontoCotaProdutoExcessao, Long> {
-
-	/**
-	 * Retorna os descontos da cota com os fornecedores
-	 * @param filtro - filtro de cosnulta
-	 * @return List<DescontoDistribuidor> 
-	 */
-	List<TipoDescontoDTO> buscarDescontos(FiltroTipoDescontoDTO filtro);
 	
 	/**
-	 * Retorna a quantidade de descontos da cota com os fornecedores
-	 * @param filtro - filtro de cosnulta
-	 * @return Integer
-	 */
-	Integer buscarQuantidadeDescontos(FiltroTipoDescontoDTO filtro);
-		
-	/**
 	 * Retorna o ultimo desconto valido
-	 * @param cota TODO
-	 * @param fornecedor TODO
-	 * @param fornecedor - fornecedor
 	 * 
-	 * @return DescontoDistribuidor
+	 * @param filtro
+	 * 
+	 * @return HistoricoDescontoCotaProdutoExcessao
 	 */
-	HistoricoDescontoCotaProdutoExcessao buscarUltimoDescontoValido(Desconto desconto, Cota cota, Fornecedor fornecedor);
+	HistoricoDescontoCotaProdutoExcessao buscarUltimoDescontoValido(FiltroConsultaHistoricoDescontoDTO filtro);
+	
+	
+	/**
+	 * Obtém lista de HistoricoDescontoCotaProdutoExcessao
+	 * 
+	 * @param filtro
+	 * 
+	 * @return List - HistoricoDescontoCotaProdutoExcessao
+	 */
+	List<HistoricoDescontoCotaProdutoExcessao> buscarListaHistoricoDescontoCotaProdutoExcessao(FiltroConsultaHistoricoDescontoDTO filtro);
+
 	
 }

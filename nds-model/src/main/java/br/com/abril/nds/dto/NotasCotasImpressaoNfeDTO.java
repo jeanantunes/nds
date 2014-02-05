@@ -11,7 +11,11 @@ import br.com.abril.nds.util.export.Export.Alignment;
 @Exportable
 public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 
-	public NotasCotasImpressaoNfeDTO(Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
+	public NotasCotasImpressaoNfeDTO(){
+		super();
+	}
+	
+	public NotasCotasImpressaoNfeDTO(Long numeroNota, Boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto) {
 		super();
 		this.numeroNota = numeroNota;
 		this.notaImpressa = notaImpressa;
@@ -21,7 +25,7 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 		this.vlrTotalDesconto = vlrTotal.subtract(vlrTotal.multiply(vlrTotalDesconto.divide(new BigDecimal("100")))).setScale(2, BigDecimal.ROUND_DOWN);;
 		this.totalExemplares = totalExemplares;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -51,55 +55,56 @@ public class NotasCotasImpressaoNfeDTO extends NfeDTO {
 		return numeroNota;
 	}
 
-	public Long getIdCota() {
-		return idCota;
-	}
-
-	public String getNomeCota() {
-		return nomeCota;
-	}
-
-	public BigInteger getTotalExemplares() {
-		return totalExemplares;
-	}
-
-	public BigDecimal getVlrTotal() {
-		return vlrTotal;
-	}
-
-	public BigDecimal getVlrTotalDesconto() {
-		return vlrTotalDesconto;
-	}
-
-	public boolean isNotaImpressa() {
-		return notaImpressa;
-	}
-
 	public void setNumeroNota(Long numeroNota) {
 		this.numeroNota = numeroNota;
+	}
+
+	public Long getIdCota() {
+		return idCota;
 	}
 
 	public void setIdCota(Long idCota) {
 		this.idCota = idCota;
 	}
 
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
+	}
+
+	public BigInteger getTotalExemplares() {
+		return totalExemplares;
 	}
 
 	public void setTotalExemplares(BigInteger totalExemplares) {
 		this.totalExemplares = totalExemplares;
 	}
 
+	public BigDecimal getVlrTotal() {
+		return vlrTotal;
+	}
+
 	public void setVlrTotal(BigDecimal vlrTotal) {
 		this.vlrTotal = vlrTotal;
+	}
+
+	public BigDecimal getVlrTotalDesconto() {
+		return vlrTotalDesconto;
 	}
 
 	public void setVlrTotalDesconto(BigDecimal vlrTotalDesconto) {
 		this.vlrTotalDesconto = vlrTotalDesconto;
 	}
 
+	public boolean isNotaImpressa() {
+		return notaImpressa;
+	}
+
 	public void setNotaImpressa(boolean notaImpressa) {
 		this.notaImpressa = notaImpressa;
 	}
+
 }

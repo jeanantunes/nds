@@ -94,8 +94,8 @@ $(function(){
 				<td width="212"></td>
 			</tr>
 			<tr>
-				<td width="91">Tipo de Nota:</td>
-				<td width="204"><select id="geracaoNfe-filtro-naturezaOperacao"
+				<td width="100">Nat. de Operação:</td>
+				<td width="195"><select id="geracaoNfe-filtro-naturezaOperacao"
 					name="naturezaOperacao"
 					style="width: 250px; font-size: 11px !important">
 						<option value="">Todos</option>
