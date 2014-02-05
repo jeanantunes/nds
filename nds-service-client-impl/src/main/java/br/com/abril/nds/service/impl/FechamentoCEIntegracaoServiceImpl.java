@@ -95,15 +95,24 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
     private ItemChamadaEncalheFornecedor atualizarItem(ItemChamadaEncalheFornecedor item, 
     		                                           ItemFechamentoCEIntegracaoDTO itemDTO) {
-    
-    	Long encalhe = itemDTO.getEncalhe().longValue();
-    	
-    	Long vendaParcial = itemDTO.getVenda().longValue();
 
-		encalhe = (encalhe == null) ? 0 : encalhe;
-		
-		vendaParcial = (vendaParcial == null) ? 0 : vendaParcial;
-		
+    	Long encalhe = 0l;
+    	
+	    Long vendaParcial = 0l;
+	    
+    	if (itemDTO!=null){
+    		
+    	    encalhe = itemDTO.getEncalhe() == null?0l:itemDTO.getEncalhe().longValue();
+    	
+    	    vendaParcial = itemDTO.getVenda() == null?0l:itemDTO.getVenda().longValue();
+    	}
+    	else{
+    		
+    		encalhe = item.getQtdeDevolucaoInformada() == null?0l:item.getQtdeDevolucaoInformada();
+        	
+    	    vendaParcial = item.getQtdeVendaApurada() == null?0l:item.getQtdeVendaApurada();
+    	}
+    	
 		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
 			
 			item.setQtdeVendaApurada(vendaParcial);
@@ -139,7 +148,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas, 
 			                boolean fechamento) {
-		
+
 		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
 		
 		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
@@ -152,12 +161,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
-			
-			// Essa validação deverá ser feita somente se houverem outros fornecedores vindos do Prodin.
-			/*if(cef.getFornecedor() == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro de integridade. Não existe fornecedor associado ao registro!");
-			}*/
 			
 			BigDecimal totalCreditoApurado = BigDecimal.ZERO;
 			BigDecimal totalCreditoInformado = BigDecimal.ZERO;
@@ -172,7 +175,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor) {
 				
 				List<ItemFechamentoCEIntegracaoDTO> itemFechamentoCEIntegracaoDTO = null;
-				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() != null && itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+				
+				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+					
 					filtro.setIdItemChamadaEncalheFornecedor(itemFo.getId());
 					itemFechamentoCEIntegracaoDTO = fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
 					filtro.setIdItemChamadaEncalheFornecedor(null);

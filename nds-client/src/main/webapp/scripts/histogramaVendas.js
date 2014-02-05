@@ -1,9 +1,8 @@
 var histogramaVendasController = $.extend(true, { 
 	
 	edicoesEscolhidas_HistogramaVenda: new Array(),
-	nomeProduto: '',
 	descricaoTipoSegmento: '',
-	codigoProduto_HistogramaVenda: "",
+	codigoProduto_HistogramaVenda: '',
 	descricaoTipoClassificacao_histogramaVenda: "",
 	
 	checkEdicao : function(check){
@@ -38,7 +37,7 @@ var histogramaVendasController = $.extend(true, {
 	
 	iniciarGrid: function(){
 		
-		$(".edicaoProdCadastradosGrid",this.workspace).flexigrid({
+		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexigrid({
 			dataType : 'json',
 			preProcess: function (data){
 				$.each(data.rows, function(index,row){
@@ -62,11 +61,8 @@ var histogramaVendasController = $.extend(true, {
 				}
 				
 				$.each(data.rows, function(index, value) {						
-
-					histogramaVendasController.nomeProduto=value.cell.nomeProduto;
+					
 					histogramaVendasController.descricaoTipoSegmento=value.cell.descricaoTipoSegmento;
-					histogramaVendasController.codigoProduto_HistogramaVenda=value.cell.codigoProduto;
-					histogramaVendasController.descricaoTipoClassificacao_histogramaVenda=value.cell.descricaoTipoClassificacao;
 					
 					var objString = 
 						'{"codigo":"'+ value.cell.codigoProduto
@@ -173,6 +169,35 @@ var histogramaVendasController = $.extend(true, {
 			return;
 		}
 		
+		var codigoProduto = undefined, nomeProduto = undefined, json;
+		$.each(
+			$(".checkEdicao:checked", histogramaVendasController.workspace), 
+			function(index, item){
+				
+				json = $.parseJSON(item.value);
+				
+				if (!codigoProduto){
+					
+					codigoProduto = json.codigo;
+					nomeProduto = json.nomeProduto;
+					histogramaVendasController.codigoProduto_HistogramaVenda = json.codigo;
+					return true;
+				}
+				
+				if (codigoProduto !== json.codigo){
+					
+					codigoProduto = undefined;
+					return false;
+				}
+			}
+		);
+		
+		if (!codigoProduto){
+			
+			exibirMensagem("WARNING", ["Selecione apenas edições de um mesmo produto."]);
+			return;
+		}
+		
 		var labelComponente="",labelElemento="";
 		if($("#inserirComponentes", histogramaVendasController.workspace).is(":checked") && 
 				$("#componente", histogramaVendasController.workspace).val()!="-1" && 
@@ -195,8 +220,8 @@ var histogramaVendasController = $.extend(true, {
 
 		var data = {"edicoes":histogramaVendasController.edicoesEscolhidas_HistogramaVenda.sort().toString(),
 				"segmento":histogramaVendasController.descricaoTipoSegmento,
-				"nomeProduto":histogramaVendasController.nomeProduto,
-				"codigoProduto":histogramaVendasController.codigoProduto_HistogramaVenda,
+				"nomeProduto":nomeProduto,
+				"codigoProduto":codigoProduto,
 				"classificacaoLabel":uniqueClassificacoes.join(', '),
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
@@ -261,11 +286,22 @@ var histogramaVendasController = $.extend(true, {
 		if ($('#inserirComponentes', histogramaVendasController.workspace).is(':checked')) {
 			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
 		}else {
-			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
+			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 		}
 		
 		
 		$(selector, histogramaVendasController.workspace).each(function(idx,comp){
+			
+			if (comp.type == 'radio'){
+				
+				if (comp.checked){
+					
+					formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
+				}
+				
+				return true;
+			}
+			
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		
@@ -285,10 +321,7 @@ var histogramaVendasController = $.extend(true, {
 		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexReload();
 		
 		histogramaVendasController.edicoesEscolhidas_HistogramaVenda = new Array();
-		histogramaVendasController.nomeProduto='';
-		histogramaVendasController.descricaoTipoSegmento='';
-		histogramaVendasController.codigoProduto_HistogramaVenda="";
-		histogramaVendasController.descricaoTipoClassificacao_histogramaVenda="";
+		histogramaVendasController.descricaoTipoClassificacao_histogramaVenda = $("#idTipoClassificacaoProduto", histogramaVendasController.workspace).val();
 
 	}, 
 	
@@ -360,4 +393,4 @@ var histogramaVendasController = $.extend(true, {
 		$('.filtroComponentes', histogramaVendasController.workspace).show();
 	}
 });
-//@ sourceURL=historicoVenda.js
+//@ sourceURL=histogramaVendas.js

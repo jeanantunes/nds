@@ -11,7 +11,6 @@ import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -124,15 +123,16 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Produto> buscarProdutosQueUsamDescontoProduto(Desconto desconto) {
+	public List<Long> buscarProdutosQueUsamDescontoProduto(Desconto desconto) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("	select p	");
+		hql.append("	select p.id	");
 		hql.append("	from HistoricoDescontoProduto hdp	");
 		hql.append("	inner join hdp.produto p			");
 		hql.append("	inner join hdp.desconto desconto	");
 		hql.append("	where desconto.id = :idDesconto 	");
+		hql.append("   	group by p.id	");
 		
 		Query q = getSession().createQuery(hql.toString());
 		
@@ -144,15 +144,17 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto) {
+	public List<Long> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("	select pe	");
+		hql.append("	select pe.id	");
 		hql.append("	from ProdutoEdicao pe, HistoricoDescontoProdutoEdicao hdpe ");
 		hql.append(" 	inner join hdpe.produtoEdicao pe	");
 		hql.append("	inner join hdpe.desconto desconto	");
 		hql.append("	where desconto.id = :idDesconto		");
+		hql.append(" 	group by pe.id						");
+		
 		
 		Query q = getSession().createQuery(hql.toString());
 		
@@ -270,7 +272,7 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DescontoProximosLancamentos> buscarProximosLancamentosQueUsamDescontoProduto(
+	public List<Long> buscarProximosLancamentosQueUsamDescontoProduto(
 			Desconto desconto) {
 		
 		if(desconto == null || desconto.getId() == null) {
@@ -279,9 +281,10 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select dpl ");
-		hql.append("from DescontoProximosLancamentos dpl ");
-		hql.append("where dpl.desconto.id = :idDesconto ");
+		hql.append(" select dpl.id ");
+		hql.append(" from DescontoProximosLancamentos dpl ");
+		hql.append(" where dpl.desconto.id = :idDesconto ");
+		hql.append(" group by dpl.id ");
 		
 		Query q = getSession().createQuery(hql.toString());
 		
