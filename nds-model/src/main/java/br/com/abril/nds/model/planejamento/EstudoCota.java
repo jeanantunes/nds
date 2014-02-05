@@ -53,7 +53,7 @@ public class EstudoCota implements Serializable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "ESTUDO_ID")
-    private AbstractEstudo estudo;
+    private Estudo estudo;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "COTA_ID")
@@ -115,13 +115,32 @@ public class EstudoCota implements Serializable {
     
     @Column(name = "COTA_NOVA")
     private Boolean cotaNova;
-    
-    public enum TipoEstudoCota{
-		NORMAL,JURAMENTADO
-	}
 
     public EstudoCota() {
 
+    }
+    
+    public EstudoCota(EstudoCotaGerado estudoCotaGerado, Estudo estudo) {
+    	
+    	this.estudo = estudo;
+    	this.classificacao = estudoCotaGerado.getClassificacao();
+    	this.cota = estudoCotaGerado.getCota();
+    	this.cotaNova = estudoCotaGerado.getCotaNova();
+    	this.indiceCorrecaoTendencia = estudoCotaGerado.getIndiceCorrecaoTendencia();
+    	this.indiceVendaCrescente = estudoCotaGerado.getIndiceVendaCrescente();
+    	this.mix = estudoCotaGerado.getMix();
+    	this.percentualEncalheMaximo = estudoCotaGerado.getPercentualEncalheMaximo();
+    	this.qtdeEfetiva = estudoCotaGerado.getQtdeEfetiva();
+    	this.qtdePrevista = estudoCotaGerado.getQtdePrevista();
+    	this.quantidadePDVS = estudoCotaGerado.getQuantidadePDVS();
+    	this.reparte = estudoCotaGerado.getReparte();
+    	this.reparteJuramentadoAFaturar = estudoCotaGerado.getReparteJuramentadoAFaturar();
+    	this.reparteMaximo = estudoCotaGerado.getReparteMaximo();
+    	this.reparteMinimo = estudoCotaGerado.getReparteMinimo();
+    	this.tipoEstudo = estudoCotaGerado.getTipoEstudo();
+    	this.vendaMedia = estudoCotaGerado.getVendaMedia();
+    	this.vendaMediaMaisN = estudoCotaGerado.getVendaMediaMaisN();
+    	this.vendaMediaNominal = estudoCotaGerado.getVendaMediaNominal();
     }
 
     public EstudoCota(Long id) {
@@ -152,11 +171,11 @@ public class EstudoCota implements Serializable {
 	this.qtdeEfetiva = qtdeEfetiva;
     }
 
-    public AbstractEstudo getEstudo() {
+    public Estudo getEstudo() {
 	return estudo;
     }
 
-    public void setEstudo(AbstractEstudo estudo) {
+    public void setEstudo(Estudo estudo) {
 	this.estudo = estudo;
     }
 

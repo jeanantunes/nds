@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.EstudoCota.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.service.EstudoCotaService;
 

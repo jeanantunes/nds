@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.planejamento.AbstractEstudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoPDVRepository;
@@ -25,7 +25,7 @@ public class EstudoPDVRepositoryImpl extends AbstractRepositoryModel<EstudoPDV, 
     }
 
     @Override
-    public EstudoPDV buscarPorEstudoCotaPDV(AbstractEstudo estudo, Cota cota, PDV pdv) {
+    public EstudoPDV buscarPorEstudoCotaPDV(EstudoGerado estudo, Cota cota, PDV pdv) {
         return (EstudoPDV) getSession()
                 .createCriteria(EstudoPDV.class)
                 .add(Restrictions.eq("estudo", estudo))

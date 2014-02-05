@@ -18,7 +18,7 @@ import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.CotaService;
@@ -105,7 +105,7 @@ public class DistribuicaoManualController extends BaseController {
 		}
 		
 		for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
-		    EstudoCota estudoCota = new EstudoCota();
+		    EstudoCotaGerado estudoCota = new EstudoCotaGerado();
 		    estudoCota.setCota(new Cota(cotaDTO.getIdCota()));
 		    estudoCota.setQtdePrevista(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
