@@ -148,7 +148,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas, 
 			                boolean fechamento) {
-		
+
 		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
 		
 		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
