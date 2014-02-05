@@ -553,11 +553,17 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		/**
 		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
 		 */
-		StringBuilder hql = new StringBuilder("SELECT ")
-		.append(" notaFiscal ");
+		StringBuilder hql = new StringBuilder("SELECT new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO( ")
+			.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal ")
+			.append(", notaFiscal.notaFiscalInformacoes.notaImpressa ")
+			.append(", cota ")
+			.append(", SUM(item.produtoServico.quantidade) ")
+			.append(", SUM(item.produtoServico.valorTotalBruto) ")
+			.append(", coalesce(SUM(item.produtoServico.valorDesconto), 0)) ");
+		
 		Query query = queryConsultaImpressaoParameters(queryConsultaImpressaoNfe(filtro, hql, true, true, true), filtro);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(NotasCotasImpressaoNfeDTO.class));
+		//query.setResultTransformer(new AliasToBeanResultTransformer(NotasCotasImpressaoNfeDTO.class));
 		
 		return query.list();
 		
@@ -617,7 +623,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			hql.append(" AND fornecedor.id in (:fornecedor) ");
 		}
 		
-		if(!isGroup){
+		if(isGroup){
 			hql.append(" group by notaFiscal.id ");
 		}
 		

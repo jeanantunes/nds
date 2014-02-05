@@ -122,7 +122,7 @@ var impressaoNfeController = $.extend(true, {
 
 		$.each(data.rows, function() {
 			checked = false;
-			for(i= 0; i < impressaoNfeController.filtroProdutos.length; i++) {
+			for(var i = 0; i < impressaoNfeController.filtroProdutos.length; i++) {
 				if(impressaoNfeController.filtroProdutos[i]['cell']['codigoProduto'] == this.cell.codigoProduto) {
 					checked = true;
 				}

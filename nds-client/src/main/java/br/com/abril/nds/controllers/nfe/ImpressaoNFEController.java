@@ -190,7 +190,8 @@ public class ImpressaoNFEController extends BaseController {
 
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(FlexiGridJson.class).from(listaCotasImpressaoNFe).page(page).total(listaCotasImpressaoNFe.size()).serialize();
+		//result.use(Results.json()).withoutRoot().from(tableModel).serialize();
 
 	}
 	
