@@ -38,7 +38,7 @@ var descontoDistribuidorController = $.extend(true,{
 		    $("#selectFornecedorSelecionado_option option",this.workspace).each(function (index) {
 		    	fornecedores.push($(this).val());
 		    });
-		    var param = {desconto:$("#descontoGeral",this.workspace).justPercent("floatValue")};
+		    var param = {desconto:$("#descontoGeral",this.workspace).justPercent("stringValue")};
 		    
 		    param = serializeArrayToPost('fornecedores', fornecedores, param);
 
