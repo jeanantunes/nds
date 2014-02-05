@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,9 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 @Resource
 @Path("devolucao/fechamentoCEIntegracao")
@@ -199,23 +203,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
 	}
-	
-	/**
-	 * Salva informações de C.E.
-	 * @param diferencas
-	 */
-	@Post
-	@Path("salvarCE")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void salvarCE(Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas){
-		
-		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		
-		fechamentoCEIntegracaoService.salvarCE(filtro, diferencas);
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Informações salvas com sucesso."),"result").recursive().serialize();
-		
-	}
 
 	@Post
 	@Path("/geraBoleto")
@@ -343,6 +330,52 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
 		
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
+	}
+	
+	@Get
+	@Path("/imprimeCE")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
+	public void imprimirCE(){
+		
+		FiltroFechamentoCEIntegracaoDTO filtro =
+				(FiltroFechamentoCEIntegracaoDTO)
+					session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+			
+		filtro.setPaginacao(null);
+		
+		//TODO chamar metodo para impressao de CE
+	}
+	
+	@Post
+	@Path("/salvarCE")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
+	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens ){
+		
+		FiltroFechamentoCEIntegracaoDTO filtro =
+				(FiltroFechamentoCEIntegracaoDTO)
+					session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		fechamentoCEIntegracaoService.salvarCE(filtro, this.obterMapItensCE(itens));
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Informações salvas com sucesso."),"result").recursive().serialize();
+	}
+	
+
+	private Map<Long,ItemFechamentoCEIntegracaoDTO> obterMapItensCE(List<ItemFechamentoCEIntegracaoDTO> itens){
+		
+		if(itens == null || itens.isEmpty()){
+			return new HashMap<Long, ItemFechamentoCEIntegracaoDTO>();
+		}
+		
+		Map<Long,ItemFechamentoCEIntegracaoDTO> mapItensCE = Maps.uniqueIndex(itens, new Function<ItemFechamentoCEIntegracaoDTO,Long>() {
+			
+			@Override
+			public Long apply(ItemFechamentoCEIntegracaoDTO item) {
+				
+				return item.getIdItemCeIntegracao();
+		}});
+		
+		return mapItensCE ;
 	}
 
 }

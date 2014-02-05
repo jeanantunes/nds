@@ -31,6 +31,8 @@ public class FiltroConsultaNotaEnvioDTO {
 	
 	private String exibirNotasEnvio;
 	
+	private boolean filtroRoteiroEspecial;
+	
 	/**
 	 * @return the dataEmissao
 	 */
@@ -159,4 +161,27 @@ public class FiltroConsultaNotaEnvioDTO {
 		this.exibirNotasEnvio = exibirNotasEnvio;
 	}
 	
+	public boolean isFiltroBoxEspecial() {
+
+		if (this.intervaloBox != null) {
+			return (this.intervaloBox.getDe() != null && this.intervaloBox.getAte() != null) &&
+					(this.intervaloBox.getDe() == 0 && this.intervaloBox.getAte() == 0);
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return the filtroRoteiroEspecial
+	 */
+	public boolean isFiltroEspecial() {
+		return filtroRoteiroEspecial || this.isFiltroBoxEspecial();
+	}
+
+	/**
+	 * @param filtroRoteiroEspecial the filtroRoteiroEspecial to set
+	 */
+	public void setFiltroRoteiroEspecial(boolean filtroRoteiroEspecial) {
+		this.filtroRoteiroEspecial = filtroRoteiroEspecial;
+	}
 }

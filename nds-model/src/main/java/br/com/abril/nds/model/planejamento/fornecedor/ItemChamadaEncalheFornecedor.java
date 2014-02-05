@@ -13,12 +13,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.Diferenca;
 
 /**
  * Item da Chamada de Encalhe do Fornecedor para retorno
@@ -110,6 +112,10 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
 
     @Column(name = "VALOR_MARGEM_APURADO", nullable = false)
     private BigDecimal valorMargemApurado;
+    
+    @OneToOne
+    @JoinColumn(name = "DIFERENCA_ID")
+    private Diferenca diferenca;
     
     /**
      * @return the id
@@ -448,7 +454,21 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
         this.valorMargemApurado = valorMargemApurado;
     }
 
-    /* (non-Javadoc)
+	/**
+	 * @return the diferenca
+	 */
+	public Diferenca getDiferenca() {
+		return diferenca;
+	}
+
+	/**
+	 * @param diferenca the diferenca to set
+	 */
+	public void setDiferenca(Diferenca diferenca) {
+		this.diferenca = diferenca;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override

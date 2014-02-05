@@ -1017,6 +1017,10 @@ public class DescontoServiceImpl implements DescontoService {
 		if(!desconto.isUsado()) {
 			
 			for(Long idProdutoEdicao : idsProdutosEdicao) {
+
+				Map<String, String> campos = new HashMap<>();
+				campos.put("descontoProdutoEdicao", null);
+				produtoEdicaoRepository.alterarPorId(idProdutoEdicao, campos);
 				
 				removerHistoricoDescontoCotaProdutoExcessao(filtroConsultaHistorico, desconto.getId(), null, idProdutoEdicao);
 				
@@ -1035,15 +1039,15 @@ public class DescontoServiceImpl implements DescontoService {
 					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
 				}
 				
-				Map<String, String> campos = new HashMap<>();
-				campos.put("descontoProdutoEdicao", null);
-				produtoEdicaoRepository.alterarPorId(idProdutoEdicao, campos);
-				
-				
 			}
 			
 			for(Long idProduto : idsProduto) {
 
+				Map<String, String> campos = new HashMap<>();
+				campos.put("descontoProduto", null);
+				produtoRepository.alterarPorId(idProduto, campos);
+
+				
 				removerHistoricoDescontoCotaProdutoExcessao(filtroConsultaHistorico, desconto.getId(), idProduto, null);
 				
 				HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto.getId(), idProduto);
@@ -1059,9 +1063,6 @@ public class DescontoServiceImpl implements DescontoService {
 					this.descontoProdutoEdicaoExcessaoRepository.remover(dcpe);
 				}
 				
-				Map<String, String> campos = new HashMap<>();
-				campos.put("descontoProduto", null);
-				produtoRepository.alterarPorId(idProduto, campos);
 
 			}
 			

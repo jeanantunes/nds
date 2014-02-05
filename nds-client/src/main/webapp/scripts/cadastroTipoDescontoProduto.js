@@ -65,7 +65,7 @@ var descontoProdutoController = $.extend(true,{
 		
 		var indProdutoEdicao = $("#mostrarEdicao", this.workspace).attr("checked") == 'checked';
 		var codigoProduto = $("#pCodigoProduto",this.workspace).val();
-		var descontoProduto = $("#descontoProduto",this.workspace).justPercent("floatValue");
+		var descontoProduto = $("#descontoProduto",this.workspace).justPercent("stringValue");
 		var descontoPredominante = $("#descontoPredominante",this.workspace).attr("checked") ? true : false;
 		var hasCotaEspecifica = document.getElementById("radioCotasEspecificas",this.workspace).checked;
 		var isTodasCotas = document.getElementById("radioTodasCotas",this.workspace).checked;

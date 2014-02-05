@@ -53,6 +53,7 @@ import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.RoteirizacaoRepository;
+import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.CotaService;
@@ -120,6 +121,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Autowired
 	private CotaAusenteRepository cotaAusenteRepository;
 	
+	@Autowired
+	private RoteiroRepository roteiroRepository;
+	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
 	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
 	private static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
@@ -129,6 +133,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
 				filtro.getIntervaloMovimento(), null);
+		
+		if (filtro.getIdRoteiro() != null) {
+			filtro.setFiltroRoteiroEspecial(TipoRoteiro.ESPECIAL.equals(this.roteiroRepository.buscarPorId(filtro.getIdRoteiro()).getTipoRoteiro()));
+		}
 
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
@@ -145,7 +153,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
 				filtro.getIntervaloMovimento(), null);
-		
+
+		if (filtro.getIdRoteiro() != null) {
+			filtro.setFiltroRoteiroEspecial(TipoRoteiro.ESPECIAL.equals(this.roteiroRepository.buscarPorId(filtro.getIdRoteiro()).getTipoRoteiro()));
+		}
+
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(filtro);
 		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {

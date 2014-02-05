@@ -33,7 +33,7 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
@@ -85,8 +85,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     @Transactional
-    public EstudoCota buscarPorId(Long id) {
-        EstudoCota estudo = new EstudoCota();
+    public EstudoCotaGerado buscarPorId(Long id) {
+    	EstudoCotaGerado estudo = new EstudoCotaGerado();
         estudo.setEstudo(estudoGeradoRepository.buscarPorId(id));
         return estudo;
     }
@@ -240,7 +240,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Transactional
     public void liberar(Long id) {
     	
-    	estudoService.criarEstudoLiberado(estudoService.liberar(id));
+    	estudoService.liberar(id);
     }
 
     @Override
