@@ -118,7 +118,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.carregarDadosCombo();
 	}
 
-	                            /**
+	                                                /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
@@ -313,6 +313,7 @@ public class ProdutoEdicaoController extends BaseController {
 			vo = e.getValidacao();
 
 		} catch (Exception e) {
+            e.printStackTrace();
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
 		
@@ -474,7 +475,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	
 	
-	                            /**
+	                                                /**
      * Valida o preenchimento dos campos obrigatórios.
      * 
      * @param dto
@@ -549,7 +550,7 @@ public class ProdutoEdicaoController extends BaseController {
 			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
 		}
 		
-		if (pe == null || pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL)) {
+        if (pe == null || pe.getOrigem().equals(Origem.MANUAL)) {
 			
 			// Distribuidor:
 			if (dto.getCodigoProduto() == null || dto.getCodigoProduto().trim().length() <= 0) {
@@ -598,11 +599,7 @@ public class ProdutoEdicaoController extends BaseController {
 			if (dto.getTipoClassificacaoProduto() == null || dto.getTipoClassificacaoProduto().getId() == null){
                 listaMensagens.add("Por favor, selecione um valor válido para a 'Classificação'");
 			}
-			
-            // Essa validação só será feita na terceira fase do projeto.
-//			if (dto.getCodigoDeBarrasCorporativo() == null || dto.getCodigoDeBarrasCorporativo().trim().length() <= 0) {
-            // listaMensagens.add("Campo 'Código de Barras Corporativo' deve ser preenchido!");
-//			}
+
 			
 		} else {
 			
@@ -618,11 +615,15 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		if (modoTela != null && modoTela.equals(ModoTela.REDISTRIBUICAO)) {
+            
+            if (dto.getDataLancamentoPrevisto() == null) {
+                listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
+            }
 		
 			Date maiorDataLancamento =
 				this.lancamentoService.getMaiorDataLancamento(dto.getId());
 			
-			if (maiorDataLancamento != null
+            if (maiorDataLancamento != null && dto.getDataLancamentoPrevisto() != null
 					&& dto.getDataLancamentoPrevisto().compareTo(maiorDataLancamento) <= 0) {
 				
 				listaMensagens.add(
@@ -637,7 +638,7 @@ public class ProdutoEdicaoController extends BaseController {
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
-	                            /**
+	                                                /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -665,7 +666,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(Results.json()).from(validacaoMap, "result").recursive().serialize();
 	}
 
-	                            /**
+	                                                /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -697,7 +698,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                            /**
+	                                                /**
      * Obtem detalhes de produto edição
      * 
      * @param idProdutoEdicao
@@ -718,7 +719,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                            /**
+	                                                /**
      * Obtém todos os períodos de lançamento da edição do produto
      * 
      * @param produtoEdicaoId
@@ -765,7 +766,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 	}
 	
-	                            /**
+	                                                /**
      * Popula e retorna Value Object com detalhes de produto edição
      * 
      * @param idProdutoEdicao

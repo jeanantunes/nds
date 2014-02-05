@@ -166,7 +166,8 @@ public class ProdutoController extends BaseController {
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto
+                    + "\" não encontrado!");
 		} else {
 			result.use(Results.json()).from(produto, "result").serialize();
 		}		
@@ -183,6 +184,7 @@ public class ProdutoController extends BaseController {
 	}
 	
 	@Post
+    @Get
 	public void autoCompletarPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
@@ -386,7 +388,8 @@ public class ProdutoController extends BaseController {
 		
 		if (!numEdicaoValida) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Edição \"" + numeroEdicao + "\" não encontrada para o produto!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Edição \"" + numeroEdicao
+                    + "\" não encontrada para o produto!");
 			
 		} else {
 			
@@ -403,7 +406,7 @@ public class ProdutoController extends BaseController {
 		
 		if (produtoEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada para o produto!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada para o produto!");
 		}
 		
 		result.use(Results.json()).from(produtoEdicao, "result").serialize();
@@ -431,19 +434,19 @@ public class ProdutoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Pesquisa os produtos com paginação.
-	 * 
-	 * @param codigo
-	 * @param produto
-	 * @param fornecedor
-	 * @param editor
-	 * @param codigoTipoProduto
-	 * @param sortorder
-	 * @param sortname
-	 * @param page
-	 * @param rp
-	 */
+	    /**
+     * Pesquisa os produtos com paginação.
+     * 
+     * @param codigo
+     * @param produto
+     * @param fornecedor
+     * @param editor
+     * @param codigoTipoProduto
+     * @param sortorder
+     * @param sortname
+     * @param page
+     * @param rp
+     */
 	@Path("/pesquisarProdutos")
 	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
@@ -469,9 +472,9 @@ public class ProdutoController extends BaseController {
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}
 	
-	/**
-	 * Carrega os combos do modal de inclusão/edição do Produto.
-	 */
+	    /**
+     * Carrega os combos do modal de inclusão/edição do Produto.
+     */
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarDadosProduto() {
@@ -503,9 +506,9 @@ public class ProdutoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
-	 */
+	    /**
+     * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
+     */
 	@Post
 	public void carregarDadosSegmentacao() {
 		
@@ -573,7 +576,7 @@ public class ProdutoController extends BaseController {
 		this.produtoService.removerProduto(id);
 			
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"), 
+new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"),
 				"result").recursive().serialize();
 	}
 	
@@ -621,24 +624,24 @@ public class ProdutoController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Produto salvo com sucesso!"), "result").recursive().serialize();
 	}
 	
-	/**
-	 * Carrega o produto para edição.
-	 * 
-	 * @param id
-	 */
+	    /**
+     * Carrega o produto para edição.
+     * 
+     * @param id
+     */
 	@Post
 	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarProdutoParaEdicao(Long id) {
 		
 		if (id == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
 		}
 		
 		Produto produto =
 			this.produtoService.obterProdutoPorID(id);
 		
 		if (produto == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
 		}
 		
 		ProdutoCadastroVO produtoCadastroVO = ProdutoCadastroVO.parseProdutoToProdutoCadastroVO(produto);
@@ -687,7 +690,7 @@ public class ProdutoController extends BaseController {
 		if (produto != null) {
 
 			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
-				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
 			}else{
 				
 				String msgCodigoTreelog = this.validarCodigoProduto(codigoFornecedor, produto.getCodigo());
@@ -700,44 +703,45 @@ public class ProdutoController extends BaseController {
 				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
 
 				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
-					listaMensagens.add(" O código [" + produto.getCodigo() + "] já esta sendo utilizado por outro produto ");
+                    listaMensagens.add(" O código [" + produto.getCodigo()
+                            + "] já esta sendo utilizado por outro produto ");
 				}
 				produto.setCodigo(produto.getCodigo().trim());
 			}
 
 			if(produto.getCodigoICD() == null || produto.getCodigoICD().trim().isEmpty()){
-				listaMensagens.add("O preenchimento do campo [Código ICD] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Código ICD] é obrigatório!");
 			}
 			
 			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
-				listaMensagens.add("O preenchimento do campo [Produto] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Produto] é obrigatório!");
 			}else{
 				produto.setNome(produto.getNome().trim());
 			}
 			
 			if (codigoFornecedor == null || codigoFornecedor.intValue() == 0) {
-				listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
 			}
 			
 			if (produto.getPeb() <= 0) {
-				listaMensagens.add("O preenchimento do campo [PEB] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [PEB] é obrigatório!");
 			}else{
 				produto.setPeb(produto.getPeb());
 			}
 			
 			if (produto.getPacotePadrao() <= 0) {
-				listaMensagens.add("O preenchimento do campo [Pacote Padrão] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Pacote Padrão] é obrigatório!");
 			}else{
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
 			if ((codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) &&
 					(produto.getDescricaoDesconto() == null || produto.getDescricaoDesconto().trim().isEmpty())) {
-				listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
 			}
 			
 			if (produto.getDesconto() == null){
-				listaMensagens.add("O preenchimento do campo [% Desconto] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [% Desconto] é obrigatório!");
 			}
 			
 			if (produto.getDesconto() != null && 
@@ -747,23 +751,23 @@ public class ProdutoController extends BaseController {
 			}
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
-				listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório!");
 			}
 
 			if (produto.getFormaComercializacao() == null) {
-				listaMensagens.add("O preenchimento do campo [Forma Comercialização] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Forma Comercialização] é obrigatório!");
 			}
 			
 			if (produto.getPeriodicidade() == null) {
-				listaMensagens.add("O preenchimento do campo [Periodicidade] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Periodicidade] é obrigatório!");
 			}
 			
 			if (produto.getTributacaoFiscal() == null) {
-				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
 			}
 			
 			if (produto.getTipoSegmentoProduto().getId() == null) {
-				listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
+                listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
 			}
 		}
 		
@@ -790,7 +794,7 @@ public class ProdutoController extends BaseController {
 
 		if (!produtoTreelog && (!codigoProduto.startsWith("10") || codigoProduto.length() != 10)) {
 
-			return "Os produtos de Fornecedores Terceiros devem ter códigos iniciados por '10' com 10 dígitos.";
+            return "Os produtos de Fornecedores Terceiros devem ter códigos iniciados por '10' com 10 dígitos.";
 		}
 
 		return null;
