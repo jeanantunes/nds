@@ -138,25 +138,39 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 		return this.itemChamadaEncalheFornecedorRepository.merge(item);
 	}
+    
+    /**
+     * Obtem lista de Chamadas de Encalhe Fornecedor
+     * 
+     * @param filtro
+     * @return List<ChamadaEncalheFornecedor>
+     */
+    private List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro){
+    	
+		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+		
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		
+		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
+		}
+		
+		return chamadasFornecedor;
+    }
 
     /**
      * Processa C.E. Integração
+     * 
      * @param filtro
      * @param diferencas
+     * @param chamadasFornecedor
      * @param fechamento
      */
 	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas, 
+			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas,
+			                List<ChamadaEncalheFornecedor> chamadasFornecedor,
 			                boolean fechamento) {
-		
-		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
-		
-		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
-				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
-		
-		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
-		}	
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -219,8 +233,46 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 	}
 	
+    /**
+     * Verifica se existem itens de CE Fornecedor com Movimento de Estoque de Perda ou Ganho Pendente de Confirmação
+     * 
+     * @param chamadasFornecedor
+     */
+	private void verificarPendenciaConfirmacaoPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
+	}
+	
+	/**
+     * Cria Movimento Estoque de Perda ou Ganho Pendente e Amarra com Item de CE Fornecedor
+     * 
+     * @param chamadasFornecedor
+     */
+	private void gerarPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
+	}
+	
+	/**
+	 * Verifica se existem pendencias de Perdas e Ganhos
+	 * Lanca Perdas e Ganhos
+	 * 
+	 * @param chamadasFornecedor
+	 */
+	private void processarPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		this.verificarPendenciaConfirmacaoPerdasEGanhos(chamadasFornecedor);
+		
+		this.gerarPerdasEGanhos(chamadasFornecedor);
+	}
+	
 	/**
 	 * Fecha C.E. Integração
+	 * 
 	 * @param filtro
 	 * @param diferencas
 	 */
@@ -229,11 +281,19 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
-		this.processaCE(filtro, diferencas, true);
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
+		
+		this.processarPerdasEGanhos(chamadasFornecedor);
+		
+		this.processaCE(filtro, 
+				        diferencas, 
+				        chamadasFornecedor,
+				        true);
 	}
 	
 	/**
 	 * Salva C.E. Integração
+	 * 
 	 * @param filtro
 	 * @param diferencas
 	 */
@@ -242,7 +302,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	public void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
-		this.processaCE(filtro, diferencas, false);
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
+		
+		this.processaCE(filtro, 
+				        diferencas, 
+				        chamadasFornecedor, 
+				        false);
 	}
 	
 	@Override

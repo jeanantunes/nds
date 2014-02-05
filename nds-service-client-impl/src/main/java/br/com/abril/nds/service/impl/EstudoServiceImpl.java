@@ -22,10 +22,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -54,6 +56,9 @@ public class EstudoServiceImpl implements EstudoService {
 	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
+	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
+	
+	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
 
     @Autowired
@@ -74,7 +79,7 @@ public class EstudoServiceImpl implements EstudoService {
 	    
 		estudo.setId(this.obterUltimoAutoIncrement());
 		
-	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
+	    for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
 	    }
 	    
@@ -130,7 +135,7 @@ public class EstudoServiceImpl implements EstudoService {
 			listIdEstudoAdicionado = new ArrayList<Long>();
 			Integer quantidadeReparte = (divisaoEstudo.getQuantidadeReparte()==null)?0:divisaoEstudo.getQuantidadeReparte();
 
-			List<EstudoCota> listEstudoCota = this.estudoCotaRepository.obterEstudoCotaPorEstudo(estudoOriginal);
+			List<EstudoCotaGerado> listEstudoCota = this.estudoCotaGeradoRepository.obterEstudoCotaPorEstudo(estudoOriginal);
 
 			int iEstudo = 0;
 			HashMap<Long,BigInteger> diffEstudosMap = new HashMap<Long,BigInteger>();
@@ -138,11 +143,11 @@ public class EstudoServiceImpl implements EstudoService {
 			for (EstudoGerado estudo : listEstudo) {
 
 				estudo.setDataLancamento(null);
-				Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
+				Set<EstudoCotaGerado> setEstudoCota = new HashSet<EstudoCotaGerado>();
 				
-				for (EstudoCota ec : listEstudoCota) {
+				for (EstudoCotaGerado ec : listEstudoCota) {
 					
-					EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(ec);
+					EstudoCotaGerado estudoCota = (EstudoCotaGerado) SerializationUtils.clone(ec);
 					estudoCota.setId(null);
 					estudoCota.setEstudo(estudo);
 
@@ -180,7 +185,7 @@ public class EstudoServiceImpl implements EstudoService {
 				}
 
 				BigInteger somarReparteParaEstudo = BigInteger.ZERO;
-				for (EstudoCota estudoCota : setEstudoCota) {
+				for (EstudoCotaGerado estudoCota : setEstudoCota) {
 					BigInteger r = estudoCota.getReparte()==null?BigInteger.ZERO:estudoCota.getReparte();
 					somarReparteParaEstudo=somarReparteParaEstudo.add(r);
 					estudoCota.setQtdeEfetiva(estudoCota.getReparte());
@@ -236,14 +241,13 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setProdutoEdicao(produtoEdicao);
 		estudo.setQtdeReparte(quantidadeReparte);
 		estudo.setReparteDistribuir(quantidadeReparte);
-		estudo.setLiberado(true);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		
 		return estudoGeradoRepository.merge(estudo);
 	}
 	
 	@Transactional
-	public EstudoGerado liberar(Long idEstudoGerado) {
+	public Estudo liberar(Long idEstudoGerado) {
 		
 		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
 		
@@ -251,15 +255,6 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		this.estudoGeradoRepository.alterar(estudoGerado);
 		
-		this.estudoGeradoRepository.flush();
-		this.estudoGeradoRepository.clear();
-		
-		return estudoGerado;
-	}
-	
-	@Transactional
-	public Estudo criarEstudoLiberado(EstudoGerado estudoGerado) {
-
 		Estudo estudo = new Estudo();
 		
 		try {
@@ -270,8 +265,19 @@ public class EstudoServiceImpl implements EstudoService {
 
 			throw new RuntimeException(e);
 		}
+		
+		Set<EstudoCota> estudoCotas = new HashSet<>();
+		
+		for (EstudoCotaGerado estudoCotaGerado : estudoGerado.getEstudoCotas()) {
 
-		this.estudoRepository.adicionar(estudo);
+			estudoCotas.add(new EstudoCota(estudoCotaGerado, estudo));
+		}
+		
+		estudo.setLancamentos(null);
+		
+		estudo.setEstudoCotas(estudoCotas);
+		
+		this.estudoRepository.saveOrUpdate(estudo);
 
 		Lancamento lancamento = 
 			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());

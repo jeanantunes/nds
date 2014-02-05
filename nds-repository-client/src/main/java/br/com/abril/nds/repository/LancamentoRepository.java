@@ -395,4 +395,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	Lancamento obterLancamentoParcialChamadaEncalhe(Long idChamdaEncalhe);
 	
+	void desvincularEstudos(List<Long> idsEstudos);
+	
 }

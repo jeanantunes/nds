@@ -243,6 +243,16 @@ public class AjusteReparteController extends BaseController {
 		}
 	}
 	
+	@Post
+	@Path("/carregarVendaMedia")
+	public void carregarVendaMedia() {
+		Integer vendaMediaMais = ajusteService.buscarVendaMedia();
+
+		result.use(Results.json()).withoutRoot().from(vendaMediaMais).recursive().serialize();
+		
+		//result.include("vendaMedia", vendaMediaMais);
+	}
+	
 	private void validarEntradaAjuste(AjusteReparteDTO ajusteDTO) {
 		
 		if (ajusteDTO.getNumeroCota() == null) {

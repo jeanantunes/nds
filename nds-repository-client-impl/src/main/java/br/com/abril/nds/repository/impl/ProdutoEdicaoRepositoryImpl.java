@@ -53,6 +53,7 @@ import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -1258,7 +1259,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
-		query.setParameter("produtoCodigo", codigoProduto);
+		query.setParameter("produtoCodigo", Util.padLeft(codigoProduto, "0", 8));
 		query.setParameter("qtdEdicoes", edicoes.length);
 		query.setParameterList("nrEdicoes", edicoes);
 		query.setParameter("deMargem", de - 0.5);
