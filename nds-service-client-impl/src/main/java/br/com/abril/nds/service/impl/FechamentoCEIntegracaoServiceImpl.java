@@ -95,7 +95,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
     private ItemChamadaEncalheFornecedor atualizarItem(ItemChamadaEncalheFornecedor item, 
     		                                           ItemFechamentoCEIntegracaoDTO itemDTO) {
-    
+
     	Long encalhe = 0l;
     	
 	    Long vendaParcial = 0l;
@@ -162,12 +162,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
 			
-			// Essa validação deverá ser feita somente se houverem outros fornecedores vindos do Prodin.
-			/*if(cef.getFornecedor() == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro de integridade. Não existe fornecedor associado ao registro!");
-			}*/
-			
 			BigDecimal totalCreditoApurado = BigDecimal.ZERO;
 			BigDecimal totalCreditoInformado = BigDecimal.ZERO;
 			BigDecimal totalMargemApurado = BigDecimal.ZERO;
@@ -181,7 +175,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor) {
 				
 				List<ItemFechamentoCEIntegracaoDTO> itemFechamentoCEIntegracaoDTO = null;
-				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() != null && itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+				
+				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+					
 					filtro.setIdItemChamadaEncalheFornecedor(itemFo.getId());
 					itemFechamentoCEIntegracaoDTO = fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
 					filtro.setIdItemChamadaEncalheFornecedor(null);
