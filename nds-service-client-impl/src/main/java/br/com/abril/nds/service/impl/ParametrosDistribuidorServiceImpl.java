@@ -1323,9 +1323,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		try {
 			
-			inputStream = couchDbClient.find(
-					TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()
-					+ "/" + ATTACHMENT_LOGOTIPO);
+			inputStream = couchDbClient.find(TipoParametroSistema.LOGOTIPO_DISTRIBUIDOR.name()+ "/" + ATTACHMENT_LOGOTIPO);
 		
 		} catch (NoDocumentException e) {
 			

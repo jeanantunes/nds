@@ -293,7 +293,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			emissorBairro 		= endereco.getBairro();
 			emissorMunicipio 	= endereco.getCidade();
 			emissorUF 			= endereco.getUf();
-			// emissorCEP 			= endereco.getCep();
+			emissorCEP 			= endereco.getCep();
 			
 		}
 		
@@ -414,7 +414,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			destinatarioBairro	=	endereco.getBairro();
 			destinatarioMunicipio	=	 endereco.getCidade();
 			destinatarioUF	=	endereco.getUf();
-			// destinatarioCEP	=	endereco.getCep();
+			destinatarioCEP	=	endereco.getCep();
 			
 		}
 		

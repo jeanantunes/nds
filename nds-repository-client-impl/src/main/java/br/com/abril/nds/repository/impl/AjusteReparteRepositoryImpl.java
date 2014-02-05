@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -198,5 +199,18 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		}else{
 			return 0;
 		}
+	}
+
+	@Override
+	public Integer vendaMedia() {
+		
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select VENDA_MEDIA_MAIS from DISTRIBUIDOR_GRID_DISTRIBUICAO ");
+		
+		Query query = super.getSession().createSQLQuery(sql.toString());
+		
+		return (Integer)query.uniqueResult();
+		
 	}
 }
