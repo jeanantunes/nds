@@ -1,9 +1,8 @@
 var histogramaVendasController = $.extend(true, { 
 	
 	edicoesEscolhidas_HistogramaVenda: new Array(),
-	nomeProduto: '',
 	descricaoTipoSegmento: '',
-	codigoProduto_HistogramaVenda: "",
+	codigoProduto_HistogramaVenda: '',
 	descricaoTipoClassificacao_histogramaVenda: "",
 	
 	checkEdicao : function(check){
@@ -170,6 +169,35 @@ var histogramaVendasController = $.extend(true, {
 			return;
 		}
 		
+		var codigoProduto = undefined, nomeProduto = undefined, json;
+		$.each(
+			$(".checkEdicao:checked", histogramaVendasController.workspace), 
+			function(index, item){
+				
+				json = $.parseJSON(item.value);
+				
+				if (!codigoProduto){
+					
+					codigoProduto = json.codigo;
+					nomeProduto = json.nomeProduto;
+					histogramaVendasController.codigoProduto_HistogramaVenda = json.codigo;
+					return true;
+				}
+				
+				if (codigoProduto !== json.codigo){
+					
+					codigoProduto = undefined;
+					return false;
+				}
+			}
+		);
+		
+		if (!codigoProduto){
+			
+			exibirMensagem("WARNING", ["Selecione apenas edições de um mesmo produto."]);
+			return;
+		}
+		
 		var labelComponente="",labelElemento="";
 		if($("#inserirComponentes", histogramaVendasController.workspace).is(":checked") && 
 				$("#componente", histogramaVendasController.workspace).val()!="-1" && 
@@ -192,8 +220,8 @@ var histogramaVendasController = $.extend(true, {
 
 		var data = {"edicoes":histogramaVendasController.edicoesEscolhidas_HistogramaVenda.sort().toString(),
 				"segmento":histogramaVendasController.descricaoTipoSegmento,
-				"nomeProduto":histogramaVendasController.nomeProduto,
-				"codigoProduto":histogramaVendasController.codigoProduto_HistogramaVenda,
+				"nomeProduto":nomeProduto,
+				"codigoProduto":codigoProduto,
 				"classificacaoLabel":uniqueClassificacoes.join(', '),
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
@@ -293,8 +321,6 @@ var histogramaVendasController = $.extend(true, {
 		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexReload();
 		
 		histogramaVendasController.edicoesEscolhidas_HistogramaVenda = new Array();
-		histogramaVendasController.nomeProduto = $("#produto", histogramaVendasController.workspace).val();
-		histogramaVendasController.codigoProduto_HistogramaVenda = $("#codigo", histogramaVendasController.workspace).val();
 		histogramaVendasController.descricaoTipoClassificacao_histogramaVenda = $("#idTipoClassificacaoProduto", histogramaVendasController.workspace).val();
 
 	}, 
