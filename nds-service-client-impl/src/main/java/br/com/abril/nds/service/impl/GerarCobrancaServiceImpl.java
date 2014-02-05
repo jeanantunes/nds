@@ -617,7 +617,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (banco == null) {
 				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor selecionado não possui banco vinculado!");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor "+fornecedor.getJuridica().getNome()+" não possui banco vinculado!");
 			}
 			
 			String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(

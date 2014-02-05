@@ -13,12 +13,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 
 /**
  * Item da Chamada de Encalhe do Fornecedor para retorno
@@ -110,6 +112,10 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
 
     @Column(name = "VALOR_MARGEM_APURADO", nullable = false)
     private BigDecimal valorMargemApurado;
+    
+    @OneToOne
+    @JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
+    private MovimentoEstoque movimentoEstoque;
     
     /**
      * @return the id
@@ -447,8 +453,22 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     public void setValorMargemApurado(BigDecimal valorMargemApurado) {
         this.valorMargemApurado = valorMargemApurado;
     }
+    
+    /**
+	 * @return the movimentoEstoque
+	 */
+	public MovimentoEstoque getMovimentoEstoque() {
+		return movimentoEstoque;
+	}
 
-    /* (non-Javadoc)
+	/**
+	 * @param movimentoEstoque the movimentoEstoque to set
+	 */
+	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
+		this.movimentoEstoque = movimentoEstoque;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
