@@ -205,16 +205,16 @@ public class ItemNotaFiscalBuilder  {
 		
 		movimentoEstoqueCota.setNotaFiscalEmitida(true);
 		
-		if(detalheNotaFiscal.getEncargoFinanceiro() == null) {
-			detalheNotaFiscal.setEncargoFinanceiro(new EncargoFinanceiro() {
-				private static final long serialVersionUID = 1L;
+		// if(detalheNotaFiscal.getEncargoFinanceiro() == null) {
+			// detalheNotaFiscal.setEncargoFinanceiro(new EncargoFinanceiro() {
+				// private static final long serialVersionUID = 1L;
 				
-			});
-		}
+			// });
+		// }
 		COFINS cofins= new COFINS();
 		cofins.setCst(1);
 		cofins.setPercentualAliquota(new BigDecimal("3.0"));
-		detalheNotaFiscal.getEncargoFinanceiro().setCofins(cofins);
+		// detalheNotaFiscal.getEncargoFinanceiro().setCofins(cofins);
 		
 		List<OrigemItemNotaFiscal> origemItens = detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() != null ? detalheNotaFiscal.getProdutoServico().getOrigemItemNotaFiscal() : new ArrayList<OrigemItemNotaFiscal>();
 		

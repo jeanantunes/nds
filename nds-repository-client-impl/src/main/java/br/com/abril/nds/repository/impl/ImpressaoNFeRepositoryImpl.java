@@ -554,14 +554,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		 * Long numeroNota, boolean notaImpressa, Cota c, BigInteger totalExemplares, BigDecimal vlrTotal, BigDecimal vlrTotalDesconto
 		 */
 		StringBuilder hql = new StringBuilder("SELECT ")
-		.append(" notaFiscal.id, ")
-		.append(" false, ")
-		.append(" cota, ")
-		.append(" pj.razaoSocial, ")
-		.append(" SUM(item.quantidade), ")
-		.append(" SUM(item.valorTotalBruto), ")
-		.append(" SUM(item.valorDesconto) ");		
-		
+		.append(" notaFiscal ");
 		Query query = queryConsultaImpressaoParameters(queryConsultaImpressaoNfe(filtro, hql, true, true, true), filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(NotasCotasImpressaoNfeDTO.class));
