@@ -17,4 +17,6 @@ public interface AjusteReparteRepository extends Repository<AjusteReparte, Long>
 	
 	int qtdAjusteSegmento (Long idCota);
 	
+	Integer vendaMedia ();
+	
 }

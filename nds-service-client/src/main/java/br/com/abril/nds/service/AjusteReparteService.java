@@ -27,4 +27,6 @@ public interface AjusteReparteService {
 	
 	TipoSegmentoProduto buscarSegmentoPorID (Long id);
 	
+	Integer buscarVendaMedia ();
+	
 }
