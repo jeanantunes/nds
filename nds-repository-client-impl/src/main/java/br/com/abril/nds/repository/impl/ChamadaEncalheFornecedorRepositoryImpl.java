@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
@@ -82,7 +83,45 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	}
     	
     	return query.list();
-
     }
+
+    /**
+     * Obtém lista de CE Fornecedor com Diferença(Perda/Ganho) Pendente
+     * 
+     * @param listaIdCeFornecedor
+     * @return List<ChamadaEncalheFornecedor>
+     */
+    @SuppressWarnings("unchecked")
+	@Override
+    public List<ChamadaEncalheFornecedor> obtemCEFornecedorComDiferencaPendente(List<Long> listaIdCeFornecedor) {
+		
+        StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select cef ")
+    	
+    	   .append(" from ChamadaEncalheFornecedor as cef ")
+
+    	   .append(" join cef.itens itens ")
+    		
+    	   .append(" join itens.diferenca dif ")
+    	
+    	   .append(" where dif.statusConfirmacao = :statusConfirmacao ");
+
+    	if (listaIdCeFornecedor!=null && !listaIdCeFornecedor.isEmpty()){
+    		
+    		hql.append(" and cef.id in = :listaIdCeFornecedor ");
+    	}
+
+    	Query query = getSession().createQuery(hql.toString());
+
+    	query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
+    	
+    	if(listaIdCeFornecedor != null && !listaIdCeFornecedor.isEmpty()){
+    		
+    		query.setParameterList("listaIdCeFornecedor", listaIdCeFornecedor);
+    	}
+    	
+    	return query.list();
+	}
 
 }

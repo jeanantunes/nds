@@ -38,7 +38,12 @@ public interface ChamadaEncalheFornecedorRepository extends Repository<ChamadaEn
     
     
     List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
-	
-	
-
+    
+    /**
+     * Obtém lista de CE Fornecedor com Diferença(Perda/Ganho) Pendente
+     * 
+     * @param listaIdCeFornecedor
+     * @return List<ChamadaEncalheFornecedor>
+     */
+    List<ChamadaEncalheFornecedor> obtemCEFornecedorComDiferencaPendente(List<Long> listaIdCeFornecedor);
 }
