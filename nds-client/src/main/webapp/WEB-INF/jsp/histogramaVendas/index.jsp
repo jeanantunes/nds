@@ -145,7 +145,7 @@
             <td width="76">Classifica&ccedil;&atilde;o:</td>
             <td width="50">
               <select name="idTipoClassificacaoProduto" id="idTipoClassificacaoProduto" style="width:200px;">
-                <option selected="selected">Selecione...</option>
+                <option selected="selected" value="">Selecione...</option>
                 <c:forEach items="${listaClassificacao}" var="classificacao">
                   <option value="${classificacao.key}">${classificacao.value}</option>
                 </c:forEach>
@@ -167,7 +167,7 @@
     <!--  href="javascript:histogramaVendasController.pesquisarFiltro(); href="/Lancamento/analise_histograma.htm"" -->
     <fieldset class="classFieldset" style="width: 960px !important; display: none;" id="fieldsetEdicoesProduto">
       <legend>Edi&ccedil;&otilde;es do Produto</legend>
-      <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
+      <table id="edicaoProdCadastradosGrid"></table>
 
     </fieldset>
 

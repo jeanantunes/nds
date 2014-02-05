@@ -2,9 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -86,48 +83,6 @@ public class EstudoServiceImpl implements EstudoService {
 
 	@Override
 	@Transactional
-	public void excluirEstudosAnoPassado() {
-		
-		Calendar c = Calendar.getInstance();
-		
-		c.set(Calendar.HOUR_OF_DAY,   0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.MONTH, Calendar.JANUARY);
-		c.set(Calendar.YEAR, c.get(Calendar.YEAR) - 1);
-		
-		Date dataStart = c.getTime();
-		
-		c.set(Calendar.HOUR_OF_DAY,   23);
-		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 59);
-		c.set(Calendar.MONTH, Calendar.DECEMBER);
-		c.set(Calendar.DAY_OF_MONTH, 31);
-		
-		Date dataEnd = c.getTime();
-		
-		System.out.println(new SimpleDateFormat("dd/MM/yyyy").format(dataStart));
-		System.out.println(new SimpleDateFormat("dd/MM/yyyy").format(dataEnd));
-		
-		List<EstudoGerado> listEstudos = estudoGeradoRepository.obterEstudosPorIntervaloData(dataStart, dataEnd);
-		
-		for (EstudoGerado estudo:listEstudos) {
-			
-			try {
-				
-				estudoGeradoRepository.remover(estudo);
-			} catch (Exception e) {
-				
-				System.out.println("Erro ao excluir estudo:" + estudo.getId());
-				e.printStackTrace();
-			}
-			
-		}
-	}
-
-	@Override
-	@Transactional
 	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
 		return estudoGeradoRepository.obterResumoEstudo(estudoId);
 	}
@@ -138,22 +93,6 @@ public class EstudoServiceImpl implements EstudoService {
 		this.estudoGeradoRepository.removerPorId(id);
 	}
 
-	@Override
-	@Transactional
-	public void criarNovoEstudo(ProdutoDistribuicaoVO produto) {
-	    EstudoGerado estudo = new EstudoGerado();
-	    estudo.setLiberado(false);
-	    estudo.setReparteDistribuir(produto.getRepDistrib());
-	    estudo.setDataLancamento(produto.getDataLanctoSemFormatacao());
-	    estudo.setDataCadastro(new Date());
-	    estudo.setDistribuicaoPorMultiplos(0);
-	    estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
-	    estudo.setQtdeReparte(produto.getRepDistrib());
-	    estudo.setProdutoEdicao(new ProdutoEdicao(produto.getIdProdutoEdicao().longValue()));
-	    estudoGeradoRepository.adicionar(estudo);
-	    produto.setIdEstudo(BigInteger.valueOf(estudo.getId()));
-	}
-	
     @Transactional(readOnly = true)
     public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
 
@@ -297,6 +236,7 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setProdutoEdicao(produtoEdicao);
 		estudo.setQtdeReparte(quantidadeReparte);
 		estudo.setReparteDistribuir(quantidadeReparte);
+		estudo.setLiberado(true);
 		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
 		
 		return estudoGeradoRepository.merge(estudo);
@@ -331,17 +271,19 @@ public class EstudoServiceImpl implements EstudoService {
 			throw new RuntimeException(e);
 		}
 
-		try {
-			
-			this.estudoRepository.adicionar(estudo);
-			
-		} catch (Exception e) {
+		this.estudoRepository.adicionar(estudo);
 
-			throw new RuntimeException(e);
+		Lancamento lancamento = 
+			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+		
+		if (lancamento != null) {
+			
+			lancamento.setEstudo(estudo);
+			
+			this.lancamentoRepository.alterar(lancamento);
 		}
 		
 		return estudo;
 	}
-	
 	
 }

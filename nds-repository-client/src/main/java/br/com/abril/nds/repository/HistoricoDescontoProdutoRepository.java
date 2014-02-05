@@ -1,7 +1,5 @@
 package br.com.abril.nds.repository;
 
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
 
 /**
@@ -15,10 +13,11 @@ public interface HistoricoDescontoProdutoRepository extends Repository<Historico
 	/**
 	 * Retorna o historico do desconto do Produto
 	 * 
-	 * @param desconto
-	 * @param produto
-	 * @return
+	 * @param idDesconto
+	 * @param idProduto
+	 * 
+	 * @return HistoricoDescontoProduto
 	 */
-	HistoricoDescontoProduto buscarHistoricoPorDescontoEProduto(Desconto desconto, Produto produto);
+	HistoricoDescontoProduto buscarHistoricoPorDescontoEProduto(Long idDesconto, Long idProduto);
 	
 }

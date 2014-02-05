@@ -286,11 +286,6 @@ public class HistogramaVendasController extends BaseController {
 		
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistogramaVendas.OrdemColuna.values(), sortname));
 		
-		if(filtro.getCodigo() != null){
-			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
-			filtro.setIdProduto(produto.getId());			
-		}
-		
 		tratarFiltro(filtro);
 		
 		TableModel<CellModelKeyValue<EdicoesProdutosDTO>> tableModel = efetuarConsultaEdicoesDoProdutos(filtro);
@@ -303,8 +298,11 @@ public class HistogramaVendasController extends BaseController {
 	private TableModel<CellModelKeyValue<EdicoesProdutosDTO>> efetuarConsultaEdicoesDoProdutos(
 			FiltroHistogramaVendas filtro) {
 		
-		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
-		filtro.setCodigo(produto.getCodigoICD());
+		if(filtro.getCodigo() != null){
+			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+			filtro.setIdProduto(produto.getId());
+			filtro.setCodigo(produto.getCodigoICD());
+		}
 		
 		List<EdicoesProdutosDTO> list = produtoEdicaoService.obterHistoricoEdicoes(filtro);
 		
