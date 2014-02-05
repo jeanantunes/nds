@@ -72,20 +72,6 @@ var produtoEdicaoController =$.extend(true,  {
 			errorCallBack();
 		}
 	},
-
-	// Mostrar auto complete por nome do produto
-	autoCompletarPorNome : function(idProduto, isFromModal) {
-		
-		produtoEdicaoController.pesquisaRealizada = false;
-
-		var nome = $(idProduto,this.workspace).val();
-
-		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'nomeProduto': nome},
-					function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
-					null, isFromModal);
-		}
-	},
 	
 	descricaoAtribuida : true,
 
@@ -93,95 +79,7 @@ var produtoEdicaoController =$.extend(true,  {
 
 	intervalo : null,
 
-	exibirAutoComplete : function(result, idProduto) {
-		
-		$(idProduto).autocomplete({
-			source : result,
-			focus : function(event, ui) {
-				produtoEdicaoController.descricaoAtribuida = false;
-			},
-			close : function(event, ui) {
-				produtoEdicaoController.descricaoAtribuida = true;
-			},
-			select : function(event, ui) {
-				produtoEdicaoController.descricaoAtribuida = true;
-			},
-			minLength: 2,
-			delay : 0,
-		});
-	},
-
-	// Pesquisar por nome do produto
-	pesquisarPorNome : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		
-		setTimeout(function() {
-			
-			clearInterval(produtoEdicaoController.intervalo); 
-		
-		}, 10 * 1000);
-
-		produtoEdicaoController.intervalo = setInterval(function() {
-			
-			if (produtoEdicaoController.descricaoAtribuida) {
-
-				if (produtoEdicaoController.pesquisaRealizada) {
-					
-					clearInterval(produtoEdicaoController.intervalo);
-
-					return;
-				}
-
-				produtoEdicaoController.pesquisarPorNomeAposIntervalo(idCodigo, idProduto,
-						isFromModal, successCallBack, errorCallBack);
-			}
-
-		}, 100);
-
-	},
-
-	pesquisarPorNomeAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		
-		clearInterval(produtoEdicaoController.intervalo);
-
-		produtoEdicaoController.pesquisaRealizada = true;
-
-		var nomeProduto = $(idProduto,this.workspace).val();
-
-		nomeProduto = $.trim(nomeProduto);
-
-		$(idCodigo,this.workspace).val("");
-
-		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
-					function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
-					function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
-		} else {
-
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-
-	pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, successCallBack) {
-		if (result != "") {
-			$(idCodigo,this.workspace).val(result.codigo);
-			$(idProduto,this.workspace).val(result.nome);
-
-			if (successCallBack) {
-				successCallBack();
-			}
-		}
-	},
-
-	pesquisarPorNomeErrorCallBack : function(idCodigo, idProduto, errorCallBack) {
-		$(idProduto,this.workspace).val("");
-		$(idProduto).focus();
-
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},	
+	
 
 	init : function(){
 		
@@ -292,23 +190,20 @@ var produtoEdicaoController =$.extend(true,  {
 			}
 		});
 		
-		
-		$('#produtoEdicaoController-pNome', this.workspace).bind({
-			keyup: function(){
-				//autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
-				produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);
+		$("#produtoEdicaoController-pNome").autocomplete({
+			source:function(param ,callback) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
 			},
-			blur: function(){
-				//autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
-				produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false, undefined,	undefined);
-			}
-		});
-		
-		
-		$('#produtoEdicaoController-nomeComercialProduto', this.workspace).keyup(function(){
-			
+			select : function(event, ui) {
+				produtoEdicaoController.descricaoAtribuida = true;
+				
+				$('#produtoEdicaoController-pCodigoProduto',produtoEdicaoController.workspace).val(ui.item.chave.codigo);
+				
+			},
+			minLength: 2,
+			delay : 0,
+		}).keyup(function(){
 			this.value = this.value.toUpperCase();
-		
 		});
 		
 			

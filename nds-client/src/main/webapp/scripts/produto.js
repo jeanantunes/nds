@@ -27,9 +27,19 @@ var produtoController = $.extend(true, {
 			produtoController.atualizaICD();
 		});
 		
-		$('#produto', produtoController.workspace).keyup(function(event){
-			if (event.keyCode !== 9)
-				produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
+		
+		$("#produto",produtoController.workspace).autocomplete({
+			source:function(param ,callback) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", { 'nomeProduto': param.term }, callback);
+			},
+			select : function(event, ui) {
+				$('#codigoProduto',produtoController.workspace).val(ui.item.chave.codigo);
+				
+			},
+			minLength: 2,
+			delay : 0,
+		}).keyup(function(){
+			this.value = this.value.toUpperCase();
 		});
 	},
 
