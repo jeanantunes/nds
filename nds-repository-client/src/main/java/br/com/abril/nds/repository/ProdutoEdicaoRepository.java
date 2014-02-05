@@ -210,13 +210,13 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * Verifica se o número da edição já foi cadastrado para outra edição 
 	 * de um mesmo Produto. 
 	 * 
-	 * @param codigoProduto Código do Produto.
+	 * @param idProduto Código do Produto.
 	 * @param numeroEdicao Número da Edição a ser verificada.
 	 * @param idProdutoEdicao ID da Edição (caso exista).
 	 * 
 	 * @return
 	 */
-	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
+	public boolean isNumeroEdicaoCadastrada(Long idProduto, 
 			Long numeroEdicao, Long idProdutoEdicao);
 	
 	/**

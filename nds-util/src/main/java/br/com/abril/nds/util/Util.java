@@ -141,7 +141,7 @@ public abstract class Util {
 				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_ITAU:
-				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
+				return Util.padLeft(idChamadaEncalheFornecedor.toString(), "0", 8);
 				
 			case BANCO_RURAL:
 				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
@@ -182,11 +182,7 @@ public abstract class Util {
 			default:
 				return codSacado + auxData + n1 + n2 + n3 + idChamadaEncalheFornecedor + (idFornecedor == null ? "0" : idFornecedor);
 		}
-	
-		
-		
-		
-		
+
 	}
 	
 	public static String gerarNossoNumero(

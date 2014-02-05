@@ -44,10 +44,13 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto,
-															 Desconto desconto, 
-															 Fornecedor fornecedor,
-															 Cota cota, Produto produto, ProdutoEdicao produtoEdicao) {
+	public DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(
+			TipoDesconto tipoDesconto,
+			Desconto desconto,
+			Fornecedor fornecedor,
+			Cota cota, 
+			Long idProduto, 
+			Long idProdutoEdicao) {
 		
 		boolean indWhere = false;
 		StringBuilder hql = new StringBuilder("select d ");
@@ -66,10 +69,10 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			indWhere = true;
 		}
 
-		if (produtoEdicao != null) {
+		if (idProdutoEdicao != null) {
 			
 			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.produtoEdicao = :produtoEdicao ");
+			   .append(" d.produtoEdicao.id = :idProdutoEdicao ");
 			indWhere = true;
 		} else {
 			
@@ -79,10 +82,10 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			
 		}
 	
-		if (produto != null) {
+		if (idProduto != null) {
 			
 			hql.append(indWhere ? " and " : " where ")
-			   .append(" d.produto = :produto ");
+			   .append(" d.produto.id = :idProduto ");
 			indWhere = true;
 		}		
 		
@@ -112,9 +115,9 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			query.setParameter("cota", cota);
 		}
 
-		if (produtoEdicao != null) {
+		if (idProdutoEdicao != null) {
 			
-			query.setParameter("produtoEdicao", produtoEdicao);
+			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
 		
 		if (tipoDesconto != null) {
@@ -127,9 +130,9 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			query.setParameter("desconto", desconto);
 		}
 		
-		if (produto != null) {
+		if (idProduto != null) {
 			
-			query.setParameter("produto", produto);
+			query.setParameter("idProduto", idProduto);
 		}
 		
 		query.setMaxResults(1);
@@ -143,7 +146,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor) {
 
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, null, null,null);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, fornecedor, null, null,null);
 	}
 	
 	/**
@@ -152,7 +155,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Cota cota) {
 		
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, cota, null,null);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, null, cota, null,null);
 	}
 	
 	/**
@@ -161,7 +164,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(Fornecedor fornecedor, Cota cota) {
 		
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, cota, null,null);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, fornecedor, cota, null,null);
 	}
 	
 	/**
@@ -170,7 +173,7 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontosProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, null, produtoEdicao,null);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, null, null, produtoEdicao,null);
 	}
 
 	/**
@@ -197,22 +200,29 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 	@Override
 	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota) {
 		
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, cota, null,tipoDesconto);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(null, fornecedor, cota, null,tipoDesconto);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
+	public Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao) {
 		
-		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(fornecedor, cota, produtoEdicao,tipoDesconto);
+		return obterDescontoProdutoEdicaoExcessaoCotaFornecedor(desconto, fornecedor, cota, produtoEdicao,tipoDesconto);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoCotaFornecedor(Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
+	private Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessaoCotaFornecedor(Desconto desconto, Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao,TipoDesconto tipoDesconto){
 		
 		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
+		
+		
+		if(desconto != null) {
+			
+			criteria.add(Restrictions.eq("desconto", desconto));
+			
+		}
 		
 		if (fornecedor != null) {
 			

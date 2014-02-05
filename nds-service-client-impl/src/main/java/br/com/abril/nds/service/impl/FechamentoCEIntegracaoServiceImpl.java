@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,6 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -51,9 +51,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Autowired
 	private BoletoService boletoService;
 
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
@@ -96,10 +93,62 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 	}
 	
-	@Override
-	@Transactional
-	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro) {
+    private ItemChamadaEncalheFornecedor atualizarItem(ItemChamadaEncalheFornecedor item, 
+    		                                           ItemFechamentoCEIntegracaoDTO itemDTO) {
+
+    	Long encalhe = 0l;
+    	
+	    Long vendaParcial = 0l;
+	    
+    	if (itemDTO!=null){
+    		
+    	    encalhe = itemDTO.getEncalhe() == null?0l:itemDTO.getEncalhe().longValue();
+    	
+    	    vendaParcial = itemDTO.getVenda() == null?0l:itemDTO.getVenda().longValue();
+    	}
+    	else{
+    		
+    		encalhe = item.getQtdeDevolucaoInformada() == null?0l:item.getQtdeDevolucaoInformada();
+        	
+    	    vendaParcial = item.getQtdeVendaApurada() == null?0l:item.getQtdeVendaApurada();
+    	}
+    	
+		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
+			
+			item.setQtdeVendaApurada(vendaParcial);
+		}
+		else{
+			
+			item.setQtdeVendaApurada(item.getQtdeEnviada() - encalhe);
+		}
 		
+		item.setQtdeDevolucaoInformada(encalhe);
+		item.setQtdeDevolucaoApurada(item.getQtdeDevolucaoInformada());
+		item.setQtdeVendaInformada(item.getQtdeVendaApurada());
+		item.setQtdeDevolucaoParcial(0L);
+		item.setValorVendaApurado(item.getPrecoUnitario().multiply(new BigDecimal(item.getQtdeVendaApurada())));
+		
+		BigDecimal desconto = obterPercentualDesconto(item);
+		
+		item.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(item.getPrecoUnitario()).multiply(item.getValorVendaApurado()));
+		item.setValorVendaApurado(item.getPrecoUnitario().multiply(item.getValorVendaApurado()).subtract(item.getValorMargemApurado()));
+		
+		item.setValorMargemInformado(item.getValorMargemApurado());
+		item.setValorVendaInformado(item.getValorVendaApurado());
+			
+		return this.itemChamadaEncalheFornecedorRepository.merge(item);
+	}
+
+    /**
+     * Processa C.E. Integração
+     * @param filtro
+     * @param diferencas
+     * @param fechamento
+     */
+	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
+			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas, 
+			                boolean fechamento) {
+
 		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
 		
 		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
@@ -112,12 +161,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
-			
-			// Essa validação deverá ser feita somente se houverem outros fornecedores vindos do Prodin.
-			/*if(cef.getFornecedor() == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro de integridade. Não existe fornecedor associado ao registro!");
-			}*/
 			
 			BigDecimal totalCreditoApurado = BigDecimal.ZERO;
 			BigDecimal totalCreditoInformado = BigDecimal.ZERO;
@@ -132,7 +175,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor) {
 				
 				List<ItemFechamentoCEIntegracaoDTO> itemFechamentoCEIntegracaoDTO = null;
-				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() != null && itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+				
+				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+					
 					filtro.setIdItemChamadaEncalheFornecedor(itemFo.getId());
 					itemFechamentoCEIntegracaoDTO = fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
 					filtro.setIdItemChamadaEncalheFornecedor(null);
@@ -157,7 +202,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf((itemFo.getQtdeDevolucaoApurada() == null) ? 0 : itemFo.getQtdeDevolucaoApurada()));
 				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf( (itemFo.getQtdeVendaApurada() == null) ? 0 : itemFo.getQtdeVendaApurada()));
 				
-				itemFo = this.atualizarItem(itemFo.getQtdeDevolucaoInformada(), itemFo.getQtdeVendaInformada(), itemFo);
+				itemFo = this.atualizarItem(itemFo, diferencas.get(itemFo.getId()));
 				
 			}
 			
@@ -167,11 +212,37 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			cef.setTotalMargemInformado(totalMargemInformado);
 			cef.setTotalVendaApurada(totalVendaApurada);
 			cef.setTotalVendaInformada(totalVendaInformada);
-			cef.setStatusCeNDS(StatusCeNDS.FECHADO);
+			cef.setStatusCeNDS(fechamento?StatusCeNDS.FECHADO:StatusCeNDS.ABERTO);
 			cef.setDataFechamentoNDS(dataOperacao);
 			
 			chamadaEncalheFornecedorRepository.alterar(cef);
 		}
+	}
+	
+	/**
+	 * Fecha C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	@Override
+	@Transactional
+	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
+			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
+		
+		this.processaCE(filtro, diferencas, true);
+	}
+	
+	/**
+	 * Salva C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	@Override
+	@Transactional
+	public void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, 
+			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
+		
+		this.processaCE(filtro, diferencas, false);
 	}
 	
 	@Override
@@ -288,38 +359,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		ItemChamadaEncalheFornecedor item = 
 			this.itemChamadaEncalheFornecedorRepository.buscarPorId(idItemChamadaFornecedor);
 
-		atualizarItem(encalhe.longValue(),venda.longValue(),item);
-	}
-
-	private ItemChamadaEncalheFornecedor atualizarItem(Long encalhe, Long vendaParcial, ItemChamadaEncalheFornecedor item) {
-		
-		encalhe = (encalhe == null) ? 0 : encalhe;
-		vendaParcial = (vendaParcial == null) ? 0 : vendaParcial;
-		
-		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
-			
-			item.setQtdeVendaApurada(vendaParcial);
-		}
-		else{
-			
-			item.setQtdeVendaApurada(item.getQtdeEnviada() - encalhe);
-		}
-		
-		item.setQtdeDevolucaoInformada(encalhe);
-		item.setQtdeDevolucaoApurada(item.getQtdeDevolucaoInformada());
-		item.setQtdeVendaInformada(item.getQtdeVendaApurada());
-		item.setQtdeDevolucaoParcial(0L);
-		item.setValorVendaApurado(item.getPrecoUnitario().multiply(new BigDecimal(item.getQtdeVendaApurada())));
-		
-		BigDecimal desconto = obterPercentualDesconto(item);
-		
-		item.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(item.getPrecoUnitario()).multiply(item.getValorVendaApurado()));
-		item.setValorVendaApurado(item.getPrecoUnitario().multiply(item.getValorVendaApurado()).subtract(item.getValorMargemApurado()));
-		
-		item.setValorMargemInformado(item.getValorMargemApurado());
-		item.setValorVendaInformado(item.getValorVendaApurado());
-			
-		return this.itemChamadaEncalheFornecedorRepository.merge(item);
+		atualizarItem(item, null);
 	}
 
 	private BigDecimal obterPercentualDesconto(ItemChamadaEncalheFornecedor item) {
