@@ -3,7 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigInteger;
 
-import br.com.abril.nds.model.planejamento.EstudoCota.TipoEstudoCota;
+import br.com.abril.nds.model.planejamento.TipoEstudoCota;
 
 public class EstudoCotaDTO implements Serializable {
 

@@ -13,10 +13,10 @@ import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.DistribuicaoRepository;
-import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.SomarEstudosService;
@@ -28,7 +28,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 	private EstudoGeradoRepository estudoGeradoRepository;
 	
 	@Autowired
-	private EstudoCotaRepository estudoCotaRepository;
+	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -49,15 +49,15 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		Long idEstudo = distribuicaoVO.getIdEstudo().longValue();
 		EstudoGerado estudoBase = estudoGeradoRepository.buscarPorId(idEstudoBase);
 		
-		Map<Long,EstudoCota> mapEstudoCota = new HashMap<Long,EstudoCota>();
+		Map<Long,EstudoCotaGerado> mapEstudoCota = new HashMap<Long,EstudoCotaGerado>();
 		
 		if (estudoBase.getEstudoCotas() != null && !estudoBase.getEstudoCotas().isEmpty()) {
 			
-			Iterator<EstudoCota> it =  estudoBase.getEstudoCotas().iterator(); 
+			Iterator<EstudoCotaGerado> it =  estudoBase.getEstudoCotas().iterator(); 
 			
 			while (it.hasNext()) {
 				
-				EstudoCota estudoCota = it.next();
+				EstudoCotaGerado estudoCota = it.next();
 				Cota cota = estudoCota.getCota();
 				
 				if(cota != null) {
@@ -78,11 +78,11 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		
 		if (estudo.getEstudoCotas() != null && !estudo.getEstudoCotas().isEmpty()) {
 			
-			Iterator<EstudoCota> it =  estudo.getEstudoCotas().iterator(); 
+			Iterator<EstudoCotaGerado> it =  estudo.getEstudoCotas().iterator(); 
 			
 			while (it.hasNext()) {
 				
-				EstudoCota estudoCota = it.next();
+				EstudoCotaGerado estudoCota = it.next();
 				
 				if (estudoCota.getCota() != null) {
 					
@@ -90,7 +90,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 					
 					if (mapEstudoCota.containsKey(idCota)) {
 					  	
-						EstudoCota estudoCotaBase = mapEstudoCota.remove(idCota);
+						EstudoCotaGerado estudoCotaBase = mapEstudoCota.remove(idCota);
 						
 						if (estudoCotaBase.getReparte() != null && estudoCota.getReparte() != null) {
 							
@@ -100,15 +100,15 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 				}
 			}
 		
-			Iterator<Entry<Long,EstudoCota>> itMap = mapEstudoCota.entrySet().iterator();
+			Iterator<Entry<Long,EstudoCotaGerado>> itMap = mapEstudoCota.entrySet().iterator();
 			
 			while (itMap.hasNext()) {
 				
-				EstudoCota estudoCota = itMap.next().getValue();
+				EstudoCotaGerado estudoCota = itMap.next().getValue();
 				estudoCota.setEstudo(estudo);
 				estudoCota.setQtdeEfetiva(estudoCota.getReparte());
 				estudoCota.setQtdePrevista(estudoCota.getReparte());
-				estudoCotaRepository.alterar(estudoCota);
+				estudoCotaGeradoRepository.alterar(estudoCota);
 			}
 			
 			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){

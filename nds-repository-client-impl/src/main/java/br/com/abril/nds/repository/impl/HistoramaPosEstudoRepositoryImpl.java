@@ -32,7 +32,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("	   (SUM(VENDA_MEDIA) / SUM(REPARTE)) * 100 vendaPercent, ");
 		sql.append("	   (SUM(REPARTE) - SUM(VENDA_MEDIA)) / COUNT(*) encalheMedio, ");
 		sql.append("       COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
-		sql.append("       (SUM(REPARTE) / (SELECT SUM(REPARTE) FROM ESTUDO_COTA WHERE ESTUDO_ID = :ESTUDO_ID) * 100) participacaoReparte, ");
+		sql.append("       (SUM(REPARTE) / (SELECT SUM(REPARTE) FROM estudo_cota_gerado WHERE ESTUDO_ID = :ESTUDO_ID) * 100) participacaoReparte, ");
 		sql.append("  		group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
 		sql.append("  FROM (SELECT REP.ID, ");
 		sql.append("               REP.NUMERO_COTA, ");
@@ -44,7 +44,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("          FROM (SELECT C.ID, ");
 		sql.append("                       C.NUMERO_COTA, ");
 		sql.append("                       EC.REPARTE ");
-		sql.append("                  FROM ESTUDO_COTA EC ");
+		sql.append("                  FROM estudo_cota_gerado EC ");
 		sql.append("                  JOIN COTA C ON C.ID = EC.COTA_ID ");
 		sql.append("                 WHERE EC.ESTUDO_ID = :ESTUDO_ID) REP ");
 		sql.append("         LEFT JOIN (SELECT C.ID, ");
