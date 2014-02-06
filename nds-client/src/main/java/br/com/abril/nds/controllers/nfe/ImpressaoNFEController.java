@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -36,7 +34,6 @@ import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -55,8 +52,6 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
 public class ImpressaoNFEController extends BaseController {
 
-	 private static final Logger logger = LoggerFactory.getLogger(ImpressaoNFEController.class);
-	
 	@Autowired
 	private HttpSession session;
 
@@ -77,9 +72,6 @@ public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
 	private ImpressaoNFEService impressaoNFEService;
-
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private RoteiroService roteiroService;
@@ -278,11 +270,7 @@ public class ImpressaoNFEController extends BaseController {
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 		 
-		logger.info("metedo de impresão de Nota Fiscal...");
-		
-		// verificar obrigação fiscal
-			// se a cota não for contribuinte de ICMS
-		this.distribuidorService.tipoImpressaoNENECADANFE();
+		this.impressaoNFEService.imprimirNFe(filtro);
 		
 		// validar o tipo de nota
 			// agregar ao tipo de nota..
@@ -315,14 +303,12 @@ public class ImpressaoNFEController extends BaseController {
 
 		result.use(Results.json()).withoutRoot().from(listaItensRotas).recursive().serialize();
 	}
-
+	
 	/**
 	 * Metodo utilitario para escrever arquivo em pdf
-	 * 
 	 */
+	@SuppressWarnings("unused")
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) {
-		
-		logger.info("metedo responsavel por escrever arquivo por response");
 		
 		this.httpResponse.setContentType("application/pdf");
 
@@ -332,7 +318,7 @@ public class ImpressaoNFEController extends BaseController {
 		try {
 			output = this.httpResponse.getOutputStream();
 			output.write(arquivo);
-			httpResponse.getOutputStream().close();
+			this.httpResponse.getOutputStream().close();
 			result.use(Results.nothing());
 		} catch (IOException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar relatorio");

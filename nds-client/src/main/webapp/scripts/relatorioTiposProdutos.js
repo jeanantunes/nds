@@ -1,9 +1,7 @@
-
-﻿var relatorioTiposProdutosController = $.extend(true, {
+var relatorioTiposProdutosController = $.extend(true, {
 	
 	path : contextPath + '/lancamento/relatorioTiposProdutos/',
-
-
+	
 	init : function() {
 		
 		$("#dateLanctoDe", this.workspace).datepicker({
@@ -51,7 +49,6 @@
 			});
 		});
 	},
-	
 	
 	pesquisar : function() {
 
@@ -163,7 +160,5 @@
 
 	}
 	
-	
 }, BaseController);
-
 //@ sourceURL=relatorioTiposProdutos.js
