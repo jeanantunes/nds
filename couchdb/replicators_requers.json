@@ -1,0 +1,25 @@
+// replicacao base CORREIOS
+{
+   "_id": "correios_from_cloud",
+   "source": "http://admin:admin@177.71.255.76:5984/correios",
+   "target": "http://admin:admin@127.0.0.1:5984/correios",
+   "continuous": true,
+   "owner": "admin"
+}
+
+// replicacao base CAMPINAS
+{
+   "_id": "replicacao_campinas",
+   "source": "http://admin:admin@177.71.197.206:5984/db_00000002",
+   "target": "http://admin:admin@127.0.0.1:5984/db_06248116",
+   "owner": "admin"
+}
+
+
+// replicacao base FC
+{
+   "_id": "replicacao_fc",
+   "source": "http://admin:admin@177.71.197.206:5984/db_07359227",
+   "target": "http://admin:admin@127.0.0.1:5984/db_07359227",
+   "owner": "admin"
+}
