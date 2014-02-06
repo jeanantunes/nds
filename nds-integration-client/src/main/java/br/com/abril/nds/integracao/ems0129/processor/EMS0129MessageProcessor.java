@@ -11,11 +11,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +49,8 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 @Component
 
 public class EMS0129MessageProcessor extends AbstractRepository implements MessageProcessor  {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0129Route.class);
+    
+    private static final Logger LOGGER = Logger.getLogger(EMS0129Route.class);
 
 	private static final String NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT = "PICKING.NEP";
 	
@@ -95,11 +95,11 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_3)) {
 
-			if (LOGGER.isWarnEnabled()) {
+
 
 				LOGGER.warn(String.format("Leiaute Picking Distribuidor %s nao implementado !",
 						distribuidor.getTipoImpressaoInterfaceLED()));
-			}
+
 			
 		} else {
 			
@@ -111,12 +111,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	
-	/**
-	 * Processa geração do arquivo de Picking do Modelo1
-	 * 
-	 * @param message
-	 * @param distribuidor
-	 */
+	            /**
+     * Processa geração do arquivo de Picking do Modelo1
+     * 
+     * @param message
+     * @param distribuidor
+     */
 	private void processarArquivoPickingModelo1(Message message,
 			Distribuidor distribuidor) {
 		
@@ -133,12 +133,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	
-	/**
-	 * Processa geração do arquivo de Picking do Modelo1
-	 * 
-	 * @param message
-	 * @param distribuidor
-	 */
+	            /**
+     * Processa geração do arquivo de Picking do Modelo1
+     * 
+     * @param message
+     * @param distribuidor
+     */
 	private void processarArquivoPickingModelo2(Message message,
 			Distribuidor distribuidor) {
 		
@@ -268,12 +268,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	
-	/**
-	 * Obtém a data de Lançamento do Distribuidor
-	 * 
-	 * @param message
-	 * @return
-	 */
+	            /**
+     * Obtém a data de Lançamento do Distribuidor
+     * 
+     * @param message
+     * @return
+     */
 	private Date getDataLancDistrib(Message message) {
 		
 		Date data = (Date) message.getHeader().get("DATA_LCTO_DISTRIB");
@@ -289,12 +289,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	
-	/**
-	 * Obtém os dados de detalhes para geração do arquivo 
-	 * 
-	 * @param message
-	 * @return
-	 */
+	            /**
+     * Obtém os dados de detalhes para geração do arquivo
+     * 
+     * @param message
+     * @return
+     */
 	@SuppressWarnings("unchecked")
 	public List<DetalhesPickingDTO> getDetalhesPicking(Long idCota, Date data) {
 		
@@ -352,12 +352,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	
 	
 	
-	/**
-	 * Cria o cabeçalho para os arquivos do modelo1
-	 * 
-	 * @param headerDTO
-	 * @return
-	 */
+	            /**
+     * Cria o cabeçalho para os arquivos do modelo1
+     * 
+     * @param headerDTO
+     * @return
+     */
 	public EMS0129Picking1Header criarHeaderModelo1(HeaderPickingDTO headerDTO) {
 		EMS0129Picking1Header outheader = new EMS0129Picking1Header();
 		
@@ -369,12 +369,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	
-	/**
-	 * Cria o cabeçalho para os arquivos do modelo 2
-	 * 
-	 * @param headerDTO
-	 * @return
-	 */
+	            /**
+     * Cria o cabeçalho para os arquivos do modelo 2
+     * 
+     * @param headerDTO
+     * @return
+     */
 	public EMS0129Picking2Header criarHeaderModelo2(HeaderPickingDTO headerDTO) {
 		
 		EMS0129Picking2Header outheader = new EMS0129Picking2Header();
@@ -388,11 +388,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		return outheader;
 	}
 
-	/**
-	 * Obtém dados utilizado no header dos arquivos de LED
-	 * @param data
-	 * @return
-	 */
+	            /**
+     * Obtém dados utilizado no header dos arquivos de LED
+     * 
+     * @param data
+     * @return
+     */
 	@SuppressWarnings("unchecked")
 	public List<HeaderPickingDTO> getHeadePicking(Date data) {
 		
@@ -545,16 +546,16 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		return modelo;
 	}
 
-	/**
-	 * Lança Exceção com Mensagem de Validação
-	 * 
-	 * @param mensagemValidacao
-	 * @param message
-	 * @throws ValidacaoException
-	 */
+	            /**
+     * Lança Exceção com Mensagem de Validação
+     * 
+     * @param mensagemValidacao
+     * @param message
+     * @throws ValidacaoException
+     */
 	private void lancarMensagemValidacao(String mensagemValidacao, Message message) throws ValidacaoException {
 		
-		this.ndsiLoggerFactory.getLogger().logWarning(message,
+        this.ndsiLoggerFactory.getLogger().logWarning(message,
 				EventoExecucaoEnum.GERACAO_DE_ARQUIVO, mensagemValidacao);
 		
 		this.setMensagemValidacao(mensagemValidacao);

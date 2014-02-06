@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,10 +22,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 /**
+ * 
+ * Classe criada para fazer a engenharia reversa de uma planilha em formado XLS
+ * ou XLSX, passando as informações para um Bean anotado.
+ * 
  * @author Thiago
- * Classe criada para fazer a engenharia reversa de uma planilha em formado XLS ou XLSX, passando as informações para um Bean anotado.
  */
 public class XlsUploaderUtils {
+    
+    private static final Logger LOGGER = Logger.getLogger(XlsUploaderUtils.class);
 	
 	private static final String XLS = ".xls";
 	private static final String XLSX = ".xlsx";
@@ -50,19 +56,19 @@ public class XlsUploaderUtils {
 				getContentUsingReflection(clazz, list, sheet);
 			}
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		
 		return list;
@@ -153,7 +159,12 @@ public class XlsUploaderUtils {
 				return cell.getBooleanCellValue();
 			case Cell.CELL_TYPE_NUMERIC:
                 if (genericType == String.class) {
-                    return ((Double) cell.getNumericCellValue()).intValue(); //Não queremos casas decimais nestes casos.
+                return ((Double) cell.getNumericCellValue()).intValue(); // Não
+                                                                         // queremos
+                                                                         // casas
+                                                                         // decimais
+                                                                         // nestes
+                                                                         // casos.
                 }
                 return cell.getNumericCellValue();
 			case Cell.CELL_TYPE_STRING:

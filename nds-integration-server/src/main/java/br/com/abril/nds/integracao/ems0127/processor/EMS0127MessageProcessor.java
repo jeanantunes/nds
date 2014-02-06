@@ -13,8 +13,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -29,7 +29,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 @Component
 public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0127MessageProcessor.class);
+	private static final Logger LOGGER = Logger.getLogger(EMS0127MessageProcessor.class);
 
 	@Autowired
 	private SessionFactory sessionFactoryIcd;

@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.util.export.Export;
@@ -11,6 +13,8 @@ import br.com.abril.nds.util.export.Export.Alignment;
 
 
 public class AnaliseNormalDTO {
+    
+    private static final Logger LOGGER = Logger.getLogger(AnaliseNormalDTO.class);
 	
 	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private int cota;
@@ -33,7 +37,7 @@ public class AnaliseNormalDTO {
 	@Export(label = "Media Venda", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private double mediaVenda;
 	
-	@Export(label = "Último Reparte", alignment=Alignment.LEFT, exhibitionOrder = 8)
+    @Export(label = "Último Reparte", alignment = Alignment.LEFT, exhibitionOrder = 8)
 	private double ultimoReparte;
 	
 	@Export(label = "Reparte 6", alignment=Alignment.LEFT, exhibitionOrder = 9)
@@ -73,12 +77,6 @@ public class AnaliseNormalDTO {
 	@Export(label = "Venda 1", alignment=Alignment.LEFT, exhibitionOrder = 20)
 	private Double venda1;
 	
-	private Long edicao6;
-	private Long edicao5;
-	private Long edicao4;
-	private Long edicao3;
-	private Long edicao2;
-	private Long edicao1;
 	
 	public void setCota(int cota) {
 		this.cota = cota;
@@ -120,7 +118,7 @@ public class AnaliseNormalDTO {
 			field.set(this, value);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -132,7 +130,7 @@ public class AnaliseNormalDTO {
 			return (Double) field.get(this);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}

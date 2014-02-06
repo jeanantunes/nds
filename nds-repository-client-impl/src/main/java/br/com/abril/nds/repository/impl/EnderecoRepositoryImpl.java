@@ -26,8 +26,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -56,7 +56,7 @@ import br.com.abril.nds.vo.EnderecoVO;
 public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Long> implements
 		EnderecoRepository {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoRepositoryImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(EnderecoRepositoryImpl.class);
 	
 	/**
 	 * Construtor.

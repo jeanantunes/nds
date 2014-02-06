@@ -22,9 +22,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.apache.commons.digester.annotations.rules.ObjectCreate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +61,6 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
-import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
@@ -91,6 +88,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
+    
+    private static final Logger LOGGER = Logger.getLogger(ContagemDevolucaoServiceImpl.class);
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -149,7 +148,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
@@ -247,13 +245,13 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	/**
-	 * Insere os dados parciais de devolução digitados pelo usuario.
-	 * 
-	 * @param listaContagemDevolucao
-	 * @param usuario
-	 * @param mockPerfilUsuario
-	 */
+	        /**
+     * Insere os dados parciais de devolução digitados pelo usuario.
+     * 
+     * @param listaContagemDevolucao
+     * @param usuario
+     * @param mockPerfilUsuario
+     */
 	@Transactional
 	public void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario, boolean indPerfilUsuarioEncarregado) {
 		
@@ -270,12 +268,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	}
 	
 	
-	/**
-	 * Salva os dados parciais de devolução digitados pelo usuario.
-	 * 
-	 * @param listaContagemDevolucao
-	 * @param usuario
-	 */
+	        /**
+     * Salva os dados parciais de devolução digitados pelo usuario.
+     * 
+     * @param listaContagemDevolucao
+     * @param usuario
+     */
 	private void inserirListaContagemDevolucao(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) {
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
@@ -403,7 +401,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		confirmarValoresContagemDevolucao(listaContagemDevolucao, usuario);
 		
-		//FIXME: ajustar função de confirmar para geração de notas ou impressão de CE de acordo com a obrigação fiscal.
+        // FIXME: ajustar função de confirmar para geração de notas ou impressão
+        // de CE de acordo com a obrigação fiscal.
 		gerarNotasFiscaisPorFornecedor(listaContagemDevolucao, usuario, false);
 		
 	}
@@ -452,7 +451,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		if (produtoEdicao == null) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.ERROR, "Não foi encontrado o produto/edição para inventário de estoque!");
+TipoMensagem.ERROR,
+                    "Não foi encontrado o produto/edição para inventário de estoque!");
 		}
 
 		BigInteger qtdeDiferenca = contagem.getDiferenca();
@@ -568,13 +568,12 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	/**
-	 * Obtém os registro de ConferenciaEncalheParcial relativos 
-	 * a um objeto de contagem agrupado e sinaliza-os mesmo que
-	 * a diferenca foi apurada.
-	 * 
-	 * @param contagem
-	 */
+	        /**
+     * Obtém os registro de ConferenciaEncalheParcial relativos a um objeto de
+     * contagem agrupado e sinaliza-os mesmo que a diferenca foi apurada.
+     * 
+     * @param contagem
+     */
 	private void sinalizarDiferencaApurada(ContagemDevolucaoDTO contagem) {
 		
 		String codigoProduto = contagem.getCodigoProduto();
@@ -599,17 +598,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	
 	
-	/**
-	 * Separa os itens a serem utilizados na geração da NF por fornecedor, 
-	 * gerando assim uma NF para cada grupo de produtos de um fornecedor.
-	 * 
-	 * @param listaContagemDevolucaoAprovada
-	 * @param usuarioopa
-	 * @param indConfirmarContagemDevolucao
-	 * 
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
-	 */
+	        /**
+     * Separa os itens a serem utilizados na geração da NF por fornecedor,
+     * gerando assim uma NF para cada grupo de produtos de um fornecedor.
+     * 
+     * @param listaContagemDevolucaoAprovada
+     * @param usuarioopa
+     * @param indConfirmarContagemDevolucao
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
 	@Override
 	@Transactional
 	public void gerarNotasFiscaisPorFornecedor(
@@ -648,14 +647,14 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	/**
-	 * Obtem o fornecedor correspondente ao código produto.
-	 * 
-	 * @param mapaCodProdutoFornecedor
-	 * @param codigoProduto
-	 * 
-	 * @return Fornecedor
-	 */
+	        /**
+     * Obtem o fornecedor correspondente ao código produto.
+     * 
+     * @param mapaCodProdutoFornecedor
+     * @param codigoProduto
+     * 
+     * @return Fornecedor
+     */
 	private Fornecedor obterFornecedorPorCodigoProduto(Map<String, Fornecedor> mapaCodProdutoFornecedor, String codigoProduto) {
 		
 		if(mapaCodProdutoFornecedor.get(codigoProduto) != null) {
@@ -689,7 +688,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 
 		if(tipoNotaFiscal == null) {
-			throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
+            throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 		}
 		
 		List<ItemNotaFiscalSaida> listItemNotaFiscal = carregarDadosNFSaida(listaAgrupadaContagemDevolucao);
@@ -753,16 +752,16 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 	}
 	
-	/**
-	 * Obtém uma lista de contagem devolução com as qtndes de itens 
-	 * sumarizadas agrupando por produto edicao.
-	 * 
-	 * @param listaContagemDevolucaoAprovada
-	 * @param indDiferencaApurada
-	 * @param indNfParcialGerada
-	 * 
-	 * @return List<ContagemDevolucaoDTO>
-	 */
+	        /**
+     * Obtém uma lista de contagem devolução com as qtndes de itens sumarizadas
+     * agrupando por produto edicao.
+     * 
+     * @param listaContagemDevolucaoAprovada
+     * @param indDiferencaApurada
+     * @param indNfParcialGerada
+     * 
+     * @return List<ContagemDevolucaoDTO>
+     */
 	private List<ContagemDevolucaoDTO> obterListaContagemDevolucaoTotalAgrupado(
 			List<ContagemDevolucaoDTO> listaContagemDevolucaoAprovada,
 			Boolean indDiferencaApurada,
@@ -951,8 +950,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
     /**
      * Gera o PDF com as chamadas de encalhe recebidas
      * 
-     * @param chamadas
-     *            chamadas de encalhe para geração do PDF
+     * @param chamadas chamadas de encalhe para geração do PDF
      * @return PDF gerado com as chamadas de encalhe
      */
     protected byte[] gerarPDFChamadaEncalheFornecedor(Collection<ChamadasEncalheFornecedorDTO> chamadas) {
@@ -962,7 +960,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
             String path = url.toURI().getPath();
             return JasperRunManager.runReportToPdf(path, new HashMap<String, Object>(), dataSource);
         } catch (URISyntaxException | JRException ex) {
-            LOG.error("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+            LOGGER.error("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
             throw new RuntimeException("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
         }
     }

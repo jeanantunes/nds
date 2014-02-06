@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -37,6 +38,9 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/distribuicao/desenglobacao")
 @Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
 public class DesenglobacaoController extends BaseController {
+    
+    private static final Logger LOGGER = Logger.getLogger(DesenglobacaoController.class);
+
 
     @Autowired
     private Result result;
@@ -95,7 +99,8 @@ public class DesenglobacaoController extends BaseController {
 //    private void validarFiltroDesenglobacao(FiltroDesenglobacaoDTO filtro) {
 //	if((filtro.getCotaDto().getNumeroCota() == null || filtro.getCotaDto().getNumeroCota() == 0) && 
 //		(filtro.getCotaDto().getNomePessoa() == null || filtro.getCotaDto().getNomePessoa().trim().isEmpty()))
-//	    throw new ValidacaoException(TipoMensagem.WARNING, "Informe um código ou nome.");
+    // throw new ValidacaoException(TipoMensagem.WARNING,
+    // "Informe um código ou nome.");
 //    }
 
     @Post
@@ -126,7 +131,8 @@ public class DesenglobacaoController extends BaseController {
     		throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota para englobar");
 		}
     	if((desenglobacao.getPorcentagemCota() == null || desenglobacao.getPorcentagemCota() <= 0)){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota ["+ desenglobacao.getNumeroCotaEnglobada() +" ], não englobada/alterada, pois estava sem porcentagem para cota!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota [" + desenglobacao.getNumeroCotaEnglobada()
+                    + " ], não englobada/alterada, pois estava sem porcentagem para cota!");
     	}
     	
     	validarCota(desenglobacao.getNumeroCotaEnglobada());
@@ -139,7 +145,7 @@ public class DesenglobacaoController extends BaseController {
     	String situacaoCadastro = cotaPesquisada.getSituacaoCadastro().toString();
     	
     	if((situacaoCadastro).equalsIgnoreCase("INATIVO")){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + numeroCota + " não está Ativa!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + numeroCota + " não está Ativa!");
     	}
 	}
     
@@ -157,7 +163,7 @@ public class DesenglobacaoController extends BaseController {
 
 	List<DesenglobacaoDTO> cotasDesenglobadas = desenglobacaoService.obterDesenglobacaoPorCota(longValue);
 
-	FileExporter.to("ENGLOBACAO_DESENGLOBACAO", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+        FileExporter.to("ENGLOBACAO_DESENGLOBACAO", fileType).inHTTPResponse(this.getNDSFileHeader(), null,
 		cotasDesenglobadas, DesenglobacaoDTO.class, this.httpResponse);
 	result.nothing();
     }
@@ -188,8 +194,8 @@ public class DesenglobacaoController extends BaseController {
 	try {
 	    this.desenglobacaoService.excluirDesenglobacao(id);
 	} catch (Exception e) {
-	    e.printStackTrace();
-	    throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao excluir Desenglobação");
+	    LOGGER.error(e.getMessage(), e);
+            throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao excluir Desenglobação");
 	}
 
 	result.use(Results.json()).from("OK").serialize();

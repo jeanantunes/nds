@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -69,6 +70,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cadastro/edicao")
 @Rules(Permissao.ROLE_CADASTRO_EDICAO)
 public class ProdutoEdicaoController extends BaseController {
+    
+    private static final Logger LOGGER = Logger.getLogger(ProdutoEdicaoController.class);
 
 	@Autowired
 	private Result result;
@@ -118,7 +121,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.carregarDadosCombo();
 	}
 
-	                                                /**
+	                                                                /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
@@ -313,7 +316,7 @@ public class ProdutoEdicaoController extends BaseController {
 			vo = e.getValidacao();
 
 		} catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 			
 			vo = new ValidacaoVO(TipoMensagem.ERROR, "O seguinte erro ocorreu:" + e.getMessage());
 		
@@ -475,7 +478,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	
 	
-	                                                /**
+	                                                                /**
      * Valida o preenchimento dos campos obrigatórios.
      * 
      * @param dto
@@ -638,7 +641,7 @@ public class ProdutoEdicaoController extends BaseController {
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
-	                                                /**
+	                                                                /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -666,7 +669,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(Results.json()).from(validacaoMap, "result").recursive().serialize();
 	}
 
-	                                                /**
+	                                                                /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -698,7 +701,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                                                /**
+	                                                                /**
      * Obtem detalhes de produto edição
      * 
      * @param idProdutoEdicao
@@ -719,7 +722,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                                                /**
+	                                                                /**
      * Obtém todos os períodos de lançamento da edição do produto
      * 
      * @param produtoEdicaoId
@@ -766,7 +769,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 	}
 	
-	                                                /**
+	                                                                /**
      * Popula e retorna Value Object com detalhes de produto edição
      * 
      * @param idProdutoEdicao
@@ -838,19 +841,6 @@ public class ProdutoEdicaoController extends BaseController {
 		return produtoLancamentoVO;
 	}
 
-	private String getValorSemMascara(String valor) {
-
-		String chr = String.valueOf(valor.charAt(valor.length()-3));
-		if (",".equals(chr)){
-		    valor = valor.replaceAll("\\.", "");
-		    valor = valor.replaceAll(",", "\\.");
-		}
-		
-		if (".".equals(chr)){
-		    valor = valor.replaceAll(",", "");
-		}
-
-		return valor;
-	}
 	
+
 }

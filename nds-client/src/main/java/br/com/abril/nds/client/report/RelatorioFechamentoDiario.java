@@ -14,8 +14,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.util.JasperUtil;
@@ -29,7 +28,7 @@ import br.com.abril.nds.util.JasperUtil;
  */
 public class RelatorioFechamentoDiario {
     
-    private static final Logger LOG = LoggerFactory.getLogger(RelatorioFechamentoDiario.class);
+    private static final Logger LOGGER = Logger.getLogger(RelatorioFechamentoDiario.class);
    
     /**
      * Nome do parâmetro de data de fechamento
@@ -52,8 +51,7 @@ public class RelatorioFechamentoDiario {
     /**
      * Exporta o relatório em formato PDF
      * 
-     * @param dto
-     *            dto com as informações do relatório
+     * @param dto dto com as informações do relatório
      * @return byte[] com o relatório exportado
      */
     public static byte[] exportPdf(FechamentoDiarioDTO dto) {
@@ -73,7 +71,7 @@ public class RelatorioFechamentoDiario {
             return baos.toByteArray();
         } catch (JRException ex) {
             String msg = "Erro exportando relatório de Fechamento Diário!";
-            LOG.error(msg, ex);
+            LOGGER.error(msg, ex);
             throw new RuntimeException(msg, ex);
         }
         

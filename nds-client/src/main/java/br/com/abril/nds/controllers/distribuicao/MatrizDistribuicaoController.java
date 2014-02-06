@@ -1,5 +1,21 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
@@ -20,34 +36,38 @@ import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
-import br.com.abril.nds.service.*;
-import br.com.abril.nds.util.*;
+import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.InformacoesProdutoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.SomarEstudosService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.HTMLTableUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.*;
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import org.apache.commons.lang.SerializationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.*;
 
 @Resource
 @Path("/matrizDistribuicao")
 @Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
 public class MatrizDistribuicaoController extends BaseController {
 
-    Logger log = LoggerFactory.getLogger(MatrizDistribuicaoController.class);
+    private static final Logger LOGGER = Logger.getLogger(MatrizDistribuicaoController.class);
 
     @Autowired
     private Result result;
@@ -241,7 +261,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
         if (buscarProduto == null || buscarProduto.isEmpty()) {
 
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] não encontrado."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo
+                    + "] não encontrado."));
         }
 
 
@@ -351,7 +372,7 @@ public class MatrizDistribuicaoController extends BaseController {
 
     /**
      * Exporta os dados da pesquisa.
-     *
+     * 
      * @param fileType - tipo de arquivo
      * @throws IOException - Exceção de E/S
      */
@@ -382,8 +403,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
     /**
      * Configura o filtro informado na tela e o armazena na sessÃ£o.
-     *
-     * @param dataPesquisa         - data da pesquisa
+     * 
+     * @param dataPesquisa - data da pesquisa
      * @param listaIdsFornecedores - lista de identificadores de fornecedores
      */
     private FiltroDistribuicaoDTO configurarFiltropesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
@@ -442,7 +463,7 @@ public class MatrizDistribuicaoController extends BaseController {
 
     /**
      * Obtem o filtro para pesquisa da sessão.
-     *
+     * 
      * @return filtro
      */
     private FiltroDistribuicaoDTO obterFiltroSessao() {
@@ -461,7 +482,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
         if (Boolean.valueOf(produtoDistribuicao.getLiberado())) {
 
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido duplicar linha de um estudo liberado."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não é permitido duplicar linha de um estudo liberado."));
         }
 
         FiltroDistribuicaoDTO filtro = obterFiltroSessao();
@@ -513,7 +535,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
                 if (qtdDuplicacoes > MAX_DUPLICACOES_PERMITIDAS) {
 
-                    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDAS + " duplicações"));
+                    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais do que "
+                            + MAX_DUPLICACOES_PERMITIDAS + " duplicações"));
                 }
             }
         }
@@ -565,7 +588,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
         if (produtosDistribuicao.size() > 1) {
 
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode haver mais de um estudo marcado para a exclusão."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não pode haver mais de um estudo marcado para a exclusão."));
         }
 
         matrizDistribuicaoService.excluirEstudos(produtosDistribuicao);
@@ -625,7 +649,8 @@ public class MatrizDistribuicaoController extends BaseController {
         	
         	if(obterProdutoPorCodigo.getIsGeracaoAutomatica()==null || obterProdutoPorCodigo.getIsGeracaoAutomatica()==false ){
         		
-        		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto "+produtoDistribuicaoVO.getCodigoProduto()+" não permite geração automática de estudo."));
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto "
+                        + produtoDistribuicaoVO.getCodigoProduto() + " não permite geração automática de estudo."));
         	}
         }
         
@@ -648,10 +673,10 @@ public class MatrizDistribuicaoController extends BaseController {
                 }
 
             } catch (ValidacaoException e) {
-                log.error("Erro na geração automatica do estudo.", e);
+                LOGGER.error("Erro na geração automatica do estudo.", e);
                 msgErro.addAll(e.getValidacao().getListaMensagens());
             } catch (Exception e) {
-                log.error("Erro na geração automatica do estudo.", e);
+                LOGGER.error("Erro na geração automatica do estudo.", e);
                 msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao());
             }
         }
@@ -665,7 +690,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
         if (!produto.getIsGeracaoAutomatica()) {
 
-            throw new ValidacaoException(TipoMensagem.WARNING, "Produto " + produto.getCodigo() + " não pode ser gerado pela geração automatica");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto " + produto.getCodigo()
+                    + " não pode ser gerado pela geração automatica");
         }
     }
 

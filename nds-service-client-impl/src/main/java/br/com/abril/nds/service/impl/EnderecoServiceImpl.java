@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -46,6 +47,9 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class EnderecoServiceImpl implements EnderecoService {
+    
+    private static final Logger LOGGER = Logger.getLogger(EnderecoServiceImpl.class);
+
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
@@ -106,47 +110,47 @@ public class EnderecoServiceImpl implements EnderecoService {
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		if (endereco == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Endereço é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Endereço é obrigatório.");
 		}
 		
 		if (tipoEndereco == null){
 			
-			listaMensagens.add("O preenchimento do campo [Tipo Endereço] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Tipo Endereço] é obrigatório.");
 		}
 		
 		if (endereco.getCep() == null || endereco.getCep().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
 		}
 
 		if (endereco.getTipoLogradouro() == null || endereco.getTipoLogradouro().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
 		}
 		
 		if (endereco.getLogradouro() == null || endereco.getLogradouro().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
 		}
 
 		if (endereco.getNumero() == null || endereco.getNumero().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
 		}
 		
 		if (endereco.getBairro() == null || endereco.getBairro().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Bairro] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Bairro] é obrigatório.");
 		}		
 
 		if (endereco.getCidade() == null || endereco.getCidade().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Cidade] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Cidade] é obrigatório.");
 		}
 		
 		if (endereco.getUf() == null || endereco.getUf().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [UF] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [UF] é obrigatório.");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -169,7 +173,8 @@ public class EnderecoServiceImpl implements EnderecoService {
 			}catch (RuntimeException e) {
 				
 				if( e instanceof org.springframework.dao.DataIntegrityViolationException){
-					throw new EnderecoUniqueConstraintViolationException("Exclusão de endereço não permitida, registro possui dependências!");
+                    throw new EnderecoUniqueConstraintViolationException(
+                            "Exclusão de endereço não permitida, registro possui dependências!");
 				}
 			}
 		}
@@ -247,14 +252,11 @@ public class EnderecoServiceImpl implements EnderecoService {
 				}			
 				
 			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 				
 		}		
@@ -270,7 +272,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 		if (siglaUF == null || siglaUF.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
 		}
 		
 		return this.enderecoRepository.obterLocalidadesPorUFNome(nome, siglaUF);
@@ -284,7 +286,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public EnderecoVO obterEnderecoPorCep(String cep) {
 		if (cep == null || cep.trim().isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP é obrigatório para a pesquisa.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O CEP é obrigatório para a pesquisa.");
 		}		
 		
 		ViewQuery query = new ViewQuery()
@@ -329,20 +331,12 @@ public class EnderecoServiceImpl implements EnderecoService {
 				ret.setLocalidade(localidade.getNome());				
 				
 			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
-						
-	/*		
-			
-			
-			*/
 		}
 		return ret;
 	}
@@ -404,13 +398,6 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 
 	@Override
-	public String buscarLocalidadePorIbge(String codigoIbge) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
 	@Transactional(readOnly = true)
 	public List<String> obterListaLocalidadePdv() {
 		return this.enderecoRepository.obterListaLocalidadePdv();
@@ -422,7 +409,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf) {
 		if (uf == null || uf.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
 		}
 		
 		return this.enderecoRepository.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
@@ -453,7 +440,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 		
 		if (uf == null || uf.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
 		}
 		
 		return this.enderecoRepository.obterLocalidadesPorUFPDVBoxEspecial(uf);

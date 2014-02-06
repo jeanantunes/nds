@@ -15,8 +15,8 @@ import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +35,7 @@ import br.com.abril.nds.util.DateUtil;
 @Component
 public class EMS0128MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0128MessageProcessor.class);
+	private static final Logger LOGGER = Logger.getLogger(EMS0128MessageProcessor.class);
 	
 	@Autowired
 	private SessionFactory sessionFactoryGfs;

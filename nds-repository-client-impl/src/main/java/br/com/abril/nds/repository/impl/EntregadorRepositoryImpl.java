@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
@@ -11,8 +12,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.EntregadorCotaProcuracaoPaginacaoVO;
@@ -29,17 +28,17 @@ import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
- * Repositório referente a entidade 
+ * Repositório referente a entidade
  * {@link br.com.abril.nds.model.cadastro.Entregador}
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador, Long> 
 									  implements EntregadorRepository {
     
-    private static final Logger LOG = LoggerFactory.getLogger(EntregadorRepositoryImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(EntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.
@@ -128,9 +127,9 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	    return (Long) query.uniqueResult();
 	}
 
-	/*
-	 * Método que retorna a query utilizada na consulta para obter Entregadores.
-	 */
+	    /*
+     * Método que retorna a query utilizada na consulta para obter Entregadores.
+     */
 	private String getConsultaEntregadoresPorFiltro(FiltroEntregadorDTO filtroEntregador, boolean isCountQuery) {
 
 		StringBuilder builder = new StringBuilder();
@@ -179,9 +178,10 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
 	    return builder.toString();
 	}
 	
-	/*
-	 * Método que retorna a cláusula Order By da consulta de entregadores, através do filtro.
-	 */
+	    /*
+     * Método que retorna a cláusula Order By da consulta de entregadores,
+     * através do filtro.
+     */
 	private String getOrdenacao(FiltroEntregadorDTO filtroEntregador) {
 		
 		StringBuilder builder = new StringBuilder();
@@ -258,7 +258,7 @@ public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador
         } catch (Exception e) {
             String message = "Erro criando result transformer para classe: "
                     + EnderecoAssociacaoDTO.class.getName();
-            LOG.error(message, e);
+            LOGGER.error(message, e);
             throw new RuntimeException(message, e);
         }
 		

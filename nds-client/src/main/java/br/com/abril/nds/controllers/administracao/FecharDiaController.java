@@ -78,7 +78,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 public class FecharDiaController extends BaseController {
     
-	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
+    private static final Logger LOGGER = Logger.getLogger(FecharDiaController.class);
 	
 	@Autowired
 	private FecharDiaService fecharDiaService;
@@ -149,7 +149,7 @@ public class FecharDiaController extends BaseController {
 		
 		if(!dto.getFechamentoRealizadoNaData()){
 			
-			LOG.info("FAZENDO VALIDAÇÕES");
+            LOGGER.info("FAZENDO VALIDAÇÕES");
 			
 			dto.setBaixaBancaria(!this.fecharDiaService.existeCobrancaParaFecharDia(dataOperacao));
 			dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(dataOperacao));
@@ -202,7 +202,7 @@ public class FecharDiaController extends BaseController {
 		
 	}
 	
-	//Grid que é acionado nas validações
+    // Grid que é acionado nas validações
 	@Post
 	@Path("/obterLancamentoFaltaESobra")
 	public void obterLancamentoFaltaESobra(){
@@ -308,13 +308,13 @@ public class FecharDiaController extends BaseController {
 		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(dataOperacao, null);
 		
 		if(listaReparte.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		}
 		
 			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaReparte, ReparteFecharDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 		
 		result.nothing();
@@ -329,13 +329,13 @@ public class FecharDiaController extends BaseController {
 				this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(dataOperacao, null);
 		
 		if(listaEncalhe.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		}
 		
 			FileExporter.to("resumo_encalhe", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaEncalhe, EncalheFecharDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 		
 		result.nothing();
@@ -350,13 +350,13 @@ public class FecharDiaController extends BaseController {
 					this.resumoSuplementarFecharDiaService.obterDadosGridSuplementar(dataOperacao, null);
 		
 		if(listaSuplementar.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		}
 		
 			FileExporter.to("resumo_reparte", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaSuplementar, SuplementarFecharDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 		
 		result.nothing();
@@ -377,13 +377,13 @@ public class FecharDiaController extends BaseController {
 				listaVenda = resumoSuplementarFecharDiaService.obterVendasSuplementar(dataOperacao,null);
 			if(listaVenda.isEmpty()) {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 			}
 			
 			FileExporter.to("venda_" + tipoVenda, fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaVenda, VendaFechamentoDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
@@ -395,13 +395,13 @@ public class FecharDiaController extends BaseController {
 				this.fecharDiaService.obterNotaFiscalComRecebimentoFisicoNaoConfirmado(dataOperacao);
 		
 		if(listaRecebimentoFisicoNaoConfirmado.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		}
 		
 			FileExporter.to("recebimento_fisico", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaRecebimentoFisicoNaoConfirmado, ValidacaoRecebimentoFisicoFecharDiaDTO.class, this.httpResponse);
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		}
 		
 		result.nothing();
@@ -503,20 +503,21 @@ public class FecharDiaController extends BaseController {
 	public void confirmar() {
 		//Unlock na base de dados
 		
-		LOG.info("INICIO CONFIRMA FECHAMENTO DIA");
+		LOGGER.info("INICIO CONFIRMA FECHAMENTO DIA");
 		
 		this.fecharDiaService.setLockBancoDeDados(false);
 
-		LOG.info("LOCK DE BANCO ATIVADO");
+		LOGGER.info("LOCK DE BANCO ATIVADO");
 		
 		this.session.setAttribute(INACTIVE_INTERVAL, this.session.getMaxInactiveInterval());
 		
 		try {
 			
-			//evita que a sessão expire antes que o fechamento do dia seja finalizado
+            // evita que a sessão expire antes que o fechamento do dia seja
+            // finalizado
 			this.session.setMaxInactiveInterval(-1);
 
-			LOG.info("SESSION CONFIGURADA PARA ATIVA PERMANENTE");
+			LOGGER.info("SESSION CONFIGURADA PARA ATIVA PERMANENTE");
 
 			Date _dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
@@ -524,11 +525,11 @@ public class FecharDiaController extends BaseController {
 			
 			if (hasPendenciaValidacao == null || !hasPendenciaValidacao) {
 
-				LOG.info("INICIO PROCESSAMENTO FECHAMENTO DIA");
+				LOGGER.info("INICIO PROCESSAMENTO FECHAMENTO DIA");
 				
 		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuarioLogado(), _dataOperacao);
 		        
-				LOG.info("FINALIZADO PROCESSAMENTO FECHAMENTO DIA");
+				LOGGER.info("FINALIZADO PROCESSAMENTO FECHAMENTO DIA");
 
 		        
 		        setFechamentoDiarioDTO(dto);
@@ -545,8 +546,9 @@ public class FecharDiaController extends BaseController {
 		        result.use(Results.json()).from(
 		        		new ValidacaoVO(
 		        				TipoMensagem.WARNING, 
-		        				"Fechamento do Dia não pode ser confirmado! " +
-		        				"Existem pendências em aberto para a data de operação: " +
+ "Fechamento do Dia não pode ser confirmado! "
+                                + "Existem pendências em aberto para a data de operação: "
+                                +
 		        				new SimpleDateFormat("dd/MM/yyyy").format(_dataOperacao) + "!"),
 		                Constantes.PARAM_MSGS).recursive().serialize();
 		        
@@ -554,7 +556,7 @@ public class FecharDiaController extends BaseController {
 		    
 		} catch (RuntimeException ex) {
 		    
-			LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
+			LOGGER.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
 
 			clearFechamentoDiarioDTO();
 
@@ -617,28 +619,29 @@ public class FecharDiaController extends BaseController {
     @Post
     public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
         
-    	LOG.info("FECHAMENTO DIARIO - INICIO GERACAO RELATORIO FECHAMENTO DIARIO");
+    	LOGGER.info("FECHAMENTO DIARIO - INICIO GERACAO RELATORIO FECHAMENTO DIARIO");
     	
-    	//volta o valor original de inativação da sessão
+        // volta o valor original de inativação da sessão
     	if (this.session.getAttribute(INACTIVE_INTERVAL) != null){
     		
     		this.session.setMaxInactiveInterval((int) this.session.getAttribute(INACTIVE_INTERVAL));
     		this.session.removeAttribute(INACTIVE_INTERVAL);
     	}
 
-    	LOG.info("FECHAMENTO DIARIO - RETIRADA CONFIGURACAO DE SESSION PERMANENTE");
+    	LOGGER.info("FECHAMENTO DIARIO - RETIRADA CONFIGURACAO DE SESSION PERMANENTE");
     	
     	FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
         
         byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
         
-    	LOG.info("FECHAMENTO DIARIO - OBTIDO BYTES RELATORIO FECHAR DIA");
+    	LOGGER.info("FECHAMENTO DIARIO - OBTIDO BYTES RELATORIO FECHAR DIA");
 
         if (relatorio != null) {
             long size = relatorio.length;
             InputStream inputStream = new ByteArrayInputStream(relatorio);
 
-            //Inclui o cookie requerido pelo plugin para tratamento da conclusão do download
+            // Inclui o cookie requerido pelo plugin para tratamento da
+            // conclusão do download
             if (ModoDownload.JQUERY_FILE_DOWNLOAD_PLUGIN.equals(modoDownload)) {
                 Cookie cookie = new Cookie("fileDownload", "true");
                 cookie.setPath(httpRequest.getContextPath());
@@ -648,12 +651,12 @@ public class FecharDiaController extends BaseController {
             InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
                     FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
             
-        	LOG.info("FECHAMENTO DIARIO - RETORNANDO RELATORIO FECHAR DIA");
+        	LOGGER.info("FECHAMENTO DIARIO - RETORNANDO RELATORIO FECHAR DIA");
 
             return download;
         }
         
-    	LOG.info("FECHAMENTO DIARIO - RELATORIO NAO GERADO");
+    	LOGGER.info("FECHAMENTO DIARIO - RELATORIO NAO GERADO");
         
         return null;
     }
@@ -701,8 +704,9 @@ public class FecharDiaController extends BaseController {
         REGULAR_DOWNLOAD,
         
         /**
-         * Download sendo efetuado pelo plugin 'jQuery File Download Plugin', que
-         * requer parâmetros extras para o tratamento da conclusão do download
+         * Download sendo efetuado pelo plugin 'jQuery File Download Plugin',
+         * que requer parâmetros extras para o tratamento da conclusão do
+         * download
          * 
          */
         JQUERY_FILE_DOWNLOAD_PLUGIN

@@ -23,14 +23,16 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * Classe responsável pelo controle das ações referentes à
- * tela de chamadão de publicações.
+ * Classe responsável pelo controle das ações referentes à tela de chamadão de
+ * publicações.
  * 
  * @author Discover Technology
  */
 @Resource
 @Path("financeiro/boletoEmail")
 public class BoletoEmailController extends BaseController {
+    
+    private static final Logger LOGGER = Logger.getLogger(BoletoEmailController.class);
 	
 	@Autowired
 	private Result result;
@@ -40,8 +42,6 @@ public class BoletoEmailController extends BaseController {
 	
 	@Autowired
 	protected BoletoEmailService boletoEmailService;
-	
-	private static final Logger LOG = Logger.getLogger("envioEmailBoletosLogger");
 	
 	private static final String STATUS_ENVIO_FINALIZADO = "ENVIO_FINALIZADO";
 	
@@ -60,7 +60,7 @@ public class BoletoEmailController extends BaseController {
 
 		List<String> mensagensBoletosNaoEmitidos = new ArrayList<String>();
 		
-		mensagensBoletosNaoEmitidos.add("Boletos/Recibos não enviados:");
+        mensagensBoletosNaoEmitidos.add("Boletos/Recibos não enviados:");
 		
 		boolean boletosNaoEmitidos = false;
 			
@@ -68,7 +68,7 @@ public class BoletoEmailController extends BaseController {
 		
 		if (listaBoletoEmail.isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem boletos pendentes de emissão.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não existem boletos pendentes de emissão.");
 		}
 		
 		int totalBoletosEmitir = listaBoletoEmail.size();
@@ -87,7 +87,7 @@ public class BoletoEmailController extends BaseController {
 
 				this.boletoEmailService.enviarBoletoEmail(bm);
 
-				LOG.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] enviado com sucesso, para a cota: " + bm.getCobranca().getCota().getNumeroCota());
+				LOGGER.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] enviado com sucesso, para a cota: " + bm.getCobranca().getCota().getNumeroCota());
 
 			} catch(Exception e) {
             	
@@ -95,8 +95,9 @@ public class BoletoEmailController extends BaseController {
         	
         	    mensagensBoletosNaoEmitidos.add("Cota "+cota.getNumeroCota()+" - "+cota.getPessoa().getNome());
         	    
-        	    LOG.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: " + bm.getCobranca().getCota().getNumeroCota());
-        	    LOG.info(e.getMessage());
+                LOGGER.info("Boleto [" + bm.getCobranca().getNossoNumero() + "] não enviado, para a cota: "
+                        + bm.getCobranca().getCota().getNumeroCota());
+        	    LOGGER.info(e.getMessage());
 
         	    String stackTrace = "";
         	    
@@ -104,7 +105,7 @@ public class BoletoEmailController extends BaseController {
         	    	stackTrace += element.toString() + "\n";
         	    }
         	    
-        	    LOG.info(stackTrace);
+        	    LOGGER.info(stackTrace);
 
         	    boletosNaoEmitidos = true;
             }

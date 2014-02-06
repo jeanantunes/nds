@@ -3,11 +3,10 @@ package br.com.abril.nds.repository.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.ResultTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -22,14 +21,14 @@ import br.com.abril.nds.repository.TelefoneEntregadorRepository;
  * {@link br.com.abril.nds.model.cadastro.TelefoneEntregador}
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class TelefoneEntregadorRepositoryImpl extends
 		AbstractRepositoryModel<TelefoneEntregador, Long> implements
 		TelefoneEntregadorRepository {
     
-    private static final Logger LOG = LoggerFactory.getLogger(TelefoneEntregadorRepositoryImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(TelefoneEntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.
@@ -99,7 +98,7 @@ public class TelefoneEntregadorRepositoryImpl extends
         } catch (Exception e) {
             String message = "Erro criando result transformer para classe: "
                     + TelefoneAssociacaoDTO.class.getName();
-            LOG.error(message, e);
+            LOGGER.error(message, e);
             throw new RuntimeException(message, e);
         }
         

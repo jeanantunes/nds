@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -23,6 +24,8 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusente, Long> implements CotaAusenteRepository { 
 	
+    private static final Logger LOGGER = Logger.getLogger(CotaAusenteRepositoryImpl.class);
+
 	/**
 	 * Construtor.
 	 */
@@ -184,7 +187,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		try {
 		  	cotaAusente = (CotaAusente) criteria.uniqueResult();
 		} catch(HibernateException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		return  cotaAusente;
 	}

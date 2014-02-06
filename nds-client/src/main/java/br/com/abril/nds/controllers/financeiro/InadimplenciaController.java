@@ -7,8 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -49,13 +48,15 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/inadimplencia")
 @Rules(Permissao.ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA)
 public class InadimplenciaController extends BaseController {
+    
+    private static final Logger LOGGER = Logger.getLogger(InadimplenciaController.class);
 
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroInadimplencia";
 	
 	private static final String ERRO_PESQUISAR_INADIMPLENCIAS = "Erro inesperado ao pesquisar inadimplencias.";	
-	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
-	private static final String WARNING_PESQUISA_VALIDACAO_SITUACAO = "É necessário selecionar a situação da dívida.";
+    private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+    private static final String WARNING_PESQUISA_VALIDACAO_SITUACAO = "É necessário selecionar a situação da dívida.";
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -63,10 +64,8 @@ public class InadimplenciaController extends BaseController {
 	@Autowired
 	private DividaService dividaService;
 	
-	@Autowired
-	private static final Logger LOG = LoggerFactory
-			.getLogger(InadimplenciaController.class);
 	
+
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -164,7 +163,7 @@ public class InadimplenciaController extends BaseController {
 			mensagens.clear();
 			mensagens.add(ERRO_PESQUISAR_INADIMPLENCIAS);
 			status=TipoMensagem.ERROR;
-			LOG.error(ERRO_PESQUISAR_INADIMPLENCIAS, e);
+			LOGGER.error(ERRO_PESQUISAR_INADIMPLENCIAS, e);
 		}
 		
 		this.tratraRetornoPesquisa(mensagens, status, grid, total, count);
@@ -207,11 +206,12 @@ public class InadimplenciaController extends BaseController {
 		return tableModel;
 	}
 
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
-	 * 
-	 * @param filtro
-	 */
+	        /**
+     * Executa tratamento de paginação em função de alteração do filtro de
+     * pesquisa.
+     * 
+     * @param filtro
+     */
 	private void tratarFiltro(FiltroCotaInadimplenteDTO filtroAtual) {
 
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
@@ -237,11 +237,11 @@ public class InadimplenciaController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Obtém detalhes de acumulo da divida
-	 * 
-	 * @param idDivida
-	 */
+	        /**
+     * Obtém detalhes de acumulo da divida
+     * 
+     * @param idDivida
+     */
 	public void getDetalhesDivida(Long idDivida) {
 		
 		List<DividaDTO> dividasDTO = null;
@@ -300,24 +300,24 @@ public class InadimplenciaController extends BaseController {
 		return dividasDTO;
 	}
 
-	/**
-	 * Obtém a divida
-	 * 
-	 * @param idDivida
-	 */
+	        /**
+     * Obtém a divida
+     * 
+     * @param idDivida
+     */
 	public void getDividaComissao(Long idDivida) {
 		DividaComissaoDTO resultado = dividaService.obterDadosDividaComissao(idDivida);
 		
 		result.use(Results.json()).from(resultado, "result").serialize();			
 	}	
 	
-	/**
-	 * Exporta os dados da pesquisa.
-	 * 
-	 * @param fileType - tipo de arquivo
-	 * 
-	 * @throws IOException Exceção de E/S
-	 */
+	        /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
 	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {

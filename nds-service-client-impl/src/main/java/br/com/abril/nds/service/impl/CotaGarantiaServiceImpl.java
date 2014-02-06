@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.Hibernate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,7 +118,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Autowired
 	private BancoRepository bancoRepository;
 	
-    private static final  Logger LOGGER = LoggerFactory.getLogger(CotaGarantiaServiceImpl.class);
+    private static final  Logger LOGGER = Logger.getLogger(CotaGarantiaServiceImpl.class);
 	
 	/*
 	 * (non-Javadoc)

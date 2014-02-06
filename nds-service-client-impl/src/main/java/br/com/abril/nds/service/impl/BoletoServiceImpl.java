@@ -119,6 +119,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
  */
 @Service
 public class BoletoServiceImpl implements BoletoService {
+    
+    private static final Logger LOGGER = Logger.getLogger(BoletoServiceImpl.class);
 	
 	@Autowired
 	protected EmailService email;
@@ -198,24 +200,25 @@ public class BoletoServiceImpl implements BoletoService {
 	@Autowired
 	private ParametroCobrancaCotaService paramtroCobrancaCotaService;
 	
-	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
-	/**
-	 * Método responsável por obter boletos por numero da cota
-	 * @param filtro
-	 * @return Lista de boletos encontrados
-	 */
+	        /**
+     * Método responsável por obter boletos por numero da cota
+     * 
+     * @param filtro
+     * @return Lista de boletos encontrados
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public List<BoletoCotaDTO> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
 		return this.boletoRepository.obterBoletosPorCota(filtro);
 	}
 	
-	/**
-	 * Método responsável por obter boleto por nossoNumero
-	 * @param nossoNumero
-	 * @return Boletos encontrado
-	 */
+	        /**
+     * Método responsável por obter boleto por nossoNumero
+     * 
+     * @param nossoNumero
+     * @return Boletos encontrado
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public Boleto obterBoletoPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
@@ -223,11 +226,12 @@ public class BoletoServiceImpl implements BoletoService {
 		return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada);
 	}
 	
-	/**
-	 * Método responsável por obter a quantidade de boletos por numero da cota
-	 * @param filtro
-	 * @return Quantidade de boletos encontrados
-	 */
+	        /**
+     * Método responsável por obter a quantidade de boletos por numero da cota
+     * 
+     * @param filtro
+     * @return Quantidade de boletos encontrados
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
@@ -289,7 +293,7 @@ public class BoletoServiceImpl implements BoletoService {
 		if (banco == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
-				"Banco não encontrado!");
+ "Banco não encontrado!");
 		}
 		
 		ControleBaixaBancaria controleBaixa =
@@ -299,14 +303,16 @@ public class BoletoServiceImpl implements BoletoService {
 				&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
-				"Já foi realizada baixa automática para a data de pagamento informada e banco " + banco.getNome() + "!");
+                    "Já foi realizada baixa automática para a data de pagamento informada e banco " + banco.getNome()
+                            + "!");
 		}
 		
 		if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
 				|| valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
-				"Valor financeiro inválido! A soma dos valores dos boletos pagos " +
+                    "Valor financeiro inválido! A soma dos valores dos boletos pagos "
+                            +
 				"deve ser igual ao valor informado!");
 		}
 				
@@ -343,7 +349,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 		} catch (Exception e) {
 
-			//gerar movimentos financeiros para cobranças não pagas
+            // gerar movimentos financeiros para cobranças não pagas
 			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
                     dataOperacao, dataPagamento, usuario, banco);
 			
@@ -354,7 +360,8 @@ public class BoletoServiceImpl implements BoletoService {
 			} else {
 			
 				throw new ValidacaoException(TipoMensagem.WARNING, 
-											 "Falha ao processar a baixa automática: " + e.getMessage());
+ "Falha ao processar a baixa automática: "
+                        + e.getMessage());
 			}
 		}
 	}
@@ -370,12 +377,12 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional
 	public void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento) {
 
-		LOG.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
+		LOGGER.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
 		
 		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
 		
 		if(naoAcumulaDividas == true) {
-			LOG.info("DISTRIBUIDOR NÃO ACUMULA DIVIDAS");
+            LOGGER.info("DISTRIBUIDOR NÃO ACUMULA DIVIDAS");
 			return;
 		}
 		
@@ -419,7 +426,7 @@ public class BoletoServiceImpl implements BoletoService {
 				continue;
 			}
 			
-			LOG.info("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
+			LOGGER.info("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
 			
 			nossoNumero = boleto.getNossoNumero();
 			
@@ -445,7 +452,7 @@ public class BoletoServiceImpl implements BoletoService {
 						dataVencimento,
 						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
 						tipoMovimentoFinanceiroPendente,
-						"Cobrança não paga");
+ "Cobrança não paga");
 				
 				MovimentoFinanceiroCota movimentoJuros = null;
 				
@@ -468,7 +475,7 @@ public class BoletoServiceImpl implements BoletoService {
 							dataVencimento,
 							valor,
 							tipoMovimentoFinanceiroJuros,
-							"Cobrança não paga");
+ "Cobrança não paga");
 				}
 				
 				valor = this.cobrancaService.calcularMulta(
@@ -487,17 +494,17 @@ public class BoletoServiceImpl implements BoletoService {
 							dataVencimento,
 							valor,
 							tipoMovimentoFinanceiroMulta,
-							"Cobrança não paga");
+ "Cobrança não paga");
 				}
 
 				this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
 
 			} catch (IllegalArgumentException e) {
 			
-				LOG.error("FALHA AO ADIAR BOLETO DIVIDA NÃO PAGA NOSSO NUMERO [" + nossoNumero + "]", e);
+                LOGGER.error("FALHA AO ADIAR BOLETO DIVIDA NÃO PAGA NOSSO NUMERO [" + nossoNumero + "]", e);
 				
-				//Caso a dívida exceder o limite de acúmulos do distribuidor, 
-				//esta não será persistida, dando continuidade ao fluxo.
+                // Caso a dívida exceder o limite de acúmulos do distribuidor,
+                // esta não será persistida, dando continuidade ao fluxo.
 				continue;
 			}
 		}
@@ -619,13 +626,14 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 
-	/**
-	 * Baixa Boleto Antecipado - Em Branco
-	 * Gera movimento financeiro de crédito para a cota referente à Boleto Antecipado - Em Branco
-	 * @param boletoAntecipado
-	 * @param valorPago
-	 * @param dataPagamento
-	 */
+	        /**
+     * Baixa Boleto Antecipado - Em Branco Gera movimento financeiro de crédito
+     * para a cota referente à Boleto Antecipado - Em Branco
+     * 
+     * @param boletoAntecipado
+     * @param valorPago
+     * @param dataPagamento
+     */
 	private void gerarBaixaBoletoAntecipado(BoletoAntecipado boletoAntecipado, 
 											PagamentoDTO pagamento, 
 											Date dataPagamento){
@@ -693,7 +701,7 @@ public class BoletoServiceImpl implements BoletoService {
 			boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
 		}		
 		
-		// Boleto não encontrado na base
+        // Boleto não encontrado na base
 		if (boleto == null) {
 			
 			// Verifica se boleto consta em boletos antecipados - em branco
@@ -718,14 +726,14 @@ public class BoletoServiceImpl implements BoletoService {
 					
 				} else {
 					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Boleto não encontrado!");
+                    throw new ValidacaoException(TipoMensagem.WARNING, "Boleto não encontrado!");
 				}
 			}
 			
 			return boleto;
 		}
 			
-		// Boleto já foi pago
+        // Boleto já foi pago
 		if (boleto.getStatusCobranca().equals(StatusCobranca.PAGO)) {
 			
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
@@ -735,7 +743,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			} else {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "O boleto já foi pago!");
+                throw new ValidacaoException(TipoMensagem.WARNING, "O boleto já foi pago!");
 			}
 			
 			return boleto;
@@ -814,11 +822,10 @@ public class BoletoServiceImpl implements BoletoService {
 										   Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
 										   Banco banco, Date dataPagamento) {
 		
-		/*
-		 * Gera baixa com status de pago, porém o nosso número
-		 * referente ao pagamento não existe na base
-		 * 
-		 */
+		                /*
+         * Gera baixa com status de pago, porém o nosso número referente ao
+         * pagamento não existe na base
+         */
 		
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, boleto,
 						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
@@ -829,11 +836,10 @@ public class BoletoServiceImpl implements BoletoService {
 									Date dataOperacao, Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
 									Banco banco, Date dataPagamento) {
 		
-		/*
-		 * Não baixa o boleto, gera baixa com status de boleto pago anteriormente
-		 * e gera movimento de crédito
-		 * 
-		 */
+		                /*
+         * Não baixa o boleto, gera baixa com status de boleto pago
+         * anteriormente e gera movimento de crédito
+         */
 		
 		BaixaCobranca baixaCobranca =
 			gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, boleto,
@@ -857,11 +863,10 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BaixaCobranca baixaCobranca = null;
 		
-		/*
-		 * Não baixa o boleto, gera baixa com status de não pago por divergência de data
-		 * e gera movimento de crédito
-		 * 
-		 */
+		                /*
+         * Não baixa o boleto, gera baixa com status de não pago por divergência
+         * de data e gera movimento de crédito
+         */
 		
 		if (!this.distribuidorRepository.aceitaBaixaPagamentoVencido()) {
 			
@@ -879,12 +884,11 @@ public class BoletoServiceImpl implements BoletoService {
 			return;
 		}
 		
-		/*
-		 * Baixa o boleto, gera baixa com status de pago com divergência de data,
-		 * calcula multas e juros em cima do valor que deveria ser pago 
-		 * e gera movimento de crédito ou débito se necessário
-		 * 
-		 */
+		                /*
+         * Baixa o boleto, gera baixa com status de pago com divergência de
+         * data, calcula multas e juros em cima do valor que deveria ser pago e
+         * gera movimento de crédito ou débito se necessário
+         */
 		
 		baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
 							 			   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
@@ -937,7 +941,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 			diferencaValor = pagamento.getValorPagamento().subtract(boleto.getValor());
 			
-			observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+            observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -951,7 +955,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			diferencaValor = boleto.getValor().subtract(pagamento.getValorPagamento());
 			
-			observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+            observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -970,11 +974,10 @@ public class BoletoServiceImpl implements BoletoService {
 								 		   ResumoBaixaBoletosDTO resumoBaixaBoletos,
 								 		   Banco banco, Date dataPagamento) {
 		
-		/*
-		 * Baixa o boleto, calcula o valor pago considerando multas, juros e desconto, 
-		 * e gera baixa cobrança com o valor atualizado
-		 * 
-		 */
+		                /*
+         * Baixa o boleto, calcula o valor pago considerando multas, juros e
+         * desconto, e gera baixa cobrança com o valor atualizado
+         */
 		
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
 						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
@@ -1001,10 +1004,11 @@ public class BoletoServiceImpl implements BoletoService {
 			 							ResumoBaixaBoletosDTO resumoBaixaBoletos,
 			 							Banco banco, Date dataPagamento) {
 		
-		/*
-		 * Verifica o parâmetro para pagamento a maior, não baixa o boleto, gera baixa
-		 * com status de não pago por divergência de valor e gera movimento de crédito
-		 */
+		                /*
+         * Verifica o parâmetro para pagamento a maior, não baixa o boleto, gera
+         * baixa com status de não pago por divergência de valor e gera
+         * movimento de crédito
+         */
 		
 		BaixaCobranca baixaCobranca = null;
 		
@@ -1027,11 +1031,10 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 		
-		/*
-		 * Baixa o boleto, gera baixa com status de pago por divergência de valor
-		 * e gera movimento de crédito da diferença
-		 * 
-		 */
+		                /*
+         * Baixa o boleto, gera baixa com status de pago por divergência de
+         * valor e gera movimento de crédito da diferença
+         */
 		
 		baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
 										   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
@@ -1042,7 +1045,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
 		
-		String observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+        String observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 		
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
@@ -1061,11 +1064,11 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BaixaCobranca baixaCobranca = null;
 		
-		/*
-		 * Verifica o parâmetro para pagamento a menor, não baixa o boleto, gera baixa
-		 * com status de não pago por divergência de valor e gera movimento de crédito
-		 * 
-		 */
+		                /*
+         * Verifica o parâmetro para pagamento a menor, não baixa o boleto, gera
+         * baixa com status de não pago por divergência de valor e gera
+         * movimento de crédito
+         */
 		
 		if (!this.distribuidorRepository.aceitaBaixaPagamentoMenor()) {
 			
@@ -1083,11 +1086,10 @@ public class BoletoServiceImpl implements BoletoService {
 			return;
 		}
 		
-		/*
-		 * Baixa o boleto, gera baixa com status de pago por divergência de valor
-		 * e gera movimento de débito da diferença
-		 * 
-		 */
+		                /*
+         * Baixa o boleto, gera baixa com status de pago por divergência de
+         * valor e gera movimento de débito da diferença
+         */
 
 		baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
  				   						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
@@ -1098,7 +1100,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
 		
-		String observacao = "Diferença de Pagamento a Menor (" + dataPagamentoFormatada + ")";
+        String observacao = "Diferença de Pagamento a Menor (" + dataPagamentoFormatada + ")";
 		
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
@@ -1115,22 +1117,22 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (pagamento.getDataPagamento() == null) {
 			
-			listaMensagens.add("Data de pagmento é obrigatória!");
+            listaMensagens.add("Data de pagmento é obrigatória!");
 		}
 		
 		if (pagamento.getNossoNumero() == null) {
 
-			listaMensagens.add("Nosso número é obrigatória!");
+            listaMensagens.add("Nosso número é obrigatória!");
 		}
 		
 		if (pagamento.getNumeroRegistro() == null) {
 
-			listaMensagens.add("Número de registro do arquivo é obrigatório!");
+            listaMensagens.add("Número de registro do arquivo é obrigatório!");
 		}
 		
 		if (pagamento.getValorPagamento() == null) {
 
-			listaMensagens.add("Valor do pagmento é obrigatório!");
+            listaMensagens.add("Valor do pagmento é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -1150,17 +1152,17 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (pagamento.getDataPagamento() == null) {
 			
-			listaMensagens.add("Data de pagmento é obrigatória!");
+            listaMensagens.add("Data de pagmento é obrigatória!");
 		}
 		
 		if (pagamento.getNossoNumero() == null) {
 
-			listaMensagens.add("Nosso número é obrigatória!");
+            listaMensagens.add("Nosso número é obrigatória!");
 		}
 				
 		if (pagamento.getValorPagamento() == null) {
 
-			listaMensagens.add("Valor do pagmento é obrigatório!");
+            listaMensagens.add("Valor do pagmento é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -1518,25 +1520,26 @@ public class BoletoServiceImpl implements BoletoService {
 		return corpoBoleto;
 	}
 
-	/**
-	 * Método responsável por gerar corpo do boleto com os atributos definidos
-	 * @param nossoNumero
-	 * @param digitoNossoNumero
-	 * @param valorDocumento
-	 * @param valorAcrescimo
-	 * @param valorDesconto
-	 * @param banco
-	 * @param dataEmissao
-	 * @param dataVencimento
-	 * @param pessoaCedente
-	 * @param pessoaSacado
-	 * @param enderecoSacado
-	 * @param tipoCobranca
-	 * @param numeroCota
-	 * @param aceitaPagamentoVencido
-	 * @param boletoEmBranco
-	 * @return GeradorBoleto: corpo do boleto carregado
-	 */
+	        /**
+     * Método responsável por gerar corpo do boleto com os atributos definidos
+     * 
+     * @param nossoNumero
+     * @param digitoNossoNumero
+     * @param valorDocumento
+     * @param valorAcrescimo
+     * @param valorDesconto
+     * @param banco
+     * @param dataEmissao
+     * @param dataVencimento
+     * @param pessoaCedente
+     * @param pessoaSacado
+     * @param enderecoSacado
+     * @param tipoCobranca
+     * @param numeroCota
+     * @param aceitaPagamentoVencido
+     * @param boletoEmBranco
+     * @return GeradorBoleto: corpo do boleto carregado
+     */
 	private CorpoBoleto geraCorpoBoleto(String nossoNumero,
 										String digitoNossoNumero,
 										BigDecimal valorDocumento,
@@ -1701,9 +1704,10 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setTituloValorCobrado(valorParaPagamentosVencidos);
         
 
-        //INFORMAÇOES DO BOLETO
+        // INFORMAÇOES DO BOLETO
         //PARAMETROS ?
-        corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
+        corpoBoleto
+                .setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
         corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes());
         corpoBoleto.setBoletoInstrucao2("");
@@ -1789,7 +1793,7 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			if(cota.getPessoa().getEmail()==null){
 		
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui email cadastrado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui email cadastrado.");
 			}
 			
 			String[] destinatarios = new String[]{cota.getPessoa().getEmail()};
@@ -1806,31 +1810,32 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		} catch(AutenticacaoEmailException e){
 			
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao conectar-se com o servidor de e-mail. ");
 			
 		} catch(ValidacaoException e){
 			
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			
 			throw e;
 			
 		}catch(Exception e){
 			
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio. ");
 		}
 	}
 	
-	/**
-	 * Método responsável por gerar impressao em formato PDF
-	 * @param nossoNumero
-	 * @return b: Boleto PDF em Array de bytes
-	 * @throws IOException
-	 * @throws ValidationException 
-	 */
+	        /**
+     * Método responsável por gerar impressao em formato PDF
+     * 
+     * @param nossoNumero
+     * @return b: Boleto PDF em Array de bytes
+     * @throws IOException
+     * @throws ValidationException
+     */
 	@Override
 	@Transactional
 	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException, ValidationException {
@@ -1855,12 +1860,13 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 	
-	/**
-	 * Método responsável pela busca de dados referentes à cobrança
-	 * @param nossoNumero
-	 * @return CobrancaVO: dados da cobrança
-	 * @throws ValidationException 
-	 */
+	        /**
+     * Método responsável pela busca de dados referentes à cobrança
+     * 
+     * @param nossoNumero
+     * @return CobrancaVO: dados da cobrança
+     * @throws ValidationException
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public byte[] gerarImpressaoBoletos(Collection<String> nossoNumeros) throws IOException, ValidationException {
@@ -1912,13 +1918,15 @@ public class BoletoServiceImpl implements BoletoService {
 		return null;
 	}
 	
-	/**
-	 * Método responsável por gerar impressao de Boleto Antecipado (Em Branco) em formato PDF
-	 * @param nossoNumero
-	 * @return b: Boleto PDF em Array de bytes
-	 * @throws IOException
-	 * @throws ValidationException 
-	 */
+	        /**
+     * Método responsável por gerar impressao de Boleto Antecipado (Em Branco)
+     * em formato PDF
+     * 
+     * @param nossoNumero
+     * @return b: Boleto PDF em Array de bytes
+     * @throws IOException
+     * @throws ValidationException
+     */
 	@Override
 	@Transactional
 	public byte[] gerarImpressaoBoletoEmBranco(String nossoNumero) throws IOException, ValidationException {
@@ -1941,12 +1949,14 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 	
-	/**
-	 * Gera Impressão de Boletos em Branco apenas para a impressão -  Sem Cobrança e Sem Financeiro Cadastrado
-	 * @param boletosEmBrancoDTO
-	 * @return byte[]
-	 * @throws ValidationException 
-	 */
+	        /**
+     * Gera Impressão de Boletos em Branco apenas para a impressão - Sem
+     * Cobrança e Sem Financeiro Cadastrado
+     * 
+     * @param boletosEmBrancoDTO
+     * @return byte[]
+     * @throws ValidationException
+     */
 	@Transactional
 	@Override
 	public byte[] geraImpressaoBoletosEmBranco(List<BoletoEmBrancoDTO> boletosEmBrancoDTO) throws ValidationException{
@@ -1970,12 +1980,13 @@ public class BoletoServiceImpl implements BoletoService {
 		return null;
 	}
 	
-	/**
-	 * Método responsável por obter os dados de uma cobrança
-	 * @param nossoNumero
-	 * @param dataPagamento
-	 * @return CobrancaVO: dados da cobrança
-	 */
+	        /**
+     * Método responsável por obter os dados de uma cobrança
+     * 
+     * @param nossoNumero
+     * @param dataPagamento
+     * @return CobrancaVO: dados da cobrança
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero, Date dataPagamento) {
@@ -2066,7 +2077,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (filtro == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não pode ser nulo.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não pode ser nulo.");
 		}
 		
 		if (filtro.getData() == null) {
@@ -2144,13 +2155,13 @@ public class BoletoServiceImpl implements BoletoService {
 		return boletosDTO;
 	}
 	
-	/**
-	 * Obtém o fornecedor padrão da cota para cobrança. 
-	 * 
-	 * @param cota Cota que deseja obter o fornecedor.
-	 * 
-	 * @return Fornecedor padrão da cota.
-	 */
+	        /**
+     * Obtém o fornecedor padrão da cota para cobrança.
+     * 
+     * @param cota Cota que deseja obter o fornecedor.
+     * 
+     * @return Fornecedor padrão da cota.
+     */
 	private Fornecedor obterFornecedorPadraoCota(Cota cota) {
 		
 		Fornecedor fornecedor = cota.getParametroCobranca() == null ? 
@@ -2260,13 +2271,15 @@ public class BoletoServiceImpl implements BoletoService {
 		return boletoAntecipado;
 	}
 	
-	/**
-	 * Obtem valor inicial da faixa de número reservada para a geração de Nosso Numero de boletos antecipados (Em Branco)
-	 * Somado ao atributo idBoletoAntecipado para a composição do Nosso Número
-	 * Considera o tamanho aceitável para cada banco
-	 * @param numeroBanco
-	 * @return long
-	 */
+	        /**
+     * Obtem valor inicial da faixa de número reservada para a geração de Nosso
+     * Numero de boletos antecipados (Em Branco) Somado ao atributo
+     * idBoletoAntecipado para a composição do Nosso Número Considera o tamanho
+     * aceitável para cada banco
+     * 
+     * @param numeroBanco
+     * @return long
+     */
 	private long obterInicioNumeroReservadoNossoNumeroBoletoAntecipado(String numeroBanco){
 		
 		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
@@ -2303,16 +2316,18 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
-	/**
-	 * Atualiza os campos Nosso Número e Dígito Nosso Número em BoletoEmBrancoDTO conforme BoletoAntecipado persistido
-	 * @param bbDTO
-	 * @param cota
-	 * @param fornecedor
-	 * @param dataEmissao
-	 * @param dataVencimento
-	 * @param banco
-	 * @param valor
-	 */
+	        /**
+     * Atualiza os campos Nosso Número e Dígito Nosso Número em
+     * BoletoEmBrancoDTO conforme BoletoAntecipado persistido
+     * 
+     * @param bbDTO
+     * @param cota
+     * @param fornecedor
+     * @param dataEmissao
+     * @param dataVencimento
+     * @param banco
+     * @param valor
+     */
 	private void gerarNossoNumeroBoletoEmBrancoDTO(BoletoEmBrancoDTO bbDTO,
 									               Cota cota,
 									               Fornecedor fornecedor,
@@ -2441,14 +2456,15 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
-	/**
-	 * Verifica se existe boleto antecipado para a cota
-	 * Data de recolhimento dentro do periodo de emissao CE do Boleto antecipado
-	 * Boletos em Branco sem reimpressão
-	 * @param idCota
-	 * @param dataRecolhimento
-	 * @return boolean
-	 */
+	        /**
+     * Verifica se existe boleto antecipado para a cota Data de recolhimento
+     * dentro do periodo de emissao CE do Boleto antecipado Boletos em Branco
+     * sem reimpressão
+     * 
+     * @param idCota
+     * @param dataRecolhimento
+     * @return boolean
+     */
 	@Transactional
 	@Override
 	public boolean existeBoletoAntecipadoCotaDataRecolhimento(Long idCota, Date dataRecolhimento){
@@ -2473,15 +2489,17 @@ public class BoletoServiceImpl implements BoletoService {
 		return false;
 	}
 	
-	/**
-	 * Atualiza boletos antecipados por periodo de recolhimento da CE e numero cota - re-emissao de CE
-	 * Adiciona referência do novo Boleto Impresso nos boletos ja emitidos no mesmo período
-	 * Atualiza apenas boletos qua nao possuem atualização anterior
-	 * @param novoBoletoAntecipado
-	 * @param numeroCota
-	 * @param dataRecolhimentoDe
-	 * @param dataRecolhimentoAte
-	 */
+	        /**
+     * Atualiza boletos antecipados por periodo de recolhimento da CE e numero
+     * cota - re-emissao de CE Adiciona referência do novo Boleto Impresso nos
+     * boletos ja emitidos no mesmo período Atualiza apenas boletos qua nao
+     * possuem atualização anterior
+     * 
+     * @param novoBoletoAntecipado
+     * @param numeroCota
+     * @param dataRecolhimentoDe
+     * @param dataRecolhimentoAte
+     */
 	private void atualizaBoletosEmitidosNoPeriodoDaNovaEmissao(BoletoAntecipado novoBoletoAntecipado,
 			                                                   Integer numeroCota,
 			                                                   Date dataRecolhimentoDe,
@@ -2526,11 +2544,13 @@ public class BoletoServiceImpl implements BoletoService {
 		return (bas!=null && bas.size()>0);
 	}
 	
-	/**
-	 * Método responsável por obter boleto Antecipado (Em Branco) por nossoNumero
-	 * @param nossoNumero
-	 * @return Boletos encontrado
-	 */
+	        /**
+     * Método responsável por obter boleto Antecipado (Em Branco) por
+     * nossoNumero
+     * 
+     * @param nossoNumero
+     * @return Boletos encontrado
+     */
 	@Override
 	@Transactional(readOnly=true)
 	public BoletoAntecipado obterBoletoEmBrancoPorNossoNumero(String nossoNumero) {

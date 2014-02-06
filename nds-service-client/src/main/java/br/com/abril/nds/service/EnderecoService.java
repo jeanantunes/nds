@@ -48,8 +48,6 @@ public interface EnderecoService {
 	
 	List<String> obterBairrosPorCidade(String cidade);
 
-	String buscarLocalidadePorIbge(String codigoIbge);
-
 	List<String> obterListaLocalidadePdv();
 
 	List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf);

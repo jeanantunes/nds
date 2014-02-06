@@ -18,8 +18,8 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +59,7 @@ import br.com.abril.nds.util.Intervalo;
 @Service
 public class NFeServiceImpl implements NFeService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NFeServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(NFeServiceImpl.class);
 	
 	@Autowired
 	protected NotaFiscalRepository notaFiscalRepository;

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,8 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
 public class EMS0198MessageProcessor extends AbstractRepository implements MessageProcessor {
+    
+    private static final Logger LOGGER = Logger.getLogger(EMS0198MessageProcessor.class);
 
 	private static final String ENCALHE_FOLDER = "encalhe";
 
@@ -158,7 +161,7 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 			
 		} catch (IOException e) {
 			
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			
 			throw new RuntimeException("Falha na geracao do Arquivo!");					
 
@@ -188,10 +191,10 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 		
 		print.println(fixedFormatManager.export(outtrailer));
 
-		/*
-		 * A quantidade de arquivos gerados é incrementado aqui pois 
-		 * considera-se que o arquivo foi gerado corretamente.
-		 */
+		                /*
+         * A quantidade de arquivos gerados é incrementado aqui pois
+         * considera-se que o arquivo foi gerado corretamente.
+         */
 		this.quantidadeArquivosGerados++;
 	}
 
@@ -219,14 +222,14 @@ public class EMS0198MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
 		
+
 	}
 
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
 		
+
 	}
 
 	public void setDataLctoDistrib(Date data) {

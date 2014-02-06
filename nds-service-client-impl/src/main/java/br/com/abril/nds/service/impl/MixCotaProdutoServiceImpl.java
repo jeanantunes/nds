@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,9 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
+    
+    private static final Logger LOGGER = Logger.getLogger(MixCotaProdutoServiceImpl.class);
+
 	@Autowired
 	private MixCotaProdutoRepository mixCotaProdutoRepository;
 	@Autowired
@@ -108,13 +112,13 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		Cota cota = cotaService.obterPorNumeroDaCota(filtroConsultaMixCotaDTO.getCota());
 		
 		if(cota==null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Digite uma cota válida."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite uma cota válida."));
 		
 		boolean tipoAlternativo = cota.getTipoDistribuicaoCota() != null && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
 		
 		if (!tipoAlternativo) {
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Cota não é do tipo Alternativo."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota não é do tipo Alternativo."));
 		}
 		
 		filtroConsultaMixCotaDTO.setCotaId(cota.getId());
@@ -214,7 +218,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		if (cota == null) {
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota ["+ cotaId +"] não existe."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota [" + cotaId + "] não existe."));
 		}
 		
 		List<String> mensagens = obterValidacaoLista(listaMixCota);
@@ -233,7 +237,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 //				Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 				MixCotaProduto mixCotaProduto = new MixCotaProduto();
 
-                //FIXME refazer... a classificação fica no ProdutoEdicao
+            // FIXME refazer... a classificação fica no ProdutoEdicao
 //				if(produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
 					
 					for (TipoClassificacaoProduto tcp : obterTodos) {
@@ -273,7 +277,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		if (cota == null) {
 			
-			return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não existe.";
+            return "Cota [" + mixCotaProdutoDTO.getNumeroCota() + "] não existe.";
 		}
 		
 		msgValidacao = obterValidacaoCota(cota);
@@ -283,7 +287,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		if(classificacoesNaoRecebidasPelaCotaList!=null){
 			for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
 				if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(mixCotaProdutoDTO.getClassificacaoProduto()))
-					return "Cota de número "+cota.getNumeroCota()+" não recebe classificação do tipo "+mixCotaProdutoDTO.getClassificacaoProduto();
+                    return "Cota de número " + cota.getNumeroCota() + " não recebe classificação do tipo "
+                            + mixCotaProdutoDTO.getClassificacaoProduto();
 			}
 		}
 		
@@ -308,7 +313,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 						continue loopSeg;
 				}
 				
-				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+mixCotaProdutoDTO.getCodigoProduto();
+                return "Cota [" + mixCotaProdutoDTO.getNumeroCota() + "] não recebe segmento "
+                        + tipoSegProd.getDescricao() + " do produto " + mixCotaProdutoDTO.getCodigoProduto();
 
 			}
 			
@@ -323,21 +329,25 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		if (produto == null) {
 			
-			return "Produto ["+mixCotaProdutoDTO.getCodigoProduto()+"] não existe.";
+            return "Produto [" + mixCotaProdutoDTO.getCodigoProduto() + "] não existe.";
 		}
 		
 		
 		MixCotaProduto mix = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(),mixCotaProdutoDTO.getCodigoICD(),mixCotaProdutoDTO.getClassificacaoProduto());
 		if (mix!=null) {
 			
-			return "Cota:["+mixCotaProdutoDTO.getNumeroCota()+","+mixCotaProdutoDTO.getNomeCota()+"], Produto ["+produto.getCodigo()+":"+produto.getNome()+"] e Classificação ["+mixCotaProdutoDTO.getClassificacaoProduto()+"] já foi cadastrado."; 
+            return "Cota:[" + mixCotaProdutoDTO.getNumeroCota() + "," + mixCotaProdutoDTO.getNomeCota()
+                    + "], Produto [" + produto.getCodigo() + ":" + produto.getNome() + "] e Classificação ["
+                    + mixCotaProdutoDTO.getClassificacaoProduto() + "] já foi cadastrado.";
 					
 		}
 
-        //FIXME refazer... a classificação fica no ProdutoEdicao
+        // FIXME refazer... a classificação fica no ProdutoEdicao
 //		if(!produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
 //
-//			return "Produto "+produto.getCodigo()+ ":" +produto.getNome()+" com a classificação "+ mixCotaProdutoDTO.getClassificacaoProduto() +" não existe.";
+        // return "Produto "+produto.getCodigo()+ ":"
+        // +produto.getNome()+" com a classificação "+
+        // mixCotaProdutoDTO.getClassificacaoProduto() +" não existe.";
 //		}
 		
 		mixCotaProdutoDTO.setItemValido(true);
@@ -350,7 +360,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		if (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 		
 
-			return "Cota não é do tipo Alternativo: ["+cota.getNumeroCota()+":"+cota.getPessoa().getNome()+"]";
+            return "Cota não é do tipo Alternativo: [" + cota.getNumeroCota() + ":" + cota.getPessoa().getNome() + "]";
 		}
 		
 		return null;
@@ -395,7 +405,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
 				if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
-					mensagens.add("Cota de número "+cota.getNumeroCota()+" não recebe classificação do tipo "+mixCotaProdutoDTO.getClassificacaoProduto());
+                    mensagens.add("Cota de número " + cota.getNumeroCota() + " não recebe classificação do tipo "
+                            + mixCotaProdutoDTO.getClassificacaoProduto());
 					mixCotaProdutoDTO.setItemValido(false);
 					continue;
 					
@@ -428,7 +439,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 								continue loopSeg;
 						}
 						
-						mensagens.add("Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao());
+                        mensagens.add("Cota [" + mixCotaProdutoDTO.getNumeroCota() + "] não recebe segmento "
+                                + tipoSegProd.getDescricao());
 						mixCotaProdutoDTO.setItemValido(false);
 						
 						
@@ -509,7 +521,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	
 		if (mixCotaProdutoDTO.getReparteMinimo() > mixCotaProdutoDTO.getReparteMaximo()) {
 			
-			return obterStringMensagemValidacaoProdutoCota(mixCotaProdutoDTO) + " não pode ter o reparte maximo não pode ser menor que o minimo.";
+            return obterStringMensagemValidacaoProdutoCota(mixCotaProdutoDTO)
+                    + " não pode ter o reparte maximo não pode ser menor que o minimo.";
 		}
 		
 		return null;
@@ -619,7 +632,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			List<MixCotaDTO> mixCotaOrigem = pesquisarPorCota(fMixCota);
 			if(mixCotaOrigem==null || mixCotaOrigem.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
 			}
 			for (MixCotaDTO mixCotaDTO : mixCotaOrigem) {
 				mixCotaDTO.setIdCota(new BigInteger(cotaDestino.getId().toString()));
@@ -628,7 +641,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			try {
 				this.mixCotaProdutoRepository.gerarCopiaMixCota(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 				return false;
 			}
 			break;
@@ -643,7 +656,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			List<MixProdutoDTO> mixProdutoOrigem = pesquisarPorProduto(fMixProduto);
 			if(mixProdutoOrigem==null || mixProdutoOrigem.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
 			}
 			
 			for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
@@ -654,7 +667,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			try {
 				this.mixCotaProdutoRepository.gerarCopiaMixProduto(mixProdutoOrigem,this.usuarioService.getUsuarioLogado());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 				return false;
 			}
 			
@@ -677,17 +690,19 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		MixCotaProduto mix = this.mixCotaProdutoRepository.buscarPorId(idMix);
 		
 		if(mix==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
 		}
 		
 		if(tipoCampo.equalsIgnoreCase("MAX")){
 			if(mix.getReparteMinimo().compareTo(novoValorReparte)==1){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Reparte mínimo não deve ser maior que o reparte Máximo.");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Reparte mínimo não deve ser maior que o reparte Máximo.");
 			}
 			mix.setReparteMaximo(novoValorReparte);
 		}else if(tipoCampo.equalsIgnoreCase("MIN")){
 			if(novoValorReparte.compareTo(mix.getReparteMaximo())==1){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Reparte mínimo não deve ser maior que o reparte Máximo.");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Reparte mínimo não deve ser maior que o reparte Máximo.");
 			}
 			mix.setReparteMinimo(novoValorReparte);
 		}

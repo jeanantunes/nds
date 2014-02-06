@@ -94,7 +94,7 @@ public class HomeController {
 			doc = Jsoup.connect("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/changes").get();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		Elements newsHeadlines = doc.select("#main-panel");
 		

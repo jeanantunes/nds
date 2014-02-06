@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.ValidationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -75,7 +75,7 @@ import br.com.caelum.vraptor.view.Results;
 public class FechamentoEncalheController extends BaseController {
 
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoEncalheController.class);
+	private static final Logger LOGGER = Logger.getLogger(FechamentoEncalheController.class);
 	
 	@Autowired
 	private Result result;
@@ -336,7 +336,7 @@ public class FechamentoEncalheController extends BaseController {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		
 	}

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,7 +120,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(NotaFiscalServiceImpl.class);
 	
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
@@ -1112,7 +1112,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 //				| NoSuchFieldException | SecurityException e) {
 //			
 //			LOGGER.warn(e.getLocalizedMessage(), e);
-//			e.printStackTrace();
+//			LOGGER.error(e.getMessage(), e);
 //		}
 		
 		if (notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().length() > tamanhoCampoMapeado){

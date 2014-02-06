@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -26,8 +26,7 @@ import br.com.abril.nds.integracao.engine.data.FileRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthField;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthTypeMapping;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -36,7 +35,7 @@ import com.ancientprogramming.fixedformat4j.format.ParseException;
 @Component("fixedLenghtContentBasedDataRouter")
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
-	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
+	private final Logger logger = Logger.getLogger(FixedLenghtContentBasedDataRouter.class);
 	
 	private static final int START_TIME_POSITION_COLON = 100;
 	

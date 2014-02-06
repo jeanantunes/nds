@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
@@ -21,22 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
+ * Classe de implementação referente ao acesso a dados da entidade
  * {@link br.com.abril.nds.model.planejamento.EstudoGerado}.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGerado, Long> implements EstudoGeradoRepository {
 	
+    private static final Logger LOGGER = Logger.getLogger(EstudoCotaGeradoRepositoryImpl.class);
+
 	@Autowired
 	private DataSource dataSource;
 	
@@ -235,7 +237,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 			long1 = rs.getLong("ID");
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		return (long1 == null || long1.equals(0L)) ? 1L : long1;
 	}

@@ -71,8 +71,8 @@ public class NdsServerLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-			LOGGER.warn("ATENÇÃO: Erro inserindo entrada de log na base; continuando sem log.");
-			e.printStackTrace();
+			LOGGER.warn("ATENÇÃO: Erro inserindo entrada de log na base; continuando sem LOGGER");
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
@@ -103,8 +103,8 @@ public class NdsServerLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-			LOGGER.warn("ATENÇÃO: Erro atualizando entrada de log na base; continuando sem log.");
-			e.printStackTrace();
+			LOGGER.warn("ATENÇÃO: Erro atualizando entrada de log na base; continuando sem LOGGER");
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
@@ -169,8 +169,8 @@ public class NdsServerLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-			LOGGER.warn("ATENÇÃO: Erro inserindo mensagem de log na base; continuando sem log.");
-			e.printStackTrace();
+			LOGGER.warn("ATENÇÃO: Erro inserindo mensagem de log na base; continuando sem LOGGER");
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import javax.persistence.NoResultException;
 import javax.servlet.ServletContext;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -35,6 +36,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/capa")
 public class CapaController {
+    
+    private static final Logger LOGGER = Logger.getLogger(CapaController.class);
 	
 	private final static int TAMANHO_MAXIMO =  500 * 1024;
 	
@@ -135,11 +138,11 @@ public class CapaController {
 		
 	}
 	
-	/**
-	 * Exclui a capa da Edição.
-	 *  
-	 * @param idProdutoEdicao
-	 */
+	    /**
+     * Exclui a capa da Edição.
+     * 
+     * @param idProdutoEdicao
+     */
 	@Post
 	@Path("/removerCapa")
 	public void removerCapa(long idProdutoEdicao) {
@@ -148,7 +151,7 @@ public class CapaController {
 		try {
 			
 			capaService.deleteCapa(idProdutoEdicao);
-			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Remoção feita com sucesso!");
+            vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Remoção feita com sucesso!");
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				
@@ -156,7 +159,7 @@ public class CapaController {
 			} else {
 				
 				if (e instanceof NoResultException) {
-					vo = new ValidacaoVO(TipoMensagem.ERROR, "Não há capa cadastrada!");
+                    vo = new ValidacaoVO(TipoMensagem.ERROR, "Não há capa cadastrada!");
 				} else {
 					vo = new ValidacaoVO(TipoMensagem.ERROR, e.getMessage() + "");
 				}
@@ -189,7 +192,7 @@ public class CapaController {
 	     out.close();
 	    
 	  } catch (NumberFormatException e) {
-		  e.printStackTrace();
+		  LOGGER.error(e.getMessage(), e);
 	  }
 	  catch (Exception e) {
 		  file = new File((servletContext.getRealPath("") + "/images/no_image.jpeg"));

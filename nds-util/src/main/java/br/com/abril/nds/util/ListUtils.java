@@ -7,8 +7,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 public class ListUtils {
+    
+    private static final Logger LOGGER = Logger.getLogger(ListUtils.class);
 
 
 	@SuppressWarnings("all")
@@ -53,7 +57,7 @@ public class ListUtils {
 					}
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException 
 						| InvocationTargetException | InstantiationException e) {
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 				}
 					
 				return i;
@@ -100,7 +104,7 @@ public class ListUtils {
 					}
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException 
 						| InvocationTargetException | InstantiationException e) {
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 				}
 					
 				return i;
