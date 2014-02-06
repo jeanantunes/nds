@@ -2,11 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.ResultTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -20,7 +19,7 @@ import br.com.abril.nds.repository.EnderecoFornecedorRepository;
 public class EnderecoFornecedorRepositoryImpl extends AbstractRepositoryModel<EnderecoFornecedor, Long> 
 											  implements EnderecoFornecedorRepository {
     
-    private static final Logger LOG = LoggerFactory.getLogger(EnderecoFornecedorRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoFiadorRepositoryImpl.class);
 
 	public EnderecoFornecedorRepositoryImpl() {
 		super(EnderecoFornecedor.class);
@@ -51,7 +50,7 @@ public class EnderecoFornecedorRepositoryImpl extends AbstractRepositoryModel<En
         } catch (Exception e) {
             String message = "Erro criando result transformer para classe: "
                     + EnderecoAssociacaoDTO.class.getName();
-            LOG.error(message, e);
+            LOGGER.error(message, e);
             throw new RuntimeException(message, e);
         }
 		

@@ -36,7 +36,7 @@ public class DynamicRouter {
 
 	public void route(RouteTemplate route) {
 		
-		// LOG DE INICIALIZAÇÃO
+        // LOG DE INICIALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {
 			ndsiLoggerFactory.resetLogger();
 			ndsiLoggerFactory.getLogger().logBeginning(route);
@@ -65,7 +65,7 @@ public class DynamicRouter {
 		// END
 		route.onEnd();
 		
-		// LOG DE FINALIZAÇÃO
+        // LOG DE FINALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {
 			ndsiLoggerFactory.getLogger().logEnd(route);
 		}

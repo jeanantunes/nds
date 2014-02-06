@@ -33,7 +33,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
-	private NdsiLoggerFactory ndsiLoggerFactory;
+    private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -65,7 +65,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
 		}catch(org.lightcouch.NoDocumentException e){
 			//Nao ha informacoes a serem processadas
-			ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
+            ndsiLoggerFactory.getLogger().setStatusProcesso(StatusExecucaoEnum.VAZIO);
 			return;
 		}
 		
@@ -107,8 +107,9 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 						}
 					});
 				} catch(Exception e) {
-					ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
-					e.printStackTrace();
+                    ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA,
+                            e.getMessage());
+
 				}
 				
 				String erro = (String) message.getHeader().get(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue()); 
@@ -134,7 +135,7 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			}
 		} while(!result.getRows().isEmpty());
 		
-		// Processamento a ser executado APÓS o processamento principal:
+        // Processamento a ser executado APÓS o processamento principal:
 		messageProcessor.posProcess(tempVar);
 		
 		couchDbClient.shutdown();

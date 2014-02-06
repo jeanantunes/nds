@@ -39,11 +39,15 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 /**
  * Tool to run database scripts. This version of the script can be found at 
  * https://gist.github.com/gists/831762/  
  */
 public class SqlScriptRunner {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlScriptRunner.class);
 
 	private static final String DEFAULT_DELIMITER = ";";
 	private static final String DELIMITER_LINE_REGEX = "(?i)DELIMITER.+";
@@ -221,15 +225,14 @@ public class SqlScriptRunner {
 							rs.close();
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						LOGGER.error(e.getMessage(), e);
 					}
 					try {
 						if (statement != null) {
 							statement.close();
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
-						// Ignore to workaround a bug in Jakarta DBCP
+						LOGGER.error(e.getMessage(), e);
 					}
 				} else {
 					Pattern pattern = Pattern.compile(DELIMITER_LINE_REGEX);

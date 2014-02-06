@@ -60,7 +60,7 @@ public class EncalheMaximo extends ProcessoAbstrato {
     		}
 		}
 	
-	estudo.getCotasComReparteJaCalculado().addAll(this.cotasComRepJaCalculado);
+	estudo.getCotasComReparteJaCalculado().addAll(new LinkedList<>(cotasComRepJaCalculado));
 	estudo.getCotas().removeAll(this.cotasComRepJaCalculado);
 	
 	this.cotasComRepJaCalculado.clear();
