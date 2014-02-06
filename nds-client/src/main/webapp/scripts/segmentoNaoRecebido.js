@@ -393,10 +393,9 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						segmentoNaoRecebidoController.messagesFeedBack(resultado);
 						
 						if(!resultado.rows.length){
-							$(".grids", segmentoNaoRecebidoController.workspace).hide();
-							$(".areaBts", segmentoNaoRecebidoController.workspace).hide();
-							
-							return;
+                            $(".grids", segmentoNaoRecebidoController.workspace).show();
+                            $(".areaBts", segmentoNaoRecebidoController.workspace).show();
+							return resultado;
 						}
 
 						// Adicionar a imagem para exclusão da linha
