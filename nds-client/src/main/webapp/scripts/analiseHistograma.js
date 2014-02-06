@@ -67,10 +67,6 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		var eficVenda = floatToPrice(parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2));
 		
-		if (isNaN(eficVenda)){
-			eficVenda = 0;
-		}
-		
 		$("#eficienciaDeVendaCell", anaLiseHistogramaController.workspace).text((eficVenda +"%").replace(".", ","));
 		
 		var r = floatToPrice(parseFloat((qtdeCotas/qtdeTotalCotasAtivas)*100 ).toFixed(2));
