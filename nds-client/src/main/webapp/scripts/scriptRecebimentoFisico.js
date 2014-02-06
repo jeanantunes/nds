@@ -707,11 +707,16 @@ var recebimentoFisicoController = $.extend(true, {
      * REFRESH DOS ITENS REFERENTES A NOTA ENCONTRADA.
      */
 	refreshItemNotaGrid : function(onSuccessFunction) {
-	
+		
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexOptions({
 			url: contextPath + '/estoque/recebimentoFisico/refreshListaItemRecebimentoFisico',
 			dataType : 'json',
-			onSuccess : onSuccessFunction	
+			onSuccess : function() {
+							bloquearItensEdicao(recebimentoFisicoController.workspace);
+							recebimentoFisicoController.marcarLinhas();
+							onSuccessFunction();
+						}
+
 		});
 			
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexReload();
@@ -983,7 +988,9 @@ var recebimentoFisicoController = $.extend(true, {
 				});
 				
 			});
-				
+			
+			
+			
 		});
 		
 	},

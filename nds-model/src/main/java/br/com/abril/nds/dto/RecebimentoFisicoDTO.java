@@ -177,11 +177,13 @@ public class RecebimentoFisicoDTO implements Serializable {
 	}
 
 	public BigDecimal getPrecoCapa() {
-		if(precoCapa==null || precoCapa == BigDecimal.ZERO){
+		
+		if(precoCapa==null){
 			return BigDecimal.ZERO;
-		}else{
-		 return precoCapa.divide(new BigDecimal(100));
 		}
+		
+		return precoCapa;
+		
 	}
 
 	public void setPrecoCapa(BigDecimal precoCapa) {
@@ -318,7 +320,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	}
 
 	public BigDecimal getPrecoItem() {
-		return precoItem;
+		return this.precoItem;
 	}
 
 	public void setPrecoItem(BigDecimal precoItem) {
