@@ -3566,4 +3566,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		return (CotaVO) query.uniqueResult();
 	}
+	
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicao(Long idCota){
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select tipoDistribuicaoCota from Cota where id = :idCota");
+		
+		query.setParameter("idCota", idCota);
+		
+		return (TipoDistribuicaoCota) query.uniqueResult();
+	}
 }
