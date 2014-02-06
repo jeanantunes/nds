@@ -23,15 +23,15 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 
 @Repository
-public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long> implements AnaliseParcialRepository {
+public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<EstudoCotaGerado, Long> implements AnaliseParcialRepository {
 
     public AnaliseParcialRepositoryImpl() {
-        super(EstudoCota.class);
+        super(EstudoCotaGerado.class);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       pdv_qtd.quantidade npdv, ");
         sql.append("       ec.qtde_efetiva reparteEstudo, ");
         sql.append("       (select coalesce(reparte, 0) ");
-        sql.append("          from estudo_cota ");
+        sql.append("          from estudo_cota_gerado ");
         sql.append("         where estudo_id = e.estudo_origem_copia ");
         sql.append("           and cota_id = ec.cota_id) reparteEstudoOrigemCopia, ");
         sql.append("       coalesce(ec.reparte,0) reparteSugerido, ");
@@ -66,7 +66,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("                  and p.id = p.id ");
         sql.append("                order by pe.numero_edicao desc ");
         sql.append("                limit 0, 1), 0) ultimoReparte ");
-        sql.append("  from estudo_cota ec ");
+        sql.append("  from estudo_cota_gerado ec ");
         sql.append("  left join cota c on (c.id = ec.cota_id) ");
         sql.append("  left join pessoa pes on (c.pessoa_id = pes.id) ");
         sql.append("  left join estudo_gerado e on (e.id = ec.estudo_id) ");
@@ -424,7 +424,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public void atualizaReparteCota(Long estudoId, Long numeroCota, Long reparteSubtraido) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("update estudo_cota ec ");
+        sql.append("update estudo_cota_gerado ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
         sql.append("   set ec.reparte = coalesce(ec.reparte,0) + ? ");
         sql.append(" where ec.estudo_id = ? ");
@@ -442,7 +442,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("update estudo_cota ec ");
+        sql.append("update estudo_cota_gerado ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
         sql.append("   set ec.classificacao = 'IN' ");
         sql.append(" where ec.estudo_id = ? ");
@@ -521,7 +521,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
         sql.append("       ec.reparte quantidade, ");
         sql.append("       ec.classificacao motivo ");
-        sql.append("  from estudo_cota ec ");
+        sql.append("  from estudo_cota_gerado ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");
         sql.append("  join pessoa pe on pe.id = cota.pessoa_id ");
         sql.append("  left join ranking_segmento rks on rks.cota_id = cota.id ");
@@ -649,7 +649,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
 	@Override
 	public AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem,Integer numeroCota) {
-		String sql = "select estudo_cota.REPARTE as ultimoReparte from estudo_cota join cota ON estudo_cota.COTA_ID = cota.ID where estudo_id = :estudoID and cota.numero_cota= :numeroCota";
+		String sql = "select estudo_cota.REPARTE as ultimoReparte from estudo_cota_gerado estudo_cota join cota ON estudo_cota.COTA_ID = cota.ID where estudo_id = :estudoID and cota.numero_cota= :numeroCota";
 		
 		  SQLQuery query = getSession().createSQLQuery(sql);
 	        query.setParameter("estudoID", estudoOrigem);

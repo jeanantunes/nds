@@ -53,7 +53,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" estudoG.qtdeReparte AS qtdeReparteEstudo, ");
 
 		hql.append(" (select min(estCota.reparteMinimo)    					" + 
-				   "	from EstudoCota estCota  							" +
+				   "	from EstudoCotaGerado estCota  							" +
 				   "  	inner join estCota.estudo as estRM                  " + 
 				   "	where estRM.id in (estudoG.id)) as reparteMinimo,   ");
 		

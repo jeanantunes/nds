@@ -24,6 +24,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.NullComparator;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +84,9 @@ import br.com.abril.nds.util.StringUtil;
 
 @Service
 public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentoCobrancaServiceImpl.class);
+
 
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
@@ -146,7 +150,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			
 		} catch (Exception e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar e-mail de arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "Erro ao enviar e-mail de arquivo de cobrança para nosso número: " + nossoNumero + " - "
+                            + e.getMessage());
 		}
 		
 		this.cobrancaRepository.incrementarVia(nossoNumero);
@@ -188,14 +194,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return arquivo;
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Retorna um grupo de documentos de cobrança. 
-	 * @param listNossoNumero
-	 * @return byte[]
-	 * @throws JRException
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Retorna um grupo de documentos de cobrança.
+     * 
+     * @param listNossoNumero
+     * @return byte[]
+     * @throws JRException
+     */
 	private byte[] gerarDocumentoCobrancas(List<String> listNossoNumero) throws Exception {
 		
 		List<CobrancaImpressaoDTO> cobrancas = new ArrayList<CobrancaImpressaoDTO>();
@@ -216,13 +223,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return arquivo ;
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Retorna uma lista com os nosso número referente as cobranças.
-	 * @param dividas
-	 * @return List<String>
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Retorna uma lista com os nosso número referente as cobranças.
+     * 
+     * @param dividas
+     * @return List<String>
+     */
 	private List<String> getNossoNumeros(List<GeraDividaDTO> dividas){
 		
 		List<String> list = new ArrayList<String>();
@@ -234,14 +242,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return list;
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Envia um tipo de cobrança por email.
-	 * @param cobranca
-	 * @throws AutenticacaoEmailException
-	 * @throws JRException 
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Envia um tipo de cobrança por email.
+     * 
+     * @param cobranca
+     * @throws AutenticacaoEmailException
+     * @throws JRException
+     */
 	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, Exception {
 		
 		String assunto = this.distribuidorService.assuntoEmailCobranca();
@@ -261,14 +270,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		emailService.enviar(assunto,mensagem,destinatarios,anexoEmail);
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Retorna o documento de cobrança gerado pelo Ireport
-	 * @param cobrancas
-	 * @return byte[]
-	 * @throws JRException
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Retorna o documento de cobrança gerado pelo Ireport
+     * 
+     * @param cobrancas
+     * @return byte[]
+     * @throws JRException
+     */
 	private byte[] getDocumentoCobranca(Cobranca... cobrancas) throws Exception{
 		
 		String razaoSocial = this.distribuidorService.obterRazaoSocialDistribuidor();
@@ -282,14 +292,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return gerarDocumentoIreport(list);
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Retorna um grupo de documentos de cobrança gerado pelo Ireport
-	 * @param list
-	 * @return  byte[] 
-	 * @throws JRException
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Retorna um grupo de documentos de cobrança gerado pelo Ireport
+     * 
+     * @param list
+     * @return byte[]
+     * @throws JRException
+     */
 	private byte[] gerarDocumentoIreport(List<CobrancaImpressaoDTO> list) throws Exception{
 		
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
@@ -303,12 +314,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		 return  JasperRunManager.runReportToPdf(path, map, jrDataSource);
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Retorna as informações do distribuidor para montagem dos parâmetros do Ireport
-	 * @return Map<String, Object>
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Retorna as informações do distribuidor para montagem dos parâmetros do
+     * Ireport
+     * 
+     * @return Map<String, Object>
+     */
 	private Map<String, Object> getInformacoesDistribuido(){
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -344,13 +357,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return map;
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Obtem descrição concatenada do endereço do distribuidor
-	 * @param enderecoDistribuidor
-	 * @return String
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Obtem descrição concatenada do endereço do distribuidor
+     * 
+     * @param enderecoDistribuidor
+     * @return String
+     */
 	private String obterDescricaoEnderecoDistribuidor(EnderecoDistribuidor enderecoDistribuidor){
 		
 		Endereco endereco  = enderecoDistribuidor.getEndereco();
@@ -372,14 +386,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return descricao.toString();
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Monta a estrutura do objeto para impressão no Ireport
-	 * @param cobranca 
-	 * @param distribuidor
-	 * @return CobrancaImpressaoDTO
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Monta a estrutura do objeto para impressão no Ireport
+     * 
+     * @param cobranca
+     * @param distribuidor
+     * @return CobrancaImpressaoDTO
+     */
 	private CobrancaImpressaoDTO obterCobrancaImpressaoDTO(Cobranca cobranca, String razaoSocialDistribuidor){
 		
 		CobrancaImpressaoDTO impressaoDTO = new CobrancaImpressaoDTO();
@@ -402,14 +417,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return impressaoDTO;
 	}
 
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Atribui os dados da cota para a impressão
-	 * @param razaoSocialDistribuidor
-	 * @param impressaoDTO
-	 * @param cota
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Atribui os dados da cota para a impressão
+     * 
+     * @param razaoSocialDistribuidor
+     * @param impressaoDTO
+     * @param cota
+     */
 	private void atribuirDadosCota(String razaoSocialDistribuidor,CobrancaImpressaoDTO impressaoDTO, Cota cota) {
 		
 		if(cota!= null){
@@ -454,13 +470,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		}
 	}
 
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Atribui os dados do Banco para a impressão
-	 * @param impressaoDTO
-	 * @param banco
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Atribui os dados do Banco para a impressão
+     * 
+     * @param impressaoDTO
+     * @param banco
+     */
 	private void atribuirDadosBanco(CobrancaImpressaoDTO impressaoDTO, Banco banco) {
 		
 		if(banco!= null){
@@ -483,12 +500,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		}
 	}
 	
-	/**
-	 * BOLETO/COBRANCA
-	 * 
-	 * Gera documento de cobrança
-	 * @param nossoNumero
-	 */
+	    /**
+     * BOLETO/COBRANCA
+     * 
+     * Gera documento de cobrança
+     * 
+     * @param nossoNumero
+     */
 	@Override
 	@Transactional
 	public byte[] gerarDocumentoCobranca(String nossoNumero) {
@@ -519,7 +537,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		}
 		catch (Exception e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
+            throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: "
+                    + nossoNumero + " - " + e.getMessage());
 		}
 		
 		Integer vias = (cobranca.getVias() == null) ? 1 : (cobranca.getVias()+1);
@@ -551,13 +570,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			aux = aux.substring(i-1, i);
 			switch (Integer.parseInt(aux)){ 
 			    case 1:
-			    	ord+="DÉCIMO";
+                ord += "DÉCIMO";
 			        break;
 			    case 2:
-			    	ord+="VIGÉSIMO";
+                ord += "VIGÉSIMO";
 			        break;
 			    case 3:
-			    	ord+="TRIGÉSIMO";
+                ord += "TRIGÉSIMO";
 			        break;
 			    default:
 			    	ord+="";
@@ -589,7 +608,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		    	ord+="SEXTO";
 		    	break;
 		    case 7:
-		    	ord+=" SÉTIMO";
+            ord += " SÉTIMO";
 		    	break;
 		    case 8:
 		    	ord+=" OITAVO";
@@ -604,12 +623,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return ord;
 	}
 	
-	/**
-	 * SLIP
-	 * 
-	 * Ordena lista de produtos da impressão por dia
-	 * @param listaProdutoEdicaoSlip
-	 */
+	    /**
+     * SLIP
+     * 
+     * Ordena lista de produtos da impressão por dia
+     * 
+     * @param listaProdutoEdicaoSlip
+     */
 	@SuppressWarnings("unchecked")
 	private void ordenarListaPorDia(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
 
@@ -687,11 +707,16 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     /**
      * SLIP
      * 
-	 * Retorna a data de operação do controle confernecia encalhe junto com o horario da data de finalização de controle conferencia encalhe.
-	 * @param dataFimConferencia - data de finalização de controle conferencia encalhe cota
-	 * @param dataOperacaoConferenia - data de operação de controle conferencia encalhe cota
-	 * @return Date - data de operação de controle conferencia encalhe cota com horario de finalização da conferencia 
-	 */
+     * Retorna a data de operação do controle confernecia encalhe junto com o
+     * horario da data de finalização de controle conferencia encalhe.
+     * 
+     * @param dataFimConferencia - data de finalização de controle conferencia
+     *            encalhe cota
+     * @param dataOperacaoConferenia - data de operação de controle conferencia
+     *            encalhe cota
+     * @return Date - data de operação de controle conferencia encalhe cota com
+     *         horario de finalização da conferencia
+     */
 	private Date obterDataOperacaoConferencia(Date dataFimConferencia, Date dataOperacaoConferenia){
 		
 		Calendar dataFinalConferencia =  Calendar.getInstance();
@@ -706,14 +731,15 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return dataOperacaoConferencia.getTime();
 	}
 	
-	/**
-	 * SLIP
-	 * 
-	 * Obtem todos os dados da impressão do Slip
-	 * @param idControleConferenciaEncalheCota
-	 * @param incluirNumeroSlip
-	 * @return SlipDTO
-	 */
+	    /**
+     * SLIP
+     * 
+     * Obtem todos os dados da impressão do Slip
+     * 
+     * @param idControleConferenciaEncalheCota
+     * @param incluirNumeroSlip
+     * @return SlipDTO
+     */
     private SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
@@ -821,7 +847,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		} catch(Exception e) {
 		
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao carregar logotipo do distribuidor no documento de cobrança");
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "Erro ao carregar logotipo do distribuidor no documento de cobrança");
 		
 		}
 		
@@ -836,8 +863,8 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		for(DebitoCreditoCotaDTO item : listaComposicaoCobranca){
 			
-	        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
-			//débito para o distribuidor, não para a cota
+            // TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
+            // débito para o distribuidor, não para a cota
 		    if (OperacaoFinaceira.DEBITO.equals(item.getTipoLancamento())) {
 		    	
 				totalComposicao = totalComposicao.add(item.getValor());
@@ -877,6 +904,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * SLIP
      * 
      * Gera impressão de Slip para Impressoras Matriciais
+     * 
      * @param slipDTO
      * @return byte[]
      */
@@ -997,7 +1025,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		//e.adicionarCompleteEspaco("Outros valores", slipDTO.getOutrosValores().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 		e.adicionarCompleteEspaco("VALOR TOTAL A PAGAR", valorTotalPagar);
 	
-		e.quebrarLinhaEscape(9);//Espaços fim da impressao
+        e.quebrarLinhaEscape(9);// Espaços fim da impressao
 		
 		String saida = sb.toString();
 		
@@ -1008,6 +1036,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * SLIP
      * 
      * Insere cabeçalho do Slip
+     * 
      * @param e
      * @param ordinalDiaConferenciaEncalhe
      */
@@ -1026,13 +1055,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		e.quebrarLinhaEscape();
 	}
 	
-	/**
-	 * SLIP
-	 * 
-	 * Adiciona informações da composição da cobrança no Slip
-	 * @param e
-	 * @param slipDTO
-	 */
+	    /**
+     * SLIP
+     * 
+     * Adiciona informações da composição da cobrança no Slip
+     * 
+     * @param e
+     * @param slipDTO
+     */
 	private void adicionarComposicaoCobranca(ImpressaoMatricialUtil e, SlipDTO slipDTO) {
 
 		e.adicionar("COMPOSICAO COBRANCA---------------------");
@@ -1088,7 +1118,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		}
 		catch(Exception e){
 			
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slipDTO.getListaProdutoEdicaoSlipDTO());
@@ -1105,11 +1135,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			
 		} catch (JRException e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 			
 		}catch (URISyntaxException e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 			
 		}
 	}
@@ -1118,6 +1148,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
      * SLIP
      * 
      * Gera Slip da Cobrança para Impressão em Impressora Matricial
+     * 
      * @param idControleConferenciaEncalheCota
      * @param incluirNumeroSlip
      * @return byte[]
@@ -1131,15 +1162,16 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return gerarSlipTxtMatricial(slipDTO);
 	}
     
-	/**
-	 * SLIP
-	 * 
-	 * Gera Slip da Cobrança
-	 * @param idControleConferenciaEncalheCota
-	 * @param incluirNumeroSlip
-	 * @param tpArquivo
-	 * @return byte[]
-	 */
+	    /**
+     * SLIP
+     * 
+     * Gera Slip da Cobrança
+     * 
+     * @param idControleConferenciaEncalheCota
+     * @param incluirNumeroSlip
+     * @param tpArquivo
+     * @return byte[]
+     */
 	@Override
 	@Transactional
 	public byte[] gerarSlipCobranca(Long idControleConferenciaEncalheCota, 
@@ -1164,15 +1196,16 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		}
 	}
 	
-	/**
-	 * SLIP
-	 * 
-	 * Gera Slip da Cobrança
-	 * @param nossoNumero
-	 * @param incluirNumeroSlip
-	 * @param tpArquivo
-	 * @return byte[]
-	 */
+	    /**
+     * SLIP
+     * 
+     * Gera Slip da Cobrança
+     * 
+     * @param nossoNumero
+     * @param incluirNumeroSlip
+     * @param tpArquivo
+     * @return byte[]
+     */
 	@Override
 	@Transactional
 	public byte[] gerarSlipCobranca(String nossoNumero, 
@@ -1367,17 +1400,18 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     	return qtdeTotal.toString();
     }
 	
-	/**
-	 * RECIBO
-	 * 
-	 * Gera um relatório à partir de um Objeto com atributos e listas definidas
-	 * @param list
-	 * @param cobranca
-	 * @param pathJasper
-	 * @return Array de bytes do relatório gerado
-	 * @throws JRException
-	 * @throws URISyntaxException
-	 */
+	    /**
+     * RECIBO
+     * 
+     * Gera um relatório à partir de um Objeto com atributos e listas definidas
+     * 
+     * @param list
+     * @param cobranca
+     * @param pathJasper
+     * @return Array de bytes do relatório gerado
+     * @throws JRException
+     * @throws URISyntaxException
+     */
 	private byte[] gerarDocumentoReciboIreport(Cobranca cobranca,
 										       String pathJasper) throws JRException, URISyntaxException {
 		
@@ -1400,13 +1434,14 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 	
-	/**
-	 * RECIBO
-	 * 
-	 * Gera Recibo da Cobrança
-	 * @param nossoNumero
-	 * @return byte[]
-	 */
+	    /**
+     * RECIBO
+     * 
+     * Gera Recibo da Cobrança
+     * 
+     * @param nossoNumero
+     * @return byte[]
+     */
 	@Override
 	@Transactional
 	public byte[] gerarReciboCobranca(String nossoNumero) {

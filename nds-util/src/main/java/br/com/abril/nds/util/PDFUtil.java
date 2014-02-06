@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.apache.poi.util.IOUtils;
 
 import com.itextpdf.text.Document;
@@ -21,6 +22,8 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFUtil {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PDFUtil.class);
 	
 	public static byte[] mergePDFs(List<byte[]> arquivos) {
 
@@ -34,7 +37,7 @@ public class PDFUtil {
 			return PDFUtil.concatPDFs(pdfs, true);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
 		return null;
@@ -117,8 +120,8 @@ public class PDFUtil {
 			try {
 				if (outputStream != null)
 					outputStream.close();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
 			}
 		}
 	}

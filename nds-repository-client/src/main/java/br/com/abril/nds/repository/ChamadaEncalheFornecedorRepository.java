@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.util.Intervalo;
 
@@ -38,7 +39,13 @@ public interface ChamadaEncalheFornecedorRepository extends Repository<ChamadaEn
     
     
     List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
-	
-	
-
+    
+    /**
+     * Obtém lista de CE Fornecedor com Diferença(Perda/Ganho) Pendente
+     * 
+     * @param listaIdCeFornecedor
+     * @param statusConfirmacao
+     * @return List<ChamadaEncalheFornecedor>
+     */
+    List<ChamadaEncalheFornecedor> obtemCEFornecedorComDiferencaPendente(List<Long> listaIdCeFornecedor, StatusConfirmacao statusConfirmacao);
 }

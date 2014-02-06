@@ -20,7 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.Diferenca;
 
 /**
  * Item da Chamada de Encalhe do Fornecedor para retorno
@@ -114,8 +114,8 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     private BigDecimal valorMargemApurado;
     
     @OneToOne
-    @JoinColumn(name = "MOVIMENTO_ESTOQUE_ID")
-    private MovimentoEstoque movimentoEstoque;
+    @JoinColumn(name = "DIFERENCA_ID")
+    private Diferenca diferenca;
     
     /**
      * @return the id
@@ -453,19 +453,19 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     public void setValorMargemApurado(BigDecimal valorMargemApurado) {
         this.valorMargemApurado = valorMargemApurado;
     }
-    
-    /**
-	 * @return the movimentoEstoque
+
+	/**
+	 * @return the diferenca
 	 */
-	public MovimentoEstoque getMovimentoEstoque() {
-		return movimentoEstoque;
+	public Diferenca getDiferenca() {
+		return diferenca;
 	}
 
 	/**
-	 * @param movimentoEstoque the movimentoEstoque to set
+	 * @param diferenca the diferenca to set
 	 */
-	public void setMovimentoEstoque(MovimentoEstoque movimentoEstoque) {
-		this.movimentoEstoque = movimentoEstoque;
+	public void setDiferenca(Diferenca diferenca) {
+		this.diferenca = diferenca;
 	}
 
 	/* (non-Javadoc)

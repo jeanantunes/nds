@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
@@ -21,21 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
+ * Classe de implementação referente ao acesso a dados da entidade
  * {@link br.com.abril.nds.model.planejamento.EstudoGerado}.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGerado, Long> implements EstudoGeradoRepository {
 	
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudoCotaGeradoRepositoryImpl.class);
+
 	@Autowired
 	private DataSource dataSource;
 	
@@ -67,7 +70,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 	public EstudoGerado obterEstudoECotasPorIdEstudo(Long idEstudo) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select estudoCota.estudo from EstudoCota estudoCota");
+		hql.append(" select estudoCota.estudo from EstudoCotaGerado estudoCota");
 		hql.append(" where estudoCota.estudo.id = :estudo");
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -101,17 +104,17 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("     SELECT ");
 		sql.append("       (SELECT lancamento.reparte FROM estudo_gerado estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidor, ");
 		sql.append("       (SELECT reparte_promocional FROM estudo_gerado estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdRepartePromocional, ");
-		sql.append("       (SELECT sum(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
+		sql.append("       (SELECT sum(reparte) FROM estudo_cota_gerado WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
 		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
-		sql.append("       (SELECT count(DISTINCT estudo_cota.cota_id) FROM estudo_cota"); 
+		sql.append("       (SELECT count(DISTINCT estudo_cota_gerado.cota_id) FROM estudo_cota_gerado"); 
 		sql.append(" 				WHERE ESTUDO_ID = :estudoId AND reparte IS NOT NULL) AS qtdCotasRecebemReparte, ");
-		sql.append("       (SELECT COUNT(id) FROM estudo_cota WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		sql.append(" 	   IFNULL((SELECT MIN(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
+		sql.append("       (SELECT COUNT(id) FROM estudo_cota_gerado WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
+		sql.append(" 	   IFNULL((SELECT MIN(reparte) FROM estudo_cota_gerado WHERE estudo_id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
 		sql.append("	   (SELECT reparte_minimo FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");
 		sql.append("	   (SELECT abrangencia FROM estrategia JOIN estudo_gerado estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS abrangenciaSugerida, ");
 		sql.append(" 	   (SELECT COUNT( DISTINCT (CASE WHEN qtde_recebida - qtde_devolvida > 0 THEN cota_id ELSE null END)) FROM estoque_produto_cota");
 		sql.append(" 		 	WHERE estoque_produto_cota.produto_edicao_id IN (SELECT produto_edicao_id FROM estudo_produto_edicao_base WHERE estudo_id = :estudoId)");
-		sql.append(" 		 	AND estoque_produto_cota.cota_id IN (SELECT cota_id FROM ESTUDO_COTA WHERE estudo_id = :estudoId)) AS qtdCotasQueVenderam");
+		sql.append(" 		 	AND estoque_produto_cota.cota_id IN (SELECT cota_id FROM estudo_cota_gerado WHERE estudo_id = :estudoId)) AS qtdCotasQueVenderam");
 		sql.append("   ) AS base ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
@@ -196,10 +199,10 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(*) from estudo_cota ec where ec.ESTUDO_ID=")
+		hql.append(" select count(*) from estudo_cota_gerado ec where ec.ESTUDO_ID=")
 				.append( estudoBase.toString()) 
 				.append(" and ec.COTA_ID in (  ")
-			.append(" 	select ec2.COTA_ID from estudo_cota ec2 where ec2.ESTUDO_ID = ")
+			.append(" 	select ec2.COTA_ID from estudo_cota_gerado ec2 where ec2.ESTUDO_ID = ")
 					.append( estudoSomado.toString())	 
 					.append( ")" );
 		
@@ -213,7 +216,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
     @Override
     @Transactional(readOnly = true)
     public int obterCotasComRepartePorIdEstudo(Long estudoId) {
-        return ((Number) this.getSession().createCriteria(EstudoCota.class)
+        return ((Number) this.getSession().createCriteria(EstudoCotaGerado.class)
                 .add(Restrictions.eq("estudo.id", estudoId))
                 .add(Restrictions.gt("reparte", BigInteger.ZERO))
                 .setProjection(Projections.rowCount())
@@ -234,7 +237,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 			long1 = rs.getLong("ID");
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		return (long1 == null || long1.equals(0L)) ? 1L : long1;
 	}

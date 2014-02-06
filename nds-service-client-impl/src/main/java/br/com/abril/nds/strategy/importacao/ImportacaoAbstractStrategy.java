@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.exception.ImportacaoException;
@@ -18,19 +21,20 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 /**
- *
+ * 
  * Classe que abstrai a leitura e geração de log dos arquivos importados
- *
+ * 
  * @author Discover Technology
- *
+ * 
  */
 public abstract class ImportacaoAbstractStrategy<T> {
 
-	private static final Logger logger = Logger.getLogger(ImportacaoAbstractStrategy.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportacaoAbstractStrategy.class);
+    private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
 
-	protected static final String MENSAGEM_ERRO_PARSE_DADOS = "Parse das informações contidas na linha do arquivo inválida!";
+    protected static final String MENSAGEM_ERRO_PARSE_DADOS = "Parse das informações contidas na linha do arquivo inválida!";
 
-	protected static final String MENSAGEM_ERRO_FORMATO_DADOS="Formato das informações contidas na linha do arquivo inválida!";
+    protected static final String MENSAGEM_ERRO_FORMATO_DADOS = "Formato das informações contidas na linha do arquivo inválida!";
 
 	protected Date dataCriacaoArquivo;
 	
@@ -86,7 +90,7 @@ public abstract class ImportacaoAbstractStrategy<T> {
 									, it.toString()
 									, false
 								);
-					logger.error(retorno.toString());
+					LOGGER.error(retorno.toString());
 					//return retorno;
 					
 					// Tratamento de qualquer outra exception
@@ -98,11 +102,11 @@ public abstract class ImportacaoAbstractStrategy<T> {
 									, it.toString()
 									, false
 								);
-					logger.error(retorno.toString());
+					LOGGER.error(retorno.toString());
 				}
 			}
 		} catch (IOException ex) {
-			logger.fatal("Erro na leitura de arquivo", ex);
+            LOGGER.error(FATAL, "Erro na leitura de arquivo", ex);
 			throw new ImportacaoException(ex.getMessage());
 		} 		
 

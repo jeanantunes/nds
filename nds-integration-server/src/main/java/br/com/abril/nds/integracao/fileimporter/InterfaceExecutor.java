@@ -18,6 +18,7 @@ import java.util.Scanner;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.UpdateConflictException;
@@ -67,18 +68,21 @@ import com.healthmarketscience.jackcess.Table;
 
 /**
  * Realiza a execução das interfaces de integração. <br>
- * Lê as linhas dos arquivos de entrada, transforma em documentos e grava no CouchDB. 
+ * Lê as linhas dos arquivos de entrada, transforma em documentos e grava no
+ * CouchDB.
  */
 @Service
 public class InterfaceExecutor {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceExecucao.class);
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
 	private static ApplicationContext applicationContext;
 	
-	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
+    private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
 
-	private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
+    private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
 	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
@@ -137,23 +141,23 @@ public class InterfaceExecutor {
 	}
 	
 	
-	/**
-	 * Executa a interface selecionada para todos os distribuidores.
-	 * 
-	 * @param nomeUsuario login do usuário, para efeitos de log
-	 * @param interfaceEnum interface a ser executada
-	 */
+	            /**
+     * Executa a interface selecionada para todos os distribuidores.
+     * 
+     * @param nomeUsuario login do usuário, para efeitos de log
+     * @param interfaceEnum interface a ser executada
+     */
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum) {
 		this.executarInterface(nomeUsuario, interfaceEnum, null);
 	}
 	
-	/**
-	 * Executa a interface selecionada para o distribuidor selecionado.
-	 * 
-	 * @param nomeUsuario login do usuário, para efeitos de log
-	 * @param interfaceEnum interface a ser executada
-	 * @param codigoDistribuidor código do distribuidor
-	 */
+	            /**
+     * Executa a interface selecionada para o distribuidor selecionado.
+     * 
+     * @param nomeUsuario login do usuário, para efeitos de log
+     * @param interfaceEnum interface a ser executada
+     * @param codigoDistribuidor código do distribuidor
+     */
 	public void executarInterface(String nomeUsuario, InterfaceEnum interfaceEnum, Long codigoDistribuidor) {
 		
 		// Busca dados de configuracao
@@ -163,7 +167,7 @@ public class InterfaceExecutor {
 			throw new RuntimeException("Interface " + interfaceEnum.getCodigoInterface() + " nao cadastrada");
 		}
 		
-		// Loga início
+        // Loga início
 		Date dataInicio = new Date();
 		LogExecucao logExecucao = this.logarInicio(dataInicio, interfaceExecucao, nomeUsuario);
 		
@@ -178,9 +182,9 @@ public class InterfaceExecutor {
 			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
-		} catch (Exception t) {
+        } catch (Exception e) {
 			this.processadoComSucesso = false;
-			t.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		} finally {
 			// Loga fim
 			this.logarFim(logExecucao);
@@ -309,7 +313,7 @@ public class InterfaceExecutor {
 				} catch (Exception e) {
 					
 					this.logarArquivo(logExecucao, distribuidor, arquivo.getAbsolutePath(), StatusExecucaoEnum.FALHA, e.getMessage());
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 					continue;
 					
 				}
@@ -360,20 +364,19 @@ public class InterfaceExecutor {
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 				} catch (FileNotFoundException e1) {
 					this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-					//e1.printStackTrace();
 				} finally {
 					if (null != in) {
 						try {
 							in.close();
-						} catch (IOException e1) {							
-							e1.printStackTrace();
+                        } catch (IOException ex) {
+                            LOGGER.error(ex.getMessage(), ex);
 						}
 					}
 				}
 				
 			} catch (Exception e) {
 				this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-				//e.printStackTrace();
+				//LOGGER.error(e.getMessage(), e);
 			}
 			
 		}
@@ -552,7 +555,8 @@ public class InterfaceExecutor {
 				continue;
 			} 
 
-			// TODO: verificar tamanho correto das linhas nos arquivos: difere da definição
+            // TODO: verificar tamanho correto das linhas nos arquivos: difere
+            // da definição
 //			if (linha.length() != interfaceEnum.getTamanhoLinha().intValue()) {
 //				throw new ValidacaoException(TAMANHO_LINHA);
 //			}
@@ -601,13 +605,13 @@ public class InterfaceExecutor {
 		scanner.close();
 	}
 
-	/**
-	 * Recupera a lista de arquivos a serem processados.
-	 * 
-	 * @param interfaceExecucao interface sendo executada
-	 * @param codigoDistribuidor código do distribuidor
-	 * @return lista de arquivos a serem processados
-	 */
+	            /**
+     * Recupera a lista de arquivos a serem processados.
+     * 
+     * @param interfaceExecucao interface sendo executada
+     * @param codigoDistribuidor código do distribuidor
+     * @return lista de arquivos a serem processados
+     */
 	private List<File> recuperaArquivosProcessar(String diretorio, String pastaInterna, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
 
 		List<File> listaArquivos = new ArrayList<File>();
@@ -643,9 +647,9 @@ public class InterfaceExecutor {
 		
 	}
 	
-	/**
-	 * Loga o início da execução de uma interface de integração.
-	 */
+	            /**
+     * Loga o início da execução de uma interface de integração.
+     */
 	
 	private LogExecucao logarInicio(Date dataInicio, InterfaceExecucao interfaceExecucao, String nomeLoginUsuario) {
 		
@@ -680,9 +684,9 @@ public class InterfaceExecutor {
 		this.logExecucaoArquivoRepository.inserir(logExecucaoArquivo);
 	}
 	
-	/**
-	 * Loga o final da execução da interface de integração.
-	 */
+	            /**
+     * Loga o final da execução da interface de integração.
+     */
 	
 	private void logarFim(LogExecucao logExecucao) {
 		

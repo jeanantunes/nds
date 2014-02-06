@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -375,7 +375,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return Long.valueOf(count);
     }
 
-	                        /**
+	                            /**
      * Insere os dados de desconto relativos ao produto edição em questão.
      * 
      * @param produtoEdicao
@@ -606,13 +606,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		PeriodoLancamentoParcial periodoInicial = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
 		
-		if(periodoInicial!= null && periodoInicial.getLancamentoPeriodoParcial()!= null){
-			
-			if(periodoInicial.getLancamentoPeriodoParcial().getDataLancamentoDistribuidor().compareTo(dto.getDataLancamentoPrevisto())<0){
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Data lançamento previsto deve ser menor que a data de lançamento real.");
-			}
-		}
+
 
 		PeriodoLancamentoParcial periodoFinal = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
 		
@@ -624,7 +618,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 	}
 
-	                        /**
+	                            /**
      * Aplica todas as regras de validação para o cadastro de uma Edição.
      * 
      * @param dto
@@ -632,7 +626,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
      */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 
-		                                                /*
+		                                                        /*
          * Regra: Os campos abaixos só podem ser alterados caso a Edição ainda
          * não tenha sido publicado pelo distribuidor: - Código da Edição; -
          * Número da Edição;
@@ -684,7 +678,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         // Nota: Conforme conversado com o Cesar e Paulo Bacherini em
         // 05/11/2012, dois produtos diferentes podem sim ter o mesmo código de
         // barras
-		                                                /*
+		                                                        /*
          * List<ProdutoEdicao> lstPeCodBarra =
          * this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
          * dto.getCodigoDeBarras(), produtoEdicao.getId()); if (lstPeCodBarra !=
@@ -706,7 +700,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
          */
 	}
 
-	                        /**
+	                            /**
      * Salva ou atualiza um ProdutoEdicao.<br>
      * . Os campos permitidos no cenário de gravação ou alteração de um
      * ProdutoEdição criado por um Distribuidor:
@@ -852,7 +846,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return produtoEdicao;
 	}
 
-	                        /**
+	                            /**
      * Salva o lançamento.
      * 
      * @param lancamento

@@ -34,7 +34,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         sql.append("  from tipo_ponto_pdv t ");
         sql.append("  join pdv p on p.tipo_ponto_pdv_id = t.id ");
         sql.append("  join cota c on c.id = p.cota_id ");
-        sql.append("  join estudo_cota ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
+        sql.append("  join estudo_cota_gerado ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
         sql.append(" order by t.descricao ");
 
         Query query = getSession().createSQLQuery(sql.toString()).addEntity(TipoPontoPDV.class);
@@ -58,7 +58,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         sql.append("  join gerador_fluxo_pdv g on g.tipo_gerador_fluxo_id = t.id ");
         sql.append("  join pdv on pdv.id = g.pdv_id ");
         sql.append("  join cota c on c.id = pdv.cota_id ");
-        sql.append("  join estudo_cota ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
+        sql.append("  join estudo_cota_gerado ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
         sql.append(" order by t.descricao ");
 
         Query query = getSession().createSQLQuery(sql.toString()).addEntity(TipoGeradorFluxoPDV.class);
@@ -78,7 +78,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         StringBuilder sql = new StringBuilder();
         sql.append("select distinct e.bairro ");
         sql.append("  from cota c ");
-        sql.append("  join estudo_cota ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
+        sql.append("  join estudo_cota_gerado ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
         sql.append("  join pdv p on p.cota_id = c.id ");
         sql.append("  join endereco_pdv ep on ep.pdv_id = p.id ");
         sql.append("  join endereco e on e.id = ep.endereco_id and e.bairro is not null and trim(e.bairro) <> '' ");
@@ -107,7 +107,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         sql.append("       r.usuario_id ");
         sql.append("  from regiao r ");
         sql.append("  join registro_cota_regiao rcr on rcr.regiao_id = r.id ");
-        sql.append("  join estudo_cota ec on ec.cota_id = rcr.cota_id and ec.estudo_id = :estudoId ");
+        sql.append("  join estudo_cota_gerado ec on ec.cota_id = rcr.cota_id and ec.estudo_id = :estudoId ");
         sql.append(" order by r.nome_regiao ");
 
         Query query = getSession().createSQLQuery(sql.toString()).addEntity(Regiao.class);
@@ -154,7 +154,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         sql.append("  from area_influencia_pdv a ");
         sql.append("  join pdv p on p.area_influencia_pdv_id = a.id ");
         sql.append("  join cota c on c.id = p.cota_id ");
-        sql.append("  join estudo_cota ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
+        sql.append("  join estudo_cota_gerado ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
         sql.append(" order by a.descricao ");
 
         Query query = getSession().createSQLQuery(sql.toString()).addEntity(AreaInfluenciaPDV.class);
@@ -174,7 +174,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         StringBuilder sql = new StringBuilder();
         sql.append("select distinct e.uf ");
         sql.append("  from cota c ");
-        sql.append("  join estudo_cota ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
+        sql.append("  join estudo_cota_gerado ec on ec.cota_id = c.id and ec.estudo_id = :estudoId ");
         sql.append("  join pdv p on p.cota_id = c.id ");
         sql.append("  join endereco_pdv ep on ep.pdv_id = p.id ");
         sql.append("  join endereco e on e.id = ep.endereco_id and e.uf is not null and trim(e.uf) <> '' ");

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,9 @@ import br.com.abril.nds.service.UsuarioService;
 
 @Service
 public class FixacaoReparteServiceImpl implements FixacaoReparteService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(FixacaoReparteServiceImpl.class);
+
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -136,9 +140,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
             if (fixacaoReparte.getClassificacaoProdutoEdicao() != null) {
                 descricao = fixacaoReparte.getClassificacaoProdutoEdicao().getDescricao();
             }
-            throw new ValidacaoException(TipoMensagem.WARNING, "Já existe fixação para esta cota[" +
+            throw new ValidacaoException(TipoMensagem.WARNING, "Já existe fixação para esta cota["
+                    +
                     fixacaoReparteDTO.getCotaFixadaString() +
-                    "], produto[" + fixacaoReparteDTO.getProdutoFixado() + "] e classificação[" +
+ "], produto[" + fixacaoReparteDTO.getProdutoFixado()
+                    + "] e classificação[" +
                     descricao + "]");
         }
 
@@ -203,7 +209,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
         TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.buscarPorId(fixacaoReparteDTO.getClassificacaoProdutoId());
 
-        // Esta validação nao faz mais sentido como está... talvez varrer todas as possiveis edições involvidas?
+        // Esta validação nao faz mais sentido como está... talvez varrer todas
+        // as possiveis edições involvidas?
 		validaStatusProduto(fixacaoReparteDTO, produto);
 		
 		// obter o id da base
@@ -252,7 +259,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		case CONFIRMADO:
 		case FECHADO:
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não permitido a fixação devido ao status das edições.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não permitido a fixação devido ao status das edições.");
 			
 		case BALANCEADO:
 		case BALANCEADO_RECOLHIMENTO:
@@ -348,7 +355,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
         Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
         if (StringUtils.isBlank(produto.getCodigoICD())) {
-            return true; //Não deixar fixar sem um codigo ICD cadastrado.
+            return true; // Não deixar fixar sem um codigo ICD cadastrado.
         }
         fixacaoReparteDTO.setProdutoFixado(produto.getCodigoICD());
         return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
@@ -377,7 +384,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			
 			List<FixacaoReparteDTO> fixacaoCotaOrigemList = fixacaoReparteRepository.obterFixacoesRepartePorCota(filtroConsultaFixacaoCotaDTO);
 			if(fixacaoCotaOrigemList==null || fixacaoCotaOrigemList.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
 			}
 			for (FixacaoReparteDTO fixacaoReparteDTO : fixacaoCotaOrigemList) {
 				fixacaoReparteDTO.setCotaFixadaId(cotaDestino.getId());
@@ -386,7 +393,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			try {
 				fixacaoReparteRepository.gerarCopiaPorCotaFixacaoReparte(fixacaoCotaOrigemList,this.usuarioService.getUsuarioLogado());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 				return false;
 			}
 			break;
@@ -403,7 +410,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			List<FixacaoReparteDTO> listFixacaoReparteOrigemDTO = fixacaoReparteRepository.obterFixacoesRepartePorProduto(filtroConsultaFixacaoProdutoDTO);
 			
 			if(listFixacaoReparteOrigemDTO==null || listFixacaoReparteOrigemDTO.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
 			}
 			
 			for (FixacaoReparteDTO fixacaoReparteDTO : listFixacaoReparteOrigemDTO) {
@@ -413,7 +420,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			try {
 				fixacaoReparteRepository.gerarCopiaPorProdutoFixacaoReparte(listFixacaoReparteOrigemDTO,this.usuarioService.getUsuarioLogado());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 				return false;
 			}
 			

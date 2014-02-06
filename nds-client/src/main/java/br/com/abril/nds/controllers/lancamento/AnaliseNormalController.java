@@ -16,7 +16,9 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.service.AnaliseNormalService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -36,6 +38,9 @@ public class AnaliseNormalController extends BaseController{
 	
 	@Autowired
 	private AnaliseNormalService analiseNormalService;
+	
+	@Autowired
+    private LancamentoService lancamentoService;
 
 	@Autowired
 	private HttpServletResponse httpResponse;
@@ -47,6 +52,8 @@ public class AnaliseNormalController extends BaseController{
 	@Path("/")
 	public void index(Long id){
 		EstudoGerado estudo = analiseNormalService.buscarPorId(id);
+		Lancamento lancamento = lancamentoService.obterPorId(estudo.getLancamentoID());
+		result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));
 		result.include("estudo", estudo);
 		result.forwardTo("/WEB-INF/jsp/lancamento/analiseNormal.jsp");
 	}
