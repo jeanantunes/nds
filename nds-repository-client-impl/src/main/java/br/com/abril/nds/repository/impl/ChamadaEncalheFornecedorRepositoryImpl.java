@@ -89,11 +89,12 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
      * Obtém lista de CE Fornecedor com Diferença(Perda/Ganho) Pendente
      * 
      * @param listaIdCeFornecedor
+     * @param statusConfirmacao
      * @return List<ChamadaEncalheFornecedor>
      */
     @SuppressWarnings("unchecked")
 	@Override
-    public List<ChamadaEncalheFornecedor> obtemCEFornecedorComDiferencaPendente(List<Long> listaIdCeFornecedor) {
+    public List<ChamadaEncalheFornecedor> obtemCEFornecedorComDiferencaPendente(List<Long> listaIdCeFornecedor, StatusConfirmacao statusConfirmacao) {
 		
         StringBuilder hql = new StringBuilder();
     	
@@ -114,7 +115,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
 
     	Query query = getSession().createQuery(hql.toString());
 
-    	query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
+    	query.setParameter("statusConfirmacao", statusConfirmacao);
     	
     	if(listaIdCeFornecedor != null && !listaIdCeFornecedor.isEmpty()){
     		
