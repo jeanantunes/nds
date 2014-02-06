@@ -251,6 +251,19 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
 		
+		Lancamento lancamento = 
+			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+		
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamento para este estudo.");
+		}
+		
+		if (lancamento.getEstudo() != null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um estudo liberado para este lançamento.");
+		}
+		
 		estudoGerado.setLiberado(true);
 		
 		this.estudoGeradoRepository.alterar(estudoGerado);
@@ -278,17 +291,11 @@ public class EstudoServiceImpl implements EstudoService {
 		estudo.setEstudoCotas(estudoCotas);
 		
 		this.estudoRepository.saveOrUpdate(estudo);
-
-		Lancamento lancamento = 
-			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+	
+		lancamento.setEstudo(estudo);
 		
-		if (lancamento != null) {
+		this.lancamentoRepository.alterar(lancamento);
 			
-			lancamento.setEstudo(estudo);
-			
-			this.lancamentoRepository.alterar(lancamento);
-		}
-		
 		return estudo;
 	}
 	

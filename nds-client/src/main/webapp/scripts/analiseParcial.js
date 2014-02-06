@@ -997,7 +997,7 @@ var analiseParcialController = $.extend(true, {
             if ($('#status_estudo').text() == 'Liberado') {
                 analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
             } else if ($('#saldo_reparte').text() != 0) {
-                analiseParcialController.exibirMsg('WARNING', ['Não é possovel libeara estudo com saldo de reparte.']);
+                analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             } else {
                 $('<div>Liberar estudo?</div>').dialog({
                     escondeHeader: false,
@@ -1022,6 +1022,11 @@ var analiseParcialController = $.extend(true, {
                     }
                 });
             }
+            event.preventDefault();
+        });
+        
+        $('#naoLiberar').click(function(event){
+        	analiseParcialController.exibirMsg('WARNING', ['Já existe um estudo liberado para este lançamento.']);
             event.preventDefault();
         });
 

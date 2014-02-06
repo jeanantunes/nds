@@ -87,8 +87,8 @@ public class AnaliseParcialController extends BaseController {
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
 
-        EstudoCotaGerado estudo = analiseParcialService.buscarPorId(id);
-        Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
+        EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
+        Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
 
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
@@ -97,8 +97,10 @@ public class AnaliseParcialController extends BaseController {
             result.include("tipoExibicao", modoAnalise);
             session.setAttribute("modoAnalise", modoAnalise);
         }
+        
+        result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));
         result.include("lancamento", lancamento);
-        result.include("estudoCota", estudo);
+        result.include("estudoCota", estudoCota);
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);
