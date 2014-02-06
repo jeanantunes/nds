@@ -31,4 +31,8 @@ public enum StatusIntegracaoNFE {
 		
 		return this.descricao;
 	}
+	
+	public static boolean isAprovado(StatusIntegracaoNFE status){
+		return APROVADO.equals(status);
+	}
 }
