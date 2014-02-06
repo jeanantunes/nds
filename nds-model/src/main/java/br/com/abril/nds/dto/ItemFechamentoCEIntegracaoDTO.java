@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.integracao.StatusIntegracaoNFE;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -52,6 +53,15 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	private Long idProdutoEdicao;
 	
 	private Long idItemCeIntegracao;
+	
+	private StatusIntegracaoNFE statusIntegracaoNFE;
+	
+	private boolean integracaoNFEAprovado;
+	
+    public boolean getIntegracaoNFEAprovado(){
+    	integracaoNFEAprovado =  (statusIntegracaoNFE != null && StatusIntegracaoNFE.isAprovado(statusIntegracaoNFE));
+    	return integracaoNFEAprovado;
+    }
 	
 	@Export(label = "Tipo", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	public String getTipoFormatado() {
@@ -163,4 +173,14 @@ public class ItemFechamentoCEIntegracaoDTO implements Serializable {
 	public void setIdItemCeIntegracao(Long idItemCeIntegracao) {
 		this.idItemCeIntegracao = idItemCeIntegracao;
 	}
+
+	public StatusIntegracaoNFE getStatusIntegracaoNFE() {
+		return statusIntegracaoNFE;
+	}
+
+	public void setStatusIntegracaoNFE(StatusIntegracaoNFE statusIntegracaoNFE) {
+		this.statusIntegracaoNFE = statusIntegracaoNFE;
+	}
+	
+	
 }
