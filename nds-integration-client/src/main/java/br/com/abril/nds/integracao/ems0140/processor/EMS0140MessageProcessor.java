@@ -276,6 +276,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao = new ProdutoEdicao();
                 produtoEdicao.setProduto(produto);
                 produtoEdicao.setNumeroEdicao(inputItem.getEdicao());
+                produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                 produtoEdicao.setPacotePadrao(10);
                 produtoEdicao.setPeb(35);
                 produtoEdicao.setPeso(100L);
@@ -292,8 +293,11 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 Date dataLancamento = inputItem.getDataLancamento();
                 dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
                 Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
-                Lancamento lancamento = new Lancamento();
                 
+                int numeroLancamentoNovo = 1;
+                
+                Lancamento lancamento = new Lancamento();
+                lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataCriacao(dataAtual);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
                 lancamento.setDataLancamentoDistribuidor(dataLancamento);

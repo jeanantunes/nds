@@ -45,6 +45,7 @@ import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
+
     
     @Autowired
     private NdsiLoggerFactory ndsiLoggerFactory;
@@ -228,6 +229,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao = new ProdutoEdicao();
                 produtoEdicao.setProduto(produto);
                 produtoEdicao.setNumeroEdicao(inputItem.getEdicao());
+                produtoEdicao.setDesconto(BigDecimal.valueOf(inputItem.getDesconto()));
                 produtoEdicao.setPacotePadrao(10);
                 produtoEdicao.setPeb(35);
                 produtoEdicao.setPeso(100L);
@@ -242,10 +244,13 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 
                 Date dataAtual = new Date();
                 Date dataLancamento = inputItem.getDataLancamento();
+                int numeroLancamentoNovo = 1;
+                
                 dataLancamento = dataLancamento == null ? dataAtual : dataLancamento;
                 Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
                 Lancamento lancamento = new Lancamento();
                 lancamento.setDataCriacao(dataAtual);
+                lancamento.setNumeroLancamento(numeroLancamentoNovo);
                 lancamento.setDataLancamentoPrevista(dataLancamento);
                 lancamento.setDataLancamentoDistribuidor(dataLancamento);
                 lancamento.setDataRecolhimentoPrevista(dataRecolhimento);

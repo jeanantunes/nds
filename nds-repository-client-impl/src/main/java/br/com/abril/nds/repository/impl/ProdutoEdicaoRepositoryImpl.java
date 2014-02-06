@@ -1528,9 +1528,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT count(*) from Estudo estudo");
-		hql.append(" WHERE   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
-		hql.append(" AND   estudo.id    				   = :idEstudo");
+		hql.append(" SELECT count(*) from EstudoGerado estudoGerado ");
+		hql.append(" WHERE estudoGerado.produtoEdicao.produto.codigo = :codigoProduto");
+		hql.append(" AND estudoGerado.id = :idEstudo");
 
 		Query query = super.getSession().createQuery(hql.toString());
 
