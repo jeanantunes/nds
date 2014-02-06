@@ -7,7 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +58,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
     
-    private static final Logger LOGGER = Logger.getLogger(MixCotaProdutoServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MixCotaProdutoServiceImpl.class);
 
 	@Autowired
 	private MixCotaProdutoRepository mixCotaProdutoRepository;

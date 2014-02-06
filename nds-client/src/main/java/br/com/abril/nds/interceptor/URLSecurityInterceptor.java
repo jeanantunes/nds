@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -39,7 +39,7 @@ import com.google.gson.Gson;
 @Intercepts(before=ExecuteMethodInterceptor.class)
 public class URLSecurityInterceptor implements Interceptor {
 
-	private Logger logger = Logger.getLogger(URLSecurityInterceptor.class);
+	private Logger logger = LoggerFactory.getLogger(URLSecurityInterceptor.class);
 
 	private Result result;
 

@@ -14,7 +14,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.util.JasperUtil;
@@ -28,7 +28,7 @@ import br.com.abril.nds.util.JasperUtil;
  */
 public class RelatorioFechamentoDiario {
     
-    private static final Logger LOGGER = Logger.getLogger(RelatorioFechamentoDiario.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RelatorioFechamentoDiario.class);
    
     /**
      * Nome do parâmetro de data de fechamento

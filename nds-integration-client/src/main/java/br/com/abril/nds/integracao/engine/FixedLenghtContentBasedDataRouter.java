@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ import com.ancientprogramming.fixedformat4j.format.ParseException;
 @Component("fixedLenghtContentBasedDataRouter")
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	
-	private final Logger logger = Logger.getLogger(FixedLenghtContentBasedDataRouter.class);
+	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
 	
 	private static final int START_TIME_POSITION_COLON = 100;
 	

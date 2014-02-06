@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
@@ -34,7 +34,7 @@ import br.com.abril.nds.util.DateUtil;
 @Component
 public class EMS0128MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
-	private static final Logger LOGGER = Logger.getLogger(EMS0128MessageProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0128MessageProcessor.class);
 	
 	@Autowired
 	private SessionFactory sessionFactoryGfs;

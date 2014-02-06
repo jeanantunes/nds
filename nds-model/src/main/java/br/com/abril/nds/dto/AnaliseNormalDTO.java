@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
@@ -14,7 +14,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
 
 public class AnaliseNormalDTO {
     
-    private static final Logger LOGGER = Logger.getLogger(AnaliseNormalDTO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnaliseNormalDTO.class);
 	
 	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private int cota;

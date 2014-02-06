@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.converters.ConvertDataJSON;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -25,7 +25,7 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 @Component
 public class DefaultFlexiGridJson implements FlexiGridJson {
     
-    private static final Logger LOGGER = Logger.getLogger(DefaultFlexiGridJson.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFlexiGridJson.class);
 	
 	private XStreamSerializer serializer;
     private XStream xstream;

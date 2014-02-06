@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,7 +31,7 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 @Repository
 public class CotaDAO {
     
-    private static final Logger LOGGER = Logger.getLogger(CotaDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CotaDAO.class);
 
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;

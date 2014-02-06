@@ -3,7 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -28,7 +28,7 @@ public class TelefoneEntregadorRepositoryImpl extends
 		AbstractRepositoryModel<TelefoneEntregador, Long> implements
 		TelefoneEntregadorRepository {
     
-    private static final Logger LOGGER = Logger.getLogger(TelefoneEntregadorRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TelefoneEntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.

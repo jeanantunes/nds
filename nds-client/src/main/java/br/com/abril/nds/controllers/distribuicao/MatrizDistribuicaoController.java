@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -67,7 +67,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
 public class MatrizDistribuicaoController extends BaseController {
 
-    private static final Logger LOGGER = Logger.getLogger(MatrizDistribuicaoController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MatrizDistribuicaoController.class);
 
     @Autowired
     private Result result;

@@ -39,7 +39,7 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 /**
  * Tool to run database scripts. This version of the script can be found at 
@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class SqlScriptRunner {
     
-    private static final Logger LOGGER = Logger.getLogger(SqlScriptRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlScriptRunner.class);
 
 	private static final String DEFAULT_DELIMITER = ";";
 	private static final String DELIMITER_LINE_REGEX = "(?i)DELIMITER.+";

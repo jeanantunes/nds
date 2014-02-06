@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import br.com.abril.nds.service.InterfaceExecucaoService;
 @Service
 public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 
-	private static final Logger LOGGER = Logger.getLogger(InterfaceExecucaoServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceExecucaoServiceImpl.class);
 	
 	@Autowired
 	private ApplicationContext applicationContext;

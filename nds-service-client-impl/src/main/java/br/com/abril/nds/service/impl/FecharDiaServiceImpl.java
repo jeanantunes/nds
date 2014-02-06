@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,7 +147,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Service
 public class FecharDiaServiceImpl implements FecharDiaService {
     
-    private static final Logger LOGGER = Logger.getLogger(FecharDiaServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FecharDiaServiceImpl.class);
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
@@ -287,7 +287,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private BoletoService boletoService;
-	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
+	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
 	@Override
 	@Transactional

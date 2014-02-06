@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +47,7 @@ import br.com.abril.nds.service.UsuarioService;
 @Service
 public class FixacaoReparteServiceImpl implements FixacaoReparteService {
     
-    private static final Logger LOGGER = Logger.getLogger(FixacaoReparteServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FixacaoReparteServiceImpl.class);
 
 
 	@Autowired

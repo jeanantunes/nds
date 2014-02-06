@@ -3,7 +3,7 @@ package br.com.abril.nds.controllers.interceptor;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.client.annotation.Public;
 import br.com.abril.nds.controllers.ErrorController;
@@ -30,7 +30,7 @@ import com.google.gson.Gson;
 @Intercepts(before=ExecuteMethodInterceptor.class)
 public class ValidacaoInterceptor implements Interceptor {
 	
-	private Logger logger = Logger.getLogger(ValidacaoInterceptor.class);
+	private Logger logger = LoggerFactory.getLogger(ValidacaoInterceptor.class);
 
 	private Result result;
 	

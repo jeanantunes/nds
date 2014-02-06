@@ -18,7 +18,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperRunManager;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 /**
  * Classe utilitária para manipulação de relatórios JasperReports
@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class JasperUtil {
     
-    private static final Logger LOGGER = Logger.getLogger(JasperUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JasperUtil.class);
 
 
     /**

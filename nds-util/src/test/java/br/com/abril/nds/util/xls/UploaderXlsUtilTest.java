@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.util.upload.XlsMapper;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
@@ -15,7 +15,7 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 public class UploaderXlsUtilTest {
     
-    private static final Logger LOGGER = Logger.getLogger(UploaderXlsUtilTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploaderXlsUtilTest.class);
 
 
 

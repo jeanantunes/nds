@@ -11,7 +11,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -48,7 +48,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class EnderecoServiceImpl implements EnderecoService {
     
-    private static final Logger LOGGER = Logger.getLogger(EnderecoServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoServiceImpl.class);
 
 
 	@Autowired

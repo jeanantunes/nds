@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +97,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
     
-    private static final Logger LOGGER = Logger.getLogger(GerarCobrancaServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GerarCobrancaServiceImpl.class);
 
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;

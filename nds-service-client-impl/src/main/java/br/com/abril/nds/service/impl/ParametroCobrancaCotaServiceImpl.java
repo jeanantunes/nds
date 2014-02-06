@@ -23,7 +23,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,7 +92,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaService {
 		
-	private static final Logger LOGGER = Logger.getLogger(ParametroCobrancaCotaServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaServiceImpl.class);
 	
 	@Autowired
 	private CotaRepository cotaRepository;

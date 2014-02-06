@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import javax.persistence.NoResultException;
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -37,7 +37,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/capa")
 public class CapaController {
     
-    private static final Logger LOGGER = Logger.getLogger(CapaController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CapaController.class);
 	
 	private final static int TAMANHO_MAXIMO =  500 * 1024;
 	

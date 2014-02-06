@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -63,7 +63,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/distribuicao/histogramaVendas")
 public class HistogramaVendasController extends BaseController {
     
-    private static final Logger LOGGER = Logger.getLogger(HistogramaVendasController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HistogramaVendasController.class);
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroHistogramaVendas";
 	private static final String HISTOGRAMA_SESSION_ATTRIBUTE = "resultadoHistogramaVendas";

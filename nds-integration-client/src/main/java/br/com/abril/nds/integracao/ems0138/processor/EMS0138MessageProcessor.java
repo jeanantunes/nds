@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 @Component
 public class EMS0138MessageProcessor extends AbstractRepository implements MessageProcessor {
 
-	private static final Logger LOGGER = Logger.getLogger(EMS0138MessageProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0138MessageProcessor.class);
 
 	@Autowired
 	private DistribuidorService distribuidorService;

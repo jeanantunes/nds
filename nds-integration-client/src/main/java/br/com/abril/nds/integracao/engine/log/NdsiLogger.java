@@ -2,7 +2,7 @@ package br.com.abril.nds.integracao.engine.log;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class NdsiLogger extends AbstractRepository {
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
-	private Logger LOGGER = Logger.getLogger(NdsiLogger.class);
+	private Logger LOGGER = LoggerFactory.getLogger(NdsiLogger.class);
 	private StatusExecucaoEnum statusProcesso = StatusExecucaoEnum.SUCESSO;
 	private LogExecucao logExecucao = null;
 	

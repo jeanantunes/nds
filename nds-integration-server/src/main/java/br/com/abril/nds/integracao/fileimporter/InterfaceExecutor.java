@@ -18,7 +18,7 @@ import java.util.Scanner;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.UpdateConflictException;
@@ -74,7 +74,7 @@ import com.healthmarketscience.jackcess.Table;
 @Service
 public class InterfaceExecutor {
     
-    private static final Logger LOGGER = Logger.getLogger(InterfaceExecucao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceExecucao.class);
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
@@ -84,7 +84,7 @@ public class InterfaceExecutor {
 
     private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
 
-	//private static Logger LOGGER = Logger.getLogger(InterfaceExecutor.class);
+	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
 	@Autowired
 	private IcdObjectService icdObjectService;

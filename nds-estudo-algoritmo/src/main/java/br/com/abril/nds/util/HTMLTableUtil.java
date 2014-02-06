@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
@@ -23,7 +23,7 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 public class HTMLTableUtil {
     
-    private static final Logger LOGGER = Logger.getLogger(HTMLTableUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLTableUtil.class);
 
 
     public static String estudoToHTML(EstudoTransient estudo) {

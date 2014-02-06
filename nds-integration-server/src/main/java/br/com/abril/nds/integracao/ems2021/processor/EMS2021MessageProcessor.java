@@ -8,7 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 @Component
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {
 
-    private static final Logger LOGGER = Logger.getLogger(EMS2021MessageProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
 
     @Autowired
 	private SessionFactory sessionFactoryIcd;

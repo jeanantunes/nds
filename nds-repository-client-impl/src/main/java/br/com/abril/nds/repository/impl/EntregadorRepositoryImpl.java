@@ -3,7 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
@@ -38,7 +38,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 public class EntregadorRepositoryImpl extends AbstractRepositoryModel<Entregador, Long> 
 									  implements EntregadorRepository {
     
-    private static final Logger LOGGER = Logger.getLogger(EntregadorRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntregadorRepositoryImpl.class);
 
 	/**
 	 * Construtor.

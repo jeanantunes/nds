@@ -9,7 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -43,7 +43,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_FINANCEIRO_SUSPENSAO_COTA)
 public class SuspensaoCotaController extends BaseController {
     
-    private static final Logger LOGGER = Logger.getLogger(SuspensaoCotaController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuspensaoCotaController.class);
 
     protected static final String WARNING_SUSPENSAO_COTA_SUSPENSA = "Não foi possível realizar a suspensão pois a cota já estava suspensa.";
     protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há sugestões para suspensão de cota.";

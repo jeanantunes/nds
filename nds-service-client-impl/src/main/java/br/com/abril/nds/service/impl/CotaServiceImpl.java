@@ -23,7 +23,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,7 +158,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class CotaServiceImpl implements CotaService {
 	
-    private static final Logger LOGGER = Logger.getLogger(CotaServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CotaServiceImpl.class);
 	
 	@Autowired
 	private SituacaoCotaService situacaoCotaService; 

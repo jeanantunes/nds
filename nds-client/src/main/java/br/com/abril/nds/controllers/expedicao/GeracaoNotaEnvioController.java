@@ -10,7 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,7 +52,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
 public class GeracaoNotaEnvioController extends BaseController {
 
-    private static final Logger LOGGER = Logger.getLogger(GeracaoNotaEnvioController.class);	
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNotaEnvioController.class);	
 
     @Autowired
     private Result result;

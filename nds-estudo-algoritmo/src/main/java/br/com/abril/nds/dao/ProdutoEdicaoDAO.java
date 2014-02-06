@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,7 +27,7 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 @Repository
 public class ProdutoEdicaoDAO {
     
-    private static final Logger LOGGER = Logger.getLogger(ProdutoEdicaoDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProdutoEdicaoDAO.class);
 
 
 	@Autowired

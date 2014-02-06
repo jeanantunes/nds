@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
@@ -37,7 +37,7 @@ import br.com.abril.nds.repository.EstudoGeradoRepository;
 @Repository
 public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGerado, Long> implements EstudoGeradoRepository {
 	
-    private static final Logger LOGGER = Logger.getLogger(EstudoCotaGeradoRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudoCotaGeradoRepositoryImpl.class);
 
 	@Autowired
 	private DataSource dataSource;

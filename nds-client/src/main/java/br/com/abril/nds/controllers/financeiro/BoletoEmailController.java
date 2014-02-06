@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -32,7 +32,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("financeiro/boletoEmail")
 public class BoletoEmailController extends BaseController {
     
-    private static final Logger LOGGER = Logger.getLogger(BoletoEmailController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoletoEmailController.class);
 	
 	@Autowired
 	private Result result;

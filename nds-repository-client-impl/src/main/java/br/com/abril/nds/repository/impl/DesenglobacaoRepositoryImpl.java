@@ -2,7 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -18,7 +18,7 @@ import br.com.abril.nds.repository.DesenglobacaoRepository;
 @Repository
 public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desenglobacao, Long> implements DesenglobacaoRepository {
     
-    private static final Logger LOGGER = Logger.getLogger(DesenglobacaoRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DesenglobacaoRepositoryImpl.class);
 
 
     @Autowired

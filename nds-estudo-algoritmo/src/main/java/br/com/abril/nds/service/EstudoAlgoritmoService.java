@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.MonthDay;
 import org.joda.time.Years;
@@ -67,7 +67,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class EstudoAlgoritmoService {
 
-    private static final Logger LOGGER = Logger.getLogger(EstudoAlgoritmoService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
 
     @Autowired
     private EstudoDAO estudoDAO;

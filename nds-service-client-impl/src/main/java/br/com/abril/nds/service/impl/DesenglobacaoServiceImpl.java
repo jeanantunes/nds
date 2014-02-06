@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import br.com.abril.nds.util.DateUtil;
 @Service
 public class DesenglobacaoServiceImpl implements DesenglobacaoService {
     
-    private static final Logger LOGGER = Logger.getLogger(DesenglobacaoServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DesenglobacaoServiceImpl.class);
 
     @Autowired
     private DesenglobacaoRepository desenglobacaoRepository;

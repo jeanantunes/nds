@@ -21,7 +21,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -80,7 +80,7 @@ import com.itextpdf.text.pdf.codec.Base64;
 @Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 public class ConferenciaEncalheController extends BaseController {
 	
-	private static final Logger LOGGER = Logger.getLogger(ConferenciaEncalheController.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConferenciaEncalheController.class);	
 	
 	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
 	

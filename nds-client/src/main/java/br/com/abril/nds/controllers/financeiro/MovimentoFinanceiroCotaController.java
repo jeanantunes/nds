@@ -3,7 +3,7 @@ package br.com.abril.nds.controllers.financeiro;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -35,7 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_MOVIMENTO_FINANCEIRO_COTA)
 public class MovimentoFinanceiroCotaController extends BaseController{
     
-    private static final Logger LOGGER = Logger.getLogger(MovimentoFinanceiroCotaController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovimentoFinanceiroCotaController.class);
 	
 	@Autowired
 	private Result result;

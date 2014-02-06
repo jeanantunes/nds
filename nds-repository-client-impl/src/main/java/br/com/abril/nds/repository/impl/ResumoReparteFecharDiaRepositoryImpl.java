@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -30,7 +30,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository implements ResumoReparteFecharDiaRepository {
     
-    private static final Logger LOGGER = Logger.getLogger(ResumoReparteFecharDiaRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResumoReparteFecharDiaRepositoryImpl.class);
 	
 
 	@Override

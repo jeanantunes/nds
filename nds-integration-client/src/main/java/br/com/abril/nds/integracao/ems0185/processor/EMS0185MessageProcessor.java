@@ -14,7 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.lightcouch.CouchDbClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
 public class EMS0185MessageProcessor extends AbstractRepository implements MessageProcessor  {
-	private static final Logger LOGGER = Logger.getLogger(EMS0185MessageProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0185MessageProcessor.class);
 	
 	@Autowired
 	private CouchDbProperties couchDbProperties;

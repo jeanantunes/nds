@@ -1,12 +1,12 @@
 package br.com.abril.nds.util.export.fiscal.nota.condition;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import br.com.caelum.stella.validation.CNPJValidator;
 
 public class CNPJCondition extends ConditionDefault {
     
-    private static final Logger LOGGER = Logger.getLogger(CNPJCondition.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CNPJCondition.class);
 
 	@Override
 	public boolean valid(Object object) {	

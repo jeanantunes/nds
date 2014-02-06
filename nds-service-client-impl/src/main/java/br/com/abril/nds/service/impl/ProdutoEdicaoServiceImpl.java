@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,7 +98,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
-	private static final Logger LOGGER = Logger.getLogger(ProdutoEdicaoServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProdutoEdicaoServiceImpl.class);
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;

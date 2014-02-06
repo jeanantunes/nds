@@ -7,12 +7,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 
 public class ListUtils {
     
-    private static final Logger LOGGER = Logger.getLogger(ListUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListUtils.class);
 
 
 	@SuppressWarnings("all")

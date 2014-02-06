@@ -15,7 +15,7 @@ import java.util.Set;
 
 import javax.xml.bind.ValidationException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,7 +120,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class BoletoServiceImpl implements BoletoService {
     
-    private static final Logger LOGGER = Logger.getLogger(BoletoServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoletoServiceImpl.class);
 	
 	@Autowired
 	protected EmailService email;

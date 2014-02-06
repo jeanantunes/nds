@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -42,7 +42,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
 public class ConfirmacaoExpedicaoController extends BaseController{
     
-    private static final Logger LOGGER = Logger.getLogger(ConfirmacaoExpedicaoController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmacaoExpedicaoController.class);
 
 
 	@Autowired

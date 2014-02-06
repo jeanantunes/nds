@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -47,7 +47,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/distribuicao/caracteristicaDistribuicao")
 public class CaracteristicaDistribuicaoController extends BaseController{
     
-    private static final Logger LOGGER = Logger.getLogger(CaracteristicaDistribuicaoController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CaracteristicaDistribuicaoController.class);
 	
 	private static final String FILTRO_DETALHE_SESSION_ATTRIBUTE = "filtroDetalhe";
 	private static final String FILTRO_SIMPLES_SESSION_ATTRIBUTE = "filtroSimples";

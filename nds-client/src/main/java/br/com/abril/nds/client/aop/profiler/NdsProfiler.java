@@ -3,13 +3,13 @@ package br.com.abril.nds.client.aop.profiler;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 
 @Aspect
 public class NdsProfiler {
 
-	private static final Logger LOGGER = Logger.getLogger(NdsProfiler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(NdsProfiler.class);
 	
 	private static final int START_TIME_POSITION_COLON = 170;
 	

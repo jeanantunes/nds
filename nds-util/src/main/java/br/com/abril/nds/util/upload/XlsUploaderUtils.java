@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -30,7 +30,7 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
  */
 public class XlsUploaderUtils {
     
-    private static final Logger LOGGER = Logger.getLogger(XlsUploaderUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XlsUploaderUtils.class);
 	
 	private static final String XLS = ".xls";
 	private static final String XLSX = ".xlsx";

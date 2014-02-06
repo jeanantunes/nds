@@ -22,7 +22,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +89,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
     
-    private static final Logger LOGGER = Logger.getLogger(ContagemDevolucaoServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
