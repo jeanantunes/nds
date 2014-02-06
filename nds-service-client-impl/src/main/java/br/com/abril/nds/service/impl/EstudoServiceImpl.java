@@ -283,7 +283,12 @@ public class EstudoServiceImpl implements EstudoService {
 		
 		for (EstudoCotaGerado estudoCotaGerado : estudoGerado.getEstudoCotas()) {
 
-			estudoCotas.add(new EstudoCota(estudoCotaGerado, estudo));
+			BigInteger qtdeEfetiva = estudoCotaGerado.getQtdeEfetiva();
+			
+			if (qtdeEfetiva != null && !BigInteger.ZERO.equals(qtdeEfetiva)) {
+			
+				estudoCotas.add(new EstudoCota(estudoCotaGerado, estudo));
+			}
 		}
 		
 		estudo.setLancamentos(null);
