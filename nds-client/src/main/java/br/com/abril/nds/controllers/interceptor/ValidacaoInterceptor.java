@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
 import br.com.abril.nds.client.annotation.Public;
@@ -10,7 +11,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.ExceptionUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.InterceptionException;
@@ -57,7 +57,7 @@ public class ValidacaoInterceptor implements Interceptor {
 			
 			logger.error(throwable.getMessage(), throwable);
 			
-			Throwable cause = ExceptionUtil.getRootCause(throwable);
+            Throwable cause = ExceptionUtils.getRootCause(throwable);
 			
 			if (cause instanceof ValidacaoException) {
 
@@ -72,11 +72,11 @@ public class ValidacaoInterceptor implements Interceptor {
 		}
 	}
 
-	/**
-	 * Trata as validações a partir da ValidacaoException lançada
-	 * 
-	 * @param validacaoException
-	 */
+	    /**
+     * Trata as validações a partir da ValidacaoException lançada
+     * 
+     * @param validacaoException
+     */
 	private void tratarExcecaoValidacao(ValidacaoException validacaoException) {
 
 		if (Util.isAjaxUpload(request)) {
@@ -104,11 +104,11 @@ public class ValidacaoInterceptor implements Interceptor {
 		}			
 	}
 
-	/**
-	 * Método que trata as exceções genéricas.
-	 * 
-	 * @param throwable
-	 */
+	    /**
+     * Método que trata as exceções genéricas.
+     * 
+     * @param throwable
+     */
 	private void tratarExecoesGenericas(Throwable throwable) {
 
 		String message = "Ocorreu um erro inesperado: " + throwable.getMessage();

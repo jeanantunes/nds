@@ -39,14 +39,15 @@ public class NdsiLogger extends AbstractRepository {
 	private StatusExecucaoEnum statusProcesso = StatusExecucaoEnum.SUCESSO;
 	private LogExecucao logExecucao = null;
 	
-	/**
-	 * Insere o log de início do processamento da interface
-	 * @param route rota sendo processada
-	 */
+	    /**
+     * Insere o log de início do processamento da interface
+     * 
+     * @param route rota sendo processada
+     */
 	public void logBeginning(RouteTemplate route) {
 		
 		if (logExecucao != null) {
-			throw new IllegalStateException("logBeginning já executado para este batch");
+            throw new IllegalStateException("logBeginning já executado para este batch");
 		}
 		
 		InterfaceExecucao interfaceExecucao = new InterfaceExecucao();
@@ -58,7 +59,9 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucao.setDataInicio(new Date());
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(route.getUserName());
-		logExecucao.setStatus(StatusExecucaoEnum.ERRO);// Inicia o processo como Não processado - No final atualiza status
+        logExecucao.setStatus(StatusExecucaoEnum.ERRO);// Inicia o processo como
+                                                       // Não processado - No
+                                                       // final atualiza status
 		
 		try {
 			TransactionTemplate template = new TransactionTemplate(transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -70,8 +73,8 @@ public class NdsiLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-			LOGGER.warn("ATENÇÃO: Erro inserindo entrada de log na base; continuando sem log.");
-			e.printStackTrace();
+            LOGGER.warn("ATENÇÃO: Erro inserindo entrada de log na base; continuando sem log.", e);
+
 		}
 	}
 	
@@ -96,8 +99,8 @@ public class NdsiLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-			LOGGER.warn("ATENÇÃO: Erro atualizando entrada de log na base; continuando sem log.");
-			e.printStackTrace();
+            LOGGER.warn("ATENÇÃO: Erro atualizando entrada de log na base; continuando sem log.", e);
+
 		}
 	}
 	
@@ -131,12 +134,13 @@ public class NdsiLogger extends AbstractRepository {
 	}
 	
 	
-	/**
-	 * Faz a inserção da mensagem de log
-	 * @param message
-	 * @param eventoExecucaoEnum
-	 * @param descricaoErro
-	 */
+	    /**
+     * Faz a inserção da mensagem de log
+     * 
+     * @param message
+     * @param eventoExecucaoEnum
+     * @param descricaoErro
+     */
 	
 	private void logMessage(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro, String mensagemInfo) {
 		
@@ -174,8 +178,7 @@ public class NdsiLogger extends AbstractRepository {
 				}
 			});
 		} catch(Exception e) {
-			LOGGER.warn("ATENÇÃO: Erro inserindo mensagem de log na base; continuando sem log.");
-			e.printStackTrace();
+            LOGGER.warn("ATENÇÃO: Erro inserindo mensagem de log na base; continuando sem log.", e);
 		}
 	}
 	

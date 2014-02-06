@@ -9,12 +9,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
-import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -40,7 +39,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		try {
 			session = sessionFactoryIcd.getCurrentSession();
 		} catch(Exception e) {
-			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
+            LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
 
 		if(session == null) {
@@ -76,9 +75,8 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			String[] s = c.getMetaData().getURL().split(":");
 			database = s[s.length - 1];
 			username = c.getMetaData().getUserName();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
 		}
 		
 		
@@ -119,7 +117,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 					cdbc.save(ce);
 				} catch(Exception e) {
-					LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
+                    LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
 				} finally {
 					if (cdbc != null) {
 						cdbc.shutdown();
@@ -165,7 +163,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 
-		query.setParameterList("status", new String[]{"A"}); //FIXME: Sérgio: deve buscar status 'A'
+        query.setParameterList("status", new String[] { "A" }); // FIXME:
+                                                                // Sérgio: deve
+                                                                // buscar status
+                                                                // 'A'
 		query.setParameter("distribuidor", Long.parseLong(distribuidor));
 		query.setParameter("nao", "N");
 

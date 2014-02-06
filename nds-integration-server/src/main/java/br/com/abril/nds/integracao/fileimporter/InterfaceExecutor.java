@@ -141,7 +141,7 @@ public class InterfaceExecutor {
 	}
 	
 	
-	    /**
+	            /**
      * Executa a interface selecionada para todos os distribuidores.
      * 
      * @param nomeUsuario login do usuário, para efeitos de log
@@ -151,7 +151,7 @@ public class InterfaceExecutor {
 		this.executarInterface(nomeUsuario, interfaceEnum, null);
 	}
 	
-	    /**
+	            /**
      * Executa a interface selecionada para o distribuidor selecionado.
      * 
      * @param nomeUsuario login do usuário, para efeitos de log
@@ -182,9 +182,9 @@ public class InterfaceExecutor {
 			} else {
 				this.executarInterfaceArquivo(interfaceEnum, interfaceExecucao, logExecucao, codigoDistribuidor, nomeUsuario);
 			}
-		} catch (Exception t) {
+        } catch (Exception e) {
 			this.processadoComSucesso = false;
-			t.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
 		} finally {
 			// Loga fim
 			this.logarFim(logExecucao);
@@ -364,13 +364,12 @@ public class InterfaceExecutor {
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 				} catch (FileNotFoundException e1) {
 					this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
-					//e1.printStackTrace();
 				} finally {
 					if (null != in) {
 						try {
 							in.close();
-						} catch (IOException e1) {							
-							e1.printStackTrace();
+                        } catch (IOException ex) {
+                            LOGGER.error(ex.getMessage(), ex);
 						}
 					}
 				}
@@ -606,7 +605,7 @@ public class InterfaceExecutor {
 		scanner.close();
 	}
 
-	    /**
+	            /**
      * Recupera a lista de arquivos a serem processados.
      * 
      * @param interfaceExecucao interface sendo executada
@@ -648,7 +647,7 @@ public class InterfaceExecutor {
 		
 	}
 	
-	    /**
+	            /**
      * Loga o início da execução de uma interface de integração.
      */
 	
@@ -685,7 +684,7 @@ public class InterfaceExecutor {
 		this.logExecucaoArquivoRepository.inserir(logExecucaoArquivo);
 	}
 	
-	    /**
+	            /**
      * Loga o final da execução da interface de integração.
      */
 	
