@@ -184,4 +184,6 @@ public interface FornecedorService {
 	Origem obterOrigemCadastroFornecedor(Long idFornecedor);
 
 	List<Fornecedor> obterFornecedoresDesc();
+	
+	List<ItemDTO<Long, String>> obterFornecedoresUnificados();
 }

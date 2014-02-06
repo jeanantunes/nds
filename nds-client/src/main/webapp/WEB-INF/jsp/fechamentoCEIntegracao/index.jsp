@@ -19,6 +19,12 @@
 <body>
 
 	<iframe src="" id="download-iframe-fechamento" style="display:none;"></iframe>
+	
+	<form id="idFormConfirmacaoSalvar">
+		<div id="dialog-ConfirmacaoSalvar" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja salvar as informações?</p>
+		</div>
+	</form>
 
     <div class="areaBts">
     	<div class="area">
