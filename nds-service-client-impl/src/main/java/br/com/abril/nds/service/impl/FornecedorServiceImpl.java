@@ -757,4 +757,21 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacaoCadastro) {
 		return this.fornecedorRepository.obterFornecedoresDestinatarios(situacaoCadastro);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<ItemDTO<Long, String>> obterFornecedoresUnificados(){
+		
+		List<Fornecedor> listaFornecedor = fornecedorRepository.obterFornecedoresUnificados();
+		
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Fornecedor fornecedor : listaFornecedor) {
+			
+			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+		}
+		
+		return listaFornecedoresCombo;
+
+	}
 }

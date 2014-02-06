@@ -96,9 +96,19 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 		
 		TipoSegmentoProduto segmento = produto.getTipoSegmentoProduto();
+		
+		if (segmento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário cadastrar um segmento para o produto.");
+		}
+		
 		TipoSegmentoProdutoDTO segmentoDTO = new TipoSegmentoProdutoDTO();
-		segmentoDTO.setIdSegmento(segmento.getId());
-		segmentoDTO.setDescricao(segmento.getDescricao());
+		
+		if (segmento != null) {
+		
+			segmentoDTO.setIdSegmento(segmento.getId());
+			segmentoDTO.setDescricao(segmento.getDescricao());
+		}
 		
 		selecionado.setTipoSegmentoProduto(segmentoDTO);
 		if (estudo != null && estudo.isLiberado()) {

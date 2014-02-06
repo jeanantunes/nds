@@ -27,7 +27,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		StringBuilder sql = new StringBuilder();
 		
 	 sql.append(" select ")
-		.append(" ifnull(plp.lancamento_parcial_id, lanc.id) as idLancamento,")
+		.append(" lanc.id as idLancamento,")
 		.append(" prod.CODIGO as codigoProduto,") 
 		.append(" prod.NOME as nomeProduto,")
 		.append(" prodEdic.ID as idProdutoEdicao,")
@@ -72,8 +72,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and lanc.status in ('BALANCEADO', 'PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'FURO')")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")
-	    .append(" and (plp.NUMERO_PERIODO is null or plp.NUMERO_PERIODO =1) ");
-		
+		.append(" and (lanc.PERIODO_LANCAMENTO_PARCIAL_ID is null or lanc.PERIODO_LANCAMENTO_PARCIAL_ID = plp.id) ")
+	    .append(" and (plp.NUMERO_PERIODO is null or plp.NUMERO_PERIODO = 1) ");
 	 
 	 	if(filtro.getEstudoId()!=null){
 	 		sql.append(" and estudo.id = :estudoId");

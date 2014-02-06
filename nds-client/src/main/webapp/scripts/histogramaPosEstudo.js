@@ -466,6 +466,11 @@ var histogramaPosEstudoController = $.extend(true, {
 						 $('#estudoLiberadoFs').hide();
 
 				 }
+			 }, function(jsonData) {
+				 
+				 exibirMensagem(jsonData.tipoMensagem, jsonData.mensagens);
+				 
+				 $('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));
 			 }
 		);
 	},

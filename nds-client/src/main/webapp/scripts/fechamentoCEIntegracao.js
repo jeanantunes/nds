@@ -73,7 +73,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				});
 				
 				$("#btnSalvarCE", fechamentoCEIntegracaoController.workspace).click(function() {
-					fechamentoCEIntegracaoController.salvarCE();
+					fechamentoCEIntegracaoController.popupConfirmacao();
 				});
 			}
 	},
@@ -131,6 +131,28 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 		});
 		
+	},
+	
+	popupConfirmacao : function() {
+	
+		$( "#dialog-ConfirmacaoSalvar", fechamentoCEIntegracaoController.workspace).dialog({
+			resizable: false,
+			height:150,
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					fechamentoCEIntegracaoController.salvarCE();
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-ConfirmacaoSalvar", fechamentoCEIntegracaoController.workspace).parents("form")
+		});	
 	},
 	
 	buscarNumeroSemana : function(){
@@ -225,6 +247,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				width : 80,
 				sortable : false,
 				align : 'right'
+			},{
+				display : 'Integração NFE',
+				name : 'integracaoNFEAprovado',
+				width : 80,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "sequencial",
 			sortorder : "asc",
@@ -285,26 +313,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
-		
-		if (eval(reparte) < eval(venda)) {
-			
-			exibirMensagem(
-				'WARNING', ["A quantidade de venda não pode exceder a quantidade do reparte!"]);
-			
-			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
-				
-				if(itemCEIntegracao.id == idItemCeIntegracao) {
-					
-					var venda = itemCEIntegracao.venda;
-					
-					$("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
-					
-					return false;
-				}
-			});
-			
-			return;
-		}
 		
 		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
 		
@@ -373,11 +381,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					
 					var isParcial = row.cell.tipoFormatado == 'PARCIAL';
 					
-					var colunaReparte =
-						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
-							(row.cell.reparte)?row.cell.reparte:"" +
-						'</span>';
-					
 					var colunaReparte;
 					
 					var colunaEncalhe;
@@ -429,11 +432,22 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.valorVendaFormatado +
 						'</span>';
 					
+					var nomeImagemStatusIntegracaoNFE = (!row.cell.integracaoNFEAprovado) 
+														? "ico_reopen.gif" : "ico_check.gif";
+					
+					var colunaStatusIntegracaoNFE = 
+						'<span>'+
+							'<a  href="javascript:;" title="'+row.cell.statusIntegracaoNFE+'" rel="tipsy">'+
+								'<img src="'+contextPath+'/images/'+nomeImagemStatusIntegracaoNFE+'" hspace="5" border="0"/>'+
+							'</a>'+
+						'</span>';
+				
 					row.cell.reparte = colunaReparte;
 					row.cell.encalhe = colunaEncalhe;					
 					row.cell.venda = colunaVenda;
 					row.cell.precoCapaFormatado = colunaPrecoCapa;
 					row.cell.valorVendaFormatado = colunaValorVenda;
+					row.cell.integracaoNFEAprovado = colunaStatusIntegracaoNFE;
 				});
 				
 			};
@@ -458,8 +472,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
 			dataType : 'json',
 			params: [
-			         {name:'filtro.idFornecedor' , value:idFornecedor},
-			         {name:'filtro.semana' , value:semana}
+			         {name:'idFornecedor' , value:idFornecedor},
+			         {name:'semana' , value:semana}
 			         ]		         
 		});
 		
