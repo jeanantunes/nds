@@ -338,7 +338,7 @@ var analiseHistoricoVendaController = $.extend(true, {
 			reparteMedio = 0,
 			vendaMedia = 0;
 
-		if (typeof histogramaVendasController.edicoesEscolhidas_HistogramaVenda !== "undefined") {
+		if (typeof histogramaVendasController !== "undefined" && typeof histogramaVendasController.edicoesEscolhidas_HistogramaVenda !== "undefined") {
 			// EMS 2029
 			 qtdEdicoes = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
 		}else{

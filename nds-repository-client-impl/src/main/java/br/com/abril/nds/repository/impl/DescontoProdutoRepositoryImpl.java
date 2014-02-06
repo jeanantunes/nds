@@ -254,9 +254,15 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		"  where dadosCompletos.qtdeCotas>0 " + 
 		"  ) ");
-		         
-		    
 		
+		sql.append(" 	group by 			");
+		sql.append("	idTipoDesconto, 	");          
+		sql.append("	codigoProduto,  	");        
+		sql.append("	nomeProduto,    	");     
+		sql.append("	numeroEdicao,   	");     
+		sql.append("	desconto,       	");   
+		sql.append("	nomeUsuario,    	");       
+		sql.append("	dataAlteracao   	");        
 
 		if (sortname != null && !sortname.isEmpty()) { 
 

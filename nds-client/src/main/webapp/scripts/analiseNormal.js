@@ -49,6 +49,12 @@ $(function(){
 		event.preventDefault();
 		return false;
 	});
+	
+	$('#naoLiberar').click(function(event){
+    	analiseParcialController.exibirMsg('WARNING', ['Já existe um estudo liberado para este lançamento.']);
+        event.preventDefault();
+    });
+	
 	$(".arrowUp[src$='sobe.gif']").click(arrowUpClick);
 	$(".arrowDown[src$='desce.gif']").click(arrowDownClick);
 	$(".editarEdicao").click(function(event){
