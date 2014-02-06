@@ -847,7 +847,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					proximoLancamentoPeriodo.getProdutoEdicao(), 
 						item.getQtde(), proximoLancamentoPeriodo.getDataLancamentoDistribuidor());
 			
-			estudo = estudoService.criarEstudoLiberado(estudoGerado);
+			estudo = estudoService.liberar(estudoGerado.getId());
 			
 		} else {
 			

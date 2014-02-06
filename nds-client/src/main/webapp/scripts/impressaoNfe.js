@@ -213,7 +213,61 @@ var impressaoNfeController = $.extend(true, {
 		}
 		);
 	},
+	
+	
+	/**
+	 * Recarregar combos por Box
+	 */
+    changeBox : function() {
+		
+    	var boxDe =  $("#impressaoNfe-filtro-inputIntervaloBoxDe").val();
+    	
+    	var boxAte = $("#impressaoNfe-filtro-inputIntervaloBoxAte").val();
+    	
+    	var params = [{
+			            name : "codigoBoxDe",
+			            value : boxDe	
+					  },{
+						name : "codigoBoxAte",
+						value : boxAte
+					  }];
+    	
+    	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
+			function(result) {
+    		    
+    		    var listaBox = result[2];
+    		    
+    		    impressaoNfeController.recarregarCombo($("#impressaoNfe-filtro-inputIntervaloBoxDe", impressaoNfeController.workspace), listaBox ,boxDe);
+     		    
+    		    impressaoNfeController.recarregarCombo($("#impressaoNfe-filtro-inputIntervaloBoxAte", impressaoNfeController.workspace), listaBox ,boxAte);
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combo
+	 */
+	recarregarCombo : function (comboNameComponent, content, valSelected) {
+		
+		comboNameComponent.empty();
 
+		comboNameComponent.append(new Option('Selecione...', '', true, true));
+		
+	    $.each(content, function(index, row) {
+		    	
+	    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+		});
+
+	    if (valSelected) {
+	    	
+	        $(comboNameComponent).val(valSelected);
+	    } else {
+	    	
+	        $(comboNameComponent).val('');
+	    }
+	},
+	
+	
 	executarPreProcessamento : function(resultado) {
 
 		if (resultado.mensagens) {

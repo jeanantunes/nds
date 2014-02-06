@@ -28,7 +28,7 @@ public class NfeDTO implements Serializable {
 	private StatusProcessamentoInterno statusNfe;
 	private String tipoNfe;
 	private String movimentoIntegracao;
-	
+	private boolean notaImpressa;
 	
 	/**
 	 * Obtém numero
@@ -209,6 +209,14 @@ public class NfeDTO implements Serializable {
 	 */
 	public void setIdNotaFiscal(Long idNotaFiscal) {
 		this.idNotaFiscal = idNotaFiscal;
+	}
+	
+	public boolean isNotaImpressa() {
+		return notaImpressa;
+	}
+	
+	public void setNotaImpressa(boolean notaImpressa) {
+		this.notaImpressa = notaImpressa;
 	}
 	
 	

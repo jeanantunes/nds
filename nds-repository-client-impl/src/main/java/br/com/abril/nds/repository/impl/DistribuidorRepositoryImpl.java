@@ -39,9 +39,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuidorRepository;
 
 @Repository
-public class DistribuidorRepositoryImpl extends
-		AbstractRepositoryModel<Distribuidor, Long> implements
-		DistribuidorRepository {
+public class DistribuidorRepositoryImpl extends AbstractRepositoryModel<Distribuidor, Long> implements DistribuidorRepository {
 
 	public DistribuidorRepositoryImpl() {
 		super(Distribuidor.class);
@@ -530,8 +528,8 @@ public class DistribuidorRepositoryImpl extends
 				createQuery("select d.juridica.cnpj from Distribuidor d").uniqueResult();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuidorEmissaoDocumentos(){
 		
 		return (List<ParametrosDistribuidorEmissaoDocumento>)

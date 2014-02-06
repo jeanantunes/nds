@@ -22,11 +22,11 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
-import br.com.abril.nds.repository.EstudoCotaRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -48,7 +48,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
 
     @Autowired
-    EstudoCotaRepository estudoCotaRepository;
+    EstudoCotaGeradoRepository estudoCotaGeradoRepository;
 
     @Autowired
     EstudoComplementarRepository estudoComplementarRepository;
@@ -117,7 +117,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     @Transactional
     @Override
     public boolean gerarEstudoComplementar(EstudoComplementarVO estudoComplementarVO) {
-	List<EstudoCota> estudoCotas = selecionarBancas(estudoComplementarVO);
+	List<EstudoCotaGerado> estudoCotas = selecionarBancas(estudoComplementarVO);
 
 	if (estudoCotas.isEmpty()) {
 	    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
@@ -139,10 +139,10 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	// Gera Novo Estudo
 	estudoGeradoRepository.adicionar(estudo1);
 	
-	List<EstudoCota> cotas = new ArrayList<>();
+	List<EstudoCotaGerado> cotas = new ArrayList<>();
 
-	for (EstudoCota cota : estudoCotas) {
-	    EstudoCota nova = new EstudoCota();
+	for (EstudoCotaGerado cota : estudoCotas) {
+		EstudoCotaGerado nova = new EstudoCotaGerado();
 	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "reparte", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 	    nova.setEstudo(estudo1);
 	    nova.setReparte(reparte);
@@ -162,7 +162,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	    reparte = BigInteger.ONE;
 	} 
 	while (qtdDistribuido.compareTo(reparte) > 0) {
-	    for (EstudoCota cota : cotas) {
+	    for (EstudoCotaGerado cota : cotas) {
 		cota.setReparte(cota.getReparte().add(reparte));
 		qtdDistribuido = qtdDistribuido.subtract(reparte);
 
@@ -172,25 +172,25 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	    }
 	}
 
-	for (EstudoCota cota : cotas) {
+	for (EstudoCotaGerado cota : cotas) {
 	    if (cota.getReparte() != null) {
 		cota.setQtdeEfetiva(cota.getReparte());
 		cota.setQtdePrevista(cota.getReparte());
 	    }
-	    estudoCotaRepository.adicionar(cota);	
+	    estudoCotaGeradoRepository.adicionar(cota);	
 	}
 	return true;
     }
 
-    private List<EstudoCota> ordenarCotas(List<EstudoCota> estudoCotas, EstudoComplementarVO estudoComplementarVO) {
-	Map<Long, EstudoCota> mapCotas = new HashMap<>();
-	for (EstudoCota cota : estudoCotas) {
+    private List<EstudoCotaGerado> ordenarCotas(List<EstudoCotaGerado> estudoCotas, EstudoComplementarVO estudoComplementarVO) {
+	Map<Long, EstudoCotaGerado> mapCotas = new HashMap<>();
+	for (EstudoCotaGerado cota : estudoCotas) {
 	    mapCotas.put(cota.getCota().getId(), cota);
 	}
-	LinkedList<EstudoCota> cotasOrdenadas = new LinkedList<>(estudoComplementarRepository.getCotasOrdenadas(estudoComplementarVO));
-	LinkedList<EstudoCota> retorno = new LinkedList<>();
+	LinkedList<EstudoCotaGerado> cotasOrdenadas = new LinkedList<>(estudoComplementarRepository.getCotasOrdenadas(estudoComplementarVO));
+	LinkedList<EstudoCotaGerado> retorno = new LinkedList<>();
 	
-	for (EstudoCota cota : cotasOrdenadas) {
+	for (EstudoCotaGerado cota : cotasOrdenadas) {
 	    if (mapCotas.get(cota.getCota().getId()) != null) {
 		retorno.add(mapCotas.get(cota.getCota().getId()));
 	    }
@@ -198,7 +198,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	return retorno;
     }
 
-    private List<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
+    private List<EstudoCotaGerado> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
 	return estudoComplementarRepository.selecionarBancas(estudoComplementarVO);
     }
 }

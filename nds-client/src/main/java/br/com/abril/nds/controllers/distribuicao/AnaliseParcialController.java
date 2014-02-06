@@ -28,8 +28,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
-import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
@@ -88,8 +87,8 @@ public class AnaliseParcialController extends BaseController {
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
 
-        EstudoCota estudo = analiseParcialService.buscarPorId(id);
-        Lancamento lancamento = lancamentoService.obterPorId(((EstudoGerado)estudo.getEstudo()).getLancamentoID());
+        EstudoCotaGerado estudoCota = analiseParcialService.buscarPorId(id);
+        Lancamento lancamento = lancamentoService.obterPorId(estudoCota.getEstudo().getLancamentoID());
 
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
@@ -98,8 +97,10 @@ public class AnaliseParcialController extends BaseController {
             result.include("tipoExibicao", modoAnalise);
             session.setAttribute("modoAnalise", modoAnalise);
         }
+        
+        result.include("lancamentoComEstudoLiberado", (lancamento.getEstudo() != null));
         result.include("lancamento", lancamento);
-        result.include("estudoCota", estudo);
+        result.include("estudoCota", estudoCota);
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);

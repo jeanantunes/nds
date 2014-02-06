@@ -365,7 +365,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return  idsProdutoEdicao.size();
 	}
 
-	            /**
+	                            /**
      * Corpo com a consulta HQL para pesquisar e ordenar as edições já
      * cadatradas.<br>
      * Possui como opções de filtro:<br>
@@ -405,7 +405,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
 		hql.append("   ) ");
 		
-		                        /**
+		                                                        /**
          * Comentado por Eduardo "PunkRock" Castro em 05/12 devido a existencia
          * de dados na tabela de ProdutoEdicao e não eh apresentado no grid
          */
@@ -420,11 +420,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append("  AND (pe.PRECO_VENDA between :precoDe and :precoAte) ");
 		}
 		if (statusLancamento != null) {
-			if(!statusLancamento.equals(StatusLancamento.FURO)) {
-				hql.append("  AND l.status = :situacaoLancamento ");
-			} else {
-				hql.append("  AND l.id = (select max(fp.lancamento_id) from FURO_PRODUTO fp where (fp.lancamento_id = l.id and fp.produto_edicao_id = pe.id)) ");
-			}
+            hql.append("  AND l.status = :situacaoLancamento ");
+
 		}		
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			hql.append("  AND UPPER(p.codigo) LIKE UPPER(:codigoProduto) ");
@@ -461,7 +458,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			query.setDouble("precoAte", preco.getAte());
 		}
 		
-		if (statusLancamento != null && !statusLancamento.equals(StatusLancamento.FURO)) {
+        if (statusLancamento != null) {
 			query.setParameter("situacaoLancamento", statusLancamento.name());
 		}	
 		
@@ -470,7 +467,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		if (!StringUtil.isEmpty(nome))  {
-			query.setString("nome", nome);
+            query.setString("nome", "%" + nome + "%");
 		}
 		
 		if (!StringUtil.isEmpty(codigoDeBarras)) {
@@ -566,7 +563,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return criteria.list();
 	}
 
-	            /**
+	                            /**
      * Obtém produtoEdicao por (produto e numeroEdicao) ou nome
      * 
      * @param idProduto
@@ -1117,8 +1114,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select DISTINCT " +
-				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
-				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
+				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate " +
+				"	and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
+				
+				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate " +
+				"	and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
+				
 				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
@@ -1322,7 +1323,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" WHERE ");
 		//hql.append(" tipoMovimento.id = 13 and ");
 
-		hql.append(" produto.codigoICD = :codigoProduto ");
+		hql.append(" produto.codigo = :codigoProduto ");
 		parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 
 		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {

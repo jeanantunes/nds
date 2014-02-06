@@ -3,13 +3,14 @@ package br.com.abril.nds.controllers.nfe;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -23,11 +24,8 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
-import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoDestinatario;
 import br.com.abril.nds.model.fiscal.TipoEmissaoNfe;
-import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
@@ -40,7 +38,6 @@ import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -58,6 +55,8 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
 public class ImpressaoNFEController extends BaseController {
 
+	 private static final Logger logger = LoggerFactory.getLogger(ImpressaoNFEController.class);
+	
 	@Autowired
 	private HttpSession session;
 
@@ -153,7 +152,7 @@ public class ImpressaoNFEController extends BaseController {
 		
 		result.include("roteiros", listRoteiro);
 	}
-
+	
 	private void iniciarComboRota() {
 		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
 		
@@ -257,8 +256,8 @@ public class ImpressaoNFEController extends BaseController {
 	 * 
 	 * @throws IOException Exceção de E/S
 	 */
-	@SuppressWarnings("deprecation")
 	@Post
+	@SuppressWarnings("deprecation")
 	public void exportar(FileType fileType) throws IOException {
 
 		FiltroImpressaoNFEDTO filtro = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
@@ -277,90 +276,19 @@ public class ImpressaoNFEController extends BaseController {
 	}
 
 	@Post
-	@SuppressWarnings("incomplete-switch")
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
-
-
-		FiltroImpressaoNFEDTO filtroPesquisa = (FiltroImpressaoNFEDTO) session.getAttribute("filtroPesquisaNFe");
-
-		if(filtro.getNumerosNotas() != null) {
-			filtroPesquisa.setNumerosNotas(filtro.getNumerosNotas());
-		} else {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
-			throw new ValidacaoException(validacaoVO);
-		}
-
-		filtroPesquisa.setPaginacao(null);
-		//List<NotasCotasImpressaoNfeDTO> cotas = impressaoNFEService.buscarCotasParaImpressaoNFe(filtroPesquisa);
-
-		byte[] arquivo = null; 
-		String nomeArquivo = "";
+		 
+		logger.info("metedo de impresão de Nota Fiscal...");
 		
-		TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE =
-				this.distribuidorService.tipoImpressaoNENECADANFE();
-
-		if(this.distribuidorService.obrigacaoFiscal() != null) {
-
-			List<NotaFiscal> nfs = impressaoNFEService.buscarNotasParaImpressaoNFe(filtroPesquisa);
-
-			switch(tipoImpressaoNENECADANFE) {
-
-				case DANFE:
-					arquivo = nfeService.obterDanfesPDF(nfs, false);
-					nomeArquivo = "danfes";
-					break;
-				default:
-					throw new ValidacaoException(TipoMensagem.ERROR, "O tipo de impressão configurado no Distribuidor não está disponível.");
-					
-			}
-
-			// Atualiza a flag que informa se a nota ja foi impressa
-			for(NotaFiscal nf : nfs) {
-				NotaFiscal nfOrig = nfeService.obterNotaFiscalPorId(nf);
-				nfOrig.getNotaFiscalInformacoes().setNotaImpressa(true);
-				nfeService.mergeNotaFiscal(nfOrig);
-			}
-
-		} else {
-
-			List<NotaEnvio> nes = impressaoNFEService.buscarNotasEnvioParaImpressaoNFe(filtroPesquisa);
-
-			Intervalo<Date> intervalo = new Intervalo<Date>(filtro.getDataMovimentoInicial(), filtro.getDataMovimentoFinal());
-			
-			switch(tipoImpressaoNENECADANFE) {
-
-				case MODELO_1:
-					arquivo = nfeService.obterNEsPDF(nes, false, intervalo);
-					nomeArquivo = "NEs";
-					break;
-				case MODELO_2:
-					arquivo = nfeService.obterNEsPDF(nes, true, intervalo);
-					nomeArquivo = "NECAs";
-					break;
-
-			}
-
-			// Atualiza a flag que informa se a nota ja foi impressa
-			for(NotaEnvio ne : nes) {
-				NotaEnvio neOrig = nfeService.obterNotaEnvioPorId(ne);
-				neOrig.setNotaImpressa(true);
-				nfeService.mergeNotaEnvio(neOrig);
-			}
-
-		}
-
-		try {
-
-			escreverArquivoParaResponse(arquivo, nomeArquivo);
-
-		} catch(IOException e) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do arquivo.");
-
-		}
-
+		// verificar obrigação fiscal
+			// se a cota não for contribuinte de ICMS
+		this.distribuidorService.tipoImpressaoNENECADANFE();
+		
+		// validar o tipo de nota
+			// agregar ao tipo de nota..
+		
 	}
-
+	
 	/**
 	 * Metodos auxiliares
 	 *
@@ -370,7 +298,7 @@ public class ImpressaoNFEController extends BaseController {
 	 */
 	@Post
 	public void carregarRotasImpressaoNFE(Long idRoteiro, String sortname, Ordenacao ordenacao) {
-
+		
 		List<ItemDTO<Long, String>> listaItensRotas = new ArrayList<ItemDTO<Long,String>>();
 
 		for (Rota rota : (idRoteiro != null && idRoteiro > -1) ? rotaService.buscarRotaPorRoteiro(idRoteiro) : rotaService.obterRotas()) {
@@ -389,24 +317,25 @@ public class ImpressaoNFEController extends BaseController {
 	}
 
 	/**
-	 * Metodos utilitarios
+	 * Metodo utilitario para escrever arquivo em pdf
 	 * 
 	 */
-
-	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
-
+	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) {
+		
+		logger.info("metedo responsavel por escrever arquivo por response");
+		
 		this.httpResponse.setContentType("application/pdf");
 
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
 
-		OutputStream output = this.httpResponse.getOutputStream();
-
-		output.write(arquivo);
-
-		httpResponse.getOutputStream().close();
-
-		result.use(Results.nothing());
-
+		OutputStream output;
+		try {
+			output = this.httpResponse.getOutputStream();
+			output.write(arquivo);
+			httpResponse.getOutputStream().close();
+			result.use(Results.nothing());
+		} catch (IOException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"Erro ao gerar relatorio");
+		}
 	}
-
 }

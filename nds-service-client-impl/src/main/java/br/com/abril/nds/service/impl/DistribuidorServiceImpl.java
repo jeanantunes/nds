@@ -257,7 +257,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Transactional(readOnly = true)
 	public ObrigacaoFiscal obrigacaoFiscal() {
 		
-		return this.distribuidorRepository.obrigacaoFiscal();
+		return null; //this.distribuidorRepository.obrigacaoFiscal();
 	}
 
 	@Override
