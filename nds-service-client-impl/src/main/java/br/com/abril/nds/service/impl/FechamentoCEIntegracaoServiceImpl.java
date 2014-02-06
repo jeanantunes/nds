@@ -14,14 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
-import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
@@ -155,24 +153,15 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return this.itemChamadaEncalheFornecedorRepository.merge(item);
 	}
     
-    
-    
-    
-    
-    
     /**
      * Processa diferença do Item da Chamada de Encalhe do Fornecedor
      * 
      * @param itemCE
-     * @return
+     * @return Diferenca
      */
     private Diferenca processarDiferencaDeItemCEFornecedor(ItemChamadaEncalheFornecedor itemCE) {
     	
-    	
-		
     	Usuario usuario = this.usuarioService.getUsuarioLogado();
-    	
-    	
     	
     	Long encalhe = itemCE.getQtdeDevolucaoInformada() == null?0l:itemCE.getQtdeDevolucaoInformada();
     	
@@ -182,35 +171,25 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	
 		Long calculoQdeDiferenca = ((venda + encalhe) - reparte);
 		
-		
-		
 		ProdutoEdicao produtoEdicao = itemCE.getProdutoEdicao();		
-		
-		
-		
-		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-		
-		//itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico()); ???
-		
-		
 		
 		Diferenca diferenca = new Diferenca();
 		
 		diferenca.setQtde(BigInteger.valueOf(calculoQdeDiferenca));
 		
-		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
-		
 		diferenca.setResponsavel(usuario);
 		
 		diferenca.setProdutoEdicao(produtoEdicao);
 		
-		
-		
 		if(diferenca.getQtde().compareTo(BigInteger.ZERO ) < 0 ){
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 			
 			diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.PERDA);
 			
-		} else if(diferenca.getQtde().compareTo(BigInteger.ZERO) > 0){						
+		} else if(diferenca.getQtde().compareTo(BigInteger.ZERO) > 0){		
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 			
 			diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.GANHO);
 		}
@@ -218,15 +197,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 			return null;
 		}
-		
-		
-		
+
 		return diferenca;
 	}
-
-    
-    
-    
     
     /**
      * Obtem lista de Chamadas de Encalhe Fornecedor
@@ -401,7 +374,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 * @param diferencas
 	 */
 	@Override
-	@Transactional
+	@Transactional(noRollbackForClassName = "ValidacaoException")
 	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		

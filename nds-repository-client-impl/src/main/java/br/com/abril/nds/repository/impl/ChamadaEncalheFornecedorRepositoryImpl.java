@@ -109,7 +109,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
 
     	if (listaIdCeFornecedor!=null && !listaIdCeFornecedor.isEmpty()){
     		
-    		hql.append(" and cef.id in = :listaIdCeFornecedor ");
+    		hql.append(" and cef.id in (:listaIdCeFornecedor) ");
     	}
 
     	Query query = getSession().createQuery(hql.toString());
