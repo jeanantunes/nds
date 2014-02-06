@@ -10,8 +10,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -186,7 +186,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
 		geracaoNotaEnvioService.busca(filtro);
 
-	FileExporter.to("consignado-encalhe", fileType).inHTTPResponse(
+	FileExporter.to("nota-envio", fileType).inHTTPResponse(
 		this.getNDSFileHeader(), filtro, null,
 		consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,
 		this.httpServletResponse);

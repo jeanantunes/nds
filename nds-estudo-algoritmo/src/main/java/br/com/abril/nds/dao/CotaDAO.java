@@ -3,8 +3,14 @@ package br.com.abril.nds.dao;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +30,8 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
 public class CotaDAO {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CotaDAO.class);
 
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
@@ -70,8 +78,8 @@ public class CotaDAO {
 		    return temp;
 		}
 	    });
-	} catch (Exception ex) {
-	    ex.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
 	}
 	return listEquivalente;
     }
@@ -85,9 +93,8 @@ public class CotaDAO {
 		cota.setId(rs.getLong("ID"));
 		cotas.add(cota);
 	    }
-	} catch (Exception ex) {
-	    System.out.println("Ocorreu um erro ao tentar consultar as cotas");
-	    ex.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error("Ocorreu um erro ao tentar consultar as cotas", e);
 	}
 	return cotas;
     }
@@ -150,9 +157,9 @@ public class CotaDAO {
     private void traduzAjusteReparte(ResultSet rs, CotaEstudo cota) throws SQLException {
 	String formaAjuste = rs.getString("FORMA_AJUSTE");
 	if ((formaAjuste != null) && (!formaAjuste.isEmpty())) {
-	    if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA)) {
+	    if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA.name())) {
 		cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO").toBigInteger());
-	    } else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX)) {
+	    } else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX.name())) {
 		cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
 	    } else {
 		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));

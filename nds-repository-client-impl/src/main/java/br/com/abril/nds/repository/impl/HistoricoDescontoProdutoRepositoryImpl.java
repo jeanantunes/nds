@@ -3,8 +3,6 @@ package br.com.abril.nds.repository.impl;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.HistoricoDescontoProdutoRepository;
@@ -23,19 +21,18 @@ public class HistoricoDescontoProdutoRepositoryImpl extends AbstractRepositoryMo
 	}
 
 	@Override
-	public HistoricoDescontoProduto buscarHistoricoPorDescontoEProduto(Desconto desconto, Produto produto) {
+	public HistoricoDescontoProduto buscarHistoricoPorDescontoEProduto(Long idDesconto, Long idProduto) {
 		
-		StringBuilder hql = new StringBuilder("select hdp ")
-		.append("from HistoricoDescontoProduto as hdp ") 
-		.append("where 1 = 1 ")
-		.append("and hdp.desconto.id = :idDesconto ")
-		.append("and hdp.produto.id  = :idProduto ");
+		StringBuilder hql = new StringBuilder(" select hdp ")
+		.append("	from HistoricoDescontoProduto as hdp	") 
+		.append("	where	")
+		.append(" 	hdp.desconto.id = :idDesconto		")
+		.append(" 	and hdp.produto.id  = :idProduto	");
 
 		Query query = getSession().createQuery(hql.toString());
 		
-		//TODO: Validar nulos
-		query.setParameter("idDesconto", desconto.getId());
-		query.setParameter("idProduto", produto.getId());
+		query.setParameter("idDesconto", idDesconto);
+		query.setParameter("idProduto", idProduto);
 
 		return (HistoricoDescontoProduto) query.uniqueResult();
 	}

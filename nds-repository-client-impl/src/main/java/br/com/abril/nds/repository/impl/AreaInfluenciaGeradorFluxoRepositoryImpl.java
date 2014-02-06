@@ -3,7 +3,6 @@ package br.com.abril.nds.repository.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;

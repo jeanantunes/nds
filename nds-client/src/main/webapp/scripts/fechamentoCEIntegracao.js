@@ -20,9 +20,15 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
 			
+			$("#btnSalvarCE", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnImpressaoCE", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
 			if (fechada) {					
 				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+				
+				$("#imagemSalvarCE", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
 				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
 				
@@ -30,16 +36,22 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				
 				$("#imagemBoletoEmBranco", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
 				
+				$("#imagemImprimirCE", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
 				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).click(function() {
 					fechamentoCEIntegracaoController.reabrirCeIntegracao();
 				});
 				
 				$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).click(function() {
-					fechamentoCEIntegracaoController.geraBoleto('BOLETO')
+					fechamentoCEIntegracaoController.geraBoleto('BOLETO');
 				});
 				
 				$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).click(function() {
-					fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO')
+					fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO');
+				});
+				
+				$("#btnImpressaoCE", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.imprimirCE();
 				});
 				
 			} else {
@@ -48,14 +60,59 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
 				
+				$("#imagemSalvarCE", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
 				$("#imagemImpressaoBoleto", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
 				$("#imagemBoletoEmBranco", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
+				$("#imagemImprimirCE", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+				
 				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
 					fechamentoCEIntegracaoController.fecharCE();
 				});
+				
+				$("#btnSalvarCE", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.popupConfirmacao();
+				});
 			}
+	},
+	
+	salvarCE:function(){
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/salvarCE',
+				 fechamentoCEIntegracaoController.getItensAlteradosCE(),
+				 function(resultado) {
+				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+					fechamentoCEIntegracaoController.esconderBotoes();
+					fechamentoCEIntegracaoController.itensCEIntegracao = [];
+					return resultado;
+				 },
+				null,
+				true
+			);
+	},
+	
+	imprimirCE:function(){
+		
+	},
+	
+	getItensAlteradosCE:function(){
+		
+		var itens = [];
+		
+		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+			
+			if(itemCEIntegracao.alteracao) {
+
+				itens.push({name:"itens[" + index + "].idItemCeIntegracao",value:itemCEIntegracao.id});
+				itens.push({name:"itens[" + index + "].encalhe",value:itemCEIntegracao.encalhe});
+				itens.push({name:"itens[" + index + "].venda",value:itemCEIntegracao.venda});				
+			}
+		});
+		
+		return itens;
 	},
 	
 	geraBoleto : function(tipoCobranca) {
@@ -74,6 +131,28 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 		});
 		
+	},
+	
+	popupConfirmacao : function() {
+	
+		$( "#dialog-ConfirmacaoSalvar", fechamentoCEIntegracaoController.workspace).dialog({
+			resizable: false,
+			height:150,
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					fechamentoCEIntegracaoController.salvarCE();
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			form: $("#dialog-ConfirmacaoSalvar", fechamentoCEIntegracaoController.workspace).parents("form")
+		});	
 	},
 	
 	buscarNumeroSemana : function(){
@@ -168,6 +247,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				width : 80,
 				sortable : false,
 				align : 'right'
+			},{
+				display : 'Integração NFE',
+				name : 'integracaoNFEAprovado',
+				width : 80,
+				sortable : false,
+				align : 'center'
 			}],
 			sortname : "sequencial",
 			sortorder : "asc",
@@ -229,26 +314,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
-		if (eval(reparte) < eval(venda)) {
-			
-			exibirMensagem(
-				'WARNING', ["A quantidade de venda não pode exceder a quantidade do reparte!"]);
-			
-			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
-				
-				if(itemCEIntegracao.id == idItemCeIntegracao) {
-					
-					var venda = itemCEIntegracao.venda;
-					
-					$("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
-					
-					return false;
-				}
-			});
-			
-			return;
-		}
-		
 		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
 		
 		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(
@@ -266,6 +331,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				
 				itemCEIntegracao.encalhe = encalhe;
 				itemCEIntegracao.venda = venda;
+				itemCEIntegracao.alteracao = true;
 				
 				return false;
 			}
@@ -311,14 +377,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				$.each(resultado.listaFechamento.rows, function(index, row) {
 					
 					fechamentoCEIntegracaoController.itensCEIntegracao.push(
-						{id: row.cell.idItemCeIntegracao, encalhe: row.cell.encalhe, venda: row.cell.venda});
+						{id: row.cell.idItemCeIntegracao, encalhe: row.cell.encalhe, venda: row.cell.venda,alteracao:false});
 					
 					var isParcial = row.cell.tipoFormatado == 'PARCIAL';
-					
-					var colunaReparte =
-						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
-							(row.cell.reparte)?row.cell.reparte:"" +
-						'</span>';
 					
 					var colunaReparte;
 					
@@ -371,11 +432,22 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							row.cell.valorVendaFormatado +
 						'</span>';
 					
+					var nomeImagemStatusIntegracaoNFE = (!row.cell.integracaoNFEAprovado) 
+														? "ico_reopen.gif" : "ico_check.gif";
+					
+					var colunaStatusIntegracaoNFE = 
+						'<span>'+
+							'<a  href="javascript:;" title="'+row.cell.statusIntegracaoNFE+'" rel="tipsy">'+
+								'<img src="'+contextPath+'/images/'+nomeImagemStatusIntegracaoNFE+'" hspace="5" border="0"/>'+
+							'</a>'+
+						'</span>';
+				
 					row.cell.reparte = colunaReparte;
 					row.cell.encalhe = colunaEncalhe;					
 					row.cell.venda = colunaVenda;
 					row.cell.precoCapaFormatado = colunaPrecoCapa;
 					row.cell.valorVendaFormatado = colunaValorVenda;
+					row.cell.integracaoNFEAprovado = colunaStatusIntegracaoNFE;
 				});
 				
 			};
@@ -400,8 +472,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			url: contextPath + '/devolucao/fechamentoCEIntegracao/pesquisaPrincipal',
 			dataType : 'json',
 			params: [
-			         {name:'filtro.idFornecedor' , value:idFornecedor},
-			         {name:'filtro.semana' , value:semana}
+			         {name:'idFornecedor' , value:idFornecedor},
+			         {name:'semana' , value:semana}
 			         ]		         
 		});
 		
@@ -419,11 +491,12 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	fecharCE : function(){
 	
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/fecharCE',
-				 null,
+				 fechamentoCEIntegracaoController.getItensAlteradosCE(),
 				 function(resultado) {
 				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
 					fechamentoCEIntegracaoController.esconderBotoes();
+					fechamentoCEIntegracaoController.itensCEIntegracao = [];
 					return resultado;
 				 },
 				null,

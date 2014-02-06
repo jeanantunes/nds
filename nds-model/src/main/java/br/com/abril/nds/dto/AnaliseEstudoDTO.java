@@ -6,7 +6,7 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
-import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -15,7 +15,7 @@ public class AnaliseEstudoDTO implements Serializable {
 
 	private static final long serialVersionUID = 5998039236971366942L;
 
-	private Estudo estudo;
+	private EstudoGerado estudo;
 	private Long numeroEstudo;
 	private String codigoProduto;
 	private String nomeProduto;
@@ -99,10 +99,10 @@ public class AnaliseEstudoDTO implements Serializable {
 	public void setProdEdicao(ProdutoEdicao prodEdicao) {
 		this.prodEdicao = prodEdicao;
 	}
-	public Estudo getEstudo() {
+	public EstudoGerado getEstudo() {
 		return estudo;
 	}
-	public void setEstudo(Estudo estudo) {
+	public void setEstudo(EstudoGerado estudo) {
 		this.estudo = estudo;
 	}
 	public boolean isPermiteParcial() {

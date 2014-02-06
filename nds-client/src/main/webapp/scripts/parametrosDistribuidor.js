@@ -297,8 +297,8 @@ var parametrosDistribuidorController = $.extend(true, {
 	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
 	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
 	    
-	    if(vendaMediaMais > 10 || vendaMediaMais < 0) {
-		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 0 a 10!");
+	    if(vendaMediaMais > 10 || vendaMediaMais < 1) {
+		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 01 a 10!");
 	    }
 		
 	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {

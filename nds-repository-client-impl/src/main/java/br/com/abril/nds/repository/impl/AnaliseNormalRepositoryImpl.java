@@ -73,7 +73,7 @@ public class AnaliseNormalRepositoryImpl extends
 		if (queryDTO.isPorcentagemVendaFilteredSorted()) {
 			sql.append(" ,(((epc.qtde_recebida-epc.qtde_devolvida)*100)/epc.qtde_recebida) as filtroPercVenda");
 		}
-		sql.append(" from estudo_cota ec "
+		sql.append(" from estudo_cota_gerado ec "
 				+ "	left join cota cota on cota.id=ec.cota_id "
 				+ "	left join pessoa p on cota.pessoa_id=p.id  "
 				+ "	left join estudo_gerado e on e.id=ec.estudo_id  "
@@ -273,7 +273,7 @@ public class AnaliseNormalRepositoryImpl extends
 	public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte) {
 		SQLQuery query = getSession()
 				.createSQLQuery(
-						"update estudo_cota ec left join cota cota on cota.id=ec.cota_id set ec.reparte=? where ec.estudo_id=? and cota.numero_cota=?;");
+						"update estudo_cota_gerado ec left join cota cota on cota.id=ec.cota_id set ec.reparte=? where ec.estudo_id=? and cota.numero_cota=?;");
 		query.setLong(0, reparte);
 		query.setLong(1, estudoId);
 		query.setLong(2, numeroCota);

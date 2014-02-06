@@ -2,6 +2,7 @@ package br.com.abril.nds.process.encalhemaximo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedList;
 
 import org.springframework.stereotype.Component;
 
@@ -24,25 +25,45 @@ import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
  */
 @Component
 public class EncalheMaximo extends ProcessoAbstrato {
-
+	
+	LinkedList<CotaEstudo> cotasComRepJaCalculado = new LinkedList<>();
+	
     @Override
     public void executar(EstudoTransient estudo) {
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    BigDecimal percentualVenda = null;
-	    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0) {
-		// percentualVenda = 1 - (VENDA / REPDISTRIB) * 100
-		percentualVenda = BigDecimal.ONE.subtract(
-			estudo.getSomatoriaVendaMedia().divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP)
-			.multiply(BigDecimal.valueOf(100)));
-	    }
-	    if ((cota.getPercentualEncalheMaximo() != null) && (percentualVenda != null)) {
-		if ((cota.getPercentualEncalheMaximo().compareTo(BigDecimal.ZERO) > 0) && (cota.getPercentualEncalheMaximo().compareTo(percentualVenda) < 0)) {
-		    // VENDA_MEDIA / ((100 - PERCENTUAL_ENCALHE_COTA) / 100)
-		    BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo())
-			    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-		    cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+		
+    	for (CotaEstudo cota : estudo.getCotas()) {
+		
+    		if(cota.getPercentualEncalheMaximo() != null){
+    		
+	    		BigDecimal percentualVenda = null;
+			    
+	    		if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0) {
+	    			// percentualVenda = ((1 - (VENDA / REPDISTRIB)) * 100)
+	    			percentualVenda = (BigDecimal.ONE.subtract(estudo.getSomatoriaVendaMedia().divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP))).multiply(BigDecimal.valueOf(100));
+	    			//percentualVenda = percentualVenda.multiply(BigDecimal.valueOf(100));
+	    			
+	    		}
+	    		
+	    		if ((percentualVenda != null)) {
+					if ((cota.getPercentualEncalheMaximo().compareTo(BigDecimal.ZERO) > 0) && (cota.getPercentualEncalheMaximo().compareTo(percentualVenda) < 0)) {
+					    
+						// VENDA_MEDIA / ((100 - PERCENTUAL_ENCALHE_COTA) / 100)
+						//RepFinal Cota = VendaMédiaFinal Cota / ((100 - %EncalheMáximo Cota ) / 100)
+					    
+						BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+					    
+						cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+					    
+						cotasComRepJaCalculado.add(cota);
+					}
+			    }
+    		}
 		}
-	    }
-	}
+	
+	estudo.getCotasComReparteJaCalculado().addAll(new LinkedList<>(cotasComRepJaCalculado));
+	estudo.getCotas().removeAll(this.cotasComRepJaCalculado);
+	
+	this.cotasComRepJaCalculado.clear();
+	
     }
 }

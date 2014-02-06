@@ -5,7 +5,6 @@ import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
@@ -53,7 +52,7 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * @param produtoEdicao - produto
 	 * @return {@link DescontoCotaProdutoExcessao}
 	 */
-	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota, Produto produto, ProdutoEdicao produtoEdicao);
+	DescontoCotaProdutoExcessao buscarDescontoCotaProdutoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota, Long idProduto, Long idProdutoEdicao);
 
 	/**
 	 * Obtém descontos de produtos edição de um fornecedor.
@@ -112,6 +111,8 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * 
 	 * @param tipoDesconto - tipo de desconto
 	 * 
+	 * @param desconto - desconto
+	 * 
 	 * @param fornecedor - fornecedor
 	 * 
 	 * @param cota - cota
@@ -120,7 +121,7 @@ public interface DescontoProdutoEdicaoExcessaoRepository extends Repository<Desc
 	 * 
 	 * @return {@link Set} {@link DescontoCotaProdutoExcessao}
 	 */
-	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Fornecedor fornecedor, Cota cota,ProdutoEdicao produtoEdicao);
+	Set<DescontoCotaProdutoExcessao> obterDescontoProdutoEdicaoExcessao(TipoDesconto tipoDesconto, Desconto desconto, Fornecedor fornecedor, Cota cota, ProdutoEdicao produtoEdicao);
 		
 	/**
 	 * Salva uma lista de descontosProdutoEdicao

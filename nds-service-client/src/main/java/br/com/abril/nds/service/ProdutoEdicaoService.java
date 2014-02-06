@@ -181,7 +181,7 @@ public interface ProdutoEdicaoService {
 	 * 
 	 * @return
 	 */
-	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao, boolean redistribuicao, String situacaoProdutoEdicao);
+	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, Long idProdutoEdicao, boolean redistribuicao, String situacaoProdutoEdicao);
 
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
 	

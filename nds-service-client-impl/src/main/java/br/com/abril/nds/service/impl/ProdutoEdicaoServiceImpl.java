@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -172,7 +172,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, 
-					"Código de identificação da Edição é inválida!"));
+                    "Código de identificação da Edição é inválida!"));
 		}
 
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
@@ -199,15 +199,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		List<String> mensagensValidacao = new ArrayList<String>();
 
 		if (codigo == null || codigo.isEmpty()){
-			mensagensValidacao.add("Código é obrigatório.");
+            mensagensValidacao.add("Código é obrigatório.");
 		}
 
 		if (edicao == null){
-			mensagensValidacao.add("Edição é obrigatório.");
+            mensagensValidacao.add("Edição é obrigatório.");
 		}
 
 		if (dataLancamento == null){
-			mensagensValidacao.add("Data Lançamento é obrigatório.");
+            mensagensValidacao.add("Data Lançamento é obrigatório.");
 		}
 
 		if (!mensagensValidacao.isEmpty()){
@@ -227,7 +227,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				furoProdutoDTO.setPathImagem(parametroSistema.getValor() + furoProdutoDTO.getPathImagem());
 			}
 
-			//buscar proxima data para lançamento
+            // buscar proxima data para lançamento
 
 			Calendar calendar = Calendar.getInstance();
 			try {
@@ -282,17 +282,17 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		if (codigoProduto == null || codigoProduto.isEmpty()) {
 
-			mensagensValidacao.add("Código é obrigatório.");
+            mensagensValidacao.add("Código é obrigatório.");
 		}
 
 		if (numeroEdicao == null || numeroEdicao.isEmpty()) {
 
-			mensagensValidacao.add("Número edição é obrigatório.");
+            mensagensValidacao.add("Número edição é obrigatório.");
 		}
 
 		if (!Util.isLong(numeroEdicao)) {
 
-			mensagensValidacao.add("Número edição é inválido.");
+            mensagensValidacao.add("Número edição é inválido.");
 		}
 
 		if (!mensagensValidacao.isEmpty()){
@@ -323,7 +323,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
 		}
 		
 		List<ProdutoEdicao> produtosEdicao = this.produtoEdicaoRepository.obterProdutoPorCodigoNome(
@@ -375,12 +375,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return Long.valueOf(count);
     }
 
-	/**
-	 * Insere os dados de desconto relativos ao produto edição em questão.
-	 * 
-	 * @param produtoEdicao
-	 * @param indNovoProdutoEdicao
-	 */
+	                            /**
+     * Insere os dados de desconto relativos ao produto edição em questão.
+     * 
+     * @param produtoEdicao
+     * @param indNovoProdutoEdicao
+     */
 	private void inserirDescontoProdutoEdicao(ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
 
 		Produto produto = produtoEdicao.getProduto();
@@ -448,7 +448,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setOrigem(Origem.MANUAL);
 		} else {
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
-		}		
+        }
+        
+        if (this.produtoEdicaoRepository.isNumeroEdicaoCadastrada(produtoEdicao.getProduto().getId(),
+                dto.getNumeroEdicao(), produtoEdicao.getId())) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da edição ja cadastra. Escolha outro número.");
+        }
 		
 		// 01 ) Salvar/Atualizar o ProdutoEdicao:
 		produtoEdicao = this.salvarProdutoEdicao(dto, produtoEdicao);
@@ -460,12 +465,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		// 02) Salvar imagem:
 		if (imgInputStream != null) {
 
-			// Verifica se o tipo do arquivo é imagem JPEG, PNG ou GIF:
+            // Verifica se o tipo do arquivo é imagem JPEG, PNG ou GIF:
 			if(!FileType.JPEG.getContentType().equalsIgnoreCase(contentType) && 
 					   !FileType.GIF.getContentType().equalsIgnoreCase(contentType)  && 
 					   !FileType.PNG.getContentType().equalsIgnoreCase(contentType)) {
 				throw new ValidacaoException(TipoMensagem.WARNING, 
-						"O formato da imagem da capa não é válido!");
+ "O formato da imagem da capa não é válido!");
 			}
 
 			capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
@@ -494,14 +499,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				&& this.isLancamentoBalanceadoRecolhimento(lancamento)) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
-				"Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
+                    "Não é possível alterar o regime de recolhimento para lançamentos em recolhimento."));
 		}
 		
 		if (ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())
 				&& dto.isParcial()) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
-				"Para redistribuição não é possível escolher o regime de recolhimento parcial."));
+                    "Para redistribuição não é possível escolher o regime de recolhimento parcial."));
 		}
 	}
 
@@ -601,12 +606,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		PeriodoLancamentoParcial periodoInicial = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
 		
-		if(periodoInicial!= null && periodoInicial.getLancamentoPeriodoParcial()!= null){
-			
-			if(periodoInicial.getLancamentoPeriodoParcial().getDataLancamentoDistribuidor().compareTo(dto.getDataLancamentoPrevisto())<0){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Data lançamento previsto deve ser menor que a data de lançamento real.");
-			}
-		}
+
 
 		PeriodoLancamentoParcial periodoFinal = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
 		
@@ -618,22 +618,21 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 	}
 
-	/**
-	 * Aplica todas as regras de validação para o cadastro de uma Edição.
-	 * 
-	 * @param dto
-	 * @param produtoEdicao
-	 */
+	                            /**
+     * Aplica todas as regras de validação para o cadastro de uma Edição.
+     * 
+     * @param dto
+     * @param produtoEdicao
+     */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 
-		/*
-		 * Regra: Os campos abaixos só podem ser alterados caso a Edição
-		 * ainda não tenha sido publicado pelo distribuidor:
-		 * - Código da Edição;
-		 * - Número da Edição;
-		 * 
-		 * Alteração: "Data de Lançamento do Distribuidor" > "Data 'de hoje'"
-		 */
+		                                                        /*
+         * Regra: Os campos abaixos só podem ser alterados caso a Edição ainda
+         * não tenha sido publicado pelo distribuidor: - Código da Edição; -
+         * Número da Edição;
+         * 
+         * Alteração: "Data de Lançamento do Distribuidor" > "Data 'de hoje'"
+         */
 
 		if(produtoEdicao.getId()!= null){
 			
@@ -642,101 +641,108 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 				if (produtoEdicao.getProduto().getCodigo()!=null && !produtoEdicao.getProduto().getCodigo().equals(dto.getCodigoProduto())) {
 					throw new ValidacaoException(TipoMensagem.ERROR, 
-							"Não é permitido alterar o código de uma Edição já publicada!");
+                            "Não é permitido alterar o código de uma Edição já publicada!");
 				}
 	
-				// Campo: Número do ProdutoEdicao:
+                // Campo: Número do ProdutoEdicao:
 				if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
 					throw new ValidacaoException(TipoMensagem.ERROR, 
-							"Não é permitido alterar o número de uma Edição já publicada!");
+                            "Não é permitido alterar o número de uma Edição já publicada!");
 				}
 			}
 			
 		}
 
-		/* Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1 */
+        /*
+         * Regra: Se não existir nenhuma edição associada ao produto, salvar n.
+         * 1
+         */
 		if (!this.produtoEdicaoRepository.hasProdutoEdicao(produtoEdicao.getProduto())) {
 			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
 		}
 
-		/* Regra: Não deve existir dois número de edição para o mesmo grupo de Edições: */
-		/*VALIDAÇÃO FEITA POR EDICAO + LCTO*/
+        /*
+         * Regra: Não deve existir dois número de edição para o mesmo grupo de
+         * Edições:
+         */
+        /* VALIDAÇÃO FEITA POR EDICAO + LCTO */
 		//if (this.produtoEdicaoRepository.isNumeroEdicaoCadastrada(
 				//dto.getCodigoProduto(), dto.getNumeroEdicao(), produtoEdicao.getId())) {
-			//throw new ValidacaoException(TipoMensagem.ERROR, "Este número de edição já esta cadastrada para outra Edição!");
+        // throw new ValidacaoException(TipoMensagem.ERROR,
+        // "Este número de edição já esta cadastrada para outra Edição!");
 		//}
 		
 		
 		
-		/* Regra: Não deve existir duas Edições com o mesmo código de barra. */
-		// Nota: Conforme conversado com o Cesar e Paulo Bacherini em 05/11/2012, dois produtos diferentes podem sim ter o mesmo código de barras
-		/*List<ProdutoEdicao> lstPeCodBarra = 
-				this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
-						dto.getCodigoDeBarras(), produtoEdicao.getId());
-		if (lstPeCodBarra != null && !lstPeCodBarra.isEmpty()) {
-		    // Nota: Caso exista, mas não se trate do MESMO produto edição
-			for (ProdutoEdicao produtoEdicaoPorCodigoBarra : lstPeCodBarra) {
-			
-				if (produtoEdicaoPorCodigoBarra.getId() != produtoEdicao.getId()) {
-				
-					ProdutoEdicao peCodBarra = lstPeCodBarra.get(0);
-					StringBuilder msg = new StringBuilder();
-					msg.append("O Produto '");
-					msg.append(peCodBarra.getProduto().getNome());
-					msg.append("' - Edição º");
-					msg.append(peCodBarra.getNumeroEdicao());
-					msg.append(" já esta cadastrado com este código de barra!");
-					
-					throw new ValidacaoException(TipoMensagem.ERROR, msg.toString());
-				
-				}
-			}
-		}*/
+        /* Regra: Não deve existir duas Edições com o mesmo código de barra. */
+        // Nota: Conforme conversado com o Cesar e Paulo Bacherini em
+        // 05/11/2012, dois produtos diferentes podem sim ter o mesmo código de
+        // barras
+		                                                        /*
+         * List<ProdutoEdicao> lstPeCodBarra =
+         * this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
+         * dto.getCodigoDeBarras(), produtoEdicao.getId()); if (lstPeCodBarra !=
+         * null && !lstPeCodBarra.isEmpty()) { // Nota: Caso exista, mas não se
+         * trate do MESMO produto edição for (ProdutoEdicao
+         * produtoEdicaoPorCodigoBarra : lstPeCodBarra) {
+         * 
+         * if (produtoEdicaoPorCodigoBarra.getId() != produtoEdicao.getId()) {
+         * 
+         * ProdutoEdicao peCodBarra = lstPeCodBarra.get(0); StringBuilder msg =
+         * new StringBuilder(); msg.append("O Produto '");
+         * msg.append(peCodBarra.getProduto().getNome());
+         * msg.append("' - Edição º"); msg.append(peCodBarra.getNumeroEdicao());
+         * msg.append(" já esta cadastrado com este código de barra!");
+         * 
+         * throw new ValidacaoException(TipoMensagem.ERROR, msg.toString());
+         * 
+         * } } }
+         */
 	}
 
-	/**
-	 * Salva ou atualiza um ProdutoEdicao.<br>.
-	 * Os campos permitidos no cenário de gravação ou alteração de um 
-	 * ProdutoEdição criado por um Distribuidor:
-	 * <ul>
-	 * <li>Imagem da Capa;</li>
-	 * <li>Código do ProdutoEdição;</li>
-	 * <li>Nome Comercial do ProdutoEdição;</li>
-	 * <li>Número da Edição;</li>
-	 * <li>Pacote Padrão;</li>
-	 * <li>Tipo de Lançamento;</li>
-	 * <li>Preço da Capa (Previsto);</li>
-	 * <li>Data de Lançamento (Previsto);</li>
-	 * <li>Reparte Previsto;</li>
-	 * <li>Reparte Promocional;</li>
-	 * <li>Categoria;</li>
-	 * <li>Código de Barras;</li>
-	 * <li>Código de Barras Corporativo;</li>
-	 * <li>Desconto;</li>
-	 * <li>Chamada da Capa;</li>
-	 * <li>Regime de Recolhimento (Parcial);</li>
-	 * <li>Brinde;</li>
-	 * <li>Boletim Informativo;</li>
-	 * </ul>
-	 * <br> 
-	 * Os campos permitidos no cenário de alteração de um ProdutoEdição 
-	 * vindo da Interface:
-	 * <ul>
-	 * <li>Imagem da Capa;</li>
-	 * <li>Preço da Capa (Real);</li>
-	 * <li>Código de Barras;</li>
-	 * <li>Chamada da Capa;</li>
-	 * <li>Brinde;</li>
-	 * <li>Peso;</li>
-	 * </ul>
-	 * 
-	 * @param dto
-	 * @param produtoEdicao
-	 */
+	                            /**
+     * Salva ou atualiza um ProdutoEdicao.<br>
+     * . Os campos permitidos no cenário de gravação ou alteração de um
+     * ProdutoEdição criado por um Distribuidor:
+     * <ul>
+     * <li>Imagem da Capa;</li>
+     * <li>Código do ProdutoEdição;</li>
+     * <li>Nome Comercial do ProdutoEdição;</li>
+     * <li>Número da Edição;</li>
+     * <li>Pacote Padrão;</li>
+     * <li>Tipo de Lançamento;</li>
+     * <li>Preço da Capa (Previsto);</li>
+     * <li>Data de Lançamento (Previsto);</li>
+     * <li>Reparte Previsto;</li>
+     * <li>Reparte Promocional;</li>
+     * <li>Categoria;</li>
+     * <li>Código de Barras;</li>
+     * <li>Código de Barras Corporativo;</li>
+     * <li>Desconto;</li>
+     * <li>Chamada da Capa;</li>
+     * <li>Regime de Recolhimento (Parcial);</li>
+     * <li>Brinde;</li>
+     * <li>Boletim Informativo;</li>
+     * </ul>
+     * <br>
+     * Os campos permitidos no cenário de alteração de um ProdutoEdição vindo da
+     * Interface:
+     * <ul>
+     * <li>Imagem da Capa;</li>
+     * <li>Preço da Capa (Real);</li>
+     * <li>Código de Barras;</li>
+     * <li>Chamada da Capa;</li>
+     * <li>Brinde;</li>
+     * <li>Peso;</li>
+     * </ul>
+     * 
+     * @param dto
+     * @param produtoEdicao
+     */
 
 	private ProdutoEdicao salvarProdutoEdicao(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
 		
-		// 01) Validações:
+        // 01) Validações:
 		this.validarProdutoEdicao(dto, produtoEdicao);
 		
 		// 02) Campos a serem persistidos e/ou alterados:
@@ -746,23 +752,24 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		BigInteger repartePromocional = (dto.getRepartePromocional() == null) 
 				? BigInteger.ZERO : dto.getRepartePromocional();
+        produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
 		
 		if ((produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
 			// Campos exclusivos para o Distribuidor::
 			
-			// Identificação:
+            // Identificação:
 			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
 			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 			produtoEdicao.setCaracteristicaProduto(dto.getCaracteristicaProduto());
 			produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
 			produtoEdicao.setPeb(dto.getPeb());	
-			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
+
 			produtoEdicao.setGrupoProduto(dto.getGrupoProduto());
 
 			// Reparte:
 			produtoEdicao.setReparteDistribuido(repartePrevisto.add(repartePromocional));
 
-			// Características do lançamento:
+            // Características do lançamento:
 			// TODO: !!!colocar o select da categoria aqui!!!
 			produtoEdicao.setCodigoDeBarraCorporativo(dto.getCodigoDeBarrasCorporativo());
 
@@ -770,7 +777,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			produtoEdicao.setParcial(dto.isParcial());	// Regime de Recolhimento;
 				
-			// Característica Física:
+            // Característica Física:
 			produtoEdicao.setPeso(dto.getPeso());
 			Dimensao dimEdicao = new Dimensao();
 			dimEdicao.setLargura(dto.getLargura());
@@ -785,7 +792,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setDescricaoDesconto(dto.getDescricaoDesconto());
 			produtoEdicao.setDesconto(dto.getDesconto());
 
-			//Segmentação
+            // Segmentação
 			SegmentacaoProduto segm = produtoEdicao.getSegmentacao()!=null?produtoEdicao.getSegmentacao():new SegmentacaoProduto();
 			segm.setClasseSocial(dto.getClasseSocial());
 			segm.setSexo(dto.getSexo());
@@ -802,9 +809,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setSegmentacao(segm);
 		}
 
-		//Campos editáveis, independente da Origem
+        // Campos editáveis, independente da Origem
 		produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto().getId() == null ? null : dto.getTipoClassificacaoProduto());
-        produtoEdicao.setPrecoVenda(dto.getPrecoVenda()==null?dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View: Preço Capa - Real;
+        produtoEdicao.setPrecoVenda(dto.getPrecoVenda() == null ? dto.getPrecoPrevisto() : dto.getPrecoVenda()); // View:
+                                                                                                                 // Preço
+                                                                                                                 // Capa
+                                                                                                                 // -
+                                                                                                                 // Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():Long.valueOf("0"));
@@ -835,14 +846,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return produtoEdicao;
 	}
 
-	/**
-	 * Salva o lançamento.
-	 * 
-	 * @param lancamento
-	 * @param dto
-	 * @param produtoEdicao
-	 * @param usuario 
-	 */
+	                            /**
+     * Salva o lançamento.
+     * 
+     * @param lancamento
+     * @param dto
+     * @param produtoEdicao
+     * @param usuario
+     */
 	private Lancamento salvarLancamento(Lancamento lancamento, ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, Usuario usuario) {
 		
 		lancamento.setNumeroLancamento(dto.getNumeroLancamento());
@@ -897,7 +908,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		if (produtoEdicao == null) {
 			
-			validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
+            validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
 		}
 		
 		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
@@ -909,28 +920,31 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
 					|| lancamento.getStatus().equals(StatusLancamento.FURO)) ) {
 								
-				validacaoMap.put("edicaoExpedida", "Produto balanceado, é necessário realizar o furo da publicação para realizar a exclusão!");
+                validacaoMap.put("edicaoExpedida",
+                        "Produto balanceado, é necessário realizar o furo da publicação para realizar a exclusão!");
 				
 				return validacaoMap;
 			}
 			
 			if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) {
 				
-				validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
+                validacaoMap.put("edicaoComNota", "Esta edição possui nota emitida e não pode ser excluida!");
 				
 				return validacaoMap;
 			}
 			
 			if(lancamento.getStatus().equals(StatusLancamento.BALANCEADO))
-				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição possui lancamento já balanceado, é necessário realizar o Furo da Edição!");
+                validacaoMap.put("edicaoEmBalanceamentoBalanceada",
+                        "Esta Edição possui lancamento já balanceado, é necessário realizar o Furo da Edição!");
 						
 			if(lancamento.getEstudo() != null) {
-				validacaoMap.put("edicaoPossuiEstudo", "Esta edição já possui estudo!");
+                validacaoMap.put("edicaoPossuiEstudo", "Esta edição já possui estudo!");
 			}
 			
 			if(produtoEdicao.getEstoqueProduto() != null) {
 				
-				validacaoMap.put("edicaoPossuiEstoque", "Esta edição possui produtos em estoque e não pode ser excluida!");
+                validacaoMap.put("edicaoPossuiEstoque",
+                        "Esta edição possui produtos em estoque e não pode ser excluida!");
 
 				return validacaoMap;
 			}
@@ -947,7 +961,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		if (produtoEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
 		
 		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
@@ -955,7 +969,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		for (Lancamento lancamento : lancamentos) {
 			
 			if(lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty() ) 
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição possui nota emitida e não pode ser excluida!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Esta edição possui nota emitida e não pode ser excluida!");
 			
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
@@ -963,20 +978,23 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO)
 					|| lancamento.getStatus().equals(StatusLancamento.FURO)) ) {
 								
-				throw new ValidacaoException(TipoMensagem.WARNING, "Produto balanceado, é necessário realizar o furo da publicação para realizar a exclusão!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Produto balanceado, é necessário realizar o furo da publicação para realizar a exclusão!");
 				
 			}
 			
 			if(lancamento.getStatus().equals(StatusLancamento.BALANCEADO))
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição possui lancamento já balanceado, é necessário realizar o Furo da Edição!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Esta edição possui lancamento já balanceado, é necessário realizar o Furo da Edição!");
 						
 			if(lancamento.getEstudo() != null) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição já possui estudo!");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição já possui estudo!");
 			}
 			
 			if(produtoEdicao.getEstoqueProduto() != null) {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta edição possui produtos em estoque e não pode ser excluida!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Esta edição possui produtos em estoque e não pode ser excluida!");
 			}
 		}
 		
@@ -1028,11 +1046,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		} catch (DataIntegrityViolationException e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Esta edição não pode ser excluida por estar associada em outras partes do sistema!");
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "Esta edição não pode ser excluida por estar associada em outras partes do sistema!");
 			
 		} catch (Exception e) {
-			LOGGER.error("Ocorreu um erro ao tentar excluir a edição!", e);
-			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
+            LOGGER.error("Ocorreu um erro ao tentar excluir a edição!", e);
+            throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir a edição!");
 		}
 	}
 	
@@ -1054,15 +1073,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			return;
 		}
 		
-		throw new ValidacaoException(TipoMensagem.WARNING, "Situação do lançamento não permite cadastrar nova redistribuição!");
+        throw new ValidacaoException(TipoMensagem.WARNING,
+                "Situação do lançamento não permite cadastrar nova redistribuição!");
 		
 	}
 	
 	@Transactional(readOnly = true)
 	@Override
-	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicaoString, boolean redistribuicao, String situacaoProdutoEdicao) {
+    public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, Long idProdutoEdicao, boolean redistribuicao,
+            String situacaoProdutoEdicao) {
 		
-		Long idProdutoEdicao = (idProdutoEdicaoString != null) ? Long.valueOf(idProdutoEdicaoString) : null;
 		
 		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
 		
@@ -1078,6 +1098,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (produto.getFornecedor() != null 
 				&& produto.getFornecedor().getJuridica() != null) {
 			nomeFornecedor = produto.getFornecedor().getJuridica().getNomeFantasia();
+            dto.setIdFornecedor(produto.getFornecedor().getId());
 		}
 
 		dto.setNomeFornecedor(nomeFornecedor);
@@ -1138,7 +1159,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			if (dto.isParcial()) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Regime de recolhimento parcial não permite cadastro de redistribuição!");
+                        "Regime de recolhimento parcial não permite cadastro de redistribuição!");
 			}
 			
 			
@@ -1318,7 +1339,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	private void obterProdutoEdicaoDTOManual(String codigoProduto,Produto produto, ProdutoEdicaoDTO dto) {
 		
-		// Edição criada pelo Distribuidor:
+        // Edição criada pelo Distribuidor:
 		dto.setOrigemInterface(false);
 		
 		dto.setPeb(produto.getPeb());
@@ -1449,7 +1470,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			throw new ValidacaoException(new ValidacaoVO(
 				TipoMensagem.WARNING, 
 					"O produto " + produtoEdicao.getProduto().getNome() 
-						+ " não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
+                                    + " não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
 		}
 		
 		return porcentagemDesconto;

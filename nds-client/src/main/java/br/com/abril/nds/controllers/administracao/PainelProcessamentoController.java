@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -51,7 +52,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/administracao/painelProcessamento")
 @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO)
 public class PainelProcessamentoController extends BaseController {
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PainelProcessamentoController.class);
 	@Autowired
 	private Result result;
 
@@ -91,7 +93,7 @@ public class PainelProcessamentoController extends BaseController {
 	@Get
 	public void exportar(FileType fileType, int tipoRelatorio) throws IOException {
 		if (fileType == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
 
 		switch (tipoRelatorio) {
@@ -102,7 +104,7 @@ public class PainelProcessamentoController extends BaseController {
 			exportarProcesso(fileType);
 			break;
 		default:
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de relatório " + tipoRelatorio + " não encontrado!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de relatório " + tipoRelatorio + " não encontrado!");
 		}
 		
 		this.result.nothing();
@@ -222,7 +224,7 @@ public class PainelProcessamentoController extends BaseController {
 				try {
 					dataOperacao = new SimpleDateFormat("dd/MM/yyyy").parse(dataProcessamento);
 				} catch (ParseException e) {
-					e.printStackTrace();
+                    LOGGER.error(e.getMessage(), e);
 				}
 			}
 			
@@ -406,14 +408,15 @@ public class PainelProcessamentoController extends BaseController {
 		return filtro;
 	}
 	
-	/**
-	 * Configura a paginação dos filtros
-	 * @param filtro
-	 * @param sortorder
-	 * @param sortname
-	 * @param page
-	 * @param rp
-	 */
+	                                /**
+     * Configura a paginação dos filtros
+     * 
+     * @param filtro
+     * @param sortorder
+     * @param sortname
+     * @param page
+     * @param rp
+     */
 	private void configurarPaginacaoProcessos(FiltroProcessosDTO filtro, String sortorder, String sortname, int page,int rp) {
 
 		if (filtro != null) {
@@ -463,14 +466,15 @@ public class PainelProcessamentoController extends BaseController {
 		return filtro;
 	}
 	
-	/**
-	 * Configura a paginação dos filtros
-	 * @param filtro
-	 * @param sortorder
-	 * @param sortname
-	 * @param page
-	 * @param rp
-	 */
+	                                /**
+     * Configura a paginação dos filtros
+     * 
+     * @param filtro
+     * @param sortorder
+     * @param sortname
+     * @param page
+     * @param rp
+     */
 	private void configurarPaginacaoInterfaces(FiltroInterfacesDTO filtro, String sortorder,	String sortname, int page,int rp) {
 
 		if (filtro != null) {
@@ -502,7 +506,9 @@ public class PainelProcessamentoController extends BaseController {
 			interfaceExecucaoService.executarInterface(idInterface, getUsuarioLogado(), null);
 		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
+        result.use(Results.json())
+                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
+                        "result").recursive().serialize();
 	}
 	
 	/**
@@ -519,7 +525,9 @@ public class PainelProcessamentoController extends BaseController {
 		
 		interfaceExecucaoService.executarTodasInterfacesMDCEmOrdem(getUsuarioLogado());
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
+        result.use(Results.json())
+                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
+                        "result").recursive().serialize();
 	}
 	
 }

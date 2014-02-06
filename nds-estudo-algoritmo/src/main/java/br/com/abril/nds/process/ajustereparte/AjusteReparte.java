@@ -2,6 +2,7 @@ package br.com.abril.nds.process.ajustereparte;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedList;
 
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
@@ -32,7 +34,9 @@ import br.com.abril.nds.vo.ValidacaoVO;
  */
 @Component
 public class AjusteReparte extends ProcessoAbstrato {
-
+	
+	LinkedList<CotaEstudo> cotasComReparteJaCalculado = new LinkedList<>();
+	
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 	if ((estudo == null) || (estudo.getCotas() == null)) {
@@ -48,7 +52,16 @@ public class AjusteReparte extends ProcessoAbstrato {
 		}
 		cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+	    cotasComReparteJaCalculado.add(cota);
 	    }
+	    
 	}
+	
+	estudo.setCotasComReparteJaCalculado(new LinkedList<>(cotasComReparteJaCalculado));
+	
+	this.cotasComReparteJaCalculado.clear();
+	
+	estudo.getCotas().removeAll(estudo.getCotasComReparteJaCalculado());
+	
     }
 }

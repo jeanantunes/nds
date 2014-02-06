@@ -2,9 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -25,10 +22,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstudoCotaGeradoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoGeradoRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -57,6 +56,9 @@ public class EstudoServiceImpl implements EstudoService {
 	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
+	private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
+	
+	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
 
     @Autowired
@@ -77,53 +79,11 @@ public class EstudoServiceImpl implements EstudoService {
 	    
 		estudo.setId(this.obterUltimoAutoIncrement());
 		
-	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
+	    for (EstudoCotaGerado estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
 	    }
 	    
 	    estudoGeradoRepository.adicionar(estudo);
-	}
-
-	@Override
-	@Transactional
-	public void excluirEstudosAnoPassado() {
-		
-		Calendar c = Calendar.getInstance();
-		
-		c.set(Calendar.HOUR_OF_DAY,   0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		c.set(Calendar.MONTH, Calendar.JANUARY);
-		c.set(Calendar.YEAR, c.get(Calendar.YEAR) - 1);
-		
-		Date dataStart = c.getTime();
-		
-		c.set(Calendar.HOUR_OF_DAY,   23);
-		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 59);
-		c.set(Calendar.MONTH, Calendar.DECEMBER);
-		c.set(Calendar.DAY_OF_MONTH, 31);
-		
-		Date dataEnd = c.getTime();
-		
-		System.out.println(new SimpleDateFormat("dd/MM/yyyy").format(dataStart));
-		System.out.println(new SimpleDateFormat("dd/MM/yyyy").format(dataEnd));
-		
-		List<EstudoGerado> listEstudos = estudoGeradoRepository.obterEstudosPorIntervaloData(dataStart, dataEnd);
-		
-		for (EstudoGerado estudo:listEstudos) {
-			
-			try {
-				
-				estudoGeradoRepository.remover(estudo);
-			} catch (Exception e) {
-				
-				System.out.println("Erro ao excluir estudo:" + estudo.getId());
-				e.printStackTrace();
-			}
-			
-		}
 	}
 
 	@Override
@@ -138,22 +98,6 @@ public class EstudoServiceImpl implements EstudoService {
 		this.estudoGeradoRepository.removerPorId(id);
 	}
 
-	@Override
-	@Transactional
-	public void criarNovoEstudo(ProdutoDistribuicaoVO produto) {
-	    EstudoGerado estudo = new EstudoGerado();
-	    estudo.setLiberado(false);
-	    estudo.setReparteDistribuir(produto.getRepDistrib());
-	    estudo.setDataLancamento(produto.getDataLanctoSemFormatacao());
-	    estudo.setDataCadastro(new Date());
-	    estudo.setDistribuicaoPorMultiplos(0);
-	    estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
-	    estudo.setQtdeReparte(produto.getRepDistrib());
-	    estudo.setProdutoEdicao(new ProdutoEdicao(produto.getIdProdutoEdicao().longValue()));
-	    estudoGeradoRepository.adicionar(estudo);
-	    produto.setIdEstudo(BigInteger.valueOf(estudo.getId()));
-	}
-	
     @Transactional(readOnly = true)
     public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
 
@@ -191,7 +135,7 @@ public class EstudoServiceImpl implements EstudoService {
 			listIdEstudoAdicionado = new ArrayList<Long>();
 			Integer quantidadeReparte = (divisaoEstudo.getQuantidadeReparte()==null)?0:divisaoEstudo.getQuantidadeReparte();
 
-			List<EstudoCota> listEstudoCota = this.estudoCotaRepository.obterEstudoCotaPorEstudo(estudoOriginal);
+			List<EstudoCotaGerado> listEstudoCota = this.estudoCotaGeradoRepository.obterEstudoCotaPorEstudo(estudoOriginal);
 
 			int iEstudo = 0;
 			HashMap<Long,BigInteger> diffEstudosMap = new HashMap<Long,BigInteger>();
@@ -199,11 +143,11 @@ public class EstudoServiceImpl implements EstudoService {
 			for (EstudoGerado estudo : listEstudo) {
 
 				estudo.setDataLancamento(null);
-				Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
+				Set<EstudoCotaGerado> setEstudoCota = new HashSet<EstudoCotaGerado>();
 				
-				for (EstudoCota ec : listEstudoCota) {
+				for (EstudoCotaGerado ec : listEstudoCota) {
 					
-					EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(ec);
+					EstudoCotaGerado estudoCota = (EstudoCotaGerado) SerializationUtils.clone(ec);
 					estudoCota.setId(null);
 					estudoCota.setEstudo(estudo);
 
@@ -241,7 +185,7 @@ public class EstudoServiceImpl implements EstudoService {
 				}
 
 				BigInteger somarReparteParaEstudo = BigInteger.ZERO;
-				for (EstudoCota estudoCota : setEstudoCota) {
+				for (EstudoCotaGerado estudoCota : setEstudoCota) {
 					BigInteger r = estudoCota.getReparte()==null?BigInteger.ZERO:estudoCota.getReparte();
 					somarReparteParaEstudo=somarReparteParaEstudo.add(r);
 					estudoCota.setQtdeEfetiva(estudoCota.getReparte());
@@ -303,23 +247,27 @@ public class EstudoServiceImpl implements EstudoService {
 	}
 	
 	@Transactional
-	public EstudoGerado liberar(Long idEstudoGerado) {
+	public Estudo liberar(Long idEstudoGerado) {
 		
 		EstudoGerado estudoGerado = this.estudoGeradoRepository.buscarPorId(idEstudoGerado);
+		
+		Lancamento lancamento = 
+			this.lancamentoRepository.buscarPorId(estudoGerado.getLancamentoID());
+		
+		if (lancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não há lançamento para este estudo.");
+		}
+		
+		if (lancamento.getEstudo() != null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Já existe um estudo liberado para este lançamento.");
+		}
 		
 		estudoGerado.setLiberado(true);
 		
 		this.estudoGeradoRepository.alterar(estudoGerado);
 		
-		this.estudoGeradoRepository.flush();
-		this.estudoGeradoRepository.clear();
-		
-		return estudoGerado;
-	}
-	
-	@Transactional
-	public Estudo criarEstudoLiberado(EstudoGerado estudoGerado) {
-
 		Estudo estudo = new Estudo();
 		
 		try {
@@ -330,18 +278,30 @@ public class EstudoServiceImpl implements EstudoService {
 
 			throw new RuntimeException(e);
 		}
+		
+		Set<EstudoCota> estudoCotas = new HashSet<>();
+		
+		for (EstudoCotaGerado estudoCotaGerado : estudoGerado.getEstudoCotas()) {
 
-		try {
+			BigInteger qtdeEfetiva = estudoCotaGerado.getQtdeEfetiva();
 			
-			this.estudoRepository.adicionar(estudo);
+			if (qtdeEfetiva != null && !BigInteger.ZERO.equals(qtdeEfetiva)) {
 			
-		} catch (Exception e) {
-
-			throw new RuntimeException(e);
+				estudoCotas.add(new EstudoCota(estudoCotaGerado, estudo));
+			}
 		}
 		
+		estudo.setLancamentos(null);
+		
+		estudo.setEstudoCotas(estudoCotas);
+		
+		this.estudoRepository.saveOrUpdate(estudo);
+	
+		lancamento.setEstudo(estudo);
+		
+		this.lancamentoRepository.alterar(lancamento);
+			
 		return estudo;
 	}
-	
 	
 }

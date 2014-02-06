@@ -19,9 +19,22 @@
 <body>
 
 	<iframe src="" id="download-iframe-fechamento" style="display:none;"></iframe>
+	
+	<form id="idFormConfirmacaoSalvar">
+		<div id="dialog-ConfirmacaoSalvar" title="Fechamento CE - Integração" style="display:none;">
+	  		<p>Deseja salvar as informações?</p>
+		</div>
+	</form>
 
     <div class="areaBts">
     	<div class="area">
+    		
+    		<span class="bt_novos bt_acoes_grid_ce" id="btnSalvarCE" >
+		      	<a isEdicao="true" href="javascript:;" title="Salvar" rel="tipsy" title="Salvar">
+		      		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" id="imagemSalvarCE" />
+		      	</a>
+		    </span>
+		    
     		<span class="bt_novos bt_acoes_grid_ce" id="btnFechamento" >
 		      	<a isEdicao="true" href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
 		      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
@@ -57,6 +70,12 @@
 				</c:if>					       
 	       
 	       </span>
+		   
+		   <span class="bt_novos bt_acoes_grid_ce" id="btnImpressaoCE" >
+		      	<a isEdicao="true" href="javascript:;" title="Imprimir" rel="tipsy" title="Imprimir">
+		      		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" id="imagemImprimirCE" />
+		      	</a>
+		    </span>
 		       
 		       
 		       <span class="bt_arq bt_acoes_grid_ce">

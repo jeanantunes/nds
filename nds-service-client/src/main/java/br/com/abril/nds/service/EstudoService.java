@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -23,16 +22,12 @@ public interface EstudoService {
 	EstudoGerado obterEstudo(Long id);
 	
 	void gravarEstudo(EstudoGerado estudo);
-
-	public abstract void excluirEstudosAnoPassado();
 	
 	EstudoGerado criarEstudo(ProdutoEdicao produtoEdicao,BigInteger quantidadeReparte,Date dataLancamento);
 
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
 	
 	void excluirEstudo(long id);
-
-	void criarNovoEstudo(ProdutoDistribuicaoVO produto);
 	
 	public EstudoGerado obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
 
@@ -42,8 +37,6 @@ public interface EstudoService {
 	
 	public Long obterUltimoAutoIncrement();
 	
-	EstudoGerado liberar(Long idEstudoGerado);
-	
-	Estudo criarEstudoLiberado(EstudoGerado estudoGerado);
+	Estudo liberar(Long idEstudoGerado);
 	
 }

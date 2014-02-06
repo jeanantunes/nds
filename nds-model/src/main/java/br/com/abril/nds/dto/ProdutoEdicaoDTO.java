@@ -26,7 +26,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	//Atributos que também são utilizados para a funcionalidade Add_em_lote
+    // Atributos que também são utilizados para a funcionalidade Add_em_lote
 
 	@XlsMapper(value="cod_produto_prodin")
 	private String codigoProduto;
@@ -95,8 +95,9 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
-	// Usados na listagem de Edições:
+    // Usados na listagem de Edições:
 	private Date dataLancamento;
+    private Long idFornecedor;
 	private String nomeFornecedor;
 	private TipoLancamento tipoLancamento;
 	private StatusLancamento situacaoLancamento;
@@ -105,7 +106,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String temBrinde;
 	private String status;
 	
-	// Campos para cadastrar uma nova Edição:
+    // Campos para cadastrar uma nova Edição:
 	// codigoProduto;
 	private String nomeComercialProduto;
 	private String fase;
@@ -137,7 +138,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String editor;
 	private String caracteristicaProduto;
 	
-	//Segmentação
+    // Segmentação
 	private ClasseSocial classeSocial;
 	private Sexo sexo;
 	private FaixaEtaria faixaEtaria;
@@ -396,7 +397,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		return this.temBrinde;
 	}
 	public void setTemBrinde(Boolean temBrinde) {
-		this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
+        this.temBrinde = temBrinde.booleanValue() ? "Sim" : "Não";
 	}
 
 	/**
@@ -992,5 +993,19 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public String getTipoClassificacaoFormatado() {
 		return tipoClassificacaoFormatado;
-	}  
+    }
+    
+    /**
+     * @return the idFornecedor
+     */
+    public Long getIdFornecedor() {
+        return idFornecedor;
+    }
+    
+    /**
+     * @param idFornecedor the idFornecedor to set
+     */
+    public void setIdFornecedor(Long idFornecedor) {
+        this.idFornecedor = idFornecedor;
+    }
 }

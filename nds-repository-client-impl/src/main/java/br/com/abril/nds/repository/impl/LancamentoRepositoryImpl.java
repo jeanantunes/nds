@@ -2360,5 +2360,13 @@ public class LancamentoRepositoryImpl extends
 
 		return (Boolean) query.uniqueResult();
 	}
+	
+	public void desvincularEstudos(List<Long> idsEstudos) {
+		
+		this.getSession().createQuery(
+			"update Lancamento lancamento set lancamento.estudo = null "
+			+ "where lancamento.estudo.id in (:idsEstudos)")
+			.setParameterList("idsEstudos", idsEstudos).executeUpdate();
+	}
 
 }

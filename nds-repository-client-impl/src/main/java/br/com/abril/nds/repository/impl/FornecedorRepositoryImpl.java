@@ -591,4 +591,20 @@ public class FornecedorRepositoryImpl extends
 		
 		return query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedoresUnificados() {
+
+		String hql = "from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica "
+				+ " where fornecedor.situacaoCadastro = :situacaoCadastro"
+				+ " and ( fornecedor.fornecedorUnificador is not null or fornecedor.fornecedoresUnificados is not empty )" ;
+
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
+
+		return query.list();
+	}
 }

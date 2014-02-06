@@ -146,20 +146,20 @@ $(function(){
 				<td width="10"></td>
 				<td width="102">
 					<span class="vlrPerc" >
-						<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
+						<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" size="5"/>
 					</span>
 				</td>
 
-				<td width="400"></td>
+				<td width=400></td>
 				<td width="100">
 					<span class="vdaMedia" >
-						<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_input" value="1" style="display: none;"  onblur="ajusteReparteController.formatarAjusteAplicadoVendaMedia();" type="text" style="width: 50px;" />
+						<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_input" value="1" style="display: none;" type="text" style="width: 50px;" size="5" />
 					</span>
 				</td>
 				<td width="350"></td>
 				<td width="250">
 					<span class="encalheMaximo"	>
-						<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />
+						<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" size="5" />
 					</span>
 				</td>
 			</tr>
@@ -292,20 +292,20 @@ $(function(){
 									<td width="10"></td>
 									<td width="102">
 										<span class="vlrPerc" >
-											<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_editar_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 10px;" />
+											<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_editar_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 10px;" size="5" />
 										</span>
 									</td>
 
 									<td width="400"></td>
 									<td width="100">
 										<span class="vdaMedia" >
-											<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoVendaMediaEditar();" type="text" style="width: 10px;" />
+											<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_editar_input" value="1" style="display: none;"  type="text" style="width: 10px;" size="5"/>
 										</span>
 									</td>
 									<td width="350"></td>
 									<td width="250">
 										<span class="encalheMaximo"	>
-											<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalheEditar();" type="text" style="width: 10px;" />
+											<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalheEditar();" type="text" style="width: 10px;" size="5"/>
 										</span>
 									</td>
 								</tr>

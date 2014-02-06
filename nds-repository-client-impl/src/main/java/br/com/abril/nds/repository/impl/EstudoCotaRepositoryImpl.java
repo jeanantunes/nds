@@ -6,12 +6,9 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
-import br.com.abril.nds.model.planejamento.AbstractEstudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoCotaRepository;
@@ -149,6 +146,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		sql.append(" WHERE cota.id IN (:idCotas) ");
 		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
 		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");
+		sql.append(" AND estudoCota.qtdeEfetiva > 0 ");
 		
 		if("EMITIDAS".equals(exibirNotasEnvio)) {
 			sql.append(" AND itemNotaEnvios is not null ");
@@ -194,49 +192,6 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 	return query.list();
 	}
-	
-	
-
-	@Override
-	public void removerEstudoCotaPorEstudo(Long idEstudo) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" delete from EstudoCota estudoCota");
-		hql.append(" where estudoCota.estudo.id = :idEstudo");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("idEstudo", idEstudo);
-		
-		query.executeUpdate();
-	}
-	
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<EstudoCota> obterEstudoCotaPorEstudo(AbstractEstudo estudo) {
-
-	String hql = " from EstudoCota estudoCota where estudoCota.estudo = :estudo ";
-
-	Query query = super.getSession().createQuery(hql);
-
-	query.setParameter("estudo", estudo);
-
-	return query.list();
-    }
-    
-    @Override
-    @Transactional
-    public void inserirProdutoBase(EstudoGerado estudo) {
-	StringBuilder sql = new StringBuilder();
-	sql.append("insert into estudo_produto_edicao_base ");
-	sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
-	sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, 1) ");
-	
-	Query query = getSession().createSQLQuery(sql.toString());
-	query.setParameter("estudo_id", estudo.getId());
-	query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
-	query.executeUpdate();
-    }
     
     @Override
 	public void removerEstudosCotaPorEstudos(List<Long> listIdEstudos) {

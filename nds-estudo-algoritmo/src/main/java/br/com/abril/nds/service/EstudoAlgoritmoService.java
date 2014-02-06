@@ -9,11 +9,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.MonthDay;
 import org.joda.time.Years;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,14 +49,17 @@ import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
- * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
- * setup do estudo, levando em consideração todas as variáveis também definidas no setup.
+ * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
+ * as cotas encontradas para o perfil definido no setup do estudo, levando em
+ * consideração todas as variáveis também definidas no setup.
  * <p style="white-space: pre-wrap;">
- * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} - {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
- * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} - {@link AjusteCota} - {@link JornaleirosNovos} -
- * {@link VendaMediaFinal} - {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
- * {@link ReparteProporcional} - {@link EncalheMaximo} - {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: -
- * N/A
+ * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} -
+ * {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
+ * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} -
+ * {@link AjusteCota} - {@link JornaleirosNovos} - {@link VendaMediaFinal} -
+ * {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
+ * {@link ReparteProporcional} - {@link EncalheMaximo} -
+ * {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: - N/A
  * 
  * Processo Anterior: N/A Próximo Processo: N/A
  * </p>
@@ -65,7 +67,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class EstudoAlgoritmoService {
 
-    private static final Logger log = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
 
     @Autowired
     private EstudoDAO estudoDAO;
@@ -122,8 +124,8 @@ public class EstudoAlgoritmoService {
     private JornaleirosNovos jornaleirosNovos;
 
     public static void calculate(EstudoTransient estudo) {
-	// Somatória da venda média de todas as cotas e
-	// Somatória de reparte das edições abertas de todas as cotas
+        // Somatória da venda média de todas as cotas e
+        // Somatória de reparte das edições abertas de todas as cotas
 	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
 	estudo.setTotalPDVs(BigDecimal.ZERO);
@@ -163,7 +165,7 @@ public class EstudoAlgoritmoService {
     }
 
     public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(ProdutoEdicaoEstudo edicao) {
-	log.info("Buscando edições para estudo.");
+        LOGGER.info("Buscando edições para estudo.");
 	return definicaoBasesDAO.getEdicoesBases(edicao);
     }
 
@@ -177,7 +179,7 @@ public class EstudoAlgoritmoService {
 	listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
 	if (listaEdicoesBase.isEmpty()) {
 	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-		    "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
+                    "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
 	}
 	return listaEdicoesBase;
     }
@@ -232,7 +234,7 @@ public class EstudoAlgoritmoService {
     public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto, BigInteger reparte,
 	    Usuario usuario) throws Exception {
 
-	log.debug("Iniciando execução do estudo.");
+        LOGGER.debug("Iniciando execução do estudo.");
 	EstudoTransient estudo = new EstudoTransient();
 	estudo.setDataCadastro(new Date());
 	estudo.setDataLancamento(produto.getDataLancamento());
@@ -292,12 +294,13 @@ public class EstudoAlgoritmoService {
 			divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
 		if (quebrado.compareTo(inteiro) != 0) {
 		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-			    String.format("O reparte mínimo deve ser múltiplo de %s.", estudo.getPacotePadrao())));
+ String.format(
+                            "O reparte mínimo deve ser múltiplo de %s.", estudo.getPacotePadrao())));
 		}
 	    }
 	}
 
-	// carregando parâmetros do banco de dados
+        // carregando parâmetros do banco de dados
 	carregarParametros(estudo);
 
 	definicaoBases.executar(estudo);
@@ -333,10 +336,11 @@ public class EstudoAlgoritmoService {
 
 	calcularReparte.executar(estudo);
 
-	// processo que faz os ajustes finais e grava as informações no banco de dados
+        // processo que faz os ajustes finais e grava as informações no banco de
+        // dados
 	ajusteFinalReparte.executar(estudo);
 
-	log.debug("Execução do estudo concluída");
+        LOGGER.debug("Execução do estudo concluída");
 	return estudo;
     }
 

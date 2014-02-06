@@ -53,19 +53,21 @@ import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
+ * Classe de implementação referente ao acesso a dados da entidade
  * {@link br.com.abril.nds.model.cadastro.ProdutoEdicao}
  * 
  * @author Discover Technology
  */
 @Repository
 public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<ProdutoEdicao, Long> implements ProdutoEdicaoRepository {
-	/**
-	 * Construtor padrão.
-	 */
+	    
+    /**
+     * Construtor padrão.
+     */
 	public ProdutoEdicaoRepositoryImpl() {
 		super(ProdutoEdicao.class);
 	}
@@ -363,26 +365,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return  idsProdutoEdicao.size();
 	}
 
-	/**
-	 * Corpo com a consulta HQL para pesquisar e ordenar as edições já 
-	 * cadatradas.<br>
-	 * Possui como opções de filtro:<br>
-	 * <ul>
-	 * <li>Código do Produto;</li>
-	 * <li>Nome do Produto;</li>
-	 * <li>Data de Lançamento;</li>
-	 * <li>Situação do Lançamento;</li>
-	 * <li>Código de Barra da Edição;</li>
-	 * <li>Contém brinde;</li>
-	 * </ul>
-	 * 
-	 * @param hql
-	 * @param dto
-	 * @param sortname
-	 * @param sortorder
-	 * 
-	 * @return
-	 */
+	                            /**
+     * Corpo com a consulta HQL para pesquisar e ordenar as edições já
+     * cadatradas.<br>
+     * Possui como opções de filtro:<br>
+     * <ul>
+     * <li>Código do Produto;</li>
+     * <li>Nome do Produto;</li>
+     * <li>Data de Lançamento;</li>
+     * <li>Situação do Lançamento;</li>
+     * <li>Código de Barra da Edição;</li>
+     * <li>Contém brinde;</li>
+     * </ul>
+     * 
+     * @param hql
+     * @param dto
+     * @param sortname
+     * @param sortorder
+     * 
+     * @return
+     */
 	private SQLQuery queryBodyPesquisarEdicoes(StringBuilder hql, String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<Double> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde, String sortname, String sortorder) {
@@ -403,9 +405,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("           l.PRODUTO_EDICAO_ID=pe.ID ");
 		hql.append("   ) ");
 		
-		/**
-		 * Comentado por Eduardo "PunkRock" Castro em 05/12 devido a existencia de dados na tabela de ProdutoEdicao e não eh apresentado no grid
-		 */
+		                                                        /**
+         * Comentado por Eduardo "PunkRock" Castro em 05/12 devido a existencia
+         * de dados na tabela de ProdutoEdicao e não eh apresentado no grid
+         */
 		//hql.append(" AND ln.id = (select max(ln.id) from ln where ln.produtoEdicao.id = pe.id) ");
 		
 		// Filtros opcionais da pesquisa:
@@ -417,11 +420,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append("  AND (pe.PRECO_VENDA between :precoDe and :precoAte) ");
 		}
 		if (statusLancamento != null) {
-			if(!statusLancamento.equals(StatusLancamento.FURO)) {
-				hql.append("  AND l.status = :situacaoLancamento ");
-			} else {
-				hql.append("  AND l.id = (select max(fp.lancamento_id) from FURO_PRODUTO fp where (fp.lancamento_id = l.id and fp.produto_edicao_id = pe.id)) ");
-			}
+            hql.append("  AND l.status = :situacaoLancamento ");
+
 		}		
 		if (!StringUtil.isEmpty(codigoProduto)) {
 			hql.append("  AND UPPER(p.codigo) LIKE UPPER(:codigoProduto) ");
@@ -447,7 +447,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		query.setParameter("indAtivo", true);
 		
-		// Parâmetros opcionais da pesquisa:
+        // Parâmetros opcionais da pesquisa:
 		if (dataLancamento != null) {
 			query.setDate("dataLancamentoDe", dataLancamento.getDe());
 			query.setDate("dataLancamentoAte", dataLancamento.getAte());
@@ -458,7 +458,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			query.setDouble("precoAte", preco.getAte());
 		}
 		
-		if (statusLancamento != null && !statusLancamento.equals(StatusLancamento.FURO)) {
+        if (statusLancamento != null) {
 			query.setParameter("situacaoLancamento", statusLancamento.name());
 		}	
 		
@@ -467,7 +467,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		if (!StringUtil.isEmpty(nome))  {
-			query.setString("nome", nome);
+            query.setString("nome", "%" + nome + "%");
 		}
 		
 		if (!StringUtil.isEmpty(codigoDeBarras)) {
@@ -535,24 +535,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	@Override
-	public boolean isNumeroEdicaoCadastrada(String codigoProduto, 
+    public boolean isNumeroEdicaoCadastrada(Long idProduto,
 			Long numeroEdicao, Long idProdutoEdicao) {
-
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT COUNT(pe.id) ");
-		hql.append("  FROM ProdutoEdicao pe JOIN pe.produto as pr ");
-		hql.append(" WHERE pe.numeroEdicao = :numeroEdicao ");
-		hql.append("   AND pe.id != :idProdutoEdicao ");
-		hql.append("   AND pr.codigo = :codigoProduto ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setString("codigoProduto", codigoProduto);
-		query.setLong("numeroEdicao", numeroEdicao);
-		query.setLong("idProdutoEdicao", 
-				idProdutoEdicao == null ? Long.valueOf(0) : idProdutoEdicao);
-
-		Long qtd = (Long) query.uniqueResult();
+        
+        Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+        criteria.setProjection(Projections.rowCount());
+        
+        criteria.add(Restrictions.eq("numeroEdicao", numeroEdicao));
+        criteria.add(Restrictions.eq("produto.id", idProduto));
+        if (idProdutoEdicao != null) {
+            criteria.add(Restrictions.not(Restrictions.idEq(idProdutoEdicao)));
+        }
+        Long qtd = (Long) criteria.uniqueResult();
 		return qtd.intValue() > 0 ? true : false;
 	}
 
@@ -569,13 +563,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return criteria.list();
 	}
 
-	/**
-	 * Obtém produtoEdicao por (produto e numeroEdicao) ou nome
-	 * @param idProduto
-	 * @param numeroEdicao
-	 * @param nome
-	 * @return ProdutoEdicao
-	 */
+	                            /**
+     * Obtém produtoEdicao por (produto e numeroEdicao) ou nome
+     * 
+     * @param idProduto
+     * @param numeroEdicao
+     * @param nome
+     * @return ProdutoEdicao
+     */
 	@Override
 	public ProdutoEdicao obterProdutoEdicaoPorProdutoEEdicaoOuNome(Long idProduto,
 																   Long numeroEdicao,
@@ -875,10 +870,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " inner join PRODUTO_EDICAO produtoedi1_ on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoedi1_.ID  " +
 				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +	
 				 " inner join PRODUTO produto5_ on produtoedi1_.PRODUTO_ID=produto5_.ID  " +
-				 " inner join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
-				 " inner join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
+				 " left join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
+				 " left join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
 				 " inner join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID  " +
-				 " inner join BOX box on cota2_.BOX_ID=box.ID  " +
+				 " left join BOX box on cota2_.BOX_ID=box.ID  " +
 				 " ";
 
 
@@ -906,7 +901,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameterMap.put("numeroEdicao",Long.valueOf(filtro.getEdicao()));
 		}
 
-		//classificação = classificação do produto
+        // classificação = classificação do produto
 		if (filtro.getIdTipoClassificacaoProduto() != null) {
 			whereList.add(" tipoclassi6_.id = :tipoClassificacaoProdutoId");
 			parameterMap.put("tipoClassificacaoProdutoId",Long.valueOf(filtro.getIdTipoClassificacaoProduto()));
@@ -1090,12 +1085,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				// " (sum(reparteTotal)-sum(HIST.qtde_Recebida - HIST.qtde_Devolvida))/count(HIST.COTA_ID) as encalheMedio, " +
 				" (avg(HIST.qtde_Devolvida) / :qtdEdicoes) as encalheMedio , " + 
 
-				//Part Reparte – participação do reparte desta faixa de venda em relação ao reparte total da edição
-				// O valor dessa coluna é a soma de reparte das cotas que fazem parte desta faixa dividido pelo reparte total da edição.
+                // Part Reparte – participação do reparte desta faixa de venda
+                // em relação ao reparte total da edição
+                // O valor dessa coluna é a soma de reparte das cotas que fazem
+                // parte desta faixa dividido pelo reparte total da edição.
 				" sum(hist.qtde_Recebida)/sum(reparteTotal) as partReparte, " +
 
-				//Part Venda - mesmo critério que Part de Reparte, porém, observando a venda. 
-				//Resumindo, é a soma de venda das cotas que fazem parte desta faixa dividido pela venda total da edição.
+                // Part Venda - mesmo critério que Part de Reparte, porém,
+                // observando a venda.
+                // Resumindo, é a soma de venda das cotas que fazem parte desta
+                // faixa dividido pela venda total da edição.
 				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / " +
 				//subselect para totalizar as vendas de um produto, sem filtro por cota
 				" (select sum(qtde_recebida)-sum(qtde_devolvida) from estoque_produto_cota " +
@@ -1115,8 +1114,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select DISTINCT " +
-				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
-				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
+				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate " +
+				"	and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
+				
+				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate " +
+				"	and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
+				
 				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
@@ -1257,7 +1260,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
-		query.setParameter("produtoCodigo", codigoProduto);
+		query.setParameter("produtoCodigo", Util.padLeft(codigoProduto, "0", 8));
 		query.setParameter("qtdEdicoes", edicoes.length);
 		query.setParameterList("nrEdicoes", edicoes);
 		query.setParameter("deMargem", de - 0.5);
@@ -1304,28 +1307,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
-		hql.append(" sum(estoqueProduto.qtde) as repartePrevisto, ");
-		hql.append(" sum(estoqueProduto.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
+		hql.append(" sum(estoqueProduto.qtdeRecebida) as repartePrevisto, ");
+		hql.append(" sum(estoqueProduto.qtdeRecebida - coalesce(estoqueProduto.qtdeDevolvida, 0)) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		hql.append(" produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-		hql.append(" FROM EstoqueProduto estoqueProduto");
-		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
-		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		hql.append(" FROM EstoqueProdutoCota estoqueProduto");
+		//hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
+		//hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
 		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 
 		hql.append(" WHERE ");
-		hql.append(" tipoMovimento.id = 13 and ");
+		//hql.append(" tipoMovimento.id = 13 and ");
 
-		if (filtro.getProdutoDto() != null) {
-			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-				hql.append(" produto.codigoICD = :codigoProduto ");
-				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
-			}
-		}
+		hql.append(" produto.codigo = :codigoProduto ");
+		parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 
 		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
 			hql.append(" and produtoEdicao.numeroEdicao in (");

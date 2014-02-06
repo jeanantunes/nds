@@ -224,8 +224,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         	reparte =row.cell.estoque;
         	repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.estoque);
         }else {
-            reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
-            repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte - row.cell.promo);
+        	//reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
+            reparte = (row.cell.reparte);
+            repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte);
 	    }
 
         row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i, liberado);
@@ -233,7 +234,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         row.cell.sobra = (row.cell.idEstudo == null || row.cell.idEstudo == "")?'<span id="sobra'+i+'">0</span>':
             '<span id="sobra'+i+'">'+(reparte - repDist)+'</span>';
 
-        var t  = "Previsto: " + (row.cell.reparte - row.cell.promo);
+       
+        var t  = "Previsto: " + (row.cell.reparte);
             t += "\r\nEstoque: " + row.cell.estoque;
 
         row.cell.reparte = '<span title="' + t + '">' + reparte + '</span>'; //parseInt(row.cell.reparte, 10)

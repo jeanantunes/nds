@@ -34,7 +34,7 @@ var descontoCotaController = $.extend(true,{
 	novoDescontoEspecifico: function() {
 		
 		var cotaEspecifica = $("#numCotaEspecifico", this.workspace).val();
-		var descontoEspecifico = $("#descontoEspecifico", this.workspace).justPercent("floatValue");
+		var descontoEspecifico = $("#descontoEspecifico", this.workspace).justPercent("stringValue");
 		
 		var fornecedores = new Array();
 		

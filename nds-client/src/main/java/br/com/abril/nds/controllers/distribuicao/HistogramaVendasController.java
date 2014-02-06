@@ -110,7 +110,7 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private RegiaoService regiaoService;
 	
-	private static String reparteTotal;
+	private static String REPARTE_TOTAL = "reparteTotal";
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
@@ -241,7 +241,7 @@ public class HistogramaVendasController extends BaseController {
 		
 		NumberFormat f = NumberFormat.getNumberInstance();
 		// informações do resumo do histograma (parte inferior da tela)
-		reparteTotal = f.format(reparteTotalDistribuidor / nrEdicoes.length);
+		this.session.setAttribute(REPARTE_TOTAL, f.format(reparteTotalDistribuidor / nrEdicoes.length));
 		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
 		
 		
@@ -286,11 +286,6 @@ public class HistogramaVendasController extends BaseController {
 		
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistogramaVendas.OrdemColuna.values(), sortname));
 		
-		if(filtro.getCodigo() != null){
-			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
-			filtro.setIdProduto(produto.getId());			
-		}
-		
 		tratarFiltro(filtro);
 		
 		TableModel<CellModelKeyValue<EdicoesProdutosDTO>> tableModel = efetuarConsultaEdicoesDoProdutos(filtro);
@@ -303,8 +298,11 @@ public class HistogramaVendasController extends BaseController {
 	private TableModel<CellModelKeyValue<EdicoesProdutosDTO>> efetuarConsultaEdicoesDoProdutos(
 			FiltroHistogramaVendas filtro) {
 		
-		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
-		filtro.setCodigo(produto.getCodigoICD());
+		if(filtro.getCodigo() != null){
+			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+			filtro.setIdProduto(produto.getId());
+			filtro.setCodigo(produto.getCodigoICD());
+		}
 		
 		List<EdicoesProdutosDTO> list = produtoEdicaoService.obterHistoricoEdicoes(filtro);
 		
@@ -365,7 +363,7 @@ public class HistogramaVendasController extends BaseController {
 				cotasProduto, 
 				cotaEsmagas,
 				vendaEsmagada, 
-				reparteTotal,
+				this.session.getAttribute(REPARTE_TOTAL).toString(),
 				reparteTotalFormatado,
 				vendaTotal,
 				eficienciaVenda.concat("%"),

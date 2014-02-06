@@ -162,6 +162,7 @@ public class GeradorBoleto {
 		if(corpoBoletos!= null && !corpoBoletos.isEmpty() ){
 			
 			for(CorpoBoleto corpo  : corpoBoletos){
+				
 				listaBoletos.add(createBoleto(corpo));
 			}
 		}
@@ -202,7 +203,9 @@ public class GeradorBoleto {
 		List<Boleto> list = createBoletos();
 		
 		if(!list.isEmpty()){
+			
 			byte[] byteArrayPdf = BoletoViewer.groupInOnePDF(list);
+			
 		    return byteArrayPdf;
 		}
 	    return null;

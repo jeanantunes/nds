@@ -6,7 +6,7 @@ var analiseParcialController = $.extend(true, {
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
-    inputReparteSugerido: '<input reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
+    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
     tipoExibicao : 'NORMAL',
 
     exibirMsg: function(tipo, texto) {
@@ -410,7 +410,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     atualizaReparte : function(input) {
-
+    	
         var $saldoreparte = $('#saldo_reparte');
         var saldoReparte = parseInt($saldoreparte.text());
         var $input_reparte = $(input);
@@ -419,7 +419,7 @@ var analiseParcialController = $.extend(true, {
         var reparteAtual = $input_reparte.attr('reparteAtual');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
-
+        
         if (reparteAtual != reparteDigitado) {
             var legendaText = $legenda.text();
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
@@ -433,7 +433,7 @@ var analiseParcialController = $.extend(true, {
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
                 success: function() {
-                    analiseParcialController.atualizaAbrangencia();
+                	analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
                     var reparteInicial = $input_reparte.attr('reparteInicial');
                     $input_reparte.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
@@ -484,6 +484,8 @@ var analiseParcialController = $.extend(true, {
 
     preProcessGrid : function(resultado) {
 
+    	var disabled = $('#status_estudo').text()==='Liberado';
+    	
         if (resultado.mensagens) {
             analiseParcialController.exibirMsg(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
             return;
@@ -515,6 +517,7 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#numeroCota/g, numCota)
                             .replace(/#value/g, cell.reparteSugerido)
                             .replace(/#repEstudo/g, cell.reparteEstudo)
+                            .replace(/#disabled/g, disabled ? 'disabled':'')
                             .replace(/#redReparte/g, analiseParcialController.calculaPercentualReducaoReparte(cell.reparteEstudo, cell.reparteSugerido));
             cell.reparteSugerido = input;
             
@@ -994,7 +997,7 @@ var analiseParcialController = $.extend(true, {
             if ($('#status_estudo').text() == 'Liberado') {
                 analiseParcialController.exibirMsg('WARNING', ['Estudo já está libearado.']);
             } else if ($('#saldo_reparte').text() != 0) {
-                analiseParcialController.exibirMsg('WARNING', ['Não é possovel libeara estudo com saldo de reparte.']);
+                analiseParcialController.exibirMsg('WARNING', ['Não é possível liberar estudo com saldo de reparte.']);
             } else {
                 $('<div>Liberar estudo?</div>').dialog({
                     escondeHeader: false,
@@ -1008,6 +1011,9 @@ var analiseParcialController = $.extend(true, {
                                 if(typeof(matrizDistribuicao)=="object"){
                                 	matrizDistribuicao.carregarGrid();
                                 }
+                                
+                                var disabled = $('#status_estudo').text()==='Liberado';    
+                                $('.reparteSugerido').attr('disabled','disabled');
                             });
                         },
                         "Cancelar": function() {
@@ -1016,6 +1022,11 @@ var analiseParcialController = $.extend(true, {
                     }
                 });
             }
+            event.preventDefault();
+        });
+        
+        $('#naoLiberar').click(function(event){
+        	analiseParcialController.exibirMsg('WARNING', ['Já existe um estudo liberado para este lançamento.']);
             event.preventDefault();
         });
 

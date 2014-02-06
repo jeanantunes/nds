@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
@@ -13,7 +15,19 @@ public interface FechamentoCEIntegracaoService {
 	
 	List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
-	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro);
+	/**
+	 * Fecha C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas);
+	
+	/**
+	 * Salva C.E. Integração
+	 * @param filtro
+	 * @param diferencas
+	 */
+	void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 	
@@ -21,7 +35,7 @@ public interface FechamentoCEIntegracaoService {
 
 	FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
 
-	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
+	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro, BigDecimal qntVenda);
 	
 	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda);
 
