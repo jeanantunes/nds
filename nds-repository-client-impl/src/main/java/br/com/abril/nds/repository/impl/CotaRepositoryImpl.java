@@ -2034,9 +2034,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
-				+ "	    left outer join "
-				+ "	        BOX box1_  "
-				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
 				+ "	        ESTUDO_COTA ec_  "
 				+ "	            on cota_.ID=ec_.COTA_ID  "
