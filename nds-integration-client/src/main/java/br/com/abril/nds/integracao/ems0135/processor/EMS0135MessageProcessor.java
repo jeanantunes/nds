@@ -20,11 +20,13 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -202,6 +204,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao = new ProdutoEdicao();
 				produtoEdicao.setProduto(produto);
 				produtoEdicao.setNumeroEdicao(imputItem.getEdicao());
+				produtoEdicao.setDesconto(BigDecimal.valueOf( imputItem.getDesconto()));
 				produtoEdicao.setPacotePadrao(10);
 				produtoEdicao.setPeb(35);
 				produtoEdicao.setPeso(100L);
@@ -220,6 +223,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, produto.getPeb());
 				Lancamento lancamento = new Lancamento();
 				lancamento.setDataCriacao(dataAtual);
+				
+				 /*
+				 * Settando o numero do Lancamento para 1 pois 
+				 * estamos cadastrando um novo Produto Edição 
+				 */
+				int numeroLancamentoNovo = 1;
+				lancamento.setNumeroLancamento(numeroLancamentoNovo);
+				
 				lancamento.setDataLancamentoPrevista(dataLancamento);
 				lancamento.setDataLancamentoDistribuidor(dataLancamento);
 				lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
