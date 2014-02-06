@@ -9,33 +9,33 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.EstudoComplementarVO;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 
 @Repository
-public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long> implements EstudoComplementarRepository {
+public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<EstudoCotaGerado, Long> implements EstudoComplementarRepository {
 
     public EstudoComplementarRepositoryImpl() {
-	super(EstudoCota.class);
+	super(EstudoCotaGerado.class);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public LinkedList<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
+    public LinkedList<EstudoCotaGerado> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
 
-	LinkedHashSet<EstudoCota> lista = new LinkedHashSet<>();
+	LinkedHashSet<EstudoCotaGerado> lista = new LinkedHashSet<>();
 
 	for (int i = 0; i < 4; i++) {
 	    StringBuilder sql = new StringBuilder();
 	    sql.append("select distinct ec.* ");
-	    sql.append("  from estudo_cota ec ");
+	    sql.append("  from estudo_cota_gerado ec ");
 	    sql.append("  join cota c on c.id = ec.cota_id and c.situacao_cadastro = 'ATIVO' ");
 	    if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
 		sql.append("  join ranking_faturamento rs on rs.cota_id = c.id ");
 		sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_faturamento r) ");
 	    } else {
-		sql.append("  join estudo e on e.id = ec.estudo_id ");
+		sql.append("  join estudo_gerado e on e.id = ec.estudo_id ");
 		sql.append("  join produto_edicao pe on pe.id = e.produto_edicao_id ");
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  join ranking_segmento rs on rs.cota_id = c.id ");
@@ -67,29 +67,29 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		sql.append(" order by rs.qtde desc ");
 	    }
 
-	    Query query = super.getSession().createSQLQuery(sql.toString()).addEntity(EstudoCota.class);
+	    Query query = super.getSession().createSQLQuery(sql.toString()).addEntity(EstudoCotaGerado.class);
 	    query.setParameter("estudoId", estudoComplementarVO.getCodigoEstudo());
-	    List<EstudoCota> temp = query.list();
+	    List<EstudoCotaGerado> temp = query.list();
 	    if (temp != null) {
-		lista.addAll(new LinkedHashSet<EstudoCota>(temp));
+		lista.addAll(new LinkedHashSet<EstudoCotaGerado>(temp));
 	    }
 	}
-	return new LinkedList<EstudoCota>(lista);
+	return new LinkedList<EstudoCotaGerado>(lista);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<EstudoCota> getCotasOrdenadas(EstudoComplementarVO estudoComplementarVO) {
+    public List<EstudoCotaGerado> getCotasOrdenadas(EstudoComplementarVO estudoComplementarVO) {
 	
 	StringBuilder sql = new StringBuilder();
 	sql.append("select distinct ec.* ");
-	sql.append("  from estudo_cota ec ");
+	sql.append("  from estudo_cota_gerado ec ");
 	sql.append("  join cota c on c.id = ec.cota_id and c.situacao_cadastro = 'ATIVO' ");
 	if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
 	    sql.append("  join ranking_faturamento rs on rs.cota_id = c.id ");
 	    sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_faturamento r) ");
 	} else {
-	    sql.append("  join estudo e on e.id = ec.estudo_id ");
+	    sql.append("  join estudo_gerado e on e.id = ec.estudo_id ");
 	    sql.append("  join produto_edicao pe on pe.id = e.produto_edicao_id ");
 	    sql.append("  join produto p on p.id = pe.produto_id ");
 	    sql.append("  join ranking_segmento rs on rs.cota_id = c.id ");
@@ -114,7 +114,7 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 	    sql.append(" order by rs.qtde desc ");
 	}
 
-	Query query = super.getSession().createSQLQuery(sql.toString()).addEntity(EstudoCota.class);
+	Query query = super.getSession().createSQLQuery(sql.toString()).addEntity(EstudoCotaGerado.class);
 	query.setParameter("estudoId", estudoComplementarVO.getCodigoEstudo());
 	return query.list();
     }

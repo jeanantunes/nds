@@ -13,11 +13,11 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 
 public interface AnaliseParcialService {
 
-	EstudoCota buscarPorId(Long id);
+	EstudoCotaGerado buscarPorId(Long id);
 	List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO);
 	void atualizaClassificacaoCota(Long estudoId, Long numeroCota);
 	void atualizaReparte(Long estudoId, Long numeroCota, Long reparte);

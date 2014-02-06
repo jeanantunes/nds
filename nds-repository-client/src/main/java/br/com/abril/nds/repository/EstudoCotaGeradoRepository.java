@@ -5,6 +5,8 @@ import java.util.List;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
+import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -14,7 +16,7 @@ import br.com.abril.nds.util.Intervalo;
  * @author Discover Technology
  *
  */
-public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
+public interface EstudoCotaGeradoRepository extends Repository<EstudoCotaGerado, Long> {
 
 	/**
 	 * Obtém o estudo da cota de acordo com o
@@ -25,23 +27,32 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	 * 
 	 * @return {@link EstudoCota}
 	 */
-	EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia);
+	EstudoCotaGerado obterEstudoCota(Integer numeroCota, Date dataReferencia);
 	
-	List<EstudoCota> obterEstudoCota(Long isCota, Date dataDe, Date dataAte);
+	List<EstudoCotaGerado> obterEstudoCota(Long isCota, Date dataDe, Date dataAte);
 	
 	List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
 	
-	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
+	EstudoCotaGerado obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
 	
-	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
+	EstudoCotaGerado obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
 	
-	List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> listaIdCotas, 
+	List<EstudoCotaGerado> obterEstudosCotaParaNotaEnvio(List<Long> listaIdCotas, 
 												   Intervalo<Date> periodo, 
 												   List<Long> listaIdsFornecedores,
 												   String exibirNotasEnvio);
+
+	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerEstudoCotaPorEstudo(Long idEstudo);
+
+	List<EstudoCotaGerado> obterEstudosCota(Long idEstudo);
 	
-	List<EstudoCota> obterEstudosCota(Long idEstudo);
+	List<EstudoCotaGerado> obterEstudoCotaPorEstudo(EstudoGerado estudo);
+
+	void inserirProdutoBase(EstudoGerado estudo);
 	
 	void removerEstudosCotaPorEstudos(List<Long> listIdEstudos);
-
 }

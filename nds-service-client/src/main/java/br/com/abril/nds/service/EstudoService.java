@@ -37,8 +37,6 @@ public interface EstudoService {
 	
 	public Long obterUltimoAutoIncrement();
 	
-	EstudoGerado liberar(Long idEstudoGerado);
-	
-	Estudo criarEstudoLiberado(EstudoGerado estudoGerado);
+	Estudo liberar(Long idEstudoGerado);
 	
 }

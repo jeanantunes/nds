@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,24 +14,33 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.RecebimentoFisicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.BoletoService;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -50,9 +60,15 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	@Autowired
 	private BoletoService boletoService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
@@ -138,25 +154,112 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 		return this.itemChamadaEncalheFornecedorRepository.merge(item);
 	}
+    
+    
+    
+    
+    
+    
+    /**
+     * Processa diferença do Item da Chamada de Encalhe do Fornecedor
+     * 
+     * @param itemCE
+     * @return
+     */
+    private Diferenca processarDiferencaDeItemCEFornecedor(ItemChamadaEncalheFornecedor itemCE) {
+    	
+    	
+		
+    	Usuario usuario = this.usuarioService.getUsuarioLogado();
+    	
+    	
+    	
+    	Long encalhe = itemCE.getQtdeDevolucaoInformada() == null?0l:itemCE.getQtdeDevolucaoInformada();
+    	
+    	Long venda = itemCE.getQtdeVendaApurada() == null?0l:itemCE.getQtdeVendaApurada();
+    	
+    	Long reparte = itemCE.getQtdeEnviada() == null?0l:itemCE.getQtdeEnviada();
+    	
+		Long calculoQdeDiferenca = ((venda + encalhe) - reparte);
+		
+		
+		
+		ProdutoEdicao produtoEdicao = itemCE.getProdutoEdicao();		
+		
+		
+		
+		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
+		
+		//itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico()); ???
+		
+		
+		
+		Diferenca diferenca = new Diferenca();
+		
+		diferenca.setQtde(BigInteger.valueOf(calculoQdeDiferenca));
+		
+		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+		
+		diferenca.setResponsavel(usuario);
+		
+		diferenca.setProdutoEdicao(produtoEdicao);
+		
+		
+		
+		if(diferenca.getQtde().compareTo(BigInteger.ZERO ) < 0 ){
+			
+			diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.PERDA);
+			
+		} else if(diferenca.getQtde().compareTo(BigInteger.ZERO) > 0){						
+			
+			diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.GANHO);
+		}
+		else{
+			
+			return null;
+		}
+		
+		
+		
+		return diferenca;
+	}
+
+    
+    
+    
+    
+    /**
+     * Obtem lista de Chamadas de Encalhe Fornecedor
+     * 
+     * @param filtro
+     * @return List<ChamadaEncalheFornecedor>
+     */
+    private List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro){
+    	
+		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
+		
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+		
+		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
+		}
+		
+		return chamadasFornecedor;
+    }
 
     /**
      * Processa C.E. Integração
+     * 
      * @param filtro
      * @param diferencas
+     * @param chamadasFornecedor
      * @param fechamento
      */
 	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas, 
+			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas,
+			                List<ChamadaEncalheFornecedor> chamadasFornecedor,
 			                boolean fechamento) {
-		
-		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
-		
-		List<ChamadaEncalheFornecedor> chamadasFornecedor = 
-				chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
-		
-		if(chamadasFornecedor == null || chamadasFornecedor.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Erro no processo de confirmação do fechamento de CE integação. Registro não encontrado!");
-		}	
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -220,7 +323,80 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	}
 	
 	/**
+	 * Obtem lista de ID de CE Fornecedor
+	 * @param chamadasFornecedor
+	 * @return List<Long>
+	 */
+	private List<Long> obterListaIdCEFornecedor(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		List<Long> listaId = new ArrayList<Long>();
+		
+		for(ChamadaEncalheFornecedor item : chamadasFornecedor){
+			
+			listaId.add(item.getId());
+		}
+	
+		return listaId;
+	}
+	
+    /**
+     * Verifica se existem itens de CE Fornecedor com Movimento de Estoque de Perda ou Ganho Pendente de Confirmação
+     * 
+     * @param chamadasFornecedor
+     */
+	private void verificarPendenciaConfirmacaoPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		List<Long> listaIdCEFornecedor = this.obterListaIdCEFornecedor(chamadasFornecedor);
+		
+		List<ChamadaEncalheFornecedor> listaCEComDiferencaPendente = chamadaEncalheFornecedorRepository.obtemCEFornecedorComDiferencaPendente(listaIdCEFornecedor);
+		
+		if (listaCEComDiferencaPendente!=null && !listaCEComDiferencaPendente.isEmpty()){
+		
+		    throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
+		}
+	}
+	
+	/**
+     * Cria Movimento Estoque de Perda ou Ganho Pendente e Amarra com Item de CE Fornecedor
+     * 
+     * @param chamadasFornecedor
+     */
+	private void gerarPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		for (ChamadaEncalheFornecedor cef : chamadasFornecedor){
+			
+			for(ItemChamadaEncalheFornecedor item : cef.getItens()){
+
+				Diferenca diferenca = this.processarDiferencaDeItemCEFornecedor(item);
+
+				if (diferenca != null){
+				
+		            item.setDiferenca(diferenca);
+		        
+		            this.itemChamadaEncalheFornecedorRepository.merge(item);
+		            
+		            throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");
+				}
+		    }
+		}		
+	}
+	
+	/**
+	 * Verifica se existem pendencias de Perdas e Ganhos
+	 * Lanca Perdas e Ganhos
+	 * 
+	 * @param chamadasFornecedor
+	 */
+	private void processarPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		this.verificarPendenciaConfirmacaoPerdasEGanhos(chamadasFornecedor);
+		
+		this.gerarPerdasEGanhos(chamadasFornecedor);
+	}
+	
+	/**
 	 * Fecha C.E. Integração
+	 * 
 	 * @param filtro
 	 * @param diferencas
 	 */
@@ -229,11 +405,19 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
-		this.processaCE(filtro, diferencas, true);
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
+		
+		this.processarPerdasEGanhos(chamadasFornecedor);
+		
+		this.processaCE(filtro, 
+				        diferencas, 
+				        chamadasFornecedor,
+				        true);
 	}
 	
 	/**
 	 * Salva C.E. Integração
+	 * 
 	 * @param filtro
 	 * @param diferencas
 	 */
@@ -242,7 +426,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	public void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
-		this.processaCE(filtro, diferencas, false);
+		List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
+		
+		this.processaCE(filtro, 
+				        diferencas, 
+				        chamadasFornecedor, 
+				        false);
 	}
 	
 	@Override

@@ -155,6 +155,7 @@ init : function() {
 	// FUNCTION NOVO AJUSTE	
 	incluirAjuste : function() {
 		ajusteReparteController.limparPopUp();
+		
 		$("#tableSegmentos").hide();
 		
 		$("#dialog-novo").dialog({
@@ -550,10 +551,14 @@ init : function() {
 		$('#AJUSTE_HISTORICO_editar_input').hide();
 		
 		
-		if((result.formaAjuste == "AJUSTE_VENDA_MEDIA") || (result.formaAjuste == "AJUSTE_ENCALHE_MAX")){
+		if((result.formaAjuste == "AJUSTE_ENCALHE_MAX")){
 			$('#'+result.formaAjuste+'_editar_input').show().val(parseFloat(result.ajusteAplicado).toFixed(0));
 		}else{
 			$('#'+result.formaAjuste+'_editar_input').show().val(parseFloat(result.ajusteAplicado).toFixed(1));
+		}
+		
+		if(result.formaAjuste == "AJUSTE_VENDA_MEDIA"){
+			ajusteReparteController.carregarVendaMedia("AJUSTE_VENDA_MEDIA_editar_input");
 		}
 		
 		$("#tipoSegmento1").show();
@@ -885,6 +890,16 @@ init : function() {
 		});
 	},
 	
+	carregarVendaMedia : function(vdMedia){
+		$.postJSON(contextPath + "/distribuicao/ajusteReparte/carregarVendaMedia", null,
+				function(result) {
+						$("#"+vdMedia).val(result).disable();
+				   },
+				   null,
+				   true
+		);
+	},
+	
 	filtroPorSegmento : function(){
 
 		$("#AJUSTE_HISTORICO_input").hide();
@@ -931,6 +946,9 @@ init : function() {
 		$("#AJUSTE_ENCALHE_MAX_input").hide();
 		
 		$("#tableSegmentos").hide();
+		
+		ajusteReparteController.carregarVendaMedia("AJUSTE_VENDA_MEDIA_input");
+		
 	},
 	
 	filtroPorVendaEditar : function(){
@@ -941,6 +959,8 @@ init : function() {
 		$("#AJUSTE_ENCALHE_MAX_editar_input").hide();
 		
 		$("#tableSegmentosEditar").hide();
+		
+		ajusteReparteController.carregarVendaMedia("AJUSTE_VENDA_MEDIA_editar_input");
 	},
 	
 	filtroPorEncalhe : function(){
@@ -1072,20 +1092,7 @@ init : function() {
 			indiceAjuste = $("AJUSTE_VENDA_MEDIA_editar_input").val();
 		}
 		
-	    if(indiceAjuste < 0 || indiceAjuste > 10){        
-	           var erros = new Array();
-	           erros[0] = "O Índice deve estar entre 01 e 10.";
-	           exibirMensagemDialog('WARNING',   erros,"");                
-	           $("#AJUSTE_VENDA_MEDIA_input").val("");
-	           $("#AJUSTE_VENDA_MEDIA_editar_input").val("");
-	           return;
-	    }
-	},
-	
-	formatarAjusteAplicadoVendaMediaEditar : function (){
-			indiceAjuste = $("#AJUSTE_VENDA_MEDIA_editar_input").val();
-		
-	    if(indiceAjuste < 0 || indiceAjuste > 10){        
+	    if(indiceAjuste < 1 || indiceAjuste > 10){        
 	           var erros = new Array();
 	           erros[0] = "O Índice deve estar entre 01 e 10.";
 	           exibirMensagemDialog('WARNING',   erros,"");                

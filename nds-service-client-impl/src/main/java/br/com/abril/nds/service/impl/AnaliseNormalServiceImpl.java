@@ -52,7 +52,7 @@ public class AnaliseNormalServiceImpl implements AnaliseNormalService{
 	@Transactional
 	public void liberar(Long id) {
 
-		estudoService.criarEstudoLiberado(estudoService.liberar(id));
+		estudoService.liberar(id);
 	}
 
 }
