@@ -2134,8 +2134,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				}
 				
 				sql.append(" group by cota_.ID ");
-				sql.append(" having SUM(ec_.QTDE_EFETIVA) > 0 ");
-		
 	}
 
 	private void montarParametrosFiltroNotasEnvio(
