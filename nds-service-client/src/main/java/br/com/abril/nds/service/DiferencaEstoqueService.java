@@ -116,6 +116,8 @@ public interface DiferencaEstoqueService {
 	
 	public Diferenca lancarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque);
 	
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque);
+	
 	void validarDadosParaImpressaoNaData(String dataMovimentoFormatada);
 
 	HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(

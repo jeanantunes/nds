@@ -1,5 +1,20 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
@@ -10,27 +25,29 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.*;
+import br.com.abril.nds.service.BrindeService;
+import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.caelum.vraptor.*;
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.util.List;
 
 @Resource
 @Path("/distribuicao/caracteristicaDistribuicao")
 public class CaracteristicaDistribuicaoController extends BaseController{
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CaracteristicaDistribuicaoController.class);
 	
 	private static final String FILTRO_DETALHE_SESSION_ATTRIBUTE = "filtroDetalhe";
 	private static final String FILTRO_SIMPLES_SESSION_ATTRIBUTE = "filtroSimples";
@@ -50,14 +67,12 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Autowired
 	private ProdutoService produtoService;
 	
-	@SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
 	private Result result;
 	
 	@Autowired
 	HttpSession session;
 	
-	@SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -84,7 +99,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		List<CaracteristicaDistribuicaoSimplesDTO> resultado =caracteristicaDistribuicaoService.buscarComFiltroSimples(filtro);
 		
 		if(resultado.isEmpty()){
-			 throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
 	    }
 		   
 		   TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaSimples(filtro);
@@ -117,7 +132,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		List<CaracteristicaDistribuicaoDTO> resultadoPesquisa = caracteristicaDistribuicaoService.buscarComFiltroCompleto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			 throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
 	    }
 		
 		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModel = new TableModel<>();
@@ -178,7 +193,8 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		if(filtroDetalhe!=null){
 			resultadoPesquisaDetalhe = caracteristicaDistribuicaoService.buscarComFiltroCompleto(filtroDetalhe) ;
 			clazz = CaracteristicaDistribuicaoDTO.class;
-			FileExporter.to("caracteristica_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, resultadoPesquisaDetalhe, clazz, this.httpResponse);
+            FileExporter.to("caracteristica_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null,
+                    resultadoPesquisaDetalhe, clazz, this.httpResponse);
 		}
 		
 		result.nothing();
@@ -197,7 +213,8 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		if(filtroSimples!=null){
 			resultadoPesquisaSimples = caracteristicaDistribuicaoService.buscarComFiltroSimples(filtroSimples) ;
 			clazz = CaracteristicaDistribuicaoSimplesDTO.class;
-			FileExporter.to("caracteristica_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, resultadoPesquisaSimples, clazz, this.httpResponse);
+            FileExporter.to("caracteristica_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null,
+                    resultadoPesquisaSimples, clazz, this.httpResponse);
 		}
 		
 		result.nothing();
@@ -227,7 +244,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		     out.close();
 		    
 		  } catch (NumberFormatException e) {
-			  e.printStackTrace();
+			  LOGGER.error(e.getMessage(), e);
 		  }
 		  catch (Exception e) {
 			  file = new File((servletContext.getRealPath("") + "/images/no_image.jpeg"));

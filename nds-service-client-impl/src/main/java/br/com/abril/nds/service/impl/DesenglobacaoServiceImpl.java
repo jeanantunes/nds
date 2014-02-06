@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class DesenglobacaoServiceImpl implements DesenglobacaoService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DesenglobacaoServiceImpl.class);
 
     @Autowired
     private DesenglobacaoRepository desenglobacaoRepository;
@@ -105,7 +108,7 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 	    }
 	    desenglobacaoRepository.inserirCotasDesenglobadas(desenglobada);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    LOGGER.error(e.getMessage(), e);
 	}
 	return true;
     }
@@ -127,21 +130,11 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
     private boolean verificaPorcentagemCota(List<DesenglobacaoDTO> desenglobaDTO) {
 	float somatoriaPorcentagemEnglobada = 0;
-	float porcentagemCota = 0;
 
-	/*for (DesenglobaVO desenglobaVO : desenglobaDTO) {
-
-			List<Desenglobacao> existeCotaEnglobada = desenglobacaoRepository.obterDesenglobacaoPorCota(desenglobaVO.getDesenglobaNumeroCota().longValue());
-			if (!existeCotaEnglobada.isEmpty()) {
-				porcentagemCota = desenglobacaoRepository.verificaPorcentagemCota(desenglobaVO.getDesenglobaNumeroCota().longValue());
-			}
-
-			somatoriaPorcentagemEnglobada += desenglobaVO.getEnglobadaPorcentagemCota();
-		}*/
 	for (DesenglobacaoDTO desenglobaVO : desenglobaDTO) {
 	    somatoriaPorcentagemEnglobada += desenglobaVO.getPorcentagemCota();
 	}
-	//		if ((porcentagemCota + somatoriaPorcentagemEnglobada) > 100) {
+
 	if ((somatoriaPorcentagemEnglobada) > 100) {
 	    return false;
 	}

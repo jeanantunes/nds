@@ -356,11 +356,24 @@ table.dadosTab { margin-left: 370px;}
                         <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /> Arquivo
 				    </a>
 				</span>
-                <span class="bt_novos">
-                    <a href="javascript:return false;" id="liberar">
-                        <img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" alt="Liberar" hspace="5" border="0" /> Liberar
-				    </a>
-				</span>
+
+				<c:choose>
+					<c:when test="${lancamentoComEstudoLiberado}">
+						<span class="bt_novos">
+		                    <a href="javascript:return false;" id="naoLiberar">
+		                        <img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" alt="Liberar" hspace="5" border="0" /> Liberar
+						    </a>
+						</span>
+					</c:when>
+					<c:otherwise>
+						<span class="bt_novos">
+		                    <a href="javascript:return false;" id="liberar">
+		                        <img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" alt="Liberar" hspace="5" border="0" /> Liberar
+						    </a>
+						</span>
+					</c:otherwise>
+				</c:choose>
+				
                 <span class="bt_novos">
                     <a href="javascript:;" id="botaoVoltarTelaAnalise" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));selectTabTitle('Histograma Pré Análise');">
                         <img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar

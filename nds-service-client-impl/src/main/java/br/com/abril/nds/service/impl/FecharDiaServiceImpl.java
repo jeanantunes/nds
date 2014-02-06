@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,6 +146,8 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
 public class FecharDiaServiceImpl implements FecharDiaService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(FecharDiaServiceImpl.class);
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
@@ -285,7 +287,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private BoletoService boletoService;
-	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
+	private static final Logger LOG = LoggerFactory.getLogger("fecharDiaLogger");
 	
 	@Override
 	@Transactional
@@ -293,7 +295,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		return false;
 		
-		//TODO verificar com o cesar com ficara a regra para validação de baixa de cobrança no fechamento diario
+        // TODO verificar com o cesar com ficara a regra para validação de baixa
+        // de cobrança no fechamento diario
 		
 		//Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
 		//return this.fecharDiaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
@@ -817,10 +820,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     
     private FechamentoDiarioDTO salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
     	
-    	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
-    	validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
+        validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
+        validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
     	
-    	validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
+        validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
     	
     	FechamentoDiario fechamento = new FechamentoDiario();
     	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);
@@ -943,7 +946,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null);
 		
 		if(diasSemanaDistribuidorOpera == null || diasSemanaDistribuidorOpera.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível realizar fechamento diário. Nenhum dia da semana com operação cadastradado para o Distribuidor."); 
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não é possível realizar fechamento diário. Nenhum dia da semana com operação cadastradado para o Distribuidor.");
 		}
 		
 		Date novaData = obterDataValida(distribuidor.getDataOperacao(), diasSemanaDistribuidorOpera);
@@ -957,7 +961,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
     /**
      * Retorna a próxima data em que o distribuidor opera.
-     *
+     * 
      * @param dataAtual
      * @param diasSemanaDistribuidorOpera
      * 
@@ -984,11 +988,10 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 	}
 
-	/**
+	    /**
      * Inclui as diferenças nas informações do fechamento diário
      * 
-     * @param fechamento
-     *            Fechamento diário em processamento
+     * @param fechamento Fechamento diário em processamento
      * @return Lista de diferenças lançadas na data em fechamento
      */
     protected List<DiferencaDTO> incluirFaltasSobras(FechamentoDiario fechamento) {
@@ -1010,7 +1013,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		ResumoFechamentoDiarioConsignadoDTO resumoConsignado = obterResumoConsignado(fechamento.getDataFechamento());
 		
-		validarDadosFechamentoDiario(resumoConsignado, "Erro na obtenção dos dados de Resumo Consignado!");
+        validarDadosFechamentoDiario(resumoConsignado, "Erro na obtenção dos dados de Resumo Consignado!");
 		
 		incluirResumoValorConsignado(fechamento, resumoConsignado);
 		
@@ -1024,7 +1027,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		ResumoAVista resumoAvista = resumoConsignado.getResumoAVista();
 		
-		validarDadosFechamentoDiario(resumoAvista, "Erro na obtenção dos dados de Resumo Consignado!");
+        validarDadosFechamentoDiario(resumoAvista, "Erro na obtenção dos dados de Resumo Consignado!");
 		
 		FechamentoDiarioResumoAvista valorResumoAvista = new FechamentoDiarioResumoAvista();
 		
@@ -1042,7 +1045,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		ResumoConsignado rmConsignado = resumoConsignado.getResumoConsignado();
 		
-		validarDadosFechamentoDiario(rmConsignado, "Erro na obtenção dos dados de Resumo Consignado!");
+        validarDadosFechamentoDiario(rmConsignado, "Erro na obtenção dos dados de Resumo Consignado!");
 		
 		FechamentoDiarioResumoConsignado valorResumoConsignado = new FechamentoDiarioResumoConsignado();
 		
@@ -1059,19 +1062,22 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		ResumoEstoqueDTO resumoEstoque = obterResumoEstoque(fechamento.getDataFechamento());
 		
-		validarDadosFechamentoDiario(resumoEstoque, "Erro na obtenção dos dados de Resumo de Estoque!");
+        validarDadosFechamentoDiario(resumoEstoque, "Erro na obtenção dos dados de Resumo de Estoque!");
 		
 		ResumoEstoqueProduto estoqueProduto = resumoEstoque.getResumoEstoqueProduto();
 		
-		validarDadosFechamentoDiario(estoqueProduto, "Erro na obtenção dos dados referente aos Produtos do Resumo de Estoque!");
+        validarDadosFechamentoDiario(estoqueProduto,
+                "Erro na obtenção dos dados referente aos Produtos do Resumo de Estoque!");
 		
 		ResumoEstoqueExemplar estoqueExemplar = resumoEstoque.getResumoEstoqueExemplar();
 		
-		validarDadosFechamentoDiario(estoqueExemplar, "Erro na obtenção dos dados referente aos Exemplares do Resumo de Estoque!");
+        validarDadosFechamentoDiario(estoqueExemplar,
+                "Erro na obtenção dos dados referente aos Exemplares do Resumo de Estoque!");
 		
 		ValorResumoEstoque valorResumo = resumoEstoque.getValorResumoEstoque();
 		
-		validarDadosFechamentoDiario(valorResumo, "Erro na obtenção dos dados referente aos Valores do Resumo de Estoque!");
+        validarDadosFechamentoDiario(valorResumo,
+                "Erro na obtenção dos dados referente aos Valores do Resumo de Estoque!");
 		
 		incluirResumoEstoque(fechamento,TipoEstoque.LANCAMENTO, estoqueExemplar.getQuantidadeLancamento(), 
 				estoqueProduto.getQuantidadeLancamento() ,valorResumo.getValorLancamento());
@@ -1108,7 +1114,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		ResumoFechamentoDiarioCotasDTO resumoCotas = obterResumoCotas(fechamento.getDataFechamento());
 		
-		validarDadosFechamentoDiario(resumoCotas,"Erro na obtenção dos dados de Resumo de Cotas!");
+        validarDadosFechamentoDiario(resumoCotas, "Erro na obtenção dos dados de Resumo de Cotas!");
 		
 		FechamentoDiarioConsolidadoCota consolidadoCota = new FechamentoDiarioConsolidadoCota();
 		
@@ -1163,7 +1169,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<SumarizacaoDividasDTO> resumoDividas = dividaService.sumarizacaoDividasVencerApos(fechamento.getDataFechamento());
 		
-		validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Vencer!");
+        validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Vencer!");
 		
 		List<Cobranca> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
 		
@@ -1176,7 +1182,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		List<SumarizacaoDividasDTO> resumoDividas = dividaService.sumarizacaoDividasReceberEm(fechamento.getDataFechamento());
 		
-		validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Receber!");
+        validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Receber!");
 		
 		List<Cobranca> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
 		
@@ -1242,7 +1248,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		ResumoSuplementarFecharDiaDTO resumoSuplementar = resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(fechamento.getDataFechamento());
 		builder.resumoSuplementar(resumoSuplementar);
 		
-		validarDadosFechamentoDiario(resumoSuplementar, "Erro na obtenção dos dados de Resumo de Suplementar!");
+        validarDadosFechamentoDiario(resumoSuplementar, "Erro na obtenção dos dados de Resumo de Suplementar!");
 		
 		FechamentoDiarioConsolidadoSuplementar consolidadoSuplementar = new FechamentoDiarioConsolidadoSuplementar();
 		
@@ -1318,7 +1324,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		ResumoEncalheFecharDiaDTO resumoEncalhe = this.resumoEncalheFecharDiaService.obterResumoGeralEncalhe(fechamento.getDataFechamento());
 		builder.resumoEncalhe(resumoEncalhe);
 		
-		validarDadosFechamentoDiario(resumoEncalhe, "Erro na obtenção dos dados de Resumo de Encalhe!");
+        validarDadosFechamentoDiario(resumoEncalhe, "Erro na obtenção dos dados de Resumo de Encalhe!");
 		
 		FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe = new FechamentoDiarioConsolidadoEncalhe();
 		
@@ -1393,7 +1399,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    SumarizacaoReparteDTO resumoReparte = resumoReparteFecharDiaService.obterSumarizacaoReparte(fechamento.getDataFechamento());
 		builder.resumoReparte(resumoReparte);
 		
-		validarDadosFechamentoDiario(resumoReparte,"Erro na obtenção dos dados de Resumo de Reparte!");
+        validarDadosFechamentoDiario(resumoReparte, "Erro na obtenção dos dados de Resumo de Reparte!");
 		
 		FechamentoDiarioConsolidadoReparte consolidadoReparte = new FechamentoDiarioConsolidadoReparte();
 		
@@ -1601,7 +1607,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private void validarDadosFechamentoDiario(Object objeto, String mensagem) throws FechamentoDiarioException{
 		
 		if(mensagem == null){
-			mensagem =  "Erro na gravação do Resumo de Fechamento do Dia!";
+            mensagem = "Erro na gravação do Resumo de Fechamento do Dia!";
 		}
 		
 		if(objeto == null){
@@ -1615,35 +1621,35 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		this.processarAlteracaoDescontoLogistica();
 		
-		LOG.info("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
+		LOGGER.info("FECHAMENTO DIARIO - ATUALIZADO DESCONTO LOGISTICA");
 		
 		processarControleDeAprovacao();
 
-		LOG.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
+		LOGGER.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
 		
 		try {
 
 			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
 
-			LOG.info("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
+			LOGGER.info("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
 			
 			atualizarHistoricoEstoqueProduto(dataFechamento);
 
-			LOG.info("FECHAMENTO DIARIO - ATUALIZADO HISTORICO ESTOQUE PRODUTO ");
+			LOGGER.info("FECHAMENTO DIARIO - ATUALIZADO HISTORICO ESTOQUE PRODUTO ");
 			
 			this.processarLancamentosRecolhimento(usuario);
 
-			LOG.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
+			LOGGER.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
 			
 			processarDividasNaoPagas(usuario, dataFechamento);
 			
-			LOG.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
+			LOGGER.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
 			
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
 			
-			LOG.error("FALHA AO PROCESSAR FECHAMENTO DO DIA", e);
+			LOGGER.error("FALHA AO PROCESSAR FECHAMENTO DO DIA", e);
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
@@ -1808,7 +1814,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 				default:
 					
-					throw new RuntimeException("Tipo de Diferença não identificado");
+                throw new RuntimeException("Tipo de Diferença não identificado");
 			}
 			
 			if (lancamentoDiferenca != null) {
