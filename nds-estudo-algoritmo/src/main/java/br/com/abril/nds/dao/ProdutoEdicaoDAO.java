@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,12 +19,16 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
 public class ProdutoEdicaoDAO {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProdutoEdicaoDAO.class);
+
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
@@ -42,7 +44,6 @@ public class ProdutoEdicaoDAO {
 	
 	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 
-	private static final Logger log = LoggerFactory.getLogger(ProdutoEdicaoDAO.class);
 
 	public List<ProdutoEdicaoEstudo> getEdicaoRecebidas(CotaEstudo cota) {
 		return getEdicaoRecebidas(cota, null);
@@ -75,8 +76,8 @@ public class ProdutoEdicaoDAO {
 				edicoes.add(edicao);
 			}
 		} catch (Exception ex) {
-			log.error("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota", ex);
-			ex.printStackTrace();
+            LOGGER.error("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota", ex);
+
 		}
 		return edicoes;
 	}
@@ -91,10 +92,8 @@ public class ProdutoEdicaoDAO {
 			if (rs.next()) {
 				return rs.getInt(1);
 			}
-			return 0;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota");
+        } catch (Exception e) {
+            LOGGER.error("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota", e);
 		}
 		return 0;
 	}
@@ -142,7 +141,7 @@ public class ProdutoEdicaoDAO {
             });
         } catch (EmptyResultDataAccessException e) {
             String msg = "Não encontrou o produto[" + codigoProduto + "] edição[" + numeroEdicao + "] do estudo.";
-            log.error(msg, e);
+            LOGGER.error(msg, e);
             throw new ValidacaoException(TipoMensagem.ERROR, msg);
         }
     }

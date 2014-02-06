@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,6 +96,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class GerarCobrancaServiceImpl implements GerarCobrancaService {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(GerarCobrancaServiceImpl.class);
 
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
@@ -171,11 +174,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Autowired
 	private CotaUnificacaoRepository cotaUnificacaoRepository;
 
-	/**
-	 * Obtém a situação da cota
-	 * @param idCota
-	 * @return SituacaoCadastro
-	 */
+	    /**
+     * Obtém a situação da cota
+     * 
+     * @param idCota
+     * @return SituacaoCadastro
+     */
 	private SituacaoCadastro obterSitiacaoCadastroCota(Long idCota){
 		Cota cota  = this.cotaRepository.buscarPorId(idCota);
 		return cota.getSituacaoCadastro();
@@ -195,14 +199,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(dataVencimentoDebito,idsCota) > 0;
 	}
 	
-	/**
-	 * Gera cobranças para Cotas específicas
-	 * 
-	 * @param cotas
-	 * @param idUsuario
-	 * @param enviaEmail
-	 * @throws GerarCobrancaValidacaoException
-	 */
+	    /**
+     * Gera cobranças para Cotas específicas
+     * 
+     * @param cotas
+     * @param idUsuario
+     * @param enviaEmail
+     * @throws GerarCobrancaValidacaoException
+     */
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(List<Cota> cotas, 
@@ -229,7 +233,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	            
 	                } catch (ValidacaoException e) {
 	  
-	                    e.printStackTrace();
+	                    LOGGER.error(e.getMessage(), e);
 	                }
 	            }
 	        
@@ -240,14 +244,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	    }
 	}
 
-	/**
-	 * Consolida Financeiro, Gera Divida e Gera Cobrança
-	 * 
-	 * @param idCota
-	 * @param idUsuario
-	 * @param setNossoNumero
-	 * @throws GerarCobrancaValidacaoException
-	 */
+	    /**
+     * Consolida Financeiro, Gera Divida e Gera Cobrança
+     * 
+     * @param idCota
+     * @param idUsuario
+     * @param setNossoNumero
+     * @throws GerarCobrancaValidacaoException
+     */
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, 
@@ -304,6 +308,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
     /**
      * Salva informações pendência de envio de documento de cobrança por email
+     * 
      * @param nossoNumeroEnvioEmail
      */
     private void salvarBoletoEmailPendenteEnvio(Set<String> nossoNumeroEnvioEmail){
@@ -316,17 +321,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
     }
 	
-	/**
-	 * Gera Cobraça para uma ou todas as cotas com pendências financeiras
-	 * A divida pode ser postergada caso não hava forma de cobrança compativel com a pendência ou
-	 * se o parametro postergarDividas == true
-	 * 
-	 * @param idCota
-	 * @param idUsuario
-	 * @param setNossoNumero
-	 * @param postergarDividas
-	 * @throws GerarCobrancaValidacaoException
-	 */
+	    /**
+     * Gera Cobraça para uma ou todas as cotas com pendências financeiras A
+     * divida pode ser postergada caso não hava forma de cobrança compativel com
+     * a pendência ou se o parametro postergarDividas == true
+     * 
+     * @param idCota
+     * @param idUsuario
+     * @param setNossoNumero
+     * @param postergarDividas
+     * @throws GerarCobrancaValidacaoException
+     */
 	private void gerarCobrancaCota(Long idCota, 
 			                       Long idUsuario, 
 			                       Set<String> setNossoNumero,
@@ -370,7 +375,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				
-				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
+                // verifica se cota esta suspensa, se estiver verifica se existe
+                // chamada de encalhe na data de operação
 				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro()) &&
 						!this.cotaUnificacaoRepository.verificarCotaUnificada(ultimaCota.getNumeroCota())){
 					
@@ -392,7 +398,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    	
 			    	throw new GerarCobrancaValidacaoException(
 			    			new ValidacaoVO(TipoMensagem.WARNING, 
-			    			"Fornecedor não encontrado para o [Movimento Financeiro " + 
+                            "Fornecedor não encontrado para o [Movimento Financeiro " +
 			    			movimentoFinanceiroCota.getId() + "] [Cota " + cotaAtual.getNumeroCota() + "]."));
 			    }
 				
@@ -448,7 +454,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 													  postergarDividas,
 													  consolidadosCotaUnficacao);
 					
-					//Limpa dados para contabilizar próxima cota
+                    // Limpa dados para contabilizar próxima cota
 					ultimaCota = movimentoFinanceiroCota.getCota();
 					
 					ultimoFornecedor = movimentoFinanceiroCota.getFornecedor();
@@ -539,18 +545,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 
-	/**
-	 * Retorna a data de vencimento para o boleto, sendo esta calculada 
-	 * da seguinte forma:
-	 * 
-	 * É recuperada a data da Terça-feira dentro da semana utilizada na pesquisa 
-	 * principal do fechamentoCEIntegração. A esta data são adicionados 2 dias
-	 * úteis.
-	 * 
-	 * @param anoSemana
-	 * 
-	 * @return Date
-	 */
+	    /**
+     * Retorna a data de vencimento para o boleto, sendo esta calculada da
+     * seguinte forma:
+     * 
+     * É recuperada a data da Terça-feira dentro da semana utilizada na pesquisa
+     * principal do fechamentoCEIntegração. A esta data são adicionados 2 dias
+     * úteis.
+     * 
+     * @param anoSemana
+     * 
+     * @return Date
+     */
 	private Date obterDataVencimentoBoletoDistribuidor(int anoSemana) {
 		
 		int anoBase = SemanaUtil.getAno(anoSemana);
@@ -617,7 +623,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (banco == null) {
 				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor "+fornecedor.getJuridica().getNome()+" não possui banco vinculado!");
+                throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor " + fornecedor.getJuridica().getNome()
+                        + " não possui banco vinculado!");
 			}
 			
 			String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
@@ -669,20 +676,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return valorMinimo;
 	}
 	
-	/**
-	 * Consolida os movimentos financeiros
-	 * Gera Divida e Cobrança
-	 * Posterga as pendências financeiras caso os parametros postergarDividas==true ou formaCobrancaPrincipal==null
-	 * 
-	 * @param cota
-	 * @param movimentos
-	 * @param usuario
-	 * @param qtdDiasNovaCobranca
-	 * @param dataOperacao
-	 * @param msgs
-	 * @param fornecedor
-	 * @param formaCobrancaPrincipal
-	 */
+	    /**
+     * Consolida os movimentos financeiros Gera Divida e Cobrança Posterga as
+     * pendências financeiras caso os parametros postergarDividas==true ou
+     * formaCobrancaPrincipal==null
+     * 
+     * @param cota
+     * @param movimentos
+     * @param usuario
+     * @param qtdDiasNovaCobranca
+     * @param dataOperacao
+     * @param msgs
+     * @param fornecedor
+     * @param formaCobrancaPrincipal
+     */
 	private void montarConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos,
 			                                    Usuario usuario, 
 			                                    int qtdDiasNovaCobranca, 
@@ -797,7 +804,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
 		consolidadoFinanceiroCota.setPendente(vlMovPendente);
 		
-		//insere postergado pois não encontrou forma de cobrança ou parametros do método exigem postergação
+        // insere postergado pois não encontrou forma de cobrança ou parametros
+        // do método exigem postergação
 		if (formaCobrancaPrincipal == null || postergarDividas==true){
 			
 			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
@@ -856,7 +864,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if(formaCobrancaPrincipal.getTipoFormaCobranca() == null) {
 			cobrarHoje = true;
 		} else {
-			// switch usado para se é usado os parametros de cobranca da propria cota
+            // switch usado para se é usado os parametros de cobranca da propria
+            // cota
 			switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
 			
 				case DIARIA:
@@ -899,7 +908,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (dataVencimento == null){
 			
-			msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: " + cota.getNumeroCota());
+            msgs.add("Não foi possível calcular data de vencimento da cobrança, verifique os parâmetros de cobrança da cota número: "
+                    + cota.getNumeroCota());
 			
 			return;
 		}
@@ -945,7 +955,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			Banco banco = formaCobrancaPrincipal.getBanco();
 			
-			//caso tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança, ou a cota esteja suspensa
+        // caso tenha alcançado o valor minino de cobrança e seja um dia de
+        // concentração de cobrança, ou a cota esteja suspensa
 			if ( (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0) &&
 					(vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
 					(vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
@@ -1078,7 +1089,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
 		}
 		
-		//verifica se a forma de cobrança principal do distribuidor utiliza dias uteis para geração da data de vencimento da cobrança
+        // verifica se a forma de cobrança principal do distribuidor utiliza
+        // dias uteis para geração da data de vencimento da cobrança
 		if(formaCobranca.isVencimentoDiaUtil()) {
 			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento);
 		}
@@ -1086,22 +1098,22 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
 	}
 
-	/**
-	 * Posterga as pendências financeiras da cota
-	 * 
-	 * @param cota
-	 * @param qtdDiasNovaCobranca
-	 * @param msgs
-	 * @param fornecedor
-	 * @param consolidadoFinanceiroCota
-	 * @param vlMovFinanTotal
-	 * @param vlMovFinanPostergado
-	 * @param usuario
-	 * @param diasSemanaConcentracaoPagamento
-	 * @param dataOperacao
-	 * @param descPostergado
-	 * @return MovimentoFinanceiroCota
-	 */
+	    /**
+     * Posterga as pendências financeiras da cota
+     * 
+     * @param cota
+     * @param qtdDiasNovaCobranca
+     * @param msgs
+     * @param fornecedor
+     * @param consolidadoFinanceiroCota
+     * @param vlMovFinanTotal
+     * @param vlMovFinanPostergado
+     * @param usuario
+     * @param diasSemanaConcentracaoPagamento
+     * @param dataOperacao
+     * @param descPostergado
+     * @return MovimentoFinanceiroCota
+     */
 	private MovimentoFinanceiroCota gerarPostergado(Cota cota,
 			                                        int qtdDiasNovaCobranca, 
 			                                        List<String> msgs, 
@@ -1139,7 +1151,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (tipoMovimentoFinanceiro == null) {
 			
-			msgs.add("Tipo de movimento para postergação não encontrado!");
+            msgs.add("Tipo de movimento para postergação não encontrado!");
 			
 			return null;
 		}
@@ -1148,14 +1160,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 			if (diasSemanaConcentracaoPagamento == null){
 				
-				descPostergado = "Forma de cobrança não encontrada para a cota: "+ cota.getNumeroCota() +", a cobrança será postergada.";
+                descPostergado = "Forma de cobrança não encontrada para a cota: " + cota.getNumeroCota()
+                        + ", a cobrança será postergada.";
 			} else if (!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
 				
-				descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
+                descPostergado = "Não existe acúmulo de pagamento para este dia ("
+                        +
 						new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
 			} else {
 				
-				descPostergado = "Valor mínimo para dívida não atingido";
+                descPostergado = "Valor mínimo para dívida não atingido";
 			}
 		}
 		
@@ -1442,17 +1456,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
-		this.emailService.enviar("Cobrança", 
-								 "Segue documento de cobrança em anexo.", 
+        this.emailService.enviar("Cobrança", "Segue documento de cobrança em anexo.",
 								 new String[]{email}, 
 								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));		
 	}
 	
-	/**
-	 * Envia Cobranças para email da Cota
-	 * @param cota
-	 * @param nossoNumeroEnvioEmail
-	 */
+	    /**
+     * Envia Cobranças para email da Cota
+     * 
+     * @param cota
+     * @param nossoNumeroEnvioEmail
+     */
 	@Override
 	@Transactional
 	public void enviarDocumentosCobrancaEmail(Cota cota, Set<String> nossoNumeroEnvioEmail) {
@@ -1478,7 +1492,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
             
                 } catch (AutenticacaoEmailException e) {
   
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage(), e);
                 }
 			}
 		}	

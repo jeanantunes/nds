@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -16,6 +17,9 @@ import br.com.abril.nds.repository.DesenglobacaoRepository;
 
 @Repository
 public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desenglobacao, Long> implements DesenglobacaoRepository {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DesenglobacaoRepositoryImpl.class);
+
 
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
@@ -82,7 +86,7 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 	    getSession().createQuery(hql).setLong("idCota", idCota)
 	    .executeUpdate();
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    LOGGER.error(e.getMessage(), e);
 	    res=Boolean.FALSE;
 	}
 	return res;

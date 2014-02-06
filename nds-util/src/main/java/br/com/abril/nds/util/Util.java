@@ -1,8 +1,8 @@
 package br.com.abril.nds.util;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -18,8 +18,11 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 public abstract class Util {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
 	
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	
@@ -165,9 +168,12 @@ public abstract class Util {
 				
 				// return Util.padLeft(codSacado + auxData + idMovimentoFinanceiro, "0", 13);
 				
-				// Foi alterada a forma para composição do nosso número conforme foi pedido.
-				// De [número cota + dd/MM/yyyy + id movimento financeiro] para [número cota + id movimento financeiro].
-				// A forma antiga estava estourando o limite máximo de 13 caracteres.
+            // Foi alterada a forma para composição do nosso número conforme foi
+            // pedido.
+            // De [número cota + dd/MM/yyyy + id movimento financeiro] para
+            // [número cota + id movimento financeiro].
+            // A forma antiga estava estourando o limite máximo de 13
+            // caracteres.
 				return Util.padLeft(codSacado + idChamadaEncalheFornecedor, "0", 13);
 				
 			case MERCANTIL_DO_BRASIL:
@@ -266,7 +272,8 @@ public abstract class Util {
 //				
 //				somatorio = somatorio % 10;
 				
-//				A composição do nosso número com os cálculos acima estavam ultrapassando a quantidade de caracteres [8] para o banco Itau.
+            // A composição do nosso número com os cálculos acima estavam
+            // ultrapassando a quantidade de caracteres [8] para o banco Itau.
 				
 				return Util.padLeft(idDivida.toString(), "0", 8);
 				
@@ -457,62 +464,64 @@ public abstract class Util {
 		DIVISAO_GEOGRAFICA;
 	}
 	
-	/**
-	 * Retorna a lista de UFs brasileiras.<br>
-	 * A lista pode vir ordenada em:<br>
-	 * <ul>
-	 * <li>Ordem Alfabética; (Ordenação padrão);</li>
-	 * <li>Divisão Geográfica (norte, nordestes, centro-oeste, sudeste e sul);</li>
-	 * </ul>
-	 * 
-	 * @param tpUf Determina o tipo de ordenação.<br>
-	 * Se for passado <i>null</i> será utilizado a ordenação padrão (ordem alfabética);
-	 * 
-	 * @return
-	 */
+	    /**
+     * Retorna a lista de UFs brasileiras.<br>
+     * A lista pode vir ordenada em:<br>
+     * <ul>
+     * <li>Ordem Alfabética; (Ordenação padrão);</li>
+     * <li>Divisão Geográfica (norte, nordestes, centro-oeste, sudeste e sul);</li>
+     * </ul>
+     * 
+     * @param tpUf Determina o tipo de ordenação.<br>
+     *            Se for passado <i>null</i> será utilizado a ordenação padrão
+     *            (ordem alfabética);
+     * 
+     * @return
+     */
 	public static List<UfEnum> getUfs(TipoAgrupamentoUf tpUf) {
 		
 		List<UfEnum> lst = new ArrayList<UfEnum>();
 		
-		// Região Norte:
+        // Região Norte:
 		lst.add(UfEnum.AC);	// Acre
 		lst.add(UfEnum.AM);	// Amazonas	
-		lst.add(UfEnum.AP);	// Amapá
-		lst.add(UfEnum.PA);	// Pará
-		lst.add(UfEnum.RO);	// Rondônia
+        lst.add(UfEnum.AP); // Amapá
+        lst.add(UfEnum.PA); // Pará
+        lst.add(UfEnum.RO); // Rondônia
 		lst.add(UfEnum.RR);	// Roraima
 		lst.add(UfEnum.TO);	// Tocantins
 		
-		// Região Nordeste:
+        // Região Nordeste:
 		lst.add(UfEnum.AL);	// Alagoas
 		lst.add(UfEnum.BA);	// Bahia
-		lst.add(UfEnum.CE);	// Ceará
-		lst.add(UfEnum.MA);	// Maranhão
-		lst.add(UfEnum.PB);	// Paraíba
+        lst.add(UfEnum.CE); // Ceará
+        lst.add(UfEnum.MA); // Maranhão
+        lst.add(UfEnum.PB); // Paraíba
 		lst.add(UfEnum.PE);	// Pernambuco
-		lst.add(UfEnum.PI);	// Piauí
+        lst.add(UfEnum.PI); // Piauí
 		lst.add(UfEnum.RN);	// Rio Grande do Norte
 		lst.add(UfEnum.SE);	// Sergipe
 		
-		// Região Centro-Oeste:
+        // Região Centro-Oeste:
 		lst.add(UfEnum.DF);	// Distrito Federal
-		lst.add(UfEnum.GO);	// Goiás
+        lst.add(UfEnum.GO); // Goiás
 		lst.add(UfEnum.MS);	// Mato Grosso do Sul
 		lst.add(UfEnum.MT);	// Mato Grosso
 		
-		// Região Sudeste:
-		lst.add(UfEnum.ES);	// Espírito Santo
+        // Região Sudeste:
+        lst.add(UfEnum.ES); // Espírito Santo
 		lst.add(UfEnum.MG);	// Minas Gerais
 		lst.add(UfEnum.RJ);	// Rio de Janeiro
-		lst.add(UfEnum.SP);	// São Paulo
+        lst.add(UfEnum.SP); // São Paulo
 		
-		// Região Sul:
-		lst.add(UfEnum.PR);	// Paraná
+        // Região Sul:
+        lst.add(UfEnum.PR); // Paraná
 		lst.add(UfEnum.RS);	// Rio Grande do Sul
 		lst.add(UfEnum.SC);	// Santa Catarina
 		
 		
-		// Ordena por ordem alabética as siglas se for diferente de divisão geográfica:
+        // Ordena por ordem alabética as siglas se for diferente de divisão
+        // geográfica:
 		if (!TipoAgrupamentoUf.DIVISAO_GEOGRAFICA.equals(tpUf)) {
 			Collections.sort(lst, new Comparator<UfEnum>() {
 				@Override
@@ -535,7 +544,7 @@ public abstract class Util {
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		BigInteger hash = new BigInteger(1, md.digest(original.getBytes()));  
 		return hash.toString(16);
@@ -554,15 +563,14 @@ public abstract class Util {
 	}
 	
 	
-	/**
-	 * Retorna uma substring de parâmetro value 
-	 * quantidade de caracteres maxima igual ao 
-	 * a do parâmetro maxChar.
-	 * 
-	 * @param value
-	 * @param maxChar
-	 * @return String
-	 */
+	    /**
+     * Retorna uma substring de parâmetro value quantidade de caracteres maxima
+     * igual ao a do parâmetro maxChar.
+     * 
+     * @param value
+     * @param maxChar
+     * @return String
+     */
 	public static String truncarValor(String value, int maxChar) {
 		
 		if(value == null) {
@@ -592,8 +600,8 @@ public abstract class Util {
 	}
 	
     /**
-     * Utilitário para tratamento de valor "null" utilizando
-     * um valor "padrão"
+     * Utilitário para tratamento de valor "null" utilizando um valor "padrão"
+     * 
      * @param value valor para verificação de nulo
      * @param safeValue valor padrao para utilização caso o valor seja nulo
      * @return value caso não seja nulo, safeValue caso value seja nulo
@@ -608,7 +616,8 @@ public abstract class Util {
     
     
     /**
-     * Cria um identificador para o objeto 
+     * Cria um identificador para o objeto
+     * 
      * @param object objeto para criação do identificador
      * @return identificador gerado
      */
@@ -617,7 +626,8 @@ public abstract class Util {
     }
 
     /**
-     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que o valorIgnorar passado no 3ºparam
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a
+     * dif for menor que o valorIgnorar passado no 3ºparam
      * 
      * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
      * 
@@ -638,10 +648,11 @@ public abstract class Util {
     }
     
     /**
-     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que 0,005 (meio) centavo
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a
+     * dif for menor que 0,005 (meio) centavo
      * 
      * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
-     *  
+     * 
      * @param v1
      * @param v2
      * @return
@@ -697,7 +708,7 @@ public abstract class Util {
              result = getM.invoke(obj, null);
         } catch (IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         
         if(pathList.length==1){
@@ -739,7 +750,7 @@ public abstract class Util {
              result = getM.invoke(obj, null);
         } catch (IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         
         if(pathList.length==1){

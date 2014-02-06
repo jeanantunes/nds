@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -877,7 +877,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void apagarTipoCota(Long idCota, String tipoCota){
 		
-		Logger logger = Logger.getLogger(CotaController.class.getName());
+		Logger logger = LoggerFactory.getLogger(CotaController.class.getName());
 		logger.info("-->CotaController.apagarTipoCota");
 		cotaService.apagarTipoCota(idCota,  tipoCota);
 		

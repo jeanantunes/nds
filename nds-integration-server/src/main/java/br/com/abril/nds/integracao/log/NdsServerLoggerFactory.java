@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Factory para Loggers dos batchs.
- * Mantém uma instância de NdsiLogger para batch em execução.
+ * Mantém uma instância de ndsiLoggerFactory para batch em execução.
  * Utilizar para acessar gravação de log em tabela.
  * 
  * @author jonatas.junior
@@ -28,7 +28,7 @@ public class NdsServerLoggerFactory {
 	private ThreadLocalNdsLogger threadLocalNdsLogger = new ThreadLocalNdsLogger();
 	
 	/**
-	 * Retorna uma instância do NdsiLogger referente ao batch em execução.
+	 * Retorna uma instância do ndsiLoggerFactory referente ao batch em execução.
 	 * 
 	 * @return logger
 	 */
