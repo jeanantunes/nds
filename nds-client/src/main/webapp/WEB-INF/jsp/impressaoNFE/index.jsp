@@ -30,7 +30,7 @@
 
 	<fieldset class="classFieldset">
 		<legend>Pesquisar NF-e</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		<table width="100%" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="91">Destinatário:</td>
    				<td width="180">
@@ -49,9 +49,9 @@
 				<td width="212"></td>
 			</tr>
 			<tr>
-				<td width="91">Tipo de Nota:</td>
+				<td width="91">Natureza Op:</td>
    				<td width="204">
-					<select id="impressaoNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:250px; font-size:11px!important">
+					<select id="impressaoNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:200px; font-size:11px!important" title="">
 						<option value="">Todos</option>
 						
 					</select>

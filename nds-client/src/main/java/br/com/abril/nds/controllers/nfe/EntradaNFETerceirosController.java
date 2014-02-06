@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosPendentesDTO;
 import br.com.abril.nds.dto.ConsultaEntradaNFETerceirosRecebidasDTO;
@@ -339,14 +340,13 @@ public class EntradaNFETerceirosController extends BaseController {
 					listaNotasRecebidas, ConsultaEntradaNFETerceirosRecebidasDTO.class, this.httpResponse);			
 		}else{
 			
-			//List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
-			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
+			List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = this.entradaNFETerceirosService.buscarNFNotasPendentes(filtro, false);
+			// List<ConsultaEntradaNFETerceirosPendentesDTO> listaNotasPendentes = new ArrayList<ConsultaEntradaNFETerceirosPendentesDTO>();
 			/*if(listaNotasRecebidas.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}*/
 			
-			FileExporter.to("consulta_notas_pendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
+			FileExporter.to("notasPendentes", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaNotasPendentes, ConsultaEntradaNFETerceirosPendentesDTO.class, this.httpResponse);
 			
 		}
 			

@@ -118,6 +118,34 @@ public abstract class EncargoFinanceiro implements Serializable {
 		this.detalheNotaFiscal = detalheNotaFiscal;
 	}
 
+	/**
+	 * @return the pisSt
+	 */
+	public PISST getPisSt() {
+		return pisSt;
+	}
+
+	/**
+	 * @param pisSt the pisSt to set
+	 */
+	public void setPisSt(PISST pisSt) {
+		this.pisSt = pisSt;
+	}
+
+	/**
+	 * @return the cofinsSt
+	 */
+	public COFINSST getCofinsSt() {
+		return cofinsSt;
+	}
+
+	/**
+	 * @param cofinsSt the cofinsSt to set
+	 */
+	public void setCofinsSt(COFINSST cofinsSt) {
+		this.cofinsSt = cofinsSt;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -147,34 +175,6 @@ public abstract class EncargoFinanceiro implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	/**
-	 * @return the pisSt
-	 */
-	public PISST getPisSt() {
-		return pisSt;
-	}
-
-	/**
-	 * @param pisSt the pisSt to set
-	 */
-	public void setPisSt(PISST pisSt) {
-		this.pisSt = pisSt;
-	}
-
-	/**
-	 * @return the cofinsSt
-	 */
-	public COFINSST getCofinsSt() {
-		return cofinsSt;
-	}
-
-	/**
-	 * @param cofinsSt the cofinsSt to set
-	 */
-	public void setCofinsSt(COFINSST cofinsSt) {
-		this.cofinsSt = cofinsSt;
 	}
 
 }

@@ -22,7 +22,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
@@ -81,21 +80,22 @@ public class RetornoNFEController extends BaseController {
 			listaNotas = FileImportUtil.importArquivosModificadosEm(pathNFEImportacao.getValor(), dataReferencia, FileType.XML);
 		
 		} catch (FileNotFoundException e) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O diretório parametrizado não é válido"));
+			throw new ValidacaoException(TipoMensagem.WARNING, "O diretório parametrizado não é válido");
 		}
 		
 		if (listaNotas == null || listaNotas.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foi encontrado nenhuma nota para a data informada"));
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi encontrado nenhuma nota para a data informada");
 		}
-				
+			
 		List<RetornoNFEDTO> listaNotasRetorno = this.notaFiscalService.processarRetornoNotaFiscal(this.gerarParseListaNotasRetorno(listaNotas));
-						
+		
 		this.session.setAttribute(LISTA_NOTAS_DE_RETORNO, listaNotasRetorno);
 		
 		List<SumarizacaoNotaRetornoVO> sumarizacoes = new ArrayList<SumarizacaoNotaRetornoVO>();
 		SumarizacaoNotaRetornoVO sumarizacao = this.sumarizarNotasRetorno(listaNotasRetorno);
 		sumarizacoes.add(sumarizacao);
 		result.use(FlexiGridJson.class).from(sumarizacoes).page(1).total(sumarizacoes.size()).serialize();
+				
 	}
 	
 	
