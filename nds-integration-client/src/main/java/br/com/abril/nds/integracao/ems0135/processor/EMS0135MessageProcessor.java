@@ -179,8 +179,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto, edicao);
 			if (produtoEdicao == null) {
 				
-				
-				//Trac 784
 				Produto produto = this.produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
 				
 				if (produto == null){
@@ -334,10 +332,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return valorLiquidoTotal;
 	}
 	
-	private BigDecimal calcularValorUnitario() {
-		return BigDecimal.ZERO;
-	}
-	
 	
 	private Lancamento obterLancamentoProdutoEdicao(Long idProdutoEdicao) {
 		
@@ -426,22 +420,16 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
 			Long edicao) {
 
-		try {
+		Criteria criteria = this.getSession().createCriteria(
+				ProdutoEdicao.class, "produtoEdicao");
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+		criteria.createAlias("produtoEdicao.produto", "produto");
+		criteria.setFetchMode("produto", FetchMode.JOIN);
 
-			criteria.createAlias("produtoEdicao.produto", "produto");
-			criteria.setFetchMode("produto", FetchMode.JOIN);
+		criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
+		criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
 
-			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
-			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
-
-			return (ProdutoEdicao) criteria.uniqueResult();
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return (ProdutoEdicao) criteria.uniqueResult();
 	}
 
 	private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente, TipoUsuarioNotaFiscal destinatario) {
@@ -479,26 +467,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		return (CFOP) criteria.uniqueResult();
 	}
 
-
-	/**
-	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
-	 * minuto, segundo e milissendo).
-	 * 
-	 * @param dt
-	 * 
-	 * @return
-	 */
-	private Date normalizarDataSemHora(Date dt) {
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(dt);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		
-		return cal.getTime();
-	}
 	
 	@Override
 	public void posProcess(Object tempVar) {
