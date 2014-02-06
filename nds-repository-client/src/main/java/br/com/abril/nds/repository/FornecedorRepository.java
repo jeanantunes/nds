@@ -155,6 +155,9 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	List<Fornecedor> obterFornecedoresDesc();
 	
 	List<ItemDTO<Long, String>> obterFornecedoresDestinatarios(SituacaoCadastro situacao);
-	
+
 	ItemDTO<Long, String> obterNome(Long id);
+	
+	List<Fornecedor> obterFornecedoresUnificados();
+
 }

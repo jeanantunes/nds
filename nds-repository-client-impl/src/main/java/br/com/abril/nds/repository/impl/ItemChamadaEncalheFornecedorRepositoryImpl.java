@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
-import br.com.abril.nds.util.Intervalo;
 
 @Repository
 public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryModel<ItemChamadaEncalheFornecedor, Long> implements ItemChamadaEncalheFornecedorRepository {
@@ -77,7 +75,7 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 	}
 	
 	
-	public List<ItemChamadaEncalheFornecedor> obterItensChamadaEncalheFornecedor(Long idChamadaEncalheFornecedor,Intervalo<Date> periodo){
+	public List<ItemChamadaEncalheFornecedor> obterItensChamadaEncalheFornecedor(Long idChamadaEncalheFornecedor){
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -89,24 +87,14 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		
 		hql.append(" inner join itemChamadaEncalheFornecedor.produtoEdicao produtoEdicao ");
 		
-		hql.append(" inner join produtoEdicao.estoqueProduto estoqueProduto ");
+		hql.append(" left join produtoEdicao.estoqueProduto estoqueProduto ");
 		
-		//hql.append(" inner join FechamentoEncalhe fechamentoEncalhe");
-		
-		hql.append(" where 1 = 1 ");
-		
-		//hql.append(" fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = produtoEdicao.id " );
-		
-		//hql.append(" AND fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe BETWEEN :inicioSemana AND :fimSemana ");
-		
-		hql.append(" AND chamadaEncalheFornecedor.id = :idChamadaEncalheFornecedor ");
+		hql.append(" where chamadaEncalheFornecedor.id = :idChamadaEncalheFornecedor ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idChamadaEncalheFornecedor", idChamadaEncalheFornecedor);
-		//query.setParameter("inicioSemana", periodo.getDe());
-		//query.setParameter("fimSemana", periodo.getAte());
-	
+		
 		return query.list();
 	}
 }
