@@ -2718,12 +2718,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
 			
+			int qtdEdicaoVendida = 0;
+			
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
 				
 				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
 				
 				if (dto != null) {
+					qtdEdicaoVendida++;
 					if (i == 0) {
 						if(dto.getReparte() != null){
 							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
@@ -2786,7 +2789,7 @@ public class CotaServiceImpl implements CotaService {
 				}
 			}
 			
-			setMediaVendaEReparte(listProdutoEdicaoDto.size(), analiseHistoricoDTO);
+			setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
 		}
 		
 		formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
