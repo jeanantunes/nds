@@ -7,7 +7,9 @@ import java.util.List;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
+import com.ancientprogramming.fixedformat4j.annotation.Record;
 
+@Record
 public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> implements Serializable {
 
 	private static final long serialVersionUID = -1611339433305392806L;
@@ -91,10 +93,6 @@ public class EMS0140Input extends IntegracaoDocumentMaster<EMS0140InputItem> imp
 
 	public void setNumeroNotaEnvio(String numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
-	}
-
-	public List<EMS0140InputItem> getItem() {
-		return itens;
 	}
 
 	public void setItem(List<EMS0140InputItem> item) {

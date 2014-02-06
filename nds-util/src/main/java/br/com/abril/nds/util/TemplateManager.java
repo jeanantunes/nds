@@ -5,23 +5,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.util.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
- * Classe utilitária para gerenciamento de templates
- * utilizando Velocity.
+ * Classe utilitária para gerenciamento de templates utilizando Velocity.
  * 
  * @author Discover Technology
- *
+ * 
  */
 public abstract class TemplateManager {
 	
 	
-	private static Logger logger = Logger.getLogger(TemplateManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateManager.class);
+    private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
 	
 	/**
 	 * Enum para os nomes dos templates.
@@ -46,11 +49,11 @@ public abstract class TemplateManager {
 			this.anexos = anexos;
 		}
 		
-		/**
-		 * Obtém o nome do template
-		 * 
-		 * @return String
-		 */
+		        /**
+         * Obtém o nome do template
+         * 
+         * @return String
+         */
 		public String getNome() {
 			return this.nome;
 		}
@@ -86,7 +89,7 @@ public abstract class TemplateManager {
 					anexosTemplate.add(anexoEmail);
 
 				}catch (Exception e){
-					logger.fatal("Erro na leitura de anexo para template de e-mail", e);
+                    LOGGER.error(FATAL, "Erro na leitura de anexo para template de e-mail", e);
 				}
 				
 			}
@@ -94,14 +97,14 @@ public abstract class TemplateManager {
 		return anexosTemplate;
 	}
 	
-	/**
-	 * Obtém o template.
-	 * 
-	 * @param nomeTemplate - o nome do template
-	 * @param parametros - os parametros usados no template
-	 * 
-	 * @return String
-	 */
+	    /**
+     * Obtém o template.
+     * 
+     * @param nomeTemplate - o nome do template
+     * @param parametros - os parametros usados no template
+     * 
+     * @return String
+     */
 	public static String getTemplate(TemplateNames nomeTemplate, Map<String, Object> parametros) {
 		
         StringWriter writer = new StringWriter();

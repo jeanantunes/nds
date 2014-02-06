@@ -661,9 +661,7 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		BigInteger qtdeExemplares = itemRecebimento.getRepartePrevisto() == null ? BigInteger.ZERO : itemRecebimento.getRepartePrevisto();
 		
-		BigDecimal precoItem = itemRecebimento.getPrecoItem() == null ? 
-				(itemRecebimento.getPrecoCapa() == null ? BigDecimal.ZERO : itemRecebimento.getPrecoCapa()) :
-				itemRecebimento.getPrecoItem();
+		BigDecimal precoItem = itemRecebimento.getPrecoCapa() == null ? BigDecimal.ZERO : itemRecebimento.getPrecoCapa();
 				
 		BigInteger qtdeTotalItens = null;
 		
@@ -806,6 +804,7 @@ public class RecebimentoFisicoController extends BaseController {
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+		notaFiscalEntrada.setUsuario(getUsuarioLogado());
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			atualizarItensRecebimentoEmSession(itensRecebimento);
@@ -1149,16 +1148,20 @@ public class RecebimentoFisicoController extends BaseController {
 			carregarValoresQtdPacoteQtdExemplar(dto);
 			
 			String valorDesconto = dto.getPrecoDesconto();
+			
 			if (dto.getPrecoDesconto() == null) {
+				
 				if (dto.getPercentualDesconto() != null) {
-					valorDesconto = dto.getPrecoItem().subtract(
-							dto.getPrecoItem().multiply(
+					valorDesconto = dto.getPrecoCapa().subtract(
+							dto.getPrecoCapa().multiply(
 									dto.getPercentualDesconto())).setScale(4, RoundingMode.HALF_EVEN).toString();
 				} else {
 					
 					valorDesconto = dto.getPrecoItem().setScale(4, RoundingMode.HALF_EVEN).toString();
 				}
+				
 			}
+			
 			dto.setPrecoDesconto(new BigDecimal(valorDesconto).setScale(4, RoundingMode.HALF_EVEN).toString());
 			
 			carregarValorTotal(dto, isRefresh);
@@ -1170,7 +1173,8 @@ public class RecebimentoFisicoController extends BaseController {
 			String codigo 		     	 = dto.getCodigoProduto();
 			String nomeProduto 	     	 = dto.getNomeProduto();
 			String edicao 		     	 = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
-			String precoItem 	     	 = (dto.getPrecoItem() 			== null) 	? "0.0" : dto.getPrecoItem().toString();
+			String precoCapa			 = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			
 			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0" : dto.getRepartePrevisto().toString();
 			String qtdPacote			 = (dto.getQtdPacote()			== null) 	? "0"	: dto.getQtdPacote().toString(); 
 			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
@@ -1207,7 +1211,7 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setCodigo(codigo);
 			recebFisico.setNomeProduto(nomeProduto);
 			recebFisico.setEdicao(edicao);
-			recebFisico.setPrecoCapa(precoItem);
+			recebFisico.setPrecoCapa(precoCapa);
 			
 			recebFisico.setPrecoDesconto(valorDesconto);
 			
@@ -1377,6 +1381,7 @@ public class RecebimentoFisicoController extends BaseController {
 	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
 		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
+		notaFiscalEntrada.setUsuario(getUsuarioLogado());
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			atualizarItensRecebimentoEmSession(itensRecebimento);

@@ -57,7 +57,7 @@ public class AjusteReparte extends ProcessoAbstrato {
 	    
 	}
 	
-	estudo.setCotasComReparteJaCalculado(this.cotasComReparteJaCalculado);
+	estudo.setCotasComReparteJaCalculado(new LinkedList<>(cotasComReparteJaCalculado));
 	
 	this.cotasComReparteJaCalculado.clear();
 	

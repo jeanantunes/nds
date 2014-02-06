@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.financeiro;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -33,6 +34,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/financeiro/movimentoFinanceiroCota")
 @Rules(Permissao.ROLE_MOVIMENTO_FINANCEIRO_COTA)
 public class MovimentoFinanceiroCotaController extends BaseController{
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovimentoFinanceiroCotaController.class);
 	
 	@Autowired
 	private Result result;
@@ -76,7 +79,8 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 
 		if (processamentoFinanceiroCotaVO==null || processamentoFinanceiroCotaVO.isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pendência financeira encontrada na data["+DateUtil.formatarDataPTBR(data)+"].");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pendência financeira encontrada na data["
+                    + DateUtil.formatarDataPTBR(data) + "].");
 		}
 		
 		int qtdRegistros = this.movimentoFinanceiroCotaService.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, data);
@@ -115,10 +119,12 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 			
 		} catch (GerarCobrancaValidacaoException e) {
 
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado e cobrança gerada com sucesso."), "result").recursive().serialize();
+        result.use(Results.json())
+                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado e cobrança gerada com sucesso."),
+                        "result").recursive().serialize();
 	}
 	
 	@Post
@@ -146,10 +152,12 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 				
 			} catch (GerarCobrancaValidacaoException e) {
 
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado e dívida postergada com sucesso."), "result").recursive().serialize();
+        result.use(Results.json())
+                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado e dívida postergada com sucesso."),
+                        "result").recursive().serialize();
 	}
 }

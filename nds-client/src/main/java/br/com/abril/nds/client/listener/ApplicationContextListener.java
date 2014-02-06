@@ -12,11 +12,14 @@ import java.util.Enumeration;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -38,7 +41,8 @@ import br.com.abril.nds.util.QuartzUtil;
  */
 public class ApplicationContextListener implements ServletContextListener {
 
-	private Logger logger = Logger.getLogger(ApplicationContextListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextListener.class);
+    private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
 
 	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
@@ -53,12 +57,12 @@ public class ApplicationContextListener implements ServletContextListener {
 
 				DriverManager.deregisterDriver(driver);
 
-				logger.info(String.format("Desregistrando driver JDBC: %s",
+                LOGGER.info(String.format("Desregistrando driver JDBC: %s",
 						driver));
 
 			} catch (SQLException e) {
 
-				logger.error(String.format(
+                LOGGER.error(String.format(
 						"Erro desregistrando driver JDBC:  %s", driver), e);
 			}
 
@@ -87,17 +91,17 @@ public class ApplicationContextListener implements ServletContextListener {
 			
 		} catch (SchedulerException e) {
 			
-			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
 		}
 		
 	}
 
-	/*
-	 * Efetua o agendamento do serviço de integração operacional do
-	 * distribuidor.
-	 */
+	        /*
+     * Efetua o agendamento do serviço de integração operacional do
+     * distribuidor.
+     */
 	private void agendarIntegracaoOperacionalDistribuidor(Scheduler scheduler) {
 
 		try {
@@ -126,7 +130,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}
@@ -160,7 +164,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}
@@ -205,17 +209,16 @@ public class ApplicationContextListener implements ServletContextListener {
 			scheduler.scheduleJob(jobRankingFaturamento, cronTriggerRankingFaturamento);
 			scheduler.scheduleJob(jobRankingSegmento, cronTriggerRankingSegmento);
 		} catch (SchedulerException e) {
-			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
 		}
 	}
 
 	
-	/*
-	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
-	 * 
-	 */
+	        /*
+     * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
+     */
 	private void agendaExeclusaoAjusteReparte(Scheduler scheduler) {
 
 		try {
@@ -244,16 +247,15 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}
 	}
 	
-	/*
-	 * Efetua o agendamento do serviço de exclusão de fixacao por reparte.
-	 * 
-	 */
+	        /*
+     * Efetua o agendamento do serviço de exclusão de fixacao por reparte.
+     */
 	private void agendaExclusaoFixacaoReparte(Scheduler scheduler) {
 
 		try {
@@ -284,16 +286,15 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}
 	}
 	
-	/*
-	 * Efetua o agendamento do serviço de exclusão de Regiões.
-	 * 
-	 */
+	        /*
+     * Efetua o agendamento do serviço de exclusão de Regiões.
+     */
 	private void agendaExclusaoRegiao(Scheduler scheduler) {
 
 		try {
@@ -324,7 +325,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		} catch (SchedulerException se) {
 
-			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+            LOGGER.error(FATAL, "Falha ao inicializar agendador do Quartz", se);
 
 			throw new RuntimeException(se);
 		}

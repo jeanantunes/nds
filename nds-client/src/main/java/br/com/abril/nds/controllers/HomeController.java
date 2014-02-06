@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import net.vidageek.mirror.dsl.Mirror;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -53,7 +53,7 @@ public class HomeController {
 	@Autowired
 	private UsuarioService usuarioService;
 	
-	private static Logger LOGGER = Logger.getLogger(HomeController.class);	
+	private static Logger LOGGER = LoggerFactory.getLogger(HomeController.class);	
 	
 	/**
 	 * @param router
@@ -94,7 +94,7 @@ public class HomeController {
 			doc = Jsoup.connect("http://177.71.255.76:8080/jenkins/job/deploy%20nds-client%20homolog/changes").get();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 		Elements newsHeadlines = doc.select("#main-panel");
 		
