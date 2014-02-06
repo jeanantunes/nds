@@ -21,8 +21,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -113,21 +112,22 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String IND_COTA_EMITE_NFE = "IND_COTA_EMITE_NFE";
 	
-	/*
-	 * Conferência de encalhe da cota que foi iniciada porém ainda não foi salva.
-	 */
+	    /*
+     * Conferência de encalhe da cota que foi iniciada porém ainda não foi
+     * salva.
+     */
 	private static final String CONF_ENC_COTA_STATUS_INICIADA_NAO_SALVA = "INICIADA_NAO_SALVA";
 	
 	
-	/*
-	 * Conferência de encalhe da cota que foi iniciada e já foi salva.
-	 */
+	    /*
+     * Conferência de encalhe da cota que foi iniciada e já foi salva.
+     */
 	private static final String CONF_ENC_COTA_STATUS_INICIADA_SALVA = "INICIADA_SALVA";
 	
 	
-	/*
-	 * Nenhuma conferência de encalhe da cota iniciada em aberto.
-	 */
+	    /*
+     * Nenhuma conferência de encalhe da cota iniciada em aberto.
+     */
 	private static final String CONF_ENC_COTA_STATUS_NAO_INICIADA = "NAO_INICIADA";
 
 	@Autowired
@@ -170,7 +170,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
 		}
 		
-		//Obter box usuário
+        // Obter box usuário
 		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
 				this.getUsuarioLogado().getBox().getId() != null){
 			
@@ -237,7 +237,7 @@ public class ConferenciaEncalheController extends BaseController {
 			alterarBoxUsuario(idBox);
 		} else {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento é obrigatório.");
 		}
 		
 		this.result.use(Results.json()).from("").serialize();
@@ -279,10 +279,10 @@ public class ConferenciaEncalheController extends BaseController {
 			mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
 	}
 	
-	/**
-	 * Realiza a remoção da trava da session do usuario com 
-	 * conferencia de encalhe
-	 */
+	    /**
+     * Realiza a remoção da trava da session do usuario com conferencia de
+     * encalhe
+     */
 	@Post
 	public void removerTravaConferenciaEncalheCotaUsuario() {
 		
@@ -346,15 +346,15 @@ public class ConferenciaEncalheController extends BaseController {
 			return;
 		}
 		
-		String nomeUsuario = "Não identificado";
+        String nomeUsuario = "Não identificado";
 		
 		if(mapaSessionIDNomeUsuario != null && mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida) != null) {
 			nomeUsuario = mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida);
 		}
 		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
-				" Não é possível iniciar a conferência de encalhe para esta cota, " +
-				" a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario  + " ] ");
+                " Não é possível iniciar a conferência de encalhe para esta cota, "
+                        + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
 	
 		
 	}
@@ -364,7 +364,7 @@ public class ConferenciaEncalheController extends BaseController {
 		Usuario usuario = getUsuarioLogado();
 		
 		if(usuario==null) {
-			return "Não Identificado";
+            return "Não Identificado";
 		}
 		
 		if(usuario.getNome()!=null && !usuario.getNome().isEmpty()) {
@@ -375,7 +375,7 @@ public class ConferenciaEncalheController extends BaseController {
 			return usuario.getLogin();
 		}
 		
-		return "Não Identificado";
+        return "Não Identificado";
 		
 	}
 	
@@ -412,12 +412,13 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	/**
-	 * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de uma cota 
-	 * sem ter salvo (ou finalizado) os dados de uma conferência em andamento.
-	 * 
-	 * @param numeroCota
-	 */
+	    /**
+     * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de
+     * uma cota sem ter salvo (ou finalizado) os dados de uma conferência em
+     * andamento.
+     * 
+     * @param numeroCota
+     */
 	public void verificarConferenciaEncalheCotaStatus(Integer numeroCota) {
 		
 		Map<String, Object> resultado = new HashMap<String, Object>();
@@ -463,32 +464,31 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(CustomMapJson.class).put(IND_COTA_EMITE_NFE, emiteNfe).serialize();
 	}
 	
-	/**
-	 * Valida informações basicas antes de iniciar o recolhimento:
-	 * 
-	 *  - Se a cota existe.
-	 *  
-	 *  - Se o box de recolhimento foi informado.
-	 *  
-	 *  - Se ainda não foi realizado o fechamento de encalhe na data
-	 *    de operação.
-	 *    
-	 *  - Se a cota foi tratada como cota ausente na funcionalidade
-	 *    de fechamento de encalhe.
-	 *  
-	 * @param numeroCota
-	 */
+	    /**
+     * Valida informações basicas antes de iniciar o recolhimento:
+     * 
+     * - Se a cota existe.
+     * 
+     * - Se o box de recolhimento foi informado.
+     * 
+     * - Se ainda não foi realizado o fechamento de encalhe na data de operação.
+     * 
+     * - Se a cota foi tratada como cota ausente na funcionalidade de fechamento
+     * de encalhe.
+     * 
+     * @param numeroCota
+     */
 	private void validarCotaParaInicioConferenciaEncalhe(Integer numeroCota) {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		if (cota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
 		}
 		
 		
 		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 		}
 		
 		try {
@@ -505,7 +505,8 @@ public class ConferenciaEncalheController extends BaseController {
 		boolean hasCotaAusenteFechamentoEncalhe = this.conferenciaEncalheService.hasCotaAusenteFechamentoEncalhe(numeroCota);
 		
 		if (hasCotaAusenteFechamentoEncalhe) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota já inserida no processo de cota ausente. Por favor, verificar.");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Cota já inserida no processo de cota ausente. Por favor, verificar.");
 		}
 		
 		
@@ -516,14 +517,13 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	/**
-	 * Ponto de inicio de uma conferência de encalhe.
-	 * 
-	 * Realiza validações antes do inicio da operação
-	 * de encalhe da cota.
-	 * 
-	 * @param numeroCota
-	 */
+	    /**
+     * Ponto de inicio de uma conferência de encalhe.
+     * 
+     * Realiza validações antes do inicio da operação de encalhe da cota.
+     * 
+     * @param numeroCota
+     */
 	@Post
 	public void iniciarConferenciaEncalhe(Integer numeroCota){
 		
@@ -552,7 +552,8 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				this.result.use(CustomMapJson.class)
 				.put("IND_COTA_RECOLHE_NA_DATA", "N")
-				.put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
+                        .put("msg", "Cota não possui recolhimento planejado para a data de operação atual.")
+                        .serialize();
 			
 			}
 			
@@ -560,19 +561,20 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	/**
-	 * Cria em session flag para indicar que os registros de conferencia de encalhe da cota
-	 * que estão em session ainda não foram alterados pelo usuario.
-	 */
+	    /**
+     * Cria em session flag para indicar que os registros de conferencia de
+     * encalhe da cota que estão em session ainda não foram alterados pelo
+     * usuario.
+     */
 	private void indicarStatusConferenciaEncalheCotaSalvo() {
 		StatusConferenciaEncalheCota statusConferenciaEncalhe = obterStatusConferenciaEncalheCotaFromSession();
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(true);
 	}
 	
-	/**
-	 * Cria em session flag para indicar que os registros de conferencia de encalhe da cota
-	 * que estão em session já foram alterados pelo usuario.
-	 */
+	    /**
+     * Cria em session flag para indicar que os registros de conferencia de
+     * encalhe da cota que estão em session já foram alterados pelo usuario.
+     */
 	private void indicarStatusConferenciaEncalheCotaAlterado() {
 		StatusConferenciaEncalheCota statusConferenciaEncalhe = obterStatusConferenciaEncalheCotaFromSession();
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(false);
@@ -734,7 +736,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
 		}
 
 		List<ItemAutoComplete> listaProdutos = 
@@ -748,16 +750,16 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 
-	/**
-	 * Obtém o objeto do tipo ConferenciaEncalheDTO que esta na lista 
-	 * de conferencia em session com idProdutoEdicao ou codigoSM igual 
-	 * ao passado por parâmetro.
-	 * 
-	 * @param idProdutoEdicao
-	 * @param sm
-	 * 
-	 * @return ConferenciaEncalheDTO
-	 */
+	    /**
+     * Obtém o objeto do tipo ConferenciaEncalheDTO que esta na lista de
+     * conferencia em session com idProdutoEdicao ou codigoSM igual ao passado
+     * por parâmetro.
+     * 
+     * @param idProdutoEdicao
+     * @param sm
+     * 
+     * @return ConferenciaEncalheDTO
+     */
 	private ConferenciaEncalheDTO getConferenciaEncalheDTOFromSession(Long idProdutoEdicao, Integer sm) {
 		
 		List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
@@ -804,16 +806,17 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		}  catch(EncalheRecolhimentoParcialException e) {
 			
-			LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
+            LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não existe chamada de encalhe para produto parcial na data operação.");
 		}
 		
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
 			
-			LOGGER.error("Produto Edição não encontrado.");
+            LOGGER.error("Produto Edição não encontrado.");
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} else if (conferenciaEncalheDTO == null){
 			
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
@@ -852,7 +855,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		
 		if(idProdutoEdicaoAnterior == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
 		}
 		
 		try {
@@ -865,13 +868,14 @@ public class ConferenciaEncalheController extends BaseController {
 			} 
 			
 		} catch(EncalheRecolhimentoParcialException e) {
-			LOGGER.error("Não existe chamada de encalhe deste produto para essa cota: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+            LOGGER.error("Não existe chamada de encalhe deste produto para essa cota: " + e.getMessage(), e);
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não existe chamada de encalhe para produto parcial na data operação.");
 		}
 		
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} else if (conferenciaEncalheDTO == null) {
 			
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
@@ -932,12 +936,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (idProdutoEdicao == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto é obrigatório.");
 		}
 		
 		if (quantidade == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade é obrigatório.");
 		}
 		
 		ProdutoEdicaoDTO produtoEdicao = null;
@@ -948,8 +952,9 @@ public class ConferenciaEncalheController extends BaseController {
 					this.getNumeroCotaFromSession(), 
 					idProdutoEdicao);
 		} catch (EncalheRecolhimentoParcialException e) {
-			LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+            LOGGER.error("Não existe chamada de encalhe para produto parcial na data operação: " + e.getMessage(), e);
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não existe chamada de encalhe para produto parcial na data operação.");
 		} 
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTOSessao = getConferenciaEncalheDTOFromSession(idProdutoEdicao, null);
@@ -1028,7 +1033,7 @@ public class ConferenciaEncalheController extends BaseController {
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
 		
 		if(qtdExemplares == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
 		}
 
 		ConferenciaEncalheDTO conf = null;
@@ -1112,7 +1117,7 @@ public class ConferenciaEncalheController extends BaseController {
 				return;
 			}
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
 		} else {
 			
 			List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -1125,7 +1130,8 @@ public class ConferenciaEncalheController extends BaseController {
 						
 						if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)){
 							
-							this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
+                            this.result.use(Results.json())
+                                    .from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
 							return;
 						}
 					}
@@ -1135,7 +1141,8 @@ public class ConferenciaEncalheController extends BaseController {
 						
 						if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)){
 							
-							this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
+                            this.result.use(Results.json())
+                                    .from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
 							return;
 						}
 					}
@@ -1207,19 +1214,25 @@ public class ConferenciaEncalheController extends BaseController {
 																         indConferenciaContingencia);
 
 		} catch (EncalheSemPermissaoSalvarException e) {
-			LOGGER.error("Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
+            LOGGER.error(
+                    "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados: "
+                            + e.getMessage(), e);
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
 			
 		} catch (ConferenciaEncalheFinalizadaException e) {
-			LOGGER.error("Conferência não pode ser salvar, finalize a operação para não perder os dados: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
+            LOGGER.error(
+                    "Conferência não pode ser salvar, finalize a operação para não perder os dados: " + e.getMessage(),
+                    e);
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
 		}
 	}
 
-	/**
-	 * Salva os dados da conferência de encalhe.
-	 */
+	    /**
+     * Salva os dados da conferência de encalhe.
+     */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void salvarConferencia(boolean indConferenciaContingencia){
@@ -1232,7 +1245,7 @@ public class ConferenciaEncalheController extends BaseController {
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
 		if (info == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		controleConfEncalheCota.setCota(info.getCota());
@@ -1273,7 +1286,8 @@ public class ConferenciaEncalheController extends BaseController {
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
+new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive()
+                .serialize();
 	}
 	
 	
@@ -1296,7 +1310,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (horaInicio == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada.");
 		}
 		
 	}
@@ -1391,8 +1405,8 @@ public class ConferenciaEncalheController extends BaseController {
 			}
 			
 		}catch (Exception e) {
-			LOGGER.error("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança: " + e.getMessage(), e);
-			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), e);
+            LOGGER.error("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança: " + e.getMessage(), e);
+            throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), e);
 		}
 	}
 
@@ -1445,7 +1459,7 @@ public class ConferenciaEncalheController extends BaseController {
 			try {
 				gerarArquivoNoServer(tipo_documento_impressao_encalhe,arquivos.get(tipo_documento_impressao_encalhe));
 			}catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
@@ -1507,12 +1521,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		if (info.getCota() == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		List<Long> idsCota = new ArrayList<>();
@@ -1522,7 +1536,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			this.result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.WARNING, 
-							"Já existe cobrança gerada para a data de operação atual, continuar irá sobrescreve-la. Deseja continuar?"), 
+                            "Já existe cobrança gerada para a data de operação atual, continuar irá sobrescreve-la. Deseja continuar?"),
 							"result").recursive().serialize();
 			return;
 		}
@@ -1552,8 +1566,8 @@ public class ConferenciaEncalheController extends BaseController {
 				newListaConferenciaEncalheCota.add((ConferenciaEncalheDTO)BeanUtils.cloneBean(conf));
 			
 			} catch (Exception e) {
-				LOGGER.error("Falha na execução do sistema: " + e.getMessage(), e);
-				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na execução do sistema.");
+                LOGGER.error("Falha na execução do sistema: " + e.getMessage(), e);
+                throw new ValidacaoException(TipoMensagem.ERROR, "Falha na execução do sistema.");
 			}
 		}
 		
@@ -1577,7 +1591,7 @@ public class ConferenciaEncalheController extends BaseController {
 			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 			
 			if (info == null){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 			}
 			
 			controleConfEncalheCota.setCota(info.getCota());
@@ -1639,8 +1653,8 @@ public class ConferenciaEncalheController extends BaseController {
 			try {
 				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
 			} catch (Exception e){
-				LOGGER.error("Erro ao gerar documentos da conferência de encalhe: " + e.getMessage(), e);
-				throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
+                LOGGER.error("Erro ao gerar documentos da conferência de encalhe: " + e.getMessage(), e);
+                throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
 			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
@@ -1657,9 +1671,9 @@ public class ConferenciaEncalheController extends BaseController {
 				String msgSucess = "";
 				
 				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
-					msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+                    msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
 				} else {
-					msgSucess = "Operação efetuada com sucesso.";
+                    msgSucess = "Operação efetuada com sucesso.";
 				}
 				
 				dados.put("listaMensagens", 	new String[]{msgSucess});
@@ -1676,7 +1690,8 @@ public class ConferenciaEncalheController extends BaseController {
 		} else {
 			
 			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result").recursive().serialize();
+new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result")
+                    .recursive().serialize();
 		}
 	}
 	
@@ -1774,21 +1789,21 @@ public class ConferenciaEncalheController extends BaseController {
 	private void validarCamposNotaFiscalEntrada(NotaFiscalEntradaCota notaFiscalEntradaCota) {
 		
 		if(notaFiscalEntradaCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Dados da nota fiscal inválidos.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Dados da nota fiscal inválidos.");
 		}
 		
 		List<String> mensagens = new ArrayList<String>();
 		
 		if(notaFiscalEntradaCota.getNumero() == null) {
-			mensagens.add("Número da nota fiscal deve ser preenchido.");
+            mensagens.add("Número da nota fiscal deve ser preenchido.");
 		}
 		
 		if(notaFiscalEntradaCota.getSerie() == null || notaFiscalEntradaCota.getSerie().isEmpty()) {
-			mensagens.add("Série da nota fiscal deve ser preenchida.");
+            mensagens.add("Série da nota fiscal deve ser preenchida.");
 		}
 		
 		if(notaFiscalEntradaCota.getDataEmissao() == null) {
-			mensagens.add("Data Emissão deve ser preenchida.");
+            mensagens.add("Data Emissão deve ser preenchida.");
 		}
 		
 		if(notaFiscalEntradaCota.getValorProdutos() == null) {
@@ -1838,12 +1853,13 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	/**
-	 * Verifica se o valor total da nota fiscal informada é igual
-	 * ao valor de encalhe conferido na operação. 
-	 * @throws Exception 
-	 * 
-	 */
+	    /**
+     * Verifica se o valor total da nota fiscal informada é igual ao valor de
+     * encalhe conferido na operação.
+     * 
+     * @throws Exception
+     * 
+     */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void verificarValorTotalNotaFiscal(boolean indConferenciaContingencia) throws Exception {
@@ -1876,13 +1892,13 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Verifica se o valor total de chamada encalhe informado é igual
-	 * ao valor de encalhe conferido na operação. 
-	 * 
-	 * @param valorCEInformado
-	 * @param qtdCEInformado
-	 */
+	    /**
+     * Verifica se o valor total de chamada encalhe informado é igual ao valor
+     * de encalhe conferido na operação.
+     * 
+     * @param valorCEInformado
+     * @param qtdCEInformado
+     */
 	@Post
 	public void verificarValorTotalCE(BigDecimal valorCEInformado, BigInteger qtdCEInformado) {
 
@@ -1900,7 +1916,8 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
 				resultadoValidacao.put("valorCEInformadoValido", false);
-				resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
+                resultadoValidacao.put("mensagemConfirmacao",
+                        "Valor CE jornaleiro informado inválido. Deseja continuar?");
 				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 				return;
 			} 
@@ -1910,7 +1927,8 @@ public class ConferenciaEncalheController extends BaseController {
 			if (qtdCEInformado == null || BigInteger.ZERO.compareTo(qtdCEInformado) >= 0 ){
 				
 				resultadoValidacao.put("valorCEInformadoValido", false);
-				resultadoValidacao.put("mensagemConfirmacao", "Qtde CE jornaleiro informada inválido. Deseja continuar?");
+                resultadoValidacao.put("mensagemConfirmacao",
+                        "Qtde CE jornaleiro informada inválido. Deseja continuar?");
 				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
 				return;
 
@@ -1929,12 +1947,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	/**
-	 * Compara se o valor de qtde de itens de encalhe apontado pelo jornaleiro
-	 * é igual ao contabilizado na operação de conferência de encalhe.
-	 * 
-	 * @param valorTotalCEQuantidade
-	 */
+	    /**
+     * Compara se o valor de qtde de itens de encalhe apontado pelo jornaleiro é
+     * igual ao contabilizado na operação de conferência de encalhe.
+     * 
+     * @param valorTotalCEQuantidade
+     */
 
 	private void comparValorTotalCEQuantidade(BigInteger valorTotalCEQuantidade) {
 		
@@ -1961,12 +1979,12 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	
-	/**
-	 * Compara se o valor monetario de encalhe apontado pelo jornaleiro
-	 * é igual ao contabilizado na operação de conferência de encalhe.
-	 * 
-	 * @param valorTotalCEMonetario
-	 */
+	    /**
+     * Compara se o valor monetario de encalhe apontado pelo jornaleiro é igual
+     * ao contabilizado na operação de conferência de encalhe.
+     * 
+     * @param valorTotalCEMonetario
+     */
 	private void comparValorTotalCEMonetario(BigDecimal valorTotalCEMonetario) {
 		
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
@@ -2019,7 +2037,8 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		} catch (EncalheRecolhimentoParcialException e) {
 			
-			LOGGER.error("Erro no ao pesquisar Produto Edicação por Id Encalhe Recolhimento Parcial: " + e.getMessage(), e);
+            LOGGER.error(
+                    "Erro no ao pesquisar Produto Edicação por Id Encalhe Recolhimento Parcial: " + e.getMessage(), e);
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 
 		}
@@ -2106,16 +2125,15 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	/**
-	 * Carrega o mapa passado como parâmetro com o seguinte valores:
-	 * 
-	 * valorEncalhe  		=	total do encalhe conferido até o momento nesta operação.
-	 * valorVendaDia 		=	valorReparte subtraído valorEncalhe.
-	 * valorDebitoCredito 	=	Creditos e Debitos da Cota 
-	 * valorPagar			= 	
-	 * 
-	 * @param dados
-	 */
+	    /**
+     * Carrega o mapa passado como parâmetro com o seguinte valores:
+     * 
+     * valorEncalhe = total do encalhe conferido até o momento nesta operação.
+     * valorVendaDia = valorReparte subtraído valorEncalhe. valorDebitoCredito =
+     * Creditos e Debitos da Cota valorPagar =
+     * 
+     * @param dados
+     */
 	private void calcularValoresMonetarios(Map<String, Object> dados){
 		
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
@@ -2196,16 +2214,16 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Processa a quantidade informada pelo usuario, 
-	 * validando quando um produto CROMO é informado. 
-	 * 
-	 * @param idProdutoEdicao
-	 * @param conferenciaEncalheDTO
-	 * @param quantidade - quantidade informada pelo usuario (EX: 100 ou 100e);
-	 * 
-	 * @return quantidade
-	 */
+	    /**
+     * Processa a quantidade informada pelo usuario, validando quando um produto
+     * CROMO é informado.
+     * 
+     * @param idProdutoEdicao
+     * @param conferenciaEncalheDTO
+     * @param quantidade - quantidade informada pelo usuario (EX: 100 ou 100e);
+     * 
+     * @return quantidade
+     */
 	private BigInteger processarQtdeExemplar(Long idProdutoEdicao,
 			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade, boolean indConferenciaContingencia) {
 
@@ -2230,7 +2248,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			LOGGER.error("Erro no processar qtde exemplar: " + e.getMessage(), e);
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
 		}
 
 		ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
@@ -2340,13 +2358,13 @@ public class ConferenciaEncalheController extends BaseController {
 		return conferenciaEncalheDTO;
 	}
 	
-	/**
-	 * Obtém tableModel para grid OutrosValores (Debitos e Creditos da cota).
-	 * 
-	 * @param listaDebitoCreditoCota
-	 * 
-	 * @return TableModel<CellModelKeyValue<DebitoCreditoCotaVO>>
-	 */
+	    /**
+     * Obtém tableModel para grid OutrosValores (Debitos e Creditos da cota).
+     * 
+     * @param listaDebitoCreditoCota
+     * 
+     * @return TableModel<CellModelKeyValue<DebitoCreditoCotaVO>>
+     */
 	private TableModel<CellModelKeyValue<DebitoCreditoCotaDTO>> 
 		obterTableModelDebitoCreditoCota(List<DebitoCreditoCotaDTO> listaDebitoCreditoCota) {
 
@@ -2366,7 +2384,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		List<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
@@ -2385,7 +2403,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		info.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);

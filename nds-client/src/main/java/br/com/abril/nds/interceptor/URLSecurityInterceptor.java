@@ -5,7 +5,8 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -19,7 +20,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.ExceptionUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.InterceptionException;
@@ -39,7 +39,7 @@ import com.google.gson.Gson;
 @Intercepts(before=ExecuteMethodInterceptor.class)
 public class URLSecurityInterceptor implements Interceptor {
 
-	private Logger logger = Logger.getLogger(URLSecurityInterceptor.class);
+	private Logger logger = LoggerFactory.getLogger(URLSecurityInterceptor.class);
 
 	private Result result;
 
@@ -82,7 +82,7 @@ public class URLSecurityInterceptor implements Interceptor {
 
 			logger.error(exception.getMessage(), exception);
 
-			Throwable cause = ExceptionUtil.getRootCause(exception);
+            Throwable cause = ExceptionUtils.getRootCause(exception);
 
 			if (cause instanceof ValidacaoException) {
 
@@ -128,7 +128,8 @@ public class URLSecurityInterceptor implements Interceptor {
 		Permissao permissaoAlteracao = rule.value().getPermissaoAlteracao();
 		
 		if(permissaoAlteracao==null)
-			throw new ValidacaoException(TipoMensagem.ERROR,"Não há permissão de alteraçao para '" + rule.value().getNome() + "'");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Não há permissão de alteraçao para '"
+                    + rule.value().getNome() + "'");
 		
 		return usuarioPossuiRule(permissaoAlteracao);
 	}
@@ -147,11 +148,11 @@ public class URLSecurityInterceptor implements Interceptor {
 		return false;
 	}
 
-	/**
-	 * Trata as validações a partir da ValidacaoException lançada
-	 * 
-	 * @param validacaoException
-	 */
+	        /**
+     * Trata as validações a partir da ValidacaoException lançada
+     * 
+     * @param validacaoException
+     */
 	private void tratarExcessaoValidacao(ValidacaoException validacaoException) {
 
 		if (Util.isAjaxUpload(request)) {
@@ -179,11 +180,11 @@ public class URLSecurityInterceptor implements Interceptor {
 		}			
 	}
 
-	/**
-	 * Método que trata as exceções genéricas.
-	 * 
-	 * @param throwable
-	 */
+	        /**
+     * Método que trata as exceções genéricas.
+     * 
+     * @param throwable
+     */
 	private void tratarExcessoesGenericas(Throwable throwable) {
 
 		String message = "Ocorreu um erro inesperado: " + throwable.getMessage();

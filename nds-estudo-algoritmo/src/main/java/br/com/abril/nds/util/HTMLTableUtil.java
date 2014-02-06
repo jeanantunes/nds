@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
@@ -20,6 +22,9 @@ import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 public class HTMLTableUtil {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLTableUtil.class);
+
 
     public static String estudoToHTML(EstudoTransient estudo) {
 	
@@ -196,7 +201,7 @@ public class HTMLTableUtil {
 	h.append("</tr>");
 
 	h.append("<tr>");
-	h.append("<td>Total Venda Média</td>");
+        h.append("<td>Total Venda Média</td>");
 	h.append("<td>").append(vendaMediaTotal).append("</td>");
 	h.append("</tr>");
 	
@@ -337,7 +342,7 @@ public class HTMLTableUtil {
 					rowValue = tempMap.values();
 				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 			sb.append(String.valueOf(rowValue));
 			sb.append("</td>");

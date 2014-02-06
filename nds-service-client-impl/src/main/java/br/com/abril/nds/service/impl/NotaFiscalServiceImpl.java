@@ -1143,7 +1143,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 //				| NoSuchFieldException | SecurityException e) {
 //			
 //			LOGGER.warn(e.getLocalizedMessage(), e);
-//			e.printStackTrace();
+//			LOGGER.error(e.getMessage(), e);
 //		}
 		
 		if (notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().length() > tamanhoCampoMapeado){

@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0112.processor;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 public class EMS0112MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EMS0112MessageProcessor.class);
 
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -246,15 +248,17 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logInfo(
 						message
 						, EventoExecucaoEnum.INF_DADO_ALTERADO
-						, "Inseridos dados de Endereço e Telefone do Editor: "+ input.getNomeEditor());
+,
+                        "Inseridos dados de Endereço e Telefone do Editor: " + input.getNomeEditor());
 				
 				
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.HIERARQUIA,
 			String.format( "Ocorreu um erro inesperado para numeroEditor: "+ input.getNumeroEditor()+" codigoEditor: "+ input.getCodigoEditor()
-					+" no Interface 112, descrição do erro: "+ e.getMessage() +". Erro não para o processamento."));
+ + " no Interface 112, descrição do erro: "
+                            + e.getMessage() + ". Erro não para o processamento."));
 		}
 	}
 
@@ -391,7 +395,8 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logInfo(
 						message
 						, EventoExecucaoEnum.INF_DADO_ALTERADO
-						, "Inseridos dados de Endereço do Editor: "+ input.getNomeEditor());
+,
+                        "Inseridos dados de Endereço do Editor: " + input.getNomeEditor());
 			
 			} else if(tipo == TipoEndereco.LOCAL_ENTREGA) {
 				//ENDERECO EDITOR [ENTREGA]
@@ -418,7 +423,8 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				ndsiLoggerFactory.getLogger().logInfo(
 						message
 						, EventoExecucaoEnum.INF_DADO_ALTERADO
-						, "Inseridos dados de Endereço do Editor: "+ input.getNomeEditor());
+,
+                        "Inseridos dados de Endereço do Editor: " + input.getNomeEditor());
 				
 			}
 			

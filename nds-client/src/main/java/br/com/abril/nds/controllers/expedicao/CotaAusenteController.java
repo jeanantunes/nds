@@ -10,8 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -56,20 +55,22 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cotaAusente")
 @Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE)
 public class CotaAusenteController extends BaseController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CotaAusenteController.class);
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
 	
-	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+    private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
 	
-	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
+    private static final String WARNING_COTA_AUSENTE_DUPLICADA = "Esta cota já foi declarada como ausente nesta data.";
 	
-	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é superior a data de operação atual.";
+    private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é superior a data de operação atual.";
 	
-	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
+    private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	
-	private static final String WARNING_NUMERO_COTA_NAO_INFORMADO =  "O campo \"cota\" é obrigatório.";
+    private static final String WARNING_NUMERO_COTA_NAO_INFORMADO = "O campo \"cota\" é obrigatório.";
 	
-	private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
+    private static final String ERRO_ENVIO_SUPLEMENTAR = "Erro não esperado ao realizar envio de suplementar.";
 	
 	private static final String ERRO_PESQUISAR_COTAS_AUSENTES = "Erro ao pesquisar cotas ausentes.";
 	
@@ -101,9 +102,6 @@ public class CotaAusenteController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Autowired
-	private static final Logger LOG = LoggerFactory
-			.getLogger(CotaAusenteController.class);
 	
 	@Autowired
 	private RoteirizacaoService roteirizacaoService;
@@ -208,7 +206,7 @@ public class CotaAusenteController extends BaseController {
 			mensagens.clear();
 			mensagens.add(ERRO_PESQUISAR_COTAS_AUSENTES);
 			status=TipoMensagem.ERROR;
-			LOG.error(ERRO_PESQUISAR_COTAS_AUSENTES, e);
+			LOGGER.error(ERRO_PESQUISAR_COTAS_AUSENTES, e);
 		}
 	
 		if(grid==null) {
@@ -291,11 +289,12 @@ public class CotaAusenteController extends BaseController {
 		return data;
 	}
 	
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
-	 * 
-	 * @param filtroResumoExpedicao
-	 */
+	        /**
+     * Executa tratamento de paginação em função de alteração do filtro de
+     * pesquisa.
+     * 
+     * @param filtroResumoExpedicao
+     */
 	private void tratarFiltro(FiltroCotaAusenteDTO filtro) {
 
 		FiltroCotaAusenteDTO filtroSession = (FiltroCotaAusenteDTO) session
@@ -310,19 +309,20 @@ public class CotaAusenteController extends BaseController {
 	}
 	
 	
-	/**
-	 * Obtém os produtos edição disponíveis para uma cota ausente que 
-	 * foi buscar seu reparte
-	 * 
-	 * @param idCotaAusente
-	 */
+	        /**
+     * Obtém os produtos edição disponíveis para uma cota ausente que foi buscar
+     * seu reparte
+     * 
+     * @param idCotaAusente
+     */
 	@Post
 	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
 		
-		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
+        List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis =
 			this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
 		
-		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
+        result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1)
+                .total(listaProdutosEdicaoDisponíveis.size()).serialize();
 		
 		}
 		
@@ -358,7 +358,7 @@ public class CotaAusenteController extends BaseController {
 			mensagens.clear();
 			mensagens.add(ERRO_CANCELAR_COTA_AUSENTE);
 			status=TipoMensagem.ERROR;
-			LOG.error(ERRO_CANCELAR_COTA_AUSENTE, e);
+			LOGGER.error(ERRO_CANCELAR_COTA_AUSENTE, e);
 		}
 		
 		Object[] retorno = new Object[2];
@@ -368,11 +368,11 @@ public class CotaAusenteController extends BaseController {
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 		
-	/**
-	 * Declara cota como ausente e envia seu reparte para suplementar
-	 * 
-	 * @param numCota - Número da Cota
-	 */
+	        /**
+     * Declara cota como ausente e envia seu reparte para suplementar
+     * 
+     * @param numCota - Número da Cota
+     */
 	@Post
 	@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE_ALTERACAO)
 	public void enviarParaSuplementar(List<Integer> numCotas) {
@@ -412,7 +412,7 @@ public class CotaAusenteController extends BaseController {
 			mensagens.clear();
 			mensagens.add(ERRO_ENVIO_SUPLEMENTAR );
 			status=TipoMensagem.ERROR;
-			LOG.error(ERRO_ENVIO_SUPLEMENTAR, e);
+			LOGGER.error(ERRO_ENVIO_SUPLEMENTAR, e);
 		}
 		
 		Object[] retorno = new Object[2];
@@ -422,11 +422,11 @@ public class CotaAusenteController extends BaseController {
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 
-	/**
-	 * Obtém movimentos para realização do Rateio
-	 * 
-	 * @param numCota
-	 */
+	        /**
+     * Obtém movimentos para realização do Rateio
+     * 
+     * @param numCota
+     */
 	@Post
 	public void carregarDadosRateio(List<Integer> numCotas) {
 		
@@ -457,7 +457,7 @@ public class CotaAusenteController extends BaseController {
 			}
 		}
 
-		//TODO: Alterar para não trazer dados já rateados
+        // TODO: Alterar para não trazer dados já rateados
 		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
@@ -467,7 +467,7 @@ public class CotaAusenteController extends BaseController {
 			
 			List<String> mensagens = new ArrayList<String>();
 			
-			mensagens.add("Não ha reparte para as cotas nesta data.");
+            mensagens.add("Não ha reparte para as cotas nesta data.");
 			
 			TipoMensagem tipoMensagem = TipoMensagem.WARNING;
 			
@@ -484,10 +484,12 @@ public class CotaAusenteController extends BaseController {
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
 	
-	/**
-	 * Verifica se a redistribuição esta sendo direcionada para a mesma cota que esta sendo cadastrada como ausente.
-	 * @param movimentos
-	 */
+	        /**
+     * Verifica se a redistribuição esta sendo direcionada para a mesma cota que
+     * esta sendo cadastrada como ausente.
+     * 
+     * @param movimentos
+     */
 	private void verificarCotaRateios(List<MovimentoEstoqueCotaDTO> movimentos){
 		
 		for (MovimentoEstoqueCotaDTO mecDTO : movimentos){
@@ -498,7 +500,8 @@ public class CotaAusenteController extends BaseController {
 			
 			    if (cota.getNumeroCota().equals(rateio.getNumCota())){
 			    	
-		            throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido redistribuir para a cota ausente.");
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Não é permitido redistribuir para a cota ausente.");
 		    	}
 		    }
 		}
@@ -559,7 +562,7 @@ public class CotaAusenteController extends BaseController {
 			mensagens.clear();
 			mensagens.add(ERRO_RATEIO );
 			status = TipoMensagem.ERROR;
-			LOG.error(ERRO_RATEIO, e);
+			LOGGER.error(ERRO_RATEIO, e);
 		}
 		
 		Object[] retorno = new Object[2];
@@ -570,13 +573,13 @@ public class CotaAusenteController extends BaseController {
 		this.result.use(Results.json()).from(retorno, "result").serialize();
 	}
 	
-	/**
-	 * Exporta os dados da pesquisa.
-	 * 
-	 * @param fileType - tipo de arquivo
-	 * 
-	 * @throws IOException Exceção de E/S
-	 */
+	        /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
@@ -584,7 +587,7 @@ public class CotaAusenteController extends BaseController {
 		
 		List<CotaAusenteDTO> listaCotaAusente = cotaAusenteService.obterCotasAusentes(filtro) ;
 		
-		FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+        FileExporter.to("cota_ausente", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
 				listaCotaAusente, CotaAusenteDTO.class, this.httpResponse);
 		
 		result.nothing();
@@ -595,7 +598,8 @@ public class CotaAusenteController extends BaseController {
 		FiltroCotaAusenteDTO filtro = (FiltroCotaAusenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtro == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "É necessário fazer uma pesquisa primeiro"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "É necessário fazer uma pesquisa primeiro"));
 		}
 		
 		return filtro;
