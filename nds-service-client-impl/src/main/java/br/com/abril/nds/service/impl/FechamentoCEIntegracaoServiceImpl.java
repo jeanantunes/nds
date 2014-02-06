@@ -21,8 +21,10 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
@@ -39,6 +41,8 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -77,6 +81,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired 
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired 
+	private TipoMovimentoService tipoMovimentoService;
 
 	@Transactional
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -223,6 +233,25 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     }
 
     /**
+     * Cria Movimento de Estoque de Devolução de Encalhe Fornecedor
+     * 
+     * @param itemFo
+     * @param dataOperacao
+     */
+    private void gerarMovimentoEstoqueDevolucaoFornecedor(ItemChamadaEncalheFornecedor itemFo, Date dataOperacao){
+    	
+    	TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+    	
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+				                                           itemFo.getProdutoEdicao().getId(), 
+				                                           usuario.getId(), 
+				                                           BigInteger.valueOf(itemFo.getQtdeDevolucaoInformada()),
+				                                           tipoMovimentoEstoque);
+    }
+    
+    /**
      * Processa C.E. Integração
      * 
      * @param filtro
@@ -281,6 +310,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				
 				itemFo = this.atualizarItem(itemFo, diferencas.get(itemFo.getId()));
 				
+                this.gerarMovimentoEstoqueDevolucaoFornecedor(itemFo, dataOperacao);	
 			}
 			
 			cef.setTotalCreditoApurado(totalCreditoApurado);
