@@ -661,6 +661,10 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	this.cancelar = function(){
 		
+		$("#codigoPesquisaBases").remove();
+		$("#produtoPesquisaBases").remove();
+		$("#produtoPesquisaBases").remove();
+		
 		$(".ui-tabs-selected").find("span").click();
 		$("a[href='"+pathTela+"/matrizDistribuicao']").click();
 	};
