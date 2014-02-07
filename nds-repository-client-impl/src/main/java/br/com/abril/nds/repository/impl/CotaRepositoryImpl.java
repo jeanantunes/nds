@@ -2034,9 +2034,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
-				+ "	    left outer join "
-				+ "	        BOX box1_  "
-				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
 				+ "	        ESTUDO_COTA ec_  "
 				+ "	            on cota_.ID=ec_.COTA_ID  "
@@ -3568,5 +3565,17 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaVO.class));
 		
 		return (CotaVO) query.uniqueResult();
+	}
+	
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicao(Long idCota){
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select tipoDistribuicaoCota from Cota where id = :idCota");
+		
+		query.setParameter("idCota", idCota);
+		
+		return (TipoDistribuicaoCota) query.uniqueResult();
 	}
 }

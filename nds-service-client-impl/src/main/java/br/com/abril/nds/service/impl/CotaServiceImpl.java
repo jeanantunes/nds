@@ -2656,33 +2656,7 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota) {
 		
-		Cota cota = cotaRepository.buscarPorId(idCota);
-		
-		for (PDV pdv: cota.getPdvs()) {
-			
-			if (pdv != null) {
-				
-				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
-				
-				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
-					
-					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
-					
-					if (segmentacaoPDV != null) {
-						
-						if (segmentacaoPDV.getTipoCaracteristica() != null &&
-								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
-							
-							return true;
-						}
-					}
-				}
-			}
-			
-		}
-		
-		
-		return false;
+		return TipoDistribuicaoCota.CONVENCIONAL.equals(this.cotaRepository.obterTipoDistribuicao(idCota));
 	}
 
 	@Transactional(readOnly = true)

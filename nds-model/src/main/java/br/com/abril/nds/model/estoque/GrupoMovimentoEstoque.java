@@ -328,7 +328,13 @@ public enum GrupoMovimentoEstoque  {
 	ALTERACAO_REPARTE_COTA_PARA_LANCAMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	ALTERACAO_REPARTE_COTA_PARA_RECOLHIMENTO(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.RECOLHIMENTO),
 	ALTERACAO_REPARTE_COTA_PARA_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR),
-	ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS);
+	ALTERACAO_REPARTE_COTA_PARA_PRODUTOS_DANIFICADOS(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PRODUTOS_DANIFICADOS),
+	
+	/**
+	 * Grupos de Movimento de Estoque para estorno de perda e ganho gerados na reabertura do fechamento de CE Fornecedor
+	 */
+	ESTORNO_GANHO_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.GANHO),
+	ESTORNO_PERDA_EM(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA);
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;
