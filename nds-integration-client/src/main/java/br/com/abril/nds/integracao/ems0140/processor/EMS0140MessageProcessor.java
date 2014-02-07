@@ -254,14 +254,13 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
                 
                 if (produto == null) {
                     
-                    TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(1L);
+                    TipoProduto tipoProduto = obterTipoProduto(inputItem.getTipoProduto());
                     
                     produto = new Produto();
                     produto.setCodigo(inputItem.getCodigoProduto());
                     produto.setCodigoICD(inputItem.getCodigoProduto());
                     produto.setPeriodicidade((!Strings.isNullOrEmpty(inputItem.getPeriodicidade())) ? 
                             PeriodicidadeProduto.valueOf(inputItem.getPeriodicidade()) : PeriodicidadeProduto.MENSAL );
-                    
                     produto.setNome(inputItem.getNomeProduto());
                     produto.setOrigem(Origem.INTERFACE);
                     produto.setTipoProduto(tipoProduto);
@@ -342,6 +341,20 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         return nfEntrada;
     }
     
+    private TipoProduto obterTipoProduto(String nomeTipoProduto) {
+        List<TipoProduto> listaTipoProduto = this.tipoProdutoRepository.busca(nomeTipoProduto, null, null, null, null, null, 0, 1);
+        
+        TipoProduto tipoProduto = null;
+        
+        if(listaTipoProduto.isEmpty()) {
+            tipoProduto = this.tipoProdutoRepository.buscarPorId(1L);
+        } else {
+            tipoProduto = listaTipoProduto.get(0);
+        }
+        
+        return tipoProduto; 
+    }
+
     private Lancamento obterLancamentoProdutoEdicao(Long idProdutoEdicao) {
         
         StringBuilder hql = new StringBuilder();
