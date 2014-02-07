@@ -2,7 +2,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
-<script type="text/javascript" src="scripts/fechamentoCEIntegracao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoCEIntegracao.js"></script>
 <script language="javascript" type="text/javascript">
 
 	$(function() {
@@ -72,11 +73,10 @@
 	       </span>
 		   
 		   <span class="bt_novos bt_acoes_grid_ce" id="btnImpressaoCE" >
-		      	<a isEdicao="true" href="javascript:;" title="Imprimir" rel="tipsy" title="Imprimir">
+		      	<a isEdicao="true" href="javascript:;" title="Imprimir CE Devolução" rel="tipsy">
 		      		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" id="imagemImprimirCE" />
 		      	</a>
 		    </span>
-		       
 		       
 		       <span class="bt_arq bt_acoes_grid_ce">
 				  	<a isEdicao="true" href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
