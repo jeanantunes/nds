@@ -151,13 +151,14 @@ public class DividaServiceImpl implements DividaService {
 		
 		Divida dividaAtual = this.dividaRepository.buscarPorId(idDivida);
 		
-		dividas.add(dividaAtual);
-		
-		this.adicionarDividasRaiz(dividas, dividaAtual);
-		
-		for(Divida d : dividas) {
-			d.getCobranca();
+		if (dividaAtual == null){
+			
+			return null;
 		}
+		    
+		dividas.add(dividaAtual);
+			
+		this.adicionarDividasRaiz(dividas, dividaAtual);
 		
 		return dividas;
 	}
@@ -170,7 +171,19 @@ public class DividaServiceImpl implements DividaService {
 		
 		Divida dividaAtual = this.dividaRepository.buscarPorId(idDivida);
 		
-		List<Negociacao> listaNegociacao = dividaAtual.getCobranca().getNegociacao();
+		if (dividaAtual == null){
+			
+			return null;
+		}
+		
+		Cobranca cobranca = dividaAtual.getCobranca();
+		
+		if (cobranca == null){
+			
+			return null;
+		}
+		
+		List<Negociacao> listaNegociacao = cobranca.getNegociacao();
 		
 		if (listaNegociacao != null && !listaNegociacao.isEmpty()) {
 		
