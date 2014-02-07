@@ -51,4 +51,6 @@ public interface FechamentoCEIntegracaoService {
 	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda);
 
 	String reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
+	
+	byte[] gerarImpressaoChamadaEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
 }
