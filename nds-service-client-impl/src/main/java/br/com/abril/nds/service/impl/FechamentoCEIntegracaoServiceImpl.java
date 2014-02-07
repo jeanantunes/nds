@@ -2,22 +2,36 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -53,6 +67,10 @@ import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoCEIntegracaoServiceImpl.class);
+
+	private static final String PATH_JASPER_CE_DEVOLUCAO = "/reports/CE_Devolucao_Fornecedor_lote.jasper";
 	
 	@Autowired
 	private FechamentoCEIntegracaoRepository fechamentoCEIntegracaoRepository;
@@ -707,5 +725,51 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		return (valorRetorno == null)? BigDecimal.ZERO: valorRetorno;
 	}
+	
+	  /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly=true)
+    public byte[] gerarImpressaoChamadaEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro) {
+        
+    	List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = 
+    			chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+
+        if(chamadasEncalheFornecedor.isEmpty())
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Chamada de Encalhe Fornecedor não encontrada!");
+        
+        Distribuidor distribuidor = distribuidorService.obter();
+        Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
+                .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
+                        distribuidor);
+        
+        return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
+    }
+    
+    /**
+     * Gera o PDF com as chamadas de encalhe recebidas
+     * 
+     * @param chamadas chamadas de encalhe para geração do PDF
+     * @return PDF gerado com as chamadas de encalhe
+     */
+    private byte[] gerarPDFChamadaEncalheFornecedor(Collection<ChamadasEncalheFornecedorDTO> chamadas) {
+       
+        try {
+            
+        	JRDataSource jrDataSource = new JRBeanCollectionDataSource(chamadas);
+
+    		URL url = Thread.currentThread().getContextClassLoader().getResource(PATH_JASPER_CE_DEVOLUCAO);
+
+    		String path = url.toURI().getPath();
+
+    		return JasperRunManager.runReportToPdf(path, new HashMap<String, Object>(), jrDataSource);
+        	
+        } catch (URISyntaxException | JRException ex) {
+            LOGGER.error("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+            throw new RuntimeException("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+        }
+    }
+    
 
 }
