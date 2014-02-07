@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
+import com.ancientprogramming.fixedformat4j.annotation.FixedFormatDecimal;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
@@ -148,7 +149,8 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.periodicidade = periodicidade;
 	}
 	
-	@Field(offset = 202, length = 6)
+	@Field(offset = 203, length = 6)
+	@FixedFormatDecimal(decimals=3)
 	public Double getPeso() {
 		return peso;
 	}
@@ -157,7 +159,7 @@ public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serial
 		this.peso = peso;
 	}
 	
-	@Field(offset = 208, length = 20)
+	@Field(offset = 209, length = 20)
 	public String getTipoProduto() {
 		return tipoProduto;
 	}
