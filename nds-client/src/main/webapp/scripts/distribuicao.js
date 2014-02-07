@@ -22,16 +22,14 @@ function Distribuicao(tela) {
 				function(result) {
 
 					if (result){
-						if(result.tipoDistribuicaoCota=='CONVENCIONAL'){
+						
+						if (result.boolean){
+							
 							D.$('recebeComplementar').removeAttr('disabled');
-							/*if(result.recebeComplementar==true)
-								D.$('recebeComplementar').attr('checked','checked');
-							else
-								D.$('recebeComplementar').removeAttr('checked');*/
-						}else if(result.tipoDistribuicaoCota=='ALTERNATIVO'){
+						} else {
+							
 							D.$('recebeComplementar').attr('disabled', true);
 						}
-						
 					}
 				},
 				
@@ -165,7 +163,7 @@ function Distribuicao(tela) {
 		
 		if(dto.tipoDistribuicaoCota=='CONVENCIONAL'){
 			D.set('recebeComplementar',	dto.recebeComplementar);			
-		}else if(dto.tipoDistribuicaoCota=='ALTERNATIVO'){
+		}else {
 			D.set('recebeComplementar',	false);
 		}
 		

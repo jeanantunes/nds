@@ -171,7 +171,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 			
 		hql.append("             or ccc.codigoDiaSemana = :diaSemana ) )");
 		
-		hql.append(" and f.principal = :principal ");
+		hql.append(" and p.principal = :principal ");
 		
 
 		Query query = super.getSession().createQuery(hql.toString());

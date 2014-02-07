@@ -1265,6 +1265,22 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(" and COTA.ID=cfc_data.COTA_ID limit 1) as numeroAcumulo, ")
                    
                    .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
+                   
+                   //detalharDebitoCredito
+                   .append("(select case when count(m.id) > 0 then true else false end ")
+                   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+                   .append(" inner join COTA on COTA.ID = m.COTA_ID")
+                   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+                   .append(" and (m.TIPO_MOVIMENTO_ID in (:tiposMovimentoCredito) or m.TIPO_MOVIMENTO_ID in (:tiposMovimentoDebito) ) ")
+                   .append(" and m.ID in (")
+                   .append("     select MVTO_FINANCEIRO_COTA_ID ")
+                   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+                   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+                   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+                   .append(") and m.DATA = cfc.DT_CONSOLIDADO ")
+                   .append(")")
+                   .append(" as detalharDebitoCredito, ")
+                   
                    .append(" cfc.ENCALHE as encalhe, ")
                    .append(" cfc.ENCARGOS as encargos, ")
                    .append(" cfc.PENDENTE as pendente, ")
@@ -1332,7 +1348,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    
                    .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
                    .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
-                   .append(" inner join DIVIDA_CONSOLIDADO d_cons on d_cons.CONSOLIDADO_ID = cfc.ID ")
+                   .append(" left join DIVIDA_CONSOLIDADO d_cons on d_cons.CONSOLIDADO_ID = cfc.ID ")
                    .append(" left join DIVIDA divida on divida.ID = d_cons.DIVIDA_ID ")
                    .append(" left join BOX box on cota.BOX_ID = box.ID")
                    .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
@@ -1417,6 +1433,21 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                    .append(") and m.DATA = mfc.DATA ")
                    .append("),0)")
                    .append(") as debitoCredito, ")
+                   
+                   //detalharDebitoCredito
+                   .append("(select case when count(m.id) > 0 then true else false end ")
+                   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+                   .append(" inner join COTA on COTA.ID = m.COTA_ID")
+                   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+                   .append(" and (m.TIPO_MOVIMENTO_ID in (:tiposMovimentoCredito) or m.TIPO_MOVIMENTO_ID in (:tiposMovimentoDebito) ) ")
+                   .append(" and m.ID not in (")
+                   .append("     select MVTO_FINANCEIRO_COTA_ID ")
+                   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+                   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+                   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+                   .append(") and m.DATA = mfc.DATA ")
+                   .append(")")
+                   .append(" as detalharDebitoCredito, ")
                    
                    //encalhe
                    .append("coalesce((select sum(m.VALOR) ")
@@ -1735,6 +1766,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
                 query.addScalar("statusDivida", StandardBasicTypes.STRING);
 
                 query.addScalar("nomeBox");
+                query.addScalar("detalharDebitoCredito", StandardBasicTypes.BOOLEAN);
 
                 
                 query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));

@@ -226,17 +226,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 				
-				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor.getPoliticaCobranca();
+				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor != null ? formaCobrancaDistribuidor.getPoliticaCobranca() : null;
 				
 				parametroCobranca = new ParametroCobrancaCota();
 
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(politicaCobranca.getFatorVencimento());
 				parametroCobranca.setFormasCobrancaCota(null);
-				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
+
+				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor != null ? 
+														 formaCobrancaDistribuidor.getValorMinimoEmissao() : BigDecimal.ZERO);
 				
 				if(politicaCobranca != null) {
 					
+					parametroCobranca.setFatorVencimento(politicaCobranca.getFatorVencimento());
+
 					parametroCobranca.setUnificaCobranca(politicaCobranca.isUnificaCobranca());
 
 					parametroCobranca.setFornecedorPadrao(politicaCobranca.getFornecedorPadrao());
@@ -792,9 +795,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		if (formasCobrancaDTO.isEmpty()){
 			
 			if (formasCobranca == null || formasCobranca.size() == 0) {
-				formasCobranca = new ArrayList<>();
+				formasCobranca = new ArrayList<FormaCobranca>();
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaRepository.obterFormaCobranca();
-				formasCobranca.add(formaCobrancaDistribuidor);
+				if (formaCobrancaDistribuidor !=null) {
+					formasCobranca.add(formaCobrancaDistribuidor);
+				}
 			}
 			
 			if (this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())){
