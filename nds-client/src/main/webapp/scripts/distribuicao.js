@@ -22,16 +22,14 @@ function Distribuicao(tela) {
 				function(result) {
 
 					if (result){
-						if(result.tipoDistribuicaoCota=='CONVENCIONAL'){
+						
+						if (result.boolean){
+							
 							D.$('recebeComplementar').removeAttr('disabled');
-							/*if(result.recebeComplementar==true)
-								D.$('recebeComplementar').attr('checked','checked');
-							else
-								D.$('recebeComplementar').removeAttr('checked');*/
-						}else if(result.tipoDistribuicaoCota=='ALTERNATIVO'){
+						} else {
+							
 							D.$('recebeComplementar').attr('disabled', true);
 						}
-						
 					}
 				},
 				

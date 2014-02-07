@@ -358,7 +358,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			//Varre todos os movimentos encontrados, agrupando por cota e por fornecedor
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
 			
-			Fornecedor ultimoFornecedor = null;
+			Fornecedor ultimoFornecedor = listaMovimentoFinanceiroCota.get(0).getFornecedor();
 			
 			BigDecimal valorMovimentos = BigDecimal.ZERO;
 			

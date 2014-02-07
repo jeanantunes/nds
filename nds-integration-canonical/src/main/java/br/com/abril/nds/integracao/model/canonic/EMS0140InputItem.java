@@ -5,7 +5,9 @@ import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
+import com.ancientprogramming.fixedformat4j.annotation.Record;
 
+@Record
 public class EMS0140InputItem extends IntegracaoDocumentDetail implements Serializable {
 
 	private static final long serialVersionUID = -7153363922617002707L;

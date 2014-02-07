@@ -96,6 +96,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	imprimirCE:function(){
 		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/geraChamadaCE', null,
+				
+		function(result) {
+			
+			var file = contextPath + '/devolucao/fechamentoCEIntegracao/imprimirCE';
+	
+			$('#download-iframe-fechamento', fechamentoCEIntegracaoController.workspace).attr('src', file);
+	
+		});
+		
 	},
 	
 	getItensAlteradosCE:function(){
@@ -131,6 +141,17 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 		});
 		
+	},
+	
+	validarPreenchimentoCampo:function(campo,nomeCampo){
+		
+		if(campo.value.length < 1){
+			exibirMensagem('WARNING', ["Deve ser informado um valor para campo "+nomeCampo+"!"]);
+			campo.value = "0";
+			campo.focus();
+			return false;
+		}
+		return true;
 	},
 	
 	popupConfirmacao : function() {
@@ -266,7 +287,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	tratarAlteracaoEncalhe : function(idItemCeIntegracao, encalhe) {
+	tratarAlteracaoEncalhe : function(idItemCeIntegracao, campo) {
+		
+		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo,"Encalhe")){
+			return;
+		}
+		
+		var encalhe = campo.value;
 		
 		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
@@ -305,7 +332,13 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			idItemCeIntegracao, encalhe, venda);
 	},
 	
-	tratarAlteracaoVenda : function(idItemCeIntegracao, venda) {
+	tratarAlteracaoVenda : function(idItemCeIntegracao, campo) {
+		
+		if(!fechamentoCEIntegracaoController.validarPreenchimentoCampo(campo,"Venda")){
+			return;
+		}
+		
+		var venda = campo.value;
 		
 		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
@@ -404,7 +437,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							'value="' + row.cell.venda + '" size="5px"' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
-							row.cell.idItemCeIntegracao + ', this.value)"/>';
+							row.cell.idItemCeIntegracao + ', this)"/>';
 						
 					} else {
 						
@@ -413,7 +446,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'id="inputEncalhe' + row.cell.idItemCeIntegracao + '" ' +
 							'value="' + ((row.cell.encalhe)?row.cell.encalhe:'') + '" size="5px" ' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
-							row.cell.idItemCeIntegracao + ', this.value)"/>';
+							row.cell.idItemCeIntegracao + ', this)"/>';
 						
 						colunaVenda =	
 							'<span id="venda' + row.cell.idItemCeIntegracao + '">' +

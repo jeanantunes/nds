@@ -900,28 +900,6 @@ TipoMensagem.ERROR,
 		return listaContagemEdicaoFechada;
 	}
 	
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public byte[] gerarImpressaoChamadaEncalheFornecedor(Long idFornecedor,
-            Integer numeroSemana, Intervalo<Date> periodo) {
-        List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = chamadaEncalheFornecedorRepository
-                .obterChamadasEncalheFornecedor(idFornecedor, numeroSemana,
-                        periodo);
-
-        if(chamadasEncalheFornecedor.isEmpty())
-        	throw new ValidacaoException(TipoMensagem.WARNING, "");
-        
-        Distribuidor distribuidor = distribuidorService.obter();
-        Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
-                .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
-                        distribuidor);
-        
-        return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
-    }
-
     @Override
     @Transactional
 	public void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
@@ -951,24 +929,6 @@ TipoMensagem.ERROR,
         }
 	}
 
-    /**
-     * Gera o PDF com as chamadas de encalhe recebidas
-     * 
-     * @param chamadas chamadas de encalhe para geração do PDF
-     * @return PDF gerado com as chamadas de encalhe
-     */
-    protected byte[] gerarPDFChamadaEncalheFornecedor(Collection<ChamadasEncalheFornecedorDTO> chamadas) {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/CE_Devolucao_Fornecedor_lote.jasper");
-        try {
-            JRDataSource dataSource = new JRBeanCollectionDataSource(chamadas);
-            String path = url.toURI().getPath();
-            return JasperRunManager.runReportToPdf(path, new HashMap<String, Object>(), dataSource);
-        } catch (URISyntaxException | JRException ex) {
-            LOGGER.error("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
-            throw new RuntimeException("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
-        }
-    }
-    
     @Override
     @Transactional(readOnly = true)
     public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean perfilEncarregado){
