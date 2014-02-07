@@ -223,4 +223,23 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (BigInteger) query.uniqueResult();
 	}
+	
+	
+	@Override
+	public BigInteger buscarQtdEstoqueProdutoEdicao(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select e.qtde 				")
+		   .append(" from EstoqueProduto e 		")
+		   .append(" join e.produtoEdicao pe 	")
+		   .append(" where pe.id = :idProdutoEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+	}
+	
 }

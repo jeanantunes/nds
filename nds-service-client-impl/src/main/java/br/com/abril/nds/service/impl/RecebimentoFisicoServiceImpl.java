@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
@@ -116,6 +118,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private DistribuidorService distribuidorService;
 	
 	private final BigDecimal CEM = new BigDecimal(100);
+
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	/**
 	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
@@ -252,6 +257,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
+		notaFiscal.setUsuario(usuarioLogado);
+		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
@@ -370,9 +377,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		
-		//notaFiscal.setDataRecebimento(new Date());
-		
-		//notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		notaFiscal.setUsuario(usuarioLogado);
 		
 		notaFiscalRepository.merge(notaFiscal);
 		
@@ -444,6 +449,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param listaItensNota
 	 */
 	private void inserirDadosNovaNotaFiscal(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
+		
+		notaFiscal.setUsuario(usuarioLogado);
 		
 		notaFiscal.setDataExpedicao(dataAtual);
 		
@@ -1012,8 +1019,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(nota == null) 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nota não encontrada.");	
 						
-		if(notaFiscalRepository.notaPossuiItemExpedido(nota.getId()))
-			throw new ValidacaoException(TipoMensagem.ERROR, "A nota possui produto(s) expedido(s).");	
+		validarNotaComProdutosExpedidos(nota);	
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -1040,6 +1046,55 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			limparNotaFiscalEntrada(nota, false);
 		}
+	}
+
+	private Map<Long, BigInteger> getMapaItensNotaFiscalEntrada(NotaFiscalEntrada nota){
+		
+		Map<Long, BigInteger> mapa = new HashMap<>(); 
+		List<ItemNotaFiscalEntrada> itens = nota.getItens();
+		
+		for(ItemNotaFiscalEntrada item : itens) {
+			
+			ProdutoEdicao pe = item.getProdutoEdicao();
+			
+			if(pe == null) {
+				continue;
+			}
+			
+			mapa.put(pe.getId(), item.getQtde());
+		}
+		
+		return mapa;
+		
+		
+	}
+	
+	/**
+	 * Valida se algum item da nota possui lançamento expedi
+	 * @param nota
+	 */
+	private void validarNotaComProdutosExpedidos(NotaFiscalEntrada nota) {
+		
+		List<Long> idsProdutoEdicaoExpedidos = notaFiscalRepository.pesquisarItensNotaExpedidos(nota.getId());
+		
+		if(idsProdutoEdicaoExpedidos == null || idsProdutoEdicaoExpedidos.isEmpty()) {
+			return;
+		}
+		
+		Map<Long, BigInteger> mapaItensNotaFiscal = getMapaItensNotaFiscalEntrada(nota);
+		
+		for(Long idProdutoEdicao : idsProdutoEdicaoExpedidos) {
+			
+			BigInteger qtdeEstoque 	= estoqueProdutoRepository.buscarQtdEstoqueProdutoEdicao(idProdutoEdicao);
+		
+			BigInteger qtdeItemNota = mapaItensNotaFiscal.get(idProdutoEdicao);
+			
+			if(qtdeEstoque.compareTo(qtdeItemNota)<0) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "A nota possui produto(s) expedido(s).");
+			}
+			
+		}
+		
 	}
 
 	private void verificarFaltasESobras(NotaFiscalEntrada nota) {
