@@ -78,6 +78,35 @@ public class Expedicao implements Serializable {
 	public void setLancamentos(List<Lancamento> lancamentos) {
 		this.lancamentos = lancamentos;
 	}
-	
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getLancamentos() == null) ? 0 : this.getLancamentos().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Expedicao other = (Expedicao) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getLancamentos() == null) {
+			if (other.getLancamentos() != null)
+				return false;
+		} else if (!this.getLancamentos().equals(other.getLancamentos()))
+			return false;
+		return true;
+	}
 }

@@ -48,5 +48,5 @@ public interface ImpressaoNFEService {
 	
 	List<br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO> obterNotafiscalImpressao(FiltroImpressaoNFEDTO filtro);
 
-	void imprimirNFe(FiltroImpressaoNFEDTO filtro);
+	byte[] imprimirNFe(FiltroImpressaoNFEDTO filtro);
 }

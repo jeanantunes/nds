@@ -147,4 +147,40 @@ public class ChamadaEncalheCota implements Serializable {
 		this.conferenciasEncalhe = conferenciasEncalhe;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getChamadaEncalhe() == null) ? 0 : this.getChamadaEncalhe().hashCode());
+		result = prime * result + ((this.getCota() == null) ? 0 : this.getCota().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChamadaEncalheCota other = (ChamadaEncalheCota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getChamadaEncalhe() == null) {
+			if (other.getChamadaEncalhe() != null)
+				return false;
+		} else if (!this.getChamadaEncalhe().equals(other.getChamadaEncalhe()))
+			return false;
+		if (this.getCota() == null) {
+			if (other.getCota() != null)
+				return false;
+		} else if (!this.getCota().equals(other.getCota()))
+			return false;
+		return true;
+	}
 }

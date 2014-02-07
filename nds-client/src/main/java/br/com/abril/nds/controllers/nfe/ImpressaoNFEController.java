@@ -270,11 +270,11 @@ public class ImpressaoNFEController extends BaseController {
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
 		 
-		this.impressaoNFEService.imprimirNFe(filtro);
+		byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 		
-		// validar o tipo de nota
-			// agregar ao tipo de nota..
+		escreverArquivoParaResponse(report, "danfeCumpade");
 		
+		result.use(Results.json()).withoutRoot();
 	}
 	
 	/**
@@ -307,7 +307,6 @@ public class ImpressaoNFEController extends BaseController {
 	/**
 	 * Metodo utilitario para escrever arquivo em pdf
 	 */
-	@SuppressWarnings("unused")
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) {
 		
 		this.httpResponse.setContentType("application/pdf");

@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DanfeDTO;
+import br.com.abril.nds.dto.DanfeWrapper;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
@@ -28,6 +32,8 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.builders.DanfeBuilder;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 /**
@@ -59,9 +65,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.ImpressaoNFEService#obterProdutosExpedicaoConfirmada(java.util.List)
-	 */
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
+
 	@Transactional
 	public List<ProdutoDTO> obterProdutosExpedicaoConfirmada(FiltroImpressaoNFEDTO filtro) {
 		
@@ -129,19 +135,33 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 
 	@Override
 	@Transactional
-	public void imprimirNFe(FiltroImpressaoNFEDTO filtro) {
+	public byte[] imprimirNFe(FiltroImpressaoNFEDTO filtro) {
 		
+		List<DanfeWrapper> listaDanfeWrapper = new ArrayList<DanfeWrapper>();
 		LOGGER.info("Metodo responsavel pela impressão de NFE...");
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		
+		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
+		// InputStream logoTipoDistribuidor = distribuidor.getLogotipoDistribuidor();  
 		if(TipoAtividade.MERCANTIL.equals(distribuidor.getTipoAtividade())) {
-			LOGGER.info("MERCANTIL..... ");
 			
-			if(regimeEspecialDispensaInterna(distribuidor)){
-				LOGGER.info("obter Nota de envio sem chave de acesso ");
-			}else{
+			if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+				LOGGER.info("obter informações para imprimir DANFE ou NECA... ");				
 				
-				LOGGER.info("obter imprimir DANFE ou NECA... ");
+				List<NotaFiscal> notas = this.impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
+				
+				for (NotaFiscal notaFiscal : notas) {
+					DanfeDTO danfe = montarDanfe(notaFiscal);
+					
+					if(danfe!=null) {
+						listaDanfeWrapper.add(new DanfeWrapper(danfe));
+					}
+				}
+				
+			}else{
+				LOGGER.info("obter Nota de envio sem chave de acesso ");
+				
+				
+			
 			}
 		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade())) {
 			LOGGER.info("PRESTADOR_SERVICO ..... ");
@@ -154,12 +174,35 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 		}else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao comparar o tipo de atividade");
 		}
+		
+		return DanfeBuilder.gerarDocumentoIreport(listaDanfeWrapper, false, obterDiretorioReports(), logoDistribuidor);
+	}
+
+	private DanfeDTO montarDanfe(NotaFiscal notaFiscal) {
+		DanfeDTO danfe = new DanfeDTO();
+		
+		DanfeBuilder.carregarDanfeDadosPrincipais(danfe, notaFiscal);
+		
+		DanfeBuilder.carregarDanfeDadosEmissor(danfe, notaFiscal);
+
+		DanfeBuilder.carregarDanfeDadosDestinatario(danfe, notaFiscal);
+		
+		DanfeBuilder.carregarDanfeDadosTributarios(danfe, notaFiscal);
+		
+		DanfeBuilder.carregarDanfeDadosTransportadora(danfe, notaFiscal);
+		
+		DanfeBuilder.carregarDadosItensDanfe(danfe, notaFiscal);
+		
+		DanfeBuilder.carregarDadosDuplicatas(danfe, notaFiscal);
+		
+		return danfe;
 	}
 	
-	private boolean regimeEspecialDispensaInterna(Distribuidor distribuidor){
-		if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
-			return false;
-		}
-		return true;
+	protected URL obterDiretorioReports() {
+		
+		URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports");
+		
+		return urlDanfe;
 	}
+	
 }
