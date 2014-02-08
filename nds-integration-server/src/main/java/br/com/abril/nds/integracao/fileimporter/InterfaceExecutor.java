@@ -288,7 +288,7 @@ public class InterfaceExecutor {
 
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
-		
+		 
 			List<File> arquivos = this.recuperaArquivosProcessar(this.diretorio, this.pastaInterna, interfaceExecucao, distribuidor);
 			
 			if (arquivos == null || arquivos.isEmpty()) {
