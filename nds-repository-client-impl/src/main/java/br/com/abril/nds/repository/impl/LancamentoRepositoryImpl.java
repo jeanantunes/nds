@@ -2370,4 +2370,11 @@ public class LancamentoRepositoryImpl extends
 			.setParameterList("idsEstudos", idsEstudos).executeUpdate();
 	}
 
+	@Override
+	public List<Lancamento> obterMatrizLancamentosExpedidos(
+			List<Date> datasConfirmadas) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
