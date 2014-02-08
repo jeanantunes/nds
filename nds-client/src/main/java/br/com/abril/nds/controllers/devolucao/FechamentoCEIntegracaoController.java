@@ -2,8 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO.ColunaOrdenacaoFechamentoCEIntegracao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
@@ -58,6 +56,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	private static final String BOLETO_GERADO = "boletoDistribuidorGerado";
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO = "filtroFechamentoCEIntegracao";
+
+	private static final String CHAMADA_CE_GERADO = "chamadaCeIntegracao";
 	
 	private Result result;
 	
@@ -135,19 +135,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("/pesquisaPrincipal")
-	public void pesquisaPrincipal(FiltroFechamentoCEIntegracaoDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisaPrincipal(String semana, Long idFornecedor, String sortorder, String sortname, int page, int rp){
 		
-		validarAnoSemana(filtro.getSemana());
+		validarAnoSemana(semana);
 		
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		FiltroFechamentoCEIntegracaoDTO filtroCE = new FiltroFechamentoCEIntegracaoDTO();
+		filtroCE.setSemana(semana);
+		filtroCE.setIdFornecedor(idFornecedor);
 		
-		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(ColunaOrdenacaoFechamentoCEIntegracao.values(),sortname));
+		filtroCE.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
-		this.tratarFiltro(filtro);
+		filtroCE.setOrdenacaoColuna(Util.getEnumByStringValue(ColunaOrdenacaoFechamentoCEIntegracao.values(),sortname));
+		
+		this.tratarFiltro(filtroCE);
 
-		FechamentoCEIntegracaoDTO fechamentoCEIntegracao = fechamentoCEIntegracaoService.obterCEIntegracaoFornecedor(filtro); 
+		FechamentoCEIntegracaoDTO fechamentoCEIntegracao = fechamentoCEIntegracaoService.obterCEIntegracaoFornecedor(filtroCE); 
 		
-		FechamentoCEIntegracaoVO retornoPesquisa = renderizarPesquisa(fechamentoCEIntegracao, filtro);
+		FechamentoCEIntegracaoVO retornoPesquisa = renderizarPesquisa(fechamentoCEIntegracao, filtroCE);
 		
 		result.use(Results.json()).withoutRoot().from(retornoPesquisa).recursive().serialize();
 		
@@ -194,11 +198,11 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Post
 	@Path("fecharCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void fecharCE(Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas){
+	public void fecharCE(List<ItemFechamentoCEIntegracaoDTO> itens){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		fechamentoCEIntegracaoService.fecharCE(filtro, diferencas);
+		fechamentoCEIntegracaoService.fecharCE(filtro, this.obterMapItensCE(itens));
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
@@ -298,32 +302,24 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	private void carregarComboFornecedores() {
 		
-		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresAtivos();
-		
-		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
-		
-		for (Fornecedor fornecedor : listaFornecedor) {
-			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
-		}
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = fornecedorService.obterFornecedoresUnificados();
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
-		
-		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
-			idItemChamadaFornecedor, encalhe, venda);
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigDecimal venda) {
 		
 		FiltroFechamentoCEIntegracaoDTO filtro =
 			(FiltroFechamentoCEIntegracaoDTO)
 				session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
 		filtro.setPaginacao(null);
+		filtro.setIdItemChamadaEncalheFornecedor(idItemChamadaFornecedor);
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
 		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
-			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro, venda);
 		
 		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
 		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
@@ -332,30 +328,12 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
 	
-	@Get
-	@Path("/imprimeCE")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
-	public void imprimirCE(){
-		
-		FiltroFechamentoCEIntegracaoDTO filtro =
-				(FiltroFechamentoCEIntegracaoDTO)
-					session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-			
-		filtro.setPaginacao(null);
-		
-		//TODO chamar metodo para impressao de CE
-	}
-	
 	@Post
 	@Path("/salvarCE")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
 	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens ){
 		
-		FiltroFechamentoCEIntegracaoDTO filtro =
-				(FiltroFechamentoCEIntegracaoDTO)
-					session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
-		
-		fechamentoCEIntegracaoService.salvarCE(filtro, this.obterMapItensCE(itens));
+		fechamentoCEIntegracaoService.salvarCE(itens);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Informações salvas com sucesso."),"result").recursive().serialize();
 	}
@@ -376,6 +354,46 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}});
 		
 		return mapItensCE ;
+	}
+	
+	@Post
+	@Path("/geraChamadaCE")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
+	public void geraChamadaCE() {
+		
+		session.setAttribute(CHAMADA_CE_GERADO, null);
+		
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		if(filtro == null || filtro.getSemana() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma pesquisa realizada.");
+		}
+		
+		try {
+			
+			 byte[] chamadasEncalhe = fechamentoCEIntegracaoService.gerarImpressaoChamadaEncalheFornecedor(filtro); 
+
+			session.setAttribute(CHAMADA_CE_GERADO, chamadasEncalhe);
+			
+			result.use(Results.json()).from("").serialize();
+			
+		} catch(ValidacaoException e) { 
+			throw e;
+		} catch(Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração da chamada de enclahe fornecedor.");
+		}
+	}
+	
+	@Get
+	@Path("/imprimirCE")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
+	public void imprimirCE() throws Exception {
+		
+		byte[] chamadaCE = (byte[]) session.getAttribute(CHAMADA_CE_GERADO);
+		
+		session.setAttribute(CHAMADA_CE_GERADO, null);
+		
+		escreverArquivoParaResponse(chamadaCE, "chamadas-encalhe");
 	}
 
 }

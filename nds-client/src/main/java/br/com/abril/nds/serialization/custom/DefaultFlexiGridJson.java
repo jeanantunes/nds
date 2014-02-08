@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.converters.ConvertDataJSON;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -22,6 +24,8 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 
 @Component
 public class DefaultFlexiGridJson implements FlexiGridJson {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFlexiGridJson.class);
 	
 	private XStreamSerializer serializer;
     private XStream xstream;
@@ -41,7 +45,7 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
             xstream = new XStream(new JsonHierarchicalStreamDriver() {
                 @Override
                 public HierarchicalStreamWriter createWriter(Writer writer) {
-                    return new JsonWriter(writer, new char[0], "", JsonWriter.DROP_ROOT_MODE) {
+                return new JsonWriter(writer, new char[0], "", JsonWriter.DROP_ROOT_MODE) {
                         @Override
                         public void addAttribute(String key, String value) {
                             if (!key.equals("class")) {
@@ -98,7 +102,7 @@ public class DefaultFlexiGridJson implements FlexiGridJson {
 			    serializer = new XStreamSerializer(xstream, this.response.getWriter(), this.extractor, this.initializer);
 			}
 			catch(IOException e){
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 			    
 			return this;

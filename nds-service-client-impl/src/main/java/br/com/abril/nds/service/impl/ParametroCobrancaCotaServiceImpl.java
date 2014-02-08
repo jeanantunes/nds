@@ -23,8 +23,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -226,17 +226,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 				
-				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor.getPoliticaCobranca();
+				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor != null ? formaCobrancaDistribuidor.getPoliticaCobranca() : null;
 				
 				parametroCobranca = new ParametroCobrancaCota();
 
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(politicaCobranca.getFatorVencimento());
 				parametroCobranca.setFormasCobrancaCota(null);
-				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
+
+				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor != null ? 
+														 formaCobrancaDistribuidor.getValorMinimoEmissao() : BigDecimal.ZERO);
 				
 				if(politicaCobranca != null) {
 					
+					parametroCobranca.setFatorVencimento(politicaCobranca.getFatorVencimento());
+
 					parametroCobranca.setUnificaCobranca(politicaCobranca.isUnificaCobranca());
 
 					parametroCobranca.setFornecedorPadrao(politicaCobranca.getFornecedorPadrao());
@@ -792,9 +795,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		if (formasCobrancaDTO.isEmpty()){
 			
 			if (formasCobranca == null || formasCobranca.size() == 0) {
-				formasCobranca = new ArrayList<>();
+				formasCobranca = new ArrayList<FormaCobranca>();
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaRepository.obterFormaCobranca();
-				formasCobranca.add(formaCobrancaDistribuidor);
+				if (formaCobrancaDistribuidor !=null) {
+					formasCobranca.add(formaCobrancaDistribuidor);
+				}
 			}
 			
 			if (this.cotaUnificacaoRepository.verificarCotaUnificadora(cota.getNumeroCota())){

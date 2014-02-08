@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
@@ -15,8 +16,6 @@ import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +55,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		try {
 			session = sessionFactoryGfs.getCurrentSession();
 		} catch(Exception e) {
-			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
+            LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
 		
 		if(session == null) {
@@ -141,8 +140,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						
 					}
 					
-				} catch (NoDocumentException ex ) {
-					ex.printStackTrace();	
+                } catch (NoDocumentException e) {
+                    LOGGER.error(e.getMessage(), e);
 				}			
 			}
 			
@@ -152,7 +151,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
 	}
 	
 	/* =============================================

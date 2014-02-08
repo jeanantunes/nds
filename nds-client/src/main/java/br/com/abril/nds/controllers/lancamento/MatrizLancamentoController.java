@@ -1204,7 +1204,9 @@ public class MatrizLancamentoController extends BaseController {
 			
 			if (!confirmacaoVO.isConfirmado()) {
 				
-				if(!this.distribuidorService.obterDataOperacaoDistribuidor().after(data)){
+
+				if(this.distribuidorService.obterDataOperacaoDistribuidor().getTime() <= data.getTime()){
+
 					
 					confirmacoesAuxVO.add(confirmacaoVO);
 				}
@@ -1329,13 +1331,22 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
-	public void reabrirMatriz(List<Date> datasReabertura) {
+	public void reabrirMatriz(List<Date> datasReabertura, Date dataLancamento, List<Long> idsFornecedores) {
 
 		if (datasReabertura == null || datasReabertura.isEmpty()) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
 		}
 		this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
+		
+		validarDadosPesquisa(dataLancamento, idsFornecedores);
+		
+		removerAtributoAlteracaoSessao();
+
+		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
+		
+		// Recarrega o objeto na sessao
+		this.obterBalanceamentoLancamento(filtro);
 		
 		this.result.use(PlainJSONSerialization.class).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();

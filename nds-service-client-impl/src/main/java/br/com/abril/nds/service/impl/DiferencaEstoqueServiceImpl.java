@@ -214,7 +214,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Transactional
 	public void lancarDiferencaAutomaticaContagemDevolucao(Diferenca diferenca) {
 		
-		processarDiferenca(diferenca, TipoEstoque.LANCAMENTO, StatusConfirmacao.CONFIRMADO);
+		processarDiferenca(diferenca, TipoEstoque.LANCAMENTO, StatusConfirmacao.CONFIRMADO, true);
 		
 		StatusAprovacao statusAprovacao = StatusAprovacao.GANHO;
 		
@@ -237,34 +237,53 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		movimentoEstoqueRepository.alterar(movimentoEstoque);
 	}
 	
+	@Override
 	@Transactional
 	public Diferenca lancarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque) {
 		
-		diferenca = processarDiferenca(diferenca, tipoEstoque,StatusConfirmacao.PENDENTE);
+		boolean automatica = false;
+		
+		diferenca = processarDiferenca(diferenca, tipoEstoque,StatusConfirmacao.PENDENTE, automatica);
 		
 		return diferenca;
 	}
-
 	
+	@Override
+	@Transactional
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, 
+			                                   TipoEstoque tipoEstoque) {
+		
+		boolean automatica = true;
+		
+		diferenca = processarDiferenca(diferenca, tipoEstoque,StatusConfirmacao.PENDENTE, automatica);
+		
+		return diferenca;
+	}
+	
+	@Override
 	@Transactional
 	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, 
 											   TipoEstoque tipoEstoque, 
 											   StatusAprovacao statusAprovacao,
 											   Origem origem) {
 		
-		diferenca = processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
+		boolean automatica = true;
+		
+		diferenca = processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO, automatica);
 		
 		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca), statusAprovacao, true, origem);
 		
 		return diferenca;
 	}
 
-	private Diferenca processarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque, StatusConfirmacao statusConfirmacao) {
+	private Diferenca processarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque, StatusConfirmacao statusConfirmacao, boolean automatica) {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
-		diferenca.setAutomatica(true);
-		diferenca.setDataMovimento(this.distribuidorService.obterDataOperacaoDistribuidor());
+		diferenca.setAutomatica(automatica);
+		diferenca.setDataMovimento(dataOperacao);
 		diferenca.setTipoEstoque(tipoEstoque);
 		
 		return this.diferencaEstoqueRepository.merge(diferenca);

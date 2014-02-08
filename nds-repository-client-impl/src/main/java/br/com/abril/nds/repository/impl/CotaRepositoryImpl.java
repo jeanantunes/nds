@@ -30,8 +30,7 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -93,7 +92,7 @@ import br.com.abril.nds.util.Intervalo;
 @Repository
 public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> implements CotaRepository {
 	
-    private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
 	@Value("#{queries.suspensaoCota}")
 	public String querySuspensaoCota;
@@ -197,7 +196,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		} catch (Exception e) {
             String message = "Erro criando result transformer para classe: "
                     + EnderecoAssociacaoDTO.class.getName();
-            LOG.error(message, e);
+            LOGGER.error(message, e);
             throw new RuntimeException(message, e);
         }
 
@@ -567,10 +566,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		StringBuilder hql = new StringBuilder();
 
-		/*
-		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
-		 * PDV associado a mesma cota.
-		 */
+		        /*
+         * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um
+         * PDV associado a mesma cota.
+         */
 		hql.append("SELECT DISTINCT count ( cota.id ) ");
 
 		hql.append(getSqlFromEWhereCotasSujeitasAntecipacoEncalhe(filtro));
@@ -611,10 +610,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		StringBuilder hql = new StringBuilder();
 
-		/*
-		 * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um 
-		 * PDV associado a mesma cota.
-		 */
+		        /*
+         * Foi incluido a cláusula DISTINCT para evitar o cenário de mais de um
+         * PDV associado a mesma cota.
+         */
 		hql.append("SELECT DISTINCT new ")
 				.append(ChamadaAntecipadaEncalheDTO.class.getCanonicalName())
 				.append(" ( box.codigo, box.nome ,cota.numeroCota, estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida, ")
@@ -776,15 +775,14 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		return hql.toString();
 	}
 
-	/**
-	 * Retorna a instrução de ordenação para consulta
-	 * obterCotasSujeitasAntecipacoEncalhe
-	 * 
-	 * @param filtro
-	 *            - filtro de pesquisa com os parâmetros de ordenação.
-	 * 
-	 * @return String
-	 */
+	    /**
+     * Retorna a instrução de ordenação para consulta
+     * obterCotasSujeitasAntecipacoEncalhe
+     * 
+     * @param filtro - filtro de pesquisa com os parâmetros de ordenação.
+     * 
+     * @return String
+     */
 	private String getOrderByCotasSujeitasAntecipacoEncalhe(
 			FiltroChamadaAntecipadaEncalheDTO filtro) {
 
@@ -1180,13 +1178,12 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		return hql.toString();
 	}
 
-	/**
-	 * Retorna string sql de ordenação da consulta de cotas
-	 * 
-	 * @param filtro
-	 *            - filtro com opção de ordenação escolhida
-	 * @return String
-	 */
+	    /**
+     * Retorna string sql de ordenação da consulta de cotas
+     * 
+     * @param filtro - filtro com opção de ordenação escolhida
+     * @return String
+     */
 	private String ordenarConsultaCota(FiltroCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
@@ -2037,9 +2034,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
-				+ "	    left outer join "
-				+ "	        BOX box1_  "
-				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
 				+ "	        ESTUDO_COTA ec_  "
 				+ "	            on cota_.ID=ec_.COTA_ID  "
@@ -2137,8 +2131,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				}
 				
 				sql.append(" group by cota_.ID ");
-				sql.append(" having SUM(ec_.QTDE_EFETIVA) > 0 ");
-		
 	}
 
 	private void montarParametrosFiltroNotasEnvio(
@@ -2437,7 +2429,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
     public HistoricoTitularidadeCota obterHistoricoTitularidade(Long idCota,
             Long idHistorico) {
         Validate.notNull(idCota, "Identificador da cota não deve ser nulo!");
-        Validate.notNull(idHistorico, "Identificador do histórico de titularidade não deve ser nulo!"); 
+        Validate.notNull(idHistorico, "Identificador do histórico de titularidade não deve ser nulo!");
         String hql = "from HistoricoTitularidadeCota historico where historico.id = :idHistorico and historico.cota.id = :idCota";
         Query query = getSession().createQuery(hql);
         query.setParameter("idHistorico", idHistorico);
@@ -2526,7 +2518,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2539,7 +2531,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			
 			hql.append(" )");
 
-			// Populando o in ('','') do numero Edição
+            // Populando o in ('','') do numero Edição
 			hql.append(" and produtoEdicao.numeroEdicao in (");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2601,7 +2593,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2614,7 +2606,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			
 			hql.append(" )");
 
-			// Populando o in ('','') do numero Edição
+            // Populando o in ('','') do numero Edição
 			hql.append(" and produtoEdicao.numeroEdicao in (");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2672,7 +2664,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2685,7 +2677,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			
 			hql.append(" )");
 
-			// Populando o in ('','') do numero Edição
+            // Populando o in ('','') do numero Edição
 			hql.append(" and produtoEdicao.numeroEdicao in (");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2753,7 +2745,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2766,7 +2758,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			
 			hql.append(" )");
 
-			// Populando o in ('','') do numero Edição
+            // Populando o in ('','') do numero Edição
 			hql.append(" and produtoEdicao.numeroEdicao in (");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2882,7 +2874,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		hql.append(" WHERE ");
 		
-		// adiciona os parâmetros feitos dentro so switch
+        // adiciona os parâmetros feitos dentro so switch
 		hql.append(whereParameter.toString());
 		
 		if (cotasAtivas) {
@@ -2892,7 +2884,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2905,7 +2897,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			
 			hql.append(" )");
 
-			// Populando o in ('','') do numero Edição
+            // Populando o in ('','') do numero Edição
 			hql.append(" and produtoEdicao.numeroEdicao in (");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2962,7 +2954,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" produto.codigo in ( ");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2975,7 +2967,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			
 			hql.append(" )");
 
-			// Populando o in ('','') do numero Edição
+            // Populando o in ('','') do numero Edição
 			hql.append(" and produtoEdicao.numeroEdicao in (");
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				
@@ -2991,7 +2983,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		if (cotas != null && cotas.size() != 0) {
 			
-			// Populando o in ('','') do código produto
+            // Populando o in ('','') do código produto
 			hql.append(" and cota.numeroCota in ( ");
 			for (int i = 0; i < cotas.size(); i++) {
 				
@@ -3261,11 +3253,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	}
 	
 	
-	/**
-	 * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a data atual
-	 * @param data
-	 * @return List<Cota>
-	 */
+	    /**
+     * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a
+     * data atual
+     * 
+     * @param data
+     * @return List<Cota>
+     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Cota> obterCotasTipoAVista(Date data){
@@ -3571,5 +3565,17 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaVO.class));
 		
 		return (CotaVO) query.uniqueResult();
+	}
+	
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicao(Long idCota){
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select tipoDistribuicaoCota from Cota where id = :idCota");
+		
+		query.setParameter("idCota", idCota);
+		
+		return (TipoDistribuicaoCota) query.uniqueResult();
 	}
 }

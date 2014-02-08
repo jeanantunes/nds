@@ -16,10 +16,10 @@ public class DynamicRouterServer {
 
 	public void route(RouteTemplate route) {
 		
-		// LOG DE INICIALIZAÇÃO
+        // LOG DE INICIALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {
 			ndsServerLoggerFactory.resetLogger();
-			ndsServerLoggerFactory.getLogger().logBeginning(route);
+            ndsServerLoggerFactory.getLogger().logBeginning(route);
 		}
 		
 		// START
@@ -35,9 +35,9 @@ public class DynamicRouterServer {
 		// END
 		route.onEnd();
 		
-		// LOG DE FINALIZAÇÃO
+        // LOG DE FINALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {
-			ndsServerLoggerFactory.getLogger().logEnd(route);
+            ndsServerLoggerFactory.getLogger().logEnd(route);
 		}
 	}	
 }

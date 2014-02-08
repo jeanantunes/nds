@@ -91,8 +91,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -151,15 +149,15 @@ import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade
- * {@link br.com.abril.nds.model.cadastro.Cota}  
+ * {@link br.com.abril.nds.model.cadastro.Cota}
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Service
 public class CotaServiceImpl implements CotaService {
 	
-	Logger log = LoggerFactory.getLogger(CotaServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CotaServiceImpl.class);
 	
 	@Autowired
 	private SituacaoCotaService situacaoCotaService; 
@@ -337,7 +335,7 @@ public class CotaServiceImpl implements CotaService {
 
 		if (idCota == null) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
 		}
 		
 		return this.cotaRepository.buscarPorId(idCota);
@@ -366,7 +364,7 @@ public class CotaServiceImpl implements CotaService {
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
 		if(cota == null)
-			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+            throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		
 		Long idPessoa = cota.getPessoa().getId();
 		
@@ -412,14 +410,14 @@ public class CotaServiceImpl implements CotaService {
 
 		if (idCota == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
 		}
 		
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		
 		if (cota == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 		
 		if (listaEnderecoAssociacaoSalvar != null && !listaEnderecoAssociacaoSalvar.isEmpty()) {
@@ -433,15 +431,16 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	/**
-	 * ENDERECO
-	 * 
-	 * Retorna um Endereco à ser editado ou cadastrado
-	 * @param enderecoDTO
-	 * @param pessoa
-	 * @param novo
-	 * @return Endereco
-	 */
+	    /**
+     * ENDERECO
+     * 
+     * Retorna um Endereco à ser editado ou cadastrado
+     * 
+     * @param enderecoDTO
+     * @param pessoa
+     * @param novo
+     * @return Endereco
+     */
 	private Endereco obterEndereco(EnderecoDTO enderecoDTO, Pessoa pessoa, boolean novo){
 		
 		Endereco endereco = new Endereco();
@@ -466,14 +465,15 @@ public class CotaServiceImpl implements CotaService {
 	    return endereco;
 	}
 	
-	/**
-	 * ENDERECO
-	 * 
-	 * Persiste EnderecoCota e Endereco
-	 * Valida apenas endereços vinculados à cota
-	 * @param cota
-	 * @param listaEnderecoAssociacao
-	 */
+	    /**
+     * ENDERECO
+     * 
+     * Persiste EnderecoCota e Endereco Valida apenas endereços vinculados à
+     * cota
+     * 
+     * @param cota
+     * @param listaEnderecoAssociacao
+     */
 	private void salvarEnderecosCota(Cota cota, List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 		
 		Pessoa pessoa = cota.getPessoa();
@@ -555,21 +555,22 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	/**
-	 * TELEFONE
-	 * 
-	 * Obtém telefones da Cota
-	 * @param idCota
-	 * @param idsIgnorar
-	 * @return List<TelefoneAssociacaoDTO>
-	 */
+	    /**
+     * TELEFONE
+     * 
+     * Obtém telefones da Cota
+     * 
+     * @param idCota
+     * @param idsIgnorar
+     * @return List<TelefoneAssociacaoDTO>
+     */
 	@SuppressWarnings("unused")
 	@Transactional(readOnly = true)
 	@Override
 	public List<TelefoneAssociacaoDTO> buscarTelefonesCota(Long idCota, Set<Long> idsIgnorar) {
 		
 		if (idCota == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
+            throw new ValidacaoException(TipoMensagem.ERROR, "IdCota é obrigatório");
 		}
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
@@ -613,13 +614,13 @@ public class CotaServiceImpl implements CotaService {
 			Collection<Long> listaTelefonesRemover){
 		
 		if (idCota == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Cota é obrigatório.");
 		}
 		
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		
 		if (cota == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 		
 		this.salvarTelefonesCota(cota, listaTelefonesAdicionar);
@@ -760,7 +761,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(SituacaoCadastro.SUSPENSO.equals(cota.getSituacaoCadastro())) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A cota já está suspensa!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A cota já está suspensa!");
 		}
 		
 		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
@@ -815,7 +816,7 @@ public class CotaServiceImpl implements CotaService {
 	public String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota){
 		
 		if (numeroCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório");
 		}
 		
 		Cota cota = this.obterPorNumeroDaCota(numeroCota);
@@ -916,13 +917,13 @@ public class CotaServiceImpl implements CotaService {
 	public DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota) {
 		
 		if(idCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Id da cota não informado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Id da cota não informado.");
 		}
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
 		if(cota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
 		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
@@ -1007,6 +1008,8 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBaseCalculo(parametro.getBaseCalculo());
 		dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
+		dto.setTipoDistribuicaoCota(this.cotaRepository.obterTipoDistribuicao(idCota).name());
+		dto.setRecebeComplementar(parametro.getRecebeComplementar());
 		
 		return dto;
 	}
@@ -1016,23 +1019,24 @@ public class CotaServiceImpl implements CotaService {
 	public void salvarDistribuicaoCota(DistribuicaoDTO dto) throws FileNotFoundException, IOException {
 		
 		if(dto==null || dto.getNumCota()==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
 		}
 		
 		Cota cota = cotaRepository.obterPorNumeroDaCota(dto.getNumCota());		
 		
 		if( cota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
 		
 		///////////////////////////////////////////////
 		
 		
-		/*
-		 *  faço a pesquisa nos parâmetros de distribuidor para comparar ao que foi inserido pelo usuário.
-		 *  Se os parâmetros forem iguais, utilizo o do distribuidor.
-		 */
+		        /*
+         * faço a pesquisa nos parâmetros de distribuidor para comparar ao que
+         * foi inserido pelo usuário. Se os parâmetros forem iguais, utilizo o
+         * do distribuidor.
+         */
 		
 		ParametroDistribuicaoCota parametrosDistribuidorConferenciaCota = new ParametroDistribuicaoCota();
 		
@@ -1179,13 +1183,13 @@ public class CotaServiceImpl implements CotaService {
 	public CotaDTO obterDadosCadastraisCota(Long idCota){
 		
 		if (idCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 		
 		if (cota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
 		CotaDTO cotaDTO = new CotaDTO();
@@ -1210,6 +1214,7 @@ public class CotaServiceImpl implements CotaService {
 		processarTitularidadeCota(cota, cotaDTO);
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
+		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao().getRecebeComplementar());
 		
 		return cotaDTO;
 	}
@@ -1243,10 +1248,8 @@ public class CotaServiceImpl implements CotaService {
      * Processa os registros de titularidade da cota para criação dos titulares
      * no DTO
      * 
-     * @param cota
-     *            cota com as informações de titularidade
-     * @param cotaDTO
-     *            DTO com as incormações da cota
+     * @param cota cota com as informações de titularidade
+     * @param cotaDTO DTO com as incormações da cota
      */
 	private void processarTitularidadeCota(Cota cota, CotaDTO cotaDTO) {
         List<HistoricoTitularidadeCota> titulares = new ArrayList<HistoricoTitularidadeCota>();
@@ -1310,11 +1313,12 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	/**
-	 * Atribui os dados das referencias histórico cota base ao objeto CotaDTO
-	 * @param cotaDTO
-	 * @param baseReferenciaCota
-	 */
+	    /**
+     * Atribui os dados das referencias histórico cota base ao objeto CotaDTO
+     * 
+     * @param cotaDTO
+     * @param baseReferenciaCota
+     */
 	private void atribuirDadosBaseReferencia(CotaDTO cotaDTO, BaseReferenciaCota baseReferenciaCota){
 		
 		if(baseReferenciaCota == null){
@@ -1351,11 +1355,12 @@ public class CotaServiceImpl implements CotaService {
 	public void excluirCota(Long idCota){
 		
 		if(idCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão inválida!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada para exclusão inválida!");
 		}
 		
 		if (cotaComDebitos(idCota)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] possui dívidas em aberto e não pode ser excluída!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "A [Cota] possui dívidas em aberto e não pode ser excluída!");
 		}
 		
 		Cota cota  = cotaRepository.buscarPorId(idCota);
@@ -1367,7 +1372,8 @@ public class CotaServiceImpl implements CotaService {
 		}catch (RuntimeException e) {
 			
 			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
-				throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão não permitida, registro possui dependências!");
+                throw new ValidacaoException(TipoMensagem.ERROR,
+                        "Exclusão não permitida, registro possui dependências!");
 			}
 		}
 	}
@@ -1398,7 +1404,7 @@ public class CotaServiceImpl implements CotaService {
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		boolean incluirPDV = false;
-		//Flag indica criação de uma nova cota
+        // Flag indica criação de uma nova cota
 		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
@@ -1409,14 +1415,14 @@ public class CotaServiceImpl implements CotaService {
 			newCota = true;
 		}
 		
-		//Flag indica a mudança de número da cota
+        // Flag indica a mudança de número da cota
 		boolean mudancaNumero = false;
 		if (!newCota) {
 		    Integer numeroCota = cota.getNumeroCota();
 		    Integer novoNumeroCota = cotaDto.getNumeroCota();
 		    mudancaNumero = !numeroCota.equals(novoNumeroCota);
 		}
-		//Se é uma nova cota ou alteração de número, processa o novo número
+        // Se é uma nova cota ou alteração de número, processa o novo número
 		if (newCota || mudancaNumero) {
 		    processarNovoNumeroCota(cotaDto.getNumeroCota(),cota.getId());
 		}
@@ -1492,17 +1498,19 @@ public class CotaServiceImpl implements CotaService {
 		fileService.persistirTemporario(path);
 	}
 
-	/**
-	 * Valida os dados referente histórico cota base
-	 * @param cotaDto
-	 */
+	    /**
+     * Valida os dados referente histórico cota base
+     * 
+     * @param cotaDto
+     */
 	private void validarHistoricoCotaBase(CotaDTO cotaDto) {
 		
 		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
 			
 			if(DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(Calendar.getInstance().getTime()))!=0){
 
-				throw new ValidacaoException(TipoMensagem.WARNING,"Campo [Período] referente à cota base deve ser igual a data da alteração!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "Campo [Período] referente à cota base deve ser igual a data da alteração!");
 			}
 		}
 		
@@ -1511,24 +1519,28 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Até] referente à  cota base é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento do campo [Até] referente à  cota base é obrigatório!");
 		}
 		
 		if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() != null ){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Período] referente à  cota base é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento do campo [Período] referente à  cota base é obrigatório!");
 		}
 		
 		if(DateUtil.isDataInicialMaiorDataFinal(cotaDto.getInicioPeriodo(), cotaDto.getFimPeriodo())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O período preenchido nos campos [Período] [Até] referente à  cota base está inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O período preenchido nos campos [Período] [Até] referente à  cota base está inválido!");
 		}
 	}
 	
 	
 	
-	/**
-	 * Valida o formato das inforamções referente ao cadastro de uma cota
-	 * @param cotaDto
-	 */
+	    /**
+     * Valida o formato das inforamções referente ao cadastro de uma cota
+     * 
+     * @param cotaDto
+     */
 	private void validarFormatoDados(CotaDTO cotaDto) {
 		
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
@@ -1542,20 +1554,21 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [E-mail] está inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [E-mail] está inválido!");
 		}
 		
 		if( cotaDto.getEmailNF()!= null && !cotaDto.getEmailNF().isEmpty() && !Util.validarEmail(cotaDto.getEmailNF())){
-			throw new ValidacaoException(TipoMensagem.WARNING," O preenchimento do campo [E-mail NF-e] está inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING, " O preenchimento do campo [E-mail NF-e] está inválido!");
 		}
 		
 	}
 	
-	/**
-	 * Persiste dados básicos de um PDV referente a nova cota
-	 * @param cota
-	 * @param cotaDTO
-	 */
+	    /**
+     * Persiste dados básicos de um PDV referente a nova cota
+     * 
+     * @param cota
+     * @param cotaDTO
+     */
 	private void persisteDadosPDV(Cota cota,CotaDTO cotaDTO) {
 		
 		if(cota.getPdvs() == null || cota.getPdvs().isEmpty()){
@@ -1579,12 +1592,13 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	/**
-	 * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota 
-	 * @param cota
-	 * @param cotaDto
-	 * @return ParametrosCotaNotaFiscalEletronica
-	 */
+	    /**
+     * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota
+     * 
+     * @param cota
+     * @param cotaDto
+     * @return ParametrosCotaNotaFiscalEletronica
+     */
 	private ParametrosCotaNotaFiscalEletronica getParamNFE(Cota cota, CotaDTO cotaDto){
 		
 		ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica(); 
@@ -1599,72 +1613,73 @@ public class CotaServiceImpl implements CotaService {
 	    return paramNFE;
 	}
 	
-	/**
-	 * Validas as informações referente ao cadasto de uma nova cota.
-	 * @param cotaDto
-	 */
+	    /**
+     * Validas as informações referente ao cadasto de uma nova cota.
+     * 
+     * @param cotaDto
+     */
 	private void validarParametrosObrigatoriosCota(CotaDTO cotaDto) {
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
 		
 		if(cotaDto.getNumeroCota() == null){
-			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
+            mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
 		}
 	
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
 			
 			if(cotaDto.getRazaoSocial() == null || cotaDto.getRazaoSocial().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [Razão Social] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [Razão Social] é obrigatório!");
 			}
 			
 			if(cotaDto.getNumeroCnpj() == null || cotaDto.getNumeroCnpj().trim().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [CNPJ] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [CNPJ] é obrigatório!");
 	    	}
 			
 			if(cotaDto.getInscricaoEstadual() == null || cotaDto.getInscricaoEstadual().isEmpty() ){
-				mensagensValidacao.add("O preenchimento do campo [Inscrição Estadual] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [Inscrição Estadual] é obrigatório!");
 			}
 		}
 		
 		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
 			
 			if(cotaDto.getNomePessoa() == null || cotaDto.getNomePessoa().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [Nome] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [Nome] é obrigatório!");
 			}
 			
 			if(cotaDto.getNumeroCPF() == null || cotaDto.getNumeroCPF().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [CPF] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [CPF] é obrigatório!");
 			}
 			
 			if(cotaDto.getNumeroRG() == null || cotaDto.getNumeroRG().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [R. G.] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [R. G.] é obrigatório!");
 			}
 			
 			if(cotaDto.getDataNascimento() == null){
-				mensagensValidacao.add("O preenchimento do campo [Data Nascimento] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [Data Nascimento] é obrigatório!");
 			}
 			
 			if(cotaDto.getOrgaoEmissor() == null ||  cotaDto.getOrgaoEmissor().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [Orgão Emissor] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [Orgão Emissor] é obrigatório!");
 			}
 			
 			if(cotaDto.getEstadoSelecionado() == null || cotaDto.getEstadoSelecionado().isEmpty()){
-				mensagensValidacao.add("O preenchimento do campo [UF] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [UF] é obrigatório!");
 			}
 			
 			if(cotaDto.getEstadoCivilSelecionado() == null){
-				mensagensValidacao.add("O preenchimento do campo [Estado Civil] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [Estado Civil] é obrigatório!");
 			}
 		}
 		
 		if(cotaDto.isEmiteNFE()){
 			if((cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty())){
-				mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
+                mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
 			}
 		}
 		
 		if(cotaDto.getTipoDistribuicaoCota() == null){
-			mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
+            mensagensValidacao.add("O preenchimento do campo [Tipo] é obrigatório!");
 		}
 				
 		if (!mensagensValidacao.isEmpty()){
@@ -1672,12 +1687,13 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	/**
-	 * Persiste e retorna os dados da pessoa referente a cota Física ou Jurídica
-	 * @param cota
-	 * @param cotaDto
-	 * @return Pessoa
-	 */
+	    /**
+     * Persiste e retorna os dados da pessoa referente a cota Física ou Jurídica
+     * 
+     * @param cota
+     * @param cotaDto
+     * @return Pessoa
+     */
 	private Pessoa persistePessoaCota(Cota cota, CotaDTO cotaDto){
 		
 		Pessoa pessoa = null;
@@ -1723,12 +1739,13 @@ public class CotaServiceImpl implements CotaService {
     	return pessoa;
 	}
 	
-	/**
-	 * Retona uma instância de Pessoa Jurídica ou Física
-	 * @param cotaDTO
-	 * @param pessoa
-	 * @return Pessoa
-	 */
+	    /**
+     * Retona uma instância de Pessoa Jurídica ou Física
+     * 
+     * @param cotaDTO
+     * @param pessoa
+     * @return Pessoa
+     */
 	private Pessoa getPessoa(CotaDTO cotaDTO, Pessoa pessoa){
 		
 		if(pessoa == null){
@@ -1823,22 +1840,26 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	/**
-	 * Valida os parâmetros referente ao objeto BaseReferenciaCota
-	 * @param cotaDto
-	 */
+	    /**
+     * Valida os parâmetros referente ao objeto BaseReferenciaCota
+     * 
+     * @param cotaDto
+     */
 	private void validarParametrosBaseReferenciaCota(CotaDTO cotaDto){
 		
 		if(tratarValorReferenciaCota(cotaDto.getHistoricoPrimeiraCota(),cotaDto.getHistoricoPrimeiraPorcentagem())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
 		}
 		
 		if(tratarValorReferenciaCota(cotaDto.getHistoricoSegundaCota(),cotaDto.getHistoricoSegundaPorcentagem())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
 		}
 		
 		if(tratarValorReferenciaCota(cotaDto.getHistoricoTerceiraCota(),cotaDto.getHistoricoTerceiraPorcentagem())){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento dos campos [Período] [Até] referente à  cota base é obrigatório!");
 		}
 	}
 	
@@ -1877,13 +1898,14 @@ public class CotaServiceImpl implements CotaService {
 		return referenciasCota;
 	}
 	
-	/**
-	 * Retorna um objeto do tipo ReferenciaCota
-	 * @param numeroCota - número da cota
-	 * @param porcentagem - porcentagem
-	 * @param baseReferenciaCota - objeto BaseReferenciaCota
-	 * @return ReferenciaCota
-	 */
+	    /**
+     * Retorna um objeto do tipo ReferenciaCota
+     * 
+     * @param numeroCota - número da cota
+     * @param porcentagem - porcentagem
+     * @param baseReferenciaCota - objeto BaseReferenciaCota
+     * @return ReferenciaCota
+     */
 	private ReferenciaCota getReferencaiCota(Integer numeroCota,BigDecimal porcentagem, BaseReferenciaCota baseReferenciaCota){
 		
 		Cota cota = null;
@@ -1900,10 +1922,12 @@ public class CotaServiceImpl implements CotaService {
 		return referenciaCota;
 	}
 	
-	/**
-	 * Valida se os números de cota informado para histórico cota base são iguais
-	 * @param cotaDTO
-	 */
+	    /**
+     * Valida se os números de cota informado para histórico cota base são
+     * iguais
+     * 
+     * @param cotaDTO
+     */
 	private void validarCotaBaseIgual(CotaDTO cotaDTO){
 		
 		validarCotaIguais(cotaDTO.getHistoricoPrimeiraCota(), cotaDTO.getHistoricoSegundaCota(), cotaDTO.getHistoricoTerceiraCota());
@@ -1913,25 +1937,29 @@ public class CotaServiceImpl implements CotaService {
 		validarCotaIguais(cotaDTO.getHistoricoTerceiraCota(),cotaDTO.getHistoricoSegundaCota(),cotaDTO.getHistoricoPrimeiraCota());
 	}
 	
-	/**
-	 * Verifica números de cotas iguais
-	 * @param param
-	 * @param param2
-	 * @param param3
-	 */
+	    /**
+     * Verifica números de cotas iguais
+     * 
+     * @param param
+     * @param param2
+     * @param param3
+     */
 	private void validarCotaIguais(Integer param,Integer param2, Integer param3){
 		
 		if(param!= null){
 			if(param.equals(param2)|| param.equals(param3)){
-				throw new ValidacaoException(TipoMensagem.WARNING,"A cota " + param + "está incorreta! A cota " + param + " está duplicada!");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + param + "está incorreta! A cota "
+                        + param + " está duplicada!");
 			}
 		}
 	}
 	
-	/**
-	 * Valida se a porcentagem informada nas cotas histórico base obedecem 100 porcento.
-	 * @param cotaDto
-	 */
+	    /**
+     * Valida se a porcentagem informada nas cotas histórico base obedecem 100
+     * porcento.
+     * 
+     * @param cotaDto
+     */
 	private void validarPorcentagemCotaBase(CotaDTO cotaDto) {
 		
 		boolean existeValor = false;
@@ -1959,7 +1987,8 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if(existeValor && (valor.intValue() != 100)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Porcentagem histórico cota base inválido! A porcentagem do histórico cota base deve ser 100%  ");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Porcentagem histórico cota base inválido! A porcentagem do histórico cota base deve ser 100%  ");
 		}
 		
 	}
@@ -1980,11 +2009,12 @@ public class CotaServiceImpl implements CotaService {
 		return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
 	}
 	
-	/**
-	 * Verifica se o número da cota existente pode ser utilizado por uma nova cota
-	 * 
-	 * @param numeroCota - número da nova cota
-	 */
+	    /**
+     * Verifica se o número da cota existente pode ser utilizado por uma nova
+     * cota
+     * 
+     * @param numeroCota - número da nova cota
+     */
 	private void processarNovoNumeroCota(Integer numeroCota, Long idCota){
 		
 		Cota cota  = cotaRepository.obterPorNumeroDaCota(numeroCota);
@@ -1995,32 +2025,36 @@ public class CotaServiceImpl implements CotaService {
 				
 				if(!isParametroDistribuidoNumeroCotaValido(numeroCota)){
 
-					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser utilizado.");
+                    throw new ValidacaoException(TipoMensagem.WARNING,
+                            "Número da cota está inativo mas não pode ser utilizado.");
 				}
 				else{
-				   //Alterar Numero Cota e registra histórico
+                    // Alterar Numero Cota e registra histórico
 					alteraNumeroCota(cota);
 				}
 			}
 			//else{
-				//Verifica se é edicao da cota
+            // Verifica se é edicao da cota
 				//if(!cota.getId().equals(idCota)){
-					//throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
+            // throw new
+            // ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
 				//}
 			//}	
 			
-			//Verifica se cota possui dívidas em aberto
+            // Verifica se cota possui dívidas em aberto
 			BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(cota.getId());
 	        if (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0){
-	        	throw new ValidacaoException(TipoMensagem.WARNING, "O [Número] pertence à uma [Cota] que possui dívidas em aberto e não pode ser utilizado!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "O [Número] pertence à uma [Cota] que possui dívidas em aberto e não pode ser utilizado!");
 	        }
 		}
 	}
 	
-	/**
-	 * Altera o número da cota e gera um histporico com o número antigo
-	 * @param cota - objeto que sofrera a alteração de número de cota
-	 */
+	    /**
+     * Altera o número da cota e gera um histporico com o número antigo
+     * 
+     * @param cota - objeto que sofrera a alteração de número de cota
+     */
 	private void alteraNumeroCota(Cota cota){
 		
 		Integer novoNumeroCota = getNovoNumeroCota(cota.getNumeroCota(), null,1);
@@ -2043,13 +2077,14 @@ public class CotaServiceImpl implements CotaService {
 		
 	}
 	
-	/**
-	 * Retorna um número de sugestão para o cadastro de uma nova cota
-	 * @param numeroCota
-	 * @param novoNumeroCota
-	 * @param numero
-	 * @return Integer
-	 */
+	    /**
+     * Retorna um número de sugestão para o cadastro de uma nova cota
+     * 
+     * @param numeroCota
+     * @param novoNumeroCota
+     * @param numero
+     * @return Integer
+     */
 	private Integer getNovoNumeroCota(Integer numeroCota, Integer novoNumeroCota ,Integer numero){
 		
 		Cota cota  = cotaRepository.obterPorNumeroDaCota( (novoNumeroCota == null) ?numeroCota :novoNumeroCota);
@@ -2090,10 +2125,12 @@ public class CotaServiceImpl implements CotaService {
 		return (qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao);
 	}
 
-	/**
-	 * Método responsável por obter tipos de cota para preencher combo da camada view
-	 * @return comboTiposCota: Tipos de cota padrão.
-	 */
+	    /**
+     * Método responsável por obter tipos de cota para preencher combo da camada
+     * view
+     * 
+     * @return comboTiposCota: Tipos de cota padrão.
+     */
 	@Override
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota() {
 		List<ItemDTO<TipoCota,String>> comboTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
@@ -2152,10 +2189,12 @@ public class CotaServiceImpl implements CotaService {
 		return cotas;
 	}
 	
-	/**
-	 * Descarta Enderecos, Telefones, Garantias e Sócios da Cota na Troca de Titularidade
-	 * @param cota
-	 */
+	    /**
+     * Descarta Enderecos, Telefones, Garantias e Sócios da Cota na Troca de
+     * Titularidade
+     * 
+     * @param cota
+     */
 	private void excluiEnderecosTelefonesGarantiasSociosCota(Cota cota){
 		
 		Set<EnderecoCota> enderecos = cota.getEnderecos();
@@ -2417,7 +2456,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (cota == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
 		}
 		
 		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
@@ -2517,7 +2556,7 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<TipoDescontoProdutoDTO> obterDescontosProdutoHistoricoTitularidadeCota(Long idCota, Long idHistorico) {
-	    Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
+        Validate.notNull(idCota, "Identificador da Cota não deve ser nulo");
         Validate.notNull(idHistorico, "Identificador do Histórico não deve ser nulo!");
         HistoricoTitularidadeCota historico = cotaRepository.obterHistoricoTitularidade(idCota, idHistorico);
         List<TipoDescontoProdutoDTO> dtos = new ArrayList<TipoDescontoProdutoDTO>();
@@ -2619,33 +2658,7 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota) {
 		
-		Cota cota = cotaRepository.buscarPorId(idCota);
-		
-		for (PDV pdv: cota.getPdvs()) {
-			
-			if (pdv != null) {
-				
-				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
-				
-				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
-					
-					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
-					
-					if (segmentacaoPDV != null) {
-						
-						if (segmentacaoPDV.getTipoCaracteristica() != null &&
-								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
-							
-							return true;
-						}
-					}
-				}
-			}
-			
-		}
-		
-		
-		return false;
+		return TipoDistribuicaoCota.CONVENCIONAL.equals(this.cotaRepository.obterTipoDistribuicao(idCota));
 	}
 
 	@Transactional(readOnly = true)
@@ -2681,12 +2694,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
 			
+			int qtdEdicaoVendida = 0;
+			
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
 				
 				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
 				
 				if (dto != null) {
+					qtdEdicaoVendida++;
 					if (i == 0) {
 						if(dto.getReparte() != null){
 							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
@@ -2749,7 +2765,7 @@ public class CotaServiceImpl implements CotaService {
 				}
 			}
 			
-			setMediaVendaEReparte(listProdutoEdicaoDto.size(), analiseHistoricoDTO);
+			setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
 		}
 		
 		formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
@@ -2874,14 +2890,14 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	@Override
 	public void apagarTipoCota(Long idCota, String TipoCota) {
-		log.info("CotaServiceImpl.apagarTipoCota");
+		LOGGER.info("CotaServiceImpl.apagarTipoCota");
 		
 		if(idCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada inválida!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada inválida!");
 		}
 		
 		if (TipoCota==null || TipoCota.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Cota inválida");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Cota inválida");
 		}
 
 		try{	
@@ -2896,7 +2912,8 @@ public class CotaServiceImpl implements CotaService {
 		}catch (RuntimeException e) {
 
 			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
-				throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão não permitida, registro possui dependências!");
+                throw new ValidacaoException(TipoMensagem.ERROR,
+                        "Exclusão não permitida, registro possui dependências!");
 			}
 		}
 	}
@@ -2958,7 +2975,7 @@ public class CotaServiceImpl implements CotaService {
 		if (cotasSemRoteirizacao == null || !cotasSemRoteirizacao.isEmpty()){
 			
 			List<String> msgs = new ArrayList<String>();
-			msgs.add("Cotas sem roteirização:");
+            msgs.add("Cotas sem roteirização:");
 			for (CotaDTO c : cotasSemRoteirizacao){
 				msgs.add(+ c.getNumeroCota() + " - " + c.getNomePessoa());
 			}

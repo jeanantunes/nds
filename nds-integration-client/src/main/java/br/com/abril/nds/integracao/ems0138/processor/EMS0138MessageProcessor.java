@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.lightcouch.CouchDbClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +15,7 @@ import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIn
 import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIntegracaoItemDTO;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;

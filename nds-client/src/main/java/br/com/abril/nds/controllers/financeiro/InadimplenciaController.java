@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -49,13 +50,15 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/inadimplencia")
 @Rules(Permissao.ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA)
 public class InadimplenciaController extends BaseController {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(InadimplenciaController.class);
 
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroInadimplencia";
 	
 	private static final String ERRO_PESQUISAR_INADIMPLENCIAS = "Erro inesperado ao pesquisar inadimplencias.";	
-	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
-	private static final String WARNING_PESQUISA_VALIDACAO_SITUACAO = "É necessário selecionar a situação da dívida.";
+    private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+    private static final String WARNING_PESQUISA_VALIDACAO_SITUACAO = "É necessário selecionar a situação da dívida.";
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -63,10 +66,8 @@ public class InadimplenciaController extends BaseController {
 	@Autowired
 	private DividaService dividaService;
 	
-	@Autowired
-	private static final Logger LOG = LoggerFactory
-			.getLogger(InadimplenciaController.class);
 	
+
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -164,7 +165,7 @@ public class InadimplenciaController extends BaseController {
 			mensagens.clear();
 			mensagens.add(ERRO_PESQUISAR_INADIMPLENCIAS);
 			status=TipoMensagem.ERROR;
-			LOG.error(ERRO_PESQUISAR_INADIMPLENCIAS, e);
+			LOGGER.error(ERRO_PESQUISAR_INADIMPLENCIAS, e);
 		}
 		
 		this.tratraRetornoPesquisa(mensagens, status, grid, total, count);
@@ -207,11 +208,12 @@ public class InadimplenciaController extends BaseController {
 		return tableModel;
 	}
 
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
-	 * 
-	 * @param filtro
-	 */
+	        /**
+     * Executa tratamento de paginação em função de alteração do filtro de
+     * pesquisa.
+     * 
+     * @param filtro
+     */
 	private void tratarFiltro(FiltroCotaInadimplenteDTO filtroAtual) {
 
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
@@ -237,16 +239,26 @@ public class InadimplenciaController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Obtém detalhes de acumulo da divida
-	 * 
-	 * @param idDivida
-	 */
+	        /**
+     * Obtém detalhes de acumulo da divida
+     * 
+     * @param idDivida
+     */
 	public void getDetalhesDivida(Long idDivida) {
 		
 		List<DividaDTO> dividasDTO = null;
 		
+		if (idDivida == null){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívida atual não encontrada !");
+		}
+		
 		Divida dividaAtual = dividaService.obterDividaPorId(idDivida);
+		
+        if (dividaAtual == null){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívida atual não encontrada !");
+		}
 		
 		if (StatusDivida.NEGOCIADA.equals(dividaAtual.getStatus())) {
 			
@@ -262,8 +274,12 @@ public class InadimplenciaController extends BaseController {
 	
 	private List<DividaDTO> montarDividasDTONegociacao(Long idDivida) {
 		
-		List<MovimentoFinanceiroCota> movimentosFinanceiroCota =
-			this.dividaService.obterDividasNegociacao(idDivida);
+		List<MovimentoFinanceiroCota> movimentosFinanceiroCota = this.dividaService.obterDividasNegociacao(idDivida);
+		
+		if(movimentosFinanceiroCota == null || movimentosFinanceiroCota.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívidas Negociação não encontradas !"); 
+		}
 		
 		List<DividaDTO> dividasDTO = new ArrayList<>();
 		
@@ -284,15 +300,27 @@ public class InadimplenciaController extends BaseController {
 		
 		List<Divida> dividas = this.dividaService.obterDividasAcumulo(idDivida);
 		
+		if (dividas == null || dividas.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívidas Acumuladas não encontradas !"); 
+		}
+		
 		List<DividaDTO> dividasDTO = new ArrayList<>();
 		
 		DividaDTO dividaDTO = null;
 		
 		for(Divida divida : dividas) {
 			
+			Cobranca cobranca = divida.getCobranca();
+			
+			if (cobranca == null){
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Dívida sem cobrança vinculada !");
+			}
+			
 			dividaDTO =
-				new DividaDTO(DateUtil.formatarDataPTBR(divida.getCobranca().getDataVencimento()), 
-							  CurrencyUtil.formatarValor(divida.getCobranca().getValor()));
+				new DividaDTO(DateUtil.formatarDataPTBR(cobranca.getDataVencimento()), 
+							  CurrencyUtil.formatarValor(cobranca.getValor()));
 			
 			dividasDTO.add(dividaDTO);
 		}
@@ -300,24 +328,24 @@ public class InadimplenciaController extends BaseController {
 		return dividasDTO;
 	}
 
-	/**
-	 * Obtém a divida
-	 * 
-	 * @param idDivida
-	 */
+	        /**
+     * Obtém a divida
+     * 
+     * @param idDivida
+     */
 	public void getDividaComissao(Long idDivida) {
 		DividaComissaoDTO resultado = dividaService.obterDadosDividaComissao(idDivida);
 		
 		result.use(Results.json()).from(resultado, "result").serialize();			
 	}	
 	
-	/**
-	 * Exporta os dados da pesquisa.
-	 * 
-	 * @param fileType - tipo de arquivo
-	 * 
-	 * @throws IOException Exceção de E/S
-	 */
+	        /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
 	@SuppressWarnings("deprecation")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
