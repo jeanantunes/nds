@@ -995,8 +995,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 		}
 		
-		total = (total-resultante) / dadosLancamentoBalanceamento.getDatasExpectativaReparte().size();
-		dadosLancamentoBalanceamento.setMediaDistribuicao(new BigInteger(""+total)); 
+		if(dadosLancamentoBalanceamento!=null 
+		&& dadosLancamentoBalanceamento.getDatasExpectativaReparte() !=null 
+		&& dadosLancamentoBalanceamento.getDatasExpectativaReparte().size() > 0){
+		
+			total = (total-resultante) / dadosLancamentoBalanceamento.getDatasExpectativaReparte().size();
+		    dadosLancamentoBalanceamento.setMediaDistribuicao(new BigInteger(""+total)); 
+		}
 		
 		return produtosLancamentoNaoProcessados;
 	}
@@ -2102,9 +2107,21 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		this.validarReaberturaMatriz(datasConfirmadas,
 				this.distribuidorService.obterDataOperacaoDistribuidor());
 
+
+		List<Lancamento> lancamentosExpedidos = this.lancamentoRepository
+				.obterMatrizLancamentosExpedidos(datasConfirmadas);
+
+		for (Lancamento lancamento : lancamentosExpedidos) {
+			
+			if(lancamento.getStatus().equals(StatusLancamento.EXPEDIDO)){
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Existem lançamentos que já foram expedidos. Não será possivel reabir a matriz nesse dia!");
+			}
+		}
+		
 		List<Lancamento> lancamentos = this.lancamentoRepository
 				.obterMatrizLancamentosConfirmados(datasConfirmadas);
-
+	
 		for (Lancamento lancamento : lancamentos) {
 
 			this.validarLancamentoParaReabertura(lancamento);
