@@ -1221,7 +1221,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" left join ");
 		sql.append(" ESTUDO estudo ");
 		sql.append(" on (estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
+		sql.append(" AND (estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA OR estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR)) ");
+		//sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 
 		sql.append(" left join ");
 		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");

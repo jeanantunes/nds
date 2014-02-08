@@ -314,23 +314,30 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Post
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
-	List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
-	if (selecionados == null) {
-	    selecionados = new ArrayList<>();
-	}
-
-	if ((indexes != null) && (indexes.size() > 0)) {
-	    for (Integer index : indexes) {
-		if (index != null) {
-		    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
-		    if (!selecionados.contains(produtoEdicao)) {
-			selecionados.add(produtoEdicao);
-		    }
+	
+		if (resultadoPesquisa != null) {
+		
+			List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
+			if (selecionados == null) {
+			    selecionados = new ArrayList<>();
+			}
+		
+			if ((indexes != null) && (indexes.size() > 0)) {
+			    for (Integer index : indexes) {
+				if (index != null) {
+				    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
+				    if (!selecionados.contains(produtoEdicao)) {
+					selecionados.add(produtoEdicao);
+				    }
+				}
+			    }
+			}
+			session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
+			result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
+		} else {
+			
+			result.nothing();
 		}
-	    }
-	}
-	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
-	result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
     }
 
     @Path("gerarEstudo")

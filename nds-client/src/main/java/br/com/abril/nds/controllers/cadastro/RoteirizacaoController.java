@@ -324,6 +324,10 @@ public class RoteirizacaoController extends BaseController {
 	@Path("/incluirRoteiro")
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
+		if(idBox == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario selecionar um Box para inclusão de um Roteiro!");
+		}
+		
 		this.validarDadosInclusao(ordem, nome);
 		
 		this.adicionarRoteiro(ordem, nome);
@@ -868,7 +872,7 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> pdvs = rota.getPdvs();
 	    
 	    if (pdvs != null){
-	    
+	    	ordenarPdvsPeloIndiceDaLista(rota);
 		    Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		    PaginacaoUtil.ordenarEmMemoria(pdvs, ordenacao, sortname);
 		    result.use(FlexiGridJson.class).from(pdvs).total(pdvs.size()).page(1).serialize();
@@ -1362,6 +1366,10 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/transferirRotasComNovoRoteiro")
 	public void transferirRotasComNovoRoteiro(List<Long> rotasId, Long idBox, Integer ordem, String roteiroNome, TipoRoteiro tipoRoteiro) {
+		
+		if(idBox == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario selecionar um Box para inclusão de um Roteiro!");
+		}
 		
 		Roteiro roteiro = populaRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
 		

@@ -2,28 +2,45 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
-import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.MensagemException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
@@ -32,6 +49,7 @@ import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
+import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -40,6 +58,8 @@ import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -48,6 +68,10 @@ import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoCEIntegracaoServiceImpl.class);
+
+	private static final String PATH_JASPER_CE_DEVOLUCAO = "/reports/CE_Devolucao_Fornecedor_lote.jasper";
 	
 	@Autowired
 	private FechamentoCEIntegracaoRepository fechamentoCEIntegracaoRepository;
@@ -71,6 +95,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
+	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	
+	@Autowired
 	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
 	
 	@Autowired
@@ -78,6 +105,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired 
+	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired 
+	private TipoMovimentoService tipoMovimentoService;
 
 	@Transactional
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -109,72 +142,22 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 	}
 	
-    private ItemChamadaEncalheFornecedor atualizarItem(ItemChamadaEncalheFornecedor item, 
-    		                                           ItemFechamentoCEIntegracaoDTO itemDTO) {
-
-    	Long encalhe = 0l;
-    	
-	    Long vendaParcial = 0l;
-	    
-    	if (itemDTO!=null){
-    		
-    	    encalhe = itemDTO.getEncalhe() == null?0l:itemDTO.getEncalhe().longValue();
-    	
-    	    vendaParcial = itemDTO.getVenda() == null?0l:itemDTO.getVenda().longValue();
-    	}
-    	else{
-    		
-    		encalhe = item.getQtdeDevolucaoInformada() == null?0l:item.getQtdeDevolucaoInformada();
-        	
-    	    vendaParcial = item.getQtdeVendaApurada() == null?0l:item.getQtdeVendaApurada();
-    	}
-    	
-		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
-			
-			item.setQtdeVendaApurada(vendaParcial);
-		}
-		else{
-			
-			item.setQtdeVendaApurada(item.getQtdeEnviada() - encalhe);
-		}
-		
-		item.setQtdeDevolucaoInformada(encalhe);
-		item.setQtdeDevolucaoApurada(item.getQtdeDevolucaoInformada());
-		item.setQtdeVendaInformada(item.getQtdeVendaApurada());
-		item.setQtdeDevolucaoParcial(0L);
-		item.setValorVendaApurado(item.getPrecoUnitario().multiply(new BigDecimal(item.getQtdeVendaApurada())));
-		
-		BigDecimal desconto = obterPercentualDesconto(item);
-		
-		item.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(item.getPrecoUnitario()).multiply(item.getValorVendaApurado()));
-		item.setValorVendaApurado(item.getPrecoUnitario().multiply(item.getValorVendaApurado()).subtract(item.getValorMargemApurado()));
-		
-		item.setValorMargemInformado(item.getValorMargemApurado());
-		item.setValorVendaInformado(item.getValorVendaApurado());
-			
-		return this.itemChamadaEncalheFornecedorRepository.merge(item);
-	}
-    
-    
-    
-    
-    
-    
     /**
      * Processa diferença do Item da Chamada de Encalhe do Fornecedor
      * 
      * @param itemCE
-     * @return
+     * @return Diferenca
      */
     private Diferenca processarDiferencaDeItemCEFornecedor(ItemChamadaEncalheFornecedor itemCE) {
     	
-    	
-		
     	Usuario usuario = this.usuarioService.getUsuarioLogado();
     	
-    	
-    	
     	Long encalhe = itemCE.getQtdeDevolucaoInformada() == null?0l:itemCE.getQtdeDevolucaoInformada();
+    	
+    	if (encalhe == 0){
+    		
+    		return null;
+    	}
     	
     	Long venda = itemCE.getQtdeVendaApurada() == null?0l:itemCE.getQtdeVendaApurada();
     	
@@ -182,35 +165,25 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	
 		Long calculoQdeDiferenca = ((venda + encalhe) - reparte);
 		
-		
-		
 		ProdutoEdicao produtoEdicao = itemCE.getProdutoEdicao();		
-		
-		
-		
-		ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-		
-		//itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico()); ???
-		
-		
 		
 		Diferenca diferenca = new Diferenca();
 		
-		diferenca.setQtde(BigInteger.valueOf(calculoQdeDiferenca));
-		
-		diferenca.setItemRecebimentoFisico(itemRecebimentoFisico);
+		diferenca.setQtde(BigInteger.valueOf(calculoQdeDiferenca).abs());
 		
 		diferenca.setResponsavel(usuario);
 		
 		diferenca.setProdutoEdicao(produtoEdicao);
 		
-		
-		
 		if(diferenca.getQtde().compareTo(BigInteger.ZERO ) < 0 ){
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 			
 			diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.PERDA);
 			
-		} else if(diferenca.getQtde().compareTo(BigInteger.ZERO) > 0){						
+		} else if(diferenca.getQtde().compareTo(BigInteger.ZERO) > 0){		
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 			
 			diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.GANHO);
 		}
@@ -218,16 +191,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			
 			return null;
 		}
-		
-		
-		
+
 		return diferenca;
 	}
 
-    
-    
-    
-    
     /**
      * Obtem lista de Chamadas de Encalhe Fornecedor
      * 
@@ -249,6 +216,32 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     }
 
     /**
+     * Cria Movimento de Estoque de Devolução de Encalhe Fornecedor
+     * 
+     * @param itemFo
+     * @param dataOperacao
+     */
+    private void gerarMovimentoEstoqueDevolucaoFornecedor(ItemChamadaEncalheFornecedor itemFo, Date dataOperacao){
+    	
+    	TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+    	
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+		BigInteger quantidadeEncalhe = BigInteger.valueOf(itemFo.getQtdeDevolucaoInformada());
+		
+		if (quantidadeEncalhe.compareTo(BigInteger.ZERO) == 0){
+			
+			return;
+		}
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+				                                           itemFo.getProdutoEdicao().getId(), 
+				                                           usuario.getId(), 
+				                                           quantidadeEncalhe,
+				                                           tipoMovimentoEstoque);
+    }
+    
+    /**
      * Processa C.E. Integração
      * 
      * @param filtro
@@ -257,9 +250,8 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
      * @param fechamento
      */
 	private void processaCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			                Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas,
-			                List<ChamadaEncalheFornecedor> chamadasFornecedor,
-			                boolean fechamento) {
+			                Map<Long,ItemFechamentoCEIntegracaoDTO> itensAlterados,
+			                List<ChamadaEncalheFornecedor> chamadasFornecedor) {
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -273,30 +265,22 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			BigDecimal totalVendaInformada = BigDecimal.ZERO;
 			
 			List<ItemChamadaEncalheFornecedor> itensChamadaEncalheFornecedor = 
-							itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cef.getId(), filtro.getPeriodoRecolhimento());
+							itemChamadaEncalheFornecedorRepository.obterItensChamadaEncalheFornecedor(cef.getId());
 			
 			for(ItemChamadaEncalheFornecedor itemFo : itensChamadaEncalheFornecedor) {
 				
-				List<ItemFechamentoCEIntegracaoDTO> itemFechamentoCEIntegracaoDTO = null;
+				BigInteger qntVenda = BigInteger.valueOf( itemFo.getQtdeVendaInformada() == null ? 0L : itemFo.getQtdeVendaInformada());
+				BigInteger qntEncalhe = BigInteger.valueOf( itemFo.getQtdeDevolucaoInformada() == null ? 0L : itemFo.getQtdeDevolucaoInformada());
 				
-				if(itemFo.getValorVendaApurado() == null || itemFo.getValorVendaApurado() == BigDecimal.ZERO) {
+				if(itensAlterados.containsKey(itemFo.getId())){
 					
-					filtro.setIdItemChamadaEncalheFornecedor(itemFo.getId());
-					itemFechamentoCEIntegracaoDTO = fechamentoCEIntegracaoRepository.buscarItensFechamentoCeIntegracao(filtro);
-					filtro.setIdItemChamadaEncalheFornecedor(null);
-					ItemFechamentoCEIntegracaoDTO item = itemFechamentoCEIntegracaoDTO.get(0);
+					ItemFechamentoCEIntegracaoDTO itemCE = itensAlterados.get(itemFo.getId());
 					
-					BigDecimal desconto = obterPercentualDesconto(itemFo);
-					
-					itemFo.setValorVendaApurado(item.getPrecoCapa().multiply(new BigDecimal(item.getVenda())));
-					itemFo.setValorVendaInformado(item.getPrecoCapa().multiply(new BigDecimal(item.getVenda())));
-					itemFo.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(itemFo.getPrecoUnitario()).multiply(itemFo.getValorVendaApurado()));
-					itemFo.setValorVendaApurado(itemFo.getPrecoUnitario().multiply(itemFo.getValorVendaApurado()).subtract(itemFo.getValorMargemApurado()));
-					
-					itemFo.setValorMargemInformado(itemFo.getValorMargemApurado());
-					itemFo.setValorVendaInformado(itemFo.getValorVendaApurado());
-					
+					qntVenda = itemCE.getVenda();
+					qntEncalhe = itemCE.getEncalhe();
 				}
+				
+				itemFo = this.atualizarItemCE(itemFo, qntVenda, qntEncalhe);
 				
 				totalCreditoApurado = totalCreditoApurado.add(itemFo.getValorVendaApurado());
 				totalCreditoInformado = totalCreditoInformado.add(itemFo.getValorVendaInformado()); 
@@ -305,8 +289,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 				totalVendaApurada = totalVendaApurada.add(BigDecimal.valueOf((itemFo.getQtdeDevolucaoApurada() == null) ? 0 : itemFo.getQtdeDevolucaoApurada()));
 				totalVendaInformada = totalVendaInformada.add(BigDecimal.valueOf( (itemFo.getQtdeVendaApurada() == null) ? 0 : itemFo.getQtdeVendaApurada()));
 				
-				itemFo = this.atualizarItem(itemFo, diferencas.get(itemFo.getId()));
-				
+                this.gerarMovimentoEstoqueDevolucaoFornecedor(itemFo, dataOperacao);	
 			}
 			
 			cef.setTotalCreditoApurado(totalCreditoApurado);
@@ -315,7 +298,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			cef.setTotalMargemInformado(totalMargemInformado);
 			cef.setTotalVendaApurada(totalVendaApurada);
 			cef.setTotalVendaInformada(totalVendaInformada);
-			cef.setStatusCeNDS(fechamento?StatusCeNDS.FECHADO:StatusCeNDS.ABERTO);
+			cef.setStatusCeNDS(StatusCeNDS.FECHADO);
 			cef.setDataFechamentoNDS(dataOperacao);
 			
 			chamadaEncalheFornecedorRepository.alterar(cef);
@@ -324,6 +307,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	/**
 	 * Obtem lista de ID de CE Fornecedor
+	 * 
 	 * @param chamadasFornecedor
 	 * @return List<Long>
 	 */
@@ -339,6 +323,26 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return listaId;
 	}
 	
+	/**
+     * Verifica se existem itens de CE Fornecedor com Movimento de Estoque de Perda ou Ganho Confirmados
+     * 
+     * @param chamadasFornecedor
+     */
+	private boolean existeConfirmacaoPerdasEGanhos(List<ChamadaEncalheFornecedor> chamadasFornecedor){
+		
+		List<Long> listaIdCEFornecedor = this.obterListaIdCEFornecedor(chamadasFornecedor);
+		
+		List<ChamadaEncalheFornecedor> listaCEComDiferencaPendente = chamadaEncalheFornecedorRepository.obtemCEFornecedorComDiferencaPendente(listaIdCEFornecedor, 
+				                                                                                                                              StatusConfirmacao.CONFIRMADO);
+		
+		if (listaCEComDiferencaPendente!=null && !listaCEComDiferencaPendente.isEmpty()){
+		
+		    return true;	
+		}
+		
+		return false;
+	}
+	
     /**
      * Verifica se existem itens de CE Fornecedor com Movimento de Estoque de Perda ou Ganho Pendente de Confirmação
      * 
@@ -348,11 +352,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		List<Long> listaIdCEFornecedor = this.obterListaIdCEFornecedor(chamadasFornecedor);
 		
-		List<ChamadaEncalheFornecedor> listaCEComDiferencaPendente = chamadaEncalheFornecedorRepository.obtemCEFornecedorComDiferencaPendente(listaIdCEFornecedor);
+		List<ChamadaEncalheFornecedor> listaCEComDiferencaPendente = chamadaEncalheFornecedorRepository.obtemCEFornecedorComDiferencaPendente(listaIdCEFornecedor, 
+				                                                                                                                              StatusConfirmacao.PENDENTE);
 		
 		if (listaCEComDiferencaPendente!=null && !listaCEComDiferencaPendente.isEmpty()){
 		
-		    throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
+		    throw new MensagemException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
 		}
 	}
 	
@@ -375,7 +380,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		        
 		            this.itemChamadaEncalheFornecedorRepository.merge(item);
 		            
-		            throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");
+		            throw new MensagemException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");
 				}
 		    }
 		}		
@@ -391,7 +396,12 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		this.verificarPendenciaConfirmacaoPerdasEGanhos(chamadasFornecedor);
 		
-		this.gerarPerdasEGanhos(chamadasFornecedor);
+        boolean isPerdaGanhoConfirmado = this.existeConfirmacaoPerdasEGanhos(chamadasFornecedor);
+		
+		if (!isPerdaGanhoConfirmado){
+			
+		    this.gerarPerdasEGanhos(chamadasFornecedor);
+		}    
 	}
 	
 	/**
@@ -401,7 +411,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 * @param diferencas
 	 */
 	@Override
-	@Transactional
+	@Transactional(noRollbackForClassName = "MensagemException")
 	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
@@ -409,10 +419,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		this.processarPerdasEGanhos(chamadasFornecedor);
 		
-		this.processaCE(filtro, 
-				        diferencas, 
-				        chamadasFornecedor,
-				        true);
+		this.processaCE(filtro,diferencas,chamadasFornecedor);
 	}
 	
 	/**
@@ -423,15 +430,151 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 */
 	@Override
 	@Transactional
-	public void salvarCE(FiltroFechamentoCEIntegracaoDTO filtro, 
-			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
+	public void salvarCE(List<ItemFechamentoCEIntegracaoDTO> itens) {
 		
-		List<ChamadaEncalheFornecedor> chamadasFornecedor = this.obterChamadasEncalheFornecedor(filtro);
+		for(ItemFechamentoCEIntegracaoDTO item : itens){
+			
+			ItemChamadaEncalheFornecedor itemCE = this.itemChamadaEncalheFornecedorRepository.buscarPorId(item.getIdItemCeIntegracao());
+			
+			if(itemCE!= null){
+				
+				this.atualizarItemCE(itemCE, item.getVenda(), item.getEncalhe());
+			}
+		}
+	}
+	
+	/**
+	 * Cria Movimento de Estoque de Estorno de Item da CE Fornecedor
+	 * 
+	 * @param idProdutoEdicao
+	 * @param quantidade
+	 * @param itemFo
+	 * @param dataOperacao
+	 */
+    private void gerarMovimentoEstoqueEstornoDevolucaoFornecedor(Long idProdutoEdicao, 
+    		                                                     BigInteger quantidade,
+    		                                                     Date dataOperacao){
+    	
+    	TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE);
+    	
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
 		
-		this.processaCE(filtro, 
-				        diferencas, 
-				        chamadasFornecedor, 
-				        false);
+        if (quantidade.compareTo(BigInteger.ZERO) == 0){
+			
+			return;
+		}
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+				                                           idProdutoEdicao, 
+				                                           usuario.getId(), 
+				                                           quantidade,
+				                                           tipoMovimentoEstoque);
+    }
+    
+    /**
+	 * Cria Movimento de Estoque de Estorno da Diferenca do Item da CE Fornecedor
+	 * 
+	 * @param diferenca
+	 * @param dataOperacao
+	 */
+    private void gerarMovimentoEstoqueEstornoDiferenca(Diferenca diferenca,
+    		                                           Date dataOperacao){
+    	
+    	if (diferenca == null){
+    		
+    		return;
+    	}
+
+        diferenca.setStatusConfirmacao(StatusConfirmacao.CANCELADO);
+		
+		this.diferencaEstoqueRepository.merge(diferenca);
+		
+		MovimentoEstoque movimentoEstoque = diferenca.getLancamentoDiferenca()!=null?diferenca.getLancamentoDiferenca().getMovimentoEstoque():null;
+		
+		if (movimentoEstoque == null){
+			
+			return;
+		}
+		
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+        TipoMovimentoEstoque tipoMovimentoEstoque = null;
+    	
+    	TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
+    	
+    	switch (tipoDiferenca){ 
+    	
+	    	case PERDA_EM: 
+	    		
+	    		tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_PERDA_EM);
+	    	
+	    		break;
+	    	case GANHO_EM:
+	    	    
+	    		tipoMovimentoEstoque = this.tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_GANHO_EM);
+	    		
+	    		break;	
+    	}
+		
+		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+				                                           movimentoEstoque.getProdutoEdicao().getId(), 
+				                                           usuario.getId(), 
+				                                           movimentoEstoque.getQtde(),
+				                                           tipoMovimentoEstoque);
+    }
+    
+    /**
+     * Realiza estorno de movimentos de estoque gerados no fechamento da CE Fornecedor
+     * Cancela a diferença (falta/sobra)
+     * 
+     * @param cef
+     * @param dataOperacao
+     */
+    @Override
+    @Transactional
+	public void estornarCeIntegracao(ChamadaEncalheFornecedor cef, Date dataOperacao){
+		
+		for(ItemChamadaEncalheFornecedor item : cef.getItens()){
+			
+			this.gerarMovimentoEstoqueEstornoDevolucaoFornecedor(item.getProdutoEdicao().getId(), 
+					                                             BigInteger.valueOf(item.getQtdeDevolucaoInformada()), 
+					                                             dataOperacao);
+			
+			this.gerarMovimentoEstoqueEstornoDiferenca(item.getDiferenca(), dataOperacao);
+		}
+	}
+	
+	private ItemChamadaEncalheFornecedor atualizarItemCE(ItemChamadaEncalheFornecedor item, BigInteger qtdVenda, BigInteger qntEncalhe ){
+		
+		Long vendaParcial = (qtdVenda == null) ? 0L: qtdVenda.longValue();
+		
+		Long encalhe = (qntEncalhe == null) ? 0L: qntEncalhe.longValue();
+		
+		if( RegimeRecolhimento.PARCIAL.equals(item.getRegimeRecolhimento())){
+			
+			item.setQtdeVendaApurada(vendaParcial);
+		}
+		else{
+			
+			item.setQtdeVendaApurada(item.getQtdeEnviada() - encalhe);
+		}
+		
+		item.setQtdeDevolucaoInformada(encalhe);
+		item.setQtdeDevolucaoApurada(item.getQtdeDevolucaoInformada());
+		item.setQtdeVendaInformada(item.getQtdeVendaApurada());
+		item.setQtdeDevolucaoParcial(0L);
+		item.setValorVendaApurado(item.getPrecoUnitario().multiply(new BigDecimal(item.getQtdeVendaApurada())));
+		
+		BigDecimal desconto = obterPercentualDesconto(item);
+		
+		item.setValorMargemApurado(desconto.divide(new BigDecimal(100)).multiply(item.getValorVendaApurado()));
+		item.setValorVendaApurado(item.getValorVendaApurado().subtract(item.getValorMargemApurado()));
+		
+		item.setValorMargemInformado(item.getValorMargemApurado());
+		item.setValorVendaInformado(item.getValorVendaApurado());
+			
+		return this.itemChamadaEncalheFornecedorRepository.merge(item);
+
 	}
 	
 	@Override
@@ -458,7 +601,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		fechamentoCEIntegracaoDTO.setItensFechamentoCE( this.buscarItensFechamentoCeIntegracao(filtro));
 		
-		fechamentoCEIntegracaoDTO.setConsolidado(this.buscarConsolidadoItensFechamentoCeIntegracao(filtro));
+		fechamentoCEIntegracaoDTO.setConsolidado(this.obterConsolidadoCE(filtro));
 		
 		fechamentoCEIntegracaoDTO.setSemanaFechada(this.verificarStatusSemana(filtro));
 		
@@ -467,13 +610,38 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Override
 	@Transactional(readOnly=true)
-	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro, BigDecimal qntVenda) {
+		
+		ItemChamadaEncalheFornecedor item = itemChamadaEncalheFornecedorRepository.buscarPorId(filtro.getIdItemChamadaEncalheFornecedor());
+		
+		FechamentoCEIntegracaoConsolidadoDTO consolidadoItem = this.obterConsolidadoCE(filtro);
+		
+		filtro.setIdItemChamadaEncalheFornecedor(null);
+		FechamentoCEIntegracaoConsolidadoDTO consolidadoItens = this.obterConsolidadoCE(filtro);
+		
+		BigDecimal desconto = obterPercentualDesconto(item);
+		
+		BigDecimal valorBruto = (item.getPrecoUnitario().multiply(qntVenda));
+		BigDecimal valorDesconto = (desconto.divide(new BigDecimal(100)).multiply(valorBruto));
+		
+		consolidadoItens.setTotalBruto(consolidadoItens.getTotalBruto().subtract(consolidadoItem.getTotalBruto()));
+		consolidadoItens.setTotalDesconto(consolidadoItens.getTotalDesconto().subtract(consolidadoItem.getTotalDesconto()));
+		
+		consolidadoItens.setTotalBruto(consolidadoItens.getTotalBruto().add(valorBruto));
+		consolidadoItens.setTotalDesconto(consolidadoItens.getTotalDesconto().add(valorDesconto));
+		
+		consolidadoItens.setTotalLiquido(consolidadoItens.getTotalBruto().subtract(consolidadoItens.getTotalDesconto()));
+		
+		return consolidadoItens;
+	}
+	
+	private FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCE(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		filtro.setPeriodoRecolhimento(this.obterPeriodoDataRecolhimento(filtro.getSemana()));
 		
 		return this.fechamentoCEIntegracaoRepository.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
 	}
-	
+
 	@Override
 	@Transactional
 	public String reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -489,19 +657,22 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		StringBuilder fornecedorSemReabertura = new StringBuilder();
 		
-		for(ChamadaEncalheFornecedor item : chamadasFornecedor){
+		for(ChamadaEncalheFornecedor cef : chamadasFornecedor){
 			
-			if(item.getDataFechamentoNDS().compareTo(dataOperacao)!=0
-					|| StatusIntegracao.INTEGRADO.equals(item.getStatusIntegracao())){
+			if(cef.getDataFechamentoNDS().compareTo(dataOperacao)!=0
+					|| StatusIntegracao.INTEGRADO.equals(cef.getStatusIntegracao())){
 				
-				fornecedorSemReabertura.append((item.getFornecedor().getJuridica()!= null)
-						? item.getFornecedor().getJuridica().getRazaoSocial()
+				fornecedorSemReabertura.append((cef.getFornecedor().getJuridica()!= null)
+						? cef.getFornecedor().getJuridica().getRazaoSocial()
 								:"").append(",");
 				continue;
 			}
+
+			this.estornarCeIntegracao(cef, dataOperacao); 
+
+			cef.setStatusCeNDS(StatusCeNDS.ABERTO);
 			
-			item.setStatusCeNDS(StatusCeNDS.ABERTO);
-			chamadaEncalheFornecedorRepository.alterar(item);
+			chamadaEncalheFornecedorRepository.alterar(cef);
 		}
 		
 		return montarMensagemFornecedorSemReabertura(fornecedorSemReabertura);
@@ -539,7 +710,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
 		
 		return periodoRecolhimento;
-		
 	}
 
 	@Transactional
@@ -548,7 +718,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		ItemChamadaEncalheFornecedor item = 
 			this.itemChamadaEncalheFornecedorRepository.buscarPorId(idItemChamadaFornecedor);
 
-		atualizarItem(item, null);
+		atualizarItemCE(item, venda, encalhe);
 	}
 
 	private BigDecimal obterPercentualDesconto(ItemChamadaEncalheFornecedor item) {
@@ -561,6 +731,51 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		return (valorRetorno == null)? BigDecimal.ZERO: valorRetorno;
 	}
-
 	
+	  /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly=true)
+    public byte[] gerarImpressaoChamadaEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro) {
+        
+    	List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = 
+    			chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(filtro);
+
+        if(chamadasEncalheFornecedor.isEmpty())
+        	throw new ValidacaoException(TipoMensagem.WARNING, "Chamada de Encalhe Fornecedor não encontrada!");
+        
+        Distribuidor distribuidor = distribuidorService.obter();
+        Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
+                .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
+                        distribuidor);
+        
+        return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
+    }
+    
+    /**
+     * Gera o PDF com as chamadas de encalhe recebidas
+     * 
+     * @param chamadas chamadas de encalhe para geração do PDF
+     * @return PDF gerado com as chamadas de encalhe
+     */
+    private byte[] gerarPDFChamadaEncalheFornecedor(Collection<ChamadasEncalheFornecedorDTO> chamadas) {
+       
+        try {
+            
+        	JRDataSource jrDataSource = new JRBeanCollectionDataSource(chamadas);
+
+    		URL url = Thread.currentThread().getContextClassLoader().getResource(PATH_JASPER_CE_DEVOLUCAO);
+
+    		String path = url.toURI().getPath();
+
+    		return JasperRunManager.runReportToPdf(path, new HashMap<String, Object>(), jrDataSource);
+        	
+        } catch (URISyntaxException | JRException ex) {
+            LOGGER.error("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+            throw new RuntimeException("Erro gerando PDF Chamada de Encalhe Fornecedor!", ex);
+        }
+    }
+    
+
 }

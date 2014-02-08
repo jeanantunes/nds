@@ -191,9 +191,7 @@ public class RoteiroRepositoryImpl extends
 				if(codigoBoxDe != null && codigoBoxAte == null) {
 					criteria.add(Restrictions.eq("box.codigo", codigoBoxDe.intValue()));
 				}
-				if(codigoBoxDe == null && codigoBoxAte != null) {
-					criteria.add(Restrictions.eq("box.codigo", codigoBoxAte.intValue()));
-				}
+
 			
 			}
 		}

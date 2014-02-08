@@ -325,14 +325,14 @@ function limparLstExcecao1(){
             <td width="43">Código:</td>
             <td width="78">
             	<input type="text" id="codigoPesquisaBases" style="width:60px;"
-            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"
             	 	/>
             </td>
             <td width="48">Produto:</td>
             <td width="184">
             	<input type="text" id="produtoPesquisaBases" style="width:160px;" 
             		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
-                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', '#edicaoPesquisaBases', true);"
             		/>
             </td>
             <td width="42">Edição:</td>

@@ -45,6 +45,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -80,6 +81,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Autowired
 	private CotaRepository cotaRepository;
+
+	@Autowired
+	private EstudoService estudoService;
 
 	private static final int MAX_DUPLICACOES_PERMITIDA = 3;
 
@@ -546,7 +550,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	estudoCopia.setLancamentoID(lancamento.getId());
     estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
 
-	Long id = estudoGeradoRepository.adicionar(estudoCopia);
+    Long id = this.estudoService.obterUltimoAutoIncrement();
+    
+    estudoCopia.setId(id);
+    
+	this.estudoGeradoRepository.adicionar(estudoCopia);
 	estudoCopia = estudoGeradoRepository.buscarPorId(id);
 
 	return estudoCopia;
