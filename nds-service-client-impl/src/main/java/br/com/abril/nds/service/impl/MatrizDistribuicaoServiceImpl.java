@@ -275,7 +275,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		estudoRepository.removerEstudos(idsEstudos);
 		
-		estudoCotaGeradoRepository.removerEstudosCotaPorEstudos(idsEstudos);
+		//estudoCotaGeradoRepository.removerEstudosCotaPorEstudos(idsEstudos);
     }
 
 	@Override
