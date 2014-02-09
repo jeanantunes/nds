@@ -163,7 +163,7 @@ function Distribuicao(tela) {
 		
 		if(dto.tipoDistribuicaoCota=='CONVENCIONAL'){
 			D.set('recebeComplementar',	dto.recebeComplementar);			
-		}else if(dto.tipoDistribuicaoCota=='ALTERNATIVO'){
+		}else {
 			D.set('recebeComplementar',	false);
 		}
 		

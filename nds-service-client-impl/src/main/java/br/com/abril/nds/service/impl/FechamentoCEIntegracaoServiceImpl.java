@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.chamadaencalhe.ChamadasEncalheFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.MensagemException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -152,6 +153,11 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	Usuario usuario = this.usuarioService.getUsuarioLogado();
     	
     	Long encalhe = itemCE.getQtdeDevolucaoInformada() == null?0l:itemCE.getQtdeDevolucaoInformada();
+    	
+    	if (encalhe == 0){
+    		
+    		return null;
+    	}
     	
     	Long venda = itemCE.getQtdeVendaApurada() == null?0l:itemCE.getQtdeVendaApurada();
     	
@@ -351,7 +357,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		if (listaCEComDiferencaPendente!=null && !listaCEComDiferencaPendente.isEmpty()){
 		
-		    throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
+		    throw new MensagemException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");	
 		}
 	}
 	
@@ -374,7 +380,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		        
 		            this.itemChamadaEncalheFornecedorRepository.merge(item);
 		            
-		            throw new ValidacaoException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");
+		            throw new MensagemException(TipoMensagem.WARNING, "É necessário confirmar Perdas e Ganhos");
 				}
 		    }
 		}		
@@ -405,7 +411,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	 * @param diferencas
 	 */
 	@Override
-	@Transactional(noRollbackForClassName = "ValidacaoException")
+	@Transactional(noRollbackForClassName = "MensagemException")
 	public void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro, 
 			             Map<Long,ItemFechamentoCEIntegracaoDTO> diferencas) {
 		
