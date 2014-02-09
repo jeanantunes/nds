@@ -378,6 +378,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterMatrizLancamentosConfirmados(List<Date> datasConfirmadas);
 	
+	List<Lancamento> obterMatrizLancamentosExpedidos(List<Date> datasConfirmadas);
+	
 	List<Lancamento> obterRecolhimentosConfirmados(List<Date> datasConfirmadas);
 	
 	boolean existeConferenciaEncalheParaLancamento(Long idLancamento);
