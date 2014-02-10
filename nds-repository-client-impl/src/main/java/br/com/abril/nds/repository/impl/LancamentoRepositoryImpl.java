@@ -2376,5 +2376,22 @@ public class LancamentoRepositoryImpl extends
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public boolean existeMatrizLancamentosExpedidos(
+			List<Date> datasConfirmadas) {
+				
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select case when(count(lancamento.id) > 0) then true else false end ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor in (:dataLancamento )");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameterList("dataLancamento", datasConfirmadas);
+		
+		return (Boolean) query.uniqueResult();
+	}
 
 }
