@@ -480,11 +480,11 @@ var produtoEdicaoController =$.extend(true,  {
 			var cProduto = '';
 			$.each(resultado.rows, function(index, row) {
 
-				var linkAprovar = '<a href="javascript:;" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ', \'' + row.cell.codigoProduto + '\', \'' + row.cell.statusSituacao + '\');" style="cursor:pointer; margin-right:10px;">' +
+				var linkAprovar = '<a href="javascript:;" isEdicao="true" onclick="produtoEdicaoController.editarEdicao(' + row.cell.id + ', \'' + row.cell.codigoProduto + '\', \'' + row.cell.statusSituacao + '\');" style="cursor:pointer; margin-right:10px;">' +
 				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
 				'</a>';
 
-				var linkExcluir = '<a href="javascript:;" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
+				var linkExcluir = '<a href="javascript:;" isEdicao="true" onclick="produtoEdicaoController.removerEdicao(' + row.cell.id + ');" style="cursor:pointer">' +
 				'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
 				'</a>';
 

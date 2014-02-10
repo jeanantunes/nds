@@ -469,7 +469,8 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 		timeout: 18000000, //5 horas
 		dataType: dataType,
 		success: function(json) {
-			
+			console.log('ajax');
+			bloquearItensEdicao(BaseController.workspace);
 			var tipoMensagem = null;
 			var listaMensagens = null;
 			

@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0109.processor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,53 +45,25 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	@Override
 	public void processMessage(Message message) {
 
-		// Distribuidor unico para todo sistema
-		if (verificarDistribuidor(message)) {
+		Editor editor = this.findEditorByID(message);
 
-			Editor editor = this.findEditorByID(message);
+		TipoProduto tipoProduto = this.findTipoProduto(message);
 
-			TipoProduto tipoProduto = this.findTipoProduto(message);
+		Produto produto = this.findProduto(message);
 
-			Produto produto = this.findProduto(message);
+		if (produto == null) {
 
-			if (produto == null) {
-
-				this.criarProdutoConformeInput(message, editor, tipoProduto);
-
-			} else {
-
-				this.atualizaProdutoConformeInput(produto, editor, tipoProduto,
-						message);
-			}
+			this.criarProdutoConformeInput(message, editor, tipoProduto);
 
 		} else {
 
-            this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"Distribuidor nao encontrato.");
-
-//			throw new RuntimeException("Distribuidor incorreto.");
+			this.atualizaProdutoConformeInput(produto, editor, tipoProduto,
+					message);
 		}
-	}
-
-	private boolean verificarDistribuidor(Message message) {
-		EMS0109Input input = (EMS0109Input) message.getBody();
-
-		String codigoDistribuidorSistema = 
-			message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
-		
-		String codigoDistribuidorArquivo = input.getCodigoDistribuidor();
-
-		if (codigoDistribuidorSistema != null
-				&& codigoDistribuidorSistema.equals(codigoDistribuidorArquivo)) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 	private Produto findProduto(Message message) {
+	    
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
@@ -205,8 +178,13 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		Produto produto = new Produto();
 
-		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
-		
+
+        String codigoDistribuidor = 
+                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+        
+        Fornecedor fornecedor = this
+                .findFornecedor(Integer.parseInt(codigoDistribuidor));
+				
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
@@ -307,11 +285,14 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		EMS0109Input input = (EMS0109Input) message.getBody();
 
+		String codigoDistribuidor = 
+	            message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
 		
 		Fornecedor fornecedor = this
-				.findFornecedor(input.getCodigoFornecedor());
+				.findFornecedor(Integer.parseInt(codigoDistribuidor));
 		
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
+		
 		
 		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
 		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(tipoDescontoInt);
@@ -438,6 +419,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			if (produto.getFornecedor().getCodigoInterface() != fornecedor
 					.getCodigoInterface()) {
 
+			    produto.setFornecedores(new HashSet<Fornecedor>());
+			    
 				produto.addFornecedor(fornecedor);
 
                 this.ndsiLoggerFactory.getLogger().logInfo(
@@ -488,7 +471,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 						"Atualizacao da Forma de Comercializacao para: " + produto.getFormaComercializacao().getValue());
 
 		}		
-
+		
+		this.getSession().update(produto);
 	}
 
 	                /**

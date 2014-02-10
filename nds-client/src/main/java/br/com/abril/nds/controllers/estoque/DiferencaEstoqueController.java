@@ -1516,6 +1516,22 @@ public class DiferencaEstoqueController extends BaseController {
 		);
 		
 		listaTiposDiferenca.add(
+			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.PERDA_DE, TipoDiferenca.PERDA_DE.getDescricao())
+		);
+		
+		listaTiposDiferenca.add(
+			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.PERDA_EM, TipoDiferenca.PERDA_EM.getDescricao())
+		);
+		
+		listaTiposDiferenca.add(
+			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.GANHO_DE, TipoDiferenca.GANHO_DE.getDescricao())
+		);
+		
+		listaTiposDiferenca.add(
+			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.GANHO_EM, TipoDiferenca.GANHO_EM.getDescricao())
+		);
+		
+		listaTiposDiferenca.add(
 			new ItemDTO<TipoDiferenca, String>(
 				TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO, 
 				TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.getDescricao())
@@ -1856,6 +1872,14 @@ public class DiferencaEstoqueController extends BaseController {
 				
 				consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao().getDescricao());
 				
+			} else if(diferenca.getLancamentoDiferenca() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0) != null
+					&& diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getStatusIntegracao() != null) {
+				
+				consultaDiferencaVO.setStatusIntegracao(
+					diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getStatusIntegracao().getDescricao()
+				);				
 			}
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getLancamentoDiferenca().getStatus().toString());

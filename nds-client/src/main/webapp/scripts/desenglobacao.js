@@ -365,23 +365,20 @@ var desenglobacaoController = $.extend(true, {
                 if(alterando){
                     $.post(contextPath + "/distribuicao/desenglobacao/editarDesenglobacao", [{name:'cotaNumeroDesenglobada', value: alterando}],
                             function(res) {
-                        if(res){
-//                          desenglobacaoController.res=res;
-                            if(res){
-                                result=res.result;
-                                var cotaDesenglobada = result[0];
-                                var cotasEnglobadasArray = result[1];
-                                $("#filtroDesenglobaNumeroCota").val(cotaDesenglobada.numeroCota);
-                                $("#filtroDesenglobaNomePessoa").val(cotaDesenglobada.nomePessoa);
+                                if(res){
+                                    result=res.result;
+                                    var cotaDesenglobada = result[0];
+                                    var cotasEnglobadasArray = result[1];
+                                    $("#filtroDesenglobaNumeroCota").val(cotaDesenglobada.numeroCota);
+                                    $("#filtroDesenglobaNomePessoa").val(cotaDesenglobada.nomePessoa);
 
-                                for ( var int = 0; int < cotasEnglobadasArray.length; int++) {
-                                    cota = cotasEnglobadasArray[int];
-                                    desenglobacaoController.adicionarCotaEnglobada(int,cota.numeroCotaEnglobada,cota.nomeCotaEnglobada,cota.porcentagemCota,
+                                    for ( var int = 0; int < cotasEnglobadasArray.length; int++) {
+                                        cota = cotasEnglobadasArray[int];
+                                        desenglobacaoController.adicionarCotaEnglobada(int,cota.numeroCotaEnglobada,cota.nomeCotaEnglobada,cota.porcentagemCota,
                                             cotaDesenglobada.numeroCota,cotaDesenglobada.nomePessoa);
+                                    }
+                                    $('#percentualDesengloba').val($('#tableCotasEnglobadas').find('input[name*="porcentagemCota"]').map(function(){return this.value*1;}).toArray().reduce(function(a,b){return a+b;}));
                                 }
-
-                            }
-                        }
                     });
                 }
             },

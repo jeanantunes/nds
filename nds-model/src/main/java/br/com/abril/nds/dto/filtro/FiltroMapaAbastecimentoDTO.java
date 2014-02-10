@@ -22,7 +22,7 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Integer codigoCota;
 	private Long edicaoProduto; 
 	private String nomeCota;
-	private Boolean quebraPorCota;
+	private boolean quebraPorCota;
 	private Boolean useSM;
 	private Long idEntregador;
 	private Boolean excluirProdutoSemReparte;
@@ -265,14 +265,14 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	/**
 	 * @return the quebraPorCota
 	 */
-	public Boolean getQuebraPorCota() {
+	public boolean getQuebraPorCota() {
 		return quebraPorCota;
 	}
 
 	/**
 	 * @param quebraPorCota the quebraPorCota to set
 	 */
-	public void setQuebraPorCota(Boolean quebraPorCota) {
+	public void setQuebraPorCota(boolean quebraPorCota) {
 		this.quebraPorCota = quebraPorCota;
 	}
 

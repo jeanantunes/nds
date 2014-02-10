@@ -325,7 +325,7 @@ public class RoteirizacaoController extends BaseController {
 	public void incluirRoteiro(Long idBox, Integer ordem, String nome, TipoRoteiro tipoRoteiro) {
 		
 		if(idBox == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario selecionar um Box para inclusão de um Roteiro!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um Box para adicionar um roteiro.");
 		}
 		
 		this.validarDadosInclusao(ordem, nome);
@@ -1368,7 +1368,7 @@ public class RoteirizacaoController extends BaseController {
 	public void transferirRotasComNovoRoteiro(List<Long> rotasId, Long idBox, Integer ordem, String roteiroNome, TipoRoteiro tipoRoteiro) {
 		
 		if(idBox == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario selecionar um Box para inclusão de um Roteiro!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um Box para adicionar um roteiro.");
 		}
 		
 		Roteiro roteiro = populaRoteiro(idBox, ordem, roteiroNome, tipoRoteiro);
