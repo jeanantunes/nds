@@ -28,9 +28,9 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
-import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -189,12 +189,12 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         return notafiscalEntrada;
     }
     
-    private TipoNotaFiscal obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente,
+    private NaturezaOperacao obterTipoNotaFiscal(GrupoNotaFiscal grupoNotaFiscal, TipoUsuarioNotaFiscal emitente,
             TipoUsuarioNotaFiscal destinatario) {
         
-        String hql = " from TipoNotaFiscal tipoNotaFiscal where tipoNotaFiscal.grupoNotaFiscal = :grupoNotaFiscal "
-                + "and tipoNotaFiscal.emitente = :emitente and tipoNotaFiscal.destinatario = :destinatario "
-                + " group by tipoNotaFiscal.id  ";
+        String hql = " from NaturezaOperacao no where no.grupoNotaFiscal = :grupoNotaFiscal "
+                + "and no.emitente = :emitente and no.destinatario = :destinatario "
+                + " group by no.id  ";
         
         Query query = getSession().createQuery(hql);
         
@@ -202,7 +202,7 @@ public class EMS0140MessageProcessor extends AbstractRepository implements Messa
         query.setParameter("emitente", emitente);
         query.setParameter("destinatario", destinatario);
         
-        return (TipoNotaFiscal) query.uniqueResult();
+        return (NaturezaOperacao) query.uniqueResult();
     }
     
     private CFOP obterCFOP() {
