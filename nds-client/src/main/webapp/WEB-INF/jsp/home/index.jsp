@@ -134,6 +134,7 @@
 											
 											focarPrimeiroElemento();
 											$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
+											bloquearItensEdicao(BaseController.workspace);
 										}
 									},
 									cache : true
