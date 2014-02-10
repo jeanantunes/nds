@@ -29,27 +29,6 @@ public interface ContagemDevolucaoService {
 	public List<ContagemDevolucaoDTO> obterContagemDevolucaoEdicaoFechada(
 			boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas, FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
-    /**
-     * Gera o arquivo para impressão das chamadas de encalhe dos fornecedores de
-     * acordo com os parâmetros
-     * 
-     *  @param idFornecedor
-     *            identificador do fornecedor, pode ser nulo, neste caso, indica
-     *            todos os fornecedores
-     * @param numeroSemana
-     *            número da semana para recuperação das chamadas de encalhe,
-     *            pode ser nulo, neste caso a geração do arquivo será por intervalo de
-     *            recolhimento
-     * @param periodo
-     *            período de recolhimento das chamadas de encalhe, pode ser
-     *            nulo, neste caso a geração do arquivo será por número da semana de
-     *            recolhimento
-
-     * @return arquivo gerado com as informações de chamada de encalhe dos
-     *         fornecedor de acordo com os parâmetros
-     */
-	public byte[] gerarImpressaoChamadaEncalheFornecedor(Long idFornecedor, Integer numeroSemana, Intervalo<Date> periodo);
-
 	void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException;
 
 	List<ContagemDevolucaoDTO> obterListaContagemDevolucao(

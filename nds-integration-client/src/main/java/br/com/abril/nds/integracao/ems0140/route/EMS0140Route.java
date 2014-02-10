@@ -18,23 +18,23 @@ public class EMS0140Route extends CouchDBImportRouteTemplate {
 	private EMS0140MessageProcessor messageProcessor;
 	
 	@Override
+    public String getUri() {
+        return "EMS0140";
+    }
+	
+	@Override
+    public MessageProcessor getMessageProcessor() {
+        return messageProcessor;
+    }
+	
+	@Override
+    public RouteInterface getRouteInterface() {
+        return RouteInterface.EMS0140;
+    }
+	
+	@Override
 	public InterfaceEnum getInterfaceEnum() {
 		return InterfaceEnum.EMS0140;
-	}
-
-	@Override
-	public String getUri() {
-		return "EMS0140";
-	}
-
-	@Override
-	public MessageProcessor getMessageProcessor() {
-		return messageProcessor;
-	}
-
-	@Override
-	public RouteInterface getRouteInterface() {
-		return RouteInterface.EMS0140;
 	}
 
 }

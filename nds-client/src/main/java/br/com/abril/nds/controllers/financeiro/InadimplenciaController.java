@@ -7,7 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -22,6 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -246,7 +248,17 @@ public class InadimplenciaController extends BaseController {
 		
 		List<DividaDTO> dividasDTO = null;
 		
+		if (idDivida == null){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívida atual não encontrada !");
+		}
+		
 		Divida dividaAtual = dividaService.obterDividaPorId(idDivida);
+		
+        if (dividaAtual == null){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívida atual não encontrada !");
+		}
 		
 		if (StatusDivida.NEGOCIADA.equals(dividaAtual.getStatus())) {
 			
@@ -262,8 +274,12 @@ public class InadimplenciaController extends BaseController {
 	
 	private List<DividaDTO> montarDividasDTONegociacao(Long idDivida) {
 		
-		List<MovimentoFinanceiroCota> movimentosFinanceiroCota =
-			this.dividaService.obterDividasNegociacao(idDivida);
+		List<MovimentoFinanceiroCota> movimentosFinanceiroCota = this.dividaService.obterDividasNegociacao(idDivida);
+		
+		if(movimentosFinanceiroCota == null || movimentosFinanceiroCota.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívidas Negociação não encontradas !"); 
+		}
 		
 		List<DividaDTO> dividasDTO = new ArrayList<>();
 		
@@ -284,15 +300,27 @@ public class InadimplenciaController extends BaseController {
 		
 		List<Divida> dividas = this.dividaService.obterDividasAcumulo(idDivida);
 		
+		if (dividas == null || dividas.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Dívidas Acumuladas não encontradas !"); 
+		}
+		
 		List<DividaDTO> dividasDTO = new ArrayList<>();
 		
 		DividaDTO dividaDTO = null;
 		
 		for(Divida divida : dividas) {
 			
+			Cobranca cobranca = divida.getCobranca();
+			
+			if (cobranca == null){
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Dívida sem cobrança vinculada !");
+			}
+			
 			dividaDTO =
-				new DividaDTO(DateUtil.formatarDataPTBR(divida.getCobranca().getDataVencimento()), 
-							  CurrencyUtil.formatarValor(divida.getCobranca().getValor()));
+				new DividaDTO(DateUtil.formatarDataPTBR(cobranca.getDataVencimento()), 
+							  CurrencyUtil.formatarValor(cobranca.getValor()));
 			
 			dividasDTO.add(dividaDTO);
 		}

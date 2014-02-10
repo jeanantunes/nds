@@ -81,6 +81,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal saldo;
 	
+	private boolean detalharDebitoCredito;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -359,6 +361,14 @@ public class ContaCorrenteCotaVO implements Serializable {
 
 	public void setStatusDivida(String statusDivida) {
 		this.statusDivida = statusDivida;
+	}
+
+	public boolean isDetalharDebitoCredito() {
+		return detalharDebitoCredito;
+	}
+
+	public void setDetalharDebitoCredito(boolean detalharDebitoCredito) {
+		this.detalharDebitoCredito = detalharDebitoCredito;
 	}
 
 }

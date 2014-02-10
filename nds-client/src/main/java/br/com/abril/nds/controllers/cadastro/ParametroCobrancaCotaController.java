@@ -269,7 +269,14 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		}
 
-		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
+		if (parametroCobranca != null) { 
+
+			this.result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
+		
+		} else {
+			
+			this.result.nothing();
+		}
 	}
 	
 	@Post
