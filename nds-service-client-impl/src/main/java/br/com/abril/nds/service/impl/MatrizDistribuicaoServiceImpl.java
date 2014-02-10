@@ -306,19 +306,18 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 	}
 
-	private void removeEstudo(Long idEstudo) {
-
-		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
-    
-		if (!estudo.isLiberado()) {
-
-			estudoGeradoRepository.remover(estudo);
-
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Este estudo já foi liberado, não é permitido excluí-lo!"));
-		}
-	}
+    @Override
+	public void removeEstudo(Long idEstudo) {
+        if (idEstudo > 0) {
+            EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
+            if (!estudo.isLiberado()) {
+                estudoGeradoRepository.remover(estudo);
+            } else {
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+                        "Este estudo já foi liberado, não é permitido excluí-lo!"));
+            }
+        }
+    }
 
 	@Override
 	@Transactional
