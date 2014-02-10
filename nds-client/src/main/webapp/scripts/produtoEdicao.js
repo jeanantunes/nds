@@ -801,18 +801,20 @@ var produtoEdicaoController =$.extend(true,  {
 							//Desativar Segmentação
 							$("#produtoEdicaoController-tipoSegmento").attr("disabled", true);
 							
-							if(!result.dataLancamento){
+							if(!result.dataLancamento || result.dataLancamento.$ == '01/01/3000'){
 								 $("#produtoEdicaoController-dataLancamento").val("");
 								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
 								 $("#produtoEdicaoController-istrac29").val(true);
 							}
 							
+							/*
 							if (result.origem == "INTERFACE") {
 								
 								$("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
 							}else{
 								$("#produtoEdicaoController-dataLancamento").attr("disabled", true);
 							}
+							*/
 
 							if (redistribuicao) {
 								
