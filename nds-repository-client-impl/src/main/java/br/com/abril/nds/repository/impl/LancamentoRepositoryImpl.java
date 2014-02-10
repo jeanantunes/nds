@@ -2386,10 +2386,12 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select case when(count(lancamento.id) > 0) then true else false end ");
 		hql.append(" from Lancamento lancamento ");
 		hql.append(" where lancamento.dataLancamentoDistribuidor in (:dataLancamento )");
+		hql.append(" and lancamento.status = :status ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameterList("dataLancamento", datasConfirmadas);
+		query.setParameter("status", StatusLancamento.EXPEDIDO);
 		
 		return (Boolean) query.uniqueResult();
 	}
