@@ -202,17 +202,23 @@ public class CalcularReparte extends ProcessoAbstrato {
 	return false;
     }
 
-    private BigInteger getSomaReparteCalculadoCotas(EstudoTransient estudo) {
-	List<CotaEstudo> cotas = new ArrayList<>();
-	cotas.addAll(estudo.getCotas());
-	cotas.addAll(estudo.getCotasExcluidas());
-	cotas.addAll(estudo.getCotasSoComEdicaoAberta());
-	BigInteger somaReparteCalculadoCota = BigInteger.ZERO;
-	for (CotaEstudo cota : cotas) {
-	    somaReparteCalculadoCota = somaReparteCalculadoCota.add(cota.getReparteCalculado());
+	private BigInteger getSomaReparteCalculadoCotas(EstudoTransient estudo) {
+		
+		List<CotaEstudo> cotas = new ArrayList<>();
+		
+		cotas.addAll(estudo.getCotas());
+		cotas.addAll(estudo.getCotasExcluidas());
+		cotas.addAll(estudo.getCotasSoComEdicaoAberta());
+		cotas.addAll(estudo.getCotasComReparteJaCalculado());
+		
+		BigInteger somaReparteCalculadoCota = BigInteger.ZERO;
+
+		for (CotaEstudo cota : cotas) {
+			somaReparteCalculadoCota = somaReparteCalculadoCota.add(cota.getReparteCalculado());
+		}
+		
+		return somaReparteCalculadoCota;
 	}
-	return somaReparteCalculadoCota;
-    }
 
     public void calcularIndiceSobra(EstudoTransient estudo) {
 	// Fim do sub processo
@@ -223,7 +229,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	Collections.sort(cotas, new Comparator<CotaEstudo>() {
 	    @Override
 	    public int compare(CotaEstudo c1, CotaEstudo c2) {
-		return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
+	    	return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
 	    }
 	});
 
