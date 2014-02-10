@@ -79,4 +79,37 @@ public class EdicaoBaseEstrategia implements Serializable {
 	public void setEstrategia(Estrategia estrategia) {
 		this.estrategia = estrategia;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getEstrategia() == null) ? 0 : this.getEstrategia().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EdicaoBaseEstrategia other = (EdicaoBaseEstrategia) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getEstrategia() == null) {
+			if (other.getEstrategia() != null)
+				return false;
+		} else if (!this.getEstrategia().equals(other.getEstrategia()))
+			return false;
+		return true;
+	}
+	
+	
 }

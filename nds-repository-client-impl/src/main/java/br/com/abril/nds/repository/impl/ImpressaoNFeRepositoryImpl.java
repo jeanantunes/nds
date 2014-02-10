@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -88,17 +87,22 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	@Override
 	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("select nf ");
-		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select notaFiscal")
+		.append(" from NotaFiscal notaFiscal")
+		.append(" where")
+		.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal in (:numerosNotas) ");
 		//Complementa o HQL com as clausulas de filtro
-		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
+		//Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
 
-		return q.list();
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameterList("numerosNotas", filtro.getNumerosNotas());
+		
+		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<NotaEnvio> buscarNotasEnvioParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ne ");
@@ -112,13 +116,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	//Torna reaproveitavel a parte de filtro da query
 	private Query montarFiltroConsultaNfeParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
 		
-		ObrigacaoFiscal obrigacaoFiscal = this.distribuidorRepository.obrigacaoFiscal();
-		
 		if(filtro == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
 		}
 		
-		sql.append("from NotaFiscal nf, Cota cota join nf.produtosServicos ps ");
+		sql.append("from NotaFiscal nf, Cota cota join nf.notaFiscalInformacoes.detalhesNotaFiscal ps ");
 		
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
 			sql.append(", MovimentoEstoqueCota movEstCota ");
@@ -144,9 +146,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
 		}
 		
-		if(obrigacaoFiscal != null) {
-			sql.append("and nf.informacaoEletronica.retornoComunicacaoEletronica.status = :statusNFe ");
-		}
+		sql.append("and nf.informacaoEletronica.retornoComunicacaoEletronica.status = :statusNFe ");
 		
 		//Filtra por datas de movimento de, entre e ate
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
@@ -242,9 +242,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			q.setParameter("tipoNotaFiscal", Long.parseLong(filtro.getTipoNFe()) );
 		}
 		
-		if(obrigacaoFiscal != null) {
-			q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
-		}
+		q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
 		
 		if(filtro.getDataMovimentoInicial() != null || filtro.getDataMovimentoFinal() != null) {
 			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() == null) {

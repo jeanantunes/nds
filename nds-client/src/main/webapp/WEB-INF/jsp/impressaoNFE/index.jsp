@@ -18,7 +18,6 @@
 
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos"><a isEdicao="true" href="javascript:;" id="impressaoNfe-btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
 
         <span class="bt_arq"><a href="javascript:;" id="impressaoNfe-btnImprimirXLS" title="Gerar Arquivo" onclick="impressaoNfeController.imprimir('XLS');" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 
@@ -49,7 +48,7 @@
 				<td width="212"></td>
 			</tr>
 			<tr>
-				<td width="91">Natureza Op:</td>
+				<td width="91">Nat. de Opera&ccedil;&atilde;o:</td>
    				<td width="204">
 					<select id="impressaoNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:200px; font-size:11px!important" title="">
 						<option value="">Todos</option>
@@ -100,10 +99,25 @@
 			<tr>
 				<td>Cota de:</td>
 				<td><input type="text" name="idCotaInicial" id="idCotaInicial" style="width: 80px;" /> &nbsp;Até&nbsp; <input
-					type="text" name="idCotaFinal" id="idCotaFinal" style="width: 80px;" /></td>
+					type="text" name="idCotaFinal" id="idCotaFinal" style="width: 80px;" />
+				</td>
+
 				<td>Intervalo Box:</td>
-				<td><input type="text" name="idBoxInicial" id="idBoxInicial" style="width: 76px;" /> &nbsp;Até &nbsp; <input
-					type="text" name="idBoxFinal" id="idBoxFinal" style="width: 76px;" /></td>
+				<td>
+					<select name="impressaoNfe-filtro-boxDe" id="impressaoNfe-filtro-inputIntervaloBoxDe" onchange="impressaoNfeController.changeBox();" style="width: 100px;">
+						<option value="" selected="selected">Selecione...</option>
+						<c:forEach var="box" items="${listaBox}">
+							<option value="${box.key}">${box.value}</option>
+						</c:forEach>
+					</select> &nbsp;Até &nbsp; 
+					<select name="impressaoNfe-filtro-boxAte" id="impressaoNfe-filtro-inputIntervaloBoxAte" onchange="impressaoNfeController.changeBox();" style="width: 100px;">
+						<option value="" selected="selected">Selecione...</option>
+							<c:forEach var="box" items="${listaBox}">
+								<option value="${box.key}">${box.value}</option>
+							</c:forEach>
+					</select>
+				</td>
+				
 				<td>Fornecedor:</td>
 				<td><a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
 					</td>
