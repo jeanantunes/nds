@@ -23,7 +23,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,8 +91,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -1009,6 +1008,8 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBaseCalculo(parametro.getBaseCalculo());
 		dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
+		dto.setTipoDistribuicaoCota(this.cotaRepository.obterTipoDistribuicao(idCota).name());
+		dto.setRecebeComplementar(parametro.getRecebeComplementar());
 		
 		return dto;
 	}
@@ -1213,6 +1214,7 @@ public class CotaServiceImpl implements CotaService {
 		processarTitularidadeCota(cota, cotaDTO);
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
+		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao().getRecebeComplementar());
 		
 		return cotaDTO;
 	}
@@ -2656,33 +2658,7 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota) {
 		
-		Cota cota = cotaRepository.buscarPorId(idCota);
-		
-		for (PDV pdv: cota.getPdvs()) {
-			
-			if (pdv != null) {
-				
-				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
-				
-				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
-					
-					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
-					
-					if (segmentacaoPDV != null) {
-						
-						if (segmentacaoPDV.getTipoCaracteristica() != null &&
-								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
-							
-							return true;
-						}
-					}
-				}
-			}
-			
-		}
-		
-		
-		return false;
+		return TipoDistribuicaoCota.CONVENCIONAL.equals(this.cotaRepository.obterTipoDistribuicao(idCota));
 	}
 
 	@Transactional(readOnly = true)

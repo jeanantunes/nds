@@ -128,6 +128,9 @@ public class PdvServiceImpl implements PdvService {
     
     @Autowired
     private EnderecoPDVRepository enderecoPdvRepository;
+    
+    @Autowired
+    private GeradorFluxoPDVRepository geradorFluxoPDVRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -347,7 +350,10 @@ public class PdvServiceImpl implements PdvService {
         }
 
         if (pdv != null) {
-            pdvRepository.remover(pdv);
+        	
+       		this.geradorFluxoPDVRepository.removerGeradorFluxoPDV(pdv.getId());
+
+       		this.pdvRepository.remover(pdv);
         }
     }
 

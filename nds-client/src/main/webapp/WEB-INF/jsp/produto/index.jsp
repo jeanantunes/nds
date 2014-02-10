@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -268,7 +269,7 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="produtoController.novoProduto();" rel="tipsy" title="Novo Produto">
+				<a href="javascript:;" onclick="produtoController.novoProduto();" isEdicao="true" rel="tipsy" title="Novo Produto">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 				</a>
 			</span>
