@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -481,7 +480,7 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
 			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
-			resumoExpedicaoVO.setReparte(expd.getQntReparte().add(expd.getQntDiferenca()));
+			resumoExpedicaoVO.setReparte(expd.getQntReparte());
 			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
 			
 			BigDecimal valorDiferenca = 

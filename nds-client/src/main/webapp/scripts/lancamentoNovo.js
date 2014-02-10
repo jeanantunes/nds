@@ -144,6 +144,8 @@ var lancamentoNovoController = $.extend(true, {
 		$("#cotaInputNota", lancamentoNovoController.workspace).val("");
 		$("#nomeCotaNota", lancamentoNovoController.workspace).val("");
 		
+		$("#nomeEstoqueSpan", lancamentoNovoController.workspace).html("Estoque");
+		
 		$("#divPesquisaProdutosNota", lancamentoNovoController.workspace).hide();
 
 		$("#tipoDiferenca", lancamentoNovoController.workspace).removeAttr("disabled");
@@ -387,6 +389,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$("#paraEstoque",lancamentoNovoController.workspace).check();
 		
+		var tipoEstoque = result.diferenca != null ? "(" + result.diferenca.descricaoTipoEstoque + ")" : "";
+		$("#nomeEstoqueSpan").html("Estoque " + tipoEstoque);
+
 		lancamentoNovoController.paraEstoque(true);
 		
 		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(result.diferenca.tipoDiferenca);

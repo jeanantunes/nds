@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
@@ -31,7 +30,6 @@ import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -387,36 +385,12 @@ public class MapaAbastecimentoController extends BaseController {
 
 			switch(filtro.getTipoConsulta()) {
 			case BOX:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
-
-				filtro.getPaginacao().setSortColumn("nomeEdicao");
-				filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+				filtro.setPaginacao(null);
 				Map<String, ProdutoMapaDTO> produtosMapaBox = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 
-				boolean cotasSemRoteirizacao = false;
-				List<String> arrayCotasSemRoteirizacaoBox = new ArrayList<String>();
-				Set<Entry<String, ProdutoMapaDTO>> entrySet = produtosMapaBox.entrySet();
-				java.util.Iterator<Entry<String, ProdutoMapaDTO>> iterator = entrySet.iterator();
-
-
-				while(iterator.hasNext()) {
-					Entry<String, ProdutoMapaDTO> next = iterator.next();
-					if(next.getValue() == null) {
-						cotasSemRoteirizacao = true;
-
-						arrayCotasSemRoteirizacaoBox.add(next.getKey());
-					}
-				}
-
-				if(cotasSemRoteirizacao == true) {
-					result.include("result", arrayCotasSemRoteirizacaoBox);
-				} else {
-					setaNomeParaImpressao();
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapaBox);
-				}
-				break;
-
+				setaNomeParaImpressao();
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapaBox);
+			break;
 			case ROTA:
 				
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
@@ -450,9 +424,8 @@ public class MapaAbastecimentoController extends BaseController {
 								
 			break;
 			case PRODUTO_ESPECIFICO:
-				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.getPaginacao().setPaginaAtual(null);
-
+				filtro.setPaginacao(null);
+				
 				ProdutoEdicaoMapaDTO produtoEdicaoMapaEspecifico = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEspecifico);
@@ -498,8 +471,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.setPaginacao(null);
 
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 
@@ -670,7 +642,7 @@ public class MapaAbastecimentoController extends BaseController {
 			mostrarMensagemListaVazia();
 		}
 
-		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorProdutoEdicao(filtro);
 
 		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
 	}
