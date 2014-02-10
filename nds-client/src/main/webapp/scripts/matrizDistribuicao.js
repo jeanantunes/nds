@@ -1650,7 +1650,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        	
 	        	return;
 	        }
-	        
+	        /*
 	        $('#confirmar_variaveis').dialog({
 	            escondeHeader: false,
 	            resizable: false,
@@ -1680,8 +1680,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	                click: function() {
 	                    $(this).dialog("close");
 	                }
-	            }],
+	            }]
 	        });
+            */
 	    }
 	    );
 	},

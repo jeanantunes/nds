@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.abril.nds.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -20,10 +21,6 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
-import br.com.abril.nds.service.EstudoService;
-import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
@@ -31,6 +28,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+import org.springframework.transaction.annotation.Transactional;
 
 @Path("/distribuicao/histogramaPosEstudo")
 @Resource
@@ -58,8 +56,11 @@ public class HistogramaPosEstudoController extends BaseController{
 	
 	@Autowired
 	private ProdutoBaseSugeridaRepository baseSugeridaRepository;
-	
-	@Path("/index")
+
+    @Autowired
+    private MatrizDistribuicaoService matrizDistribuicaoService;
+
+    @Path("/index")
 	public void histogramaPosEstudo(String codigoProduto, String edicao) {
 	    if (codigoProduto != null && !codigoProduto.isEmpty() && edicao != null && !edicao.isEmpty()) {
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
@@ -70,18 +71,16 @@ public class HistogramaPosEstudoController extends BaseController{
 		result.include("modoAnalise", modoAnalise);
 	    }
 	}
-	
-	
-	@Post
-	public void excluirEstudo(long id){
-		if (id > 0) {
-			estudoService.excluirEstudo(id);
-			
-			throw new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!");
-		}
-	}
-	
-	@Post
+
+
+    @Post
+    @Transactional
+    public void excluirEstudo(long id) {
+        matrizDistribuicaoService.removeEstudo(id);
+        result.use(Results.json()).withoutRoot().from(new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!")).recursive().serialize();
+    }
+
+    @Post
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
 		Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
 		EstudoGerado estudo = (EstudoGerado) estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
