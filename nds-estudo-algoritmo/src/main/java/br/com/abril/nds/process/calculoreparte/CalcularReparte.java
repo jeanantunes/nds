@@ -68,50 +68,63 @@ public class CalcularReparte extends ProcessoAbstrato {
 	calcularIndiceSobra(estudo);
     }
 
-    public void calcularAjusteReparte(EstudoTransient estudo) {
-	BigDecimal reparteDistribuir = new BigDecimal(estudo.getReparteDistribuir());
-	estudo.setExcedenteDistribuir(reparteDistribuir.subtract(estudo.getSomatoriaVendaMedia()));
-	if (reparteDistribuir.compareTo(estudo.getSomatoriaVendaMedia()) > 0) {
-	    boolean temEdicaoBaseFechada = temEdicaoBaseFechada(estudo);
+	public void calcularAjusteReparte(EstudoTransient estudo) {
+		
+		BigDecimal reparteDistribuir = new BigDecimal(estudo.getReparteDistribuir());
+		estudo.setExcedenteDistribuir(reparteDistribuir.subtract(estudo.getSomatoriaVendaMedia()));
+		
+		if (reparteDistribuir.compareTo(estudo.getSomatoriaVendaMedia()) > 0) {
+			
+			boolean temEdicaoBaseFechada = temEdicaoBaseFechada(estudo);
+			
+			BigInteger reservaAjuste = BigInteger.ZERO;
+			
+			if (temEdicaoBaseFechada) {
+				// Variável AjusteReparte modificada no faq FAQF2-53
+				// AjusteReparte = Excedente * 1%
+				// ou 1 exemplar (o que for maior, desde que 1 exemplar não
+				// ultrapasse a 10% do excedente)
+				// ou 1 pacote-padrão se for distribuição por múltiplos
 
-	    BigInteger reservaAjuste = BigInteger.ZERO;
-	    if (temEdicaoBaseFechada) {
-		// Variável AjusteReparte modificada no faq FAQF2-53
-		// AjusteReparte = Excedente * 1%
-		// ou 1 exemplar (o que for maior, desde que 1 exemplar não
-		// ultrapasse a 10% do excedente)
-		// ou 1 pacote-padrão se for distribuição por múltiplos
+				// Calculo 1 - Pacote padrao
+				BigInteger calculo1 = BigInteger.ZERO;
+				
+				if (estudo.isDistribuicaoPorMultiplos()
+						&& estudo.getPacotePadrao() != null) {
+					calculo1 = estudo.getPacotePadrao();
+				}
+				
+				// Calculo 2 - Excedente * 1%
+				BigInteger calculo2 = estudo.getExcedenteDistribuir()
+						.multiply(BigDecimal.valueOf(0.01))
+						.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+				// Calculo 3 - 1 Exemplar
+				BigInteger calculo3 = BigInteger.ZERO;
+				// checando se 1 exemplar nao e maior que 10%
+				BigDecimal percentual = BigDecimal.ZERO;
+				
+				if (estudo.getExcedenteDistribuir().compareTo(BigDecimal.ZERO) > 0) {
+					percentual = BigDecimal.valueOf(100).divide(
+							estudo.getExcedenteDistribuir(), 2,
+							BigDecimal.ROUND_HALF_UP);
+				}
+				
+				if (percentual.compareTo(BigDecimal.valueOf(10)) < 0) {
+					calculo3 = BigInteger.ONE;
+				}
 
-		// Calculo 1 - Pacote padrao
-		BigInteger calculo1 = BigInteger.ZERO;
-		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-		    calculo1 = estudo.getPacotePadrao();
+				reservaAjuste = calculo1.max(calculo2);
+				reservaAjuste = reservaAjuste.max(calculo3);
+				reservaAjuste = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(reservaAjuste));
+
+				// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
+				estudo.setExcedenteDistribuir(estudo.getExcedenteDistribuir().subtract(new BigDecimal(reservaAjuste)));
+				estudo.setReservaAjuste(reservaAjuste);
+				estudo.setReservaAjusteInicial(reservaAjuste);
+				estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(reservaAjuste));
+			}
 		}
-		// Calculo 2 - Excedente * 1%
-		BigInteger calculo2 = estudo.getExcedenteDistribuir().multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-		// Calculo 3 - 1 Exemplar
-		BigInteger calculo3 = BigInteger.ZERO;
-		// checando se 1 exemplar nao e maior que 10%
-		BigDecimal percentual = BigDecimal.ZERO;
-		if (estudo.getExcedenteDistribuir().compareTo(BigDecimal.ZERO) > 0) {
-		    percentual = BigDecimal.valueOf(100).divide(estudo.getExcedenteDistribuir(), 2, BigDecimal.ROUND_HALF_UP);
-		}
-		if (percentual.compareTo(BigDecimal.valueOf(10)) < 0) {
-		    calculo3 = BigInteger.ONE;
-		}
-
-		reservaAjuste = calculo1.max(calculo2);
-		reservaAjuste = reservaAjuste.max(calculo3);
-		reservaAjuste = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(reservaAjuste));
-
-		// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
-		estudo.setExcedenteDistribuir(estudo.getExcedenteDistribuir().subtract(new BigDecimal(reservaAjuste)));
-		estudo.setReservaAjuste(reservaAjuste);
-		estudo.setReservaAjusteInicial(reservaAjuste);
-		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(reservaAjuste));
-	    }
 	}
-    }
 
     public void calcularPercentualExcedente(EstudoTransient estudo) throws Exception {
 	// %Excedente = Excedente / SVendaMédiaFinal
