@@ -643,9 +643,8 @@ var histogramaPosEstudoController = $.extend(true, {
 
 	recalcularEstudo : function (){
 		var urlAnalise = contextPath + '/distribuicaoVendaMedia/index?estudoId=' + $('#codigoEstudoFs').text();
-
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
-	},
+	}
 
 }, BaseController);
 //@ sourceURL=histogramaPosEstudo.js

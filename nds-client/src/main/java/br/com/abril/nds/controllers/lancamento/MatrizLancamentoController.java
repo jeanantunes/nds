@@ -1204,7 +1204,9 @@ public class MatrizLancamentoController extends BaseController {
 			
 			if (!confirmacaoVO.isConfirmado()) {
 				
+
 				if(this.distribuidorService.obterDataOperacaoDistribuidor().getTime() <= data.getTime()){
+
 					
 					confirmacoesAuxVO.add(confirmacaoVO);
 				}
@@ -1318,7 +1320,7 @@ public class MatrizLancamentoController extends BaseController {
 			
 			if (confirmacaoVO.isConfirmado()) {
 				
-				if(this.distribuidorService.obterDataOperacaoDistribuidor().before(data)){
+				if(!this.distribuidorService.obterDataOperacaoDistribuidor().after(data)){
 					
 				  datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
 				}

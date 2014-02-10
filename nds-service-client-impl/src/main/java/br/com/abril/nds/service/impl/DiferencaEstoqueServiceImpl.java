@@ -1057,7 +1057,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
 		
-		diferenca.getItemRecebimentoFisico().setDiferenca(null);
+		if (diferenca.getItemRecebimentoFisico() != null) {
+			
+			diferenca.getItemRecebimentoFisico().setDiferenca(null);
+		}
 		
 		this.diferencaEstoqueRepository.remover(diferenca);
 	}

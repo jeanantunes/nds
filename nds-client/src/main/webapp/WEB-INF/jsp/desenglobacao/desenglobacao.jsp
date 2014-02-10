@@ -109,7 +109,7 @@
 						<input type="text" name="desenglobaDTO[0].desenglobaNomePessoa" id="filtroDesenglobaNomePessoa" style="width: 200px;" />
 					</td>
                     <td>% Desengl:</td>
-                    <td><input id="percentualDesengloba" type="text" size="5"/></td>
+                    <td><input id="percentualDesengloba" type="text" size="5" readonly/></td>
 				</tr>
 			</table>
 		</fieldset>
