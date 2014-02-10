@@ -1236,4 +1236,96 @@ public class Distribuidor {
             List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
+
+	@Override
+	public String toString() {
+		return "Distribuidor [id=" + id + ", parametroCobrancaDistribuidor="
+				+ parametroCobrancaDistribuidor
+				+ ", parametrosRecolhimentoDistribuidor="
+				+ parametrosRecolhimentoDistribuidor
+				+ ", parametrosAprovacaoDistribuidor="
+				+ parametrosAprovacaoDistribuidor + ", codigo=" + codigo
+				+ ", dataOperacao=" + dataOperacao + ", juridica=" + juridica
+				+ ", fatorDesconto=" + fatorDesconto + ", politicasCobranca="
+				+ politicasCobranca + ", politicaSuspensao="
+				+ politicaSuspensao + ", telefones=" + telefones
+				+ ", parametrosDistribuidorEmissaoDocumentos="
+				+ parametrosDistribuidorEmissaoDocumentos
+				+ ", parametrosDistribuidorFaltasSobras="
+				+ parametrosDistribuidorFaltasSobras + ", aceitaJuramentado="
+				+ aceitaJuramentado + ", tipoContabilizacaoCE="
+				+ tipoContabilizacaoCE + ", supervisionaVendaNegativa="
+				+ supervisionaVendaNegativa + ", politicaChamadao="
+				+ politicaChamadao + ", capacidadeDistribuicao="
+				+ capacidadeDistribuicao + ", capacidadeRecolhimento="
+				+ capacidadeRecolhimento + ", numeroReprogramacoesLancamento="
+				+ numeroReprogramacoesLancamento + ", inicioSemana="
+				+ inicioSemana + ", executaRecolhimentoParcial="
+				+ executaRecolhimentoParcial + ", preenchimentoAutomaticoPDV="
+				+ preenchimentoAutomaticoPDV + ", fatorRelancamentoParcial="
+				+ fatorRelancamentoParcial + ", valorConsignadoSuspensaoCotas="
+				+ valorConsignadoSuspensaoCotas
+				+ ", quantidadeDiasSuspensaoCotas="
+				+ quantidadeDiasSuspensaoCotas + ", parametroContratoCota="
+				+ parametroContratoCota + ", tiposGarantiasAceita="
+				+ tiposGarantiasAceita
+				+ ", requerAutorizacaoEncalheSuperaReparte="
+				+ requerAutorizacaoEncalheSuperaReparte
+				+ ", qntDiasReutilizacaoCodigoCota="
+				+ qntDiasReutilizacaoCodigoCota
+				+ ", utilizaSugestaoIncrementoCodigo="
+				+ utilizaSugestaoIncrementoCodigo
+				+ ", qtdDiasEncalheAtrasadoAceitavel="
+				+ qtdDiasEncalheAtrasadoAceitavel
+				+ ", qntDiasVencinemtoVendaEncalhe="
+				+ qntDiasVencinemtoVendaEncalhe + ", tipoAtividade="
+				+ tipoAtividade + ", possuiRegimeEspecialDispensaInterna="
+				+ possuiRegimeEspecialDispensaInterna
+				+ ", numeroDispositivoLegal=" + numeroDispositivoLegal
+				+ ", dataLimiteVigenciaRegimeEspecial="
+				+ dataLimiteVigenciaRegimeEspecial + ", tipoImpressaoCE="
+				+ tipoImpressaoCE + ", tipoImpressaoInterfaceLED="
+				+ tipoImpressaoInterfaceLED + ", arquivoInterfaceLedPicking1="
+				+ arquivoInterfaceLedPicking1
+				+ ", arquivoInterfaceLedPicking2="
+				+ arquivoInterfaceLedPicking2
+				+ ", arquivoInterfaceLedPicking3="
+				+ arquivoInterfaceLedPicking3 + ", tipoImpressaoNENECADANFE="
+				+ tipoImpressaoNENECADANFE + ", utilizaProcuracaoEntregadores="
+				+ utilizaProcuracaoEntregadores
+				+ ", informacoesComplementaresProcuracao="
+				+ informacoesComplementaresProcuracao + ", utilizaGarantiaPdv="
+				+ utilizaGarantiaPdv + ", parcelamentoDividas="
+				+ parcelamentoDividas + ", negociacaoAteParcelas="
+				+ negociacaoAteParcelas + ", utilizaControleAprovacao="
+				+ utilizaControleAprovacao + ", prazoFollowUp=" + prazoFollowUp
+				+ ", prazoAvisoPrevioValidadeGarantia="
+				+ prazoAvisoPrevioValidadeGarantia
+				+ ", qtdDiasLimiteParaReprogLancamento="
+				+ qtdDiasLimiteParaReprogLancamento
+				+ ", descontoCotaNegociacao=" + descontoCotaNegociacao
+				+ ", parametroEntregaBanca=" + parametroEntregaBanca
+				+ ", codigoDistribuidorDinap=" + codigoDistribuidorDinap
+				+ ", codigoDistribuidorFC=" + codigoDistribuidorFC
+				+ ", enderecoDistribuidor=" + enderecoDistribuidor
+				+ ", controleArquivoCobranca=" + controleArquivoCobranca
+				+ ", fechamentoDiarioEmAndamento="
+				+ fechamentoDiarioEmAndamento + ", aceitaBaixaPagamentoMaior="
+				+ aceitaBaixaPagamentoMaior + ", aceitaBaixaPagamentoMenor="
+				+ aceitaBaixaPagamentoMenor + ", aceitaBaixaPagamentoVencido="
+				+ aceitaBaixaPagamentoVencido + ", numeroDiasNovaCobranca="
+				+ numeroDiasNovaCobranca + ", assuntoEmailCobranca="
+				+ assuntoEmailCobranca + ", mensagemEmailCobranca="
+				+ mensagemEmailCobranca + ", pracaVeraneio=" + pracaVeraneio
+				+ ", interfacesMatrizExecucao=" + interfacesMatrizExecucao
+				+ ", dataInicioInterfacesMatrizExecucao="
+				+ dataInicioInterfacesMatrizExecucao + ", pararAcumuloDividas="
+				+ pararAcumuloDividas + ", tiposNotaFiscalDistribuidor="
+				+ tiposNotaFiscalDistribuidor
+				+ ", tiposEmissoesNotaFiscalDistribuidor="
+				+ tiposEmissoesNotaFiscalDistribuidor
+				+ ", listClassificacaoCota=" + listClassificacaoCota
+				+ ", gridDistribuicao=" + gridDistribuicao
+				+ ", listPercentualExcedente=" + listPercentualExcedente + "]";
+	}
 }

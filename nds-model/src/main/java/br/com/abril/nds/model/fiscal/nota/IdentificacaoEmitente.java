@@ -48,7 +48,7 @@ public class IdentificacaoEmitente implements Serializable {
 		/**
 		 * 3 – Regime Normal. (v2.0)
 		 */
-		REGINE_NORMAL(3);
+		REGIME_NORMAL(3);
 		
 		private Integer regimeTributario;
 		

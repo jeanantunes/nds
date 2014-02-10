@@ -143,5 +143,35 @@ public class HistoricoLancamento implements Serializable {
 	public void setTipoEdicao(TipoEdicao tipoEdicao) {
 		this.tipoEdicao = tipoEdicao;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getLancamento() == null) ? 0 : this.getLancamento().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HistoricoLancamento other = (HistoricoLancamento) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getLancamento() == null) {
+			if (other.getLancamento() != null)
+				return false;
+		} else if (!this.getLancamento().equals(other.getLancamento()))
+			return false;
+		return true;
+	}
 }

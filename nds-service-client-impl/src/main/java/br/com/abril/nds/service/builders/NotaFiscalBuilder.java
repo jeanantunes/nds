@@ -67,28 +67,6 @@ public class NotaFiscalBuilder implements Serializable {
 		return notaFiscal;
 	}
 
-
-	// metodo responsavel pelo dados do distribuidor da nota
-	public static NotaFiscalNds popularDadosDistribuidor(NotaFiscalNds notaFiscal, Distribuidor distribuidor, FiltroViewNotaFiscalDTO filtro){
-		// Dados do Distribuidor
-		/**
-		 *		
-		notaFiscal.getEmissor().setNomeFantasia(distribuidor.getJuridica().getRazaoSocial());
-		notaFiscal.getEmissor().setInscricaoEstadual(distribuidor.getJuridica().getInscricaoEstadual());
-		notaFiscal.getEmissor().setCnpj(distribuidor.getJuridica().getCnpj());
-		
-		Endereço
-		notaFiscal.getEmissor().getNotaFicalEndereco().setLogradouro(distribuidor.getEnderecoDistribuidor().getEndereco().getLogradouro());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setNumero(distribuidor.getEnderecoDistribuidor().getEndereco().getNumero());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setBairro(distribuidor.getEnderecoDistribuidor().getEndereco().getBairro());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setCidade(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
-		notaFiscal.getEmissor().getNotaFicalEndereco().setUf(distribuidor.getEnderecoDistribuidor().getEndereco().getUf()); 
-		 * 
-		 */
-		
-		return notaFiscal;
-	}
-	
 	public TipoOperacao tipoOperacaoNotaFiscal (){
 		
 		return null;
@@ -143,7 +121,7 @@ public class NotaFiscalBuilder implements Serializable {
 		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setCnae("1234567");
 		
 		//FIXME: Obter o valor crt
-		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGINE_NORMAL);
+		notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().setRegimeTributario(RegimeTributario.REGIME_NORMAL);
 		
 		CNPJEmitente cnpj = new CNPJEmitente();
 		cnpj.setDocumento(distribuidor.getJuridica().getCnpj().replaceAll("/", "").replaceAll("\\.", "").replaceAll("-", ""));
