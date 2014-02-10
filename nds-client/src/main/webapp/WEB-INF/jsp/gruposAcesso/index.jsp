@@ -89,19 +89,19 @@
             </tr>
             <tr>
               <td>Username:</td>
-              <td><input type="text" name="usuarioDTO.login" id="login" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.login" id="login" autocomplete="off" style="width:220px;"/></td>
               <td>E-mail:</td>
-              <td><input type="text" name="usuarioDTO.email" id="email" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.email" id="email" autocomplete="off" style="width:220px;"/></td>
             </tr>
             <tr id="trInsercaoSenhas">
               <td>Nova Senha:</td>
-              <td><input type="password" name="usuarioDTO.senha" id="senha" style="width:220px;"/></td>
+              <td><input type="password" name="usuarioDTO.senha" id="senha" autocomplete="off" style="width:220px;"/></td>
               <td>Confirma nova Senha:</td>
-              <td><input type="password" name="usuarioDTO.confirmaSenha" id="usuarioSenhaConfirma" style="width:220px;"/></td>
+              <td><input type="password" name="usuarioDTO.confirmaSenha" id="usuarioSenhaConfirma" autocomplete="off" style="width:220px;"/></td>
             </tr>
             <tr id="trLembreteSenha">
               <td>Lembrete Senha:</td>
-              <td><input type="text" name="usuarioDTO.lembreteSenha" id="lembreteSenha" style="width:220px;"/></td>
+              <td><input type="text" name="usuarioDTO.lembreteSenha" id="lembreteSenha" autocomplete="off" style="width:220px;"/></td>
               <td>Status:</td>
               <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
@@ -243,7 +243,7 @@
 	      </fieldset>
            </div>
            </form>
-           <form action="/administracao/gruposAcesso" id="pesquisar_usuario_form">
+          
            <div id="tabs-usuarios" class="fixo">
            <div class="areaBts">
            		<div class="area">
@@ -251,6 +251,7 @@
            		</div>
            </div>
            <div class="linha_separa_fields">&nbsp;</div>
+            <form action="/administracao/gruposAcesso" id="pesquisar_usuario_form">
 	        <fieldset class="fieldFiltro" style="width:905px!important;">
 	   	    	<legend> Pesquisar Usuário</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -261,6 +262,7 @@
 		            </tr>
 	          	</table>
 	      	</fieldset>
+	      	 </form>
 	      <div class="linha_separa_fields">&nbsp;</div>
 	      <fieldset class="fieldGrid" style="width:905px!important;">
 	       	<legend>Usuários  Cadastrados</legend>
@@ -271,7 +273,7 @@
 	      </fieldset>
 	      <br clear="all" />
            </div>
-           </form>
+          
            <form action="/administracao/gruposAcesso" id="pesquisar_regras_form">
            <div id="tabs-regras" class="fixo">
            <div class="areaBts">

@@ -1,4 +1,4 @@
-<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}"/>
 <head>
 
 <style>
@@ -117,22 +117,22 @@ balanceamentoLancamento.inicializar();
 			  		<div class="area">
 			  			<span class="bt_novos" style="display: none;">
 		        			<!-- Voltar Configuração Inicial -->
-		        			<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
+		        			<a id="linkVoltarConfiguracaoInicial" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
 		        		</span>
 			  			
 			  			<span class="bt_novos" style="display: none;">
 			  				<!-- Reprogramar -->
-			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
+			  				<a id="linkReprogramar" href="javascript:;" isEdicao="true" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
 		                </span>
 		                
 		                <span class="bt_novos" style="display: none;">
-							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
+							<a isEdicao="true" id="linkSalvar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
 								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
 							</a>
 						</span>
 						
 						<span class="bt_novos" style="display: none;">
-							<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
+							<a id="linkMatrizFornecedor" isEdicao="true" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
 								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
 							</a>
 						</span>
@@ -154,13 +154,13 @@ balanceamentoLancamento.inicializar();
 						
 						<span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
 		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
+		                    <a id="linkConfirmar" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
 		                    </a>
 		                </span>
 		                
 						<span class="bt_novos" style="display: none;">
-				            <a id="linkReabrirMatriz" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" rel="tipsy" title="Reabrir Matriz" >
+				            <a id="linkReabrirMatriz" isEdicao="true" href="javascript:;" onclick="balanceamentoLancamento.obterDatasConfirmadasParaReabertura();" rel="tipsy" title="Reabrir Matriz" >
 					             <img src="<c:url value='images/ico_reopen.gif'/>"  hspace="5" border="0" />
 				           </a> 
 			            </span>

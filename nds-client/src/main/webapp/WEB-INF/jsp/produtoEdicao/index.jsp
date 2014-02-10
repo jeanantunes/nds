@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript"
@@ -140,12 +141,12 @@ fieldset {
 						</fieldset>
 
 						<span class="bt_novos"> <a name="linkIncluirNovo"
-							href="javascript:;"
+							href="javascript:;" isEdicao="true"
 							onclick="produtoEdicaoController.salvarProdutoEdicao(false);">
 								<img src="${pageContext.request.contextPath}/images/ico_add.gif"
 								border="0" /> <b> Incluir Novo</b>
 						</a>
-						</span> <span class="bt_novos"> <a name="linkRedistribuicao"
+						</span> <span class="bt_novos"> <a name="linkRedistribuicao" isEdicao="true"
 							href="javascript:;" style="display: none;"
 							onclick="produtoEdicaoController.popupRedistribuicao();"> <img
 								src="${pageContext.request.contextPath}/images/ico_salvar.gif"
@@ -562,12 +563,12 @@ fieldset {
 
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos"> <a href="javascript:;"
+			<span class="bt_novos"> <a href="javascript:;"  isEdicao="true" 
 				onclick="produtoEdicaoController.novaEdicao();" rel="tipsy"
 				title="Incluir Nova Edição"><img
 					src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 					hspace="5" border="0" /></a>
-			</span> <span class="bt_novos"> <a href="javascript:;"
+			</span> <span class="bt_novos"> <a href="javascript:;"  isEdicao="true" 
 				onclick="produtoEdicaoController.edicaoLote();" rel="tipsy"
 				title="Adicionar Edição em Lote"><img
 					src="${pageContext.request.contextPath}/images/ico_integrar.png"

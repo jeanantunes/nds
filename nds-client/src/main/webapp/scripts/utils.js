@@ -583,7 +583,7 @@ function bloquearItensEdicao(workspace) {
 	if($('#permissaoAlteracao',workspace).val()=="true")
 		return;
 	
-	$('a[isEdicao="true"]',workspace).each(function() {
+	$('a[isEdicao="true"][isedicao="true"]',workspace).each(function() {
 		this.href="#";
 		$(this).removeAttr("onClick");
 		$(this).unbind('click');
@@ -592,7 +592,7 @@ function bloquearItensEdicao(workspace) {
 		});
 	});
 	
-	$('input[isEdicao="true"]',workspace).each(function() {
+	$('input[isEdicao="true"][isedicao="true"]',workspace).each(function() {
 		$(this).attr("disabled",true);
 		$(this).removeAttr("onClick");
 	});
