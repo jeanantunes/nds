@@ -121,7 +121,9 @@
 				<td width="20" class="view-estouque">
 					<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
 				</td>
-				<td width="72" class="view-estouque">Estoque</td>
+				<td width="72" class="view-estouque">
+					<span id="nomeEstoqueSpan">Estoque</span>
+				</td>
 				<td width="20" class="view-cota">
 					<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
 				</td>
