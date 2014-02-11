@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -38,6 +39,23 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	 * @return BigDecimal
 	 */
 	BigDecimal obterSaldoDistribuidorEntrada(Date data, FormaComercializacao formaComercializacao);
-
-	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico( Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao);
+	
+	public MovimentoEstoque obterMovimentoEstoqueDoItemNotaFiscal(Long idItemNotaFiscal, TipoMovimentoEstoque tipoMovimento); 
+	
+	/**
+	 * Obtém uma lista de movimentos de reparte promocional
+	 * (inseridos durante o recebimento fisico), cujo os movimentos
+	 * de recebimento fisico relativos não tenham sido extornados;
+	 * 
+	 * @param idProdutoEdicao
+	 * @param grupoMovimentoEstoqueRepartePromocional
+	 * @param grupoMovimentoEstoqueEstornoRecebimentoFisico
+	 * 
+	 * @return List - Long
+	 */
+	public List<Long> obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(
+			Long idProdutoEdicao,
+			GrupoMovimentoEstoque grupoMovimentoEstoqueRepartePromocional,
+			GrupoMovimentoEstoque grupoMovimentoEstoqueEstornoRecebimentoFisico);
+	
 }
