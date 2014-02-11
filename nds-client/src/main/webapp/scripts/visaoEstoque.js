@@ -111,7 +111,7 @@ var visaoEstoqueController = $.extend(true, {
 			
 			if (value.cell.tipoEstoque != "LANCAMENTO_JURAMENTADO") {
 				acao += '<a href="javascript:;" isEdicao="true" onClick="visaoEstoqueController.popup_transferencia(\'' + value.cell.tipoEstoque + '\', \'' + value.cell.estoque + '\');" title="Transferir Estoque"><img src="' + contextPath + '/images/ico_negociar.png" hspace="5" border="0" alt="Transferir" /></a>    ' +
-						'<a href="javascript:;" onClick="visaoEstoqueController.popup_inventario(\'' + value.cell.tipoEstoque + '\', \'' + value.cell.estoque + '\');" title="Inventário Estoque"><img src="' + contextPath + '/images/bt_expedicao.png" hspace="5" border="0" alt="Inventário" /></a>';
+						'<a href="javascript:;" isEdicao="true" onClick="visaoEstoqueController.popup_inventario(\'' + value.cell.tipoEstoque + '\', \'' + value.cell.estoque + '\');" title="Inventário Estoque"><img src="' + contextPath + '/images/bt_expedicao.png" hspace="5" border="0" alt="Inventário" /></a>';
 			}
 			
 			value.cell.acao = acao;
