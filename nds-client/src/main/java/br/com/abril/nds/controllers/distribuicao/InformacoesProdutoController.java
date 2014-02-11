@@ -261,9 +261,9 @@ public class InformacoesProdutoController extends BaseController {
 		if(resumo.getQtdReparteDistribuidor()==null)
 			resumo.setReparteDistribuido(new BigDecimal(0));
 		
-		//reparte Promocional
-		if(resumo.getQtdRepartePromocional()==null)
-			resumo.setQtdRepartePromocional(new BigDecimal(0));
+		//reparte Promocional = saldo
+		if(resumo.getSaldo()==null)
+			resumo.setSaldo(new BigDecimal(0));
 		
 		//reparteDistribuido
 		if(resumo.getQtdReparteDistribuidoEstudo()==null)
