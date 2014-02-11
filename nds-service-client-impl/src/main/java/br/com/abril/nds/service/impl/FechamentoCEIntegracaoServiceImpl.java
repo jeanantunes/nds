@@ -198,7 +198,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
     	
 		Usuario usuario = this.usuarioService.getUsuarioLogado();
 		
-		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+		this.movimentoEstoqueService.gerarMovimentoEstoque(null, 
 				                                           itemFo.getProdutoEdicao().getId(), 
 				                                           usuario.getId(), 
 				                                           BigInteger.valueOf(itemFo.getQtdeDevolucaoInformada()),
