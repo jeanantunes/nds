@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -108,8 +109,10 @@ public class InformacoesProdutoController extends BaseController {
 	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro, String sortname) {
 		
 		Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodProduto());
-		
-		filtro.setCodProduto(produto.getCodigoICD().isEmpty() ? produto.getCodigo() : produto.getCodigoICD());
+        if (StringUtils.isBlank(produto.getCodigoICD())) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto não possui codigo ICD cadastrado.");
+        }
+        filtro.setCodProduto(produto.getCodigoICD());
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 

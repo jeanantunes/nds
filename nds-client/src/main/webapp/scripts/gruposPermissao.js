@@ -17,6 +17,11 @@ var gruposPermissaoController = $.extend(true, {
 			$("#grupoPermissaonome", gruposPermissaoController.workspace).val("");
 			$("#grupoPermissaoId", gruposPermissaoController.workspace).val("");
 			
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexOptions({
+				url : contextPath + "/administracao/gruposAcesso/obterPermissoes",
+			}).flexReload();
+
+			
 			this.popup_grupo();
 		},
 		popup_grupo : function() {

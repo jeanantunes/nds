@@ -74,6 +74,8 @@ public class DiferencaVO implements Serializable {
 	
 	private TipoEstoque tipoEstoque;
 	
+	private String descricaoTipoEstoque;
+	
 	private boolean cadastrado;
 
 	private String fornecedor;
@@ -484,6 +486,14 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setTipoEstoque(TipoEstoque tipoEstoque) {
 		this.tipoEstoque = tipoEstoque;
+		this.descricaoTipoEstoque = tipoEstoque != null ? tipoEstoque.getDescricao() : "";
+	}
+
+	/**
+	 * @return the descricaoTipoEstoque
+	 */
+	public String getDescricaoTipoEstoque() {
+		return this.descricaoTipoEstoque;
 	}
 
 	public void setFornecedor(String fornecedor) {

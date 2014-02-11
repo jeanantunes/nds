@@ -28,6 +28,9 @@ public interface MatrizDistribuicaoService {
 	public void duplicarLinhas(ProdutoDistribuicaoVO prodDistribVO);
 
 	public void finalizarMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
-	
-	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id);
-}
+
+    public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id);
+
+    public void removeEstudo(Long idEstudo);
+
+    }

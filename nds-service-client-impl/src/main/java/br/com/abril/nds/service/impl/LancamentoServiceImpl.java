@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
@@ -63,6 +65,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private CotaService cotaService;
+    
+    private static final List<StatusLancamento> STATUS_LANCAMENTOS_REMOVIVEL = Arrays.asList(
+            StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO,
+            StatusLancamento.BALANCEADO);
 	
 	@Override
 	@Transactional
@@ -105,14 +111,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 			fornecedor = lancamento.getProdutoEdicao().getProduto().getFornecedor().getJuridica().getRazaoSocial();			
 		}
 		
-		// Conforme solicitado pelo Cesar, caso não encontre preço de venda utiliza o preço previsto
+        // Conforme solicitado pelo Cesar, caso não encontre preço de venda
+        // utiliza o preço previsto
 		String preco = "";
 		if (lancamento.getProdutoEdicao().getPrecoVenda() != null) {
 			preco = lancamento.getProdutoEdicao().getPrecoVenda().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",");
 		} else if (lancamento.getProdutoEdicao().getPrecoPrevisto() != null) {
 			preco = lancamento.getProdutoEdicao().getPrecoPrevisto().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",");
 		} else {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem preço de venda e preco previsto. Codigo: " + lancamento.getProdutoEdicao().getProduto().getCodigo() + ", Edicao: " + lancamento.getProdutoEdicao().getProduto().getNome());
+            throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem preço de venda e preco previsto. Codigo: "
+                    + lancamento.getProdutoEdicao().getProduto().getCodigo() + ", Edicao: "
+                    + lancamento.getProdutoEdicao().getProduto().getNome());
 		}
 		
 		LancamentoNaoExpedidoDTO dto = 
@@ -159,7 +168,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
-		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+        // TODO: geração de historico desativada devido a criação de trigger
+        // para realizar essa geração.
 		//historicoLancamentoRepository.adicionar(historico);
 		
 		
@@ -207,7 +217,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
 		}
 		
 		return lancamentoRepository.obterUltimoLancamentoDaEdicao(idProdutoEdicao);
@@ -218,7 +228,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
 		}
 		
 		return lancamentoRepository.obterPrimeiroLancamentoDaEdicao(idProdutoEdicao);
@@ -229,11 +239,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
 		}
 		
 		if (idCota == null || Long.valueOf(0).equals(idCota)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O código da Cota é inválido!");
 		}
 		
 		return lancamentoRepository.obterUltimoLancamentoDaEdicaoParaCota(idProdutoEdicao, idCota);
@@ -322,5 +332,33 @@ public class LancamentoServiceImpl implements LancamentoService {
 	public Lancamento obterLancamentoNaMesmaSessao(Long id) {
 		return this.lancamentoRepository.buscarPorIdSemEstudo(id);
 	}
+    
+    @Override
+    @Transactional(readOnly = false)
+    public void removerLancamento(Long id) {
+        if (id == null) {
+            throw new ValidacaoException(TipoMensagem.ERROR, "Id do lançamento deve ser especificado.");
+        }
+        
+        Lancamento lancamento = lancamentoRepository.buscarPorId(id);
+        if (lancamento == null) {
+            throw new ValidacaoException(TipoMensagem.ERROR, "Lançamento não existe ou ja foi excluido.");
+        }
+        
+        if (lancamento.getNumeroLancamento() == 1) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não é perdido excluir o lançamento número 1.");
+        }
+        
+        if (lancamento.getPeriodoLancamentoParcial() != null
+                && TipoLancamentoParcial.PARCIAL.equals(lancamento.getPeriodoLancamentoParcial().getTipo())) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Este Lançamento é parcial e não pode ser excluido. Consulte a tela de parciais.");
+        }
+        if (!STATUS_LANCAMENTOS_REMOVIVEL.contains(lancamento.getStatus())) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "O status deste Lançamento é "
+                    + lancamento.getStatus().getDescricao() + " e não pode ser removido.");
+        }
+        this.lancamentoRepository.remover(lancamento);
+    }
 
 }

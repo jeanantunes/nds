@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript"
@@ -22,7 +23,7 @@ label {
 	vertical-align: super;
 }
 
-#produtoEdicaoController-dialog-novo,#produtoEdicaoController-dialog-capa,#produtoEdicaoController-dialog-excluir-capa,#produtoEdicaoController-dialog-precos-real-previsto-divergentes,#produtoEdicaoController-dialog-excluir
+#produtoEdicaoController-dialog-novo,#produtoEdicaoController-dialog-capa,#produtoEdicaoController-dialog-excluir-lancamento,#produtoEdicaoController-dialog-excluir-capa,#produtoEdicaoController-dialog-precos-real-previsto-divergentes,#produtoEdicaoController-dialog-excluir
 	{
 	display: none;
 }
@@ -86,7 +87,12 @@ fieldset {
 		title="Excluir Edi&ccedil;&atilde;o">
 		<p>Confirma a exclus&atilde;o desta Edi&ccedil;&atilde;o?</p>
 	</div>
-
+	
+	<div id="produtoEdicaoController-dialog-excluir-lancamento"
+		title="Excluir Edi&ccedil;&atilde;o">
+		<p>Confirma a exclus&atilde;o deste Lan&ccedil;amento?</p>
+	</div>
+	
 	<div
 		id="produtoEdicaoController-dialog-precos-real-previsto-divergentes"
 		title="Preços Real e Previsto divergentes">
@@ -140,12 +146,12 @@ fieldset {
 						</fieldset>
 
 						<span class="bt_novos"> <a name="linkIncluirNovo"
-							href="javascript:;"
+							href="javascript:;" isEdicao="true"
 							onclick="produtoEdicaoController.salvarProdutoEdicao(false);">
 								<img src="${pageContext.request.contextPath}/images/ico_add.gif"
 								border="0" /> <b> Incluir Novo</b>
 						</a>
-						</span> <span class="bt_novos"> <a name="linkRedistribuicao"
+						</span> <span class="bt_novos"> <a name="linkRedistribuicao" isEdicao="true"
 							href="javascript:;" style="display: none;"
 							onclick="produtoEdicaoController.popupRedistribuicao();"> <img
 								src="${pageContext.request.contextPath}/images/ico_salvar.gif"
@@ -562,12 +568,12 @@ fieldset {
 
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_novos"> <a href="javascript:;"
+			<span class="bt_novos"> <a href="javascript:;"  isEdicao="true" 
 				onclick="produtoEdicaoController.novaEdicao();" rel="tipsy"
 				title="Incluir Nova Edição"><img
 					src="${pageContext.request.contextPath}/images/ico_salvar.gif"
 					hspace="5" border="0" /></a>
-			</span> <span class="bt_novos"> <a href="javascript:;"
+			</span> <span class="bt_novos"> <a href="javascript:;"  isEdicao="true" 
 				onclick="produtoEdicaoController.edicaoLote();" rel="tipsy"
 				title="Adicionar Edição em Lote"><img
 					src="${pageContext.request.contextPath}/images/ico_integrar.png"

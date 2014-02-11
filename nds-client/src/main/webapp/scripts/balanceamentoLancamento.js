@@ -1207,7 +1207,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	click: function() {
 					
 			    		reabrirMatriz();
-			    		balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
+			    		//balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
 			    	}
 			    },
 			    {
@@ -1236,17 +1236,29 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			params.push({name: 'datasReabertura['+index+']', value: value.value});
 		});
 		
+		var dataLancamento = $("#datepickerDe", _workspace).val();
+		
+		params.push({name:'dataLancamento', value: dataLancamento});
+		
+		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
+			params.push({name:'idsFornecedores', value: $(this).val()});
+		});
+		
 		$.postJSON(
 			contextPath + "/matrizLancamento/reabrirMatriz",
 			params,
 			function(result) {
 				$("#dialog-reabrir-matriz").dialog("close");
+				
+				T.carregarGrid(dataLancamento, true);
+				
 				exibirMensagem(
 					result.tipoMensagem, 
 					result.listaMensagens
 				);
 			}
 		);
+		
 	};
 	
 }

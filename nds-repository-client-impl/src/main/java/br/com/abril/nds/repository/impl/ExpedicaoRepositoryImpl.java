@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -244,7 +243,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-
+		
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 											 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -258,6 +257,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
+		
 		query.setParameterList("statusAposExpedido", 
 				   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 								 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
@@ -355,8 +355,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		     .append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 	 ")
 		     .append("  	  and d.TIPO_DIRECIONAMENTO IN ('COTA', 'NOTA') 			 ")
 		
-		     .append("     and d.DATA_MOVIMENTACAO between innerQuery.dataLancamento ")
-		     .append("     and COALESCE((select min(data_lcto_distribuidor) ")
+		     .append("     and d.DATA_MOVIMENTACAO <= ")
+		     .append("     COALESCE((select min(data_lcto_distribuidor) ")
 		     .append("	  from lancamento where data_lcto_distribuidor > innerQuery.dataLancamento ")
 		     .append("  	  and produto_edicao_id = produtoEdicaoId and status IN( 'EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')), innerQuery.dataLancamento) ")
 		     .append("     group by d.PRODUTO_EDICAO_ID 							 ")
@@ -380,6 +380,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		          .append(" produtoEdicao.PRECO_VENDA AS precoCapa, ")
 		          .append(" mec.QTDE AS qntReparte, ")
 		          .append(" mec.QTDE * produtoEdicao.PRECO_VENDA AS valorFaturado, ")
+		          .append(" tp.GRUPO_MOVIMENTO_ESTOQUE as grupoMovimento, ") 
 		          .append(" produtoEdicao.ID AS produtoEdicaoId, ")
 		          .append(" CONCAT(COALESCE(box.CODIGO, ''), '-', COALESCE(box.NOME, '')) AS codigoBox, ")
 		          .append(" expedicao.data_expedicao AS dataExpedicao, ");
@@ -415,13 +416,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					  .append(" on fornecedor.JURIDICA_ID=pessoa.ID ");
 		}
 
-		innerQuery.append(" INNER JOIN movimento_ESTOQUE me ON me.PRODUTO_EDICAO_ID=produtoEdicao.ID ")
-				  .append(" INNER JOIN tipo_movimento tp ON tp.ID = me.TIPO_MOVIMENTO_ID ")
-				  .append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+		innerQuery.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA mec ON mec.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+				  .append(" INNER JOIN tipo_movimento tp ON tp.ID = mec.TIPO_MOVIMENTO_ID ")
 				  .append(" INNER JOIN COTA cota  ON mec.COTA_ID=cota.ID ")
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
-				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE IN ('"+ GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name() +"' )")
 				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ");
 		
 		return innerQuery;
@@ -462,8 +461,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT  innerQuery.precoCapa AS precoCapa, 				 ")
-				.append(" SUM(innerQuery.qntReparte) AS qntReparte, 			 ")
+		sql.append(" SELECT  innerQuery.precoCapa AS precoCapa, 				 	")
+				.append(" SUM(CASE WHEN innerQuery.grupoMovimento in (" + this.getGruposFalta() + ") ")
+				.append("			 THEN -innerQuery.qntReparte ")
+				.append("			 ELSE innerQuery.qntReparte END ")
+				.append(" ) AS qntReparte, 						    ")
 				.append(" COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) AS qntDiferenca,")
 				.append(" sum(innerQuery.valorFaturado) AS valorFaturado, 		 ")
 				.append(" innerQuery.codigoProduto AS codigoProduto, 			 ")
@@ -493,4 +495,23 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 
 		return sql.toString();
 	}
+	
+	private String getGruposFalta() {
+
+		List<String> list = 
+				Arrays.asList(GrupoMovimentoEstoque.PERDA_DE.name(),
+				      GrupoMovimentoEstoque.PERDA_EM.name(),
+				      GrupoMovimentoEstoque.FALTA_DE.name(),
+				      GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
+				      GrupoMovimentoEstoque.FALTA_EM.name(),
+				      GrupoMovimentoEstoque.FALTA_EM_COTA.name());
+		
+		String gruposFalta = "";
+		
+		for (String grupo : list) {
+			gruposFalta += ", '" + grupo + "'";
+		}
+
+		return gruposFalta.replaceFirst(",", "");
+	}	
 }

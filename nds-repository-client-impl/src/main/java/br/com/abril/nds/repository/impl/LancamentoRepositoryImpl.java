@@ -1221,7 +1221,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" left join ");
 		sql.append(" ESTUDO estudo ");
 		sql.append(" on (estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
+		sql.append(" AND (estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA OR estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR)) ");
+		//sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 
 		sql.append(" left join ");
 		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");
@@ -2367,6 +2368,32 @@ public class LancamentoRepositoryImpl extends
 			"update Lancamento lancamento set lancamento.estudo = null "
 			+ "where lancamento.estudo.id in (:idsEstudos)")
 			.setParameterList("idsEstudos", idsEstudos).executeUpdate();
+	}
+
+	@Override
+	public List<Lancamento> obterMatrizLancamentosExpedidos(
+			List<Date> datasConfirmadas) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public boolean existeMatrizLancamentosExpedidos(
+			List<Date> datasConfirmadas) {
+				
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select case when(count(lancamento.id) > 0) then true else false end ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor in (:dataLancamento )");
+		hql.append(" and lancamento.status = :status ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameterList("dataLancamento", datasConfirmadas);
+		query.setParameter("status", StatusLancamento.EXPEDIDO);
+		
+		return (Boolean) query.uniqueResult();
 	}
 
 }

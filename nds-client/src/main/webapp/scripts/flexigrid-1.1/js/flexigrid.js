@@ -437,7 +437,9 @@
 				i = null;
 				if (p.onSuccess) {
 					p.onSuccess(this);
+					
 				}
+				bloquearItensEdicao(BaseController.workspace);
 				if (p.hideOnSubmit) {
 					$(g.block).remove();
 				}

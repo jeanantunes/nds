@@ -639,28 +639,23 @@ public class MatrizDistribuicaoController extends BaseController {
 
         EstudoTransient estudoAutomatico = null;
 
-        List<String> htmlEstudo = new ArrayList<String>();
-        List<String> msgErro = new ArrayList<String>();
-        List<ProdutoDistribuicaoVO> umaEdicaoBase = new ArrayList<ProdutoDistribuicaoVO>();
+        List<String> htmlEstudo = new ArrayList<>();
+        List<String> msgErro = new ArrayList<>();
+        List<ProdutoDistribuicaoVO> umaEdicaoBase = new ArrayList<>();
+        List<ProdutoDistribuicaoVO> naoPermiteGeracaoAutomaticaList = new ArrayList<>();
 
-        for (int i = 0; i < produtoDistribuicaoVOs.size(); i++) {
-        	ProdutoDistribuicaoVO produtoDistribuicaoVO = produtoDistribuicaoVOs.get(i);
-        	Produto obterProdutoPorCodigo = this.produtoService.obterProdutoPorCodigo(produtoDistribuicaoVO.getCodigoProduto());
-        	
-        	if(obterProdutoPorCodigo.getIsGeracaoAutomatica()==null || obterProdutoPorCodigo.getIsGeracaoAutomatica()==false ){
-        		
-                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto "
-                        + produtoDistribuicaoVO.getCodigoProduto() + " não permite geração automática de estudo."));
-        	}
+        for (ProdutoDistribuicaoVO produtoDistribuicaoVO : produtoDistribuicaoVOs) {
+            Produto obterProdutoPorCodigo = this.produtoService.obterProdutoPorCodigo(produtoDistribuicaoVO.getCodigoProduto());
+
+            if (obterProdutoPorCodigo.getIsGeracaoAutomatica() == null || obterProdutoPorCodigo.getIsGeracaoAutomatica() == false) {
+                naoPermiteGeracaoAutomaticaList.add(produtoDistribuicaoVO);
+                msgErro.add("Produto " + produtoDistribuicaoVO.getCodigoProduto() + " não permite geração automática de estudo.");
+            }
         }
-        
-        for (int i = 0; i < produtoDistribuicaoVOs.size(); i++) {
+        produtoDistribuicaoVOs.removeAll(naoPermiteGeracaoAutomaticaList);
 
-            ProdutoDistribuicaoVO produtoDistribuicaoVO = produtoDistribuicaoVOs.get(i);
-
+        for (ProdutoDistribuicaoVO produtoDistribuicaoVO : produtoDistribuicaoVOs) {
             try {
-
-            	
                 if (confirmaUmaEdicaoBase || validarEdicaoBase(produtoDistribuicaoVO, umaEdicaoBase)) {
 
                     validarGeracaoAutomatica(produtoDistribuicaoVO);

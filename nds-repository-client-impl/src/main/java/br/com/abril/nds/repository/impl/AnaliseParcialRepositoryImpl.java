@@ -426,14 +426,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo_cota_gerado ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
-        sql.append("   set ec.reparte = coalesce(ec.reparte,0) + ? ");
+        sql.append("   set ec.reparte = coalesce(ec.reparte,0) + ?, ");
+        sql.append("   ec.qtde_efetiva = coalesce(ec.qtde_efetiva,0) + ? ");
         sql.append(" where ec.estudo_id = ? ");
         sql.append("   and cota.numero_cota = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setLong(0, reparteSubtraido);
-        query.setLong(1, estudoId);
-        query.setLong(2, numeroCota);
+        query.setLong(1, reparteSubtraido);
+        query.setLong(2, estudoId);
+        query.setLong(3, numeroCota);
         query.executeUpdate();
     }
 

@@ -195,10 +195,18 @@ var contaCorrenteCotaController = $.extend(true, {
 										  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
 										  ',\''+value.cell.nomeBox+'\');"/>' + (formatMoneyValue(Math.abs(value.cell.vendaEncalhe))) + '</a>' : '0.0000';
 				
-				value.cell.debitoCredito = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
-										   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito * -1 +'\');"/>' +
-											(formatMoneyValue(value.cell.debitoCredito * -1)) +'</a>' : '0.0000';
-
+				if (value.cell.detalharDebitoCredito){
+					
+					var valor = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0) * -1 ? value.cell.debitoCredito : '0.0000';
+					
+					value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
+							   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + valor +'\');"/>' +
+								(formatMoneyValue(valor)) +'</a>';
+				} else {
+					
+					value.cell.debitoCredito = '0.0000';
+				}
+										  
 				value.cell.encargos = (value.cell.encargos != null && value.cell.encargos != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
 									  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + 
 									  (formatMoneyValue(Math.abs(value.cell.encargos))) +'</a>' : '0.0000';
