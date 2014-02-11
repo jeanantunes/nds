@@ -4,14 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.fiscal.nota.Tributacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 
 /**
  * 
  * @author Diego Fernandes
  *
  */
-public interface TributacaoRepository extends Repository<Tributacao, Long> {
+public interface TributacaoRepository extends Repository<NotaFiscalTributacao, Long> {
 	
 	/**
 	 * usca a Tributação mais proxima a data de vigencia respentando os outros paramentros.
@@ -27,7 +27,7 @@ public interface TributacaoRepository extends Repository<Tributacao, Long> {
 	 * @param cstICMS
 	 * @return
 	 */
-	public abstract Tributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao, String ufOrigem,
+	public abstract NotaFiscalTributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao, String ufOrigem,
 			String ufDestino, int naturezaOperacao, String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia,
 			String cstICMS);
 	
@@ -45,7 +45,7 @@ public interface TributacaoRepository extends Repository<Tributacao, Long> {
 	 * @param dataVigencia
 	 * @return
 	 */
-	public abstract Tributacao tributacaoDefault(String codigoEmpresa, TipoOperacao tipoOperacao, String ufOrigem,
+	public abstract NotaFiscalTributacao tributacaoDefault(String codigoEmpresa, TipoOperacao tipoOperacao, String ufOrigem,
 			String ufDestino, int naturezaOperacao, String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia);
 
 	/**
@@ -60,7 +60,7 @@ public interface TributacaoRepository extends Repository<Tributacao, Long> {
 	 * @param cstICMS
 	 * @return
 	 */
-	public abstract Tributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao, List<String> ufs,
+	public abstract NotaFiscalTributacao buscar(String codigoEmpresa, TipoOperacao tipoOperacao, List<String> ufs,
 			int naturezaOperacao, String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia, String cstICMS);
 
 }

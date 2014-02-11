@@ -5,7 +5,7 @@ import java.util.Date;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.EncargoFinanceiroProduto;
-import br.com.abril.nds.model.fiscal.nota.Tributacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 
 /**
  * 
@@ -15,7 +15,7 @@ import br.com.abril.nds.model.fiscal.nota.Tributacao;
 public interface TributacaoService {
 	
 	/**
-	 * Calcula tributos de produto com base nos paramentros e os dados cadastros na entidade de {@link Tributacao}
+	 * Calcula tributos de produto com base nos paramentros e os dados cadastros na entidade de {@link NotaFiscalTributacao}
 	
 	 * 
 	 * @param codigoEmpresa
