@@ -413,7 +413,13 @@ var produtoEdicaoController =$.extend(true,  {
 				width : 55,
 				sortable : false,
 				align : 'right'
-			}  ],
+			}, {
+				display : 'A&ccedil;&atilde;o',
+				name : 'acao',
+				width : 60,
+				sortable : false,
+				align : 'center'
+			} ],
 			usepager : false,
 			useRp : false,
 			showTableToggleBtn : false,
@@ -612,6 +618,8 @@ var produtoEdicaoController =$.extend(true,  {
 		if (codigo == undefined) {
 			codigo = "";
 		}
+		
+		this.edicao = {id:id,codigo:codigo,situacaoProdutoEdicao:situacaoProdutoEdicao};
 
 		produtoEdicaoController.popup(id, codigo, false, situacaoProdutoEdicao);
 	},
@@ -923,6 +931,10 @@ var produtoEdicaoController =$.extend(true,  {
 			if (row.cell.destacarLinha) {
 				linhasDestacadas.push(index + 1);
 			}
+			
+			var acao ='</a> <a href="javascript:;" isEdicao="true" onclick="produtoEdicaoController.removerLancamento(' + row.cell.idLancamento + ');""><img src="' + contextPath + '/images/ico_excluir.gif" border="0" /></a>';
+
+			row.cell.acao = acao;	
 		});
 		
 		return result;
@@ -1418,6 +1430,47 @@ var produtoEdicaoController =$.extend(true,  {
 					dataType: 'json'
 				});
 	       }
+	},
+	removerLancamento : function(idLancamento){
+		$( "#produtoEdicaoController-dialog-excluir-lancamento").dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					var self =  this;
+					$(self).dialog("close");
+					$.postJSON(
+							 contextPath + '/cadastro/edicao/removerLancamento.json',
+							{idLancamento : idLancamento},
+							function(result) {
+								
+
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+
+								if (tipoMensagem && listaMensagens) {
+
+									exibirMensagem(tipoMensagem, listaMensagens);
+								}
+									produtoEdicaoController.popup(produtoEdicaoController.edicao.id, produtoEdicaoController.edicao.codigo, false, produtoEdicaoController.edicao.situacaoProdutoEdicao);
+									produtoEdicaoController.pesquisarEdicoes();
+							},
+							null,
+							true
+					);
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout();
+			},
+			form: $("#produtoEdicaoController-dialog-excluir-lancamento", this.workspace).parents("form")
+		});
 	}
 	
 }, BaseController);
