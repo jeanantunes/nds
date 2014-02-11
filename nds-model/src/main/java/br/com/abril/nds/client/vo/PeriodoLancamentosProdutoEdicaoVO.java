@@ -33,7 +33,9 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	
 	private boolean destacarLinha;
 	
+    private Long idLancamento;
 	
+
 	public Date getDataLancamentoDistribuidor() {
 		return dataLancamentoDistribuidor;
 	}
@@ -129,5 +131,19 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	public void setDestacarLinha(boolean destacarLinha) {
 		this.destacarLinha = destacarLinha;
 	}
+    
+    /**
+     * @return the idLancamento
+     */
+    public Long getIdLancamento() {
+        return idLancamento;
+    }
+    
+    /**
+     * @param idLancamento the idLancamento to set
+     */
+    public void setIdLancamento(Long idLancamento) {
+        this.idLancamento = idLancamento;
+    }
 	
 }

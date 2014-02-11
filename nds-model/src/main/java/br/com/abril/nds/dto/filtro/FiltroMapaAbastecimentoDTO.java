@@ -23,10 +23,11 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	private Long edicaoProduto; 
 	private String nomeCota;
 	private boolean quebraPorCota;
-	private Boolean useSM;
+	private boolean useSM;
 	private Long idEntregador;
-	private Boolean excluirProdutoSemReparte;
-	
+	private boolean excluirProdutoSemReparte;
+	private boolean porRepartePromocional;
+	private boolean produtoEspecifico;
 			
 	private PaginacaoVO paginacao;
 	
@@ -316,25 +317,25 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		this.edicaoProduto = edicaoProduto;
 	}
 
-	public Boolean getUseSM() {
+	public boolean getUseSM() {
 		return useSM;
 	}
 
-	public void setUseSM(Boolean useSM) {
+	public void setUseSM(boolean useSM) {
 		this.useSM = useSM;
 	}
 
 	/**
 	 * @return the excluirProdutoSemReparte
 	 */
-	public Boolean getExcluirProdutoSemReparte() {
+	public boolean getExcluirProdutoSemReparte() {
 		return excluirProdutoSemReparte;
 	}
 
 	/**
 	 * @param excluirProdutoSemReparte the excluirProdutoSemReparte to set
 	 */
-	public void setExcluirProdutoSemReparte(Boolean excluirProdutoSemReparte) {
+	public void setExcluirProdutoSemReparte(boolean excluirProdutoSemReparte) {
 		this.excluirProdutoSemReparte = excluirProdutoSemReparte;
 	}
 
@@ -364,6 +365,22 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 	 */
 	public void setIdEntregador(Long idEntregador) {
 		this.idEntregador = idEntregador;
+	}
+
+	public boolean isPorRepartePromocional() {
+		return porRepartePromocional;
+	}
+
+	public void setPorRepartePromocional(boolean porRepartePromocional) {
+		this.porRepartePromocional = porRepartePromocional;
+	}
+
+	public boolean isProdutoEspecifico() {
+		return produtoEspecifico;
+	}
+
+	public void setProdutoEspecifico(boolean produtoEspecifico) {
+		this.produtoEspecifico = produtoEspecifico;
 	}
 	
 	

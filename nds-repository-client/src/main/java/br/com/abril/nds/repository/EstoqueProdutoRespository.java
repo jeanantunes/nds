@@ -25,4 +25,7 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	List<Date> obterDatasRecProdutosFechados();
 
 	BigInteger buscarQtdEstoquePorProduto(String codigoProduto, List<Long> numeroEdicao);
+	
+	BigInteger buscarQtdEstoqueProdutoEdicao(Long idProdutoEdicao);
+	
 }
