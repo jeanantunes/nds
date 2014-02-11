@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
+import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -835,7 +836,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 						+ " - " + produtoEdicao.getProduto().getNomeComercial() + " - " 
 						+ produtoEdicao.getNumeroEdicao() 
 						+ "] no estoque \"" + tipoEstoque.getDescricao() 
-						+ "\", insuficiente para movimentação.");
+						+ "\", insuficiente para movimentação.", CodigoErro.SALDO_ESTOQUE_DISTRIBUIDOR_INSUFICIENTE);
 		}
 	}
 	

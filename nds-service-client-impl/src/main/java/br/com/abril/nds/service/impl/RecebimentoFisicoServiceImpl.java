@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
@@ -924,13 +925,34 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		TipoMovimentoEstoque tipoMovimento = 
 		tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 			GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL);
-	
-		movimentoEstoqueService.gerarMovimentoEstoque(
-			recebimentoFisicoDTO.getIdItemRecebimentoFisico(),
-			recebimentoFisicoDTO.getIdProdutoEdicao(), 
-			usuarioLogado.getId(), 
-			lancamento.getRepartePromocional(),
-			tipoMovimento);
+		
+		try {
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					recebimentoFisicoDTO.getIdItemRecebimentoFisico(),
+					recebimentoFisicoDTO.getIdProdutoEdicao(), 
+					usuarioLogado.getId(), 
+					lancamento.getRepartePromocional(),
+					tipoMovimento);
+		} catch(ValidacaoException e) {
+			
+			if(CodigoErro.SALDO_ESTOQUE_DISTRIBUIDOR_INSUFICIENTE.equals(e.getCodigoErro())) {
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+							" Não é possível realizar o recebimento do do produto [" + pe.getProduto().getCodigo() 
+								+ " - " + pe.getProduto().getNomeComercial() + " - " 
+								+ pe.getNumeroEdicao() 
+								+ "]. O valor de reparte promocional ultrapassa a quantidade que esta sendo recebida.");
+				
+			} else {
+				
+				throw e;
+				
+			}
+			
+		}
+		
+		
+		
 		
 	}
 
