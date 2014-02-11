@@ -1,4 +1,4 @@
-<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+ <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <head>
 
@@ -133,7 +133,7 @@
 									name="tipoDiferenca"
 									 style="width: 220px;">
 								<option selected="selected" value="">Todos</option>
-								<c:forEach var="tipoDiferenca" items="${listaTiposDiferenca}">
+								<c:forEach var="tipoDiferenca" items="${listaTiposDiferencaGeral}">
 									<option value="${tipoDiferenca.key}">${tipoDiferenca.value}</option>
 								</c:forEach>
 							</select>
