@@ -18,7 +18,6 @@ import java.util.Scanner;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.UpdateConflictException;
@@ -30,6 +29,8 @@ import org.lightcouch.NoDocumentException;
 import org.lightcouch.View;
 import org.lightcouch.ViewResult;
 import org.lightcouch.ViewResult.Rows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -141,7 +142,7 @@ public class InterfaceExecutor {
 	}
 	
 	
-	            /**
+	                    /**
      * Executa a interface selecionada para todos os distribuidores.
      * 
      * @param nomeUsuario login do usuário, para efeitos de log
@@ -151,7 +152,7 @@ public class InterfaceExecutor {
 		this.executarInterface(nomeUsuario, interfaceEnum, null);
 	}
 	
-	            /**
+	                    /**
      * Executa a interface selecionada para o distribuidor selecionado.
      * 
      * @param nomeUsuario login do usuário, para efeitos de log
@@ -363,7 +364,7 @@ public class InterfaceExecutor {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 				} catch (FileNotFoundException e1) {
-					this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+                    this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				} finally {
 					if (null != in) {
 						try {
@@ -375,7 +376,7 @@ public class InterfaceExecutor {
 				}
 				
 			} catch (Exception e) {
-				this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+                this.logarArquivo(StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
 				//LOGGER.error(e.getMessage(), e);
 			}
 			
@@ -605,7 +606,7 @@ public class InterfaceExecutor {
 		scanner.close();
 	}
 
-	            /**
+	                    /**
      * Recupera a lista de arquivos a serem processados.
      * 
      * @param interfaceExecucao interface sendo executada
@@ -647,7 +648,7 @@ public class InterfaceExecutor {
 		
 	}
 	
-	            /**
+	                    /**
      * Loga o início da execução de uma interface de integração.
      */
 	
@@ -663,6 +664,9 @@ public class InterfaceExecutor {
 		return logExecucaoRepository.inserir(logExecucao);
 	}
 	
+    private void logarArquivo(StatusExecucaoEnum status, String mensagem) {
+        this.logarArquivo(null, null, null, status, mensagem);
+    }
 	/**
 	 * Loga o processamento de um arquivo
 	 */
@@ -684,7 +688,7 @@ public class InterfaceExecutor {
 		this.logExecucaoArquivoRepository.inserir(logExecucaoArquivo);
 	}
 	
-	            /**
+	                    /**
      * Loga o final da execução da interface de integração.
      */
 	

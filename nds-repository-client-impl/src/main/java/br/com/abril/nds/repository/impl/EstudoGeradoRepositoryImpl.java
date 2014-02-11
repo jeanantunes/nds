@@ -10,12 +10,13 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -235,6 +236,8 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 			ResultSet rs=statement.executeQuery();
 			rs.next();
 			long1 = rs.getLong("ID");
+            statement.close();
+            conn.close();
 
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(), e);
