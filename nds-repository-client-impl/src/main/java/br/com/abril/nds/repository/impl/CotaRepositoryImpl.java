@@ -2287,6 +2287,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		query.setParameter("tipoCota", tipoCota);
 		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaTipoDTO.class));
 
 		query.setFirstResult( (rp * page) - rp);
@@ -2307,6 +2311,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" where (pdv.caracteristicas.pontoPrincipal=true or pdv.caracteristicas.pontoPrincipal is null) ");
 		hql.append(" and (enderecoCota.principal=true or enderecoCota.principal is null) ");		
 		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota ");
+		hql.append(" and cota.situacaoCadastro in (:situacoesCadastro) ");
 	}
 
 	private void gerarOrderByObterCotaPorTipo(StringBuilder hql,
@@ -2343,6 +2348,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("tipoCota", tipoCota);
+		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}

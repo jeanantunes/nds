@@ -223,7 +223,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
 				produtosBoxRota.get(0).getCodigoBarra(),
 				produtosBoxRota.get(0).getPrecoCapa(),
-				new LinkedHashMap<Integer, BoxRotasDTO>());
+				new LinkedHashMap<Integer, BoxRotasDTO>(),
+				produtosBoxRota.get(0).getMaterialPromocional());
 		
 		if(produtosBoxRota.size() == 0) {	
 			return null;
@@ -346,8 +347,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
-			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota()))
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+			}
 	
 			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
 			

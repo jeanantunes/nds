@@ -87,8 +87,8 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT ");
 		sql.append("   qtdReparteDistribuidor, ");
-		sql.append("   qtdRepartePromocional, ");
-		sql.append("   (qtdReparteDistribuidor - qtdRepartePromocional - qtdReparteDistribuidoEstudo) as qtdSobraEstudo, ");
+		sql.append("   (qtdReparteDistribuidor - qtdReparteDistribuidoEstudo) as qtdSobraEstudo, ");
+		sql.append("   (qtdReparteADistribuir - qtdReparteDistribuidor) as saldo, ");
 		sql.append("   qtdReparteDistribuidoEstudo, ");
 		sql.append("   qtdCotasAtivas, ");
 		sql.append("   qtdCotasRecebemReparte, ");
@@ -104,7 +104,7 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		sql.append("   ( ");
 		sql.append("     SELECT ");
 		sql.append("       (SELECT lancamento.reparte FROM estudo_gerado estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidor, ");
-		sql.append("       (SELECT reparte_promocional FROM estudo_gerado estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdRepartePromocional, ");
+		sql.append("       (SELECT qtde_reparte FROM estudo_gerado where id = :estudoId) AS qtdReparteADistribuir, ");
 		sql.append("       (SELECT sum(reparte) FROM estudo_cota_gerado WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
 		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
 		sql.append("       (SELECT count(DISTINCT estudo_cota_gerado.cota_id) FROM estudo_cota_gerado"); 
