@@ -757,7 +757,7 @@ public class ProdutoEdicaoController extends BaseController {
 			periodoLancamento.setStatus(lancamento.getStatus().getDescricao());
 			periodoLancamento.setReparte(lancamento.getReparte());
 			
-			if (!numerosPeriodo.contains(numeroPeriodo)) {
+			if (numerosPeriodo.contains(numeroPeriodo)) {
 				periodoLancamento.setDestacarLinha(true);
 			}
 			
