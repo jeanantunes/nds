@@ -49,7 +49,7 @@ public class ClassificacaoCotaServiceImpl implements ClassificacaoCotaService {
 	  for(CotaDTO cotaDTO: cotas){
 		  Cota cota = new Cota();
 		  cota.setId(cotaDTO.getIdCota());
-		  String tipoClassificacao = new String();
+            ClassificacaoCotaDistribuidorEnum tipoClassificacao = null;
 		  // BUSCA O ULTIMO FATURAMENTO GERARDO DA COTA PELA ROTINA executeJobGerarRankingFaturamento
 		  List<RankingFaturamento> rf = rankingFaturamentoService.buscarPorCota(cota);
 		  if(!rf.isEmpty()){
@@ -60,19 +60,19 @@ public class ClassificacaoCotaServiceImpl implements ClassificacaoCotaService {
 					 dCC.getValorAte().compareTo(valorFaturamento)==1)
 				  
 				  {
-					  tipoClassificacao = dCC.getCodigoClassificacaoCota().toString(); 
+                        tipoClassificacao = dCC.getCodigoClassificacaoCota();
 					 break;
 				  }
 			  }
 			  
-			  if(  tipoClassificacao !=null && tipoClassificacao.isEmpty()){
+                if (tipoClassificacao != null) {
 				  cota =cotaRepository.buscarCotaPorID(cota.getId());
 				  int quantidadePDV =cota.getPdvs().size();
 				  if( tipoClassificacao.equals(ClassificacaoCotaDistribuidorEnum.A) && quantidadePDV>1){
-					  tipoClassificacao = ClassificacaoCotaDistribuidorEnum.AA.toString();
+                        tipoClassificacao = ClassificacaoCotaDistribuidorEnum.AA;
 				  }
 				  else if (tipoClassificacao.equals(ClassificacaoCotaDistribuidorEnum.A) && quantidadePDV==1){
-					  tipoClassificacao = ClassificacaoCotaDistribuidorEnum.A.toString();
+                        tipoClassificacao = ClassificacaoCotaDistribuidorEnum.A;
 				  }
 				  //TODO ALMIR - VERIFICAR ONDE VAI COLOCAR.
 				  cotaRepository.alterar(cota);

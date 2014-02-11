@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -174,6 +173,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    }
 	}
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
+	
+	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, selecionados);
 
 	List<Roteiro> roteiros = roteiroService.buscarTodos();
 

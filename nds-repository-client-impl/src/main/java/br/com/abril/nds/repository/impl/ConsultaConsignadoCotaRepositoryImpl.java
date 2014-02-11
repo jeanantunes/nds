@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) ");
 		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
 		sql.append("		   ) AS totalDesconto ");
-		
 		
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
@@ -167,7 +167,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
 		
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID ");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
 		
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		
@@ -190,8 +190,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
-		
-		sql.append(" AND LCTO.STATUS <> :statusRecolhido ");
 		
 		if(filtro.getIdCota() != null ) { 
 			
@@ -278,11 +276,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" PJ.RAZAO_SOCIAL AS nomeFornecedor, "); 
 		sql.append(" forn.ID AS idFornecedor ");
 		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" LEFT OUTER ");
-		sql.append(" JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID ");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON (MEC.LANCAMENTO_ID=LCTO.ID AND LCTO.STATUS <> :statusRecolhido) ");
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
-		sql.append(" LEFT OUTER ");
-		sql.append(" JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+		sql.append(" LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
 		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
@@ -292,7 +288,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
 		sql.append(" WHERE (MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL)  ");
 		sql.append(" AND (TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno)) ");
-		sql.append(" AND LCTO.STATUS <> :statusRecolhido ");
 		
 		if(filtro.getIdFornecedor()!=null) {
 		
@@ -375,7 +370,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 
-		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+		query.setParameterList("tipoMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name()));
 
 		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 		

@@ -39,11 +39,12 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	// FIELDS
 	hql.append(" SELECT ");
 	hql.append(" segmentoNaoRecebido.id as segmentoNaoRecebidoId, "); // Id do Segmento
-	hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
 	hql.append(" cota.situacaoCadastro as statusCota, "); // STATUS DA COTA
 	hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
-	hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
-	hql.append(" segmentoNaoRecebido.dataAlteracao as dataAlteracao "); // DATA ALTERAÇÃO
+        hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
+        hql.append(" segmentoNaoRecebido.dataAlteracao as dataAlteracao "); // DATA
+                                                                            // ALTERAÇÃO
 
 	// FROM
 	hql.append(" FROM ");
@@ -54,7 +55,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	hql.append(" WHERE ");
 
 	// WHERE
-	if (!filtro.getTipoSegmentoProdutoId().equals(0)) {
+        if (filtro.getTipoSegmentoProdutoId() != null && filtro.getTipoSegmentoProdutoId() != 0L) {
 	    hql.append(" segmentoNaoRecebido.tipoSegmentoProduto.id =  :tipoSegmentoProdutoId");
 	    parameters.put("tipoSegmentoProdutoId", filtro.getTipoSegmentoProdutoId());
 	}
@@ -89,8 +90,9 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	hql.append(" SELECT ");
 	hql.append(" segmentoNaoRecebido.id as segmentoNaoRecebidoId, "); // Id Segmento
 	hql.append(" tipoSegmentoProduto.descricao as nomeSegmento, "); // Nome Segmento
-	hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
-	hql.append(" segmentoNaoRecebido.dataAlteracao as dataAlteracao "); // DATA ALTERAÇÃO
+        hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
+        hql.append(" segmentoNaoRecebido.dataAlteracao as dataAlteracao "); // DATA
+                                                                            // ALTERAÇÃO
 
 	// FROM
 	hql.append(" FROM ");
@@ -100,7 +102,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	hql.append(" inner join segmentoNaoRecebido.tipoSegmentoProduto as tipoSegmentoProduto ");
 	hql.append(" inner join segmentoNaoRecebido.usuario as usuario ");
 
-	// WHERE (validação para não carregar ninguém quando não houver valores no filtro)
+        // WHERE (validação para não carregar ninguém quando não houver valores
+        // no filtro)
 	if ((filtro.getNumeroCota() != null && !filtro.getNumeroCota().equals(0)) ||
 		(filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty())) {
 	    hql.append(" WHERE ");
@@ -139,7 +142,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	hql.append(" WHERE seg.tipoSegmentoProduto.id = :tipoSegmentoProdutoId ");
 	hql.append("   AND seg.cota.numeroCota = :numeroCota ");
 
-	if (tipoSegmentoProdutoId != null && !tipoSegmentoProdutoId.equals(0) && numeroCota != null && !numeroCota.equals(0)) {
+        if (tipoSegmentoProdutoId != null && tipoSegmentoProdutoId != 0L && numeroCota != null && numeroCota != 0) {
 	    parameters.put("tipoSegmentoProdutoId", tipoSegmentoProdutoId);
 	    parameters.put("numeroCota", numeroCota);
 	} else {
@@ -149,11 +152,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	setParameters(query, parameters);
 	
 	Long id = (Long) query.uniqueResult();
-	if (id != null && !id.equals(0)) {
-	    return true;
-	} else {
-	    return false;
-	}
+        
+        return (id != null && id != 0L);
     }
 
     @SuppressWarnings("unchecked")
@@ -191,7 +191,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	hql.append(" WHERE ");
 	hql.append(" seg.tipoSegmentoProduto.id = :tipoSegmentoProdutoId ) "); // finaliza a query
 
-	if (filtro.getTipoSegmentoProdutoId() != null && !filtro.getTipoSegmentoProdutoId().equals(0)) {
+        if (filtro.getTipoSegmentoProdutoId() != null && filtro.getTipoSegmentoProdutoId() != 0L) {
 	    parameters.put("tipoSegmentoProdutoId", filtro.getTipoSegmentoProdutoId());
 	}
 

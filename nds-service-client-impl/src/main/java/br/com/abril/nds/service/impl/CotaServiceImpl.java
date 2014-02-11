@@ -2033,13 +2033,12 @@ public class CotaServiceImpl implements CotaService {
 					alteraNumeroCota(cota);
 				}
 			}
-			//else{
+			else{
             // Verifica se é edicao da cota
-				//if(!cota.getId().equals(idCota)){
-            // throw new
-            // ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
-				//}
-			//}	
+				if(!cota.getId().equals(idCota)){
+					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota não pode ser utilizado.");
+				}
+			}	
 			
             // Verifica se cota possui dívidas em aberto
 			BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(cota.getId());

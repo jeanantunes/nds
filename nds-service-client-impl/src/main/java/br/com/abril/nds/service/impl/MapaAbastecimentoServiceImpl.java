@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -78,19 +77,13 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public Map<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 		FiltroMapaAbastecimentoDTO filtro) {
 		
-		List<Integer> boxes = new ArrayList<Integer>();
-		
 		Map<String,ProdutoMapaDTO> produtoMapa = new LinkedHashMap<String, ProdutoMapaDTO>();
 		
 		List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 		
 		for(ProdutoAbastecimentoDTO produtoPorBox : produtosPorBox) {
+			
 			String keyProduto = produtoPorBox.getCodigoProduto();
-
-			if(!boxes.contains(produtoPorBox.getCodigoBox())){
-				
-				boxes.add(produtoPorBox.getCodigoBox());
-			}
 
 			if(!produtoMapa.containsKey(keyProduto)){
 				
@@ -101,7 +94,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtoPorBox.getCodigoBarra(),
 				produtoPorBox.getPrecoCapa(),
 				0,
-				new HashMap<Integer, Integer>()));
+				new LinkedHashMap<Integer, Integer>()));
 			}
 
 			if(!produtoMapa.get(keyProduto).getBoxQtde().containsKey(produtoPorBox.getCodigoBox())){
@@ -221,8 +214,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Transactional
 	public ProdutoEdicaoMapaDTO obterMapaDeImpressaoPorProdutoEdicao(
 			FiltroMapaAbastecimentoDTO filtro) {
-	
-	
+		
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 		
 		ProdutoEdicaoMapaDTO peMapaDTO = new ProdutoEdicaoMapaDTO(
@@ -231,7 +223,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
 				produtosBoxRota.get(0).getCodigoBarra(),
 				produtosBoxRota.get(0).getPrecoCapa(),
-				new HashMap<Integer, BoxRotasDTO>());
+				new LinkedHashMap<Integer, BoxRotasDTO>(),
+				produtosBoxRota.get(0).getMaterialPromocional());
 		
 		if(produtosBoxRota.size() == 0) {	
 			return null;
@@ -241,15 +234,11 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 			if(!peMapaDTO.getBoxes().containsKey(item.getCodigoBox())){
 				
-				peMapaDTO.getBoxes().put(item.getCodigoBox(), new BoxRotasDTO(0, new HashMap<String, Integer>()));
+				peMapaDTO.getBoxes().put(item.getCodigoBox(), new BoxRotasDTO(0, new LinkedHashMap<String, Integer>()));
 			}
 	
 			BoxRotasDTO box = peMapaDTO.getBoxes().get(item.getCodigoBox());
-	
-//			box.setCotas(new ArrayList<Cota>());
-//			box.getCotas().add(item.getCota());
-	
-	
+			
 			if(!box.getRotasQtde().containsKey(item.getCodigoRota())){
 				
 				box.getRotasQtde().put(item.getCodigoRota(), 0);
@@ -284,17 +273,13 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Override
 	@Transactional
 	public MapaCotaDTO obterMapaDeImpressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
-	
+		
 		List<ProdutoAbastecimentoDTO> produtosCota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
-	
-		CompararProdutoMapaCotaDTO comparator = new CompararProdutoMapaCotaDTO();
-	
-		TreeMap<Long,ProdutoMapaCotaDTO> produtoMapa = new TreeMap<Long, ProdutoMapaCotaDTO>();
-	
-		comparator.setProdutoMapa(produtoMapa);
+		
+		Map<Long,ProdutoMapaCotaDTO> produtoMapa = new LinkedHashMap<Long, ProdutoMapaCotaDTO>();
 		
 		MapaCotaDTO mapaCota = new MapaCotaDTO();
-	
+		
 		mapaCota.setNumeroCota(filtro.getCodigoCota() != null ? filtro.getCodigoCota() : null);
 	
 		mapaCota.setNomeCota(filtro.getNomeCota() != null ? filtro.getNomeCota() : "");
@@ -316,7 +301,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 				ProdutoMapaCotaDTO produtoMapaCotaDTO =
 						new ProdutoMapaCotaDTO(
-								item.getNomeProduto(), item.getNumeroEdicao(), item.getCodigoBarra(), item.getSequenciaMatriz(), item.getPrecoCapa(), 0, item.getMaterialPromocional());
+								item.getNomeProduto(), item.getNumeroEdicao(), item.getCodigoBarra(), 
+								item.getSequenciaMatriz(), item.getPrecoCapa(), 0, item.getMaterialPromocional());
 	
 	
 				//colocar a lista de cotas
@@ -329,8 +315,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			}
 		}
 	
-		TreeMap<Long, ProdutoMapaCotaDTO> mapaProdutosOrdenados =
-				new TreeMap<Long, ProdutoMapaCotaDTO>(comparator);
+		Map<Long, ProdutoMapaCotaDTO> mapaProdutosOrdenados =
+				new LinkedHashMap<Long, ProdutoMapaCotaDTO>();
 	
 		mapaProdutosOrdenados.putAll(produtoMapa);
 	
@@ -344,10 +330,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public MapaProdutoCotasDTO obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro) {
 	
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
-	
-		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
+		List<ProdutoAbastecimentoDTO> produtosBoxRota = 
+				movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 	
 		if(produtosBoxRota.size() == 0)
 			return null;
@@ -358,13 +342,14 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
 				produtosBoxRota.get(0).getCodigoBarra(),
 				produtosBoxRota.get(0).getPrecoCapa(),
-				new TreeMap<Integer, Integer>(),
-				new TreeMap<String, Integer>());
+				new LinkedHashMap<Integer, Integer>(),
+				new LinkedHashMap<String, Integer>());
 	
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
-			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota()))
+			if(!pcMapaDTO.getCotasQtdes().containsKey(item.getCodigoCota())){
 				pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), 0);
+			}
 	
 			Integer qtdeAtual = pcMapaDTO.getCotasQtdes().get(item.getCodigoCota());
 			
@@ -490,10 +475,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		this.cotaService.verificarCotasSemRoteirizacao(intervaloCotas, intervaloDataLancamento, null);
 		
-	  List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
+		List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
 	
 		List<ProdutoAbastecimentoDTO> mapaCota =
-		this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+			this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
 		
 		for (ProdutoAbastecimentoDTO produto : mapaCota) {
 		
@@ -618,27 +603,27 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 //			}
 //    }
 
-    private static class CompararProdutoMapaCotaDTO implements Comparator<Long> {
-    
-     TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa;
-    
-     @Override
-     public int compare(Long o1, Long o2) {
-     ProdutoMapaCotaDTO p1 = produtoMapa.get(o1);
-     ProdutoMapaCotaDTO p2 = produtoMapa.get(o2);
-    
-    
-     int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
-     if (result == 0)
-    	 result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
-     	return result;
-     }
-    
-     /**
-      * @param produtoMapa the produtoMapa to set
-	*/
-     public void setProdutoMapa(TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa) {
-    	 this.produtoMapa = produtoMapa;
-     }
-    }
+//    private static class CompararProdutoMapaCotaDTO implements Comparator<Long> {
+//    
+//     TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa;
+//    
+//     @Override
+//     public int compare(Long o1, Long o2) {
+//     ProdutoMapaCotaDTO p1 = produtoMapa.get(o1);
+//     ProdutoMapaCotaDTO p2 = produtoMapa.get(o2);
+//    
+//    
+//     int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
+//     if (result == 0)
+//    	 result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
+//     	return result;
+//     }
+//    
+//     /**
+//      * @param produtoMapa the produtoMapa to set
+//	*/
+//     public void setProdutoMapa(TreeMap<Long, ProdutoMapaCotaDTO> produtoMapa) {
+//    	 this.produtoMapa = produtoMapa;
+//     }
+//    }
 }

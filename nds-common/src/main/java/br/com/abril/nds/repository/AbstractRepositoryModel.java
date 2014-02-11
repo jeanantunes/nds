@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementação das operações básicas do repositório
  * 
  * @author francisco.garcia
- *
- * @param <T> tipo em manipulação pelo repositório 
+ * 
+ * @param <T> tipo em manipulação pelo repositório
  * @param <K> tipo do identificador do repositório
  */
 public abstract class AbstractRepositoryModel<T, K extends Serializable> extends AbstractRepository implements Repository<T, K> {
@@ -69,16 +69,16 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		
 		int size = campos.size();
 		int counter = 0;
-		for(String c : campos.keySet()) {
+        for (Entry<String, String> entry : campos.entrySet()) {
 				
-			hql.append(c);
+            hql.append(entry.getKey());
 			hql.append("=");
 			
-			if(campos.get(c) == null) {
+            if (entry.getValue() == null) {
 				hql.append("NULL");
 			} else {
 				hql.append("'");
-				hql.append(campos.get(c));
+                hql.append(entry.getValue());
 				hql.append("'");
 				
 			}

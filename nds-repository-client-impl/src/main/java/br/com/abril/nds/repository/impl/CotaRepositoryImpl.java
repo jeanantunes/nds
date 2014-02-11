@@ -2019,11 +2019,11 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0)) - "
+				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE is null,coalesce(ec_.QTDE_EFETIVA,0),if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0))) - "
 				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0)) + "			
 				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0)) as exemplares, "	 		
 				+ "	        sum(pe_.PRECO_VENDA * ( "
-				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0) - " 
+				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE is null,coalesce(ec_.QTDE_EFETIVA,0),if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0)) - " 
 				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0) + 		 "
 				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0)) "
 				+ "			) as total, " 
@@ -2034,6 +2034,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
+				+ "	    left outer join "
+				+ "	        BOX box1_  "
+				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
 				+ "	        ESTUDO_COTA ec_  "
 				+ "	            on cota_.ID=ec_.COTA_ID  "
@@ -2284,6 +2287,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		query.setParameter("tipoCota", tipoCota);
 		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaTipoDTO.class));
 
 		query.setFirstResult( (rp * page) - rp);
@@ -2304,6 +2311,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" where (pdv.caracteristicas.pontoPrincipal=true or pdv.caracteristicas.pontoPrincipal is null) ");
 		hql.append(" and (enderecoCota.principal=true or enderecoCota.principal is null) ");		
 		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota ");
+		hql.append(" and cota.situacaoCadastro in (:situacoesCadastro) ");
 	}
 
 	private void gerarOrderByObterCotaPorTipo(StringBuilder hql,
@@ -2340,6 +2348,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("tipoCota", tipoCota);
+		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}

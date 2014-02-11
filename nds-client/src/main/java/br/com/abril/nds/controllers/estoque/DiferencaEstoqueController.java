@@ -88,8 +88,8 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * Classe responsável pelo controle das ações referentes às
- * telas de consulta de diferenças e lançamento de diferenças.
+ * Classe responsável pelo controle das ações referentes às telas de consulta de
+ * diferenças e lançamento de diferenças.
  * 
  * @author Discover Technology
  */
@@ -183,7 +183,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 		if (fileType == null) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
 		
 		FiltroConsultaDiferencaEstoqueDTO filtroSessao = this.obterFiltroParaExportacao();
@@ -404,7 +404,8 @@ public class DiferencaEstoqueController extends BaseController {
 										 		  Long idDiferenca) {
 		
 		if (tipoDiferenca == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
 		
 		if(idDiferenca == null){
@@ -582,15 +583,16 @@ public class DiferencaEstoqueController extends BaseController {
 										 String pacotePadrao) {
 		
 		if (tipoDiferenca == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] não foi informado!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O preenchimento do campo [Tipo de Diferença] não foi informado!");
 		}
 		
 		if(edicaoProduto==null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Edição] não foi informado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Edição] não foi informado!");
 		}
 		
 		if(diferenca==null) { 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
 		}
 		
 		this.validarProdutoEmRecolhimento(direcionadoParaEstoque, codigoProduto,edicaoProduto,null);
@@ -620,9 +622,10 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).from("").serialize();
 	}
 	
-	/*
-	 * Verifica se o produto informado esta em processo de recolhimento caso a diferença seja redirecionada para cota.
-	 */
+	            /*
+     * Verifica se o produto informado esta em processo de recolhimento caso a
+     * diferença seja redirecionada para cota.
+     */
 	private void validarProdutoEmRecolhimento(boolean direcionadoParaEstoque,String codigoProduto, Integer edicaoProduto, ProdutoEdicao produtoEdicao) {
 		
 		if (!direcionadoParaEstoque ) {
@@ -700,7 +703,8 @@ public class DiferencaEstoqueController extends BaseController {
 				&& TipoDirecionamentoDiferenca.COTA.equals(direcionamento)){
 			
 			if(qntReparteRateio.compareTo(diferenca) < 0){
-				throw new ValidacaoException(TipoMensagem.WARNING,"A quantidade total de diferença de produto deve ser direcionada a(s) cota(s)!");
+                throw new ValidacaoException(TipoMensagem.WARNING,
+                        "A quantidade total de diferença de produto deve ser direcionada a(s) cota(s)!");
 			}
 		}
 	}
@@ -922,7 +926,7 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		throw new ValidacaoException(
-			TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
+TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1077,12 +1081,12 @@ public class DiferencaEstoqueController extends BaseController {
 	private void validarLancamentoPorCota(Integer numeroCota,Date dataNotaEnvio, List<DiferencaVO> diferencasProdutos) {
 		
 		if (dataNotaEnvio == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota de Envio] é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota de Envio] é obrigatório!");
 		}
 		
 		if(numeroCota == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Cota] é obrigatório!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Cota] é obrigatório!");
 		}
 		
 		validarDiferencaProduto(diferencasProdutos);
@@ -1097,7 +1101,8 @@ public class DiferencaEstoqueController extends BaseController {
 				
 		if(diferencasProdutos == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado nenhuma diferença para o(s) produto(s)!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Não foi informado nenhuma diferença para o(s) produto(s)!");
 		}
 			
 		List<Long> linhasComErro = new ArrayList<Long>();
@@ -1114,7 +1119,8 @@ public class DiferencaEstoqueController extends BaseController {
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = 
-				new ValidacaoVO(TipoMensagem.WARNING, "Existe(m) diferença(s) preenchida(s) para o(s) produto(s) incorretamente!");
+ new ValidacaoVO(TipoMensagem.WARNING,
+                    "Existe(m) diferença(s) preenchida(s) para o(s) produto(s) incorretamente!");
 			
 			validacao.setDados(linhasComErro);
 			
@@ -1230,9 +1236,9 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).from(new ConfirmacaoVO(true), "result").serialize();
 	}
 	
-	/**
-	 * Método responsável por carregar todos os combos da tela de consulta.
-	 */
+	            /**
+     * Método responsável por carregar todos os combos da tela de consulta.
+     */
 	public void carregarCombosConsulta() {
 		this.carregarComboTiposDiferenca();
 		
@@ -1357,12 +1363,14 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			listaNovasDiferencas = new HashSet<Diferenca>();
 
-			// Para não limitar os resultados que irão ser persistidos no sistema
+            // Para não limitar os resultados que irão ser persistidos no
+            // sistema
 			filtroPesquisa.getPaginacao().setPaginaAtual(1);
 			filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
 			listaNovasDiferencas.addAll(this.diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
 
-			// Esta forma limitava os registros a serem persistidos apenas para a página onde o usuário se encontrava
+            // Esta forma limitava os registros a serem persistidos apenas para
+            // a página onde o usuário se encontrava
 			/*listaNovasDiferencas.addAll(
 					(List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE));*/
 		}
@@ -1373,7 +1381,7 @@ public class DiferencaEstoqueController extends BaseController {
 			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuarioLogado().getId(), modoNovaDiferenca);
 		
 		result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 		
 		this.limparSessao();
@@ -1392,7 +1400,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if (idsDiferencasSelecionadas == null || idsDiferencasSelecionadas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma diferença selecionada.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma diferença selecionada.");
 		}
 		
 		Iterator<Diferenca> iterator = listaNovasDiferencas.iterator();
@@ -1438,7 +1446,7 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 		
 		this.limparSessao();
@@ -1468,7 +1476,7 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			if (idsDiferencasSelecionadas == null) {
 				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma diferença selecionada.");
+                throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma diferença selecionada.");
 			}
 			
 			this.diferencaEstoqueService.cancelarDiferencas(
@@ -1480,20 +1488,21 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		result.use(Results.json()).from(
-			new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
-	/**
-	 * Método responsável por carregar todos os combos da tela de lançamento.
-	 */
+	    
+    /**
+     * Método responsável por carregar todos os combos da tela de lançamento.
+     */
 	private void carregarCombosLancamento() {
 		
 		this.carregarComboTiposDiferenca();
 	}
 	
-	/**
-	 * Método responsável por carregar o combo de tipos de diferença.
-	 */
+	            /**
+     * Método responsável por carregar o combo de tipos de diferença.
+     */
 	private void carregarComboTiposDiferenca() {
 
 		List<ItemDTO<TipoDiferenca, String>> listaTiposDiferencaGeral =
@@ -1542,9 +1551,9 @@ public class DiferencaEstoqueController extends BaseController {
 
 	}
 	
-	/**
-	 * Método responsável por carregar o combo de fornecedores.
-	 */
+	            /**
+     * Método responsável por carregar o combo de fornecedores.
+     */
 	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
 		
 		List<Fornecedor> listaFornecedor = this.fornecedorService.obterFornecedoresAtivos();
@@ -1571,9 +1580,9 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
-	/*
-	 * Obtém o filtro de pesquisa para exportação.
-	 */
+	            /*
+     * Obtém o filtro de pesquisa para exportação.
+     */
 	private FiltroConsultaDiferencaEstoqueDTO obterFiltroParaExportacao() {
 		
 		FiltroConsultaDiferencaEstoqueDTO filtroSessao =
@@ -1613,12 +1622,13 @@ public class DiferencaEstoqueController extends BaseController {
 		return filtroSessao;
 	}
 	
-	/*
-	 * Processa o resultado das diferenças para lançamento.
-	 *  
-	 * @param listaDiferencas - lista de diferenças
-	 * @param filtro - filtro da pesquisa
-	 */
+	            /*
+     * Processa o resultado das diferenças para lançamento.
+     * 
+     * @param listaDiferencas - lista de diferenças
+     * 
+     * @param filtro - filtro da pesquisa
+     */
 	private void processarDiferencasLancamento(List<Diferenca> listaDiferencas, 
 											   FiltroLancamentoDiferencaEstoqueDTO filtro,
 											   Integer qtdeTotalRegistros) {
@@ -1687,12 +1697,13 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).from(resultadoLancamentoDiferenca, "result").recursive().serialize();
 	}
 	
-	/*
-	 * Processa o resultado das novas diferenças para lançamento.
-	 *  
-	 * @param listaDiferencas - lista de diferenças
-	 * @param filtro - filtro da pesquisa
-	 */
+	            /*
+     * Processa o resultado das novas diferenças para lançamento.
+     * 
+     * @param listaDiferencas - lista de diferenças
+     * 
+     * @param filtro - filtro da pesquisa
+     */
 	private void processarDiferencasLancamentoNovos(Set<Diferenca> listaDiferencas, 
 												   	FiltroLancamentoDiferencaEstoqueDTO filtro) {
 
@@ -1799,12 +1810,13 @@ public class DiferencaEstoqueController extends BaseController {
 		return null;
 	}
 	
-	/*
-	 * Processa o resultado das diferenças.
-	 *  
-	 * @param listaDiferencas - lista de diferenças
-	 * @param filtro - filtro da pesquisa
-	 */
+	            /*
+     * Processa o resultado das diferenças.
+     * 
+     * @param listaDiferencas - lista de diferenças
+     * 
+     * @param filtro - filtro da pesquisa
+     */
 	private void processarDiferencas(List<Diferenca> listaDiferencas,
 									 FiltroConsultaDiferencaEstoqueDTO filtro) {
 
@@ -1923,18 +1935,23 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(resultadoDiferencaVO).recursive().serialize();
 	}
 	
-	/*
-	 * Carrega o filtro da pesquisa de lançamento de diferenças.
-	 * 
-	 * @param dataMovimento - data do movimento
-	 * @param tipoDiferenca - tipo de diferença
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 * 
-	 * @return Filtro
-	 */
+	            /*
+     * Carrega o filtro da pesquisa de lançamento de diferenças.
+     * 
+     * @param dataMovimento - data do movimento
+     * 
+     * @param tipoDiferenca - tipo de diferença
+     * 
+     * @param sortorder - ordenação
+     * 
+     * @param sortname - coluna para ordenação
+     * 
+     * @param page - página atual
+     * 
+     * @param rp - quantidade de registros para exibição
+     * 
+     * @return Filtro
+     */
 	private FiltroLancamentoDiferencaEstoqueDTO carregarFiltroPesquisaLancamentos(Date dataMovimento, 
 																				  TipoDiferenca tipoDiferenca,
 																				  String sortorder, 
@@ -1962,22 +1979,31 @@ public class DiferencaEstoqueController extends BaseController {
 		return filtroAtual;
 	}
 	
-	/*
-	 * Carrega o filtro da pesquisa de consulta de diferenças.
-	 * 
-	 * @param codigoProduto - código do produto
-	 * @param idFornecedor - identificador do fornecedor
-	 * @param dataInicial - data de movimento inicial
-	 * @param dataFinal - data de movimento final
-	 * @param tipoDiferenca - tipo de diferença
-	 * @param numeroCota - numero da cota
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 * 
-	 * @return Filtro
-	 */
+	            /*
+     * Carrega o filtro da pesquisa de consulta de diferenças.
+     * 
+     * @param codigoProduto - código do produto
+     * 
+     * @param idFornecedor - identificador do fornecedor
+     * 
+     * @param dataInicial - data de movimento inicial
+     * 
+     * @param dataFinal - data de movimento final
+     * 
+     * @param tipoDiferenca - tipo de diferença
+     * 
+     * @param numeroCota - numero da cota
+     * 
+     * @param sortorder - ordenação
+     * 
+     * @param sortname - coluna para ordenação
+     * 
+     * @param page - página atual
+     * 
+     * @param rp - quantidade de registros para exibição
+     * 
+     * @return Filtro
+     */
 	private FiltroConsultaDiferencaEstoqueDTO carregarFiltroPesquisa(String codigoProduto, 
 																	 Long idFornecedor, String dataInicial,
 																	 String dataFinal, TipoDiferenca tipoDiferenca, 
@@ -2015,15 +2041,19 @@ public class DiferencaEstoqueController extends BaseController {
 		return filtroAtual;
 	}
 	
-	/*
-	 * Configura a paginação do filtro de pesquisa de lançamentos.
-	 * 
-	 * @param filtro - filtro da pesquisa
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 */
+	            /*
+     * Configura a paginação do filtro de pesquisa de lançamentos.
+     * 
+     * @param filtro - filtro da pesquisa
+     * 
+     * @param sortorder - ordenação
+     * 
+     * @param sortname - coluna para ordenação
+     * 
+     * @param page - página atual
+     * 
+     * @param rp - quantidade de registros para exibição
+     */
 	private void configurarPaginacaoPesquisaLancamentos(FiltroLancamentoDiferencaEstoqueDTO filtro, 
 														String sortorder,
 														String sortname, 
@@ -2040,15 +2070,19 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 	}
 	
-	/*
-	 * Configura a paginação do filtro de pesquisa.
-	 * 
-	 * @param filtro - filtro da pesquisa
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 */
+	            /*
+     * Configura a paginação do filtro de pesquisa.
+     * 
+     * @param filtro - filtro da pesquisa
+     * 
+     * @param sortorder - ordenação
+     * 
+     * @param sortname - coluna para ordenação
+     * 
+     * @param page - página atual
+     * 
+     * @param rp - quantidade de registros para exibição
+     */
 	private void configurarPaginacaoPesquisa(FiltroConsultaDiferencaEstoqueDTO filtro, 
 											 String sortorder,
 											 String sortname, 
@@ -2065,36 +2099,42 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 	}
 	
-	/*
-	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
-	 * 
-	 * @param dataMovimentoFormatada - data de movimento formatado
-	 */
+	            /*
+     * Valida a entrada de dados para pesquisa de lançamentos de diferença de
+     * estoque.
+     * 
+     * @param dataMovimentoFormatada - data de movimento formatado
+     */
 	private void validarEntradaDadosPesquisaLancamentos(String dataMovimentoFormatada) {
 		
 		if (dataMovimentoFormatada == null 
 				|| dataMovimentoFormatada.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+TipoMensagem.WARNING,
+                    "O preenchimento do campo [Data de Movimento] é obrigatório!");
 		}
 		
 		if (!DateUtil.isValidDatePTBR(dataMovimentoFormatada)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Movimento inválida");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data de Movimento inválida");
 		}
 	}
 	
-	/*
-	 * Valida a entrada de dados para pesquisa de diferença de estoque.
-	 * 
-	 * @param codigoProduto
-	 * @param numeroEdicao
-	 * @param idFornecedor
-	 * @param dataInicial
-	 * @param dataFinal
-	 * @param tipoDiferenca
-	 * 
-	 */
+	            /*
+     * Valida a entrada de dados para pesquisa de diferença de estoque.
+     * 
+     * @param codigoProduto
+     * 
+     * @param numeroEdicao
+     * 
+     * @param idFornecedor
+     * 
+     * @param dataInicial
+     * 
+     * @param dataFinal
+     * 
+     * @param tipoDiferenca
+     */
 	private void validarEntradaDadosPesquisa(String codigoProduto, 
 											 Long idFornecedor, String dataInicial,
 											 String dataFinal, TipoDiferenca tipoDiferenca) {
@@ -2102,13 +2142,13 @@ public class DiferencaEstoqueController extends BaseController {
 		if ((dataInicial != null && !dataInicial.trim().isEmpty()
 				&& !DateUtil.isValidDatePTBR(dataInicial))) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data Lançamento Inicial inválida");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data Lançamento Inicial inválida");
 		}
 		
 		if ((dataFinal != null && !dataFinal.trim().isEmpty()
 				&& !DateUtil.isValidDatePTBR(dataFinal))) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data Lançamento Final inválida");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data Lançamento Final inválida");
 		}
 		
 		if (dataInicial!= null && dataFinal!= null 
@@ -2116,7 +2156,8 @@ public class DiferencaEstoqueController extends BaseController {
 												 DateUtil.parseDataPTBR(dataFinal))) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O campo [Data Lançamento] não deve ser maior que o campo [Até]!");
+TipoMensagem.WARNING,
+                    "O campo [Data Lançamento] não deve ser maior que o campo [Até]!");
 		}
 		
 		if ((dataInicial == null || dataInicial.trim().isEmpty())
@@ -2124,16 +2165,17 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING,
-					"Para realizar a pesquisa é necessário informar um Período de Data de Lançamento!");
+                    "Para realizar a pesquisa é necessário informar um Período de Data de Lançamento!");
 		}
 	}
 	
-	/**
-	 * Valida a entrada de dados para pesquisa de lançamentos de diferença de estoque.
-	 * 
-	 * @param dataMovimentoFormatada - data de movimento formatado
-	 * @param tipoDiferenca - tipo de diferença
-	 */
+	            /**
+     * Valida a entrada de dados para pesquisa de lançamentos de diferença de
+     * estoque.
+     * 
+     * @param dataMovimentoFormatada - data de movimento formatado
+     * @param tipoDiferenca - tipo de diferença
+     */
 	@Post
 	@Path("/lancamento/novo/validar")
 	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
@@ -2143,13 +2185,15 @@ public class DiferencaEstoqueController extends BaseController {
 				|| dataMovimentoFormatada.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Data de Movimento] é obrigatório!");
+TipoMensagem.WARNING,
+                    "O preenchimento do campo [Data de Movimento] é obrigatório!");
 		}
 		
 		if (tipoDiferenca == null) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
+TipoMensagem.WARNING,
+                    "O preenchimento do campo [Tipo de Diferença] é obrigatório!");
 		}
 		
 		this.result.use(Results.json()).from("").serialize();
@@ -2185,8 +2229,7 @@ public class DiferencaEstoqueController extends BaseController {
 				rateioInvalido = true;
 			}
 			
-			if (rateioCotaVO.getQuantidade() == null
-					|| BigDecimal.ZERO.equals(rateioCotaVO.getQuantidade())) {
+            if (rateioCotaVO.getQuantidade() == null || BigInteger.ZERO.equals(rateioCotaVO.getQuantidade())) {
 				
 				rateioInvalido = true;
 			}
@@ -2208,13 +2251,14 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 	}
 	
-	/*
-	 * Efetua a validação da somatória das quantidades 
-	 * do rateio x quantidade da diferença.
-	 * 
-	 * @param listaNovosRateios - lista do nos rateios
-	 * @param idDiferenca - id da diferença
-	 */
+	            /*
+     * Efetua a validação da somatória das quantidades do rateio x quantidade da
+     * diferença.
+     * 
+     * @param listaNovosRateios - lista do nos rateios
+     * 
+     * @param idDiferenca - id da diferença
+     */
 	private void validarSomaQuantidadeRateio(List<RateioCotaVO> listaNovosRateios, DiferencaVO diferencaVO ) {
 		
 		BigInteger somaQtdeRateio = BigInteger.ZERO;
@@ -2227,17 +2271,19 @@ public class DiferencaEstoqueController extends BaseController {
 		if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) > 0) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "A somatória da quantidade do(s) campo(s) [Diferença] (" 
-					+ somaQtdeRateio + ") direcionada a(s) Cota(s) é maior que a quantidade do campo [Diferença] referente ao produto informado (" 
+                    TipoMensagem.WARNING,
+                    "A somatória da quantidade do(s) campo(s) [Diferença] ("
+                            + somaQtdeRateio
+                        + ") direcionada a(s) Cota(s) é maior que a quantidade do campo [Diferença] referente ao produto informado ("
 					+ diferencaVO.getQuantidade() + ")!");
 		}
 	}
 	
-	/*
-	 * Valida se há cotas duplicadas no rateio.
-	 * 
-	 * @param listaNovosRateios - lista dos novos rateios
-	 */
+	            /*
+     * Valida se há cotas duplicadas no rateio.
+     * 
+     * @param listaNovosRateios - lista dos novos rateios
+     */
 	@SuppressWarnings("unchecked")
 	private void validarCotasDuplicadasRateio(List<RateioCotaVO> listaNovosRateios) {
 		
@@ -2300,7 +2346,8 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			linhasComErro.add(novoRateioCota.getId());
 			
-			listaMensagensErro.add("Cota inválida: Número [" + novoRateioCota.getNumeroCota() + "] - Nome [" + novoRateioCota.getNomeCota() + " ]");
+            listaMensagensErro.add("Cota inválida: Número [" + novoRateioCota.getNumeroCota() + "] - Nome ["
+                    + novoRateioCota.getNomeCota() + " ]");
 		}
 		
 		TipoDiferenca tipoDiferenca = diferencaVO.getTipoDiferenca();
@@ -2339,7 +2386,8 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if (produtoEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Produto inválido: Código [" + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto inválido: Código ["
+                + diferenca.getCodigoProduto() + "] - Edição [" + diferenca.getNumeroEdicao() + " ]");
 		}
 		
 		String mensagemErro = null;
@@ -2371,11 +2419,11 @@ public class DiferencaEstoqueController extends BaseController {
 		if (quantidade.compareTo(BigInteger.ZERO) == 0) {
 			
 			return (!isRateioCota) ?
-							"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
-								+ "' não pode ser igual a zero!"
+ "Quantidade de Diferença para o tipo de diferença '"
+                + tipoDiferenca.getDescricao() + "' não pode ser igual a zero!"
 								  
-								:"A somatória do(s) campo(s) [Diferença] do Rateio da(s) Cota(s) para o tipo de diferença '" +
-								  		tipoDiferenca.getDescricao() + "' não pode ser igual a zero!";
+            : "A somatória do(s) campo(s) [Diferença] do Rateio da(s) Cota(s) para o tipo de diferença '"
+                + tipoDiferenca.getDescricao() + "' não pode ser igual a zero!";
 		}
 		
 		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
@@ -2386,11 +2434,13 @@ public class DiferencaEstoqueController extends BaseController {
 				if(qtdeEstoqueAtual.compareTo(quantidade) < 0){
 					
 					return (!isRateioCota)?
-								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
-									+ "' não pode ser maior que a quantidade em estoque do produto!"
+ "Quantidade de Diferença para o tipo de diferença '"
+                            + tipoDiferenca.getDescricao()
+ + "' não pode ser maior que a quantidade em estoque do produto!"
 										
-									:"Quantidade do campo [Diferença] do Rateio da Cota para o tipo de diferença '" +
-										tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do campo [Reparte] da Cota!";
+                    : "Quantidade do campo [Diferença] do Rateio da Cota para o tipo de diferença '"
+                            + tipoDiferenca.getDescricao()
+                        + "' não pode ser maior que a quantidade do campo [Reparte] da Cota!";
 				}
 				
 			}else{
@@ -2399,11 +2449,13 @@ public class DiferencaEstoqueController extends BaseController {
 						|| (quantidade.compareTo(qtdeEstoqueAtual) > 0)) {
 					
 					return (!isRateioCota) ?
-								"Quantidade de Diferença para o tipo de diferença '" + tipoDiferenca.getDescricao() 
-									+ "' não pode ser maior que a quantidade em estoque do produto!"
+ "Quantidade de Diferença para o tipo de diferença '"
+                            + tipoDiferenca.getDescricao()
+ + "' não pode ser maior que a quantidade em estoque do produto!"
 										
-									:"Quantidade do campo [Diferença] do Rateio da Cota para o tipo de diferença '" +
-										tipoDiferenca.getDescricao() + "' não pode ser maior que a quantidade do campo [Reparte] da Cota!";
+                    : "Quantidade do campo [Diferença] do Rateio da Cota para o tipo de diferença '"
+                            + tipoDiferenca.getDescricao()
+                        + "' não pode ser maior que a quantidade do campo [Reparte] da Cota!";
 				}
 			}
 		}
@@ -2468,17 +2520,17 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if (!linhasComErro.isEmpty()) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Existem produtos duplicados para o lançamento!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Existem produtos duplicados para o lançamento!");
 		}
 	}
 		
-	/*
-	 * Obtém uma diferença pesquisada pelo seu id.
-	 * 
-	 * @param idDiferenca - id da diferença
-	 * 
-	 * @return DiferencaVO
-	 */
+	            /*
+     * Obtém uma diferença pesquisada pelo seu id.
+     * 
+     * @param idDiferenca - id da diferença
+     * 
+     * @return DiferencaVO
+     */
 	@SuppressWarnings("unchecked")
 	private DiferencaVO obterDiferencaPorId(Long idDiferenca) {
 		
@@ -2487,7 +2539,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem lançamentos de diferença");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Não existem lançamentos de diferença");
 		}
 		
 		for (DiferencaVO diferenca : listaDiferencas) {
@@ -2501,9 +2553,9 @@ public class DiferencaEstoqueController extends BaseController {
 		return null;
 	}
 	
-	/*
-	 * Limpa os dados da sessão.
-	 */
+	            /*
+     * Limpa os dados da sessão.
+     */
 	private void limparSessao() {
 	
 		this.httpSession.removeAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
@@ -2701,13 +2753,13 @@ public class DiferencaEstoqueController extends BaseController {
 		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 		
 		if(numeroEdicao == null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));
 		
 		
 		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao.toString());
 		
 		if(pe == null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Edição não encontrada."));
 		
 		EstoqueProduto estoque = estoqueProdutoService.buscarEstoquePorProduto(pe.getId());
 		
@@ -2967,12 +3019,12 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if (dateNotaEnvio == null) {
 		
-			listaMensagens.add("A data da nota de envio é obrigatória!");
+            listaMensagens.add("A data da nota de envio é obrigatória!");
 		}
 		
 		if (numeroCota == null) {
 			
-			listaMensagens.add("O número da cota é obrigatório!");
+            listaMensagens.add("O número da cota é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -2997,7 +3049,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if (fileType == null) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de arquivo não encontrado!");
 		}
 
 		FiltroDetalheDiferencaCotaDTO filtro = (FiltroDetalheDiferencaCotaDTO) this.httpSession.getAttribute(FILTRO_DETALHE_DIFERENCA_COTA);
@@ -3079,12 +3131,12 @@ public class DiferencaEstoqueController extends BaseController {
 			relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
 	}
 	
-	/**
-	 * Adiciona ou remove um item da lista de item adicionado
-	 * 
-	 * @param idDiferenca - id da diferença selecionada
-	 * @param selecionado - true(adiciona a lista) false(remove da lista)
-	 */
+	            /**
+     * Adiciona ou remove um item da lista de item adicionado
+     * 
+     * @param idDiferenca - id da diferença selecionada
+     * @param selecionado - true(adiciona a lista) false(remove da lista)
+     */
 	@Post
 	@Path("/selecionar")
 	@SuppressWarnings("unchecked")
@@ -3116,11 +3168,12 @@ public class DiferencaEstoqueController extends BaseController {
 		this.result.nothing();
 	}
 	
-	/**
-	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
-	 * 
-	 * @param selecionado - true(adiciona todos) false (remove todos)
-	 */
+	            /**
+     * Adiciona ou remove todos os itens da pesquisa a lista de itens
+     * selecionados da sessão.
+     * 
+     * @param selecionado - true(adiciona todos) false (remove todos)
+     */
 	@Post
 	public void selecionarTodos(Boolean selecionado, List<Long> listaIdsDiferencas){
 		

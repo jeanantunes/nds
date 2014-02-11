@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -57,9 +58,9 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 		hql.append(" produto.codigoICD as codigoProduto, "); // CODIGO PRODUTO
 		hql.append(" produto.codigo as codigoProdin, "); // CODIGO PRODUTO
 		hql.append(" produto.nome as nomeProduto, "); // NOME PRODUTO
-		hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
+        hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
 		hql.append(" excecaoProdutoCota.dataAlteracao as dataAlteracao, "); // DATA
-																			// ALTERAÇÃO
+                                                                            // ALTERAÇÃO
 		hql.append(" excecaoProdutoCota.tipoClassificacaoProduto.descricao as classificacaoProduto ");
 
 		hql.append(" FROM ExcecaoProdutoCota as excecaoProdutoCota ");
@@ -72,7 +73,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 
 		hql.append(" Produto produto ");
 
-		// O filtro sempre terá OU nomeCota OU codigoCota
+        // O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");
 
 		hql.append(" produto.codigoICD = excecaoProdutoCota.codigoICD and ");
@@ -305,27 +306,14 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 			parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
 		}
 
-		if (filtro.getProdutoDto().getCodigoProduto() != null
-				&& !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+        if (StringUtils.isNotEmpty(filtro.getProdutoDto().getCodigoProduto())) {
 
 			hql.append(" and e.codigoICD = :codigoProduto");
-			/*
-			 * if(filtro.getProdutoDto().getCodigoProduto().length()==6){
-			 * hql.append(" and p.codigoICD = :codigoProduto"); }else
-			 * if(filtro.getProdutoDto().getCodigoProduto().length()>6){
-			 * hql.append(" and p.codigo = :codigoProduto"); }
-			 */
+
 			parameters.put("codigoProduto", filtro.getProdutoDto()
 					.getCodigoProduto());
 
 		}
-		/*
-		 * else if (filtro.getProdutoDto().getNomeProduto() != null &&
-		 * !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
-		 * hql.append("and p.nome = :nomeProduto");
-		 * parameters.put("nomeProduto",
-		 * filtro.getProdutoDto().getNomeProduto()); }
-		 */
 
 		if (filtro.getProdutoDto().getIdClassificacaoProduto() != null
 				&& filtro.getProdutoDto().getIdClassificacaoProduto() > 0) {
@@ -403,8 +391,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends
 			parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
 		}
 
-		if (filtro.getProdutoDto().getCodigoProduto() != null
-				&& !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+        if (StringUtils.isNotEmpty(filtro.getProdutoDto().getCodigoProduto())) {
 			hql.append(" and  pr.codigo = :codigoProduto ) ");
 			hql.append(" and p.codigo = :codigoProduto ");
 			parameters.put("codigoProduto", filtro.getProdutoDto()

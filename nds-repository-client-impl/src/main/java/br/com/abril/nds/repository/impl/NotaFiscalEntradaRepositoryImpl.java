@@ -528,17 +528,21 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 		return (Long) query.uniqueResult() > 0;
 	}
-
+	
 	@Override
-	public boolean notaPossuiItemExpedido(Long idNota) {
+	public List<Long> pesquisarItensNotaExpedidos(Long idNota) {
 		
-		StringBuilder hql = new StringBuilder("select count(lancamento.id) ");
-		hql.append(" from Lancamento lancamento ")
-		   .append(" join lancamento.recebimentos itensRecebimentos ")
-		   .append(" join itensRecebimentos.recebimentoFisico recebimento ")
-		   .append(" join recebimento.notaFiscal notaFiscal ")		   
-		   .append(" where notaFiscal.id = :idNota ")
-		   .append(" and lancamento.status not in (:status) ");
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pe.id 						")
+		   .append(" from Lancamento lancamento 		")
+		   .append(" join lancamento.produtoEdicao pe 	")
+		   .append(" join lancamento.recebimentos itensRecebimentos 		")
+		   .append(" join itensRecebimentos.recebimentoFisico recebimento 	")
+		   .append(" join recebimento.notaFiscal notaFiscal 				")		   
+		   .append(" where notaFiscal.id = :idNota 							")
+		   .append(" and lancamento.status not in (:status) 				")
+		   .append(" group by pe.id 										");	
 
 		StatusLancamento[] status = new StatusLancamento[]{StatusLancamento.PLANEJADO,StatusLancamento.CONFIRMADO,
 				StatusLancamento.FURO,StatusLancamento.EM_BALANCEAMENTO, StatusLancamento.BALANCEADO,StatusLancamento.ESTUDO_FECHADO};
@@ -547,6 +551,21 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		query.setParameter("idNota", idNota);
 		query.setParameterList("status", status);
 		
-		return (Long) query.uniqueResult() > 0;
+		return query.list();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
