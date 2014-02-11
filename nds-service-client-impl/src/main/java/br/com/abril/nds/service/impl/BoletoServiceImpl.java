@@ -15,7 +15,8 @@ import java.util.Set;
 
 import javax.xml.bind.ValidationException;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -201,7 +202,7 @@ public class BoletoServiceImpl implements BoletoService {
 	private ParametroCobrancaCotaService paramtroCobrancaCotaService;
 	
 	
-	        /**
+	            /**
      * Método responsável por obter boletos por numero da cota
      * 
      * @param filtro
@@ -213,7 +214,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return this.boletoRepository.obterBoletosPorCota(filtro);
 	}
 	
-	        /**
+	            /**
      * Método responsável por obter boleto por nossoNumero
      * 
      * @param nossoNumero
@@ -226,7 +227,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return boletoRepository.obterPorNossoNumero(nossoNumero, dividaAcumulada);
 	}
 	
-	        /**
+	            /**
      * Método responsável por obter a quantidade de boletos por numero da cota
      * 
      * @param filtro
@@ -626,7 +627,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 
-	        /**
+	            /**
      * Baixa Boleto Antecipado - Em Branco Gera movimento financeiro de crédito
      * para a cota referente à Boleto Antecipado - Em Branco
      * 
@@ -688,18 +689,7 @@ public class BoletoServiceImpl implements BoletoService {
 			validarDadosEntradaBaixaManual(pagamento);
 		}
 		
-		Boleto boleto = null;
-		
-		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
-			
-			//boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
-			
-			boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
-			
-		} else {
-		
-			boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
-		}		
+        Boleto boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
 		
         // Boleto não encontrado na base
 		if (boleto == null) {
@@ -822,7 +812,7 @@ public class BoletoServiceImpl implements BoletoService {
 										   Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
 										   Banco banco, Date dataPagamento) {
 		
-		                /*
+		                        /*
          * Gera baixa com status de pago, porém o nosso número referente ao
          * pagamento não existe na base
          */
@@ -836,7 +826,7 @@ public class BoletoServiceImpl implements BoletoService {
 									Date dataOperacao, Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
 									Banco banco, Date dataPagamento) {
 		
-		                /*
+		                        /*
          * Não baixa o boleto, gera baixa com status de boleto pago
          * anteriormente e gera movimento de crédito
          */
@@ -863,7 +853,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BaixaCobranca baixaCobranca = null;
 		
-		                /*
+		                        /*
          * Não baixa o boleto, gera baixa com status de não pago por divergência
          * de data e gera movimento de crédito
          */
@@ -884,7 +874,7 @@ public class BoletoServiceImpl implements BoletoService {
 			return;
 		}
 		
-		                /*
+		                        /*
          * Baixa o boleto, gera baixa com status de pago com divergência de
          * data, calcula multas e juros em cima do valor que deveria ser pago e
          * gera movimento de crédito ou débito se necessário
@@ -974,7 +964,7 @@ public class BoletoServiceImpl implements BoletoService {
 								 		   ResumoBaixaBoletosDTO resumoBaixaBoletos,
 								 		   Banco banco, Date dataPagamento) {
 		
-		                /*
+		                        /*
          * Baixa o boleto, calcula o valor pago considerando multas, juros e
          * desconto, e gera baixa cobrança com o valor atualizado
          */
@@ -1004,7 +994,7 @@ public class BoletoServiceImpl implements BoletoService {
 			 							ResumoBaixaBoletosDTO resumoBaixaBoletos,
 			 							Banco banco, Date dataPagamento) {
 		
-		                /*
+		                        /*
          * Verifica o parâmetro para pagamento a maior, não baixa o boleto, gera
          * baixa com status de não pago por divergência de valor e gera
          * movimento de crédito
@@ -1031,7 +1021,7 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 		
-		                /*
+		                        /*
          * Baixa o boleto, gera baixa com status de pago por divergência de
          * valor e gera movimento de crédito da diferença
          */
@@ -1064,7 +1054,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BaixaCobranca baixaCobranca = null;
 		
-		                /*
+		                        /*
          * Verifica o parâmetro para pagamento a menor, não baixa o boleto, gera
          * baixa com status de não pago por divergência de valor e gera
          * movimento de crédito
@@ -1086,7 +1076,7 @@ public class BoletoServiceImpl implements BoletoService {
 			return;
 		}
 		
-		                /*
+		                        /*
          * Baixa o boleto, gera baixa com status de pago por divergência de
          * valor e gera movimento de débito da diferença
          */
@@ -1520,7 +1510,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return corpoBoleto;
 	}
 
-	        /**
+	            /**
      * Método responsável por gerar corpo do boleto com os atributos definidos
      * 
      * @param nossoNumero
@@ -1828,7 +1818,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
-	        /**
+	            /**
      * Método responsável por gerar impressao em formato PDF
      * 
      * @param nossoNumero
@@ -1860,7 +1850,7 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 	
-	        /**
+	            /**
      * Método responsável pela busca de dados referentes à cobrança
      * 
      * @param nossoNumero
@@ -1918,7 +1908,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return null;
 	}
 	
-	        /**
+	            /**
      * Método responsável por gerar impressao de Boleto Antecipado (Em Branco)
      * em formato PDF
      * 
@@ -1949,7 +1939,7 @@ public class BoletoServiceImpl implements BoletoService {
         return b;
 	}
 	
-	        /**
+	            /**
      * Gera Impressão de Boletos em Branco apenas para a impressão - Sem
      * Cobrança e Sem Financeiro Cadastrado
      * 
@@ -1980,7 +1970,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return null;
 	}
 	
-	        /**
+	            /**
      * Método responsável por obter os dados de uma cobrança
      * 
      * @param nossoNumero
@@ -2155,7 +2145,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return boletosDTO;
 	}
 	
-	        /**
+	            /**
      * Obtém o fornecedor padrão da cota para cobrança.
      * 
      * @param cota Cota que deseja obter o fornecedor.
@@ -2271,7 +2261,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return boletoAntecipado;
 	}
 	
-	        /**
+	            /**
      * Obtem valor inicial da faixa de número reservada para a geração de Nosso
      * Numero de boletos antecipados (Em Branco) Somado ao atributo
      * idBoletoAntecipado para a composição do Nosso Número Considera o tamanho
@@ -2316,7 +2306,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
-	        /**
+	            /**
      * Atualiza os campos Nosso Número e Dígito Nosso Número em
      * BoletoEmBrancoDTO conforme BoletoAntecipado persistido
      * 
@@ -2456,7 +2446,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
-	        /**
+	            /**
      * Verifica se existe boleto antecipado para a cota Data de recolhimento
      * dentro do periodo de emissao CE do Boleto antecipado Boletos em Branco
      * sem reimpressão
@@ -2489,7 +2479,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return false;
 	}
 	
-	        /**
+	            /**
      * Atualiza boletos antecipados por periodo de recolhimento da CE e numero
      * cota - re-emissao de CE Adiciona referência do novo Boleto Impresso nos
      * boletos ja emitidos no mesmo período Atualiza apenas boletos qua nao
@@ -2544,7 +2534,7 @@ public class BoletoServiceImpl implements BoletoService {
 		return (bas!=null && bas.size()>0);
 	}
 	
-	        /**
+	            /**
      * Método responsável por obter boleto Antecipado (Em Branco) por
      * nossoNumero
      * 

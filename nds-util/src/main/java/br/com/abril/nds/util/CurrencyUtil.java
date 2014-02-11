@@ -14,7 +14,7 @@ import br.com.caelum.stella.inwords.NumericToWordsConverter;
  * Classe utilitária para moedas.
  * 
  * @author Discover Technology
- *
+ * 
  */
 public abstract class CurrencyUtil {
 
@@ -23,13 +23,13 @@ public abstract class CurrencyUtil {
 	
 	public static DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("pt","BR"));
 	
-	/**
-	 * Formata um valor de moeda sem símbolo monetário.
-	 * 
-	 * @param valor - valor
-	 * 
-	 * @return Valor formatado
-	 */
+	    /**
+     * Formata um valor de moeda sem símbolo monetário.
+     * 
+     * @param valor - valor
+     * 
+     * @return Valor formatado
+     */
 	public static String formatarValor(Number valor) {
 		
 		if (valor == null) {
@@ -40,13 +40,13 @@ public abstract class CurrencyUtil {
 		return new DecimalFormat("#,##0.00",symbols).format(valor);
 	}
 	
-	/**
-	 * Formata um valor de moeda sem símbolo monetário.
-	 * 
-	 * @param valor - valor
-	 * 
-	 * @return Valor formatado
-	 */
+	    /**
+     * Formata um valor de moeda sem símbolo monetário.
+     * 
+     * @param valor - valor
+     * 
+     * @return Valor formatado
+     */
 	public static String formatarValorQuatroCasas(Number valor) {
 		
 		if (valor == null) {
@@ -57,13 +57,14 @@ public abstract class CurrencyUtil {
 		return new DecimalFormat("#,##0.0000",symbols).format(valor);
 	}
 
-	/**
-	 * Formata um valor de moeda sem símbolo monetário e sem a parte fracionária (truncado).
-	 * 
-	 * @param valor - valor
-	 * 
-	 * @return Valor formatado
-	 */
+	    /**
+     * Formata um valor de moeda sem símbolo monetário e sem a parte fracionária
+     * (truncado).
+     * 
+     * @param valor - valor
+     * 
+     * @return Valor formatado
+     */
 	public static String formatarValorTruncado(Number valor) {
 		
 		if (valor == null) {
@@ -74,13 +75,13 @@ public abstract class CurrencyUtil {
 		return new DecimalFormat("#,##0",symbols).format(valor);
 	}
 	
-	/**
-	 * Formata um valor de moeda com símbolo monetário.
-	 * 
-	 * @param valor - valor
-	 * 
-	 * @return Valor formatado
-	 */
+	    /**
+     * Formata um valor de moeda com símbolo monetário.
+     * 
+     * @param valor - valor
+     * 
+     * @return Valor formatado
+     */
 	public static String formatarValorComSimbolo(Number valor) {
 		
 		String valorFormatado = formatarValor(valor);
@@ -93,14 +94,15 @@ public abstract class CurrencyUtil {
 		return valorFormatado;
 	}
 	
-	/**
-	 * Converte uma String de moeda com ou sem símbolo monetário.
-	 * 
-	 * @param valor - valor
-	 * @param locale - locale recebido do cliente (necessário para símbolo monetário)
-	 * 
-	 * @return valor convertido
-	 */
+	    /**
+     * Converte uma String de moeda com ou sem símbolo monetário.
+     * 
+     * @param valor - valor
+     * @param locale - locale recebido do cliente (necessário para símbolo
+     *            monetário)
+     * 
+     * @return valor convertido
+     */
 	public static BigDecimal converterValor(String valor, Locale locale) {
 		
 		if (valor == null) {
@@ -132,23 +134,23 @@ public abstract class CurrencyUtil {
 	}
 	
 	
-	/**
-	 * Obtém o BigDecimal de uma String no formato monetario brasileiro
-	 * 
-	 * @param numero - valor em String Ex: 1.000,00
-	 * @return BigDecimal 1000.00
-	 */
+	    /**
+     * Obtém o BigDecimal de uma String no formato monetario brasileiro
+     * 
+     * @param numero - valor em String Ex: 1.000,00
+     * @return BigDecimal 1000.00
+     */
 	public static BigDecimal getBigDecimal(String numero) {
 		return new BigDecimal(numero.replace(".", "").replace(",", "."));
 	}
 	
-	/**
-	 * Converte uma String de moeda sem símbolo monetário.
-	 * 
-	 * @param valor - valor
-	 * 
-	 * @return Valor formatado
-	 */
+	    /**
+     * Converte uma String de moeda sem símbolo monetário.
+     * 
+     * @param valor - valor
+     * 
+     * @return Valor formatado
+     */
 	public static BigDecimal converterValor(String valor) {
 
 		return converterValor(valor, null);
@@ -230,7 +232,6 @@ public abstract class CurrencyUtil {
 		
 		String totalFormatadoComVirgula = CurrencyUtil.formatarValor(valor);
 		int indexOf = totalFormatadoComVirgula.indexOf(",");
-		totalFormatadoComVirgula.substring(0, indexOf);
 
 		return totalFormatadoComVirgula.substring(0, indexOf);
 	}

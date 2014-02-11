@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
@@ -86,7 +87,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Produto %1$s não encontrado.", input.getCodigoPublicacao() )
+                    String.format("Produto %1$s não encontrado.", input.getCodigoPublicacao())
 				);
 			return ;
 		} /*else {
@@ -129,13 +130,17 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.HIERARQUIA,
-						String.format( "Produto %1$s Edicao %2$s não cadastrada.", input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() )
+                        String.format("Produto %1$s Edicao %2$s não cadastrada.", input.getCodigoPublicacao(), input
+                                .getEdicaoRecolhimento().toString())
 					);
 				return;
 			} else {
 				Lancamento lancamento = null;
+                Date dataLancamentoRecolhimentoProduto = null;
+
 				try {
-					lancamento = this.recuperarRecolhimento(produtoEdicaoRecolhimento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+                    dataLancamentoRecolhimentoProduto = DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto());
+
 				} catch (ParseException e1) {
 					ndsiLoggerFactory.getLogger().logError(
 							message,
@@ -143,6 +148,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 							String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
 					return;
 				}
+                lancamento = this.recuperarRecolhimento(produtoEdicaoRecolhimento, dataLancamentoRecolhimentoProduto);
 				if (null != lancamento) {
 					
 					if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO
@@ -154,17 +160,24 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.ERRO_INFRA,
-								String.format( "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+                                        String.format(
+                                                "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.",
+                                                input.getDataLancamentoRecolhimentoProduto(), input
+                                                        .getCodigoPublicacao(), input.getEdicaoRecolhimento()
+                                                        .toString()));
 						return;
 					}
 					
-					if (!lancamento.getDataRecolhimentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto() )) {
+                    if (!lancamento.getDataRecolhimentoDistribuidor().equals(dataLancamentoRecolhimentoProduto)) {
 					
 						if (lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
 							ndsiLoggerFactory.getLogger().logWarning(
 									message,
 									EventoExecucaoEnum.INF_DADO_ALTERADO,
-									String.format( "Não foi possivel Alterar a data devido ao status de BALANCEADO_RECOLHIMENTO, para o Produto %1$s Edicao %2$s.", input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString())
+                                            String.format(
+                                                    "Não foi possivel Alterar a data devido ao status de BALANCEADO_RECOLHIMENTO, para o Produto %1$s Edicao %2$s.",
+                                                    input.getCodigoPublicacao(), input.getEdicaoRecolhimento()
+                                                            .toString())
 								);
 							return ;
 						} else {
@@ -198,7 +211,10 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					ndsiLoggerFactory.getLogger().logError(
 							message,
 							EventoExecucaoEnum.RELACIONAMENTO,
-							String.format( "Não existe recolhimento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString(), input.getDataLancamentoRecolhimentoProduto().toString() )
+                                    String.format(
+                                            "Não existe recolhimento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s",
+                                            input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString(),
+                                            input.getDataLancamentoRecolhimentoProduto().toString())
 						);
 				}
 
@@ -268,7 +284,10 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
 			
 			if (lancamento == null) {
-				// Caso não encontre o lançamento futuro, procura o anterior mais próximo com status CONFIRMADO (para alterar a data de lancamento real do distribuidor) ou BALANCEADO (para não fazer alterar e nem inserir um novo)
+                // Caso não encontre o lançamento futuro, procura o anterior
+                // mais próximo com status CONFIRMADO (para alterar a data de
+                // lancamento real do distribuidor) ou BALANCEADO (para não
+                // fazer alterar e nem inserir um novo)
 				lancamento = this.recuperarLancamentoAnteriorMaisProximo(produtoEdicaoLancamento, input.getDataMovimento());
 			}
 
@@ -296,12 +315,28 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), dataMovimento)
 					);				
 			} else {
-				if (!lancamento.getDataLancamentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto())) {
+                Date dataLancamentoRecolhimentoProduto = null;
+                
+                try {
+                    dataLancamentoRecolhimentoProduto = DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto());
+                    
+                } catch (ParseException e1) {
+                    ndsiLoggerFactory.getLogger().logError(
+                            message,
+                            EventoExecucaoEnum.ERRO_INFRA,
+                            String.format("Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input
+                                    .getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input
+                                    .getEdicaoRecolhimento().toString()));
+                }
+                if (!lancamento.getDataLancamentoDistribuidor().equals(dataLancamentoRecolhimentoProduto)) {
 					if (lancamento.getStatus().equals(StatusLancamento.BALANCEADO)) {
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.INF_DADO_ALTERADO,
-								String.format( "Não foi possivel Alterar a data devido ao status de BALANCEADO, para o Produto %1$s Edicao %2$s.", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString())
+                                        String.format(
+                                                "Não foi possivel Alterar a data devido ao status de BALANCEADO, para o Produto %1$s Edicao %2$s.",
+                                                input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao()
+                                                        .toString())
 							);	
 						return ;
 					} else {
@@ -383,12 +418,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		return (Lancamento) query.uniqueResult();
 	}
 
-	/**
-	 * Busca o lançamento anterior á data de movimetno do arquivo mais próximo (busca apenas CONFIRMADO ou BALANCEADO)
-	 * @param produtoEdicaoLancamento
-	 * @param dataMovimento
-	 * @return
-	 */
+	        /**
+     * Busca o lançamento anterior á data de movimetno do arquivo mais próximo
+     * (busca apenas CONFIRMADO ou BALANCEADO)
+     * 
+     * @param produtoEdicaoLancamento
+     * @param dataMovimento
+     * @return
+     */
 	private Lancamento recuperarLancamentoAnteriorMaisProximo(
 			ProdutoEdicao produtoEdicaoLancamento, Date dataMovimento) {
 		StringBuilder sql = new StringBuilder();

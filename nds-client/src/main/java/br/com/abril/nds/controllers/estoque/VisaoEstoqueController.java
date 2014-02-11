@@ -159,18 +159,12 @@ public class VisaoEstoqueController extends BaseController {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private TableModel getDetalhesTableModel(List<? extends VisaoEstoqueDetalheDTO> listDetalhe, String tipoEstoque, int page, int total) {
 		
-		TableModel table = null;
+        TableModel table = new TableModel<CellModelKeyValue<VisaoEstoqueDetalheDTO>>();
 		
 		if (tipoEstoque.equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
-
-			table = new TableModel<CellModelKeyValue<VisaoEstoqueDetalheDTO>>();
-		
 			table.setRows(CellModelKeyValue.toCellModelKeyValue((List<VisaoEstoqueDetalheDTO>)listDetalhe));
 			
 		} else {
-			
-			table = new TableModel<CellModelKeyValue<VisaoEstoqueDetalheJuramentadoDTO>>();
-			
 			table.setRows(CellModelKeyValue.toCellModelKeyValue((List<VisaoEstoqueDetalheJuramentadoDTO>)listDetalhe));		
 		}
 
@@ -199,7 +193,7 @@ public class VisaoEstoqueController extends BaseController {
 
 		this.visaoEstoqueService.transferirEstoque(filtro, this.getUsuarioLogado());
 		
-		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso.");
+        ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso.");
 		
 		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
@@ -241,7 +235,8 @@ public class VisaoEstoqueController extends BaseController {
 			filtro.getListaTransferencia(), tipoEstoque, this.getUsuarioLogado()
 		);
 
-		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Atualização de inventário concluída com sucesso.");
+        ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS,
+                "Atualização de inventário concluída com sucesso.");
 		
 		this.result.use(Results.json()).from(validacao, "result").serialize();
 	}
@@ -339,7 +334,7 @@ public class VisaoEstoqueController extends BaseController {
 	private void atualizarDataMovimentacao(FiltroConsultaVisaoEstoque filtro) {
 		
 		if(filtro == null || filtro != null && filtro.getDataMovimentacaoStr() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valores de filtros inválidos.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Valores de filtros inválidos.");
 		}
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -366,7 +361,7 @@ public class VisaoEstoqueController extends BaseController {
 			
 			if (!DateUtil.isValidDate(filtro.getDataMovimentacaoStr(), "dd/MM/yyyy")) {
 				
-				mensagens.add("O campo Data Movimento de é inválido");
+                mensagens.add("O campo Data Movimento de é inválido");
 			}else{
 				filtro.setDataMovimentacao(DateUtil.parseDataPTBR(filtro.getDataMovimentacaoStr()));
 			}
