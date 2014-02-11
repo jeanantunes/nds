@@ -182,7 +182,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto, Long idProdutoEdicao,
 			Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado) {
 		
-		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
+		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(idLancamento, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;
 		
@@ -1050,7 +1050,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	/*
 	 * Atualiza o estoque do produto da cota juramentado.
 	 */
-	@Transactional
+	@Override
+    @Transactional
 	public EstoqueProdutoCotaJuramentado atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
 														TipoMovimentoEstoque tipoMovimentoEstoque) {
 
@@ -1280,7 +1281,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 	}
 	
-	@Transactional
+	@Override
+    @Transactional
 	public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico) {
