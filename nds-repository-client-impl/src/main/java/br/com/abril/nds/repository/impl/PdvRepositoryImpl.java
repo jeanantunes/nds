@@ -26,11 +26,11 @@ import br.com.abril.nds.repository.PdvRepository;
 
 /**
  * 
- * Classe de implementação  das ações a acesso a dados referente a classe
- * {@link br.com.abril.nds.model.cadastro.pdv.PDV}  
+ * Classe de implementação das ações a acesso a dados referente a classe
+ * {@link br.com.abril.nds.model.cadastro.pdv.PDV}
  * 
  * @author Discover Technology
- *
+ * 
  */
 
 @Repository
@@ -124,13 +124,13 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		
 	}
 	
-	/**
-	 * Monta strinf hql de ordenação da consulta de pdvs
-	 * 
-	 * @param filtro - filtro com as opções de ordenação
-	 * 
-	 * @return String
-	 */
+	    /**
+     * Monta strinf hql de ordenação da consulta de pdvs
+     * 
+     * @param filtro - filtro com as opções de ordenação
+     * 
+     * @return String
+     */
 	private String getOrdenacaoPDV(FiltroPdvDTO filtro){
 		
 		if(filtro == null || filtro.getColunaOrdenacao() == null){
@@ -203,11 +203,12 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		return (PDV) criteria.uniqueResult();
 	}
 
-	/**
-	 * Obtém PDV's por Rota
-	 * @param idRota
-	 * @return
-	 */
+	    /**
+     * Obtém PDV's por Rota
+     * 
+     * @param idRota
+     * @return
+     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PDV> obterPDVPorRota(Long idRota) {
@@ -297,6 +298,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
     /**
      * Obtem PDV's por Cota e informações de Endereço
+     * 
      * @param numCota
      * @param municipio
      * @param uf
@@ -314,7 +316,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco") ;
 		
-		if (numCota != null && !numCota.equals("") ) {
+        if (numCota != null) {
 			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
 		}
 		
@@ -365,7 +367,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
 		}
 		
-		if (numCota != null && !numCota.equals("") ) {
+        if (numCota != null) {
 			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
 		}
 		
@@ -406,9 +408,9 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		q.executeUpdate();
 	}
 
-	/**
-	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
-	 */
+	    /**
+     * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
+     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PdvDTO> obterPDVs(Integer numeroCota) {
