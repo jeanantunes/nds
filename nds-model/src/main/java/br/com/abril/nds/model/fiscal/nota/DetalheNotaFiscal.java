@@ -89,9 +89,9 @@ public class DetalheNotaFiscal implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((this.getSequencia() == null) ? 0 : this.getSequencia().hashCode());
 		result = prime * result + ((this.getProdutoServico() == null) ? 0 : this.getProdutoServico().hashCode());
 		result = prime * result + ((this.getProdutoServicoPK() == null) ? 0 : this.getProdutoServicoPK().hashCode());
-		result = prime * result + ((this.getSequencia() == null) ? 0 : this.getSequencia().hashCode());
 		return result;
 	}
 

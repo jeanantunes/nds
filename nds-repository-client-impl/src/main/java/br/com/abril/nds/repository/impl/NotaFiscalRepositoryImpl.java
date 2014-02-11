@@ -83,15 +83,15 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		}
 
 		if(filtro.getNumeroNotaInicial()!=null) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");
 		}
 
 		if(filtro.getNumeroNotaFinal()!=null) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal <= :numeroFinal ");
 		}
 
 		if(filtro.getChaveAcesso()!=null && !filtro.getChaveAcesso().isEmpty()) {
-			sql.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso = :chaveAcesso ");
 		}
 
 		if(filtro.getSituacaoNfe()!=null && !filtro.getSituacaoNfe().isEmpty()) {
@@ -129,16 +129,12 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		.append(" notaFiscal.notaFiscalInformacoes.identificacao.naturezaOperacao.descricao as movimentoIntegracao")
 		.append(" FROM NotaFiscal as notaFiscal");
 
-		if(	(filtro.getBox()!=null) ||
-				filtro.getDataInicial() != null ||
-				filtro.getDataFinal() != null 	||
-				( filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) ||
-				( filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty() ) ||
-				filtro.getNumeroNotaInicial() != null 	||
-				filtro.getNumeroNotaFinal()!=null		||
-				( filtro.getChaveAcesso() != null && !filtro.getChaveAcesso().isEmpty() ) ||
-				( filtro.getSituacaoNfe() != null && !filtro.getSituacaoNfe().isEmpty() ) ||
-				filtro.getSerie() != null ) {
+		if(	(filtro.getBox()!=null) || filtro.getDataInicial() != null || filtro.getDataFinal() != null ||
+			(filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) || 
+			(filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty() ) || 
+			(filtro.getChaveAcesso() != null && !filtro.getChaveAcesso().isEmpty() ) ||
+			(filtro.getSituacaoNfe() != null && !filtro.getSituacaoNfe().isEmpty() ) || 
+			filtro.getNumeroNotaInicial() != null || filtro.getNumeroNotaFinal()!=null|| filtro.getSerie() != null ) {
 
 			sql.append(" WHERE ");
 
@@ -153,13 +149,18 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao <= :dataFinal ");
 		}
 
-		if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
-			sql.append(" AND NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO = :documento AND PESSOA_DESTINATARIO.TIPO = 'F' ");
+		if(filtro.getNumeroDocumento() != null){
+			if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
+				if(filtro.getDocumentoPessoa().equalsIgnoreCase("cpf")){
+					sql.append(" AND NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO = :documento AND PESSOA_DESTINATARIO.TIPO = 'F' ");
+				}else{
+					sql.append(" AND NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO = :documento AND PESSOA_DESTINATARIO.TIPO = 'F' ");
+				}
+			}
 		}
 
 		if(filtro.getTipoNfe() !=null && !filtro.getTipoNfe().isEmpty()) {
-			sql.append(" AND NOTA_FISCAL_PROCESSO.PROCESSO = :tipoEmissaoNfe");
-		}
+			sql.append(" AND notaFiscal.notaFiscalInformacoes.processos =:tipoEmissaoNfe");		}
 
 		if(filtro.getNumeroNotaInicial() !=null) {
 			sql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal >= :numeroInicial ");

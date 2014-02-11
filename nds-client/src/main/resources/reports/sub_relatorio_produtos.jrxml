@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos" pageWidth="842" pageHeight="592" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="0de048fa-a620-44b6-bcb1-d2441005639e">
-	<property name="ireport.zoom" value="1.2100000000000126"/>
+	<property name="ireport.zoom" value="8.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
@@ -225,7 +225,7 @@ $F{infoComplementar} != null ? $F{infoComplementar} : " "]]></textFieldExpressio
 	<pageFooter>
 		<band height="1">
 			<line>
-				<reportElement x="0" y="0" width="842" height="1" uuid="1154f695-4d50-4e75-a289-de7b0215ea0b"/>
+				<reportElement x="0" y="0" width="760" height="1" uuid="1154f695-4d50-4e75-a289-de7b0215ea0b"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>

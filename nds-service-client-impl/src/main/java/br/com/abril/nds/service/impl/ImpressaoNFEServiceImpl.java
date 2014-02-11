@@ -136,9 +136,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Override
 	@Transactional
 	public byte[] imprimirNFe(FiltroImpressaoNFEDTO filtro) {
+		LOGGER.info("Metodo responsavel pela impressão de NFE...");
 		
 		List<DanfeWrapper> listaDanfeWrapper = new ArrayList<DanfeWrapper>();
-		LOGGER.info("Metodo responsavel pela impressão de NFE...");
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		InputStream logoDistribuidor = this.parametrosDistribuidorService.getLogotipoDistribuidor();
 		// InputStream logoTipoDistribuidor = distribuidor.getLogotipoDistribuidor();  

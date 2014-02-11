@@ -71,10 +71,10 @@ var impressaoNfeController = $.extend(true, {
 	
 	verificarTipoDestinatario : function(element) {
 		if(element.value != "FORNECEDOR") {
-			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
-			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
 		} else {
-			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+			$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
 		}
 		
 		params = [];
@@ -87,10 +87,10 @@ var impressaoNfeController = $.extend(true, {
 				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
 			}
 			
-			$("#impressaoNfe-filtro-naturezaOperacao").empty();
+			$("#painelNfe-filtro-naturezaOperacao").empty();
 			
 			$.each(data.rows, function (i, row) {
-			    $('#impressaoNfe-filtro-naturezaOperacao').append($('<option>', { 
+			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
 			        value: row.cell.key,
 			        text : row.cell.value
 			    }));
@@ -150,7 +150,7 @@ var impressaoNfeController = $.extend(true, {
 		params = [ 	{name:'filtro.idNaturezaOperacao', value:$('#impressaoNfe-filtro-naturezaOperacao', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoInicial', value:$('#dataMovimentoInicial', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.dataMovimentoFinal', value:$('#dataMovimentoFinal', impressaoNfeController.workspace).val()},
-		           	{name:'filtro.dataEmissao', value:$('#dataEmissao', impressaoNfeController.workspace).val()},
+		           	{name:'filtro.dataEmissao', value:$('#impressaoNfe-filtro-dataEmissao', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idRoteiro', value:$('#idRoteiro', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idRota', value:$('#idRota option:selected', impressaoNfeController.workspace).val()},
 		           	{name:'filtro.idCotaInicial', value:$('#idCotaInicial', impressaoNfeController.workspace).val()},
@@ -321,6 +321,7 @@ var impressaoNfeController = $.extend(true, {
 	imprimir : function(fileType) {
 
 		if(impressaoNfeController.filtroNotasImprimirNFe.length < 1 && fileType != 'XLS') {
+			exibirMensagem("WARNING", ["Favor selecionar as notas a serem impressa!"]);
 			return false;			
 		}
 		
@@ -663,7 +664,7 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	initFiltroDatas : function() {
-		$( "#dataEmissao", impressaoNfeController.workspace ).datepicker({
+		$( "#impressaoNfe-filtro-dataEmissao", impressaoNfeController.workspace ).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
@@ -681,6 +682,15 @@ var impressaoNfeController = $.extend(true, {
 	},
 	
 	initInputs : function() {
+		
+		$(".input-date").datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
+			buttonImageOnly : true
+		});
+		
+		$(".input-date").mask("99/99/9999");
+		$("#impressaoNfe-filtro-dataEmissao").val(formatDateToString(new Date()));
 		
 		$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect({
 			selectedList : 6,
