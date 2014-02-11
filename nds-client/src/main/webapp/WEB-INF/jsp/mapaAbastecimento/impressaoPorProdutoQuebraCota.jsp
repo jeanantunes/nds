@@ -114,7 +114,7 @@ function imprimir(){
   <tr class="class_linha_3">
     <td width="660" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
       <tr>
-        <td width="8%"><strong>Total</strong>: </td>
+        <td style="width: 15%;"><strong>Total</strong>: </td>
         <td width="43%"><strong>Exemplares</strong></td>
       </tr>
       <c:forEach items="${mapBoxQtdes}" var="mapBoxQtdes">
