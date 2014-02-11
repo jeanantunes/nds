@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RecebimentoFisicoDTO;
+import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
@@ -39,10 +41,12 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.RecebimentoFisicoRepository;
@@ -116,6 +120,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private DistribuidorService distribuidorService;
 	
 	private final BigDecimal CEM = new BigDecimal(100);
+
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRepository;
+
+	@Autowired
+	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	/**
 	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
@@ -252,6 +262,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
+		notaFiscal.setUsuario(usuarioLogado);
+		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
@@ -271,35 +283,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		alterarRecebimentoFisicoParaConfirmado(usuarioLogado, notaFiscal, dataAtual);	
 		
 	}
-	
-	@Transactional
-	public void gerarMovimentosEstoqueDaNota(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal, List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual){
-		
-		verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()),notaFiscal.getValorBruto());
-		
-		notaFiscal.setDataRecebimento(this.distribuidorService.obterDataOperacaoDistribuidor());
-		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-				
-		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
-		
-		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
-
-		if(listaItemRecebimentoFisico == null || listaItemRecebimentoFisico.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem itens para confirmação de recebimento físico nesta nota fiscal");
-		}
-		
-		for(RecebimentoFisicoDTO recebimentoFisicoDTO : listaItemRecebimentoFisico) {
-			
-			inserirMovimentoEstoque(usuarioLogado, recebimentoFisicoDTO);
-			
-			atualizarLancamento(recebimentoFisicoDTO, dataAtual, usuarioLogado);
-			
-		}
-		
-		alterarRecebimentoFisicoParaConfirmado(usuarioLogado, notaFiscal, dataAtual);	
-		
-	}	
 	
 	/**
 	 * Método que compara o valor bruto da nota com a soma dos valores dos itens
@@ -370,9 +353,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		
-		//notaFiscal.setDataRecebimento(new Date());
-		
-		//notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		notaFiscal.setUsuario(usuarioLogado);
 		
 		notaFiscalRepository.merge(notaFiscal);
 		
@@ -444,6 +425,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	 * @param listaItensNota
 	 */
 	private void inserirDadosNovaNotaFiscal(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
+		
+		notaFiscal.setUsuario(usuarioLogado);
 		
 		notaFiscal.setDataExpedicao(dataAtual);
 		
@@ -868,22 +851,19 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
 		
+		boolean tratarRepartePromocional = verificarTratamentoRepartePromocional(
+				recebimentoFisicoDTO.getIdProdutoEdicao());
 		
-		boolean tratarRepartePromocional = verificarTratamentoRepartePromocional(recebimentoFisicoDTO.getIdProdutoEdicao());
-		
-		// Implementado por Cesar Punk Pop
-		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
 		TipoMovimentoEstoque tipoMovimento = 
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 
 		movimentoEstoqueService.gerarMovimentoEstoque(
+				recebimentoFisicoDTO.getIdItemRecebimentoFisico(),
 				recebimentoFisicoDTO.getIdProdutoEdicao(), 
 				usuarioLogado.getId(), 
 				recebimentoFisicoDTO.getRepartePrevisto(),
-				tipoMovimento,
-				distribuidorService.obterDataOperacaoDistribuidor(), 
-				false);
+				tipoMovimento);
 		
 		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
 
@@ -894,22 +874,45 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			tratarRepartePromocional(usuarioLogado, recebimentoFisicoDTO);
 	}
 	
+	/**
+	 * Retorna {@code true} caso deva ser gerado um movimento de estoque 
+	 * relativo a reparte promocional para o produtoEdicao em questão.
+	 * 
+	 * Caso este produtoEdicao possua reparte promocional e ainda não
+	 * tenha sido gerado um movimento de reparte promocional para o 
+	 * mesmo, então será retornado {@code true}.
+	 * 
+	 * @param idProdutoEdicao
+	 * @param idItemRecebimentoFisico
+	 * 
+	 * @return boolean
+	 */
 	private boolean verificarTratamentoRepartePromocional(Long idProdutoEdicao) {
 		
 		ProdutoEdicao pe = produtoEdicaoService.buscarPorID(idProdutoEdicao);
 		
 		if(pe == null || pe.getLancamentos() == null || pe.getLancamentos().isEmpty())
 			return false;
-		
-		if(pe.getEstoqueProduto() != null)
-			return false;
-		
+
 		Lancamento lancamento = pe.getLancamentos().iterator().next();
 		
 		if(lancamento.getRepartePromocional() == null || lancamento.getRepartePromocional().intValue() == 0)
 			return false;
 		
+		List<Long> movimentosRepPromocionalSemEstorno = movimentoEstoqueService.obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(
+				idProdutoEdicao,
+				GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL, 
+				GrupoMovimentoEstoque.ESTORNO_RECEBIMENTO_FISICO);
+		
+		
+		if(movimentosRepPromocionalSemEstorno != null && !movimentosRepPromocionalSemEstorno.isEmpty()) {
+			return false;
+		}
+		
+		
 		return true;
+		
+		
 	}
 	
 	private void tratarRepartePromocional(Usuario usuarioLogado,
@@ -922,14 +925,34 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		TipoMovimentoEstoque tipoMovimento = 
 		tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 			GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL);
-	
-		movimentoEstoqueService.gerarMovimentoEstoque(
-			recebimentoFisicoDTO.getIdProdutoEdicao(), 
-			usuarioLogado.getId(), 
-			lancamento.getRepartePromocional(),
-			tipoMovimento,
-			distribuidorService.obterDataOperacaoDistribuidor(), 
-			false);
+		
+		try {
+			movimentoEstoqueService.gerarMovimentoEstoque(
+					recebimentoFisicoDTO.getIdItemRecebimentoFisico(),
+					recebimentoFisicoDTO.getIdProdutoEdicao(), 
+					usuarioLogado.getId(), 
+					lancamento.getRepartePromocional(),
+					tipoMovimento);
+		} catch(ValidacaoException e) {
+			
+			if(CodigoErro.SALDO_ESTOQUE_DISTRIBUIDOR_INSUFICIENTE.equals(e.getCodigoErro())) {
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+							" Não é possível realizar o recebimento do do produto [" + pe.getProduto().getCodigo() 
+								+ " - " + pe.getProduto().getNomeComercial() + " - " 
+								+ pe.getNumeroEdicao() 
+								+ "]. O valor de reparte promocional ultrapassa a quantidade que esta sendo recebida.");
+				
+			} else {
+				
+				throw e;
+				
+			}
+			
+		}
+		
+		
+		
 		
 	}
 
@@ -1012,8 +1035,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(nota == null) 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Nota não encontrada.");	
 						
-		if(notaFiscalRepository.notaPossuiItemExpedido(nota.getId()))
-			throw new ValidacaoException(TipoMensagem.ERROR, "A nota possui produto(s) expedido(s).");	
+		validarNotaComProdutosExpedidos(nota);	
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -1040,6 +1062,55 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			limparNotaFiscalEntrada(nota, false);
 		}
+	}
+
+	private Map<Long, BigInteger> getMapaItensNotaFiscalEntrada(NotaFiscalEntrada nota){
+		
+		Map<Long, BigInteger> mapa = new HashMap<>(); 
+		List<ItemNotaFiscalEntrada> itens = nota.getItens();
+		
+		for(ItemNotaFiscalEntrada item : itens) {
+			
+			ProdutoEdicao pe = item.getProdutoEdicao();
+			
+			if(pe == null) {
+				continue;
+			}
+			
+			mapa.put(pe.getId(), item.getQtde());
+		}
+		
+		return mapa;
+		
+		
+	}
+	
+	/**
+	 * Valida se algum item da nota possui lançamento expedi
+	 * @param nota
+	 */
+	private void validarNotaComProdutosExpedidos(NotaFiscalEntrada nota) {
+		
+		List<Long> idsProdutoEdicaoExpedidos = notaFiscalRepository.pesquisarItensNotaExpedidos(nota.getId());
+		
+		if(idsProdutoEdicaoExpedidos == null || idsProdutoEdicaoExpedidos.isEmpty()) {
+			return;
+		}
+		
+		Map<Long, BigInteger> mapaItensNotaFiscal = getMapaItensNotaFiscalEntrada(nota);
+		
+		for(Long idProdutoEdicao : idsProdutoEdicaoExpedidos) {
+			
+			BigInteger qtdeEstoque 	= estoqueProdutoRepository.buscarQtdEstoqueProdutoEdicao(idProdutoEdicao);
+		
+			BigInteger qtdeItemNota = mapaItensNotaFiscal.get(idProdutoEdicao);
+			
+			if(qtdeEstoque.compareTo(qtdeItemNota)<0) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "A nota possui produto(s) expedido(s).");
+			}
+			
+		}
+		
 	}
 
 	private void verificarFaltasESobras(NotaFiscalEntrada nota) {
@@ -1073,19 +1144,15 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 					GrupoMovimentoEstoque.ESTORNO_REPARTE_PROMOCIONAL);
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		
 		for(ItemNotaFiscalEntrada item : itens) {
-		
-			MovimentoEstoque movimento = movimentoEstoqueService.obterUltimoMovimentoRecebimentoFisico(
-					item.getProdutoEdicao().getId(),
-					tipoMovimento,
-					dataOperacao);
 			
-			MovimentoEstoque movimentoEstornoRepartePromocional = movimentoEstoqueService.obterUltimoMovimentoRecebimentoFisico(
-					item.getProdutoEdicao().getId(),
-					tipoMovimentoEstornoRepartePromocional,
-					dataOperacao);
+			MovimentoEstoque movimento = movimentoEstoqueService.obterMovimentoEstoqueDoItemNotaFiscal(
+					item.getId(),
+					tipoMovimento);
+			
+			MovimentoEstoque movimentoEstornoRepartePromocional = movimentoEstoqueService.obterMovimentoEstoqueDoItemNotaFiscal(
+					item.getId(),
+					tipoMovimentoEstornoRepartePromocional);
 			
 			if(movimento==null)
 				continue;
@@ -1095,19 +1162,31 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			if(movimentoEstornoRepartePromocional != null)
 				qtdeRepartePromocional = movimentoEstornoRepartePromocional.getQtde();
 			
+			
 			movimentoEstoqueService.gerarMovimentoEstoque(
+					null,
 					item.getProdutoEdicao().getId(), 
 					movimento.getUsuario().getId(), 
 					movimento.getQtde().subtract(qtdeRepartePromocional),
-					tipoMovimentoEstorno,
-					dataOperacao, 
-					false);
+					tipoMovimentoEstorno);
 			
 			
+			desfazerLigacaoMovimentosEstoqueComItemRecebimentoFisico(movimento, movimentoEstornoRepartePromocional );
 			
 		}
 	}
-
+	
+	private void desfazerLigacaoMovimentosEstoqueComItemRecebimentoFisico(MovimentoEstoque ... movimentos) {
+		for(MovimentoEstoque m : movimentos){
+			if(m == null) {
+				continue;
+			}
+			
+			m.setItemRecebimentoFisico(null);
+			movimentoEstoqueRepository.merge(m);
+		}
+	}
+	
 	private void limparNotaFiscalEntrada(NotaFiscalEntrada nota, boolean isFromInterface) {
 						
 		List<ItemNotaFiscalEntrada> itens = nota.getItens();
