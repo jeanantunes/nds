@@ -65,7 +65,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		hql.append(" WHERE ");
 		
-		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
+        if (filtro.getIdTipoClassificacaoProduto() != null && filtro.getIdTipoClassificacaoProduto() != 0) {
 			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto )");
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
@@ -100,10 +100,10 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota");
 		hql.append(" INNER JOIN cota.pessoa as pessoa");
 		
-		// O filtro sempre terá OU nomeCota OU codigoCota
+        // O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");
 		
-		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
+        if (filtro.getIdTipoClassificacaoProduto() != null && filtro.getIdTipoClassificacaoProduto() != 0L) {
 			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto ");
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
@@ -139,7 +139,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota ");
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		
-		// O filtro sempre terá OU nomeCota OU codigoCota
+        // O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");
 		
 		if (filtro.getCotaDto() != null) {

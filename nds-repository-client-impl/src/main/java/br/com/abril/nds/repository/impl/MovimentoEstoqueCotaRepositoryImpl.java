@@ -2553,7 +2553,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.CODIGO_DE_BARRAS as codigoBarra, ");
 		hql.append(" 		sum(estudoCota.REPARTE) as reparte, ");
 		hql.append(" 		sum(estudoCota.REPARTE * produtoEdicao.PRECO_VENDA) as totalBox, ");
-		hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa ");
+		hql.append(" 		produtoEdicao.PRECO_VENDA as precoCapa, ");
+		hql.append("		coalesce(lancamento.REPARTE_PROMOCIONAL, 0) as materialPromocional ");
 		
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, statusLancamento);
 		
@@ -2594,6 +2595,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("totalBox", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("materialPromocional", StandardBasicTypes.BIG_INTEGER);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
 

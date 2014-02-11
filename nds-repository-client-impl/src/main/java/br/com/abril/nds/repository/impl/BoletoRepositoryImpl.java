@@ -34,28 +34,29 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade 
+ * Classe de implementação referente ao acesso a dados da entidade
  * {@link br.com.abril.nds.model.financeiro.Boleto}
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> implements BoletoRepository {
 
 	
-	/**
-	 * Construtor padrão
-	 */
+	    /**
+     * Construtor padrão
+     */
 	public BoletoRepositoryImpl() {
 		super(Boleto.class);
 	}
 
-	/**
-	 * Método responsável por obter a quantidade de boletos
-	 * @param filtro
-	 * @return quantidade: quantidade de boletos
-	 */
+	    /**
+     * Método responsável por obter a quantidade de boletos
+     * 
+     * @param filtro
+     * @return quantidade: quantidade de boletos
+     */
 	@Override
 	public long obterQuantidadeBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro){
 		long quantidade = 0;
@@ -264,11 +265,12 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		return sql;
 	}
 	
-	/**
-	 * Método responsável por obter uma lista de boletos
-	 * @param filtro
-	 * @return query.list(): lista de boletos
-	 */
+	    /**
+     * Método responsável por obter uma lista de boletos
+     * 
+     * @param filtro
+     * @return query.list(): lista de boletos
+     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<BoletoCotaDTO> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro) {
@@ -312,7 +314,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 			
 		    query.setParameter("status", filtro.getStatus().name());
 		    
-		    query.setParameter("statusBa", (filtro.getStatus().equals(StatusDivida.EM_ABERTO)?StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO:filtro.getStatus()).name());
+            query.setParameter("statusBa",
+                    (filtro.getStatus().equals(StatusCobranca.PAGO) ? StatusDivida.BOLETO_ANTECIPADO_EM_ABERTO
+                            : StatusDivida.QUITADA).name());
 		}
 
 		query.setParameter("tipoCobrancaBoleto", TipoCobranca.BOLETO.name());
@@ -335,11 +339,12 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		return query.list();
 	}
 	
-	/**
-	 * Método responsável por obter Boleto individual 
-	 * @param nossoNumero
-	 * @param dividaAcumulada
-	 */
+	    /**
+     * Método responsável por obter Boleto individual
+     * 
+     * @param nossoNumero
+     * @param dividaAcumulada
+     */
 	@Override
 	public Boleto obterPorNossoNumero(String nossoNumero, Boolean dividaAcumulada) {
 		

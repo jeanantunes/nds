@@ -102,13 +102,12 @@ public class ProdutoCadastroVO implements Serializable {
 		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
 		this.origem = origem;
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
-		this.idTipoClassifProduto = idTipoClassifProduto;
 	}
 
 	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
 
 		if (produto == null) {
-			throw new RuntimeException("Produto não pode ser nulo!");
+            throw new RuntimeException("Produto não pode ser nulo!");
 		}
 		
 		FormaComercializacao formaComercializacao = produto.getFormaComercializacao();

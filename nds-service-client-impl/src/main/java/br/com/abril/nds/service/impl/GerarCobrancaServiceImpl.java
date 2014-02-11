@@ -15,7 +15,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,7 +175,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Autowired
 	private CotaUnificacaoRepository cotaUnificacaoRepository;
 
-	    /**
+	            /**
      * Obtém a situação da cota
      * 
      * @param idCota
@@ -199,7 +200,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(dataVencimentoDebito,idsCota) > 0;
 	}
 	
-	    /**
+	            /**
      * Gera cobranças para Cotas específicas
      * 
      * @param cotas
@@ -244,7 +245,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	    }
 	}
 
-	    /**
+	            /**
      * Consolida Financeiro, Gera Divida e Gera Cobrança
      * 
      * @param idCota
@@ -321,7 +322,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
     }
 	
-	    /**
+	            /**
      * Gera Cobraça para uma ou todas as cotas com pendências financeiras A
      * divida pode ser postergada caso não hava forma de cobrança compativel com
      * a pendência ou se o parametro postergarDividas == true
@@ -545,7 +546,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 
-	    /**
+	            /**
      * Retorna a data de vencimento para o boleto, sendo esta calculada da
      * seguinte forma:
      * 
@@ -624,7 +625,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (banco == null) {
 				
                 throw new ValidacaoException(TipoMensagem.ERROR, "Fornecedor " + fornecedor.getJuridica().getNome()
-                        + " não possui banco vinculado!");
+                    + " não possui banco vinculado!");
 			}
 			
 			String nossoNumeroDistribuidor = Util.gerarNossoNumeroDistribuidor(
@@ -676,7 +677,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return valorMinimo;
 	}
 	
-	    /**
+	            /**
      * Consolida os movimentos financeiros Gera Divida e Cobrança Posterga as
      * pendências financeiras caso os parametros postergarDividas==true ou
      * formaCobrancaPrincipal==null
@@ -1018,7 +1019,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					case BOLETO_EM_BRANCO:
 						cobranca = new CobrancaBoletoEmBranco();
 					break;
-					case OUTROS:
+            default:
 						cobranca = new CobrancaOutros();
 					break;
 				}
@@ -1098,7 +1099,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
 	}
 
-	    /**
+	            /**
      * Posterga as pendências financeiras da cota
      * 
      * @param cota
@@ -1161,7 +1162,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (diasSemanaConcentracaoPagamento == null){
 				
                 descPostergado = "Forma de cobrança não encontrada para a cota: " + cota.getNumeroCota()
-                        + ", a cobrança será postergada.";
+                    + ", a cobrança será postergada.";
 			} else if (!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
 				
                 descPostergado = "Não existe acúmulo de pagamento para este dia ("
@@ -1461,7 +1462,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));		
 	}
 	
-	    /**
+	            /**
      * Envia Cobranças para email da Cota
      * 
      * @param cota

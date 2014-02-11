@@ -30,7 +30,9 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) {
 	if ((estudo.getProdutoEdicaoEstudo() != null) && (estudo.getEdicoesBase() != null)) {
-	    if ((estudo.isComplementarAutomatico()) && ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().equals(1)) || (!estudo.getProdutoEdicaoEstudo().isColecao()))) {
+            if ((estudo.isComplementarAutomatico())
+                && ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao() == 1L) || (!estudo.getProdutoEdicaoEstudo()
+                        .isColecao()))) {
 		estudo.setExcedente(new BigDecimal(estudo.getReparteDistribuir()).subtract(estudo.getSomatoriaVendaMedia()));
 		estudo.setPercentualExcedente(BigDecimal.ZERO);
 		if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
@@ -38,8 +40,10 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		}
 		estudo.setReparteComplementar(BigInteger.ZERO);
 		if (estudo.getPercentualExcedente().compareTo(BigDecimal.ONE) > 0) {
-		    // Este cálculo sofreu alterações no trac FAQF2-57
-		    // %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas) * 100
+                    // Este cálculo sofreu alterações no trac FAQF2-57
+                    // %Abrangência =
+                    // (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) /
+                    // TotalCotasAtivas) * 100
 		    int contadorAtivas = 0;
 		    for (CotaEstudo cota : estudo.getCotas()) {
 			if (!cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
@@ -55,7 +59,8 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    percentualAbrangencia = percentualAbrangencia.multiply(BigDecimal.valueOf(100));
 		    BigDecimal excedenteAMais = estudo.getExcedente().subtract(estudo.getSomatoriaVendaMedia());
 
-		    // Calculo1 = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))
+                    // Calculo1 = ExcedenteAmais * (1 – (((0,6 * %Abrangência) +
+                    // 40) / 100))
 		    BigDecimal calculo1 = BigDecimal.valueOf(0.6).multiply(percentualAbrangencia).add(BigDecimal.valueOf(40));
 		    calculo1 = excedenteAMais.multiply(BigDecimal.ONE.subtract(calculo1.divide(BigDecimal.valueOf(100), 3, BigDecimal.ROUND_HALF_UP)));
 		    // Calculo2 = 2% do Excedente

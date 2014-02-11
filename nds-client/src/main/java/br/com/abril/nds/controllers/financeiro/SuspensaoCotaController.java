@@ -9,7 +9,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -139,7 +140,7 @@ public class SuspensaoCotaController extends BaseController {
 		
 		Long total = cotaService.obterTotalCotasSujeitasSuspensao();
 		Integer inicio = (page-1)*rp;
-		if(total.equals(0)) {
+        if (total == 0L) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,MSG_PESQUISA_SEM_RESULTADO));
 		}	
@@ -204,7 +205,7 @@ public class SuspensaoCotaController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 	}
 	
-	        /**
+	            /**
      * Adiciona ou remove todos os itens da pesquisa a lista de itens
      * selecionados da sessão.
      * 
@@ -304,7 +305,7 @@ public class SuspensaoCotaController extends BaseController {
 		}
 	}
 	
-	        /**
+	            /**
      * Exporta os dados da pesquisa.
      * 
      * @param fileType - tipo de arquivo
