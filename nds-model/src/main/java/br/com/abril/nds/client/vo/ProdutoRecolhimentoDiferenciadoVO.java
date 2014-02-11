@@ -39,6 +39,7 @@ public class ProdutoRecolhimentoDiferenciadoVO {
 	@Export(label="Fornecedor", widthPercent=8f)
 	private String nomeFornecedor;
 	
+	@Export(label="Editor")
 	private String nomeEditor;
 	
 	@Export(label="Parcial")
