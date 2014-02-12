@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -48,7 +47,9 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	
 	@Export(label="Série")
 	private Integer serie;
-
+	
+	private String numeroDocumento;
+	
 	private PaginacaoVO paginacao;
 	
 	private OrdenacaoColuna ordenacaoColuna;
@@ -266,6 +267,7 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public void setOrdenacaoColuna(OrdenacaoColuna ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+	
 	/**
 	 * Obtém serie
 	 *
@@ -274,11 +276,20 @@ public class FiltroMonitorNfeDTO implements Serializable {
 	public Integer getSerie() {
 		return serie;
 	}
+	
 	/**
 	 * Atribuí serie
 	 * @param serie 
 	 */
 	public void setSerie(Integer serie) {
 		this.serie = serie;
+	}
+	
+	public String getNumeroDocumento() {
+		return numeroDocumento;
+	}
+	
+	public void setNumeroDocumento(String tipoDocumento) {
+		this.numeroDocumento = tipoDocumento;
 	}
 }

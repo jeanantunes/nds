@@ -57,13 +57,13 @@
 				</td>
 				<td width="97">Data Movimento:</td>
 				<td width="238">
-					<input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" />
-					&nbsp;&nbsp;Até&nbsp; 
-					<input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" />
+					<input name="dataMovimentoInicial" type="text" id="dataMovimentoInicial" style="width: 76px;" maxlength="10" class="input-date"/>
+					&nbsp;&nbsp;At&eacute;&nbsp; 
+					<input name="dataMovimentoFinal" type="text" id="dataMovimentoFinal" style="width: 76px;" maxlength="10" class="input-date"/>
 				</td>
-				<td width="83">Data Emissão:</td>
+				<td width="83">Data Emiss&atilde;o:</td>
 				<td width="210">
-					<input name="dataEmissao" type="text" id="dataEmissao" style="width: 80px;" value="${dataAtual}" maxlength="10" />
+					<input name="impressaoNfe-filtro-dataEmissao" type="text" id="impressaoNfe-filtro-dataEmissao" style="width: 80px;" value="${dataAtual}" maxlength="10" class="input-date"/>
 				</td>
 			</tr>
 			<tr>

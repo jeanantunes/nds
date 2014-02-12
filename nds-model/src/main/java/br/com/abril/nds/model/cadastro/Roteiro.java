@@ -179,4 +179,40 @@ public class Roteiro implements Serializable {
         return builder.toString();
     }
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getRotas() == null) ? 0 : this.getRotas().hashCode());
+		result = prime * result + ((this.getRoteirizacao() == null) ? 0 : this.getRoteirizacao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Roteiro other = (Roteiro) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getRotas() == null) {
+			if (other.getRotas() != null)
+				return false;
+		} else if (!this.getRotas().equals(other.getRotas()))
+			return false;
+		if (this.getRoteirizacao() == null) {
+			if (other.getRoteirizacao() != null)
+				return false;
+		} else if (!this.getRoteirizacao().equals(other.getRoteirizacao()))
+			return false;
+		return true;
+	}
 }

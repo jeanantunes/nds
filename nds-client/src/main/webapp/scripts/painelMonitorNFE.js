@@ -1,5 +1,10 @@
 var PainelMonitorNFE = $.extend(true, {
-
+	
+	/**
+	 * path de geração de nfe
+	 */
+	path : contextPath + '/nfe/painelMonitorNFe/',
+	
 	init : function() {
 
 		var colunas = PainelMonitorNFE.obterColModel();
@@ -25,6 +30,7 @@ var PainelMonitorNFE = $.extend(true, {
 		});
 		
 		this.initFiltroDatas();
+		this.initInputs();
 		
 		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({
 			showOn: "button",
@@ -48,6 +54,39 @@ var PainelMonitorNFE = $.extend(true, {
 		$(".grids", PainelMonitorNFE.workspace).hide();
 		
 	    $(".bt_arq", PainelMonitorNFE.workspace).hide();
+	    
+	    
+	    $(document).ready(function() {
+	    	if($("input:radio[name='impresaoNfe-radioTipoDoc']:checked").val()=="cnpj"){
+				$("input[id=impresaoNfe-documento]").mask("99.999.999/9999-99");
+		                $("#impresaoNfe-documento").text('Digite o CNPJ:');
+			} else {
+				$("input[id=impresaoNfe-documento]").mask("999.999.999-99");
+                $(this).attr('checked', false);
+			}
+
+	    });
+	    
+	    params = [];
+		params.push({name: 'tipoDestinatario', value: 'COTA'});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#painelNfe-filtro-naturezaOperacao").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
 	},
 	
 	initFiltroDatas : function(){
@@ -63,12 +102,34 @@ var PainelMonitorNFE = $.extend(true, {
 		); 
 	},
 	
+	initInputs : function() {
+		
+		
+		$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect({
+			selectedList : 6,
+		});
+		$("#painelNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		
+		$("#painelNfe-filtro-selectFornecedores").multiselect({
+			selectedList : 6
+		}).multiselect("checkAll");
+		
+		$("#selFornecedor", PainelMonitorNFE.workspace).click(function() {
+			$(".menu_fornecedor", PainelMonitorNFE.workspace).show().fadeIn("fast");
+		});
+
+		$(".menu_fornecedor", PainelMonitorNFE.workspace).mouseleave(function() {
+			$(".menu_fornecedor", PainelMonitorNFE.workspace).hide();
+		});
+		
+	},
+	
 	pesquisar: function() {
 		
 		var box = $("#box", PainelMonitorNFE.workspace).val();
 		var dataInicial = $("#dataInicial", PainelMonitorNFE.workspace).val();
 		var dataFinal = $("#dataFinal", PainelMonitorNFE.workspace).val();
-		var tipoDocumento = $('input:radio[name=radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
+		var documentoPessoa = $('input:radio[name=impresaoNfe-radioTipoDoc]:checked', PainelMonitorNFE.workspace).val();
 		var documento = $("#documento", PainelMonitorNFE.workspace).val();
 		var tipoNfe = $("#tipoNfe", PainelMonitorNFE.workspace).val();
 		var numeroInicial = $("#numeroInicial", PainelMonitorNFE.workspace).val();
@@ -81,11 +142,11 @@ var PainelMonitorNFE = $.extend(true, {
 		        {name:'filtro.box', value: box },
 		        {name:'filtro.dataInicial', value: dataInicial },
 		        {name:'filtro.dataFinal', value: dataFinal },
-		        {name:'filtro.tipoDocumento', value: tipoDocumento },
+		        {name:'filtro.documentoPessoa', value: documentoPessoa },
 		        {name:'filtro.documento', value: documento },
 		        {name:'filtro.tipoNfe', value: tipoNfe },
-		        {name:'filtro.numeroInicial', value: numeroInicial },
-		        {name:'filtro.numeroFinal', value: numeroFinal },
+		        {name:'filtro.numeroNotaInicial', value: numeroInicial },
+		        {name:'filtro.numeroNotaFinal', value: numeroFinal },
 		        {name:'filtro.chaveAcesso', value: chaveAcesso },
 		        {name:'filtro.situacaoNfe', value: situacaoNfe },
 		        {name:'filtro.serie',    value: serieNfe}
@@ -244,6 +305,50 @@ var PainelMonitorNFE = $.extend(true, {
 		
 	},
 	
+	verificarRadioCnpjCpf : function() {
+		
+         $('input[id=impresaoNfe-documento]').unmask();//Remove a mascara
+         if($("input:radio[name='impresaoNfe-radioTipoDoc']:checked").val()=="cpf"){//Acaso seja CPF
+                $("input[id=impresaoNfe-documento]").mask("999.999.999-99");
+                $("#impresaoNfe-documento").text('Digite o CPF:');
+         } else {//Acaso seja Cnpj
+                $("input[id=impresaoNfe-documento]").mask("99.999.999/9999-99");
+                $("#impresaoNfe-documento").text('Digite o CNPJ:');
+         }
+		
+	},
+	
+	verificarTipoDestinatario : function(element) {
+		if(element.value != "FORNECEDOR") {
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios option:selected").removeAttr("selected");
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("disable");
+		} else {
+			$("#impressaoNfe-filtro-selectFornecedoresDestinatarios").multiselect("enable");
+		}
+		
+		params = [];
+		params.push({name: 'tipoDestinatario', value: element.value});
+		$.postJSON(this.path + 'obterNaturezasOperacoesPorTipoDestinatario', params, function(data) {
+			var tipoMensagem = data.tipoMensagem;
+			var listaMensagens = data.listaMensagens;
+
+			if (tipoMensagem && listaMensagens) {
+				exibirMensagemDialog(tipoMensagem, listaMensagens, "");
+			}
+			
+			$("#painelNfe-filtro-naturezaOperacao").empty();
+			
+			$.each(data.rows, function (i, row) {
+			    $('#painelNfe-filtro-naturezaOperacao').append($('<option>', { 
+			        value: row.cell.key,
+			        text : row.cell.value
+			    }));
+			});
+			
+		});
+		
+	},
+	
 	obterColModel : function() {
 
 
@@ -310,8 +415,7 @@ var PainelMonitorNFE = $.extend(true, {
 			} ];	
 			
 			return colModel;
-	}
+	},
 	
 }, BaseController);
-
 //@ sourceURL=PainelNFE.js

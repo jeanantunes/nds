@@ -1238,6 +1238,50 @@ public class Distribuidor {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCodigo() == null) ? 0 : this.getCodigo().hashCode());
+		result = prime * result + ((this.getCodigoDistribuidorDinap() == null) ? 0 : this.getCodigoDistribuidorDinap().hashCode());
+		result = prime * result + ((this.getCodigoDistribuidorFC() == null) ? 0 : this.getCodigoDistribuidorFC().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Distribuidor other = (Distribuidor) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getCodigo() == null) {
+			if (other.getCodigo() != null)
+				return false;
+		} else if (!this.getCodigo().equals(other.getCodigo()))
+			return false;
+		if (this.getCodigoDistribuidorDinap() == null) {
+			if (other.getCodigoDistribuidorDinap() != null)
+				return false;
+		} else if (!this.getCodigoDistribuidorDinap()
+				.equals(other.getCodigoDistribuidorDinap()))
+			return false;
+		if (this.getCodigoDistribuidorFC() == null) {
+			if (other.getCodigoDistribuidorFC() != null)
+				return false;
+		} else if (!this.getCodigoDistribuidorFC().equals(other.getCodigoDistribuidorFC()))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "Distribuidor [id=" + id + ", parametroCobrancaDistribuidor="
 				+ parametroCobrancaDistribuidor

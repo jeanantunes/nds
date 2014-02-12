@@ -269,10 +269,15 @@ public class ImpressaoNFEController extends BaseController {
 
 	@Post
 	public void imprimirNFe(FiltroImpressaoNFEDTO filtro, String sortorder, String sortname) {
-		 
+		
+		if(filtro.getNumerosNotas() == null) {
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Devem ser informadas as cotas para impressão.");
+			throw new ValidacaoException(validacaoVO);
+		} 
+		
 		byte[] report = this.impressaoNFEService.imprimirNFe(filtro);
 		
-		escreverArquivoParaResponse(report, "danfeCumpade");
+		escreverArquivoParaResponse(report, "danfe");
 		
 		result.use(Results.json()).withoutRoot();
 	}
