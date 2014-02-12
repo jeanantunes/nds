@@ -20,9 +20,6 @@ public class HistogramaPosEstudoFaixaReparteTest {
 //		HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService = applicationContext.getBean(HistogramaPosEstudoFaixaReparteService.class);
 //		BaseEstudoAnaliseFaixaReparteDTO dto = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 100, new BigInteger("80222").intValue());
 		
-		
-		
-		
 		System.out.println(dto);
 
 	}

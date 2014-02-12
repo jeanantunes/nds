@@ -64,6 +64,10 @@ public class AnaliseHistogramaDTO implements Serializable {
 	private String idCotasEsmagadas = "";
 	private int reparteTotalDistribuidor = 0;
 	
+	private Integer faixaDe;
+	
+	private Integer faixaAte;
+	
 	public String getFaixaVenda() {
 		return faixaVenda;
 	}
@@ -205,6 +209,18 @@ public class AnaliseHistogramaDTO implements Serializable {
 	}
 	public void setReparteTotalDistribuidor(int reparteTotalDistribuidor) {
 		this.reparteTotalDistribuidor = reparteTotalDistribuidor;
+	}
+	public Integer getFaixaDe() {
+		return faixaDe;
+	}
+	public void setFaixaDe(BigInteger faixaDe) {
+		this.faixaDe = faixaDe.intValue();
+	}
+	public Integer getFaixaAte() {
+		return faixaAte;
+	}
+	public void setFaixaAte(BigInteger faixaAte) {
+		this.faixaAte = faixaAte.intValue();
 	}
 	
 }
