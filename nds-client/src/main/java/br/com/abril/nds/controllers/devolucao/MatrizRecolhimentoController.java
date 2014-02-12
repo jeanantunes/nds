@@ -60,7 +60,6 @@ import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.export.FileExporter;
-import br.com.abril.nds.util.export.NDSFileHeader;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -76,7 +75,7 @@ import br.com.caelum.vraptor.view.Results;
  * Controller responsável pela Matriz de Recolhimento.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Resource
 @Path("/devolucao/balanceamentoMatriz")
@@ -186,7 +185,8 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+TipoMensagem.WARNING,
+                    "Não houve carga de informações para o período escolhido!");
 		}
 		
 		
@@ -316,7 +316,7 @@ public class MatrizRecolhimentoController extends BaseController {
 					produtos +=
 						"<tr>"
 						+ "<td><u>Produto:</u> " + produtoRecolhimento.getNomeProduto() + "</td>"
-						+ "<td><u>Edição:</u> " + produtoRecolhimento.getNumeroEdicao() + "</td>"
+                        + "<td><u>Edição:</u> " + produtoRecolhimento.getNumeroEdicao() + "</td>"
 						+ "<td><u>Data recolhimento:</u> " + dataRecolhimentoFormatada + "</td>"
 						+ "</tr>";
 				}
@@ -324,7 +324,7 @@ public class MatrizRecolhimentoController extends BaseController {
 
 			if (!produtos.isEmpty()) {
 
-				listaMensagens.add(" A nova data de lançamento não deve ultrapassar"
+                listaMensagens.add(" A nova data de lançamento não deve ultrapassar"
 								 + " a data de recolhimento prevista");
 				
 				listaMensagens.add("<table>" + produtos + "</table>");
@@ -367,7 +367,7 @@ public class MatrizRecolhimentoController extends BaseController {
 
 		if (fileType == null) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
 		}
 
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -379,10 +379,11 @@ public class MatrizRecolhimentoController extends BaseController {
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO;
 		List<ProdutoRecolhimentoDiferenciadoVO> listaProdutoRecolhimentoDiferenciadoVO;
 		
-		//Contem Operação Diferenciada 
+        // Contem Operação Diferenciada
 		boolean isDiferenciada = false;
 		
-		//Verifica se 0s para sede e atendida. Se sim não é uma operação diferenciada
+        // Verifica se 0s para sede e atendida. Se sim não é uma operação
+        // diferenciada
 		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
 			
 			if((produtoRecolhimentoDTO.getExpectativaEncalheSede()!=null && produtoRecolhimentoDTO.getExpectativaEncalheSede().compareTo(BigDecimal.ZERO)!=0) || (produtoRecolhimentoDTO.getExpectativaEncalheAtendida()!=null && produtoRecolhimentoDTO.getExpectativaEncalheAtendida().compareTo(BigDecimal.ZERO)!=0)){
@@ -401,7 +402,7 @@ public class MatrizRecolhimentoController extends BaseController {
 					filtro.getPaginacaoVO().getOrdenacao(), filtro.getPaginacaoVO().getSortColumn());
 		    
 			FileExporter.to("matriz_recolhimento", fileType)
-			.inHTTPResponse(this.getNDSFileHeader(), filtro, null,
+.inHTTPResponse(this.getNDSFileHeader(), filtro,
 					listaProdutoRecolhimentoVO, ProdutoRecolhimentoVO.class, this.response);
 		    
 		}else{
@@ -414,7 +415,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		    
 		    
 			FileExporter.to("matriz_recolhimento", fileType)
-			.inHTTPResponse(this.getNDSFileHeader(), filtro, null,
+.inHTTPResponse(this.getNDSFileHeader(), filtro,
 					listaProdutoRecolhimentoDiferenciadoVO, ProdutoRecolhimentoDiferenciadoVO.class, this.response);
 			
 		}
@@ -508,7 +509,8 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+TipoMensagem.WARNING,
+                    "Não houve carga de informações para o período escolhido!");
 		}
 		
 		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento =
@@ -643,7 +645,8 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+TipoMensagem.WARNING,
+                    "Não houve carga de informações para o período escolhido!");
 		}
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
@@ -679,16 +682,15 @@ public class MatrizRecolhimentoController extends BaseController {
 		ValidacaoDataRecolhimento validacaoDataRecolhimento = 
 			this.verificarDataForaDaSemana(intervalo, novaDataBalanceamento);
 		
-		/*
-		 * TODO: Regra para permitir reprogramação em uma data já confirmada.
-		 * Está comentado, pois está análise para ser utilizada futuramente.
-		 *
-		if (validacaoDataRecolhimento == null) {
-			
-			validacaoDataRecolhimento =
-				this.verificarDataEmDiaConfirmado(novaDataBalanceamento);
-		}
-		*/
+		                /*
+         * TODO: Regra para permitir reprogramação em uma data já confirmada.
+         * Está comentado, pois está análise para ser utilizada futuramente.
+         * 
+         * if (validacaoDataRecolhimento == null) {
+         * 
+         * validacaoDataRecolhimento =
+         * this.verificarDataEmDiaConfirmado(novaDataBalanceamento); }
+         */
 		
 		if (validacaoDataRecolhimento == null) {
 			
@@ -727,7 +729,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada!");
 		}
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry :
@@ -748,14 +750,15 @@ public class MatrizRecolhimentoController extends BaseController {
 		return validacaoDataRecolhimento;
 	}
 	
-	/**
-	 * Método que atualiza a matriz de recolhimento de acordo com os produtos confirmados
-	 * 
-	 * @param matrizRecolhimento - matriz de recolhimento
-	 * @param matrizConfirmada - matriz de recolhimento confirmada
-	 * 
-	 * @return matriz atualizada
-	 */
+	        /**
+     * Método que atualiza a matriz de recolhimento de acordo com os produtos
+     * confirmados
+     * 
+     * @param matrizRecolhimento - matriz de recolhimento
+     * @param matrizConfirmada - matriz de recolhimento confirmada
+     * 
+     * @return matriz atualizada
+     */
 	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> atualizarMatizComProdutosConfirmados(
 								TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 								TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada) {
@@ -773,10 +776,10 @@ public class MatrizRecolhimentoController extends BaseController {
 		return matrizRecolhimento;
 	}
 	
-	/**
-	 * Método que verifica se todos os recolhimentos estão confirmados
-	 * para remover a flag de alteração de dados da sessão.
-	 */
+	        /**
+     * Método que verifica se todos os recolhimentos estão confirmados para
+     * remover a flag de alteração de dados da sessão.
+     */
 	private void verificarBalanceamentosConfirmados() {
 		
 		List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
@@ -799,13 +802,13 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Configura o filtro informado na tela e o armazena na sessão.
-	 * 
-	 * @param anoNumeroSemana - número da semana
-	 * @param dataPesquisa - data da pesquisa
-	 * @param listaIdsFornecedores - lista de identificadores de fornecedores
-	 */
+	        /**
+     * Configura o filtro informado na tela e o armazena na sessão.
+     * 
+     * @param anoNumeroSemana - número da semana
+     * @param dataPesquisa - data da pesquisa
+     * @param listaIdsFornecedores - lista de identificadores de fornecedores
+     */
 	private void configurarFiltropesquisa(Integer anoNumeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro =
@@ -815,11 +818,11 @@ public class MatrizRecolhimentoController extends BaseController {
 									  filtro);
 	}
 	
-	/**
-	 * Obtém o filtro para pesquisa da sessão.
-	 * 
-	 * @return filtro
-	 */
+	        /**
+     * Obtém o filtro para pesquisa da sessão.
+     * 
+     * @return filtro
+     */
 	private FiltroPesquisaMatrizRecolhimentoVO obterFiltroSessao() {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro =
@@ -829,35 +832,38 @@ public class MatrizRecolhimentoController extends BaseController {
 		if (filtro == null) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Filtro para a pesquisa não encontrado!");
+TipoMensagem.WARNING, "Filtro para a pesquisa não encontrado!");
 		}
 		
 		return filtro;
 	}
 	
-	/**
-	 * Adiciona um indicador, que informa se houve reprogramação de produtos, na sessão.
-	 */
+	        /**
+     * Adiciona um indicador, que informa se houve reprogramação de produtos, na
+     * sessão.
+     */
 	private void adicionarAtributoAlteracaoSessao() {
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
 	}
 	
-	/**
-	 * Remove um indicador, que informa se houve reprogramação de produtos, da sessão.
-	 */
+	        /**
+     * Remove um indicador, que informa se houve reprogramação de produtos, da
+     * sessão.
+     */
 	private void removerAtributoAlteracaoSessao() {
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
 	}
 	
-	/**
-	 * Método que atualiza o mapa de recolhimento de acordo com as escolhas do usuário
-	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos a serem alterados
-	 * @param novaData - nova data de recolhimento
-	 * @param dataAntiga - data antiga de recolhimento
-	 */
+	        /**
+     * Método que atualiza o mapa de recolhimento de acordo com as escolhas do
+     * usuário
+     * 
+     * @param listaProdutoRecolhimento - lista de produtos a serem alterados
+     * @param novaData - nova data de recolhimento
+     * @param dataAntiga - data antiga de recolhimento
+     */
 	private void atualizarMapaRecolhimento(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
 										   Date novaData, Date dataAntiga) {
 		
@@ -895,15 +901,15 @@ public class MatrizRecolhimentoController extends BaseController {
 									  balanceamentoRecolhimentoSessao);
 	}
 	
-	/**
-	 * Cria uma cópia do mapa da matriz de recolhimento.
-	 * Isso é necessário pois se houver alterações na cópia,
-	 * não altera os valores do mapa original por referência.
-	 * 
-	 * @param matrizRecolhimentoSessao - matriz de recolhimento da sesão
-	 * 
-	 * @return cópia do mapa da matriz de recolhimento
-	 */
+	        /**
+     * Cria uma cópia do mapa da matriz de recolhimento. Isso é necessário pois
+     * se houver alterações na cópia, não altera os valores do mapa original por
+     * referência.
+     * 
+     * @param matrizRecolhimentoSessao - matriz de recolhimento da sesão
+     * 
+     * @return cópia do mapa da matriz de recolhimento
+     */
 	@SuppressWarnings("unchecked")
 	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> clonarMapaRecolhimento(
 								Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao) {
@@ -917,15 +923,17 @@ public class MatrizRecolhimentoController extends BaseController {
 		return matrizRecolhimento;
 	}
 
-	/**
-	 * Monta as listas para alteração do mapa da matriz de recolhimento
-	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento
-	 * @param matrizRecolhimento - matriz de recolhimento
-	 * @param listaProdutoRecolhimentoAdicionar - lista de produtos que serão adicionados
-	 * @param listaProdutoRecolhimentoRemover - lista de produtos que serão removidos
-	 * @param dataAntiga - data antiga de recolhimento
-	 */
+	        /**
+     * Monta as listas para alteração do mapa da matriz de recolhimento
+     * 
+     * @param listaProdutoRecolhimento - lista de produtos de recolhimento
+     * @param matrizRecolhimento - matriz de recolhimento
+     * @param listaProdutoRecolhimentoAdicionar - lista de produtos que serão
+     *            adicionados
+     * @param listaProdutoRecolhimentoRemover - lista de produtos que serão
+     *            removidos
+     * @param dataAntiga - data antiga de recolhimento
+     */
 	private void montarListasParaAlteracaoMapa(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
 											   Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,   									 
 											   List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoAdicionar,
@@ -965,14 +973,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Remove e adiona os produtos no mapa da matriz de recolhimento.
-	 * 
-	 * @param matrizRecolhimento - mapa da matriz de recolhimento
-	 * @param listaProdutoRecolhimentoAdicionar - lista de produtos que serão adicionados
-	 * @param listaProdutoRecolhimentoRemover - lista de produtos que serão removidos
-	 * @param novaData - nova data de recolhimento
-	 */
+	        /**
+     * Remove e adiona os produtos no mapa da matriz de recolhimento.
+     * 
+     * @param matrizRecolhimento - mapa da matriz de recolhimento
+     * @param listaProdutoRecolhimentoAdicionar - lista de produtos que serão
+     *            adicionados
+     * @param listaProdutoRecolhimentoRemover - lista de produtos que serão
+     *            removidos
+     * @param novaData - nova data de recolhimento
+     */
 	private void removerEAdicionarMapa(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 									   List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados,
 		     						   List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoAdicionar,
@@ -1017,13 +1027,13 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 	}
 		
-	/**
-	 * Método que processa os balanceamentos para exibição no grid.
-	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento
-	 * @param paginacao - paginação
-	 * @param sortname - nome da coluna para ordenação
-	 */
+	        /**
+     * Método que processa os balanceamentos para exibição no grid.
+     * 
+     * @param listaProdutoRecolhimento - lista de produtos de recolhimento
+     * @param paginacao - paginação
+     * @param sortname - nome da coluna para ordenação
+     */
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
 										PaginacaoVO paginacao, String sortname) {
 		
@@ -1106,11 +1116,11 @@ public class MatrizRecolhimentoController extends BaseController {
 				if (produtoRecolhimentoDTO.getParcial() != null) {
 					produtoRecolhimentoVO.setParcial(produtoRecolhimentoDTO.getParcial().getDescricao());
 				} else {
-					produtoRecolhimentoVO.setParcial("Não");
+                produtoRecolhimentoVO.setParcial("Não");
 				}
 					
 				produtoRecolhimentoVO.setBrinde(
-					(produtoRecolhimentoDTO.isPossuiBrinde()) ? "Sim" : "Não");
+(produtoRecolhimentoDTO.isPossuiBrinde()) ? "Sim" : "Não");
 
 				produtoRecolhimentoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
 
@@ -1185,11 +1195,11 @@ public class MatrizRecolhimentoController extends BaseController {
 			if (produtoRecolhimentoDiferenciadoVO.getParcial() != null) {
 				produtoRecolhimentoDiferenciadoVO.setParcial(produtoRecolhimentoDTO.getParcial().getDescricao());
 			} else {
-				produtoRecolhimentoDiferenciadoVO.setParcial("Não");
+                produtoRecolhimentoDiferenciadoVO.setParcial("Não");
 			}
 				
 			produtoRecolhimentoDiferenciadoVO.setBrinde(
-				(produtoRecolhimentoDTO.isPossuiBrinde()) ? "Sim" : "Não");
+(produtoRecolhimentoDTO.isPossuiBrinde()) ? "Sim" : "Não");
 
 			produtoRecolhimentoDiferenciadoVO.setDataLancamento(produtoRecolhimentoDTO.getDataLancamento());
 
@@ -1221,13 +1231,13 @@ public class MatrizRecolhimentoController extends BaseController {
 		return listaProdutoRecolhimentoDiferenciadoVO;
 	}
 	
-	/**
-	 * Método que formata os valores para serem exibidos na tela.
-	 * 
-	 * @param produtoRecolhimento - produto recolhimento
-	 * 
-	 * @return produto recolhimento formatado
-	 */
+	        /**
+     * Método que formata os valores para serem exibidos na tela.
+     * 
+     * @param produtoRecolhimento - produto recolhimento
+     * 
+     * @return produto recolhimento formatado
+     */
 	private ProdutoRecolhimentoFormatadoVO formatarProdutoRecolhimento(ProdutoRecolhimentoVO produtoRecolhimento) {
 	
 		ProdutoRecolhimentoFormatadoVO produtoRecolhimentoFormatado =
@@ -1315,26 +1325,26 @@ public class MatrizRecolhimentoController extends BaseController {
 		return produtoRecolhimentoFormatado;
 	}
 	
-	/**
-	 * Valida os dados da pesquisa.
-	 *  
-	 * @param numeroSemana - número da semana
-	 * @param dataPesquisa - data da pesquisa
-	 * @param listaIdsFornecedores - lista de id's dos fornecedores
-	 */
+	        /**
+     * Valida os dados da pesquisa.
+     * 
+     * @param numeroSemana - número da semana
+     * @param dataPesquisa - data da pesquisa
+     * @param listaIdsFornecedores - lista de id's dos fornecedores
+     */
 	private void validarDadosPesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		if (dataPesquisa == null) {
 			
-			listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
+            listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
 			
 		}
 		
 		if (listaIdsFornecedores == null || listaIdsFornecedores.isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
+            listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -1343,30 +1353,30 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Valida os dados para reprogramação.
-	 * 
-	 * @param data - data para reprogramação
-	 * @param numeroSemana - número da semana
-	 */
+	        /**
+     * Valida os dados para reprogramação.
+     * 
+     * @param data - data para reprogramação
+     * @param numeroSemana - número da semana
+     */
 	private void validarDadosReprogramar(String data, Integer numeroSemana) {
 		
 		if (data == null || data.trim().isEmpty()) {
 			
 			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da data é obrigatório!"));
+                    new ValidacaoVO(TipoMensagem.WARNING, "O preenchimento da data é obrigatório!"));
 		}
 		
 		if (!DateUtil.isValidDatePTBR(data)) {
 			
 			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING, "Data inválida!"));
+new ValidacaoVO(TipoMensagem.WARNING, "Data inválida!"));
 		}
 		
 		if (numeroSemana == null) {
 			
 			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING, "Semana inválida!"));
+new ValidacaoVO(TipoMensagem.WARNING, "Semana inválida!"));
 		}
 	}
 	
@@ -1384,23 +1394,23 @@ public class MatrizRecolhimentoController extends BaseController {
 					
 					throw new ValidacaoException(
 						TipoMensagem.WARNING,
-						"O recolhimento não pode ser reprogramado para uma data já confirmada!");
+                            "O recolhimento não pode ser reprogramado para uma data já confirmada!");
 				}
 			}
 		}
 	}
 
-	/**
-	 * Valida a lista de produtos informados na tela para reprogramação.
-	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento
-	 */
+	        /**
+     * Valida a lista de produtos informados na tela para reprogramação.
+     * 
+     * @param listaProdutoRecolhimento - lista de produtos de recolhimento
+     */
 	private void validarListaParaReprogramacao(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento) {
 		
 		if (listaProdutoRecolhimento == null || listaProdutoRecolhimento.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"É necessário selecionar ao menos um produto para realizar a reprogramação!");
+                    "É necessário selecionar ao menos um produto para realizar a reprogramação!");
 		}
 
 		for (ProdutoRecolhimentoFormatadoVO produto : listaProdutoRecolhimento) {
@@ -1419,7 +1429,7 @@ public class MatrizRecolhimentoController extends BaseController {
 
 				throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					"Não é permitido a reprogramação, pois o parametro de recolhimento não está configurado para esta e fornecedor."
+                        "Não é permitido a reprogramação, pois o parametro de recolhimento não está configurado para esta e fornecedor."
 				);
 			}
 
@@ -1428,21 +1438,23 @@ public class MatrizRecolhimentoController extends BaseController {
 			if (!(novaData.compareTo(lancamento.getDataLancamentoDistribuidor()) > 0)) {
 
 				throw new ValidacaoException(TipoMensagem.WARNING,
-						"A data de recolhimento deve ser maior que a data de lançamento.");
+                        "A data de recolhimento deve ser maior que a data de lançamento.");
 			}
 		}
 	}
 	
-	/**
-	 * Obtém a matriz de balanceamento de recolhimento.
-	 * 
-	 * @param anoNumeroSemana - número da semana
-	 * @param listaIdsFornecedores - lista de identificadores dos fornecedores
-	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
-	 * @param forcarBalanceamento - indicador para forçar a sugestão através do balanceamento
-	 * 
-	 * @return - objeto contendo as informações do balanceamento
-	 */
+	        /**
+     * Obtém a matriz de balanceamento de recolhimento.
+     * 
+     * @param anoNumeroSemana - número da semana
+     * @param listaIdsFornecedores - lista de identificadores dos fornecedores
+     * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de
+     *            recolhimento
+     * @param forcarBalanceamento - indicador para forçar a sugestão através do
+     *            balanceamento
+     * 
+     * @return - objeto contendo as informações do balanceamento
+     */
 	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimento(Integer anoNumeroSemana,
 																		List<Long> listaIdsFornecedores,
 																		TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
@@ -1460,22 +1472,21 @@ public class MatrizRecolhimentoController extends BaseController {
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);
 		}
-		/*
-		if (balanceamentoRecolhimento == null
-				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
-				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
-			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
-		}
-		*/
+		                /*
+         * if (balanceamentoRecolhimento == null ||
+         * balanceamentoRecolhimento.getMatrizRecolhimento() == null ||
+         * balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+         * 
+         * throw new ValidacaoException( TipoMensagem.WARNING,
+         * "Não houve carga de informações para o período escolhido!"); }
+         */
 		return balanceamentoRecolhimento;
 	}
 	
-	/**
-	 * Obtém o resumo do período de balanceamento de acordo com a data da pesquisa
-	 * e a lista de id's dos fornecedores.
-	 */
+	        /**
+     * Obtém o resumo do período de balanceamento de acordo com a data da
+     * pesquisa e a lista de id's dos fornecedores.
+     */
 	private ResultadoResumoBalanceamentoVO obterResultadoResumoBalanceamento(
 											BalanceamentoRecolhimentoDTO balanceamentoRecolhimento) {
 		
@@ -1854,9 +1865,9 @@ public class MatrizRecolhimentoController extends BaseController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive().serialize();
 	}
 
-	/**
-	 * Obtem agrupamento diário para confirmação de Balanceamento
-	 */
+	        /**
+     * Obtem agrupamento diário para confirmação de Balanceamento
+     */
 	@Post
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void obterAgrupamentoDiarioBalanceamento() {
@@ -1884,17 +1895,18 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		if (isItensConfirmado) {
 		
-			String mensagem = " Operação não permitida! Matriz de recolhimento já foi fechada! Não existe itens disponíveis para voltar a configuração inicial."; 
+            String mensagem = " Operação não permitida! Matriz de recolhimento já foi fechada! Não existe itens disponíveis para voltar a configuração inicial.";
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,mensagem,true);
 		}	
 	}
 	
-	/**
-	 * Obtem a concentração ordenada e agrupada por data para a Matriz de Lançamento
-	 * 
-	 * @return List<ConfirmacaoVO>: confirmacoesVO
-	 */
+	        /**
+     * Obtem a concentração ordenada e agrupada por data para a Matriz de
+     * Lançamento
+     * 
+     * @return List<ConfirmacaoVO>: confirmacoesVO
+     */
     private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
 		
     	BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
@@ -1904,7 +1916,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
 				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada!");
 		}
     	
 		List<ConfirmacaoVO> confirmacoesVO = this.obterDatasConfirmacao(balanceamentoRecolhimento.getMatrizRecolhimento());
@@ -1964,7 +1976,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	private void verificarExecucaoInterfaces() {
 		if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
 		}
 	}
 	
@@ -1992,7 +2005,8 @@ public class MatrizRecolhimentoController extends BaseController {
 			this.httpSession.removeAttribute(ATRIBUTO_SESSAO_VALIDACAO);
 		}
 		*/
-		throw new ValidacaoException(TipoMensagem.WARNING, "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
+        throw new ValidacaoException(TipoMensagem.WARNING,
+                "A chamada de encalhe da data seleciona já foi gerada. Realizar a reimpressão do documento.");
 		//this.result.use(Results.json()).from("", "result").serialize();
 	}
 	

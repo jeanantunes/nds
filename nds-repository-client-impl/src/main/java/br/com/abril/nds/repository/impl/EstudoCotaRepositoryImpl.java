@@ -67,7 +67,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
+	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Long idLancamento, Long idProdutoEdicao) {
 			
 		String hql = " select estudoCota.id as id, " 
 				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
@@ -77,11 +77,11 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 				   + " join estudoCota.estudo estudo "
 				   + " join estudoCota.cota cota "
 				   + " join estudo.produtoEdicao produtoEdicao "
-				   + " where estudo.dataLancamento = :dataLancamento " 
+				   + " where estudo.lancamentoID = :idLancamento " 
 				   + " and produtoEdicao.id = :idProdutoEdicao";
 		
 		Query query = super.getSession().createQuery(hql);
-		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("idLancamento", idLancamento);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setResultTransformer(Transformers.aliasToBean(EstudoCotaDTO.class));
 		
@@ -108,6 +108,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		return (EstudoCota) query.uniqueResult();
 	}
 	
+    @Override
     public EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota) {
 		
 		String hql = " from EstudoCota estudoCota "

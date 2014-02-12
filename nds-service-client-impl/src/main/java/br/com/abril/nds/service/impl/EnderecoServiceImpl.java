@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -451,4 +452,10 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public List<String> obterBairrosPDVBoxEspecial(String uf, String cidade) {
 		return this.enderecoRepository.obterBairrosPDVBoxEspecial(uf, cidade);
 	}
+	
+	@Override
+	public List<ItemDTO<String, String>> buscarMunicipioAssociadasCota(){
+		return enderecoCotaRepository.buscarMunicipio();
+	}
+	
 }

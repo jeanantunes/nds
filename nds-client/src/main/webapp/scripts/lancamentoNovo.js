@@ -119,6 +119,11 @@ var lancamentoNovoController = $.extend(true, {
 		$("#alteracaoReparteProduto", lancamentoNovoController.workspace).text("");
 		$("#diferencaProdutoInput", lancamentoNovoController.workspace).val("");
 		
+		$("#codigoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val("");
+		$("#nomeProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val("");
+		$("#edicaoProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val("");
+		$("#diferencaProdutoInputAlteracaoReparte", lancamentoNovoController.workspace).val("");
+		
 		$("#fieldCota", lancamentoNovoController.workspace).hide();
 		$(".trCotas", lancamentoNovoController.workspace).remove();
 
@@ -600,11 +605,17 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
 		
-		var codigoProduto = $("#codigoProdutoInput", lancamentoNovoController.workspace).val();
+		var sufixoAlteracaoReparte = "";
 		
-		var edicaoProduto = $("#edicaoProdutoInput", lancamentoNovoController.workspace).val();
+		if (lancamentoNovoController.isTipoDiferencaAlteracaoReparte(tipoDiferenca)) {
+			sufixoAlteracaoReparte = "AlteracaoReparte";
+		}
 		
-		var diferenca = $("#diferencaProdutoInput", lancamentoNovoController.workspace).val();
+		var codigoProduto = $("#codigoProdutoInput"+sufixoAlteracaoReparte, lancamentoNovoController.workspace).val();
+		
+		var edicaoProduto = $("#edicaoProdutoInput"+sufixoAlteracaoReparte, lancamentoNovoController.workspace).val();
+		
+		var diferenca = $("#diferencaProdutoInput"+sufixoAlteracaoReparte, lancamentoNovoController.workspace).val();
 		
 		var direcionadoParaEstoque = $('#paraEstoque', lancamentoNovoController.workspace).attr('checked') ? true : false;
 		

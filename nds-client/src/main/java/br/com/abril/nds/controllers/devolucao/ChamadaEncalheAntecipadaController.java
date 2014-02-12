@@ -29,7 +29,6 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -39,6 +38,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
@@ -104,6 +104,9 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Autowired
 	private PdvService pdvService;
 	
+	@Autowired
+	private EnderecoService enderecoService;
+	
 	@Path("/")
 	public void index() {
 		
@@ -130,7 +133,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	private void carregarMunicipios(){
 		
-		List<ItemDTO<Integer, String>> municipios = pdvService.buscarMunicipiosPdvPrincipal();
+		List<ItemDTO<String, String>> municipios = enderecoService.buscarMunicipioAssociadasCota();
 		
 		result.include("listaMunicipios",municipios);
 	}
@@ -178,7 +181,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Post
 	@Path("/pesquisar")
 	public void pesquisarCotasPorProduto(String codigoProduto,Long numeroEdicao,Long box,Long fornecedor, 
-										 Long rota,Long roteiro,boolean programacaoRealizada,Integer municipio,Long tipoPontoPDV,
+										 Long rota,Long roteiro,boolean programacaoRealizada,String municipio,Long tipoPontoPDV,
 										 String sortorder, String sortname, int page, int rp){
 		
 		validarParametrosPesquisa(codigoProduto, numeroEdicao);
@@ -255,14 +258,14 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@Post
 	@Path("/obterQuantidadeExemplares")
 	public void obterQuantidadeExemplaresPorCota(Integer numeroCota, String codigoProduto, Long numeroEdicao,Long fornecedor,
-												 boolean programacaoRealizada,Integer municipio, Long tipoPontoPDV){
+												 boolean programacaoRealizada,String municipio, Long tipoPontoPDV){
 		
 		FiltroChamadaAntecipadaEncalheDTO filtro = new FiltroChamadaAntecipadaEncalheDTO();
 		filtro.setNumeroCota(numeroCota);
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setNumeroEdicao(numeroEdicao);
 		filtro.setFornecedor(fornecedor);
-		filtro.setCodMunicipio(municipio);
+		filtro.setDescMunicipio(municipio);
 		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		BigInteger quantidade = BigInteger.ZERO;
@@ -857,7 +860,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@Get
 	public void exportarPesquisaCotas(FileType fileType,String dataProgaramada,String codigoProduto, 
-										Long numeroEdicao, Long fornecedor,Integer municipio,Long tipoPontoPDV) throws IOException{
+										Long numeroEdicao, Long fornecedor,String municipio,Long tipoPontoPDV) throws IOException{
 		
 		List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada = 
 				(List<ChamadaEncalheAntecipadaVO>) session.getAttribute(LISTA_PESQUISA_COTA);
@@ -867,7 +870,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		filtro.setCodigoProduto(codigoProduto);
 		filtro.setFornecedor(fornecedor);
 		filtro.setNumeroEdicao(numeroEdicao);
-		filtro.setCodMunicipio(municipio);
+		filtro.setDescMunicipio(municipio);
 		filtro.setCodTipoPontoPDV(tipoPontoPDV);
 		
 		atribuirValoresFIltro(filtro);
@@ -975,21 +978,8 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 			}
 		}
 		
-		if(filtro.isProgramacaoCE()){
-			filtro.setDescComCE("Sim");
-		}
-		else{
-			filtro.setDescComCE("Não");
-		}
-		
-		if(filtro.getCodMunicipio()!= null){
-			
-			Endereco endereco = pdvService.buscarMunicipioPdvPrincipal(filtro.getCodMunicipio());
-			if(endereco!= null){
-				filtro.setDescMunicipio(endereco.getCidade());
-			}
-		}
-		
+		filtro.setDescComCE( filtro.isProgramacaoCE()?"Sim":"Não");
+
 		if(filtro.getCodTipoPontoPDV()!= null){
 			
 			TipoPontoPDV tipoPontoPDV = pdvService.obterTipoPontoPDVPrincipal(filtro.getCodTipoPontoPDV());
