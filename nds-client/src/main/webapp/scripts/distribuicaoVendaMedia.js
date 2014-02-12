@@ -6,12 +6,12 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 
 	this.carregarEventos = function() {
 	    if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
-                $('#sobra').text(parseInt($('#reparteTotal').text()) - parseInt($('#reparteDistribuir').val()));
+                $('#sobra').text(($('#reparteTotal').text()*1) - ($('#reparteDistribuir').val()*1));
             }
 	    
 	    $('#reparteDistribuir').blur(function() {
 	        if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
-	            $('#sobra').text(parseInt($('#reparteTotal').text()) - parseInt($('#reparteDistribuir').val()));
+	            $('#sobra').text(($('#reparteTotal').text()*1) - ($('#reparteDistribuir').val()*1));
 	        }
 	    });
 	};
@@ -641,7 +641,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
         //TODO adicionar numero periodo caso o idLancamento nao seja o suficiente
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
-		    myWindow = window.open('', '_blank');
+		    //usado para exibir as variaveis do estudo
+            
+			myWindow = window.open('', '_blank');
             myWindow.document.write(result.list[0]);
             myWindow.focus();
             
@@ -654,7 +656,12 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             if(typeof(matrizDistribuicao)=="object"){
             		matrizDistribuicao.carregarGrid();
             }
-                    
+            
+            $("#codigoPesquisaBases").remove();
+    		$("#produtoPesquisaBases").remove();
+    		$("#produtoPesquisaBases").remove();
+    		$("#edicaoProdCadastradosGrid").remove();
+            
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
 	};
@@ -664,6 +671,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		$("#codigoPesquisaBases").remove();
 		$("#produtoPesquisaBases").remove();
 		$("#produtoPesquisaBases").remove();
+		$("#edicaoProdCadastradosGrid").remove();
 		
 		$(".ui-tabs-selected").find("span").click();
 		$("a[href='"+pathTela+"/matrizDistribuicao']").click();

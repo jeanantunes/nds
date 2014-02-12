@@ -91,19 +91,19 @@
 				<tr>
 					<td>
 						<input type="text" id="codigoProdutoInputAlteracaoReparte" style="width:75px;" maxlength="30"
-							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInputAlteracaoReparte, nomeProdutoInputAlteracaoReparte, edicaoProdutoInputAlteracaoReparte, true);"/>
+							onchange="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorCodigoProduto(codigoProdutoInputAlteracaoReparte, nomeProdutoInputAlteracaoReparte, edicaoProdutoInputAlteracaoReparte, true);"/>
 					</td>
 					<td>
 						<input type="text" id="nomeProdutoInputAlteracaoReparte" style="width:130px;" maxlength="60"
 							onkeyup="pesquisaProdutoLancamentoFaltasSobras.autoCompletarPorNomeProduto(nomeProdutoInputAlteracaoReparte, true);"
-							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInputAlteracaoReparte, nomeProdutoInputAlteracaoReparte, edicaoProdutoInputAlteracaoReparte, true);"/>
+							onchange="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInputAlteracaoReparte, nomeProdutoInputAlteracaoReparte, edicaoProdutoInputAlteracaoReparte, true);"/>
 					</td>
 					<td align="center">
-						<input type="text" id="edicaoProdutoInputAlteracaoReparte" onblur="lancamentoNovoController.buscarReparteCotaProduto();" style="width:80px;" maxlength="255" />
+						<input type="text" id="edicaoProdutoInputAlteracaoReparte" onchange="lancamentoNovoController.buscarReparteCotaProduto();" style="width:80px;" maxlength="255" />
 					</td>
 					<td align="right" id="alteracaoReparteProduto"></td>
 					<td align="center">
-						<input id="diferencaProdutoInputAlteracaoReparte" onblur="lancamentoNovoController.atualizarSaldoConsignado();" style="width: 60px; text-align: center;" maxlength="10" />
+						<input id="diferencaProdutoInputAlteracaoReparte" onchange="lancamentoNovoController.atualizarSaldoConsignado();" style="width: 60px; text-align: center;" maxlength="10" />
 					</td>
 					<td align="center" id="saldoConsignado"></td>
 				</tr>
@@ -121,7 +121,9 @@
 				<td width="20" class="view-estouque">
 					<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
 				</td>
-				<td width="72" class="view-estouque">Estoque</td>
+				<td width="72" class="view-estouque">
+					<span id="nomeEstoqueSpan">Estoque</span>
+				</td>
 				<td width="20" class="view-cota">
 					<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
 				</td>
@@ -173,7 +175,7 @@
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td align="center">
-						<input type="text" id="edicaoProdutoInput" onblur="lancamentoNovoController.buscarPrecoProdutoEdicao();" style="width:80px;" maxlength="255" />
+						<input type="text" id="edicaoProdutoInput" onchange="lancamentoNovoController.buscarPrecoProdutoEdicao();" style="width:80px;" maxlength="255" />
 					</td>
 					<td align="right" id="precoCapaProduto"></td>
 					<td align="center" id="pacotePadrao"></td>

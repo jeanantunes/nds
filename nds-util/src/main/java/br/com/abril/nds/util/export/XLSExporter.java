@@ -41,7 +41,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
  * Classe responsável pela exportação de arquivos XLS.
  * 
  * @author Discover Technology
- *
+ * 
  */
 public class XLSExporter implements Exporter {
 	
@@ -272,7 +272,7 @@ public class XLSExporter implements Exporter {
 
 			int totalUniversal = 4000 * headers.size();
 			
-			float patternPercentage = 400000 / totalUniversal;
+            float patternPercentage = (float) 400000 / totalUniversal;
 			
 			int width = exportHeader.getWidthPercent() == null ? 4000 
 						: Math.round(exportHeader.getWidthPercent() * 4000 / patternPercentage);

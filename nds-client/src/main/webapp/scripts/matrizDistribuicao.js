@@ -862,7 +862,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-somar-estudo", _workspace).hide();
 		$("#dialog-informacoes-produto", _workspace).hide();
 		$("#telaPesquisaMatriz", _workspace).show();
-	},
+        this.tabSomarCopiarEstudos = '';
+    },
 	
 	this.mostraTelaCopiarProporcionalDeEstudo = function() {
 		T.mostrarOpcoes();
@@ -871,6 +872,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).hide();
 		$("#dialog-copiar-estudo", _workspace).show();
 		T.inicializarTelaCopiaProporcional();
+        this.tabSomarCopiarEstudos = 'copiar';
 	},
 	
 	this.mostraTelaSomarEstudos = function() {
@@ -880,7 +882,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).hide();
 		$("#dialog-somar-estudo", _workspace ).show();
 		T.inicializarTelaSomarEstudos();
-	},
+        this.tabSomarCopiarEstudos = 'somar';
+    },
 	
 	this.inicializarTelaCopiaProporcional = function() {
 		$('#copiarEstudo-estudo').text('');
@@ -1650,7 +1653,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        	
 	        	return;
 	        }
-	        
+	        /*
 	        $('#confirmar_variaveis').dialog({
 	            escondeHeader: false,
 	            resizable: false,
@@ -1680,8 +1683,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	                click: function() {
 	                    $(this).dialog("close");
 	                }
-	            }],
+	            }]
 	        });
+            */
 	    }
 	    );
 	},

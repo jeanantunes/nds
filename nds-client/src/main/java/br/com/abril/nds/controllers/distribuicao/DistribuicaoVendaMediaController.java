@@ -121,21 +121,24 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	EstudoGerado estudo = null;
 	ProdutoEdicao produtoEdicao = null;
+    Produto produto;
 
 	if (estudoId != null && estudoId != 0l) {
 	    estudo = estudoService.obterEstudo(estudoId);
 	    result.include("estudo", estudo);
 	    produtoEdicao = estudo.getProdutoEdicao();
-	} else {
-	    produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
-	}
+        produto = estudo.getProdutoEdicao().getProduto();
+    } else {
+        produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
+        produto = produtoEdicao.getProduto();
+    }
 
 	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
 
 	EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
 
-	Lancamento lancamento = null;
+	Lancamento lancamento;
 	if (lancamentoId == null) {
 	    lancamento = findLancamentoBalanceado(produtoEdicao);
 	} else {
@@ -153,7 +156,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    }
 	} else {
 	    EstudoTransient estudoTemp = new EstudoTransient();
-	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(codigoProduto, edicao, lancamentoId));
+	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
 	    try {
 		definicaoBases.executar(estudoTemp);
 		selecionados.clear();
@@ -170,6 +173,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    }
 	}
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
+	
+	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, selecionados);
 
 	List<Roteiro> roteiros = roteiroService.buscarTodos();
 
@@ -185,15 +190,15 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	if (lancado != null) {
 	    result.include("lancado", lancado);
-	} else {
-	    result.include("lancado", lancamento.getReparte());
-	}
+	} else if (lancamento != null) {
+        result.include("lancado", lancamento.getReparte());
+    }
 
 	if (promocional != null) {
 	    result.include("promocional", promocional);	
-	} else {
-	    result.include("promocional", lancamento.getRepartePromocional());
-	}
+	} else if (lancamento != null) {
+        result.include("promocional", lancamento.getRepartePromocional());
+    }
 
 	if (sobra != null) {
 	    result.include("sobra", sobra);

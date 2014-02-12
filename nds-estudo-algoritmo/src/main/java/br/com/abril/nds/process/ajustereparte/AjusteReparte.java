@@ -39,21 +39,27 @@ public class AjusteReparte extends ProcessoAbstrato {
 	
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	if ((estudo == null) || (estudo.getCotas() == null)) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo."));
-	}
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
-		BigInteger ajusteReparte = BigInteger.ZERO;
-		if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
-		    ajusteReparte = cota.getVendaMediaMaisN();
-		} else {
-		    ajusteReparte = estudo.getPacotePadrao();
+		
+    	if ((estudo == null) || (estudo.getCotas() == null)) {
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo."));
 		}
-		cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		cota.setClassificacao(ClassificacaoCota.ReparteFixado);
-	    cotasComReparteJaCalculado.add(cota);
-	    }
+		
+    	for (CotaEstudo cota : estudo.getCotas()) {
+		    
+    		if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
+		    	
+    			BigInteger ajusteReparte = BigInteger.ZERO;
+			
+		    	if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
+		    		ajusteReparte = cota.getVendaMediaMaisN();
+				} else {
+				    ajusteReparte = estudo.getPacotePadrao();
+				}
+			
+		    	cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+		    	cota.setClassificacao(ClassificacaoCota.Ajuste);
+		    	cotasComReparteJaCalculado.add(cota);
+		    }
 	    
 	}
 	

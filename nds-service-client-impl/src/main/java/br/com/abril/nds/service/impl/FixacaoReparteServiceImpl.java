@@ -126,7 +126,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumeroDaCota(Integer.valueOf(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
+		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto(), filtroCota.getClassificacaoProduto()) ;
 		return resultado; 
 	}
 	

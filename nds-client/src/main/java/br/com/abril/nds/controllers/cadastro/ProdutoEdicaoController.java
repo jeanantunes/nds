@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Strings;
@@ -123,7 +124,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.carregarDadosCombo();
 	}
 
-	                                                                /**
+	                                                                                        /**
      * Carrega os combos do modal de inclusão/edição do Produto-Segmentação.
      */
 	private void carregarDadosCombo() {
@@ -481,7 +482,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	
 	
-	                                                                /**
+	                                                                                        /**
      * Valida o preenchimento dos campos obrigatórios.
      * 
      * @param dto
@@ -644,7 +645,7 @@ public class ProdutoEdicaoController extends BaseController {
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
-	                                                                /**
+	                                                                                        /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -672,7 +673,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(Results.json()).from(validacaoMap, "result").recursive().serialize();
 	}
 
-	                                                                /**
+	                                                                                        /**
      * Remove uma Edição.
      * 
      * @param idProdutoEdicao
@@ -704,7 +705,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                                                                /**
+	                                                                                        /**
      * Obtem detalhes de produto edição
      * 
      * @param idProdutoEdicao
@@ -725,7 +726,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                                                                /**
+	                                                                                        /**
      * Obtém todos os períodos de lançamento da edição do produto
      * 
      * @param produtoEdicaoId
@@ -751,6 +752,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			PeriodoLancamentosProdutoEdicaoVO periodoLancamento = new PeriodoLancamentosProdutoEdicaoVO();
 			
+            periodoLancamento.setIdLancamento(lancamento.getId());
 			periodoLancamento.setNumeroPeriodo(numeroPeriodo);
 			periodoLancamento.setNumeroLancamento(lancamento.getNumeroLancamento());
 			periodoLancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoDistribuidor());
@@ -760,7 +762,7 @@ public class ProdutoEdicaoController extends BaseController {
 			periodoLancamento.setStatus(lancamento.getStatus().getDescricao());
 			periodoLancamento.setReparte(lancamento.getReparte());
 			
-			if (!numerosPeriodo.contains(numeroPeriodo)) {
+			if (numerosPeriodo.contains(numeroPeriodo)) {
 				periodoLancamento.setDestacarLinha(true);
 			}
 			
@@ -772,7 +774,7 @@ public class ProdutoEdicaoController extends BaseController {
 		this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 	}
 	
-	                                                                /**
+	                                                                                        /**
      * Popula e retorna Value Object com detalhes de produto edição
      * 
      * @param idProdutoEdicao
@@ -843,6 +845,15 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		return produtoLancamentoVO;
 	}
+    
+    @Post("/removerLancamento.json")
+    @Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
+    public void removerLancamento(Long idLancamento) {
+        this.lancamentoService.removerLancamento(idLancamento);
+        result.use(Results.json())
+                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluido com Sucesso."), "result").recursive()
+                .serialize();
+    }
 
 	
 

@@ -127,95 +127,96 @@ public class ConstantsCondition {
 	 */
 	public final static String IPI_CST_55 = "55"; 
 
-	/**
-	 * CST de COFINS 01
-	 */
-	public final static String COFINS_CST_01 = "01"; 
+	    /**
+     * CST de COFINS 01
+     */
+    public final static Integer COFINS_CST_01 = 1;
 
-	/**
-	 * CST de COFINS 02
-	 */
-	public final static String COFINS_CST_02 = "02"; 
+    /**
+     * CST de COFINS 02
+     */
+    public final static Integer COFINS_CST_02 = 2;
 
-	/**
-	 * CST de COFINS 03
-	 */
-	public final static String COFINS_CST_03 = "03"; 
+    /**
+     * CST de COFINS 03
+     */
+    public final static Integer COFINS_CST_03 = 3;
 
-	/**
-	 * CST de COFINS 04
-	 */
-	public final static String COFINS_CST_04 = "04"; 
+    /**
+     * CST de COFINS 04
+     */
+    public final static Integer COFINS_CST_04 = 4;
 
-	/**
-	 * CST de COFINS 06
-	 */
-	public final static String COFINS_CST_06 = "06"; 
+    /**
+     * CST de COFINS 06
+     */
+    public final static Integer COFINS_CST_06 = 6;
 
-	/**
-	 * CST de COFINS 07
-	 */
-	public final static String COFINS_CST_07 = "07"; 
+    /**
+     * CST de COFINS 07
+     */
+    public final static Integer COFINS_CST_07 = 7;
 
-	/**
-	 * CST de COFINS 08
-	 */
-	public final static String COFINS_CST_08 = "08"; 
+    /**
+     * CST de COFINS 08
+     */
+    public final static Integer COFINS_CST_08 = 8;
 
-	/**
-	 * CST de COFINS 09
-	 */
-	public final static String COFINS_CST_09 = "09"; 
+    /**
+     * CST de COFINS 09
+     */
+    public final static Integer COFINS_CST_09 = 9;
 
-	/**
-	 * CST de COFINS 99
-	 */
-	public final static String COFINS_CST_99 = "99"; 
+    /**
+     * CST de COFINS 99
+     */
+    public final static Integer COFINS_CST_99 = 99;
 
 
-	/**
-	 * CST de PIS 01
-	 */
-	public final static String PIS_CST_01 = "01"; 
+    /**
+     * CST de PIS 01
+     */
+    public final static Integer PIS_CST_01 = 1;
+    
+    /**
+     * CST de PIS 02
+     */
+    public final static Integer PIS_CST_02 = 2;
 
-	/**
-	 * CST de PIS 02
-	 */
-	public final static String PIS_CST_02 = "02"; 
+    /**
+     * CST de PIS 03
+     */
+    public final static Integer PIS_CST_03 = 3;
 
-	/**
-	 * CST de PIS 03
-	 */
-	public final static String PIS_CST_03 = "03"; 
+    /**
+     * CST de PIS 04
+     */
+    public final static Integer PIS_CST_04 = 4;
 
-	/**
-	 * CST de PIS 04
-	 */
-	public final static String PIS_CST_04 = "04"; 
+    /**
+     * CST de PIS 06
+     */
+    public final static Integer PIS_CST_06 = 6;
 
-	/**
-	 * CST de PIS 06
-	 */
-	public final static String PIS_CST_06 = "06"; 
+    /**
+     * CST de PIS 07
+     */
+    public final static Integer PIS_CST_07 = 7;
 
-	/**
-	 * CST de PIS 07
-	 */
-	public final static String PIS_CST_07 = "07"; 
+    /**
+     * CST de PIS 08
+     */
+    public final static Integer PIS_CST_08 = 8;
 
-	/**
-	 * CST de PIS 08
-	 */
-	public final static String PIS_CST_08 = "08"; 
+    /**
+     * CST de PIS 09
+     */
+    public final static Integer PIS_CST_09 = 9;
 
-	/**
-	 * CST de PIS 09
-	 */
-	public final static String PIS_CST_09 = "09"; 
+    /**
+     * CST de PIS 99
+     */
+    public final static Integer PIS_CST_99 = 99;
 
-	/**
-	 * CST de PIS 99
-	 */
-	public final static String PIS_CST_99 = "99"; 
 
 }

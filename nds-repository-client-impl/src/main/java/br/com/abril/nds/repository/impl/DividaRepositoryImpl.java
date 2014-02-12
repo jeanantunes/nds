@@ -270,18 +270,19 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		return hql.toString();
 	}
 	
-	/**
-	 * Retorna a string hql com a oredenação da consulta
-	 * @param filtro
-	 * @return String
-	 */
+	    /**
+     * Retorna a string hql com a oredenação da consulta
+     * 
+     * @param filtro
+     * @return String
+     */
 	private String getOrdenacaoDivida(FiltroDividaGeradaDTO filtro){
 		
 		if(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO.equals(filtro.getColunaOrdenacao())) {
 			return " ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ";
 		}
 		
-		if(filtro.getListaColunaOrdenacao().isEmpty() && filtro.getListaColunaOrdenacao()== null   )
+        if (filtro.getListaColunaOrdenacao() == null && filtro.getListaColunaOrdenacao().isEmpty())
 		{
 			return "";
 		}
@@ -331,6 +332,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " vias ";
 					break;
+            default:
+                break;
 					
 			}
 		}
@@ -874,7 +877,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
     @Override
     public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
-	    Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
+        Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
 	    return sumarizarDividas(data, TipoDivida.DIVIDA_A_RECEBER);
     }
 
@@ -883,20 +886,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
-	    Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
+        Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
         return sumarizarDividas(data, TipoDivida.DIVIDA_A_VENCER);
     }
 
     /**
      * Sumariza as dívidas de acordo com o tipo de dívida, para dívidas à
-     * receber são consideradas as dívidas com vencimento na data base, no
-     * caso de dívidas à vencer são consideradas as dívidas com vencimento após
-     * a data base
+     * receber são consideradas as dívidas com vencimento na data base, no caso
+     * de dívidas à vencer são consideradas as dívidas com vencimento após a
+     * data base
      * 
-     * @param data
-     *            data base para sumarização das dívidas
-     * @param tipoDivida
-     *            tipo da dívida para sumarização
+     * @param data data base para sumarização das dívidas
+     * @param tipoDivida tipo da dívida para sumarização
      * @return Lista com as dívidas sumarizadas
      */
 	@SuppressWarnings("unchecked")
@@ -950,7 +951,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
     @Override
     public List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
-	    Objects.requireNonNull(data, "Data para consulta das dívidas à receber EM não pode ser nula!");
+        Objects.requireNonNull(data, "Data para consulta das dívidas à receber EM não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, paginacao, false);
 	    return query.list();
     }
@@ -962,7 +963,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
     @Override
     public List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
-	    Objects.requireNonNull(data, "Data para consulta das dívidas à vencer APÓS não pode ser nula!");
+        Objects.requireNonNull(data, "Data para consulta das dívidas à vencer APÓS não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, paginacao, false);
         return query.list();
     }
@@ -972,7 +973,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public long contarDividasReceberEm(Date data) {
-	    Objects.requireNonNull(data, "Data para contagem das dívidas à receber EM não pode ser nula!");
+        Objects.requireNonNull(data, "Data para contagem das dívidas à receber EM não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, null, true);
         return (long) query.uniqueResult();
     }
@@ -982,26 +983,23 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@Override
     public long contarDividasVencerApos(Date data) {
-	    Objects.requireNonNull(data, "Data para contagem das dívidas à vencer APÓS não pode ser nula!");
+        Objects.requireNonNull(data, "Data para contagem das dívidas à vencer APÓS não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, null, true);
         return (long) query.uniqueResult();
     }
 
-	/**
-	 * Cria a query para consulta / contagem de dívidas à receber / à vencer
-	 * 
-	 * @param data
-	 *            data base para consulta ou contagem de dívidas
-	 * @param tipoDivida  tipo da dívida para recuperação, dívidas a receber ou dívidas a 
-	 * vencer
-	 * @param paginacao
-	 *            no caso de consulta de dívidas, contém os parâmetros de
-	 *            paginação de dívidas, pode ser {@code null}
-	 * @param count
-	 *            flag indicando se a query é consulta das dívidas ou contagem
-	 *            de dívidas
-	 * @return query criada com os parâmetros recebidos
-	 */
+	    /**
+     * Cria a query para consulta / contagem de dívidas à receber / à vencer
+     * 
+     * @param data data base para consulta ou contagem de dívidas
+     * @param tipoDivida tipo da dívida para recuperação, dívidas a receber ou
+     *            dívidas a vencer
+     * @param paginacao no caso de consulta de dívidas, contém os parâmetros de
+     *            paginação de dívidas, pode ser {@code null}
+     * @param count flag indicando se a query é consulta das dívidas ou contagem
+     *            de dívidas
+     * @return query criada com os parâmetros recebidos
+     */
 	private Query queryDividas(Date data, TipoDivida tipoDivida, PaginacaoVO paginacao, boolean count) {
 	    
 		StringBuilder hql = new StringBuilder("select ");

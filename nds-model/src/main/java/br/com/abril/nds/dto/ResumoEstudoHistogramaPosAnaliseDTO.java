@@ -17,7 +17,7 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 					   qtdSobraEstudo,
 					   abrangenciaSugerida,
 					   abrangenciaDeVenda,
-					   qtdRepartePromocional,
+					   saldo,
 					   qtdReparteDistribuidoEstudo,
 					   reparteDistribuido,
 					   reparteMedioCota,
@@ -104,13 +104,13 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 	public void setAbrangenciaDeVenda(BigDecimal abrangenciaDeVenda) {
 		this.abrangenciaDeVenda = abrangenciaDeVenda;
 	}
-
-	public BigDecimal getQtdRepartePromocional() {
-		return qtdRepartePromocional;
+	
+	public BigDecimal getSaldo() {
+		return saldo;
 	}
 
-	public void setQtdRepartePromocional(BigDecimal qtdRepartePromocional) {
-		this.qtdRepartePromocional = qtdRepartePromocional;
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
 	}
 
 	public BigDecimal getQtdSobraEstudo() {
@@ -119,6 +119,7 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 
 	public void setQtdSobraEstudo(BigDecimal qtdSobraEstudo) {
 		this.qtdSobraEstudo = qtdSobraEstudo;
+		this.saldo = qtdSobraEstudo;
 	}
 
 	public BigDecimal getReparteDistribuido() {

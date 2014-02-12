@@ -840,6 +840,7 @@ var fixacaoReparteController = $.extend(true, {
 			data.push({name:'filtro.cota',value: $("#codigoModalFixacao").val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#spanNomeProduto").text()});
 			data.push({name:'filtro.codigoProduto',	value: $("#spanCodigoProduto").text()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 
 			return data;
 		},
@@ -872,11 +873,15 @@ var fixacaoReparteController = $.extend(true, {
 		},
 		//Abre modal Nova Fixação
 		novo:function () {
+            var porCota = false;
 
 			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Produto'){
-
+                if ($('#filtroClassificacaoFixacao').val() == '-1') {
+                    exibirMensagem("WARNING", ["Selecione uma classificação"]);
+                    return false;
+                }
 				if(($("#codigoProdutoFixacao").val()=='' || $("#codigoProdutoFixacao").val() =='undefined' )){
-					exibirMensagem("WARNING", ["Por favor preencha o campo codigo "]);
+					exibirMensagem("WARNING", ["Por favor preencha o campo codigo"]);
 					return false;
 				}else{
 					fixacaoReparteController.exibeCodigoNomeProdutoSelecionado();
@@ -884,6 +889,7 @@ var fixacaoReparteController = $.extend(true, {
 			}
 			
 			if($("input:radio:checked", fixacaoReparteController.workspace).val() == 'Cota'){
+                porCota = true;
 
 				if(($("#codigoCotaFixacao").val()=='' || $("#codigoCotaFixacao").val() =='undefined' )){
 					exibirMensagem("WARNING", ["Por favor preencha o campo codigo"]);
@@ -899,14 +905,14 @@ var fixacaoReparteController = $.extend(true, {
 					modal: true,
 					buttons: {
 						"Confirmar": function() {
-							if(fixacaoReparteController.validaCamposVaziosNovoFixacao()){
+							if(fixacaoReparteController.validaCamposVaziosNovoFixacao(porCota)){
 								$.postJSON(contextPath + '/distribuicao/fixacaoReparte/adicionarFixacaoReparte', fixacaoReparteController.getDadosAdicionarFixacao(),
 										fixacaoReparteController.executarSuccessCallBack,fixacaoReparteController.executarErrorCallBack);
 							}
 						},
 						"Cancelar": function() {
 							$(this,fixacaoReparteController.workspace).dialog('close');
-						},
+						}
 					}
 			});
 			 $('#dialog-novoFixacao').bind('dialogclose', function(event) {
@@ -947,7 +953,7 @@ var fixacaoReparteController = $.extend(true, {
 		},
 		
 		// Função que valida campos obrigatorios no modal  de nova fixação
-		validaCamposVaziosNovoFixacao:function(){	
+		validaCamposVaziosNovoFixacao:function(porCota){
 			if($("#codigoModalFixacao").val() =="" || $("#nomeModalFixacao").val() ==""){
 				exibirMensagem("WARNING", ["Produto/nome não informado "]);
 				return false;
@@ -971,6 +977,11 @@ var fixacaoReparteController = $.extend(true, {
 						return false;
 					}
 			}
+
+            if (porCota || $('#selectModal').val() == '-1') {
+                exibirMensagem("WARNING", ["Selecione uma classificação"]);
+                return false;
+            }
 
 				return true;	
 

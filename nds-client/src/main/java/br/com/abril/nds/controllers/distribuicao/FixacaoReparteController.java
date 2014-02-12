@@ -28,6 +28,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.*;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -546,8 +547,14 @@ public class FixacaoReparteController extends BaseController {
 				getErrosUpload().add("- O numero de edições fixadas não pode ser maior que 6 (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
 				continue;
 			}
-			
-			if (fixacaoReparteService.isFixacaoExistente(fixacaoReparteDTO)) {
+
+            if (StringUtils.isBlank(fixacaoReparteDTO.getClassificacaoProduto())) {
+                invalidos.add(fixacaoReparteDTO);
+                getErrosUpload().add("- Classificação não pode estar vazia. [" + fixacaoReparteDTO.getProdutoFixado() + "]");
+                continue;
+            }
+
+            if (fixacaoReparteService.isFixacaoExistente(fixacaoReparteDTO)) {
 				invalidos.add(fixacaoReparteDTO);
 				getErrosUpload().add("- Registro existente para o produto[" + fixacaoReparteDTO.getProdutoFixado() + "] e cota[" + fixacaoReparteDTO.getCotaFixadaString() + "].") ;
 				continue;
@@ -643,8 +650,11 @@ public class FixacaoReparteController extends BaseController {
 			
 			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
-			
-			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
+            if (tipoSegProd == null) {
+                return "Produto [" + prd.getNome() + "] não possui Tipo Segmento cadastrado.";
+            }
+
+            loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
 				if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
 					
 					for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {

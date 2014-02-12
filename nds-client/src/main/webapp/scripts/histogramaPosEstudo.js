@@ -486,7 +486,7 @@ var histogramaPosEstudoController = $.extend(true, {
 
 					// Primeira coluna
 					$('#fieldSetResumoReparteTotal').html(formatarMilhar(response.qtdReparteDistribuidor || 0));
-					$('#fieldSetResumoRepartePromocional').html(formatarMilhar(response.qtdRepartePromocional || 0));
+					$('#fieldSetResumoRepartePromocional').html(formatarMilhar(response.saldo || 0));
 					$('#fieldSetResumoReservaTecnica').html(formatarMilhar(response.qtdSobraEstudo || 0));
 					$('#fieldSetResumoReparteDistribuida').html(formatarMilhar(response.qtdReparteDistribuidoEstudo || 0));
 
@@ -643,9 +643,8 @@ var histogramaPosEstudoController = $.extend(true, {
 
 	recalcularEstudo : function (){
 		var urlAnalise = contextPath + '/distribuicaoVendaMedia/index?estudoId=' + $('#codigoEstudoFs').text();
-
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
-	},
+	}
 
 }, BaseController);
 //@ sourceURL=histogramaPosEstudo.js

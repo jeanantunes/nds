@@ -306,19 +306,18 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 	}
 
-	private void removeEstudo(Long idEstudo) {
-
-		EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
-    
-		if (!estudo.isLiberado()) {
-
-			estudoGeradoRepository.remover(estudo);
-
-		} else {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
-					"Este estudo já foi liberado, não é permitido excluí-lo!"));
-		}
-	}
+    @Override
+	public void removeEstudo(Long idEstudo) {
+        if (idEstudo > 0) {
+            EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
+            if (!estudo.isLiberado()) {
+                estudoGeradoRepository.remover(estudo);
+            } else {
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+                        "Este estudo já foi liberado, não é permitido excluí-lo!"));
+            }
+        }
+    }
 
 	@Override
 	@Transactional
@@ -542,13 +541,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
     EstudoGerado estudoCopia = new EstudoGerado();
     
-	BeanUtils.copyProperties(estudo, estudoCopia, new String[] {"id", "lancamentoID", "lancamentos", "estudoCotas"});
+	BeanUtils.copyProperties(estudo, estudoCopia, new String[] {"id", "lancamentoID", "lancamentos", "estudoCotas", "dataLancamento"});
 	estudoCopia.setDataAlteracao(new Date());
 	estudoCopia.setLiberado(false);
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>());
 	estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
 	estudoCopia.setLancamentoID(lancamento.getId());
     estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
+    estudoCopia.setDataLancamento(lancamento.getDataLancamentoPrevista());
 
     Long id = this.estudoService.obterUltimoAutoIncrement();
     

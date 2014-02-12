@@ -487,12 +487,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			   											   Long idProdutoEdicao);
 	
 	/**
-	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
-	 * @param movimentosEstoqueCota
-	 */
-	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota);
-	
-	/**
 	 * Adiciona em lote a lista de Movimentos de Estoque da Cota
 	 * @param movimentosEstoqueCota
 	 */
