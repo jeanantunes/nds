@@ -840,6 +840,7 @@ var fixacaoReparteController = $.extend(true, {
 			data.push({name:'filtro.cota',value: $("#codigoModalFixacao").val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#spanNomeProduto").text()});
 			data.push({name:'filtro.codigoProduto',	value: $("#spanCodigoProduto").text()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 
 			return data;
 		},
