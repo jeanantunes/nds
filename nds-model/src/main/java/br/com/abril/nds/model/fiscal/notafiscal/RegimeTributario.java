@@ -5,76 +5,74 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.fiscal.nota.Aliquota;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 
 @Entity
 @Table(name="REGIME_TRIBUTARIO")
 public class RegimeTributario implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6097502456643446957L;
 
 	@Id
 	@GeneratedValue
-	@Column(name="ID")
 	private Long id;
 	
-	@Column(name="CODIGO")
-	private Long codigo;
+	@Column(name="codigo")
+	private String codigo;
 	
-	@Column(name="DESCRICAO")
+	@Column(name="descricao")
 	private String descricao;
 	
+	@Column(name="ativo")
+	private boolean ativo;
+	
 	@OneToMany
-	@JoinTable(name = "REGIME_TRIBUTARIO_ALIQUOTA", joinColumns = {@JoinColumn(name = "REGIME_TRIBUTARIO_ID")}, 
-		inverseJoinColumns = {@JoinColumn(name = "ALIQUOTA_ID")})
-	private List<Aliquota> aliquotas;
-	
-	public RegimeTributario() {
-		super();
-	}
-	
-	public RegimeTributario(Long codigo, String descricao) {
-		this.codigo = codigo;
-		this.descricao = descricao;
-	}
-	
+	@JoinTable(	name = "regime_tributario_tributo_aliquota", 
+				joinColumns = {@JoinColumn(name = "regime_tributario_id")}, 
+				inverseJoinColumns = {@JoinColumn(name = "tributo_aliquota_id")})
+	private List<TributoAliquota> tributoAliquota;
+
 	public Long getId() {
 		return id;
 	}
-
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
-	public Long getCodigo() {
+	public String getCodigo() {
 		return codigo;
 	}
 
-	public void setCodigo(Long codigo) {
+	public void setCodigo(String codigo) {
 		this.codigo = codigo;
+	}
+
+	public String getDescricao() {
+		return descricao;
 	}
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
-	public String getDescricao() {
-		return descricao;
+
+	public boolean isAtivo() {
+		return ativo;
 	}
 
-	@Override
-	public String toString() {
-		return "RegimeTributario [id=" + id + ", codigo=" + codigo
-				+ ", descricao=" + descricao + "]";
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
+	
 }

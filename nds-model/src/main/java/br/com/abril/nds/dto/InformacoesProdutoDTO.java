@@ -19,16 +19,16 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = -1681228943537091591L;
 	
-	@Export(label = "Numero Ediçao", alignment=Alignment.LEFT, exhibitionOrder = 1)
+    @Export(label = "Numero Ediçao", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private Long numeroEdicao;
 	
-	@Export(label = "Nome Edição", alignment=Alignment.LEFT, exhibitionOrder = 2)
+    @Export(label = "Nome Edição", alignment = Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label = "Período", alignment=Alignment.LEFT, exhibitionOrder = 3)
+    @Export(label = "Período", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private PeriodicidadeProduto periodo;
 	
-	@Export(label = "Preço R$", alignment=Alignment.LEFT, exhibitionOrder = 4)
+    @Export(label = "Preço R$", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private BigDecimal preco;
 	
 	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 5)
@@ -40,7 +40,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Venda", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private BigInteger venda;
 
-	@Export(label = "Abrangência", alignment=Alignment.LEFT, exhibitionOrder = 8)
+    @Export(label = "Abrangência", alignment = Alignment.LEFT, exhibitionOrder = 8)
 	private Double percentualAbrangencia;
 	
 	@Export(label = "Data Lcto", alignment=Alignment.LEFT, exhibitionOrder = 9)
@@ -58,7 +58,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Estudo", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private Long estudo;
 	
-	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 14)
+    @Export(label = "Usuário", alignment = Alignment.LEFT, exhibitionOrder = 14)
 	private String nomeUsuario;
 	
 	@Export(label = "Data", alignment=Alignment.LEFT, exhibitionOrder = 15)
@@ -135,7 +135,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		return reparteDistribuido;
 	}
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
-		if ((reparteDistribuido == null) || (reparteDistribuido.equals(""))){
+        if (reparteDistribuido == null) {
 			this.reparteDistribuido = BigInteger.ZERO;
 		}else{
 			this.reparteDistribuido = reparteDistribuido;
@@ -180,7 +180,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		return reparteMinimo;
 	}
 	public void setReparteMinimo(BigInteger reparteMinimo) {
-		if ((reparteMinimo == null) || (reparteMinimo.equals(""))){
+        if (reparteMinimo == null) {
 			this.reparteMinimo = BigInteger.ZERO;
 		}else{
 			this.reparteMinimo = reparteMinimo;

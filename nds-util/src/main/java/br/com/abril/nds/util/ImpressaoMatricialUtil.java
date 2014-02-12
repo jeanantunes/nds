@@ -11,7 +11,7 @@ import javax.print.PrintService;
 public class ImpressaoMatricialUtil {
 
 
-	private StringBuffer saida = new StringBuffer();
+    private StringBuffer saida;
 
 	public ImpressaoMatricialUtil(StringBuffer saida) {
 		this.saida = saida;
@@ -275,8 +275,7 @@ public class ImpressaoMatricialUtil {
 
     public void imprimir() throws PrintException, IOException {
 		
-		if(this.saida == null || "".equals(this.saida)){
-			this.saida.append("parameter NULL");
+        if (this.saida == null) {
 			return;
 		}
 		
@@ -285,9 +284,8 @@ public class ImpressaoMatricialUtil {
 
     public void imprimir(PrintService impressora) throws PrintException, IOException {
 		
-		if(this.saida == null || "".equals(this.saida)){
-			this.saida.append("parameter NULL");
-			return;
+        if (this.saida == null) {
+            return;
 		}
 		
 		new ImpressoraUtil().imprimir(replaceComandosImpressao(saida.toString()).getBytes(), impressora);

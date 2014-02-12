@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
+import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ImportacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -184,7 +185,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista, Date dataDistribuidor, Long idProduto, Long idProdutoEdicao,
 			Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota,TipoMovimentoEstoque tipoMovimentoJuramentado) {
 		
-		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
+		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(idLancamento, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;
 		
@@ -363,7 +364,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 				BigInteger quantidade = movimentoCota.getQtde().add(saldoProduto);
 
-				gerarMovimentoEstoque(data, 
+				gerarMovimentoEstoque(null, 
 						              movimentoCota.getProdutoEdicao().getId(),
 						              movimentoCota.getUsuario().getId(), 
 						              quantidade, 
@@ -407,9 +408,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoque gerarMovimentoEstoque(Long idItemRecebimentoFisico, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true, null);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(idItemRecebimentoFisico, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true, null);
 
 		return movimentoEstoque;
 	}
@@ -470,7 +471,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return movimentoEstoque;
 	}
 
-	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, 
+	private MovimentoEstoque criarMovimentoEstoque(Long idItemRecebimentoFisico, Long idProdutoEdicao, Long idUsuario, 
 												   BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 												   Origem origem, Date dataOperacao, boolean isImportacao,
 												   boolean isMovimentoDiferencaAutomatica, boolean validarTransfEstoqueDiferenca, 
@@ -485,15 +486,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
-		if (dataLancamento != null) {
+		if (idItemRecebimentoFisico != null) {
 			
-			Long idItemRecebimentoFisico =
-				this.itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+			ItemRecebimentoFisico itemRecebimentoFisico = this.itemRecebimentoFisicoRepository.buscarPorId(idItemRecebimentoFisico);
 
-			if (idItemRecebimentoFisico != null) {
-			
-				movimentoEstoque.setItemRecebimentoFisico(new ItemRecebimentoFisico(idItemRecebimentoFisico));
+			if (itemRecebimentoFisico != null) {
+				movimentoEstoque.setItemRecebimentoFisico(itemRecebimentoFisico);
 			}
+			
 		}
 
 		movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
@@ -851,7 +851,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 						+ " - " + produtoEdicao.getProduto().getNomeComercial() + " - " 
 						+ produtoEdicao.getNumeroEdicao() 
 						+ "] no estoque \"" + tipoEstoque.getDescricao() 
-						+ "\", insuficiente para movimentação.");
+						+ "\", insuficiente para movimentação.", CodigoErro.SALDO_ESTOQUE_DISTRIBUIDOR_INSUFICIENTE);
 		}
 	}
 	
@@ -1065,7 +1065,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	/*
 	 * Atualiza o estoque do produto da cota juramentado.
 	 */
-	@Transactional
+	@Override
+    @Transactional
 	public EstoqueProdutoCotaJuramentado atualizarEstoqueProdutoCotaJuramentado(MovimentoEstoqueCota movimentoEstoqueCota,
 														TipoMovimentoEstoque tipoMovimentoEstoque) {
 
@@ -1298,7 +1299,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 	}
 	
-	@Transactional
+	@Override
+    @Transactional
 	public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico) {
@@ -1397,9 +1399,24 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento, Date dataOperacao) {
+	public MovimentoEstoque obterMovimentoEstoqueDoItemNotaFiscal(Long idItemNotaFiscal, TipoMovimentoEstoque tipoMovimento) {
 		
-		return movimentoEstoqueRepository.obterUltimoMovimentoRecebimentoFisico(idProdutoEdicao, tipoMovimento, dataOperacao);
+		return movimentoEstoqueRepository.obterMovimentoEstoqueDoItemNotaFiscal(
+				idItemNotaFiscal, tipoMovimento);
+		
+	}
+	
+	@Override
+	@Transactional
+	public List<Long> obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(
+			Long idProdutoEdicao, 
+			GrupoMovimentoEstoque grupoMovimentoEstoqueRepartePromocional,
+			GrupoMovimentoEstoque grupoMovimentoEstoqueEstornoRecebimentoFisico){
+		
+		return movimentoEstoqueRepository.obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(idProdutoEdicao, grupoMovimentoEstoqueRepartePromocional,
+				grupoMovimentoEstoqueEstornoRecebimentoFisico);
+		
+		
 	}
 
 }

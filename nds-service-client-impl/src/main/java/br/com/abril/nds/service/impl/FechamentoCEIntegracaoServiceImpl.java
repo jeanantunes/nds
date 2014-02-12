@@ -234,7 +234,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			return;
 		}
 		
-		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+		this.movimentoEstoqueService.gerarMovimentoEstoque(null, 
 				                                           itemFo.getProdutoEdicao().getId(), 
 				                                           usuario.getId(), 
 				                                           quantidadeEncalhe,
@@ -464,7 +464,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			return;
 		}
 		
-		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+		this.movimentoEstoqueService.gerarMovimentoEstoque(null, 
 				                                           idProdutoEdicao, 
 				                                           usuario.getId(), 
 				                                           quantidade,
@@ -516,7 +516,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	    		break;	
     	}
 		
-		this.movimentoEstoqueService.gerarMovimentoEstoque(dataOperacao, 
+		this.movimentoEstoqueService.gerarMovimentoEstoque(null, 
 				                                           movimentoEstoque.getProdutoEdicao().getId(), 
 				                                           usuario.getId(), 
 				                                           movimentoEstoque.getQtde(),

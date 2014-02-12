@@ -474,7 +474,7 @@ var analiseParcialController = $.extend(true, {
     calculaPercentualReducaoReparte: function (reparteEstudo, reparteSugerido) {
         var repEstudo = isNaN(reparteEstudo)?0:reparteEstudo;
         var repSugerido = isNaN(reparteSugerido)?0:reparteSugerido;
-        var reducaoReparte = repEstudo - repSugerido;
+        var reducaoReparte = Math.abs(repEstudo - repSugerido);
         return Math.round((reducaoReparte / repEstudo) * 10000) / 100;
     },
 
@@ -1322,9 +1322,7 @@ var analiseParcialController = $.extend(true, {
                 break;
             default:
                 var elemento = $("#elementos :selected").val();
-                if (elemento.indexOf('tipo_distribuicao_cota') != -1) {
-                    analiseParcialController.filtrarTipoDistribuicaoCota(elemento.split('_').pop());
-                }
+
                 $("#baseEstudoGridParcial").flexOptions({
                     params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
                         {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
@@ -1439,8 +1437,8 @@ var analiseParcialController = $.extend(true, {
             $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
                 .end().find('td').removeClass('sorted');
         } else {
-            var de = $("#ordenarPorDe").val() * -1;
-            var ate = $("#ordenarPorAte").val() * -1;
+            var de = $("#ordenarPorDe").val() * 1;
+            var ate = $("#ordenarPorAte").val() * 1;
 
             var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
             var sortAtribute = 'td[abbr="reparteSugerido"] div input';

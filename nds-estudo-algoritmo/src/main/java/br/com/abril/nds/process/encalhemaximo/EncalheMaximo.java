@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -53,7 +54,7 @@ public class EncalheMaximo extends ProcessoAbstrato {
 						BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 					    
 						cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-					    
+						cota.setClassificacao(ClassificacaoCota.Ajuste);
 						cotasComRepJaCalculado.add(cota);
 					}
 			    }

@@ -5,13 +5,16 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="TRIBUTO_ALIQUOTA")
+@Table(name="TRIBUTOS_ALIQUOTAS")
 public class TributoAliquota implements Serializable {
 
 	enum TipoAliquota {
@@ -46,9 +49,11 @@ public class TributoAliquota implements Serializable {
 	@GeneratedValue
 	private Long id;
 	
+	@OneToOne
 	@JoinColumn(name="tributo_id")
 	private Tributo tributo;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name="tipo_aliquota")
 	private TipoAliquota tipoAliquota;
 	

@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.fiscal.nota.GrupoTributo;
 import br.com.abril.nds.util.export.Exportable;
 
 /**

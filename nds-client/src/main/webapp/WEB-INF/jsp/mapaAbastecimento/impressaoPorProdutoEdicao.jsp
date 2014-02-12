@@ -47,7 +47,7 @@ function imprimir(){
             <tr class="class_linha_3">
               <td colspan="2" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><table width="100%" border="0" cellspacing="1" cellpadding="1">
                 <tr>
-                  <td width="9%"><strong>Produto</strong>: </td>
+                  <td width="20%"><strong>Produto</strong>: </td>
                   <td width="36%"><strong>${mapa.nomeProduto}</strong></td>
                   <td width="23%"><strong>Código de Barras:</strong></td>
                   <td width="32%">${mapa.codigoDeBarras}</td>
@@ -57,6 +57,10 @@ function imprimir(){
                   <td>${mapa.numeroEdicao}</td>
                   <td><strong>Preço Capa R$:</strong></td>
                   <td>${mapa.precoCapa}</td>
+                </tr>
+                <tr>
+                	<td><strong>Reparte Promocional</strong></td>
+                	<td>${mapa.repartePromocional}</td>
                 </tr>
               </table></td>
             </tr>
@@ -92,7 +96,6 @@ function imprimir(){
               </table></td>
             </tr>
          </c:forEach>
-           
 </table>
 </body>
 </html>

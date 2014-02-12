@@ -1,4 +1,4 @@
-<!-- histogramaPosEstudo -->
+-<!-- histogramaPosEstudo -->
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
 <script type="text/javascript" src="scripts/histogramaPosEstudo.js"></script>
 <script type="text/javascript">
@@ -172,7 +172,7 @@ $(function(){
                     <td style="border-bottom:1px solid #ccc;">Estudo</td>
                   </tr>
                   <tr>
-                    <td style="border-bottom:1px solid #ccc;">Reparte Promocional:</td>
+                    <td style="border-bottom:1px solid #ccc;">Saldo:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoRepartePromocional"></td>
                     <td style="border-bottom:1px solid #ccc;">Cota Produto:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvProduto"></td>
@@ -181,7 +181,7 @@ $(function(){
                     <td width="60" style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteMinimoEstudo"></td>
                   </tr>
                   <tr>
-                    <td style="border-bottom:1px solid #ccc;">Reserva Técnica:</td>
+                    <td style="border-bottom:1px solid #ccc;">Sobra:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReservaTecnica"></td>
                     <td style="border-bottom:1px solid #ccc;">Cota Compl:</td>
                     <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvComplementar"></td>

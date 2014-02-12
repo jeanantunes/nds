@@ -260,7 +260,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		if (cota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Cota não encontrada.");
+ "Cota não encontrada.");
 		}
 
 		boolean indEmiteNfe = (cota.getParametrosCotaNotaFiscalEletronica() != null && cota
@@ -342,8 +342,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(indFechamentoEncalhe) {
 			throw new FechamentoEncalheRealizadoException(
-					"Não é possível realizar nova conferência para data de operação [ " + DateUtil.formatarDataPTBR(dataOperacao) + "].  \n" +
-					"Fechamento de encalhe já foi realizado. ");
+                    "Não é possível realizar nova conferência para data de operação [ "
+                        + DateUtil.formatarDataPTBR(dataOperacao) + "].  \n"
+                        + "Fechamento de encalhe já foi realizado. ");
 			
 		}
 		
@@ -368,11 +369,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return false;
 	}
 	
-	/**
-	 * Obtém a quantidade de itens existentes no EstoqueProdutoEdicao
-	 * da Cota de determinado ProdutoEdicao que ainda não foram devolvidos.
-	 * 
-	 */
+	    /**
+     * Obtém a quantidade de itens existentes no EstoqueProdutoEdicao da Cota de
+     * determinado ProdutoEdicao que ainda não foram devolvidos.
+     * 
+     */
 	private BigInteger obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(Long idCota, Long idProdutoEdicao) {
 		
 		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
@@ -393,17 +394,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	
-	/**
-	 * Valida a existência de chamada de encalhe de acordo 
-	 * com a cota de operação diferenciada e produtoEdicao 
-	 * cuja dataRecolhimento esteja dentro da faixa aceitavel 
-	 * para cota de operação diferenciada.
-	 * 
-	 * @param cota
-	 * @param produtoEdicao
-	 *  
-	 * @return ChamadaEncalheCota
-	 */
+	    /**
+     * Valida a existência de chamada de encalhe de acordo com a cota de
+     * operação diferenciada e produtoEdicao cuja dataRecolhimento esteja dentro
+     * da faixa aceitavel para cota de operação diferenciada.
+     * 
+     * @param cota
+     * @param produtoEdicao
+     * 
+     * @return ChamadaEncalheCota
+     */
 	private ChamadaEncalheCota validarChamadaEncalheOperacaoDiferenciada(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
@@ -424,15 +424,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				ProdutoEdicao pEdicao = produtoEdicaoRepository.buscarPorId(produtoEdicao.getId());
 				
 				if(pEdicao == null) {
-					throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
+                    throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
 				}
 				
 				String nomeProdutoEdicao = pEdicao.getProduto().getNome();
 				
 				throw new ValidacaoException(
 						TipoMensagem.WARNING, 
-						" Não é possível realiza a conferência do produto edição parcial [" + nomeProdutoEdicao  + "]. " +
-						" Data de operação excedendo ou fora do primeiro dia de recolhimento de operação diferenciada. "   );		
+                        " Não é possível realiza a conferência do produto edição parcial ["
+                            + nomeProdutoEdicao
+                            + "]. "
+                            + " Data de operação excedendo ou fora do primeiro dia de recolhimento de operação diferenciada. ");
 				
 			}
 			
@@ -482,8 +484,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void identificarPrimeiroDiaRecolhimentoOperacaoDiferenciada(List<DiaSemanaRecolhimento> diasSemanaRecolhimentoOperacaoDiferenciada) {
 		
-		//Se o dia programado de recolhimento for também dia de operação diferenciada então este
-		//é o primeiro dia de recolhimento
+        // Se o dia programado de recolhimento for também dia de operação
+        // diferenciada então este
+        // é o primeiro dia de recolhimento
 		for(DiaSemanaRecolhimento dia : diasSemanaRecolhimentoOperacaoDiferenciada) {
 			if(dia.indDiaProgramadoRecolhimento && dia.indOperacaoDiferenciada) {
 				dia.indPrimeiroDiaRecolhimento = true;
@@ -521,18 +524,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Retorna uma lista ordenada de objetos com informações sobre
-	 * as datas da semana de recolhimento da operação diferenciada
-	 * sendo esta semana baseada na data de recolhimento informada 
-	 * por parâmetro.
-	 * 
-	 * @param numeroCota
-	 * @param dataRecolhimentoCE
-	 * @param primeiroDiaDaSemanaDistribuidor
-	 * 
-	 * @return List - DiaSemanaRecolhimento
-	 */
+	    /**
+     * Retorna uma lista ordenada de objetos com informações sobre as datas da
+     * semana de recolhimento da operação diferenciada sendo esta semana baseada
+     * na data de recolhimento informada por parâmetro.
+     * 
+     * @param numeroCota
+     * @param dataRecolhimentoCE
+     * @param primeiroDiaDaSemanaDistribuidor
+     * 
+     * @return List - DiaSemanaRecolhimento
+     */
 	private List<DiaSemanaRecolhimento> obterListaDiaSemanaRecolhimentoOperacaoDiferenciada(
 			Integer numeroCota, 
 			Date dataRecolhimentoCE, 
@@ -578,14 +580,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	}
 	
-	/**
-	 * Retorna a chamada de encalhe do produto edição e cota em questão.
-	 * 
-	 * @param cota
-	 * @param produtoEdicao
-	 * 
-	 * @return ChamadaEncalheCota
-	 */
+	    /**
+     * Retorna a chamada de encalhe do produto edição e cota em questão.
+     * 
+     * @param cota
+     * @param produtoEdicao
+     * 
+     * @return ChamadaEncalheCota
+     */
 	private ChamadaEncalheCota obterChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		boolean postergado = false;
@@ -601,8 +603,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
-					" Este produto edição não possui CE. "   );				
+                    " Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()
+                        + "] da cota. " + " Este produto edição não possui CE. ");
 		
 		} 
 			
@@ -611,14 +613,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Retorna a chamada de encalhe do produto edição parcial e cota em questão.
-	 * 
-	 * @param cota
-	 * @param produtoEdicao
-	 * 
-	 * @return ChamadaEncalheCota
-	 */
+	    /**
+     * Retorna a chamada de encalhe do produto edição parcial e cota em questão.
+     * 
+     * @param cota
+     * @param produtoEdicao
+     * 
+     * @return ChamadaEncalheCota
+     */
 	private ChamadaEncalheCota obterChamadaEncalheParaCotaProdutoEdicaoParcial(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		boolean postergado = false;
@@ -632,8 +634,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
-					" Este produto edição não possui CE. "   );
+                    " Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()
+                        + "] da cota. " + " Este produto edição não possui CE. ");
 			
 		}
 			
@@ -643,22 +645,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	
-	/**
-	 * Valida a existência de chamada de encalhe de acordo com a
-	 * cota e produtoEdicao cuja dataRecolhimento esteja dentro da 
-	 * faixa aceitavel (de acordo com  parâmetro do Distribuidor e dataOperacao atual).
-	 * 
-	 * Obs.: A conferência de encalhe de ProdutoEdicao parcial só será possível se
-	 * houver chamadaEncalhe para o mesmo na dataOperacao atual, senão sera lançada 
-	 * EncalheRecolhimentoParcialException.
-	 * 
-	 * Se encontrada, será retornada esta chamadaEncalhe para o produtoEdicao em questão.
-	 * 
-	 * @param cota
-	 * @param produtoEdicao
-	 *  
-	 * @return ChamadaEncalhe
-	 */
+	    /**
+     * Valida a existência de chamada de encalhe de acordo com a cota e
+     * produtoEdicao cuja dataRecolhimento esteja dentro da faixa aceitavel (de
+     * acordo com parâmetro do Distribuidor e dataOperacao atual).
+     * 
+     * Obs.: A conferência de encalhe de ProdutoEdicao parcial só será possível
+     * se houver chamadaEncalhe para o mesmo na dataOperacao atual, senão sera
+     * lançada EncalheRecolhimentoParcialException.
+     * 
+     * Se encontrada, será retornada esta chamadaEncalhe para o produtoEdicao em
+     * questão.
+     * 
+     * @param cota
+     * @param produtoEdicao
+     * 
+     * @return ChamadaEncalhe
+     */
 	private ChamadaEncalheCota validarChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 		
 		ChamadaEncalheCota chamadaEncalheCota = null;
@@ -688,35 +691,36 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Verifica se o periodo do lançamento do produto edição em recolhimento é FINAL 
-	 * 
-	 * @param idProdutoEdicao - identificador do produto edição
-	 * @param idCota - identificador da cota
-	 * @param dataRecolhimento - data de recolhimento do produto
-	 * @return boolean
-	 */
+	    /**
+     * Verifica se o periodo do lançamento do produto edição em recolhimento é
+     * FINAL
+     * 
+     * @param idProdutoEdicao - identificador do produto edição
+     * @param idCota - identificador da cota
+     * @param dataRecolhimento - data de recolhimento do produto
+     * @return boolean
+     */
 	private boolean isPeriodoLancamentoRecolhimentoFinal(Long idProdutoEdicao, Long idCota, Date dataRecolhimento){
 		
 		return periodoLancamentoParcialRepository.isLancamentoConferenciaEncalheCotaPeriodoFinal(idProdutoEdicao, idCota, dataRecolhimento);
 	}
 	
-	/**
-	 * Valida se o produto edição (de acordo com sua data de recolhimento encontrada) pode ser 
-	 * recolhido na data de operação informada.
-	 *    
-	 * @param dataOperacao
-	 * @param dataPrimeiroRecolhimento
-	 * @param idProdutoEdicao
-	 * @param indOperacaoDiferenciada
-	 */
+	    /**
+     * Valida se o produto edição (de acordo com sua data de recolhimento
+     * encontrada) pode ser recolhido na data de operação informada.
+     * 
+     * @param dataOperacao
+     * @param dataPrimeiroRecolhimento
+     * @param idProdutoEdicao
+     * @param indOperacaoDiferenciada
+     */
 	@Transactional(readOnly = true)
 	public void isDataRecolhimentoValida(Date dataOperacao, Date dataPrimeiroRecolhimento, Long idProdutoEdicao, boolean indOperacaoDiferenciada) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
 		if(produtoEdicao == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
 		}
 		
 		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
@@ -729,8 +733,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				throw new ValidacaoException(
 						TipoMensagem.WARNING, 
-						"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br> " +
-						"Não é permitida antecipação de produtos pelo distribuidor. "   );
+                        "Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao + "]. <br> "
+                            + "Não é permitida antecipação de produtos pelo distribuidor. ");
 						
 			}
 			
@@ -742,8 +746,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" Distribuidor não possui parametrização de dias de recolhimento para o " +
-					"<br> fornecedor do produto edição [" + nomeProdutoEdicao  + "]."   );		
+                    " Distribuidor não possui parametrização de dias de recolhimento para o "
+                        + "<br> fornecedor do produto edição [" + nomeProdutoEdicao + "].");
 		}
 		
 		for(Date item : datasRecolhimento){
@@ -757,13 +761,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(indOperacaoDiferenciada) {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
-					" Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. "   );		
+                    " Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                        + " Data de operação excedendo ou fora dos dias de recolhimento de operação diferenciada. ");
 		} else {
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
-					" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
+                    " Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao + "]. <br>"
+                        + " Data de operação excedendo ou fora dos dias de recolhimento possíveis. ");
 		}
 
 	}
@@ -803,15 +807,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return this.conferenciaEncalheRepository.isLancamentoParcial(idProdutoEdicao);
 	}
 	
-	/**
-	 * Obtém lista de conferenciaEncalhe com os produtosEdicao que fazem parte da chamaEncalhe atual para 
-	 * a cota em questão ou que estejam dentro da semana de recolhimento. Caso uma operação de conferencia de 
-	 * encalhe esteja sendo realizada, serão adicionados apenas produtosEdicao ainda não tenham sido adicionados
-	 * a lista de conferencia de encalhe existente.
-	 * 
-	 * @param idControleConferenciaEncalheCota
-	 * @param listaConferenciaEncalhe
-	 */
+	    /**
+     * Obtém lista de conferenciaEncalhe com os produtosEdicao que fazem parte
+     * da chamaEncalhe atual para a cota em questão ou que estejam dentro da
+     * semana de recolhimento. Caso uma operação de conferencia de encalhe
+     * esteja sendo realizada, serão adicionados apenas produtosEdicao ainda não
+     * tenham sido adicionados a lista de conferencia de encalhe existente.
+     * 
+     * @param idControleConferenciaEncalheCota
+     * @param listaConferenciaEncalhe
+     */
 	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(
 			Integer numeroCota,
 			Date dataOperacao,
@@ -937,7 +942,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
-				" Cota possui operação difenciada, pode ser operada apenas: " + obterDescricaoDiasSemana(diasSemanaOperacaoDiferenciada));
+                " Cota possui operação difenciada, pode ser operada apenas: "
+                    + obterDescricaoDiasSemana(diasSemanaOperacaoDiferenciada));
 		
 	}
 	
@@ -1050,7 +1056,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(conferenciaEncalhe == null) {
 				
-				throw new IllegalStateException("Conferência de encalhe não encontrada");
+                throw new IllegalStateException("Conferência de encalhe não encontrada");
 				
 			}
 			
@@ -1087,14 +1093,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return conferenciaEncalheDTO;
 	}
 
-	/**
-	 * Retona a quantidade de dias que a dataOperacao é maior que a dataRecolhimentoDistribuidor mais 1.
-	 * Caso a dataOperacao seja menor que a dataRecolhimentoDistribuidor retornará null. 
-	 * 
-	 * @param dataRecolhimentoDistribuidor
-	 * 
-	 * @return Integer
-	 */
+	    /**
+     * Retona a quantidade de dias que a dataOperacao é maior que a
+     * dataRecolhimentoDistribuidor mais 1. Caso a dataOperacao seja menor que a
+     * dataRecolhimentoDistribuidor retornará null.
+     * 
+     * @param dataRecolhimentoDistribuidor
+     * 
+     * @return Integer
+     */
 	private Integer obterQtdeDiaAposDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -1116,12 +1123,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (numeroCota == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
 		
 		if (idProdutoEdicao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Id Prdoduto Edição é obrigatório.");
 		}
 		
 		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
@@ -1191,9 +1198,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return produtoEdicaoDTO;
 	}
 	
-	/*
-	 * Obtem a maior data de lançamnto de um produto edição
-	 */
+	    /*
+     * Obtem a maior data de lançamnto de um produto edição
+     */
 	private void atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(ProdutoEdicao produtoEdicao, ProdutoEdicaoDTO produtoEdicaoDTO) {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -1204,8 +1211,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" O produto edição [ " + produtoEdicao.getNomeComercial() + " ] não possui C.E. ou data de recolhimento prevista, " +
-					" portanto não poder adicionado a conferência de encalhe."   );
+ " O produto edição [ "
+                + produtoEdicao.getNomeComercial() + " ] não possui C.E. ou data de recolhimento prevista, "
+                + " portanto não poder adicionado a conferência de encalhe.");
 			
 		}
 		
@@ -1221,12 +1229,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (numeroCota == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
 		
 		if (sm == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
 		}
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
@@ -1338,12 +1346,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (numeroCota == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Número cota é obrigatório.");
 		}
 		
 		if (codigoDeBarras == null || codigoDeBarras.trim().isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
 		}
 		
 		List<ProdutoEdicao> produtosEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
@@ -1447,12 +1455,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return null;
 	}
 	
-	/**
-	 * Retorna a dataRecolhimento referencia sendo esta igual a 
-	 * dataOperacao - qtdDiasEncalheAtrasadoAceitavel(parâmetro do distribuidor). 
-	 * 
-	 * @return dataRecolhimentoReferencia.
-	 */
+	    /**
+     * Retorna a dataRecolhimento referencia sendo esta igual a dataOperacao -
+     * qtdDiasEncalheAtrasadoAceitavel(parâmetro do distribuidor).
+     * 
+     * @return dataRecolhimentoReferencia.
+     */
 	private Date obterDataRecolhimentoReferencia() {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -1464,10 +1472,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return dataRecolhimentoReferencia;
 	}
 	
-	/**
-	 * Associa a Cobrança relativa a uma operação 
-	 * ControleConferenciaEncalheCota.
-	 */
+	    /**
+     * Associa a Cobrança relativa a uma operação
+     * ControleConferenciaEncalheCota.
+     */
 	private void associarCobrancaConferenciaEncalheCota(Long idControleConferenciaEncalheCota, String nossoNumero) {
 		
 		CobrancaControleConferenciaEncalheCota cobrancaControleConferenciaEncalheCota = 
@@ -1501,10 +1509,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	/**
-	 * Reseta dados financeiros na finalização da conferencia de encalhe
-	 * @param controleConfEncalheCota
-	 */
+	    /**
+     * Reseta dados financeiros na finalização da conferencia de encalhe
+     * 
+     * @param controleConfEncalheCota
+     */
 	private void resetarDadosFinalizacaoConferencia(ControleConferenciaEncalheCota controleConfEncalheCota){
 		
 		if(	controleConfEncalheCota.getId() != null) {
@@ -1680,20 +1689,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return (documentoImpressaoDistribuidor != null) ? documentoImpressaoDistribuidor : false; 
 	}
 	
-	/**
-	 * Gera o movimento financeiro referente a operação de conferência de encalhe e
-	 * em seguida dispara componentes responsáveis pela geração da cobrança.
-	 * 
-	 * @param controleConferenciaEncalheCota
-	 * 
-	 * @return Set - String
-	 * @throws GerarCobrancaValidacaoException 
-	 */
+	    /**
+     * Gera o movimento financeiro referente a operação de conferência de
+     * encalhe e em seguida dispara componentes responsáveis pela geração da
+     * cobrança.
+     * 
+     * @param controleConferenciaEncalheCota
+     * 
+     * @return Set - String
+     * @throws GerarCobrancaValidacaoException
+     */
 	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
 		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
-		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
+        // CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(controleConferenciaEncalheCota.getCota(), 
         		                                                                       controleConferenciaEncalheCota.getDataOperacao());
 		
@@ -1714,7 +1725,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			boolean existeBoletoAntecipado =  this.boletoService.existeBoletoAntecipadoCotaDataRecolhimento(controleConferenciaEncalheCota.getCota().getId(), 
 					                                                                                        controleConferenciaEncalheCota.getDataOperacao());
 			
-			//se a cota for unificadora ou unificada não pode gerar cobrança nesse ponto
+            // se a cota for unificadora ou unificada não pode gerar cobrança
+            // nesse ponto
 			boolean cotaUnificadora = this.cotaUnificacaoRepository.verificarCotaUnificada(
 					controleConferenciaEncalheCota.getCota().getNumeroCota()),
 					
@@ -1743,7 +1755,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(isConferenciaRealizada){
 
-			    //EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+                // EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
 			    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
 			    		                                                                                       controleConferenciaEncalheCota.getDataOperacao());
 			}
@@ -1758,19 +1770,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return nossoNumeroCollection;
 	}
 	
-	/**
-	 * Faz o cancelamento de dados financeiros relativos a 
-	 * operação de conferência de encalhe em questão.
-	 * 
-	 * @param controleConferenciaEncalheCota
-	 */
+	    /**
+     * Faz o cancelamento de dados financeiros relativos a operação de
+     * conferência de encalhe em questão.
+     * 
+     * @param controleConferenciaEncalheCota
+     */
 	private void resetarDadosFinanceirosConferenciaEncalheCota(Long idControleConferenciaEncalheCota, Long idCota) {
 		
 		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
+        // CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
@@ -1785,7 +1798,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
 			
-			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+            // EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
 			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacao);
 		}
 	}
@@ -1802,18 +1815,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Insere os dados da conferência de encalhe.
-	 * 
-	 * @param controleConfEncalheCota
-	 * @param listaConferenciaEncalhe
-	 * @param listaIdConferenciaEncalheParaExclusao
-	 * @param usuario
-	 * @param statusOperacao
-	 * @param indConferenciaContingencia
-	 * 
-	 * @return ControleConferenciaEncalheCota
-	 */
+	    /**
+     * Insere os dados da conferência de encalhe.
+     * 
+     * @param controleConfEncalheCota
+     * @param listaConferenciaEncalhe
+     * @param listaIdConferenciaEncalheParaExclusao
+     * @param usuario
+     * @param statusOperacao
+     * @param indConferenciaContingencia
+     * 
+     * @return ControleConferenciaEncalheCota
+     */
 	private ControleConferenciaEncalheCota inserirDadosConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
@@ -2041,16 +2054,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Obtém o tipo de movimento de estoque do distribuidor.
-	 * 
-	 * @param juramentada
-	 * @param dataRecolhimentoDistribuidor
-	 * @param dataConferenciaEncalhe
-	 * @param mapaTipoMovimentoEstoque
-	 * 
-	 * @return TipoMovimentoEstoque
-	 */
+	    /**
+     * Obtém o tipo de movimento de estoque do distribuidor.
+     * 
+     * @param juramentada
+     * @param dataRecolhimentoDistribuidor
+     * @param dataConferenciaEncalhe
+     * @param mapaTipoMovimentoEstoque
+     * 
+     * @return TipoMovimentoEstoque
+     */
 	private TipoMovimentoEstoque obterTipoMovimentoEstoqueDistribuidor(
 													boolean juramentada,
 													Date dataRecolhimentoDistribuidor,
@@ -2080,14 +2093,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	/**
-	 * Verifica se a dataRecolhimentoDistribuidor é menor ou igual a dataConferenciaEncalhe.
-	 * 
-	 * @param dataRecolhimentoDistribuidor
-	 * @param dataConferenciaEncalhe
-	 * 
-	 * @return boolean
-	 */
+	    /**
+     * Verifica se a dataRecolhimentoDistribuidor é menor ou igual a
+     * dataConferenciaEncalhe.
+     * 
+     * @param dataRecolhimentoDistribuidor
+     * @param dataConferenciaEncalhe
+     * 
+     * @return boolean
+     */
 	private boolean isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(Date dataRecolhimentoDistribuidor, Date dataConferenciaEncalhe) {
 		
 		if (dataRecolhimentoDistribuidor == null){
@@ -2103,12 +2117,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Obtém um mapa de tipoMovimentoEstoque utilizados 
-	 * pela funcionalidade de conferência de encalhe.
-	 * 
-	 * @return Map<GrupoMovimentoEstoque, TipoMovimentoEstoque>
-	 */
+	    /**
+     * Obtém um mapa de tipoMovimentoEstoque utilizados pela funcionalidade de
+     * conferência de encalhe.
+     * 
+     * @return Map<GrupoMovimentoEstoque, TipoMovimentoEstoque>
+     */
 	private Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> obterMapaTipoMovimentoEstoque() {
 		
 		Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque = new HashMap<GrupoMovimentoEstoque, TipoMovimentoEstoque>();
@@ -2133,14 +2147,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Atualiza os dados da notaFiscalEntradaCota relacionada com 
-	 * uma operação de conferência de encalhe.
-	 * 
-	 * @param notaFiscalEntradaCota
-	 * @param usuario
-	 * @param dataCriacao
-	 */
+	    /**
+     * Atualiza os dados da notaFiscalEntradaCota relacionada com uma operação
+     * de conferência de encalhe.
+     * 
+     * @param notaFiscalEntradaCota
+     * @param usuario
+     * @param dataCriacao
+     */
 	private NotaFiscalEntradaCota atualizarCabecalhoNotaFiscalEntradaCota(Long idControleConferenciaEncalheCota, NotaFiscalEntradaCota notaFiscalEntradaCota, Integer numeroCota, Usuario usuario, Date dataCriacao) {
 		
 		if(notaFiscalEntradaCota == null) {
@@ -2193,13 +2207,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ParametroEmissaoNotaFiscal parametroEmissaoNF = parametroEmissaoNotaFiscalRepository.obterParametroEmissaoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 			
 			if(parametroEmissaoNF == null) {
-				throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
+                throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 			}
 			
 			NaturezaOperacao tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.RECEBIMENTO_MERCADORIAS_ENCALHE);
 
 			if(tipoNF == null) {
-				throw new IllegalStateException("TipoNotaFiscal não parametrizada");
+                throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 			}
 			
 	 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
@@ -2340,14 +2354,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		itemRecebimentoFisicoRepository.adicionar(itemRecebimentoFisico);
 	}
 	
-	/**
-	 * Se uma conferência de encalhe ja foi finalizada e depois reaberta, a mesma
-	 * terá que cancelar tudo o que for referente a cobrança da mesma
-	 * 
-	 * @param idControleConferenciaEncalheCota
-	 * @param conferenciaReaberta
-	 * @throws ConferenciaEncalheFinalizadaException
-	 */
+	    /**
+     * Se uma conferência de encalhe ja foi finalizada e depois reaberta, a
+     * mesma terá que cancelar tudo o que for referente a cobrança da mesma
+     * 
+     * @param idControleConferenciaEncalheCota
+     * @param conferenciaReaberta
+     * @throws ConferenciaEncalheFinalizadaException
+     */
 	private void desfazerCobrancaConferenciaEncalheReaberta(Long idControleConferenciaEncalheCota) {
 		
 		if(idControleConferenciaEncalheCota == null) {
@@ -2361,7 +2375,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         
         Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
         
-        //COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        // COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO
+        // CONSIGNADA ATÉ FECHAMENTO DO DIA
         boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota, dataOperacao);
 		
 		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || (isAlteracaoTipoCotaNaDataAtual)){
@@ -2377,20 +2392,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}	
 		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
 
-			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+            // EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
 			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacao);	
 		}
 	}
 	
-	/**
-	 * Valida se a quantidade da conferência de encalhe não excede o reparte 
-	 * de um produtoEdicao para determinada cota.
-	 * 
-	 * @param conferenciaEncalhe
-	 * @param cota
-	 * @param dataOperacao
-	 * @param indConferenciaContingencia
-	 */
+	    /**
+     * Valida se a quantidade da conferência de encalhe não excede o reparte de
+     * um produtoEdicao para determinada cota.
+     * 
+     * @param conferenciaEncalhe
+     * @param cota
+     * @param dataOperacao
+     * @param indConferenciaContingencia
+     */
 	@Transactional(readOnly=true)
 	public boolean validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
@@ -2414,7 +2429,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) > 0) {
-				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+                // throw new ValidacaoException(TipoMensagem.WARNING,
+                // "Conferência de encalhe está excedendo quantidade de reparte.");
 				return true;
 			}
 			
@@ -2424,7 +2440,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
 			if(qtdeNew.compareTo( qtdeOld.add(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) ) > 0) {
-				//throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
+                // throw new ValidacaoException(TipoMensagem.WARNING,
+                // "Conferência de encalhe está excedendo quantidade de reparte.");
 				return true;
 			}
 			
@@ -2759,16 +2776,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalheRepository.adicionar(conferenciaEncalhe);
 	}
 	
-	/**
-	 * Obtém a ChamadaEncalheCota de acordo com a cota, idProdutoEdicao 
-	 * e dataRecolhimento informados.
-	 *  
-	 * @param numeroCota
-	 * @param dataRecolhimentoReferencia
-	 * @param idProdutoEdicao
-	 * 
-	 * @return ChamadaEncalheCota
-	 */
+	    /**
+     * Obtém a ChamadaEncalheCota de acordo com a cota, idProdutoEdicao e
+     * dataRecolhimento informados.
+     * 
+     * @param numeroCota
+     * @param dataRecolhimentoReferencia
+     * @param idProdutoEdicao
+     * 
+     * @return ChamadaEncalheCota
+     */
 	private ChamadaEncalheCota obterChamadaEncalheCotaParaConfEncalhe(
 			Integer numeroCota,
 			Date dataRecolhimento,
@@ -2823,7 +2840,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ctrlConfEncalheCota.setDataOperacao(dataOperacaoDistribuidor);
 			ctrlConfEncalheCota.setStatus(statusOperacao);
 
-			//Método não pode haver concorrência
+            // Método não pode haver concorrência
 			synchronized (this) {
 				ctrlConfEncalheCota.setControleConferenciaEncalhe(parametrosDistribuidorService.obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
 			}
@@ -2886,7 +2903,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
 								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
 								+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
-								+ "] não possui registro de estoque da cota.");
+                    + "] não possui registro de estoque da cota.");
 				
 			}
 			
@@ -2916,7 +2933,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
 								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
 								+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
-								+ "] não possui registro de estoque da cota.");
+                    + "] não possui registro de estoque da cota.");
 				
 			}
 			
@@ -2993,7 +3010,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							+ movimentoEstoque.getProdutoEdicao().getProduto().getCodigo() + " - "
 							+ movimentoEstoque.getProdutoEdicao().getProduto().getNomeComercial()
 							+ " - " + movimentoEstoque.getProdutoEdicao().getNumeroEdicao()
-							+ "] não possui registro de estoque do distribuidor.");
+                + "] não possui registro de estoque do distribuidor.");
 			
 		}
 		
@@ -3011,7 +3028,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							+ produtoEdicao.getProduto().getNomeComercial()
 							+ " - " + produtoEdicao.getNumeroEdicao()
 							+ "] no estoque \"" + tipoEstoque.getDescricao()
-							+ "\", insuficiente para movimentação.");
+                + "\", insuficiente para movimentação.");
 		}
 	}
 
@@ -3028,7 +3045,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							+ produtoEdicao.getProduto().getNomeComercial()
 							+ " - "
 							+ produtoEdicao.getNumeroEdicao()
-							+ "] no estoque da cota, insuficiente para movimentação.");
+ + "] no estoque da cota, insuficiente para movimentação.");
 		}
 	}
 
@@ -3114,14 +3131,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BOLETO_OU_RECIBO;
 	}	
 	
-	/**
-	 * Obtém o valor total de débito ou credito de uma cota na dataOperacao.	
-	 * 
-	 * @param numeroCota
-	 * @param dataOperacao
-	 * 
-	 * @return BigDecimal
-	 */
+	    /**
+     * Obtém o valor total de débito ou credito de uma cota na dataOperacao.
+     * 
+     * @param numeroCota
+     * @param dataOperacao
+     * 
+     * @return BigDecimal
+     */
 	@Transactional(readOnly = true)
 	public BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
 		
@@ -3148,11 +3165,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				continue;
 			}
 			
-			if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
+            if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCota.getTipoLancamento())) {
 				
 				totalDebitoCredito = totalDebitoCredito.add(debitoCreditoCota.getValor());
 				
-			} else if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCota.getTipoLancamento())) {
+            } else if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCota.getTipoLancamento())) {
 				
 				totalDebitoCredito = totalDebitoCredito.subtract(debitoCreditoCota.getValor());
 				
@@ -3163,14 +3180,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return totalDebitoCredito;
 	}
 
-	/**
-	 * Obtém lista de debito crédito relativa a cobrança 
-	 * relacionada com uma operação de encalhe.
-	 * 
-	 * @param controleConferenciaEncalheCota
-	 * 
-	 * @return List - ComposicaoCobrancaSlipDTO
-	 */
+	    /**
+     * Obtém lista de debito crédito relativa a cobrança relacionada com uma
+     * operação de encalhe.
+     * 
+     * @param controleConferenciaEncalheCota
+     * 
+     * @return List - ComposicaoCobrancaSlipDTO
+     */
 	@Transactional(readOnly=true)
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota){
 		
@@ -3193,11 +3210,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	/**
-	 * Obtem valor total para geração de crédito na C.E.
-	 * @param idControleConferenciaEncalheCota
-	 * @return BigDecimal
-	 */
+	    /**
+     * Obtem valor total para geração de crédito na C.E.
+     * 
+     * @param idControleConferenciaEncalheCota
+     * @return BigDecimal
+     */
 	@Transactional
 	@Override
 	public BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota){

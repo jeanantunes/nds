@@ -3,6 +3,7 @@ package br.com.abril.nds.exception;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.enums.CodigoErro;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -23,6 +24,8 @@ public class ValidacaoException extends RuntimeException implements Serializable
 	
 	private String url;
 	
+	private CodigoErro codigoErro;
+	
 	/**
 	 * Construtor.
 	 * 
@@ -31,6 +34,18 @@ public class ValidacaoException extends RuntimeException implements Serializable
 	 */
 	public ValidacaoException(TipoMensagem tipoMensagem, String mensagem) {
 		
+		this.validacao = new ValidacaoVO(tipoMensagem, mensagem);
+	}
+	
+	/**
+	 * Construtor.
+	 * 
+	 * @param tipoMensagem - tipo de mensagem
+	 * @param mensagem - mensagem
+	 * @param codigoErro
+	 */
+	public ValidacaoException(TipoMensagem tipoMensagem, String mensagem, CodigoErro codigoErro) {
+		this.codigoErro = codigoErro;
 		this.validacao = new ValidacaoVO(tipoMensagem, mensagem);
 	}
 	
@@ -109,6 +124,15 @@ public class ValidacaoException extends RuntimeException implements Serializable
 		return url;
 	}
 	
+
+	public CodigoErro getCodigoErro() {
+		return codigoErro;
+	}
+
+	public void setCodigoErro(CodigoErro codigoErro) {
+		this.codigoErro = codigoErro;
+	}
+
 	@Override
 	public String getMessage() {
 		

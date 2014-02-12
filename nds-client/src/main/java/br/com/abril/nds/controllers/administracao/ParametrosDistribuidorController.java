@@ -37,7 +37,6 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.fiscal.notafiscal.RegimeTributario;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.RegimeTributarioRepository;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
@@ -146,7 +145,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		for(RegimeTributario re : regimesTributarios) {
 			ItemDTO<Long, String> reKV = new ItemDTO<Long, String>();
-			reKV.setKey(re.getCodigo());
+			reKV.setKey(Long.valueOf(re.getCodigo()));
 			reKV.setValue(re.getDescricao());
 			listaRegimesTributarios.add(reKV);
 		}

@@ -5,8 +5,10 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
@@ -77,5 +79,23 @@ public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<Endereco
 		query.setParameter("idCota", idCota);
 		
 		return (Long) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemDTO<String, String>> buscarMunicipio() {
+		
+		StringBuilder hql  = new StringBuilder();
+		
+		hql.append(" select endereco.cidade as key, endereco.cidade as value ")
+		   .append(" from EnderecoCota enderecoCota ")
+		   .append(" join enderecoCota.endereco endereco ")
+		   .append(" group by endereco.cidade");
+
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
+		
+		return query.list();
 	}
 }

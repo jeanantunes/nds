@@ -16,6 +16,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -67,6 +69,8 @@ public class HistogramaVendasController extends BaseController {
 	private static final String HISTOGRAMA_SESSION_ATTRIBUTE = "resultadoHistogramaVendas";
 	private String[] faixaVendaInicial = {"0-0","1-4","5-9","10-19","20-49","50-999999"};
 	
+    private static final Logger LOGGER = LoggerFactory.getLogger(HistogramaVendasController.class);
+
 	@Autowired
 	private Result result;
 	
@@ -186,11 +190,11 @@ public class HistogramaVendasController extends BaseController {
 					out.close();
 			 
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+            LOGGER.debug("Erro na conversão de tipos.", e);
 		}
 		catch (Exception e) {
 			if(e instanceof NoDocumentException){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Capa não encontrada para a edição.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Capa não encontrada para a edição.");
 			}
 		}
 		
@@ -240,13 +244,13 @@ public class HistogramaVendasController extends BaseController {
 		result.include("classificacaoLabel", classificacaoLabel);
 		
 		NumberFormat f = NumberFormat.getNumberInstance();
-		// informações do resumo do histograma (parte inferior da tela)
+        // informações do resumo do histograma (parte inferior da tela)
 		this.session.setAttribute(REPARTE_TOTAL, f.format(reparteTotalDistribuidor / nrEdicoes.length));
 		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
 		
 		
 		
-		//Pesquisar base de estudo e salvar em sessão
+        // Pesquisar base de estudo e salvar em sessão
 		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaVendaInicial, nrEdicoes);
 	
 		session.setAttribute(HISTOGRAMA_SESSION_ATTRIBUTE, list);
@@ -331,17 +335,15 @@ public class HistogramaVendasController extends BaseController {
 		
 		List<AnaliseHistogramaDTO> lista = (List<AnaliseHistogramaDTO>)session.getAttribute(HISTOGRAMA_SESSION_ATTRIBUTE);
 		
-		AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
-		
 		if (lista==null || lista.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"A última pesquisa realizada não obteve resultado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		}
+        AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
 		
 		if(fileType.equals(FileType.XLS)){
 			RodapeHistogramaVendaDTO rodapeDTO = montarRodapeParaXLS(footer, abrangenciaDistribuicao, abrangenciaVenda, eficienciaVenda);
 			
-			FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
+            FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
 					this.getNDSFileHeader(), 
 					getFiltroSessao(), 
 					rodapeDTO, 
@@ -379,8 +381,8 @@ public class HistogramaVendasController extends BaseController {
 
 	private void tratarFiltro(FiltroHistogramaVendas filtroAtual)throws ValidacaoException {
 
-		if(StringUtils.isEmpty(filtroAtual.getCodigo()) & StringUtils.isEmpty(filtroAtual.getProduto())){ 
-			throw new ValidacaoException(TipoMensagem.WARNING,"Favor informar um código ou nome de produto.");
+        if (StringUtils.isEmpty(filtroAtual.getCodigo())) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Favor informar um código ou nome de produto.");
 		}
 		
 		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session

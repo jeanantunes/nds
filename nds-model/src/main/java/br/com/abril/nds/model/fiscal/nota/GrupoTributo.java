@@ -10,10 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
-@Table(name="GRUPO_TRIBUTO")
+//@Entity
+//@Table(name="GRUPO_TRIBUTO")
 public class GrupoTributo implements Serializable {
-
+/*
 	private static final long serialVersionUID = 5392503333835977858L;
 	
 	@Id
@@ -74,5 +74,5 @@ public class GrupoTributo implements Serializable {
 		} else if (!this.getId().equals(other.id))
 			return false;
 		return true;
-	}
+	}*/
 }

@@ -642,9 +642,10 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    //usado para exibir as variaveis do estudo
-//            myWindow = window.open('', '_blank');
-//            myWindow.document.write(result.list[0]);
-//            myWindow.focus();
+            
+			myWindow = window.open('', '_blank');
+            myWindow.document.write(result.list[0]);
+            myWindow.focus();
             
             var isLiberado = result.list[2];
             	
@@ -655,7 +656,12 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             if(typeof(matrizDistribuicao)=="object"){
             		matrizDistribuicao.carregarGrid();
             }
-                    
+            
+            $("#codigoPesquisaBases").remove();
+    		$("#produtoPesquisaBases").remove();
+    		$("#produtoPesquisaBases").remove();
+    		$("#edicaoProdCadastradosGrid").remove();
+            
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
 	};
