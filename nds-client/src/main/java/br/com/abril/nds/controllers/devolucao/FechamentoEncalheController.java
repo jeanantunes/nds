@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.ValidationException;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -64,8 +64,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * Classe responsável pelo controle das ações referentes à
- * tela de chamadão de publicações.
+ * Classe responsável pelo controle das ações referentes à tela de chamadão de
+ * publicações.
  * 
  * @author Discover Technology
  */
@@ -155,7 +155,8 @@ public class FechamentoEncalheController extends BaseController {
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(
 						TipoMensagem.WARNING, 
-						"Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
+ "Não houve conferência de encalhe nesta data."), "mensagens")
+                    .recursive().serialize();
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, 
@@ -240,7 +241,8 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.getSession().removeAttribute("listaDeGrid");
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
+        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"),
+                "result").recursive().serialize();
 	}
 	
 	private List<FechamentoFisicoLogicoDTO> mergeItensFechamento(List<FechamentoFisicoLogicoDTO> fechamentosBanco,
@@ -346,7 +348,8 @@ public class FechamentoEncalheController extends BaseController {
 	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas, boolean postergarTodasCotas) {
 		
 		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Postergação não pode ser realizada antes da data atual!");
 		} 
 		/**
 		 * 09/10/2013
@@ -354,7 +357,8 @@ public class FechamentoEncalheController extends BaseController {
 		 * Remover a validacao da semana de recolhimento e permitir qualquer data futura em relacao a data de operacao
 		 */
 		else if (!dataPostergacao.after(distribuidorService.obterDataOperacaoDistribuidor())) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "A Data de Postergação deve ser maior que a data de operação!");
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "A Data de Postergação deve ser maior que a data de operação!");
 		} 
 		
 		try {
@@ -371,7 +375,7 @@ public class FechamentoEncalheController extends BaseController {
 				
 			
 			} else {
-				//Adiciona as contas com dívida
+                // Adiciona as contas com dívida
 				idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotasAusentes));
 				
 				this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
@@ -439,7 +443,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 			this.result.use(Results.json()).from(
 					new ValidacaoVO(TipoMensagem.WARNING, 
-							"Já existe cobrança gerada para a data de operação atual, continuar irá sobrescreve-la. Deseja continuar?"), 
+                            "Já existe cobrança gerada para a data de operação atual, continuar irá sobrescreve-la. Deseja continuar?"),
 							"result").recursive().serialize();
 			return;
 		}
@@ -477,9 +481,11 @@ public class FechamentoEncalheController extends BaseController {
 			}
 
 		} catch (ValidacaoException e) {
+            LOGGER.debug(e.getMessage(), e);
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 			return;
 		} catch (GerarCobrancaValidacaoException e) {
+            LOGGER.debug(e.getMessage(), e);
 			this.result.use(Results.json()).from(
 				new ValidacaoException(TipoMensagem.WARNING, e.getValidacaoVO().getListaMensagens()).getValidacao(), "result").recursive().serialize();
 			return;
@@ -507,11 +513,11 @@ public class FechamentoEncalheController extends BaseController {
 
 			}	
 		} catch (GerarCobrancaValidacaoException e) {
-
+            LOGGER.debug(e.getMessage(), e);
 			ex = e;
 
 		} catch (Exception e) {
-
+            LOGGER.debug(e.getMessage(), e);
 			this.setStatusCobrancaCotas(STATUS_FINALIZADO);
 
 			throw e;
@@ -551,7 +557,7 @@ public class FechamentoEncalheController extends BaseController {
 												                   validacaoVO);					
 			}
 		} catch (Exception e) {
-
+            LOGGER.error(e.getMessage(), e);
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 			
 		} finally {
@@ -638,7 +644,7 @@ public class FechamentoEncalheController extends BaseController {
 					FechamentoFisicoLogicoDTO.class, this.response);
 				
 			} catch (Exception e) {
-				
+                LOGGER.error(e.getMessage(), e);
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 			}
 		}
@@ -654,7 +660,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 			if (dataEncalhe == null) {
 				
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 			
 			ValidacaoVO validacaoCotaConferenciaNaoFinalizada = getValidacaoCotaConferenciaNaoFinalizada(dataEncalhe);
@@ -676,19 +682,22 @@ public class FechamentoEncalheController extends BaseController {
 			this.session.setAttribute(SET_NOSSO_NUMERO, nossoNumero);
 			
 		} catch (Exception e) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!"));
+            LOGGER.error(e.getMessage(), e);
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+                    "Erro ao tentar encerrar a operação de encalhe!"));
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+        this.result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result")
+                .recursive().serialize();
 	}
 	
-	/**
-	 * Cria um objeto {@link ValidacaoVO} com informações das cotas
-	 * que possuem conferencia de encalhe não finalizada.
-	 * 
-	 * @param dataEncalhe
-	 */
+	    /**
+     * Cria um objeto {@link ValidacaoVO} com informações das cotas que possuem
+     * conferencia de encalhe não finalizada.
+     * 
+     * @param dataEncalhe
+     */
 	private ValidacaoVO getValidacaoCotaConferenciaNaoFinalizada(Date dataEncalhe) {
 		
 		ValidacaoVO validacao = null;
@@ -698,7 +707,7 @@ public class FechamentoEncalheController extends BaseController {
 		if(listaCotaConferenciaNaoFinalizada!=null && !listaCotaConferenciaNaoFinalizada.isEmpty()) {
 			
 			StringBuffer msg = new StringBuffer();
-			msg.append("A seguintes cotas possuem conferencia de encalhe não confirmada: ");
+            msg.append("A seguintes cotas possuem conferencia de encalhe não confirmada: ");
 			
 			for(CotaDTO cota : listaCotaConferenciaNaoFinalizada) {
 				
@@ -717,39 +726,35 @@ public class FechamentoEncalheController extends BaseController {
 		return validacao;
 	}
 	
-	/**
-	 * Caso a operação realizada seja de VERIFICACAO
-	 * 
-	 * 		Serão realizadas validações retornando
-	 * 		para view mensagens de sucesso ou erro 
-	 * 		em relação a estas validações. As validações são:
-	 * 		
-	 * 		- Verifica se existem cotas com conferencia não finalizada
-	 * 		  Caso existam retorna mensagem de WARNING com uma lista
-	 * 		  destas cota.
-	 * 
-	 * 		- Verifica se existem cota ausentes retornando uma 
-	 * 		  mensagem informando se foram encontradas ou não
-	 * 		  cotas ausentes.
-	 * 
-	 * 
-	 * Caso a operação seja de CONFIRMACAO
-	 * 	
-	 *		Sera realizada uma validação (Se existem
-	 *		cotas com conferencia não finalizada).
-	 *		Caso a validação seja de sucesso sera 
-	 *		efetuado o encerramento do encalhe
-	 * 	
-	 * 
-	 * @param dataEncalhe
-	 * @param operacao
-	 */
+	    /**
+     * Caso a operação realizada seja de VERIFICACAO
+     * 
+     * Serão realizadas validações retornando para view mensagens de sucesso ou
+     * erro em relação a estas validações. As validações são:
+     * 
+     * - Verifica se existem cotas com conferencia não finalizada Caso existam
+     * retorna mensagem de WARNING com uma lista destas cota.
+     * 
+     * - Verifica se existem cota ausentes retornando uma mensagem informando se
+     * foram encontradas ou não cotas ausentes.
+     * 
+     * 
+     * Caso a operação seja de CONFIRMACAO
+     * 
+     * Sera realizada uma validação (Se existem cotas com conferencia não
+     * finalizada). Caso a validação seja de sucesso sera efetuado o
+     * encerramento do encalhe
+     * 
+     * 
+     * @param dataEncalhe
+     * @param operacao
+     */
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
 		
 		if (dataEncalhe == null) {
 				
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 		}
 		
 		
@@ -794,11 +799,14 @@ public class FechamentoEncalheController extends BaseController {
 			throw ve;
 			
 		} catch (Exception e) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
+            LOGGER.error(e.getMessage(), e);
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR,
+                    "Erro ao tentar encerrar a operação de encalhe! " + e.getMessage()));
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"),"result").recursive().serialize();
+        this.result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result")
+                .recursive().serialize();
 	}
 
 	private String resolveSort(String sortname) {
@@ -825,10 +833,11 @@ public class FechamentoEncalheController extends BaseController {
 			
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
 				
-				String msgPesquisaConsolidado = "Você está tentando fazer uma " +
+                String msgPesquisaConsolidado = "Você está tentando fazer uma "
+                    +
 						"pesquisa em modo consolidado (soma de todos os boxes). " +
-						"Já existem dados salvos em modo de pesquisa por box. " +
-						"Se você continuar, os dados serão perdidos. " +
+ "Já existem dados salvos em modo de pesquisa por box. "
+                    + "Se você continuar, os dados serão perdidos. " +
 						"Tem certeza que deseja continuar ?";
 				
 				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msgPesquisaConsolidado), "result").recursive().serialize();
@@ -841,9 +850,9 @@ public class FechamentoEncalheController extends BaseController {
 		
 		} else if ( fechamentoEncalheService.existeFechamentoEncalheConsolidado(filtro)){
 			
-			String msgPesquisaPorBox = "Você está tentando fazer uma pesquisa por box. " +
-					"Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). " +
-					"Não será possível realizar a pesquisa.";
+            String msgPesquisaPorBox = "Você está tentando fazer uma pesquisa por box. "
+                + "Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). "
+                + "Não será possível realizar a pesquisa.";
 			
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, msgPesquisaPorBox), "result").recursive().serialize();
 		
@@ -901,7 +910,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	//------------------
-	// Analítico Encalhe
+    // Analítico Encalhe
 	//------------------
 	
 	@Path("/analitico")
@@ -965,6 +974,7 @@ public class FechamentoEncalheController extends BaseController {
 					AnaliticoEncalheVO.class, this.response);
 				
 			} catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
 			}
 		}

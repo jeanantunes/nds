@@ -203,7 +203,7 @@ table.dadosTab { margin-left: 370px;}
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
                     <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
-                    <td>Data de Lancamento: <span><fmt:formatDate value="${lancamento.dataLancamentoPrevista}" /></span></td>
+                    <td>Data de Lancamento: <span><fmt:formatDate value="${lancamento.dataLancamentoDistribuidor}" /></span></td>
                     <td>Reparte Distribuido: <span id="total_reparte_estudo_cabecalho">${estudoCota.estudo.qtdeReparte}</span></td>
                     <td id="tdEstudoCopiado">Reparte Copiado: <span id="spanReparteCopiado">${reparteCopiado}</span></td>
                     <td>Pacote Padrão: <span>${estudoCota.estudo.produtoEdicao.pacotePadrao}</span></td>
