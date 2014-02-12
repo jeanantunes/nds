@@ -622,7 +622,7 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).from("").serialize();
 	}
 	
-	            /*
+	                /*
      * Verifica se o produto informado esta em processo de recolhimento caso a
      * diferença seja redirecionada para cota.
      */
@@ -1236,7 +1236,7 @@ TipoMensagem.ERROR, "Tipo de estoque inválido para Alteração de Reparte");
 		result.use(Results.json()).from(new ConfirmacaoVO(true), "result").serialize();
 	}
 	
-	            /**
+	                /**
      * Método responsável por carregar todos os combos da tela de consulta.
      */
 	public void carregarCombosConsulta() {
@@ -1500,7 +1500,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		this.carregarComboTiposDiferenca();
 	}
 	
-	            /**
+	                /**
      * Método responsável por carregar o combo de tipos de diferença.
      */
 	private void carregarComboTiposDiferenca() {
@@ -1549,7 +1549,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		result.include("listaTiposDiferenca", listaTiposDiferenca);
 	}
 	
-	            /**
+	                /**
      * Método responsável por carregar o combo de fornecedores.
      */
 	private List<ItemDTO<Long, String>> carregarComboFornecedores(String codigoProduto) {
@@ -1578,7 +1578,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
-	            /*
+	                /*
      * Obtém o filtro de pesquisa para exportação.
      */
 	private FiltroConsultaDiferencaEstoqueDTO obterFiltroParaExportacao() {
@@ -1620,7 +1620,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		return filtroSessao;
 	}
 	
-	            /*
+	                /*
      * Processa o resultado das diferenças para lançamento.
      * 
      * @param listaDiferencas - lista de diferenças
@@ -1695,7 +1695,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		result.use(Results.json()).from(resultadoLancamentoDiferenca, "result").recursive().serialize();
 	}
 	
-	            /*
+	                /*
      * Processa o resultado das novas diferenças para lançamento.
      * 
      * @param listaDiferencas - lista de diferenças
@@ -1808,7 +1808,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		return null;
 	}
 	
-	            /*
+	                /*
      * Processa o resultado das diferenças.
      * 
      * @param listaDiferencas - lista de diferenças
@@ -1933,7 +1933,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		result.use(Results.json()).withoutRoot().from(resultadoDiferencaVO).recursive().serialize();
 	}
 	
-	            /*
+	                /*
      * Carrega o filtro da pesquisa de lançamento de diferenças.
      * 
      * @param dataMovimento - data do movimento
@@ -1977,7 +1977,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		return filtroAtual;
 	}
 	
-	            /*
+	                /*
      * Carrega o filtro da pesquisa de consulta de diferenças.
      * 
      * @param codigoProduto - código do produto
@@ -2039,7 +2039,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		return filtroAtual;
 	}
 	
-	            /*
+	                /*
      * Configura a paginação do filtro de pesquisa de lançamentos.
      * 
      * @param filtro - filtro da pesquisa
@@ -2068,7 +2068,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}
 	}
 	
-	            /*
+	                /*
      * Configura a paginação do filtro de pesquisa.
      * 
      * @param filtro - filtro da pesquisa
@@ -2097,7 +2097,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 		}
 	}
 	
-	            /*
+	                /*
      * Valida a entrada de dados para pesquisa de lançamentos de diferença de
      * estoque.
      * 
@@ -2118,7 +2118,7 @@ TipoMensagem.WARNING,
 		}
 	}
 	
-	            /*
+	                /*
      * Valida a entrada de dados para pesquisa de diferença de estoque.
      * 
      * @param codigoProduto
@@ -2167,7 +2167,7 @@ TipoMensagem.WARNING,
 		}
 	}
 	
-	            /**
+	                /**
      * Valida a entrada de dados para pesquisa de lançamentos de diferença de
      * estoque.
      * 
@@ -2249,7 +2249,7 @@ TipoMensagem.WARNING,
 		}
 	}
 	
-	            /*
+	                /*
      * Efetua a validação da somatória das quantidades do rateio x quantidade da
      * diferença.
      * 
@@ -2277,7 +2277,7 @@ TipoMensagem.WARNING,
 		}
 	}
 	
-	            /*
+	                /*
      * Valida se há cotas duplicadas no rateio.
      * 
      * @param listaNovosRateios - lista dos novos rateios
@@ -2522,7 +2522,7 @@ TipoMensagem.WARNING,
 		}
 	}
 		
-	            /*
+	                /*
      * Obtém uma diferença pesquisada pelo seu id.
      * 
      * @param idDiferenca - id da diferença
@@ -2551,7 +2551,7 @@ TipoMensagem.WARNING,
 		return null;
 	}
 	
-	            /*
+	                /*
      * Limpa os dados da sessão.
      */
 	private void limparSessao() {
@@ -3077,7 +3077,8 @@ TipoMensagem.WARNING,
 
 		tableModel.setRows(lista);
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		tableModel.setTotal( detalheDiferencaCota!= null && detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota() != null 
+        tableModel
+                .setTotal(detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota() != null
 								? detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota().intValue():0);
 
 		detalheDiferencaCota.setTableModel(tableModel);
@@ -3108,7 +3109,7 @@ TipoMensagem.WARNING,
 			relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
 	}
 	
-	            /**
+	                /**
      * Adiciona ou remove um item da lista de item adicionado
      * 
      * @param idDiferenca - id da diferença selecionada
@@ -3145,7 +3146,7 @@ TipoMensagem.WARNING,
 		this.result.nothing();
 	}
 	
-	            /**
+	                /**
      * Adiciona ou remove todos os itens da pesquisa a lista de itens
      * selecionados da sessão.
      * 
