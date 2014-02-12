@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -215,7 +214,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 	}
 		
 	@SuppressWarnings("unchecked")
-	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto){
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto, String classificacaoProduto){
 			
 			StringBuilder sql = new StringBuilder("");
 	
@@ -232,7 +231,12 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			sql.append("  			join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
 			sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
 			sql.append(" 			left join tipo_classificacao_produto tcp on tcp.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID");
-			sql.append(" where cota_id = :cotaBusca ");
+
+            if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+                sql.append(" 			and tcp.ID = :classificacaoProduto");
+            }
+
+            sql.append(" where cota_id = :cotaBusca ");
             sql.append(" and produto.CODIGO_ICD = :produtoBusca ");
 			sql.append("	group by edicao order by edicao desc limit 6");
 			
@@ -241,7 +245,12 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			
 			query.setParameter("cotaBusca", cota.getId());
 			query.setParameter("produtoBusca", codigoProduto);
-			query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
+
+            if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+                query.setParameter("classificacaoProduto", classificacaoProduto);
+            }
+
+            query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 			
 			return query.list();
 	}

@@ -684,8 +684,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			param.put("roteiro",filtro.getRoteiro());
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			param.put("codigoCidadeIBGE",filtro.getCodMunicipio());
+		if(filtro.getDescMunicipio()!= null){
+			param.put("cidadeCota",filtro.getDescMunicipio());
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){
@@ -719,9 +719,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			hql.append(" JOIN pdv.enderecos enderecoPDV ")
-				.append(" JOIN enderecoPDV.endereco endereco ");
+		if(filtro.getDescMunicipio()!= null){
+			hql.append(" JOIN cota.enderecos enderecoCota ")
+				.append(" JOIN enderecoCota.endereco endereco ");
 		}
 		
 		hql.append(" WHERE ")
@@ -764,8 +764,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			hql.append(" AND roteiro.id =:roteiro ");
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			hql.append(" AND endereco.codigoCidadeIBGE =:codigoCidadeIBGE ");
+		if(filtro.getDescMunicipio()!= null){
+			hql.append(" AND endereco.cidade =:cidadeCota ");
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){
@@ -2287,6 +2287,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		query.setParameter("tipoCota", tipoCota);
 		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaTipoDTO.class));
 
 		query.setFirstResult( (rp * page) - rp);
@@ -2307,6 +2311,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" where (pdv.caracteristicas.pontoPrincipal=true or pdv.caracteristicas.pontoPrincipal is null) ");
 		hql.append(" and (enderecoCota.principal=true or enderecoCota.principal is null) ");		
 		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota ");
+		hql.append(" and cota.situacaoCadastro in (:situacoesCadastro) ");
 	}
 
 	private void gerarOrderByObterCotaPorTipo(StringBuilder hql,
@@ -2343,6 +2348,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("tipoCota", tipoCota);
+		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}

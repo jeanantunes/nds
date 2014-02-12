@@ -804,7 +804,6 @@ public class RecebimentoFisicoController extends BaseController {
 	public void salvarDadosItensDaNotaFiscal(List<RecebimentoFisicoDTO> itensRecebimento) {
 		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
-		notaFiscalEntrada.setUsuario(getUsuarioLogado());
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			atualizarItensRecebimentoEmSession(itensRecebimento);
@@ -1381,7 +1380,6 @@ public class RecebimentoFisicoController extends BaseController {
 	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
 		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
-		notaFiscalEntrada.setUsuario(getUsuarioLogado());
 		
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			atualizarItensRecebimentoEmSession(itensRecebimento);

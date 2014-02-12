@@ -13,6 +13,8 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrada, Long> {
 
+	List<Long> pesquisarItensNotaExpedidos(Long idNota);
+	
 	Integer obterQuantidadeNotasFicaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 		
 	List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
@@ -23,13 +25,11 @@ public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrad
 
 	void inserirNotaFiscal(NotaFiscalEntrada notaFiscal);
 	
-	
 	List<NotaFiscalEntrada> obterNotaFiscalEntrada(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 
 	List<ItemDTO<Long, String>> obterListaFornecedorNotaFiscal(List<Long> listaIdNotaFiscal);
 
 	boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
 			Long idPessoaJuridica, Date dataEmissao);
-
-	boolean notaPossuiItemExpedido(Long idNota);
+	
 }

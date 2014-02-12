@@ -17,9 +17,9 @@ import br.com.abril.nds.repository.PessoaRepository;
 
 /**
  * Implementação do repositório de Pessoa
- 
+ * 
  * @author francisco.garcia
- *
+ * 
  */
 @Repository
 public class PessoaRepositoryImpl extends AbstractRepositoryModel<Pessoa, Long> implements
@@ -48,15 +48,7 @@ public class PessoaRepositoryImpl extends AbstractRepositoryModel<Pessoa, Long> 
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<PessoaJuridica> buscarPorCnpj(String cnpj) {
-		cnpj = "345";
-		String hql = "from PessoaJuridica";
-		Query query = getSession().createQuery(hql);
-		//query.setParameter("cnpj", cnpj);
-		return query.list();
-	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar){

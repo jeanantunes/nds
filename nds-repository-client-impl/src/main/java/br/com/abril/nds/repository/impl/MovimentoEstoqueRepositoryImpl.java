@@ -21,7 +21,6 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
-import br.com.abril.nds.util.Util;
 
 @Repository
 public class MovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoque, Long> 
@@ -302,32 +301,59 @@ implements MovimentoEstoqueRepository {
 		query.setResultTransformer(Transformers.aliasToBean(MovimentoEstoque.class));
 		return query.list();
 	}
-
+	
 
 	@Override
-	public MovimentoEstoque obterUltimoMovimentoRecebimentoFisico(
-			Long idProdutoEdicao, TipoMovimentoEstoque tipoMovimento,
-			Date dataOperacao) {
+	public MovimentoEstoque obterMovimentoEstoqueDoItemNotaFiscal(
+			Long idItemNotaFiscal, 
+			TipoMovimentoEstoque tipoMovimento) {
 		
-		StringBuilder hql = new StringBuilder("select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
-			.append(" join movimentoEstoque.produtoEdicao produtoEdicao ")
-			.append(" join movimentoEstoque.tipoMovimento tipoMovimento ")
-			
-			.append(" where produtoEdicao.id = :idProdutoEdicao ")
-			.append(" and tipoMovimento.id = :idTipoMovimento ")
-			.append(" and movimentoEstoque.data =:dataOperacao ")
-			.append(" order by movimentoEstoque.data desc ");
-			
+		StringBuilder hql = new StringBuilder(" select movimentoEstoque from MovimentoEstoque movimentoEstoque ")
+			.append(" join movimentoEstoque.itemRecebimentoFisico itemRecebimentoFisico  	")
+			.append(" join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal				")
+			.append(" join movimentoEstoque.tipoMovimento tipoMovimento 					")
+			.append(" where ")
+			.append(" tipoMovimento.id = :idTipoMovimento and 	")
+			.append(" itemNotaFiscal.id = :idItemNotaFiscal		");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setMaxResults(1);
 		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("idItemNotaFiscal", idItemNotaFiscal);
 		query.setParameter("idTipoMovimento", tipoMovimento.getId());
-		query.setParameter("dataOperacao", dataOperacao);
 		
 		return (MovimentoEstoque) query.uniqueResult();
 	}
 
+	@Override
+	public List<Long> obterMovimentosRepartePromocionalSemEstornoRecebimentoFisico(
+			Long idProdutoEdicao,
+			GrupoMovimentoEstoque grupoMovimentoEstoqueRepartePromocional,
+			GrupoMovimentoEstoque grupoMovimentoEstoqueEstornoRecebimentoFisico) {
+		
+		StringBuilder sql = new StringBuilder(" SELECT ME.ID FROM MOVIMENTO_ESTOQUE ME ")
+		.append(" INNER JOIN ITEM_RECEB_FISICO IRF ON ( IRF.ID = ME.ITEM_REC_FISICO_ID ) ")
+		.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = ME.PRODUTO_EDICAO_ID) ")
+		.append(" INNER JOIN TIPO_MOVIMENTO TM_PROMOCIONAL ON (ME.TIPO_MOVIMENTO_ID = TM_PROMOCIONAL.ID) ")
+		.append(" WHERE PE.ID = :idProdutoEdicao and  TM_PROMOCIONAL.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoqueRepartePromocional ")
+		.append(" AND IRF.ID NOT IN ( " )
+		
+		.append(" SELECT IRF.ID FROM MOVIMENTO_ESTOQUE ME ")
+		.append(" INNER JOIN ITEM_RECEB_FISICO IRF ON ( IRF.ID = ME.ITEM_REC_FISICO_ID ) ")
+		.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = ME.PRODUTO_EDICAO_ID) ")
+		.append(" INNER JOIN TIPO_MOVIMENTO TM_ESTORNO ON (ME.TIPO_MOVIMENTO_ID = TM_ESTORNO.ID) ")
+		.append(" WHERE PE.ID = :idProdutoEdicao and TM_ESTORNO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoqueEstornoRecebimentoFisico ")
+		
+		.append(" ) " );
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("grupoMovimentoEstoqueRepartePromocional", grupoMovimentoEstoqueRepartePromocional.name());
+		query.setParameter("grupoMovimentoEstoqueEstornoRecebimentoFisico", grupoMovimentoEstoqueEstornoRecebimentoFisico.name());
+		
+		return query.list();
+	}
+	
 }

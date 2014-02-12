@@ -499,6 +499,8 @@ public class MixCotaProdutoController extends BaseController {
 				}
 				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+			} else {
+			    this.result.use(Results.nothing());
 			}
 		}else{
 			

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -63,5 +64,7 @@ public interface EnderecoService {
 	List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade);
 	
 	List<String> obterBairrosPDVBoxEspecial(String uf, String cidade);
+	
+	List<ItemDTO<String, String>> buscarMunicipioAssociadasCota();
 	
 }

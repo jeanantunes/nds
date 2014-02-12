@@ -10,7 +10,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -196,7 +197,7 @@ public class CotaAusenteController extends BaseController {
 			grid = this.efetuarConsulta(filtro);
 			
 		} catch(ValidacaoException e) {
-		
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status=TipoMensagem.WARNING;	
@@ -275,6 +276,7 @@ public class CotaAusenteController extends BaseController {
 		try {
 			data = DateUtil.parseDataPTBR(dataAusencia);
 		} catch (Exception e) {
+            LOGGER.debug(e.getMessage(), e);
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_INFORMADA_INVALIDA);
 		}
 
@@ -289,7 +291,7 @@ public class CotaAusenteController extends BaseController {
 		return data;
 	}
 	
-	        /**
+	                /**
      * Executa tratamento de paginação em função de alteração do filtro de
      * pesquisa.
      * 
@@ -309,7 +311,7 @@ public class CotaAusenteController extends BaseController {
 	}
 	
 	
-	        /**
+	                /**
      * Obtém os produtos edição disponíveis para uma cota ausente que foi buscar
      * seu reparte
      * 
@@ -321,8 +323,8 @@ public class CotaAusenteController extends BaseController {
         List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis =
 			this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
 		
-        result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1)
-                .total(listaProdutosEdicaoDisponíveis.size()).serialize();
+        result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(
+                listaProdutosEdicaoDisponíveis.size()).serialize();
 		
 		}
 		
@@ -345,11 +347,13 @@ public class CotaAusenteController extends BaseController {
 			mensagens.add(SUCESSO_CANCELAR_COTA_AUSENTE);
 			
 		} catch(ValidacaoException e) {
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status=TipoMensagem.WARNING;
 		
 		} catch(TipoMovimentoEstoqueInexistenteException e) {
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.add(e.getMessage());
 			status=TipoMensagem.WARNING;
@@ -368,7 +372,7 @@ public class CotaAusenteController extends BaseController {
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 		
-	        /**
+	                /**
      * Declara cota como ausente e envia seu reparte para suplementar
      * 
      * @param numCota - Número da Cota
@@ -396,15 +400,18 @@ public class CotaAusenteController extends BaseController {
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
 		} catch(ValidacaoException e) {
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status=TipoMensagem.WARNING;
 		
 		} catch(InvalidParameterException e) {
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
 			status=TipoMensagem.WARNING;			
 		}catch(TipoMovimentoEstoqueInexistenteException e) {
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.add(e.getMessage());
 			status=TipoMensagem.WARNING;
@@ -422,7 +429,7 @@ public class CotaAusenteController extends BaseController {
 		result.use(Results.json()).from(retorno, "result").serialize();
 	}
 
-	        /**
+	                /**
      * Obtém movimentos para realização do Rateio
      * 
      * @param numCota
@@ -439,6 +446,7 @@ public class CotaAusenteController extends BaseController {
 				this.cotaAusenteService.verificarExistenciaReparteCota(dataOperacao, numeroCota);
 				
 			} catch (ValidacaoException e) {
+                LOGGER.debug(e.getMessage(), e);
 				
 				List<String> mensagens = new ArrayList<String>();
 				
@@ -484,7 +492,7 @@ public class CotaAusenteController extends BaseController {
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
 	
-	        /**
+	                /**
      * Verifica se a redistribuição esta sendo direcionada para a mesma cota que
      * esta sendo cadastrada como ausente.
      * 
@@ -540,19 +548,19 @@ public class CotaAusenteController extends BaseController {
 			mensagens.add(SUCESSO_RATEIO);
 			
 		} catch (ValidacaoException e) {
-			
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.addAll(e.getValidacao().getListaMensagens());
 			status = TipoMensagem.WARNING;
 		
 		} catch (InvalidParameterException e) {
-			
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
 			status = TipoMensagem.WARNING;	
 			
 		} catch (TipoMovimentoEstoqueInexistenteException e) {
-			
+            LOGGER.debug(e.getMessage(), e);
 			mensagens.clear();
 			mensagens.add(e.getMessage());
 			status = TipoMensagem.WARNING;
@@ -573,7 +581,7 @@ public class CotaAusenteController extends BaseController {
 		this.result.use(Results.json()).from(retorno, "result").serialize();
 	}
 	
-	        /**
+	                /**
      * Exporta os dados da pesquisa.
      * 
      * @param fileType - tipo de arquivo

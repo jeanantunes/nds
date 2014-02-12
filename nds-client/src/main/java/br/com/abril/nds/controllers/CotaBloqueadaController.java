@@ -46,16 +46,6 @@ public class CotaBloqueadaController extends BaseController {
 		
 	}
 
-    private Map<Integer, String> obterUsuariosEmConferenciaEncalhe(){
-		
-		synchronized (this.session.getServletContext()) {
-			
-			@SuppressWarnings("unchecked")
-			Map<Integer, String> mapaUsuarioConferencia = (LinkedHashMap<Integer, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
-			
-			return mapaUsuarioConferencia;
-		}
-	}
 
 	private Map<Integer, String> obterCotasEmConferenciaEncalhe(){
 		
@@ -87,8 +77,6 @@ public class CotaBloqueadaController extends BaseController {
 		
 		Map<Integer, String> mapaCotaConferidaUsuario = this.obterCotasEmConferenciaEncalhe();
 		
-		Map<Integer, String> mapaUsuarioConferencia = this.obterUsuariosEmConferenciaEncalhe();
-		
 		List<CotaBloqueadaVO> cbsVO = new ArrayList<CotaBloqueadaVO>();
 		
 		if (mapaCotaConferidaUsuario!=null && !mapaCotaConferidaUsuario.isEmpty()){
@@ -97,9 +85,7 @@ public class CotaBloqueadaController extends BaseController {
 				
 				Cota c = this.cotaService.obterPorNumeroDaCota(entry.getKey());
 				
-				String sessionId = entry.getValue();
-				
-				cbsVO.add(new CotaBloqueadaVO(mapaUsuarioConferencia.get(sessionId),
+                cbsVO.add(new CotaBloqueadaVO(entry.getValue(),
 						                      c.getNumeroCota(),
 						                      c.getPessoa().getNome()));
 				

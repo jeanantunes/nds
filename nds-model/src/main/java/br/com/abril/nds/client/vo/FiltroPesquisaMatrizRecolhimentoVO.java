@@ -1,5 +1,6 @@
 package br.com.abril.nds.client.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,9 +14,14 @@ import br.com.abril.nds.vo.PaginacaoVO;
  * @author Discover Technology
  */
 @Exportable
-public class FiltroPesquisaMatrizRecolhimentoVO {
+public class FiltroPesquisaMatrizRecolhimentoVO implements Serializable {
 	
-	@Export(label="Semana")
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7085318512478940528L;
+    
+    @Export(label = "Semana")
 	private Integer anoNumeroSemana;
 	
 	@Export(label="Data")

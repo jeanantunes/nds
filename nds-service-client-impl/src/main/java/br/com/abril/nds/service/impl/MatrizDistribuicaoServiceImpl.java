@@ -541,13 +541,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
     EstudoGerado estudoCopia = new EstudoGerado();
     
-	BeanUtils.copyProperties(estudo, estudoCopia, new String[] {"id", "lancamentoID", "lancamentos", "estudoCotas"});
+	BeanUtils.copyProperties(estudo, estudoCopia, new String[] {"id", "lancamentoID", "lancamentos", "estudoCotas", "dataLancamento"});
 	estudoCopia.setDataAlteracao(new Date());
 	estudoCopia.setLiberado(false);
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCotaGerado>());
 	estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
 	estudoCopia.setLancamentoID(lancamento.getId());
     estudoCopia.setIdEstudoOrigemCopia(estudo.getId());
+    estudoCopia.setDataLancamento(lancamento.getDataLancamentoPrevista());
 
     Long id = this.estudoService.obterUltimoAutoIncrement();
     

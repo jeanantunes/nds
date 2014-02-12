@@ -30,34 +30,35 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 /**
- * Controller responsável pela lógica de visualização 
- * referentes a funcionalidade de cadastro de endereços. 
+ * Controller responsável pela lógica de visualização referentes a
+ * funcionalidade de cadastro de endereços.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Resource
 @Path("/cadastro/endereco")
 public class EnderecoController extends BaseController {
 
-	/**
-	 * Constante que representa o nome do atributo com a lista de endereços 
-	 * armazenado na sessão para serem persistidos na base. 
-	 */
+	    /**
+     * Constante que representa o nome do atributo com a lista de endereços
+     * armazenado na sessão para serem persistidos na base.
+     */
 	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR = "";
 
-	/**
-	 * Constante que representa o nome do atributo com a lista de endereços 
-	 * armazenado na sessão para serem persistidos na base. 
-	 */
+	    /**
+     * Constante que representa o nome do atributo com a lista de endereços
+     * armazenado na sessão para serem persistidos na base.
+     */
 	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_REMOVER = "";
 	
 	public static  String ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = "";
 	
-	/**
-	 * Atributo armazenado na sessão que, indica se existe endereços pendentes de persistência
-	 * Mantendo o status caso o usuário troque de aba e ainda não tenha confirmado as suas atividades na aba endereços
-	 */
+	    /**
+     * Atributo armazenado na sessão que, indica se existe endereços pendentes
+     * de persistência Mantendo o status caso o usuário troque de aba e ainda
+     * não tenha confirmado as suas atividades na aba endereços
+     */
 	public static  String ENDERECO_PENDENTE = "";
 	
 	@Autowired
@@ -146,14 +147,15 @@ public class EnderecoController extends BaseController {
 		ATRIBUTO_SESSAO_LISTA_ENDERECOS_EXIBIR = listaExibir;
 	}
 	
-	/**
-	 * ENDERECO - SESSAO
-	 * 
-	 * Método que realiza a pesquisa dos endereços cadastrados na sessão.
-	 * @param tela
-	 * @param sortname
-	 * @param sortorder
-	 */
+	    /**
+     * ENDERECO - SESSAO
+     * 
+     * Método que realiza a pesquisa dos endereços cadastrados na sessão.
+     * 
+     * @param tela
+     * @param sortname
+     * @param sortorder
+     */
 	@Post
 	public void pesquisarEnderecos( Tela tela, String sortname, String sortorder) {
 			
@@ -243,12 +245,14 @@ public class EnderecoController extends BaseController {
 		this.session.setAttribute(ATRIBUTO_SESSAO_LISTA_ENDERECOS_SALVAR, listaEnderecoAssociacao);
 	}
 
-	/**
-	 * ENDERECO - SESSAO
-	 * 
-	 * Método responsável por incluir/alterar um endereço para a pessoa em questão. 
-	 * @param enderecoAssociacao
-	 */
+	    /**
+     * ENDERECO - SESSAO
+     * 
+     * Método responsável por incluir/alterar um endereço para a pessoa em
+     * questão.
+     * 
+     * @param enderecoAssociacao
+     */
 	public void incluirNovoEndereco(Tela tela, EnderecoAssociacaoDTO enderecoAssociacao) {
 		
 		tela.setarParametros();
@@ -329,12 +333,13 @@ public class EnderecoController extends BaseController {
 		this.pesquisarEnderecos(tela,null, null);
 	}
 	
-	/**
-	 * ENDERECO - SESSAO
-	 * 
-	 * Método que irá remover um endereço a partir de seu ID.  
-	 * @param idEnderecoAssociacao
-	 */
+	    /**
+     * ENDERECO - SESSAO
+     * 
+     * Método que irá remover um endereço a partir de seu ID.
+     * 
+     * @param idEnderecoAssociacao
+     */
 	@Post
 	public void removerEndereco(Tela tela,Long idEnderecoAssociacao) {
 		
@@ -379,12 +384,13 @@ public class EnderecoController extends BaseController {
 		this.pesquisarEnderecos(tela,null, null);
 	}
 
-	/**
-	 * ENDERECO - SESSAO
-	 * 
-	 * Método responsável por preparar um endereço para a edição.
-	 * @param idEnderecoAssociacao
-	 */
+	    /**
+     * ENDERECO - SESSAO
+     * 
+     * Método responsável por preparar um endereço para a edição.
+     * 
+     * @param idEnderecoAssociacao
+     */
 	@Post
 	public void editarEndereco(Tela tela,Long idEnderecoAssociacao) {
 		
@@ -423,13 +429,11 @@ public class EnderecoController extends BaseController {
 			
 			Endereco endereco = this.enderecoService.buscarEnderecoPorId(idEnderecoAssociacao);
 
-			if (endereco.getCep() != null) {
-			
-				endereco.setCep(retirarFormatacaoCep(endereco.getCep()));
-			}
-			
 			if (endereco != null){
-				
+                if (endereco.getCep() != null) {
+                    
+                    endereco.setCep(retirarFormatacaoCep(endereco.getCep()));
+                }
 				enderecoAssociacao = new EnderecoAssociacaoDTO(
 						false, 
 						endereco, 
@@ -449,11 +453,12 @@ public class EnderecoController extends BaseController {
 		this.result.use(Results.json()).from(enderecoAssociacao, "result").recursive().serialize();
 	}
 	
-	/**
-	 * Método responsável pela obtenção dos dados que irão preencher o combo de UF's.
-	 * 
-	 * @param tela
-	 */
+	    /**
+     * Método responsável pela obtenção dos dados que irão preencher o combo de
+     * UF's.
+     * 
+     * @param tela
+     */
 	public void obterDadosComboUF() {
 		
 		List<String> ufs = this.enderecoService.obterUnidadeFederacaoBrasil();
@@ -467,7 +472,7 @@ public class EnderecoController extends BaseController {
 			
 		if (listaExibir!=null && listaExibir.size() > 0){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Já existe associação de endereço para este PDV.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Já existe associação de endereço para este PDV.");
 		}
 	}
 	
@@ -478,18 +483,19 @@ public class EnderecoController extends BaseController {
 			
 			if (item.getEndereco().getCep().equals(enderecoAssociacao.getEndereco().getCep())&&(item.getEndereco().getNumero().equals(enderecoAssociacao.getEndereco().getNumero()))){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING,"Endereço já cadastrado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Endereço já cadastrado.");
 			}
 		}
 	}
 
-	/**
-	 * Método responsável pela obtenção dos dados que irão preencher o combo de Cidades.
-	 * 
-	 * @param tela
-	 * 
-	 * @param siglaUF
-	 */
+	    /**
+     * Método responsável pela obtenção dos dados que irão preencher o combo de
+     * Cidades.
+     * 
+     * @param tela
+     * 
+     * @param siglaUF
+     */
 	public void autoCompletarLocalidadePorNome(String nomeLocalidade, String siglaUF) {
 
 		if (siglaUF == null || siglaUF.isEmpty()) {
@@ -563,11 +569,11 @@ public class EnderecoController extends BaseController {
 		this.result.use(Results.json()).from(listaAutoComplete, "result").include("value", "chave").serialize();
 	}
 
-	/**
-	 * Método que realiza a busca do endereço pelo CEP 
-	 * 
-	 * @param cep
-	 */
+	    /**
+     * Método que realiza a busca do endereço pelo CEP
+     * 
+     * @param cep
+     */
 	@Post
 	public void obterEnderecoPorCep(String cep) {
 		
@@ -582,7 +588,7 @@ public class EnderecoController extends BaseController {
 		
 		if (enderecoRetornado == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "CEP não encontrado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "CEP não encontrado!");
 		
 		} else {
 
@@ -590,9 +596,10 @@ public class EnderecoController extends BaseController {
 		}
 	}
 	
-	/*
-	 * Método para popular autocomplete de logradouros da tela de pesquisa de cotas
-	 */
+	    /*
+     * Método para popular autocomplete de logradouros da tela de pesquisa de
+     * cotas
+     */
 	@Post
 	public void pesquisarLogradouros(String nomeLogradouro){
 		
@@ -613,9 +620,9 @@ public class EnderecoController extends BaseController {
 		this.result.use(Results.json()).from(autoCompleteLogradouros, "result").include("value", "chave").serialize();
 	}
 	
-	/*
-	 * Método para popular autocomplete de bairros da tela de pesquisa de cotas
-	 */
+	    /*
+     * Método para popular autocomplete de bairros da tela de pesquisa de cotas
+     */
 	@Post
 	public void pesquisarBairros(String nomeBairro){
 		
@@ -636,9 +643,10 @@ public class EnderecoController extends BaseController {
 		this.result.use(Results.json()).from(autoCompleteBairros, "result").include("value", "chave").serialize();
 	}
 	
-	/*
-	 * Método para popular autocomplete de municipios da tela de pesquisa de cotas
-	 */
+	    /*
+     * Método para popular autocomplete de municipios da tela de pesquisa de
+     * cotas
+     */
 	@Post
 	public void pesquisarLocalidades(String nomeLocalidade){
 		
@@ -676,42 +684,42 @@ public class EnderecoController extends BaseController {
 		
 		if (enderecoAssociacao.getTipoEndereco() == null) {
 			
-			listaMensagens.add("O preenchimento do campo [Tipo Endereco] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Tipo Endereco] é obrigatório.");
 		}
 
 		if (endereco.getCep() == null || endereco.getCep().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [CEP] é obrigatório.");
 		}
 
 		if (endereco.getTipoLogradouro() == null || endereco.getTipoLogradouro().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Tipo Logradouro] é obrigatório.");
 		}
 		
 		if (endereco.getLogradouro() == null || endereco.getLogradouro().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Logradouro] é obrigatório.");
 		}
 
 		if (endereco.getNumero() == null) {
 			
-			listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Número] é obrigatório.");
 		}
 		
 		if (endereco.getBairro() == null || endereco.getBairro().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Bairro] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Bairro] é obrigatório.");
 		}		
 
 		if (endereco.getCidade() == null || endereco.getCidade().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [Cidade] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [Cidade] é obrigatório.");
 		}
 		
 		if (endereco.getUf() == null || endereco.getUf().isEmpty()) {
 			
-			listaMensagens.add("O preenchimento do campo [UF] é obrigatório.");
+            listaMensagens.add("O preenchimento do campo [UF] é obrigatório.");
 		}
 		
 		if (!listaMensagens.isEmpty()) {
@@ -720,12 +728,13 @@ public class EnderecoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Método que retorna um Table Model de acordo com a lista de Endereços desejada.
-	 * 
-	 * @param listaEndereco
-	 * @return TableModel<CellModel>
-	 */
+	    /**
+     * Método que retorna um Table Model de acordo com a lista de Endereços
+     * desejada.
+     * 
+     * @param listaEndereco
+     * @return TableModel<CellModel>
+     */
 	private TableModel<CellModel> getTableModelListaEndereco(List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
 
 		TableModel<CellModel> tableModel = new TableModel<CellModel>();
@@ -763,19 +772,20 @@ public class EnderecoController extends BaseController {
 		return tableModel;
 	}
 
-	/**
-	 * Método que retorna um Cell Model de acordo com o Endereço desejado.
-	 * 
-	 * @param endereco
-	 * @return CellModel
-	 */
+	    /**
+     * Método que retorna um Cell Model de acordo com o Endereço desejado.
+     * 
+     * @param endereco
+     * @return CellModel
+     */
 	private CellModel getCellModelEndereco(EnderecoAssociacaoDTO enderecoAssociacao) {
 
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
 				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
 				(enderecoAssociacao.getEndereco().getTipoLogradouro() != null ? enderecoAssociacao.getEndereco().getTipoLogradouro() : "" )+ " " + enderecoAssociacao.getEndereco().getLogradouro() 
-					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
+            + ", nº: "
+            + enderecoAssociacao.getEndereco().getNumero(),
 				enderecoAssociacao.getEndereco().getBairro(),
 				Util.adicionarMascaraCEP(enderecoAssociacao.getEndereco().getCep()), 
 				enderecoAssociacao.getEndereco().getCidade(), 
@@ -783,11 +793,11 @@ public class EnderecoController extends BaseController {
 			);
 	}
 	
-	/**
-	 * Método que realiza a verificação de endereço principal na lista corrente. 
-	 * 
-	 * @param listaEnderecoAssociacao
-	 */
+	    /**
+     * Método que realiza a verificação de endereço principal na lista corrente.
+     * 
+     * @param listaEnderecoAssociacao
+     */
 	private void validarExistenciaEnderecoPrincipal(EnderecoAssociacaoDTO enderecoAssociacaoAtual) {
 		
 		List<EnderecoAssociacaoDTO> listaEnderecos = new ArrayList<EnderecoAssociacaoDTO>();
@@ -832,7 +842,7 @@ public class EnderecoController extends BaseController {
 			
 		if (!enderecoNovo && !hasPrincipal && !enderecoAssociacaoAtual.isEnderecoPrincipal()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário pelo menos um endereço principal.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "É necessário pelo menos um endereço principal.");
 		}
 	}
 

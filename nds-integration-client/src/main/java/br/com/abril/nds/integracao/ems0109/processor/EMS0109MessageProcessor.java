@@ -291,7 +291,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	private void validarDescontoLogistico(Message message, String codigoPublicacao, int tipoDescontoInt) {
         String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
         String msg = "TipoDesconto: " + tipoDescontoInt
-                + " não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "
+            + " não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "
                 + codigoPublicacao;
 		sendEmailInterface(assunto, msg, message);
         this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, msg);
@@ -487,9 +487,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		if (descontoLogistica == null) {
 			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
-		}
-		
-		if (produto != null && descontoLogistica != null) {
+        } else {
 
 			if (produto.getDescontoLogistica() == null || !produto.getDescontoLogistica().equals(descontoLogistica)) {
 
@@ -525,7 +523,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		this.getSession().update(produto);
 	}
 
-	                /**
+	                        /**
      * Retorna o enum TributacaoFiscal (codigoSituacaoTributaria) baseado na
      * posição 220 retornada na EMS0109Input.java
      * 

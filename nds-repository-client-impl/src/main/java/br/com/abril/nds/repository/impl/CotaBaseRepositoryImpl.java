@@ -26,15 +26,19 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         
         // RETURNING FIELDS
         hql.append(" select ");        
-        hql.append(" cota.id as idCota, "); // NÚMERO DA COTA        
-        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" cota.id as idCota, "); // NÚMERO DA COTA
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
-        hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO DISTRIBUIÇÃO COTA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA
+                                                                        // DE
+                                                                        // INFLUÊNCIA
+        hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO
+                                                                    // DISTRIBUIÇÃO
+                                                                    // COTA
         
         if(obterFaturamento){
         	hql.append(" , sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL        	
@@ -95,15 +99,18 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		// RETURNING FIELDS
         hql.append(" select ");
         hql.append(" cota.id as idCota, "); // NÚMERO DA COTA
-        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA
+                                                                        // DE
+                                                                        // INFLUÊNCIA
         hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio, "); // FATURAMENTO MENSAL
-        hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE AJUSTE
+        hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE
+                                                               // AJUSTE
         if(dto != null){
         	hql.append(" , cotaBase.dataInicio as dtInicio "); // DATA INICIO
         	hql.append(" , cotaBase.dataFim as dtFinal "); // DATA FIM
@@ -190,16 +197,20 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         
         // RETURNING FIELDS
         hql.append(" select ");        
-        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA
+                                                                        // DE
+                                                                        // INFLUÊNCIA
     	hql.append(" cotaBase.dataInicio as dataInicial, "); // DATA INICIAL
     	hql.append(" cotaBase.dataFim as dataFinal, "); // DATA INICIAL
-    	hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO DISTRIBUIÇÃO COTA
+        hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO
+                                                                    // DISTRIBUIÇÃO
+                                                                    // COTA
     	
     	hql.append(" FROM CotaBaseCota as cotaBaseCota ");
     	hql.append(" LEFT JOIN cotaBaseCota.cotaBase as cotaBase ");        
@@ -251,18 +262,21 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		// RETURNING FIELDS
         hql.append(" select ");
         hql.append(" cota.id as idCota, "); // ID DA COTA
-        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA
+                                                                        // DE
+                                                                        // INFLUÊNCIA
         hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio, "); // FATURAMENTO MENSAL
         hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN 'INCLUSAO' THEN cotaBaseCota.dtInicioVigencia ELSE   "); 
         hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN 'EXCLUSAO' THEN cotaBaseCota.dtFimVigencia END END "); 
         hql.append(" as dataAlteracao, "); // DATA ALTERAÇÃO
-        hql.append(" cotaBaseCota.tipoAlteracao as tipoAlteracao "); // TIPO DE ALTERAÇÃO
+        hql.append(" cotaBaseCota.tipoAlteracao as tipoAlteracao "); // TIPO DE
+                                                                     // ALTERAÇÃO
         
         // FROM
         hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
@@ -306,15 +320,18 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		// RETURNING FIELDS
         hql.append(" select ");
         hql.append(" cota.id as idCota, "); // NÚMERO DA COTA
-        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
         hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA
+                                                                        // DE
+                                                                        // INFLUÊNCIA
         hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio, "); // FATURAMENTO MENSAL
-        hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE AJUSTE
+        hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE
+                                                               // AJUSTE
         hql.append(" , cotaBase.dataInicio as dtInicio "); // DATA INICIO
         hql.append(" , cotaBase.dataFim as dtFinal "); // DATA FIM
         
@@ -351,10 +368,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
         
-        if(dto != null){
-        	configurandoPaginacao(dto, query);
-        }
-        
+        configurandoPaginacao(dto, query);
+
 		return query.list();
 	}
 
@@ -367,9 +382,10 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		// RETURNING FIELDS
         hql.append(" select ");
         hql.append(" cota.id as idCota, "); // ID DA COTA
-        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA
         hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota, "); // NOME DA PESSOA        
-        hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE AJUSTE   
+        hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE
+                                                               // AJUSTE
         
         // FROM
     	hql.append(" FROM CotaBaseCota as cotaBaseCota ");

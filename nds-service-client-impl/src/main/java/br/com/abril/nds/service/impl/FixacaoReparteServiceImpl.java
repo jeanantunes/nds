@@ -126,7 +126,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumeroDaCota(Integer.valueOf(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
+		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto(), filtroCota.getClassificacaoProduto()) ;
 		return resultado; 
 	}
 	
@@ -207,7 +207,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		FixacaoReparte fixacaoReparte;
 		Cota cota = cotaRepository.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
 		Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
-        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.buscarPorId(fixacaoReparteDTO.getClassificacaoProdutoId());
+        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.obterPorClassificacao(fixacaoReparteDTO.getClassificacaoProduto());
 
         // Esta validação nao faz mais sentido como está... talvez varrer todas
         // as possiveis edições involvidas?
@@ -229,14 +229,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
 		fixacaoReparte.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial());
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal());
-
-        Long classificacaoProdutoId = fixacaoReparteDTO.getClassificacaoProdutoId();
         
-        if (classificacaoProdutoId.compareTo(NumberUtils.LONG_ZERO) > 0) {
-            TipoClassificacaoProduto tipoClassificacaoProduto = new TipoClassificacaoProduto();
-            tipoClassificacaoProduto.setId(classificacaoProdutoId);
-            fixacaoReparte.setClassificacaoProdutoEdicao(tipoClassificacaoProduto);
-        }
+        if (classificacaoProduto != null) 
+            fixacaoReparte.setClassificacaoProdutoEdicao(classificacaoProduto);        
 
 		return fixacaoReparte;
 	}
