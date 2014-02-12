@@ -6,7 +6,8 @@ public class FiltroConsultaFixacaoCotaDTO extends FiltroDTO {
 	private String cota;
 	private String nomeCota;
 	private String codigoProduto;
-	
+	private String classificacaoProduto;
+
 	public String getCota() {
 		return cota;
 	}
@@ -25,4 +26,12 @@ public class FiltroConsultaFixacaoCotaDTO extends FiltroDTO {
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
+
+    public String getClassificacaoProduto() {
+        return classificacaoProduto;
+    }
+
+    public void setClassificacaoProduto(String classificacaoProduto) {
+        this.classificacaoProduto = classificacaoProduto;
+    }
 }

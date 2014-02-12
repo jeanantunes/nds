@@ -22,7 +22,7 @@ public interface RecebimentoFisicoRepository extends Repository<RecebimentoFisic
 	
 	List<ItemRecebimentoFisico> obterItensRecebimentoFisicoDoProduto(Long idProdutoEdicao);
 
-	boolean existeNotaFiscal(Long numero, String serie, String cnpj);
+	boolean existeNotaFiscal(Long numero, String serie, String cnpj, Long numeroNotaEnvio);
 
 	/**
 	 * Verifica se produto possui recebimento físico

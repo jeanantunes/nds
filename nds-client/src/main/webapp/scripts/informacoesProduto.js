@@ -316,6 +316,15 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	recuperarNumeroEstudo: function(numeroEstudo){
 
+        switch (matrizDistribuicao.tabSomarCopiarEstudos) {
+            case 'somar':
+                $('#somarEstudo-estudoPesquisa').val(numeroEstudo).change();
+                return;
+            case 'copiar':
+                $('#copiarEstudo-estudoPesquisa').val(numeroEstudo).change();
+                return;
+        }
+
         var matriz = [],
             url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
             dadosResumo = {};

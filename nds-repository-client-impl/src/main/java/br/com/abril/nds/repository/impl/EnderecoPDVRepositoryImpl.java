@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -95,29 +93,6 @@ public class EnderecoPDVRepositoryImpl extends AbstractRepositoryModel<EnderecoP
 		query.setParameterList("idsEnderecoPDV", idsEnderecoPDV);
 		
 		query.executeUpdate();
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ItemDTO<Integer, String>> buscarMunicipioPdvPrincipal() {
-		
-		StringBuilder hql  = new StringBuilder();
-		
-		hql.append(" select endereco.codigoCidadeIBGE as key, endereco.cidade as value ")
-		   .append(" from EnderecoCota enderecoCota ")
-		   .append(" join enderecoCota.endereco endereco ")
-		   .append(" group by endereco.cidade");
-
-		/*.append(" from PDV pdv join pdv.enderecos enderecoPDV join enderecoPDV.endereco endereco ")
-			.append(" where pdv.caracteristicas.pontoPrincipal = true ")
-			.append(" group by endereco.codigoCidadeIBGE, endereco.cidade ")
-			.append(" order by endereco.cidade ");*/
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ItemDTO.class));
-		
-		return query.list();
 	}
 	
 	@Override

@@ -87,8 +87,8 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT ");
 		sql.append("   qtdReparteDistribuidor, ");
-		sql.append("   (qtdReparteDistribuidor - qtdReparteDistribuidoEstudo) as qtdSobraEstudo, ");
-		sql.append("   (qtdReparteADistribuir - qtdReparteDistribuidor) as saldo, ");
+		sql.append("   (qtdReparteDistribuidor - qtdReparteADistribuir) as qtdSobraEstudo, ");
+		sql.append("   (qtdReparteADistribuir - qtdReparteDistribuidoEstudo) as saldo, ");
 		sql.append("   qtdReparteDistribuidoEstudo, ");
 		sql.append("   qtdCotasAtivas, ");
 		sql.append("   qtdCotasRecebemReparte, ");

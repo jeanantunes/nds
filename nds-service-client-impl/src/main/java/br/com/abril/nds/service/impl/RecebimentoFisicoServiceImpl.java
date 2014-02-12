@@ -207,18 +207,31 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}
 	}
 	
-	        /**
-     * Verifica se a nota fiscal já existe (combinação numero, serie e cnpj do
-     * emitente)
+	/**
+     * Verifica se a nota fiscal já existe 
+     * (combinação numero, serie e cnpj do emitente ou numeroNotaEnvio)
      * 
      * @param notaFiscal
      */
 	@Transactional(readOnly=true)
 	public void validarExisteNotaFiscal(NotaFiscalEntradaFornecedor notaFiscal) {
 		
-		if ( recebimentoFisicoRepository.existeNotaFiscal(notaFiscal.getNumero(), notaFiscal.getSerie(), notaFiscal.getFornecedor().getJuridica().getCnpj()) ) {
-            throw new ValidacaoException(TipoMensagem.WARNING,
-                    "Não é possível receber a nota fiscal! Existe outra nota fiscal com o mesmo número, série e emitente (cnpj).");
+		if ( recebimentoFisicoRepository.existeNotaFiscal(
+				notaFiscal.getNumero(), 
+				notaFiscal.getSerie(), 
+				notaFiscal.getFornecedor().getJuridica().getCnpj(),
+				notaFiscal.getNumeroNotaEnvio()) ) {
+			
+			if(notaFiscal.getNumeroNotaEnvio()==null) {
+	            throw new ValidacaoException(TipoMensagem.WARNING,
+	                    "Não é possível receber a nota fiscal! Existe outra nota fiscal com o mesmo número, série e emitente (cnpj).");
+				
+			} else {
+	            throw new ValidacaoException(TipoMensagem.WARNING,
+	                    "Não é possível receber a nota fiscal! Existe outra nota fiscal com o mesmo numero nota envio.");
+				
+			}
+			
 		}
 		
 	}
@@ -1189,12 +1202,14 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	private void desfazerLigacaoMovimentosEstoqueComItemRecebimentoFisico(MovimentoEstoque ... movimentos) {
 		for(MovimentoEstoque m : movimentos){
+			
 			if(m == null) {
 				continue;
 			}
 			
 			m.setItemRecebimentoFisico(null);
-			movimentoEstoqueRepository.merge(m);
+			movimentoEstoqueRepository.alterar(m);
+			
 		}
 	}
 	
@@ -1237,7 +1252,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			itemNotaFiscalRepository.alterar(itemOriginal);
 		
-			itemRecebimentoFisicoRepository.removerPorId(itemRecebimento.getId());
+			itemRecebimentoFisicoRepository.remover(itemRecebimento);
 			
 		}		
 		
