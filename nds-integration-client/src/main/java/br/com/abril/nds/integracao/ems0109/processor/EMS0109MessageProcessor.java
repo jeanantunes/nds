@@ -461,8 +461,11 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                     "Atualizacao do CodigoICD para: " + input.getCodigoICD());
 		}
 		
-		if ((produto.getTipoSegmentoProduto() == null && input.getSegmento() != null )
-		        || !Objects.equal(produto.getTipoSegmentoProduto().getDescricao(), input.getSegmento())) {
+		TipoSegmentoProduto tipoSegmentoProduto = produto.getTipoSegmentoProduto();
+		
+		if ((tipoSegmentoProduto == null && input.getSegmento() != null) || 
+		        (input.getSegmento() != null && !Objects.equal(
+		                tipoSegmentoProduto.getDescricao(), input.getSegmento()))) {
 		    
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
             this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -470,8 +473,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
                     "Atualizacao do Tipo de Segmento do Produto para: " + input.getCodigoICD());
         }
 		
-		if ((null == produto.getFornecedor() && null != fornecedor) ||
-		        !Objects.equal(produto.getFornecedor().getCodigoInterface(), fornecedor.getCodigoInterface()))  {
+		Fornecedor produtoFornecedor = produto.getFornecedor();
+		if ((produtoFornecedor == null) || 
+		        !Objects.equal(produtoFornecedor.getCodigoInterface(), fornecedor.getCodigoInterface()))  {
 
 			    produto.setFornecedores(new HashSet<Fornecedor>());
 			    
@@ -517,8 +521,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						"Atualizacao da Forma de Comercializacao para: " + formaComercializacaoInput.getValue());
-
-		}		
+		}
 		
 		this.getSession().update(produto);
 	}
