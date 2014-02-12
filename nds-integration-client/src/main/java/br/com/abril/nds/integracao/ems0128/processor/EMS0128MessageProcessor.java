@@ -73,7 +73,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 				EMS0128Input doc = (EMS0128Input) row.getDoc();
 				
-				if (!doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
+                if (doc != null && !doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
 					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
 					for (EMS0128InputItem eitem : doc.getItems()) {
