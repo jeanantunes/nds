@@ -56,10 +56,11 @@ import br.com.caelum.vraptor.view.Results;
 
 /**
  * 
- * Classe responsável por controlas as ações da pagina de Digitação de Contagem de Devolução.
+ * Classe responsável por controlas as ações da pagina de Digitação de Contagem
+ * de Devolução.
  * 
  * @author Discover Technology
- *
+ * 
  */
 
 @Resource
@@ -101,18 +102,19 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Path("/")
 	public void index(){
 		
-		/**
-		 * FIXE Alterar o códgo abaixo quando, for definido a implementação de Perfil de Usuário
-		 */
+		                /**
+         * FIXE Alterar o códgo abaixo quando, for definido a implementação de
+         * Perfil de Usuário
+         */
 		result.include(USUARIO_PERFIL_OPERADOR, !isPerfilUsuarioEncarregado());
 		
 		carregarComboFornecedores();
 	}
 	
 	
-	/**
-	 * Método responsável por carregar o combo de fornecedores.
-	 */
+	        /**
+     * Método responsável por carregar o combo de fornecedores.
+     */
 	private void carregarComboFornecedores() {
 		
 		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresAtivos();
@@ -165,7 +167,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			if (!StringUtil.isEmpty(dataDe) || !StringUtil.isEmpty(dataAte)) {
 				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
-						"A pesquisa não pode ser realizada pelo período e pela Chamada de Encalhe ao mesmo tempo"));
+                        "A pesquisa não pode ser realizada pelo período e pela Chamada de Encalhe ao mesmo tempo"));
 			}
 			
 			return true;
@@ -202,9 +204,9 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		}
 	}
 	
-	/*
-	 * Obtém o filtro para exportação.
-	 */
+	        /*
+     * Obtém o filtro para exportação.
+     */
 	private FiltroDigitacaoContagemDevolucaoDTO obterFiltroExportacao() {
 		
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
@@ -244,13 +246,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		return filtro;
 	}
 	
-	/**
-	 * Exporta os dados da pesquisa.
-	 * 
-	 * @param fileType - tipo de arquivo
-	 * 
-	 * @throws IOException Exceção de E/S
-	 */
+	        /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 
@@ -265,13 +267,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 	}
 	
-	/**
-	 * Exporta os dados da pesquisa.
-	 * 
-	 * @param fileType - tipo de arquivo
-	 * 
-	 * @throws IOException Exceção de E/S
-	 */
+	        /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
 	@Get
 	public void exportarCoferenciaCega(FileType fileType) throws IOException {
 
@@ -281,7 +283,8 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 				.obterInfoContagemDevolucaoCega(filtro, isPerfilUsuarioEncarregado());
 
 		FileExporter.to("digitacao-contagem-devolucao", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), filtro, null, listConferenciaCega,
+this.getNDSFileHeader(), filtro,
+                listConferenciaCega,
 				ContagemDevolucaoConferenciaCegaDTO.class, this.httpResponse);
 		
 		result.nothing();
@@ -289,18 +292,22 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 	
 
-	//TODO: não há como reconhecer usuario, ainda
+    // TODO: não há como reconhecer usuario, ainda
 	private boolean isPerfilUsuarioEncarregado() {
 		return true;
 	}
 	
-	/**
-	 * Executa a pesquisa de digitação de contagem de devolução 
-	 * @param filtro
-	 */
+	        /**
+     * Executa a pesquisa de digitação de contagem de devolução
+     * 
+     * @param filtro
+     */
 	private void efetuarPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro){
 		
 		InfoContagemDevolucaoDTO infoContagem = contagemDevolucaoService.obterInfoContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
+        if (infoContagem == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+        }
 		
 		List<ContagemDevolucaoDTO> listaResultados = infoContagem.getListaContagemDevolucao();
 		
@@ -328,7 +335,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		String valorTotalFormatado = "";
 		
-		if(	infoContagem!=null && infoContagem.getValorTotalGeral()!=null ) {
+        if (infoContagem.getValorTotalGeral() != null) {
 			
 			valorTotalFormatado = CurrencyUtil.formatarValor(infoContagem.getValorTotalGeral());
 		}
@@ -359,7 +366,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 				(FiltroDigitacaoContagemDevolucaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtro == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Essa operação só pode ser realizada após a pesquisa");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Essa operação só pode ser realizada após a pesquisa");
 		}
 		
 		List<ContagemDevolucaoDTO> listaContagemEdicoesFechadasDTO = this.obterListaEdicoesFechadas();
@@ -379,7 +386,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao, boolean replicarTodos) {
 		
 		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty() && !replicarTodos) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = null;
@@ -390,7 +397,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			if (filtro == null){
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Pesquisa inválida.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "Pesquisa inválida.");
 			}
 			
 			PaginacaoVO paginacaoVO = filtro.getPaginacao();
@@ -419,7 +426,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		this.contagemDevolucaoService.inserirListaContagemDevolucao(
 				listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
@@ -432,14 +439,14 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
 		contagemDevolucaoService.confirmarContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
 		
 	}
@@ -452,24 +459,26 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		if (listaDigitacaoContagemDevolucao == null 
 				|| listaDigitacaoContagemDevolucao.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
 		contagemDevolucaoService.gerarNotasFiscaisPorFornecedorFecharLancamentos(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();
 		
 	}
 	
-	/**
-	 * Retorna uma lista de objetos ContagemDevolucaoDTO convertidos em DigitacaoContagemDevolucaoVO, 
-	 * para renderização das informações no grid da tela.
-	 * @param listaContagemDevolucaoDto
-	 * @return List<DigitacaoContagemDevolucaoVO>
-	 */
+	        /**
+     * Retorna uma lista de objetos ContagemDevolucaoDTO convertidos em
+     * DigitacaoContagemDevolucaoVO, para renderização das informações no grid
+     * da tela.
+     * 
+     * @param listaContagemDevolucaoDto
+     * @return List<DigitacaoContagemDevolucaoVO>
+     */
 	private List<DigitacaoContagemDevolucaoVO>getListaDigitacaoContagemDevolucaoVO(List<ContagemDevolucaoDTO> listaContagemDevolucaoDto){
 		
 		List<DigitacaoContagemDevolucaoVO> listaResultadosVO = new ArrayList<DigitacaoContagemDevolucaoVO>();
@@ -508,11 +517,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		return listaResultadosVO;
 	}
 	
-	/**
-	 * Retorna uma lista de objetos ContagemDevolucaoDTO para execução de ações nos componentes de negócio.
-	 * @param listaContagemDevolucaoVOs
-	 * @return List<ContagemDevolucaoDTO>
-	 */
+	        /**
+     * Retorna uma lista de objetos ContagemDevolucaoDTO para execução de ações
+     * nos componentes de negócio.
+     * 
+     * @param listaContagemDevolucaoVOs
+     * @return List<ContagemDevolucaoDTO>
+     */
 	private List<ContagemDevolucaoDTO> getListaContagemDevolucaoDTO(List<DigitacaoContagemDevolucaoVO> listaContagemDevolucaoVOs){
 		
 		ContagemDevolucaoDTO contagemDevolucaoDTO = null;
@@ -538,11 +549,12 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		return listaResultadosDto;
 	}
 	
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de pesquisa.
-	 * 
-	 * @param filtroResumoExpedicao
-	 */
+	        /**
+     * Executa tratamento de paginação em função de alteração do filtro de
+     * pesquisa.
+     * 
+     * @param filtroResumoExpedicao
+     */
 	private void tratarFiltro(FiltroDigitacaoContagemDevolucaoDTO filtro) {
 
 		FiltroDigitacaoContagemDevolucaoDTO filtroResumoSession = 
@@ -556,15 +568,15 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
-	/**
-	 * Configura paginação da lista de resultados
-	 * 
-	 * @param filtro
-	 * @param sortorder
-	 * @param sortname
-	 * @param page
-	 * @param rp
-	 */
+	        /**
+     * Configura paginação da lista de resultados
+     * 
+     * @param filtro
+     * @param sortorder
+     * @param sortname
+     * @param page
+     * @param rp
+     */
 	private void configurarPaginacaoPesquisa(FiltroDigitacaoContagemDevolucaoDTO filtro, 
 											String sortorder, String sortname,
 											int page, int rp) {
@@ -600,10 +612,11 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		return periodo; 
 	}
 	
-	/**
-	 * Trata mensagens de erro, caso tenha mensagem lança exceção de erro.
-	 * @param mensagensErro
-	 */
+	        /**
+     * Trata mensagens de erro, caso tenha mensagem lança exceção de erro.
+     * 
+     * @param mensagensErro
+     */
 	private void tratarErroDatas(List<String> mensagensErro){
 		
 		ValidacaoVO validacao = new ValidacaoVO();
@@ -617,61 +630,64 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		}
 	}
 	
-	/**
-	 * Valida o período informado para consulta 
-	 * @param dataInicial
-	 * @param dataFinal
-	 */
+	        /**
+     * Valida o período informado para consulta
+     * 
+     * @param dataInicial
+     * @param dataFinal
+     */
 	private void validarPeriodo(String dataInicial,String dataFinal){
 
 		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
 				 								 DateUtil.parseDataPTBR(dataFinal))) {
 
-			throw new ValidacaoException(TipoMensagem.ERROR, "O campo Período de não pode ser maior que o campo Até!");
+            throw new ValidacaoException(TipoMensagem.ERROR, "O campo Período de não pode ser maior que o campo Até!");
 		}
 	}
 	
-	/**
-	 * Valida o formato  das datas informadas  em um determinado período.
-	 * @param dataInicial
-	 * @param dataFinal
-	 * @return List<String>
-	 */
+	        /**
+     * Valida o formato das datas informadas em um determinado período.
+     * 
+     * @param dataInicial
+     * @param dataFinal
+     * @return List<String>
+     */
 	private List<String> validarFormatoDatas(String dataInicial,String dataFinal){
 		
 		List<String> mensagens = new ArrayList<String>();
 		
 		if (!DateUtil.isValidDate(dataInicial, "dd/MM/yyyy")) {
 			
-			mensagens.add("O campo Período de é inválido");
+            mensagens.add("O campo Período de é inválido");
 		} 
 		
 		if (!DateUtil.isValidDate(dataFinal, "dd/MM/yyyy")) {
 			
-			mensagens.add ("O campo Até é inválido");
+            mensagens.add("O campo Até é inválido");
 		}
 		
 		return mensagens;
 	}
 	
-	/**
-	 * Valida o preenchimento obrigatório do período informado.
-	 * @param dataInicial
-	 * @param dataFinal
-	 * @return List<String>
-	 */
+	        /**
+     * Valida o preenchimento obrigatório do período informado.
+     * 
+     * @param dataInicial
+     * @param dataFinal
+     * @return List<String>
+     */
 	private List<String> validarPreenchimentoObrigatorio(String dataInicial,String dataFinal){
 		
 		 List<String> mensagens = new ArrayList<String>();
 		
 		if (dataInicial == null || dataInicial.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo Período [De] é obrigatório");
+            mensagens.add("O preenchimento do campo Período [De] é obrigatório");
 		} 
 		
 		if (dataFinal == null || dataFinal.isEmpty()) {
 			
-			mensagens.add("O preenchimento do campo [Até] é obrigatório");
+            mensagens.add("O preenchimento do campo [Até] é obrigatório");
 		} 
 		
 		return mensagens;
