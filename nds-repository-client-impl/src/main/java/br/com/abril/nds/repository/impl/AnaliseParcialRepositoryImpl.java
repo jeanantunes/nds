@@ -59,12 +59,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
         sql.append("       ifnull((select round(epc.qtde_recebida, 0) ");
         sql.append("                 from estoque_produto_cota epc ");
-        sql.append("                 join lancamento l on l.produto_edicao_id = epc.produto_edicao_id ");
-        sql.append("                 join produto_edicao pe on pe.id = l.produto_edicao_id ");
-        sql.append("                 join produto p on p.id = pe.produto_id ");
+        sql.append("                 join produto_edicao ped on epc.produto_edicao_id = ped.id ");
         sql.append("                where epc.cota_id = c.id ");
-        sql.append("                  and p.id = p.id ");
-        sql.append("                order by pe.numero_edicao desc ");
+        sql.append("                  and ped.produto_id = p.id ");
+        sql.append("                order by ped.numero_edicao desc ");
         sql.append("                limit 0, 1), 0) ultimoReparte ");
         sql.append("  from estudo_cota_gerado ec ");
         sql.append("  left join cota c on (c.id = ec.cota_id) ");
