@@ -42,5 +42,5 @@ public interface EstoqueProdutoCotaRepository extends Repository<EstoqueProdutoC
 	
 	List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto, String classificacaoProduto);
 	
-	List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto);
+	List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto, String classificacaoProduto);
 }

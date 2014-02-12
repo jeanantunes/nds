@@ -1505,48 +1505,50 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
      */
 	private void carregarComboTiposDiferenca() {
 
-		List<ItemDTO<TipoDiferenca, String>> listaTiposDiferenca =
+		List<ItemDTO<TipoDiferenca, String>> listaTiposDiferencaGeral =
 			new ArrayList<ItemDTO<TipoDiferenca, String>>();
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.FALTA_DE, TipoDiferenca.FALTA_DE.getDescricao())
-		);
+		List<ItemDTO<TipoDiferenca, String>> listaTiposDiferenca =
+				new ArrayList<ItemDTO<TipoDiferenca, String>>();
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.FALTA_EM, TipoDiferenca.FALTA_EM.getDescricao())
-		);
+		ItemDTO<TipoDiferenca, String> faltaDe = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.FALTA_DE, TipoDiferenca.FALTA_DE.getDescricao());
+		listaTiposDiferencaGeral.add(faltaDe);
+		listaTiposDiferenca.add(faltaDe);
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.SOBRA_DE, TipoDiferenca.SOBRA_DE.getDescricao())
-		);
+		ItemDTO<TipoDiferenca, String> faltaEm = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.FALTA_EM, TipoDiferenca.FALTA_EM.getDescricao());
+		listaTiposDiferencaGeral.add(faltaEm);
+		listaTiposDiferenca.add(faltaEm);
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.SOBRA_EM, TipoDiferenca.SOBRA_EM.getDescricao())
-		);
+		ItemDTO<TipoDiferenca, String> perdaDe = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.PERDA_DE, TipoDiferenca.PERDA_DE.getDescricao());
+		listaTiposDiferencaGeral.add(perdaDe);
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.PERDA_DE, TipoDiferenca.PERDA_DE.getDescricao())
-		);
+		ItemDTO<TipoDiferenca, String> perdaEm = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.PERDA_EM, TipoDiferenca.PERDA_EM.getDescricao());
+		listaTiposDiferencaGeral.add(perdaEm);
+
+		ItemDTO<TipoDiferenca, String> sobraDe = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.SOBRA_DE, TipoDiferenca.SOBRA_DE.getDescricao());
+		listaTiposDiferencaGeral.add(sobraDe);
+		listaTiposDiferenca.add(sobraDe);
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.PERDA_EM, TipoDiferenca.PERDA_EM.getDescricao())
-		);
+		ItemDTO<TipoDiferenca, String> sobraEm = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.SOBRA_EM, TipoDiferenca.SOBRA_EM.getDescricao());
+		listaTiposDiferencaGeral.add(sobraEm);
+		listaTiposDiferenca.add(sobraEm);
+
+		ItemDTO<TipoDiferenca, String> ganhoDe = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.GANHO_DE, TipoDiferenca.GANHO_DE.getDescricao());
+		listaTiposDiferencaGeral.add(ganhoDe);
+
+		ItemDTO<TipoDiferenca, String> ganhoEm = new ItemDTO<TipoDiferenca, String>(TipoDiferenca.GANHO_EM, TipoDiferenca.GANHO_EM.getDescricao());
+		listaTiposDiferencaGeral.add(ganhoEm);
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.GANHO_DE, TipoDiferenca.GANHO_DE.getDescricao())
-		);
+		ItemDTO<TipoDiferenca, String> alteracaoReparte = 	
+				new ItemDTO<TipoDiferenca, String>(
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO, 
+							TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.getDescricao());
+		listaTiposDiferencaGeral.add(alteracaoReparte);
+		listaTiposDiferenca.add(alteracaoReparte);
 		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(TipoDiferenca.GANHO_EM, TipoDiferenca.GANHO_EM.getDescricao())
-		);
-		
-		listaTiposDiferenca.add(
-			new ItemDTO<TipoDiferenca, String>(
-				TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO, 
-				TipoDiferenca.ALTERACAO_REPARTE_PARA_LANCAMENTO.getDescricao())
-		);
-		
-		result.include("listaTiposDiferenca", listaTiposDiferenca);
+		this.result.include("listaTiposDiferenca", listaTiposDiferenca);
+		this.result.include("listaTiposDiferencaGeral", listaTiposDiferencaGeral);
+
 	}
 	
 	                /**
@@ -2731,10 +2733,17 @@ TipoMensagem.WARNING,
 			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				codigoProduto, numeroEdicao);
 		
-		Long qtde = movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(
-			produtoEdicao.getId(), numeroCota);
+		if (produtoEdicao == null) {
 		
-		result.use(Results.json()).withoutRoot().from(qtde).serialize();
+			this.result.nothing();
+		
+		} else {
+		
+			Long qtde = this.movimentoEstoqueCotaService.obterQuantidadeReparteProdutoCota(
+				produtoEdicao.getId(), numeroCota);
+			
+			this.result.use(Results.json()).withoutRoot().from(qtde).serialize();
+		}
 	}
 	
 	@Post
@@ -2851,12 +2860,26 @@ TipoMensagem.WARNING,
 		if (!BigInteger.ZERO.equals(qtdeDevolucaoEncalhe)) {
 			estoques.add(
 				new EstoqueDTO(
-					TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
-					TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
+					TipoEstoque.RECOLHIMENTO.name(), 
+					TipoEstoque.RECOLHIMENTO.getDescricao(),
 					atualizarQuantidadeEstoqueComNovasDiferencas(qtdeDevolucaoEncalhe, TipoEstoque.DEVOLUCAO_ENCALHE)
 					) 
 				);
 		}
+
+		BigInteger qtdeDanificados =
+				(estoque.getQtdeDanificado() != null)
+					? estoque.getQtdeDanificado() : BigInteger.ZERO;
+			
+			if (!BigInteger.ZERO.equals(qtdeDanificados)) {
+				estoques.add(
+					new EstoqueDTO(
+						TipoEstoque.DANIFICADO.name(), 
+						TipoEstoque.DANIFICADO.getDescricao(),
+						atualizarQuantidadeEstoqueComNovasDiferencas(qtdeDanificados, TipoEstoque.DANIFICADO)
+					) 
+				);
+			}
 		
 		return estoques;
 	}
