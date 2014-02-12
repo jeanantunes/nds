@@ -74,7 +74,9 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	private String campoObscuro;
 	private String nomeComercial;
 	private String formaComercializacao;
-
+	private String classificacao;
+	private String segmento;
+	
 	@Field(offset = 1, length = 7)
 	public String getCodDistrib() {
 		return codDistrib;
@@ -578,9 +580,28 @@ public class EMS0110Input extends IntegracaoDocument implements Serializable {
 	public void setNomeComercial(String nomeComercial) {
 		this.nomeComercial = nomeComercial;
 	}
-
 	
-	@Override
+	@Field(offset = 671, length=30)
+    public String getClassificacao() {
+        return classificacao;
+    }
+
+    
+    public void setClassificacao(String classificacao) {
+        this.classificacao = classificacao;
+    }
+
+    @Field(offset = 701, length=25)
+    public String getSegmento() {
+        return segmento;
+    }
+
+    
+    public void setSegmento(String segmento) {
+        this.segmento = segmento;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

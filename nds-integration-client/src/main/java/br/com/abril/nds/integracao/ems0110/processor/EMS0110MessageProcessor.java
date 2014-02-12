@@ -15,7 +15,8 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -127,16 +128,16 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	}
 
 	private Fornecedor findFornecedor(Integer codigoInterface) {
-		StringBuilder sql = new StringBuilder();
+	    StringBuilder sql = new StringBuilder();
 
-		sql.append("SELECT f FROM Fornecedor f ");
-		sql.append("WHERE  f.codigoInterface = :codigoInterface ");
+        sql.append("SELECT f FROM Fornecedor f ");
+        sql.append("WHERE  f.codigoInterface = :codigoInterface ");
 
-		Query query = this.getSession().createQuery(sql.toString());
+        Query query = this.getSession().createQuery(sql.toString());
 
-		query.setParameter("codigoInterface", codigoInterface);
+        query.setParameter("codigoInterface", codigoInterface);
 
-		return (Fornecedor) query.uniqueResult();
+        return (Fornecedor) query.uniqueResult();
 
 	}
 	
@@ -165,7 +166,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		query.setParameter("codigo", codigoCategoria);
 
 		@SuppressWarnings("unchecked")
-		List<TipoProduto> tiposProduto = (List<TipoProduto>) query.list();
+		List<TipoProduto> tiposProduto = query.list();
 
 		TipoProduto tipoProduto = null;
 
@@ -197,9 +198,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		Produto produto = new Produto();
-
+		
+		String codigoDistribuidor = 
+                message.getHeader().get(MessageHeaderProperties.CODIGO_DISTRIBUIDOR.getValue()).toString();
+		
 		Fornecedor fornecedor = this
-				.findFornecedor(input.getCodFornecPublicacao());
+                .findFornecedor(Integer.parseInt(codigoDistribuidor));
+		
 		DescontoLogistica descontoLogistica = this
 				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
 		
