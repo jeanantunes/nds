@@ -650,8 +650,11 @@ public class FixacaoReparteController extends BaseController {
 			
 			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
-			
-			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
+            if (tipoSegProd == null) {
+                return "Produto [" + prd.getNome() + "] não possui Tipo Segmento cadastrado.";
+            }
+
+            loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
 				if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
 					
 					for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {

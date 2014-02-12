@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.google.common.base.Strings;
+
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -47,7 +49,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String lancamento;
 	
 	@XlsMapper(value="preco_previsto")
-	private BigDecimal precoPrevisto;
+	private String preco;
 	
 	@XlsMapper(value="data_lancamento_previsto")
 	private String dtLancPrevisto;
@@ -70,6 +72,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	@XlsMapper(value="cod_corporativo")
 	private String codigoDeBarrasCorporativo;
 	
+	private BigDecimal precoPrevisto;
 	private Long id;
 	private Integer sequenciaMatriz;
 	private BigDecimal precoVenda;
@@ -419,12 +422,26 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public BigDecimal getPrecoPrevisto() {
 		return precoPrevisto;
 	}
-	/**
+	
+	
+    public String getPreco() {
+        return preco;
+    }
+
+    
+    public void setPreco(String preco) {
+        this.preco = preco;
+        if(Strings.isNullOrEmpty(preco))
+            return;        
+        setPrecoPrevisto(BigDecimal.valueOf(Double.parseDouble(preco.replace(",", "."))));
+    }
+
+    /**
 	 * @param precoPrevisto the precoPrevisto to set
 	 */
 	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
 		this.precoPrevisto = precoPrevisto;
-		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(precoPrevisto);
+		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(this.precoPrevisto);
 	}
 	/**
 	 * @return the dataLancamentoPrevisto
@@ -909,7 +926,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 
 	public void setLancamento(String lancamento) {
-		this.lancamento = lancamento;
+		this.lancamento = lancamento.toUpperCase().replace("Ç", "C");
 	}
 
 	public String getDtLancPrevisto() {

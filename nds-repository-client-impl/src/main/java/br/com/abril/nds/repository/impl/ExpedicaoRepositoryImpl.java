@@ -21,10 +21,11 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 
 /**
- * Classe responsável por implementar as funcionalidades referente a expedição de lançamentos de produtos.
+ * Classe responsável por implementar as funcionalidades referente a expedição
+ * de lançamentos de produtos.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Repository
 public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,Long> implements ExpedicaoRepository {
@@ -266,15 +267,17 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 								 StatusLancamento.RECOLHIDO.name(),
 								 StatusLancamento.FECHADO.name()));
 
-		if(filtro != null && filtro.getCodigoBox() != null)
+        if (filtro.getCodigoBox() != null) {
 			query.setParameter("codigoBox", filtro.getCodigoBox());
+        }
 	}
 
-	/**
-	 * Retorna uma string com o conteudo da ordenação da consulta
-	 * @param filtro
-	 * @return
-	 */
+	        /**
+     * Retorna uma string com o conteudo da ordenação da consulta
+     * 
+     * @param filtro
+     * @return
+     */
 	private String getOrderBy(FiltroResumoExpedicaoDTO filtro ){
 		
 		StringBuilder hql = new StringBuilder();
@@ -333,10 +336,12 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		return (Date) criteria.uniqueResult();
 	}
 	
-	/**
-	 * Sub-Query para obter quantidade da fiferença no relatorio de Resumo Expedição/Lançamento
-	 * @return StringBuilder
-	 */
+	        /**
+     * Sub-Query para obter quantidade da fiferença no relatorio de Resumo
+     * Expedição/Lançamento
+     * 
+     * @return StringBuilder
+     */
 	private StringBuilder getQntDiferencaResumoLancamento(){
 		
 		StringBuilder query = new StringBuilder();
@@ -426,13 +431,14 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		return innerQuery;
 	}
 	
-	/**
-	 * Obtem agrupamento do resumo de Expedição/Lancamento
-	 * @param isAgrupamentoPorBox
-	 * @param isDetalhesResumo
-	 * @param filtro
-	 * @return StringBuilder
-	 */
+	        /**
+     * Obtem agrupamento do resumo de Expedição/Lancamento
+     * 
+     * @param isAgrupamentoPorBox
+     * @param isDetalhesResumo
+     * @param filtro
+     * @return StringBuilder
+     */
 	private StringBuilder getAgrupamentoResumoLancamento(boolean isAgrupamentoPorBox, boolean isDetalhesResumo, FiltroResumoExpedicaoDTO filtro){
 		
 		StringBuilder sql = new StringBuilder();

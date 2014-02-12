@@ -28,4 +28,10 @@ public class TipoClassificacaoProdutoServiceImpl implements	TipoClassificacaoPro
 		return repo.buscarPorId(id);
 	}
 
+    @Override
+    @Transactional(readOnly=true)
+    public TipoClassificacaoProduto obterPorClassificacao(String classificacao) {
+       return repo.obterPorClassificacao(classificacao);
+    }
+
 }
