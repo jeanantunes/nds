@@ -5,7 +5,12 @@
 <title>Painel Monitor NFe</title>
 
 <script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
+<script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts//utils.js'></script>
 <script language="javascript" type="text/javascript" src='${pageContext.request.contextPath}/scripts/painelMonitorNFE.js'></script>
+
 <script type="text/javascript">
 
 $(function() {
@@ -52,9 +57,9 @@ $(function() {
 			</a> 
 		</span> 
 		
-		<span class="bt_arq"> 
-			<a href="${pageContext.request.contextPath}/nfe/painelMonitorNFe/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> 
+		<span class="bt_arq">
+			<a  isEdicao="true" onclick="PainelMonitorNFE.imprimirDanfes(false)" href="javascript:;" rel="tipsy" title="Imprimir Sele&ccedil;&atilde;o">
+				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir Sele&ccedil;&atilde;o" hspace="5" border="0" />
 			</a>
 		</span>	
 	</div>
@@ -64,43 +69,35 @@ $(function() {
 	
 	<legend> Painel Monitor NF-e</legend>
 	
-	<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-	
+	<table width="950" border="1" cellpadding="2" cellspacing="1" class="filtro">
 		<tr>
-    
-			<td width="85">Série:</td>
-
-			<td width="100">
-			
-				<input type="text" id="serieNfe" style="width: 100px;" />
-
+			<td width="150">
+				Destinat&aacute;rio:
 			</td>
-            
-			<td width="68">Período de:</td>
-
-			<td width="107">
-				<input type="text" id="dataInicial" style="width: 80px;" />
+ 			<td width="210">
+				<c:forEach items="${tiposDestinatarios}" var="tipoDestinatario" varStatus="status" >
+					<input type="radio" name="tipoDestinatario" id="tipoDestinatario${status.index}" value="${tipoDestinatario}" <c:if test="${status.index == 0}">checked="checked"</c:if> onchange="PainelMonitorNFE.verificarTipoDestinatario(this);" /> ${tipoDestinatario.descricao}
+				</c:forEach>
 			</td>
-
-			<td width="29">Até:</td>
-
-			<td width="107"><input type="text" id="dataFinal" style="width: 80px;" />
+			<td>
+				<select id="painelNfe-filtro-selectFornecedoresDestinatarios" name="selectFornecedores" multiple="multiple" style="width:250px">
+					<c:forEach items="${fornecedoresDestinatarios}" var="fornecedor">
+						<option value="${fornecedor.key }">${fornecedor.value }</option>
+					</c:forEach>
+				</select>
 			</td>
-
-			<td colspan="3">Destinatário:</td>
-
-			<td width="135">
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<td width="100">Destinatário:
+				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 					<tr>
 						<td width="15%">
-							<input type="radio" name="radioTipoDoc" value="cpf" />
+							<input type="radio" name="impresaoNfe-radioTipoDoc" value="cpf" onchange="PainelMonitorNFE.verificarRadioCnpjCpf()"/>
 						</td>
 						<td width="34%">
 							<label for="cpf">CPF</label>
 						</td>
 						
 						<td width="15%">
-							<input type="radio" name="radioTipoDoc" checked="checked" value="cnpj" />
+							<input type="radio" name="impresaoNfe-radioTipoDoc" checked="checked" value="cnpj" onchange="PainelMonitorNFE.verificarRadioCnpjCpf()"/>
 						</td>
 						
 						<td width="36%">
@@ -109,9 +106,26 @@ $(function() {
 					</tr>
 				</table>
 			</td>
-			<td width="160">
-				<input type="text" id="documento" style="width: 160px;" />
+			<td width="80">
+				<input type="text" id="impresaoNfe-documento" style="width: 160px;" />
+			</td>
+		</tr>
+		<tr>
+			<td width="180">Nat. de Opera&ccedil;&atilde;o:</td>
+  				<td width="204">
+				<select id="painelNfe-filtro-naturezaOperacao" name="naturezaOperacao" style="width:200px; font-size:11px!important" title="">
+					<option value="">Todos</option>
+				</select>
+			</td>
 			
+			<td width="68" colspan="4">Período de:
+				<input type="text" id="dataInicial" style="width: 80px;" />&nbsp;&nbsp;At&eacute;&nbsp;
+				<input type="text" id="dataFinal" style="width: 80px;" />
+			</td>
+			
+		</tr>
+		<tr>
+						
 		</tr>
 		<tr>
 			<td>Tipo:</td>
@@ -123,46 +137,31 @@ $(function() {
 				    </c:forEach>
 				</select>
 			</td>
-			<td>Número:</td>
-			<td>
-				<input type="text" id="numeroInicial" style="width: 80px;" />
-			</td>
-			<td>Até:</td>
-			<td>
+			<td>N&uacute;mero:
+				<input type="text" id="numeroInicial" style="width: 80px;" />At&eacute;:
 				<input type="text" id="numeroFinal" style="width: 80px;" />
 			</td>
-			<td colspan="3">&nbsp;</td>
 			<td>
 				Chave de Acesso NF-e:
-			</td>
-			<td>
 				<input type="text" id="chaveAcesso" style="width: 160px;" />
+			</td>
 		</tr>
 		<tr>
 			<td>Status:</td>
-			<td colspan="3">
-			
-			
-				<select name="situacaoNfe" id="situacaoNfe" style="width:285px;">
+			<td>
+				<select name="situacaoNfe" id="situacaoNfe" style="width:250px;">
 				    <option value=""  selected="selected"></option>
 				    <c:forEach items="${comboStatusNfe}" var="statusNfe">
 				      		<option value="${statusNfe.key}">${statusNfe.value}</option>	
 				    </c:forEach>
 			    </select>
 			</td>
-			
-			<td width="94">Box:</td>
-
-			<td width="129">
-			
+			<td width="94">Box:
 				<input type="text" id="box" style="width: 80px;" />
-
 			</td>
-			
-			<td colspan="3">&nbsp;</td>
-			
-			<td>&nbsp;</td>
-			
+			<td width="85">S&eacute;rie:
+				<input type="text" id="serieNfe" style="width: 100px;" />
+			</td>
 			<td>
 				<span class="bt_pesquisar">
 					<a href="javascript:;" onclick="PainelMonitorNFE.pesquisar();"><b> Pesquisar </b></a>
