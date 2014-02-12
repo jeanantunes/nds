@@ -15,6 +15,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Strings;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
 import br.com.abril.nds.client.vo.PeriodoLancamentosProdutoEdicaoVO;
@@ -441,16 +443,17 @@ public class ProdutoEdicaoController extends BaseController {
 			
 			if(peDTO.getLancamento()!=null){
 				
-				try {
-
+				try {				    
 					peDTO.setTipoLancamento(TipoLancamento.valueOf(peDTO.getLancamento().toUpperCase()));
 					
 				} catch (Exception e) {
 					
-				}
-				
+				}				
 			}
 			
+			if(!Strings.isNullOrEmpty(peDTO.getClassificacao()))
+			    peDTO.setTipoClassificacaoProduto(tipoClassificacaoProdutoService.obterPorClassificacao(peDTO.getClassificacao()));
+            
 			if(peDTO.getDtLancPrevisto()!=null)
 			peDTO.setDataLancamentoPrevisto(DateUtil.parseDataPTBR(peDTO.getDtLancPrevisto()));
 			
