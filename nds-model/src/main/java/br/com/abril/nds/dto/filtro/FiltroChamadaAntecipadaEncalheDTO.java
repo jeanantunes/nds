@@ -77,8 +77,6 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	@Export(label = "Com CE")
 	private String descComCE;
 	
-	private Integer codMunicipio;
-	
 	private Long codTipoPontoPDV;
 	
 
@@ -87,7 +85,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	 */
 	public FiltroChamadaAntecipadaEncalheDTO(String codigoProduto,Long numeroEdicao,
 											Long box, Long fornecedor, Long roteiro, Long rota,
-											boolean programacaoCE, Integer codMunicipio, Long codTipoPontoPDV) {
+											boolean programacaoCE, String municipio, Long codTipoPontoPDV) {
 		
 		this.codigoProduto = codigoProduto;
 		this.numeroEdicao = numeroEdicao;
@@ -96,8 +94,8 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		this.rota = rota;
 		this.roteiro = roteiro;
 		this.programacaoCE = programacaoCE;
-		this.codMunicipio = codMunicipio;
 		this.codTipoPontoPDV = codTipoPontoPDV;
+		this.descMunicipio = municipio;
 	}
 	
 	/**
@@ -386,20 +384,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 		this.dataOperacao = dataOperacao;
 	}
 	
-	/**
-	 * @return the codMunicipio
-	 */
-	public Integer getCodMunicipio() {
-		return codMunicipio;
-	}
-
-	/**
-	 * @param codMunicipio the codMunicipio to set
-	 */
-	public void setCodMunicipio(Integer codMunicipio) {
-		this.codMunicipio = codMunicipio;
-	}
-
+	
 	/**
 	 * @return the codTipoPontoPDV
 	 */
