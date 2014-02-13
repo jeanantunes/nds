@@ -25,12 +25,6 @@ public class PessoaServiceImpl implements PessoaService {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 	
-	@Transactional
-	@Override
-	public List<PessoaJuridica> buscarPorCnpj(String cnpj) {
-		return pessoaRepository.buscarPorCnpj(cnpj);
-	}
-
 	@Transactional(readOnly = true)
 	@Override
 	public List<PessoaFisica> obterSociosPorFiador(Long idFiador, Set<Long> idsIgnorar, Set<String> cpfsIgnorar) {

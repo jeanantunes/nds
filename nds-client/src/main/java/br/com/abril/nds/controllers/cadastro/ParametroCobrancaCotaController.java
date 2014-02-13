@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		FileType.JPG, FileType.PNG};
 
 
-	                        /**
+	                            /**
      * Constante que representa o nome do atributo com os dados de 'cota
      * cobranca' armazenado na sessão para serem persistidos na base.
      */
@@ -144,7 +145,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		this.httpResponse = httpResponse;
 	}
 
-	                        /**
+	                            /**
      * Método de chamada da página Pré-carrega itens da pagina com informações
      * default.
      */
@@ -154,7 +155,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	}
 
 
-	                        /**
+	                            /**
      * Método de Pré-carregamento de itens da pagina com informações default.
      */
 	public void preCarregamento(){
@@ -170,7 +171,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.include("listaTiposCota",listaTiposCota);
 	}
 
-	                        /**
+	                            /**
      * Carrega somente os tipos de cobrança configurados nas formas de cobrança
      * do distribuidor
      */
@@ -195,7 +196,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return comboTiposCobranca;
 	}
 
-	                        /**
+	                            /**
      * Obter tipos de cobrança das formas de cobrança utilizadas pelo
      * distribuidor para carregar combo
      */
@@ -208,7 +209,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(comboTiposCobranca, "result").recursive().serialize();
 	}
 
-	                        /**
+	                            /**
      * Método de Pré-carregamento de fornecedores relacionados com a Cota.
      * 
      * @param idCota
@@ -241,7 +242,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
 	}
 
-	                        /**
+	                            /**
      * Método responsável por obter os parametros de cobranca da Cota para a aba
      * 'Financeiro'.
      * 
@@ -316,7 +317,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(forma,"result").recursive().serialize();
 	}
 
-	                        /**
+	                            /**
      * Método responsável por obter os dados da uma forma de cobranca do
      * parametro de cobranca da Cota para a aba 'Financeiro'.
      * 
@@ -357,7 +358,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
 	}
 
-	                        /**
+	                            /**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * 
      * @param idCota
@@ -392,7 +393,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	}
 
 
-	                        /**
+	                            /**
      * Método responsável por obter os dados default da forma de cobranca
      * principal dos parametros de cobrança do distribuidor.
      * 
@@ -413,7 +414,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
 	}
 
-	                        /**
+	                            /**
      * Método responsável por postar os dados do parametro de cobrança da cota.
      * 
      * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou
@@ -456,7 +457,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		}
 	}
 
-	                        /**
+	                            /**
      * Formata os dados de FormaCobranca, apagando valores que não são
      * compatíveis com o Tipo de Cobranca escolhido.
      * 
@@ -542,7 +543,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return formaCobranca;
 	}
 
-	                        /**
+	                            /**
      * Método responsável por persistir os dados da forma de cobranca no banco
      * de dados.
      * 
@@ -627,7 +628,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		}
 	}
 
-	                        /**
+	                            /**
      * Método responsável por desativar Forma de Cobranca
      * 
      * @param idFormaCobranca
@@ -701,7 +702,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		}
 	}
 
-	                        /**
+	                            /**
      * @return obtém arquivo anexo
      */
 	private byte[] obterArquivoAnexo() {
@@ -803,7 +804,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	}
 
 
-	                        /**
+	                            /**
      * Método responsável por postar os dados da aba financeiro que são
      * específicos da cota.
      * 
@@ -929,7 +930,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.nothing();
 	}
 
-	                        /**
+	                            /**
      * Obtém um diretório temporario para upload
      * 
      * @param numeroCota
@@ -948,7 +949,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return new File(diretorioContratos, diretorioCotaTemp);
 	}
 
-	                        /**
+	                            /**
      * Método responsável pela validação dos dados e rotinas.
      */
 	public void validar(){
@@ -964,7 +965,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	}
 
 
-	                        /**
+	                            /**
      * Método responsável pela validação dos dados da Forma de Cobranca.
      * 
      * @param formaCobranca
@@ -1032,29 +1033,29 @@ public class ParametroCobrancaCotaController extends BaseController {
 		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
 				(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
 
-			if((formaCobranca.getNomeBanco()==null) || ("".equals(formaCobranca.getNomeBanco()))){
+            if (StringUtils.isEmpty(formaCobranca.getNomeBanco())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
 			}
-			if((formaCobranca.getNumBanco()==null) || ("".equals(formaCobranca.getNumBanco()))){
+            if (StringUtils.isEmpty(formaCobranca.getNumBanco())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
 			}
 
-			if((formaCobranca.getConta()==null) || ("".equals(formaCobranca.getConta()))){
+            if (formaCobranca.getConta() == null) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
 			}
-			if((formaCobranca.getContaDigito()==null) || ("".equals(formaCobranca.getContaDigito()))){
+            if (StringUtils.isEmpty(formaCobranca.getContaDigito())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
 			}
 
-			if((formaCobranca.getAgencia()==null) || ("".equals(formaCobranca.getAgencia()))){
+            if (formaCobranca.getAgencia() == null) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
 			}
-			if((formaCobranca.getAgenciaDigito()==null) || ("".equals(formaCobranca.getAgenciaDigito()))){
+            if (StringUtils.isEmpty(formaCobranca.getAgenciaDigito())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
 			}

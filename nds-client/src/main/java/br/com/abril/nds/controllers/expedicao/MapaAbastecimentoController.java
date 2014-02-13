@@ -406,9 +406,8 @@ public class MapaAbastecimentoController extends BaseController {
 
 				if(filtro.getEdicaoProduto()!=null) {	
 
-					filtro.getPaginacao().setQtdResultadosPorPagina(null);
-					filtro.getPaginacao().setPaginaAtual(null);
-
+					filtro.setPaginacao(null);
+					
 					ProdutoEdicaoMapaDTO produtoEdicaoMapaEdicaoProduto = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 
 					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
@@ -419,6 +418,7 @@ public class MapaAbastecimentoController extends BaseController {
 				}
 			break;	
 			case PROMOCIONAL:
+				filtro.setPorRepartePromocional(true);
 				result.include("isPromocional", true);
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 								
@@ -520,8 +520,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {	
 
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.setPaginacao(null);
 
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
@@ -649,6 +648,8 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	private void popularGridPorRepartePromocional(FiltroMapaAbastecimentoDTO filtro) {
 		
+		filtro.setPorRepartePromocional(true);
+		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
 
 		if (lista == null || lista.isEmpty()) {
@@ -661,7 +662,9 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	private void popularGridPorProdutoEspecifico(FiltroMapaAbastecimentoDTO filtro) {
-
+		
+		filtro.setProdutoEspecifico(true);
+		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 
 		if (lista == null || lista.isEmpty()) {

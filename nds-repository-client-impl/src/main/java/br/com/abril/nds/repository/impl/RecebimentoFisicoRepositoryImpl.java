@@ -113,21 +113,32 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 
 
 	@Override
-	public boolean existeNotaFiscal(Long numero, String serie, String cnpj) {
-		String hql = " select n "
-				   + " from NotaFiscalEntrada n "
-				   + " join n.emitente e "
-				   + " where n.numero = :numero "
-				   + " and n.serie = :serie "
-				   + " and replace(replace(replace(e.cnpj, '.', ''), '-', ''), '/', '') = :cnpj";
+	public boolean existeNotaFiscal(Long numero, String serie, String cnpj, Long numeroNotaEnvio) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select n from NotaFiscalEntrada n 	");
+		hql.append(" join n.emitente e 					");
+		hql.append(" where ( n.numero = :numero 		");
+		hql.append(" and n.serie = :serie				");
+		hql.append(" and replace(replace(replace(e.cnpj, '.', ''), '-', ''), '/', '') = :cnpj ) 		");
+		
+		if(numeroNotaEnvio!=null) {
+			hql.append(" or n.numeroNotaEnvio = :numeroNotaEnvio ");
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
 
-		Query query = getSession().createQuery(hql);
-
+		query.setMaxResults(1);
+		
 		query.setParameter("numero", numero);
 		query.setParameter("serie", serie);
 		query.setParameter("cnpj", cnpj);
+		
+		if(numeroNotaEnvio != null) {
+			query.setParameter("numeroNotaEnvio", numeroNotaEnvio);
+		}
 
-		// Caso não seja encontrado nenhum resultado para a nota, ela não existe
 		return query.uniqueResult() != null;
 	}
 	

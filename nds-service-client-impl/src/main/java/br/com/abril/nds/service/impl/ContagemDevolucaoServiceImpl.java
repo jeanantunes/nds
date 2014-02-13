@@ -739,14 +739,12 @@ TipoMensagem.ERROR,
 	
 	private void gerarMovimentoEstoque(List<ContagemDevolucaoDTO> listaContagemDevolucao) {
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		
 		for ( ContagemDevolucaoDTO contagem : listaContagemDevolucao ) {
 
 			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 
 			movimentoEstoqueService.gerarMovimentoEstoque(
-					dataOperacao,
+					null,
 					contagem.getIdProdutoEdicao(), 
 					usuarioService.getUsuarioLogado().getId(), 
 					contagem.getQtdNota(),

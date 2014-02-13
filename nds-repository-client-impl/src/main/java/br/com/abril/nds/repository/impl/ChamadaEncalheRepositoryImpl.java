@@ -327,9 +327,38 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			param.add(filtro.getCodigoBoxAte());
 		}
 		
+		carregarParamFornecedores(filtro, sql, param);
+		
+		
+	}
+
+	/**
+	 * Carrega os parâmetros fornecedores. 
+	 * 
+	 * @param filtro
+	 * @param sql
+	 * @param param
+	 */
+	private void carregarParamFornecedores(
+			FiltroEmissaoCE filtro,
+			StringBuilder sql, 
+			ArrayList<Object> param) {
+		
 		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
-			sql.append(" and fornecedor8_.ID in (?) ");
-			param.add(filtro.getFornecedores());
+			
+			sql.append(" and fornecedor8_.ID in ");
+
+			sql.append(" ( ");
+
+			int counter = 0;
+			
+			for(Long idFornecedor: filtro.getFornecedores()) {
+				sql.append( (++counter == filtro.getFornecedores().size()) ?  " ? " : " ?, ");
+				param.add(idFornecedor);
+			}
+			
+			sql.append(" ) ");
+			
 		}
 	}
 	

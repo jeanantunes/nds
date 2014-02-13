@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Util {
     
@@ -464,7 +465,7 @@ public abstract class Util {
 		DIVISAO_GEOGRAFICA;
 	}
 	
-	    /**
+	        /**
      * Retorna a lista de UFs brasileiras.<br>
      * A lista pode vir ordenada em:<br>
      * <ul>
@@ -534,17 +535,20 @@ public abstract class Util {
 		return lst;
 	}
 
-	/**
-	 * Retorna a string enviada criptografada em MD5
-	 * @param original
-	 * @return
-	 */
-	public static String md5(String original) {
+	    /**
+     * Retorna a string enviada criptografada em MD5
+     * 
+     * @param original
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public static String md5(String original) throws NoSuchAlgorithmException {
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
 			LOGGER.error(e.getMessage(), e);
+            throw e;
 		}
 		BigInteger hash = new BigInteger(1, md.digest(original.getBytes()));  
 		return hash.toString(16);
@@ -563,7 +567,7 @@ public abstract class Util {
 	}
 	
 	
-	    /**
+	        /**
      * Retorna uma substring de parâmetro value quantidade de caracteres maxima
      * igual ao a do parâmetro maxChar.
      * 

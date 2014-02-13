@@ -59,7 +59,8 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroExcecaoSegmentoParciaisDTO";
 	
-	private static final ValidacaoVO VALIDACAO_VO_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
+    private static final ValidacaoVO VALIDACAO_VO_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS,
+            "Operação realizada com sucesso.");
 	
 	@Autowired
 	private ExcecaoSegmentoParciaisService excecaoSegmentoParciaisService;
@@ -237,7 +238,8 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		validarEntradaFiltroProduto(filtro);
 		
-		if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+        if (StringUtils.isNotEmpty(filtro.getProdutoDto().getCodigoProduto())
+                && !"0".equals(filtro.getProdutoDto().getCodigoProduto())) {
 			produto = produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
 		}
 		
@@ -323,7 +325,8 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 			objects.add(juridica);
 			objects.add(tipoSegmentoProduto);
 		}else {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
+            throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto
+                    + "\" não encontrado!");
 		}	
 		
 		result.use(Results.json()).from(objects, "result").serialize();
@@ -397,13 +400,13 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	private void validarEntradaFiltroCota(FiltroExcecaoSegmentoParciaisDTO filtro) {
 		if((filtro.getCotaDto().getNumeroCota() == null || filtro.getCotaDto().getNumeroCota() == 0) && 
 				(filtro.getCotaDto().getNomePessoa() == null || filtro.getCotaDto().getNomePessoa().trim().isEmpty()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome da cota é obrigatório.");		
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome da cota é obrigatório.");
 	}
 	
 	private void validarEntradaFiltroProduto(FiltroExcecaoSegmentoParciaisDTO filtro) {
 		if((filtro.getProdutoDto().getCodigoProduto() == null || filtro.getProdutoDto().getCodigoProduto().trim().isEmpty()) && 
 				(filtro.getProdutoDto().getNomeProduto() == null || filtro.getProdutoDto().getNomeProduto().trim().isEmpty()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome do produto é obrigatório.");		
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome do produto é obrigatório.");
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unused" })

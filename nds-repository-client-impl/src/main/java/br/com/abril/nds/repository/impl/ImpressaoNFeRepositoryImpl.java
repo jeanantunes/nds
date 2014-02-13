@@ -568,8 +568,6 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		hql.append(" FROM Cota as cota, NotaFiscal as notaFiscal ")
 			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal as item ")
 			.append(" JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.pessoaDestinatarioReferencia as pj ")
-			.append(" JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal.produtoServico.origemItemNotaFiscal ori ")
-			.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal.produtoServico.origemItemNotaFiscal ori ")
 			.append(" WHERE cota.pessoa.id = pj.idPessoaOriginal ");
 
 		
@@ -589,8 +587,6 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		// Intervalo data de Movimento...
 		if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
 			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao BETWEEN :dataInicial AND :dataFinal");
-			
-			// hql.append(" AND notaFiscal.notaFiscalInformacoes.detalhesNotaFiscal.produtoServico.origemItemNotaFiscal ");
 		}
 		
 		// Intervalo de Cota:

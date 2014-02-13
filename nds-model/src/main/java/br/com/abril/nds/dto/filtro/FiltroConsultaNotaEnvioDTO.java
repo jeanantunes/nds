@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +10,14 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroConsultaNotaEnvioDTO {
+public class FiltroConsultaNotaEnvioDTO  implements Serializable{
 
-	private Date dataEmissao;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3159178471266292426L;
+    
+    private Date dataEmissao;
 	
 	private List<Long> idFornecedores;
 	

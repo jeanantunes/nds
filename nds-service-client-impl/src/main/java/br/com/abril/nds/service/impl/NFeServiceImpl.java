@@ -19,8 +19,8 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,14 +109,15 @@ public class NFeServiceImpl implements NFeService {
 		return info;
 
 	}
-	/**
-	 * Obtém os arquivos das DANFE relativas as NFes passadas como parâmetro. 
-	 * 
-	 * @param listaNfeImpressao
-	 * @param indEmissaoDepec
-	 * 
-	 * @return byte[] - Bytes das DANFES
-	 */
+	    
+    /**
+     * Obtém os arquivos das DANFE relativas as NFes passadas como parâmetro.
+     * 
+     * @param listaNfeImpressao
+     * @param indEmissaoDepec
+     * 
+     * @return byte[] - Bytes das DANFES
+     */
 	@Transactional
 	public byte[] obterDanfesPDF(List<NotaFiscal> listaNfeImpressao, boolean indEmissaoDepec) {
 
@@ -155,8 +156,8 @@ public class NFeServiceImpl implements NFeService {
 			return gerarDocumentoIreportNE(listaNEWrapper, false);
 
 		} catch(Exception e) {
-			LOGGER.error("Falha na geração dos arquivos NE!"+ e.getMessage(), e);
-			throw new RuntimeException("Falha na geração dos arquivos NE!", e);
+            LOGGER.error("Falha na geração dos arquivos NE!" + e.getMessage(), e);
+            throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
 	}
 	
@@ -578,14 +579,14 @@ public class NFeServiceImpl implements NFeService {
 
 	}
 
-	/**
-	 * Carrega e retorna um objeto DANFE com os dados pertinentes a notaFiscal 
-	 * passada como parâmetro.
-	 * 
-	 * @param nfe
-	 * 
-	 * @return DanfeDTO
-	 */
+	    /**
+     * Carrega e retorna um objeto DANFE com os dados pertinentes a notaFiscal
+     * passada como parâmetro.
+     * 
+     * @param nfe
+     * 
+     * @return DanfeDTO
+     */
 //	private NfeImpressaoDTO obterDadosNFe(NfeVO nfe) {
 //
 //		NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
@@ -617,7 +618,6 @@ public class NFeServiceImpl implements NFeService {
 //		return nfeImpressao;
 //
 //	}
-
 
 
 	/* TODO : Sem a modelagem do conceito de duplicatas no sistema, refatorar após 
@@ -708,6 +708,10 @@ public class NFeServiceImpl implements NFeService {
 
 	}
 
+    /*
+     * TODO : Sem a modelagem do conceito de duplicatas no sistema, refatorar
+     * após modelagem de dados e EMS relativa a calculo de duplicatas.
+     */
 //	private void carregarDadosDuplicatas(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 //		List<Duplicata> faturas = new ArrayList<Duplicata>();
 //		danfe.setFaturas(faturas);	
@@ -824,7 +828,7 @@ public class NFeServiceImpl implements NFeService {
 		
 		} else {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
+            throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
 		}
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -891,7 +895,7 @@ public class NFeServiceImpl implements NFeService {
 		BigDecimal valorLiquido  	= BigDecimal.ZERO;
 		
 		for(ItemNotaEnvio ine : notaEnvio.getListaItemNotaEnvio()) {
-			valorLiquido.add(ine.getPrecoCapa());
+            valorLiquido = valorLiquido.add(ine.getPrecoCapa());
 		}
 		
 		BigDecimal valorDesconto	= BigDecimal.ZERO;
@@ -1127,7 +1131,8 @@ public class NFeServiceImpl implements NFeService {
 			dataRecolhimento =  DateUtil.formatarDataPTBR(intervalo.getDe());
 		else
 			dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(intervalo.getDe()) + 
-								" até " + DateUtil.formatarDataPTBR(intervalo.getAte());
+ " até "
+                + DateUtil.formatarDataPTBR(intervalo.getAte());
 		
 		return dataRecolhimento;
 	}

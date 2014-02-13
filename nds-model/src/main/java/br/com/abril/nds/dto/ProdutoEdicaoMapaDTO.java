@@ -13,13 +13,15 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 	private String codigoDeBarras;
 	private String precoCapa;
 	private HashMap<Integer, BoxRotasDTO> boxes;
+	private Integer repartePromocional;
 	
 	public ProdutoEdicaoMapaDTO() {
 		
 	}
 	
 	public ProdutoEdicaoMapaDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, String codigoDeBarras, String precoCapa, HashMap<Integer, BoxRotasDTO> boxes) {
+			Long numeroEdicao, String codigoDeBarras, String precoCapa, HashMap<Integer, BoxRotasDTO> boxes,
+			Integer repartePromocional) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -27,6 +29,7 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 		this.codigoDeBarras = codigoDeBarras;
 		this.precoCapa = precoCapa;
 		this.boxes = boxes;
+		this.repartePromocional = repartePromocional;
 	}
 
 	/**
@@ -105,6 +108,14 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
+	}
+
+	public Integer getRepartePromocional() {
+		return repartePromocional;
+	}
+
+	public void setRepartePromocional(Integer repartePromocional) {
+		this.repartePromocional = repartePromocional;
 	}
 	
 }

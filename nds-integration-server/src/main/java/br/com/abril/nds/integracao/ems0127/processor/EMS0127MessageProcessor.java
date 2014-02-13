@@ -9,11 +9,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -75,6 +76,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			String[] s = c.getMetaData().getURL().split(":");
 			database = s[s.length - 1];
 			username = c.getMetaData().getUserName();
+            c.close();
         } catch (SQLException e) {
             LOGGER.error(e.getMessage(), e);
 		}
