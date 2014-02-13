@@ -44,6 +44,10 @@
 	$('.camposEspecificosRegimeEspecial').hide();
 	</c:if>
 	
+	
+	//${parametrosDistribuidor.regimeTributario.id}
+	//${parametrosDistribuidor.tipoAtividade.descricao}
+	
 </script>
 
 </head>
@@ -92,7 +96,7 @@
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
 			<ul>
-				<li><a href="#tabCadastro">Cadastro / Fiscal</a></li>
+				<li><a href="#tabCadastro">Cadastro</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabDistribuicao">Distribuição</a></li>

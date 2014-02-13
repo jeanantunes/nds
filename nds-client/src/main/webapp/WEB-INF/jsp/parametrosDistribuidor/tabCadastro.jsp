@@ -178,36 +178,5 @@
 		</table>
 	</fieldset>
 	
-	<fieldset
-		style="width: 440px !important; margin-bottom: 5px; float: left;">
-		<legend>Fiscal</legend>
-		<table width="307" border="0" cellspacing="2" cellpadding="0">
-			<tr>
-				<td>Regime Tributário:</td>
-				<td>
-					<select name="regimeTributario" id="regimeTributario"
-							style="width: 150px;">
-						<option selected="selected"></option>
-						<c:forEach var="regimeTributario" items="${listaRegimeTributario}">
-							<option value="${regimeTributario.key}">${regimeTributario.value}</option>
-						</c:forEach>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td width="102"></td>
-				<td width="185"></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-		</table>
-	</fieldset>
-	
 	<br clear="all" />
 </div>

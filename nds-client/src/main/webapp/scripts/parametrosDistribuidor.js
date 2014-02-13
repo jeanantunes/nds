@@ -753,6 +753,8 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		// fim F2
 		
+		parametrosDistribuidorController.carregarTributosRegimeTributario();
+		
 	},
 	
 	desabilitarItens : function() {
@@ -829,6 +831,11 @@ var parametrosDistribuidorController = $.extend(true, {
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					   });
 		 }
+	 },
+	 
+	 carregarTributosRegimeTributario : function() {
+		 $('#regimeTributario', this.workspace).val();
+		 console.log( $('#regimeTributario option:selected', this.workspace).val());
 	 }
 	 
 }, BaseController);

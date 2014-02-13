@@ -118,12 +118,13 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		this.limparLogoSessao();
 		
-		result.include("parametrosDistribuidor", parametrosDistribuidorService.getParametrosDistribuidor());
+		ParametrosDistribuidorVO parametrosDistribuidor = parametrosDistribuidorService.getParametrosDistribuidor();
+		
+		result.include("parametrosDistribuidor", parametrosDistribuidor);
 		result.include("listaDiaOperacaoFornecedor", distribuicaoFornecedorService.buscarDiasOperacaoFornecedor());
 		result.include("fornecedores", fornecedorService.obterFornecedores());
 		result.include("listaTipoPrestador", this.carregarComboTipoPrestador());
 		result.include("listaRegimeTributario", this.carregarComboRegimeTributario());
-//		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
 		result.include("listaTiposNotaFiscal", parametrosDistribuidorService.obterTiposNotaFiscalDistribuidor());
 		result.include("listaTiposEmissaoNotaFiscal", parametrosDistribuidorService.obterTiposEmissoesNotaFiscalDistribuidor());
 		result.include("listaEstadosAnuencia", parametrosDistribuidorService.obterEstadosAtendidosPeloDistribuidor());

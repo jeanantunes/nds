@@ -216,7 +216,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
-		parametrosDistribuidor.setRegimeTributario(distribuidor.getTipoAtividade());
+		parametrosDistribuidor.setRegimeTributario(distribuidor.getRegimeTributario());
+		parametrosDistribuidor.setTipoAtividade(distribuidor.getTipoAtividade());
 		parametrosDistribuidor.setPossuiRegimeEspecialDispensaInterna(distribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
 		// Parciais / Matriz de Lançamento
@@ -653,7 +654,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setCodigoDistribuidorDinap(parametrosDistribuidor.getCodigoDistribuidorDinap());
 		distribuidor.setCodigoDistribuidorFC(parametrosDistribuidor.getCodigoDistribuidorFC());
 		
-		distribuidor.setTipoAtividade(parametrosDistribuidor.getRegimeTributario());
+		distribuidor.setTipoAtividade(parametrosDistribuidor.getTipoAtividade());
 		distribuidor.setPossuiRegimeEspecialDispensaInterna(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna());
 		
 		// Parciais / Matriz de Lançamento

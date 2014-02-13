@@ -351,6 +351,10 @@ public class Distribuidor {
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
 	
+	@OneToOne
+	@JoinColumn(name="REGIME_TRIBUTARIO_ID")
+	private RegimeTributario regimeTributario;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1235,6 +1239,14 @@ public class Distribuidor {
 	public void setListPercentualExcedente(
             List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
+	}
+
+	public RegimeTributario getRegimeTributario() {
+		return regimeTributario;
+	}
+
+	public void setRegimeTributario(RegimeTributario regimeTributario) {
+		this.regimeTributario = regimeTributario;
 	}
 
 	@Override
