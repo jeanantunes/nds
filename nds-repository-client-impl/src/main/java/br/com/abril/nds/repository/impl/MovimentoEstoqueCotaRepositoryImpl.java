@@ -3459,15 +3459,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append(" join mec.produtoEdicao produtoEdicao ");
 		
-		sql.append(" join lancamento.estudo estudo ");
-		
-		sql.append(" join estudo.estudoCotas estudoCota ");
-		
 		sql.append(" where lancamento.id = :idLancamento ");
 		
 		sql.append(" and produtoEdicao.id = :idProdutoEdicao ");
-		
-		sql.append(" and cota.id = estudoCota.cota.id ");
 		
 		sql.append(" group by mec.cota.id ");
 		
