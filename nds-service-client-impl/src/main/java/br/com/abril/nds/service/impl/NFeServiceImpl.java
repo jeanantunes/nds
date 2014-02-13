@@ -25,12 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.NfeVO;
 import br.com.abril.nds.dto.Duplicata;
-import br.com.abril.nds.dto.InfoNfeDTO;
 import br.com.abril.nds.dto.ItemImpressaoNfe;
-import br.com.abril.nds.dto.NfeDTO;
 import br.com.abril.nds.dto.NfeImpressaoDTO;
 import br.com.abril.nds.dto.NfeImpressaoWrapper;
-import br.com.abril.nds.dto.filtro.FiltroMonitorNfeDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
