@@ -137,15 +137,19 @@ public class HistogramaPosEstudoController extends BaseController{
 			faixaIterator = faixaReparteInicial;
 		}
 		
+		List<Long> listaIdEdicaoBaseEstudo = histogramaPosEstudoFaixaReparteService.obterIdEdicoesBase(Long.valueOf(estudoId));
+		
 		for (String faixas : faixaIterator) {
 			int faixaDe = Integer.parseInt(faixas.split("-")[0]);
 			int faixaAte = Integer.parseInt(faixas.split("-")[1]);
-			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId);
+			
+			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId, listaIdEdicaoBaseEstudo);
+			
 			base.add(baseEstudoAnaliseFaixaReparteDTO);
 		}
 		
 		// última faixa
-		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId);
+		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId, listaIdEdicaoBaseEstudo);
 		base.add(baseEstudoAnaliseFaixaReparteDTO);
 		
 		TableModel<CellModelKeyValue<HistogramaPosEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();
