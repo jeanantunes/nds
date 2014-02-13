@@ -401,7 +401,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						// Adicionar a imagem para exclusão da linha
 						$.each(resultado.rows, function(index, row) {
 							
-							var linkExcluirSegmento = '<a href="javascript:;" onclick="segmentoNaoRecebidoController.excluirSegmentoNaoRecebidoSegmento('+row.cell.segmentoNaoRecebidoId+');" style="cursor:pointer">' +
+							var linkExcluirSegmento = '<a href="javascript:;" isEdicao="true" onclick="segmentoNaoRecebidoController.excluirSegmentoNaoRecebidoSegmento('+row.cell.segmentoNaoRecebidoId+');" style="cursor:pointer">' +
 											   	 '<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											   '</a>';
 							
@@ -422,7 +422,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						// Adicionar a imagem para exclusão da linha
 						$.each(resultado.rows, function(index, row) {
 							
-							var linkExcluirSegmento = '<a href="javascript:;" onclick="segmentoNaoRecebidoController.excluirSegmentoNaoRecebidoCota('+row.cell.segmentoNaoRecebidoId+');" style="cursor:pointer">' +
+							var linkExcluirSegmento = '<a href="javascript:;" isEdicao="true" onclick="segmentoNaoRecebidoController.excluirSegmentoNaoRecebidoCota('+row.cell.segmentoNaoRecebidoId+');" style="cursor:pointer">' +
 											   	 '<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											   '</a>';
 							

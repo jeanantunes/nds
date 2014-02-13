@@ -80,7 +80,7 @@
           	<a id="a1" href="#" data-href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar">
           	<img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
           </span>
-          <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte" ><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span><!-- <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
+          <span class="bt_novos"><a href="javascript:;" isEdicao="true" id="alterarFaixaReparte" ><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span><!-- <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
           <span class="bt_novos"><a href="javascript:anaLiseHistogramaController.voltarFiltro();"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span><br clear="all" />
 
           </td>

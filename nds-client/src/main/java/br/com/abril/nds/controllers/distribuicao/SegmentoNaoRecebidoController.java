@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicao/segmentoNaoRecebido")
 @Resource
+@Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO)
 public class SegmentoNaoRecebidoController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroSegmentoNaoRecebido";
@@ -73,7 +74,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO)
+    @Path("/")
 	public void index(){
 		// POPULANDO FILTROS
 		List<TipoSegmentoProduto> listaTipoSegmentoProduto = tipoSegmentoProdutoService.obterTipoSegmentoProduto();
@@ -163,11 +164,12 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	}
 	
 	@Post("/excluirSegmentoNaoRecebido")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO_ALTERACAO)
 	public void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId){
 		
 		segmentoNaoRecebidoService.excluirSegmentoNaoRecebido(segmentoNaoRecebidoId);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				"result").recursive().serialize();
 	}
 	
@@ -226,7 +228,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	@Post("/pesquisarSegmentosElegiveisParaInclusao")
 	public void pesquisarSegmentosElegiveisParaInclusao(FiltroSegmentoNaoRecebidoDTO filtro, String sortorder, int page, int rp, boolean isReload){
 		
-		// fazer validação do numero e nome da cota;
+        // fazer validação do numero e nome da cota;
 		this.validarEntradaFiltroCota(filtro);
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
@@ -250,9 +252,10 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	}
 	
 	@Post("/incluirCotasSegmentoNaoRecebido")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO_ALTERACAO)
 	public void incluirCotasSegmentoNaoRecebido(Long[] idCotas, Long idTipoSegmento){
 	
-		// Valida o filtro (Seleção de cotas)
+        // Valida o filtro (Seleção de cotas)
 		if (idCotas.length == 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada, por favor selecione uma cota."); 
 		}
@@ -273,15 +276,16 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		
 		session.removeAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				"result").recursive().serialize();
 		
 	}
 	
 	@Post("/incluirSegmentosNaCota")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO_ALTERACAO)
 	public void incluirSegmentosNaCota(Integer numeroCota, String nomeCota, Long[] idTipoSegmentos){
 	
-		// Criando o filtro a partir dos parametros passados na requisição
+        // Criando o filtro a partir dos parametros passados na requisição
 		FiltroSegmentoNaoRecebidoDTO filtro = new FiltroSegmentoNaoRecebidoDTO();
 		filtro.setNomeCota(nomeCota);
 		filtro.setNumeroCota(numeroCota);
@@ -312,14 +316,15 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		
 		segmentoNaoRecebidoService.inserirCotasSegmentoNaoRecebido(listaSegmentoNaoRecebido);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				"result").recursive().serialize();
 		
 	}
 	
-	/**
-	 * utilizado para auto complete da tela onde o usuário utiliza o nome do Segmento
-	 */
+	        /**
+     * utilizado para auto complete da tela onde o usuário utiliza o nome do
+     * Segmento
+     */
 	@Post
 	public void autoCompletarPorNome(FiltroSegmentoNaoRecebidoDTO filtro) {
 		
@@ -387,10 +392,10 @@ public class SegmentoNaoRecebidoController extends BaseController {
 			List<CotaNaoRecebeSegmentoDTO> listaCotaNaoRecebeSegmentoDTO = this.segmentoNaoRecebidoService.obterCotasNaoRecebemSegmento(filtro);
 			
 			if(listaCotaNaoRecebeSegmentoDTO.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to(COTAS_NAO_RECEBEM_SEGMENTO, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+            FileExporter.to(COTAS_NAO_RECEBEM_SEGMENTO, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
 					listaCotaNaoRecebeSegmentoDTO, CotaNaoRecebeSegmentoDTO.class, this.httpResponse);
 			
 			result.nothing();
@@ -400,10 +405,10 @@ public class SegmentoNaoRecebidoController extends BaseController {
 			List<SegmentoNaoRecebeCotaDTO> listaSegmentoNaoRecebeCotaDTO = this.segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosNaCota(filtro);
 			
 			if(listaSegmentoNaoRecebeCotaDTO.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to(SEGMENTOS_NAO_RECEBEM_COTA, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+            FileExporter.to(SEGMENTOS_NAO_RECEBEM_COTA, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
 					listaSegmentoNaoRecebeCotaDTO, SegmentoNaoRecebeCotaDTO.class, this.httpResponse);
 			
 			result.nothing();
@@ -412,10 +417,10 @@ public class SegmentoNaoRecebidoController extends BaseController {
 			List<TipoSegmentoProduto> listaTipoSegmentoProduto = this.segmentoNaoRecebidoService.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
 			
 			if(listaTipoSegmentoProduto.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+                throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("segmentos_elegiveis", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+            FileExporter.to("segmentos_elegiveis", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,
 					listaTipoSegmentoProduto, TipoSegmentoProduto.class, this.httpResponse);
 			
 			result.nothing();
@@ -430,7 +435,8 @@ public class SegmentoNaoRecebidoController extends BaseController {
 
 		for (TipoSegmentoProduto tipoSegmentoProduto : listaTipoSegmentoProduto) {
 
-			// Preenchendo a lista que irá representar o combobox TipoSegmentoProduto
+            // Preenchendo a lista que irá representar o combobox
+            // TipoSegmentoProduto
 			listaTipoSegmentoProdutoCombobox.add(new ItemDTO<Long, String>(tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
 		}
 
@@ -458,7 +464,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	
 	private void validarEntradaFiltroCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		if((filtro.getNumeroCota() == null || filtro.getNumeroCota() == 0) && (filtro.getNomeCota() == null || filtro.getNomeCota().trim().isEmpty()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome da cota é obrigatório.");		
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome da cota é obrigatório.");
 	}
 
 }
