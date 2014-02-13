@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -282,6 +283,19 @@ public class ProdutoEdicaoController extends BaseController {
 		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao, redistribuicao, situacaoProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
+	}
+	
+	@Post
+	public void atualizarReparteLancamento(Long idLancamento, BigInteger reparte, BigInteger repartePromocional) {
+		
+		if (idLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não existe.");
+		}
+		
+		this.lancamentoService.atualizarReparteLancamento(idLancamento, reparte, repartePromocional);
+		
+		this.result.nothing();
 	}
 	
 	@Post
@@ -723,7 +737,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                                                                                        /**
+	/**
      * Obtém todos os períodos de lançamento da edição do produto
      * 
      * @param produtoEdicaoId
@@ -758,6 +772,7 @@ public class ProdutoEdicaoController extends BaseController {
 			periodoLancamento.setDataRecolhimentoPrevista(lancamento.getDataRecolhimentoPrevista());
 			periodoLancamento.setStatus(lancamento.getStatus().getDescricao());
 			periodoLancamento.setReparte(lancamento.getReparte());
+			periodoLancamento.setRepartePromocional(lancamento.getRepartePromocional());
 			
 			if (numerosPeriodo.contains(numeroPeriodo)) {
 				periodoLancamento.setDestacarLinha(true);

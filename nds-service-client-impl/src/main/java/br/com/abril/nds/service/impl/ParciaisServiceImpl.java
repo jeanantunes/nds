@@ -93,7 +93,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	private void validarDataRecolhimentoPeriodoManual(LancamentoParcial lancamento, Date dataRecolhimento) {
 
 		if (!this.calendarioService.isDiaUtil(dataRecolhimento)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data de lançamento não é um dia util.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de recolhimento não é um dia util.");
 		}
 
 		if (DateUtil.isDataInicialMaiorIgualDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
@@ -167,7 +167,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
 					&& DateUtil.isDataInicialMaiorDataFinal(novaDataLancamento, lancamento.getDataLancamentoDistribuidor())) {
 
-				throw new ValidacaoException(TipoMensagem.WARNING, "Existe redistribuição cadastrada.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A data selecionada interfere em uma redistribuição já cadastrada.");
 			}
 		}
 	}
@@ -523,7 +523,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	private void reajustarProximoPeriodo(PeriodoLancamentoParcial proximoPeriodo,Date dataLancamento, Date dataRecolhimentoPeriodoAnterior) {
 
-		if (dataRecolhimentoPeriodoAnterior == null) {
+		if (proximoPeriodo == null || dataRecolhimentoPeriodoAnterior == null) {
 
 			return;
 		}

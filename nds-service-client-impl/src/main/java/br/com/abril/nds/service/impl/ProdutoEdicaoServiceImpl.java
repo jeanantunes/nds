@@ -511,21 +511,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	private Lancamento obterLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
-		
-		Lancamento lancamento = null;
-		
+
 		if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
-			lancamento = new Lancamento();
+			return new Lancamento();
 		} else {
-			for (Lancamento lancto: produtoEdicao.getLancamentos()) {
-				if (lancamento == null 
-						|| DateUtil.isDataInicialMaiorDataFinal(lancto.getDataLancamentoDistribuidor(), lancamento.getDataLancamentoDistribuidor())) {
-					lancamento = lancto;
-				}
-			}
+			return lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());	
 		}
-		
-		return lancamento;
 	}
 	
 	private boolean isLancamentoBalanceadoRecolhimento(Lancamento lancamento) {
@@ -865,9 +856,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
 		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		
-		BigInteger repartePrevisto = dto.getRepartePrevisto() == null ? BigInteger.ZERO : dto.getRepartePrevisto();
 		BigInteger repartePromocional = dto.getRepartePromocional() == null ? BigInteger.ZERO : dto.getRepartePromocional();
-		lancamento.setReparte(repartePrevisto);
+		
+		if (lancamento.getId() == null || dto.getRepartePrevisto() != null) {
+		
+			lancamento.setReparte(dto.getRepartePrevisto());
+		}
+
 		lancamento.setRepartePromocional(repartePromocional);
 		lancamento.setUsuario(usuario);
 		
@@ -1246,7 +1241,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	private void carregarInformacaoLancamentos(ProdutoEdicaoDTO dto,ProdutoEdicao produtoEdicao) {
 		
-		Lancamento uLancamento = lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+		Lancamento uLancamento = lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());//TODO
 
 		if (uLancamento != null) {
 			
