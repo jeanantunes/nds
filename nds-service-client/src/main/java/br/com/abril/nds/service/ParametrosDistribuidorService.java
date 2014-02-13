@@ -7,7 +7,6 @@ import java.util.List;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
-import br.com.abril.nds.model.fiscal.notafiscal.RegimeTributario;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 
 /**

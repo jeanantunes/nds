@@ -182,9 +182,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 		geracaoNotaEnvioService.busca(filtro);
 
 	FileExporter.to("nota-envio", fileType).inHTTPResponse(
-this.getNDSFileHeader(), filtro,
-		consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,
-		this.httpServletResponse);
+			this.getNDSFileHeader(), filtro,
+			consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,
+			this.httpServletResponse);
 
 	result.use(Results.nothing());
     }

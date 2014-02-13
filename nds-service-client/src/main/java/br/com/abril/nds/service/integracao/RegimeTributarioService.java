@@ -2,7 +2,7 @@ package br.com.abril.nds.service.integracao;
 
 import java.util.List;
 
-import br.com.abril.nds.model.fiscal.notafiscal.RegimeTributario;
+import br.com.abril.nds.model.cadastro.RegimeTributario;
 
 public interface RegimeTributarioService {
 	
