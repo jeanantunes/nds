@@ -1215,7 +1215,9 @@ public class CotaServiceImpl implements CotaService {
 		processarTitularidadeCota(cota, cotaDTO);
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
-		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao().getRecebeComplementar());
+		cotaDTO.setRecebeComplementar(
+			cota.getParametroDistribuicao() == null ? false : 
+				cota.getParametroDistribuicao().getRecebeComplementar());
 		
 		return cotaDTO;
 	}
@@ -1367,6 +1369,11 @@ public class CotaServiceImpl implements CotaService {
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 	
 		try{	
+			
+			for (HistoricoSituacaoCota hist : cota.getHistoricos()){
+				
+				this.historicoSituacaoCotaRepository.remover(hist);
+			}
 			
 			cotaRepository.remover(cota);
 			
