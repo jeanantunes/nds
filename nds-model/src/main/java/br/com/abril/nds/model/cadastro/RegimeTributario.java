@@ -35,7 +35,7 @@ public class RegimeTributario implements Serializable {
 	@Column(name="ativo")
 	private boolean ativo;
 	
-	@OneToMany(fetch=FetchType.EAGER)
+	@OneToMany
 	@JoinTable(	name = "regime_tributario_tributo_aliquota", 
 				joinColumns = {@JoinColumn(name = "regime_tributario_id")}, 
 				inverseJoinColumns = {@JoinColumn(name = "tributo_aliquota_id")})
