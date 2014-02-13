@@ -181,10 +181,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
 		geracaoNotaEnvioService.busca(filtro);
 
-	FileExporter.to("nota-envio", fileType).inHTTPResponse(
-			this.getNDSFileHeader(), filtro,
-			consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,
-			this.httpServletResponse);
+	FileExporter.to("nota-envio", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro,consultaNotaEnvioDTO, ConsultaNotaEnvioDTO.class,this.httpServletResponse);
 
 	result.use(Results.nothing());
     }
@@ -211,8 +208,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 		session.setAttribute(COTAS_ID, listaIdCotas);
 	
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
- "Geração de NE."), Constantes.PARAM_MSGS)
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Geração de NE."), Constantes.PARAM_MSGS)
                 .recursive().serialize();
     }
 
@@ -253,21 +249,21 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 		    if (notasGeradas != null) {
 	
-			DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-	
-			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-	
-			OutputStream output;
-	
-			output = this.httpResponse.getOutputStream();
-	
-			output.write(notasGeradas);
-	
-			httpResponse.getOutputStream().close();
-	
-			session.setAttribute(COTAS_ID, null);
-	
-			result.use(Results.nothing());
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+		
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+		
+				OutputStream output;
+		
+				output = this.httpResponse.getOutputStream();
+		
+				output.write(notasGeradas);
+		
+				httpResponse.getOutputStream().close();
+		
+				session.setAttribute(COTAS_ID, null);
+		
+				result.use(Results.nothing());
 	
 		    }
 		} catch (ValidacaoException e) {

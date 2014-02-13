@@ -597,7 +597,23 @@ public class Produto implements Serializable {
 	public String toString() {
 		return new StringBuilder(codigo).append("-").append(nome).toString();
 	}
+	
+	public Boolean getIsGeracaoAutomatica() {
+		return isGeracaoAutomatica;
+	}
 
+	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
+
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;			
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -628,21 +644,4 @@ public class Produto implements Serializable {
 			return false;
 		return true;
 	}
-
-	public Boolean getIsGeracaoAutomatica() {
-		return isGeracaoAutomatica;
-	}
-
-	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
-		this.isGeracaoAutomatica = isGeracaoAutomatica;
-	}
-
-	public String getCodigoICD() {
-		return codigoICD;
-	}
-
-	public void setCodigoICD(String codigoICD) {
-		this.codigoICD = codigoICD;			
-	}
-	
 }
