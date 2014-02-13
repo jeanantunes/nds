@@ -264,6 +264,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	}
 
 	@Override
+	@Transactional
 	public String obterValidacaoLinha(MixCotaProdutoDTO mixCotaProdutoDTO) {
 		
 		String msgValidacao = obterValidacaoPreenchimentoMix(mixCotaProdutoDTO);
@@ -678,7 +679,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		}
 		return true;
 	}
-
+	
+	@Transactional
 	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario) {
 		
 		return mixCotaProdutoRepository.obterSomaReparteMinimoPorProdutoUsuario(produtoId, idUsuario);
