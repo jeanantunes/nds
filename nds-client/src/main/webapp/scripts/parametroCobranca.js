@@ -884,19 +884,20 @@ var parametroCobrancaController = $.extend(true,
 				
 				row.cell.cotas = centralizadas;
 				
-				var linkAEditar = '<a href="javascript:;" onclick="parametroCobrancaController.editarUnificacao(' + 
+				var linkAEditar = '<a isEdicao="true" href="javascript:;" onclick="parametroCobrancaController.editarUnificacao(' + 
 				row.cell.cota + ');"' +
 				'style="cursor:pointer; margin-right:10px;">' +
 				'<img title="Editar" src="' + contextPath + '/images/ico_editar.gif" border="0px" />' +
 				'</a>';
 
-				var linkExcluir = '<a href="javascript:;" onclick="parametroCobrancaController.excluirUnificacao(' + 
+				var linkExcluir = '<a isEdicao="true" href="javascript:;" onclick="parametroCobrancaController.excluirUnificacao(' + 
 				row.cell.cota + ');" style="cursor:pointer">' +
 				'<img title="Excluir" src="' + contextPath + '/images/ico_excluir.gif" border="0px" />' +
 				'</a>';
 				
 				row.cell.acao = linkAEditar + linkExcluir;
 			});
+			var permissaoAlteracao = ($('#permissaoAlteracao',workspace).val()=="true");
 			
 			$("#dialog_cota_unificacao", parametroCobrancaController.workspace).dialog({
 				resizable: false,
@@ -907,6 +908,10 @@ var parametroCobrancaController = $.extend(true,
 					id:"bt_inc_nova",
 			        text:"Incluir Nova", 
 			        click: function() {
+			        	if(!permissaoAlteracao){
+							exibirAcessoNegado();
+							return;
+						}
 			        	$("#numeroCota_", parametroCobrancaController.workspace).val("");
 			        	$("#nomeCota_", parametroCobrancaController.workspace).val("");
 			        	parametroCobrancaController.exibirModalNovaUnificacao();

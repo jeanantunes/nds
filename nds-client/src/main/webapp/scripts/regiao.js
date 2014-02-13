@@ -407,7 +407,7 @@ var regiaoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var linkDetalhe = '<a href="javascript:;" onclick="regiaoController.remove_cotas_grid('+row.cell.registroCotaRegiaoId+');" style="cursor:pointer">' +
+			var linkDetalhe = '<a href="javascript:;" isEdicao="true" onclick="regiaoController.remove_cotas_grid('+row.cell.registroCotaRegiaoId+');" style="cursor:pointer">' +
 								'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
 							   '</a>';
 			

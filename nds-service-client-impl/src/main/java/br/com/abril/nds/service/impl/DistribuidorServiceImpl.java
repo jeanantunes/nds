@@ -618,6 +618,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public boolean isConferenciaCegaFechamentoEncalhe() {
 		
 		return this.distribuidorRepository.isConferenciaCegaFechamentoEncalhe();
