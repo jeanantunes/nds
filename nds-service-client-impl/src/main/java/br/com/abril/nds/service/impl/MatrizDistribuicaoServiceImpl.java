@@ -89,13 +89,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Override
 	@Transactional(readOnly = true)
-	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(
-			FiltroDistribuicaoDTO filtro) {
+	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 
 		this.validarFiltro(filtro);
 
-		List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs = distribuicaoRepository
-				.obterMatrizDistribuicao(filtro);
+		List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs = distribuicaoRepository.obterMatrizDistribuicao(filtro);
 
 		boolean matrizFinalizada = isMatrizFinalizada(produtoDistribuicaoVOs);
 
@@ -106,8 +104,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		return totalizadorProdutoDistribuicaoVO;
 	}
 
-	private boolean isMatrizFinalizada(
-			List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	private boolean isMatrizFinalizada(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 
 		if (produtoDistribuicaoVOs.isEmpty()) {
 
@@ -143,8 +140,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		Lancamento lancamentoCopy = cloneLancamento(lancamento);
 		lancamentoRepository.adicionar(lancamentoCopy);
 
-		gravarHistoricoLancamento(prodDistribVO.getIdUsuario().longValue(),
-				lancamentoCopy);
+		gravarHistoricoLancamento(prodDistribVO.getIdUsuario().longValue(), lancamentoCopy);
 	}
 
 	private Lancamento cloneLancamento(Lancamento lancamento) {
@@ -307,6 +303,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 
     @Override
+    @Transactional
 	public void removeEstudo(Long idEstudo) {
         if (idEstudo > 0) {
             EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
@@ -321,8 +318,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Override
 	@Transactional
-	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro,
-			List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 
 		List<ProdutoDistribuicaoVO> listDistrib = produtoDistribuicaoVOs;
 
@@ -343,13 +339,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 		if (!mensagens.isEmpty()) {
 
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-					mensagens));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
 
-	private boolean isItemValido(ProdutoDistribuicaoVO produtoDistribuicaoVO,
-			List<String> mensagens) {
+	private boolean isItemValido(ProdutoDistribuicaoVO produtoDistribuicaoVO, List<String> mensagens) {
 
 		if (produtoDistribuicaoVO.getIdEstudo() == null) {
 
@@ -363,9 +357,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 			mensagens.add(msg);
 			return false;
-		} else if (!(produtoDistribuicaoVO.getLiberado() != null && (produtoDistribuicaoVO
-				.getLiberado().equals("LIBERADO") || Boolean
-				.valueOf(produtoDistribuicaoVO.getLiberado())))) {
+		} else if (!(produtoDistribuicaoVO.getLiberado() != null && (produtoDistribuicaoVO.getLiberado().equals("LIBERADO") || Boolean.valueOf(produtoDistribuicaoVO.getLiberado())))) {
 
 			mensagens.add("Estudo " + produtoDistribuicaoVO.getIdEstudo()
 					+ " não está liberado.");
@@ -377,14 +369,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	@Override
 	@Transactional
-	public void finalizarMatrizDistribuicaoTodosItens(
-			FiltroDistribuicaoDTO filtro,
-			List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	public void finalizarMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 
 		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
 
-		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO
-				.getListProdutoDistribuicao();
+		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
 
 		Map<BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
 
@@ -419,11 +408,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 	}
 
-	private Integer obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(
-			ProdutoDistribuicaoVO produtoDistribuicaoVO) {
+	private Integer obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(ProdutoDistribuicaoVO produtoDistribuicaoVO) {
 
-		BigInteger count = lancamentoRepository
-				.obterQtdLancamentoProdutoEdicaoCopiados(produtoDistribuicaoVO);
+		BigInteger count = lancamentoRepository.obterQtdLancamentoProdutoEdicaoCopiados(produtoDistribuicaoVO);
 
 		return (count != null) ? count.intValue() : 0;
 	}
@@ -451,8 +438,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 					"Matriz ainda não finalizada.");
 		}
 
-		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO
-				.getListProdutoDistribuicao();
+		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
 
 		for (ProdutoDistribuicaoVO prodDistribVO : listDistrib) {
 
@@ -460,8 +446,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 	}
 
-	private void finalizaItemDistribuicao(ProdutoDistribuicaoVO prodDistribVO,
-			Map<BigInteger, BigInteger> map) {
+	private void finalizaItemDistribuicao(ProdutoDistribuicaoVO prodDistribVO, Map<BigInteger, BigInteger> map) {
 
 		List<String> mensagens = new ArrayList<String>();
 
@@ -471,8 +456,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 					mensagens));
 		}
 
-		Lancamento lanc = (Lancamento) distribuicaoRepository
-				.buscarPorId(prodDistribVO.getIdLancamento().longValue());
+		Lancamento lanc = (Lancamento) distribuicaoRepository.buscarPorId(prodDistribVO.getIdLancamento().longValue());
 		lanc.setDataFinMatDistrib(new Date());
 		distribuicaoRepository.alterar(lanc);
 
@@ -488,8 +472,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	}
 
-	private Map<BigInteger, BigInteger> obterMapaEstudoRepartDistrib(
-			List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	private Map<BigInteger, BigInteger> obterMapaEstudoRepartDistrib(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 
 		Map<BigInteger, BigInteger> map = new HashMap<BigInteger, BigInteger>();
 
@@ -511,16 +494,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	private void reabrirItemDistribuicao(Long idLancamento) {
 
-		Lancamento lanc = (Lancamento) distribuicaoRepository
-				.buscarPorId(idLancamento);
+		Lancamento lanc = (Lancamento) distribuicaoRepository.buscarPorId(idLancamento);
 		lanc.setDataFinMatDistrib(null);
 		distribuicaoRepository.alterar(lanc);
 	}
 
 	@Override
 	@Transactional
-	public Long confirmarCopiarProporcionalDeEstudo(
-			CopiaProporcionalDeDistribuicaoVO vo) {
+	public Long confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO vo) {
 
 		if (vo.getIdEstudo() == null || vo.getIdEstudo().intValue() <= 0) {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Pesquise um estudo valido.");
@@ -561,17 +542,21 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
     }
 
     private LinkedList<EstudoCotaGerado> copiarListaDeCotas(LinkedList<EstudoCotaGerado> lista, EstudoGerado estudo, boolean isFixacao) {
-	LinkedList<EstudoCotaGerado> retorno = new LinkedList<>();
-	for (EstudoCotaGerado estudoCota : lista) {
-		EstudoCotaGerado cota = new EstudoCotaGerado();
-	    BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "classificacao", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
-	    cota.setEstudo(estudo);
-	    cota.setClassificacao("");
-	    if (cota.getReparte() == null) {
-		cota.setReparte(BigInteger.ZERO);
-	    }
-	    retorno.add(cota);
-	}
+		LinkedList<EstudoCotaGerado> retorno = new LinkedList<>();
+	
+		for (EstudoCotaGerado estudoCota : lista) {
+			
+			EstudoCotaGerado cota = new EstudoCotaGerado();
+		    BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "classificacao", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
+		    cota.setEstudo(estudo);
+		    cota.setClassificacao("");
+			    
+		    if (cota.getReparte() == null) {
+		    	cota.setReparte(BigInteger.ZERO);
+		    }
+		    
+		    retorno.add(cota);
+		}
 	return retorno;
     }
 
@@ -633,8 +618,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		}
 	
 		if (cotas.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Não foi possivel efetuar a copia.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel efetuar a copia.");
 		}
 
 		// somar totais de reparte fixado e reparte minimo da cota mix
