@@ -575,6 +575,21 @@ public class LancamentoRepositoryImpl extends
 
 		return gruposMovimentoEstoqueSaidaDistribuidor;
 	}
+	
+	private List<String> getGruposMovimentoEstoqueDistribuidor() {
+
+		String[] arrayGruposMovimentoEstoqueSaidaDistribuidor = {
+				GrupoMovimentoEstoque.ENVIO_JORNALEIRO.toString(),
+				GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.toString(),
+				GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.toString(),
+				GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.toString(),
+				GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.toString()};
+
+		List<String> gruposMovimentoEstoqueSaidaDistribuidor = Arrays
+				.asList(arrayGruposMovimentoEstoqueSaidaDistribuidor); 
+
+		return gruposMovimentoEstoqueSaidaDistribuidor;
+	}
 
 	private String getConsultaBalanceamentoRecolhimentoAnalitico() {
 
@@ -594,16 +609,16 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" produtoEdicao.PEB as peb, "); // TODO Se de editor for 0 ou
 													// null pegar o do produto
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
-
+		
 		sql.append("  sum( ");
 		sql.append("  case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");
-		sql.append("	then (((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
-		sql.append("   	else ((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");
+		sql.append("	then ((( if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoReparteCotaAusente), movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoReparteCotaAusente), movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
+		sql.append("   	else ((if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoReparteCotaAusente), movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoReparteCotaAusente), movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");
 		sql.append(" 	end ");
 		sql.append("  ) as expectativaEncalhe, ");
 
 		sql.append("  sum( ");
-		sql.append("  ((movimentoEstoque.QTDE) - ((movimentoEstoque.QTDE) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
+		sql.append("  ((if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoReparteCotaAusente), movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) - ((if(tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in (:grupoReparteCotaAusente), movimentoEstoque.QTDE *-1,movimentoEstoque.QTDE)) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
 		sql.append("     0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, ");
 		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, produtoEdicao.DESCONTO / 100 ,");
 		sql.append("     0)) ) ) ");
@@ -746,9 +761,9 @@ public class LancamentoRepositoryImpl extends
 		List<String> statusParaBalanceamentoRecolhimento = this
 				.getStatusParaBalanceamentoRecolhimento();
 
-		List<String> gruposMovimentoEstoqueSaidaDistribuidor = this
-				.getGruposMovimentoEstoqueSaidaDistribuidor();
-
+		List<String> gruposMovimentoEstoqueDistribuidor = this
+				.getGruposMovimentoEstoqueDistribuidor();
+		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
@@ -759,8 +774,9 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("statusParaBalanceamentoRecolhimento",
 				statusParaBalanceamentoRecolhimento);
 		query.setParameterList("gruposMovimentoEstoqueSaidaDistribuidor",
-				gruposMovimentoEstoqueSaidaDistribuidor);
-
+				gruposMovimentoEstoqueDistribuidor);
+		query.setParameterList("grupoReparteCotaAusente",Arrays.asList(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.toString()));
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ProdutoRecolhimentoDTO.class));
 
