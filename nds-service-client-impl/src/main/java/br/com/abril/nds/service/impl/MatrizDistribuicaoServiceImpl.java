@@ -307,6 +307,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 
     @Override
+    @Transactional
 	public void removeEstudo(Long idEstudo) {
         if (idEstudo > 0) {
             EstudoGerado estudo = estudoGeradoRepository.buscarPorId(idEstudo);
