@@ -93,6 +93,7 @@ public class RegiaoController extends BaseController {
 
 	@Post
 	@Path("/salvarRegiao")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void salvarRegiao (String nome, boolean isFixa){
 
 		this.validarEntradaRegiao(nome);
@@ -116,6 +117,7 @@ public class RegiaoController extends BaseController {
 
 	@Post
 	@Path("/excluirCotaDaRegiao")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void excluirCota(Long id) {
 
 		this.regiaoService.excluirRegistroCotaRegiao(id);
@@ -127,6 +129,7 @@ public class RegiaoController extends BaseController {
 
 	@Post
 	@Path("/excluirRegiao")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void excluirRegiao(Long id) {
 
 		Regiao regiao = regiaoService.obterRegiaoPorId(id);
@@ -136,14 +139,14 @@ public class RegiaoController extends BaseController {
 		}else{
 
 		this.regiaoService.excluirRegiao(id);
-		this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluída com sucesso."),
+            this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluída com sucesso."),
 				"result").recursive().serialize();
 		}
 	}
 
 	@Post
 	@Path("/alterarRegiao")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void alterarRegiao(Long id) {
 
 		Regiao regiao = regiaoService.obterRegiaoPorId(id);
@@ -156,8 +159,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluída com sucesso."),
 
 		regiaoService.alterarRegiao(regiao);
 
-		this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Região alterada com sucesso."),
+        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Região alterada com sucesso."),
 				"result").recursive().serialize();
 	}
 
@@ -322,6 +324,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Região alterada com sucesso."),
 
 	@Post
 	@Path("/incluirCota")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void incluirCota (List<Integer> cotas, long idRegiao){
 
 		popularRegistroESalvarCota(cotas, idRegiao);
@@ -403,6 +406,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Região alterada com sucesso."),
 	
 	@Post
 	@Path("/addLote")
+    @Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO_ALTERACAO)
 	public void addCotasEmLote (UploadedFile xls, Long idRegiao) throws IOException {  
 		List<Integer> numerosCota = new ArrayList<Integer>();
 
