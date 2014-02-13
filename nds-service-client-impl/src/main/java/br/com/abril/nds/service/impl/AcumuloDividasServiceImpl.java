@@ -38,6 +38,7 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public AcumuloDivida obterAcumuloDividaPorMovimentoPendente(Long idMovimentoPendente) {
 
 		return this.acumuloDividasRepository.obterAcumuloDividaPorMovimentoFinanceiroPendente(idMovimentoPendente);

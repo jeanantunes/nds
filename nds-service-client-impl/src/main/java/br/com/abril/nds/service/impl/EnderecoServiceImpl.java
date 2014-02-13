@@ -436,6 +436,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 
 	@Override
+	@Transactional
 	public List<String> obterLocalidadesPorUFPDVBoxEspecial(String uf) {
 		
 		if (uf == null || uf.isEmpty()) {
@@ -448,6 +449,7 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 
 	@Override
+	@Transactional
 	public List<String> obterBairrosPDVBoxEspecial(String uf, String cidade) {
 		return this.enderecoRepository.obterBairrosPDVBoxEspecial(uf, cidade);
 	}

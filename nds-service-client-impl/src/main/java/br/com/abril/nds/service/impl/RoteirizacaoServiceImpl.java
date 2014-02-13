@@ -1583,6 +1583,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	}
 
 	@Override
+	@Transactional
 	public List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
 		
 		if(codigoBoxDe == null && codigoBoxDe == null) return new ArrayList<Roteiro>();
