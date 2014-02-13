@@ -334,26 +334,28 @@ var analiseHistoricoVendaController = $.extend(true, {
 	},
 
 	calcularMediaVendaEReparteCota : function(resumo){
-		var qtdEdicoes,
-			reparteMedio = 0,
-			vendaMedia = 0;
-
-		if (typeof histogramaVendasController !== "undefined" && typeof histogramaVendasController.edicoesEscolhidas_HistogramaVenda !== "undefined") {
-			// EMS 2029
-			 qtdEdicoes = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
-		}else{
-			// EMS 2028
-			qtdEdicoes = historicoVendaController.Grids.EdicaoSelecionadaGrid.tableModel.rows.length;
+		if (!resumo.reparteMedio && !resumo.vendaMedia){
+			var qtdEdicoes,
+				reparteMedio = 0,
+				vendaMedia = 0;
+	
+			if (typeof histogramaVendasController !== "undefined" && typeof histogramaVendasController.edicoesEscolhidas_HistogramaVenda !== "undefined") {
+				// EMS 2029
+				 qtdEdicoes = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
+			}else{
+				// EMS 2028
+				qtdEdicoes = historicoVendaController.Grids.EdicaoSelecionadaGrid.tableModel.rows.length;
+			}
+			
+			
+			for ( var i = 1; i <= qtdEdicoes + 1; i++) {
+				reparteMedio += resumo['ed' + i + 'Rep'];
+				vendaMedia += resumo['ed' + i + 'Venda'];
+			}
+			
+			resumo.reparteMedio  = parseInt(Math.round(reparteMedio / qtdEdicoes)); 
+			resumo.vendaMedia = parseInt(Math.round(vendaMedia / qtdEdicoes));
 		}
-		
-		
-		for ( var i = 1; i <= qtdEdicoes; i++) {
-			reparteMedio += resumo['ed' + i + 'Rep'];
-			vendaMedia += resumo['ed' + i + 'Venda'];
-		}
-		
-		resumo.reparteMedio  = parseInt(Math.round(reparteMedio / qtdEdicoes)); 
-		resumo.vendaMedia = parseInt(Math.round(vendaMedia / qtdEdicoes));
 	},
 	
 	// PopUp visulizado quando o usuário clica no nome da cota dentro do Grid Principal
