@@ -8,15 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "NOTA_FISCAL_TRIBUTACAO")
-@SequenceGenerator(name = "NOTA_FISCAL_TRIBUTACAO_SEQ", initialValue = 1, allocationSize = 1)
-public class Tributacao implements Serializable {
+public class NotaFiscalTributacao implements Serializable {
 	
 	
 	
@@ -26,7 +24,7 @@ public class Tributacao implements Serializable {
 	private static final long serialVersionUID = -1770966775042385935L;
 
 	@Id
-	@GeneratedValue(generator = "NOTA_FISCAL_TRIBUTACAO_SEQ")
+	@GeneratedValue
 	private Long id;
 	
 	@Column(name = "COD_EMPRESA", length = 9)
@@ -144,7 +142,7 @@ public class Tributacao implements Serializable {
 	/**
 	 * Construtor padrão.
 	 */
-	public Tributacao() {
+	public NotaFiscalTributacao() {
 		
 	}
 
@@ -706,7 +704,7 @@ public class Tributacao implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Tributacao other = (Tributacao) obj;
+		NotaFiscalTributacao other = (NotaFiscalTributacao) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

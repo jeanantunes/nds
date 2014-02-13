@@ -17,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -31,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.fiscal.nota.GrupoTributo;
 import br.com.abril.nds.util.export.Exportable;
 
 /**
@@ -176,18 +176,17 @@ public class Produto implements Serializable {
 	@Column(name = "GERACAO_AUTOMATICA", nullable = true, columnDefinition="boolean default false")
 	private Boolean isGeracaoAutomatica = false;
 	
-	//@JoinColumn(name = "EDITOR_ID")
-//	@OneToMany
-//	@JoinTable(name = "PRODUTO_EDICAO")
 	@OneToMany(mappedBy = "produto")
 	private List<ProdutoEdicao> produtoEdicao;
 	
 	@Column(name = "CODIGO_ICD", nullable = false)
 	private String codigoICD;
 	
-	@OneToOne(fetch=FetchType.LAZY , optional=true)
-	@JoinColumn(name="GRUPO_TRIBUTO_ID")
-	private GrupoTributo grupoTributo;
+	@OneToMany(fetch=FetchType.EAGER)
+	@JoinTable(	name = "produto_tributacao", 
+	joinColumns = {@JoinColumn(name = "produto_id")}, 
+	inverseJoinColumns = {@JoinColumn(name = "tributacao_id")})
+	private List<Tributacao> produtoTributacao;
 	
 	public Long getId() {
 		return id;
@@ -592,14 +591,6 @@ public class Produto implements Serializable {
 
 	public void setProdutoEdicao(List<ProdutoEdicao> produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
-	}
-	
-	public GrupoTributo getGrupoTributo() {
-		return grupoTributo;
-	}
-
-	public void setGrupoTributo(GrupoTributo grupoTributo) {
-		this.grupoTributo = grupoTributo;
 	}
 
 	@Override

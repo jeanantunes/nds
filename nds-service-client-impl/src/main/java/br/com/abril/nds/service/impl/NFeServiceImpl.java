@@ -619,7 +619,6 @@ public class NFeServiceImpl implements NFeService {
 //
 //	}
 
-
 	/* TODO : Sem a modelagem do conceito de duplicatas no sistema, refatorar após 
 	 * modelagem de dados e EMS relativa a calculo de duplicatas.
 	 */
@@ -712,6 +711,7 @@ public class NFeServiceImpl implements NFeService {
      * TODO : Sem a modelagem do conceito de duplicatas no sistema, refatorar
      * após modelagem de dados e EMS relativa a calculo de duplicatas.
      */
+
 //	private void carregarDadosDuplicatas(NfeImpressaoDTO danfe, NotaFiscal notaFiscal) {
 //		List<Duplicata> faturas = new ArrayList<Duplicata>();
 //		danfe.setFaturas(faturas);	

@@ -31,14 +31,14 @@ public class RoteirizacaoDTO implements Serializable{
 	
 	private Long id;
 	
-	/**
-	 * Box da roteirização
-	 */
+	    /**
+     * Box da roteirização
+     */
 	private BoxRoteirizacaoDTO box;
 	
-	/**
-	 * Roteiros da roteirização
-	 */
+	    /**
+     * Roteiros da roteirização
+     */
 	private List<RoteiroRoteirizacaoDTO> roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
 	
     /**
@@ -46,9 +46,9 @@ public class RoteirizacaoDTO implements Serializable{
      */
 	private TipoEdicaoRoteirizacao tipoEdicao;
 	
-	/**
-	 * Box disponíveis
-	 */
+	    /**
+     * Box disponíveis
+     */
 	private List<BoxRoteirizacaoDTO> boxDisponiveis = new ArrayList<BoxRoteirizacaoDTO>();
 	
 	/**
@@ -176,8 +176,9 @@ public class RoteirizacaoDTO implements Serializable{
 
 
 
-	/**
-     * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados
+	    /**
+     * Adiciona uma rota que pertence a outra roteirização e teve PDVs
+     * adicionados
      * 
      * @param rotaDTO
      */
@@ -234,11 +235,10 @@ public class RoteirizacaoDTO implements Serializable{
     	return novaRotaDTO;
     }
 
-	/**
+	    /**
      * Adiciona o identificador do roteiro para exclusão
      * 
-     * @param idRoteiro
-     *            identificador do roteiro
+     * @param idRoteiro identificador do roteiro
      */
 	public void addRoteiroExclusao(Long idRoteiro) {
 	    if (roteirosExclusao == null) {
@@ -247,10 +247,11 @@ public class RoteirizacaoDTO implements Serializable{
 	    roteirosExclusao.add(idRoteiro);
 	}
 
-	/**
-	 * Adiciona um novo roteiro à roteirização
-	 * @param roteiro roteiro para inclusão
-	 */
+	    /**
+     * Adiciona um novo roteiro à roteirização
+     * 
+     * @param roteiro roteiro para inclusão
+     */
 	public void addRoteiro(RoteiroRoteirizacaoDTO roteiro) {
 		if (roteiros == null) {
 			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
@@ -259,10 +260,11 @@ public class RoteirizacaoDTO implements Serializable{
 		todosRoteiros.add(roteiro);
 	}
 	
-	/**
-	 * Adiciona novos Roteiros à Roteirizacao
-	 * @param listaRoteiro: List<RoteiroRoteirizacaoDTO> para inclusão
-	 */
+	    /**
+     * Adiciona novos Roteiros à Roteirizacao
+     * 
+     * @param listaRoteiro: List<RoteiroRoteirizacaoDTO> para inclusão
+     */
 	public void addAllRoteiro(Collection<RoteiroRoteirizacaoDTO> listaRoteiro){
 		if (roteiros == null){
 			roteiros = new ArrayList<RoteiroRoteirizacaoDTO>();
@@ -277,8 +279,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Constrói um dto para a criação de uma nova roteirização
      * 
-     * @param boxDisponiveis
-     *            lista de box disponíveis para a roteirização
+     * @param boxDisponiveis lista de box disponíveis para a roteirização
      * @return {@link RoteirizacaoDTO} para a criação de uma nova roteirização
      */
 	public static RoteirizacaoDTO novaRoteirizacao(List<BoxRoteirizacaoDTO> boxDisponiveis) {
@@ -288,11 +289,10 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Cria o DTO à partir de uma roteirização existente
      * 
-     * @param roteirizacao
-     *            roteirização existente para criação do DTO
+     * @param roteirizacao roteirização existente para criação do DTO
      * @param dtos lista de boxes disponíveis
-     * @param addBoxEspecial flag indicando se o box especial deve ser adicionado
-     * à lista de box disponíveis da roteirização
+     * @param addBoxEspecial flag indicando se o box especial deve ser
+     *            adicionado à lista de box disponíveis da roteirização
      * @return DTO com as informações da roteirização existente
      */
 	public static RoteirizacaoDTO toDTO(Roteirizacao roteirizacao, List<Box> disponiveis, boolean addBoxEspecial) {
@@ -357,7 +357,7 @@ public class RoteirizacaoDTO implements Serializable{
                         endereco = enderecoPdvEntrega.getEndereco();
                         origemEndereco = OrigemEndereco.PDV;
                     
-                    } else if(endereco == null && pdv != null && pdv.getEnderecoPrincipal() != null) {
+                    } else if (endereco == null && pdv.getEnderecoPrincipal() != null) {
                     
                     	EnderecoPDV enderecoPdv = pdv.getEnderecoPrincipal();
                     	endereco = enderecoPdv.getEndereco();
@@ -408,8 +408,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Recupera a rota da roteirização pelo id
      * 
-     * @param id
-     *            identificador da rota
+     * @param id identificador da rota
      * @return rota com o identificador recebido
      */
 	public RotaRoteirizacaoDTO getRota(Long id) {
@@ -423,10 +422,11 @@ public class RoteirizacaoDTO implements Serializable{
 	    return null;
 	}
 
-	/**
-	 * Reseta o DTO selecionando um novo box
-	 * @param idBox identificador do Box para a roteirização
-	 */
+	    /**
+     * Reseta o DTO selecionando um novo box
+     * 
+     * @param idBox identificador do Box para a roteirização
+     */
 	public void reset(Long idBox) {
 	    this.id = null;
 	    this.tipoEdicao = TipoEdicaoRoteirizacao.NOVO;
@@ -463,6 +463,7 @@ public class RoteirizacaoDTO implements Serializable{
     
     /**
      * Filtra os roteiros pela descricao
+     * 
      * @param descricaoRoteiro descrição do roteiro para filtragem
      */
     public void filtarRoteiros(String descricaoRoteiro) {
@@ -484,8 +485,7 @@ public class RoteirizacaoDTO implements Serializable{
     /**
      * Recupera o roteiro pelo identificador
      * 
-     * @param idRoteiro
-     *            identificador do roteiro
+     * @param idRoteiro identificador do roteiro
      * @return roteiro com o identificador fornecido ou null caso não exista
      *         roteiro com o identificador fornecido
      */
@@ -579,10 +579,11 @@ public class RoteirizacaoDTO implements Serializable{
 		this.roteirosTransferidos = roteirosTransferidos;
 	}
 	
-	/**
+	    /**
      * Recupera a maior ordem dos roteiros da roteirização
-     * @return valor da maior ordem da lista de roteiro
-     * ou 0 caso a lista esteja vazia
+     * 
+     * @return valor da maior ordem da lista de roteiro ou 0 caso a lista esteja
+     *         vazia
      */
     public int getMaiorOrdemRoteiro() {
         int max = 0;
@@ -595,8 +596,9 @@ public class RoteirizacaoDTO implements Serializable{
     }
     
     /**
-     * Adiciona o roteiro aos roteiros da roteirização
-     * de acordo com a maior ordem existente
+     * Adiciona o roteiro aos roteiros da roteirização de acordo com a maior
+     * ordem existente
+     * 
      * @param roteiro roteiro para inclusão
      */
     public void addRoteiroAposMaiorOrdem(RoteiroRoteirizacaoDTO roteiro) {

@@ -17,7 +17,7 @@ import br.com.abril.nds.model.fiscal.nota.ICMS;
 import br.com.abril.nds.model.fiscal.nota.IPI;
 import br.com.abril.nds.model.fiscal.nota.Origem;
 import br.com.abril.nds.model.fiscal.nota.PIS;
-import br.com.abril.nds.model.fiscal.nota.Tributacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscalTributacao;
 import br.com.abril.nds.repository.TributacaoRepository;
 import br.com.abril.nds.service.TributacaoService;
 
@@ -45,7 +45,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 			String codigoNaturezaOperacao, String codigoNBM, Date dataVigencia,
 			String cstICMS, BigDecimal valorItem) {
 		
-		Tributacao tributacao = tributacaoRepository.buscar(codigoEmpresa,
+		NotaFiscalTributacao tributacao = tributacaoRepository.buscar(codigoEmpresa,
 				tipoOperacao, ufOrigem, ufDestino, naturezaOperacao,
 				codigoNaturezaOperacao, codigoNBM, dataVigencia, cstICMS);
 
@@ -88,7 +88,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		return encargoFinanceiroProduto;
 	}
 
-	private ICMS calculaICMS(Tributacao tributacao, BigDecimal valorItem) {
+	private ICMS calculaICMS(NotaFiscalTributacao tributacao, BigDecimal valorItem) {
 		ICMS icms = new ICMS();
 		String cstICMS = tributacao.getCstICMS();
 
@@ -105,7 +105,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		return icms;
 	}
 
-	private IPI calculaIPI(Tributacao tributacao, BigDecimal valorItem) {
+	private IPI calculaIPI(NotaFiscalTributacao tributacao, BigDecimal valorItem) {
 		IPI ipi = new IPI();
 
 		ipi.setCst(tributacao.getCstIPI());
@@ -119,7 +119,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		return ipi;
 	}
 
-	private PIS calculaPIS(Tributacao tributacao, BigDecimal valorItem) {
+	private PIS calculaPIS(NotaFiscalTributacao tributacao, BigDecimal valorItem) {
 		PIS pis = new PIS();
 
 		pis.setCst(Integer.valueOf(tributacao.getCstPIS()));
@@ -132,7 +132,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 		return pis;
 	}
 
-	private COFINS calculaCOFINS(Tributacao tributacao, BigDecimal valorItem) {
+	private COFINS calculaCOFINS(NotaFiscalTributacao tributacao, BigDecimal valorItem) {
 		COFINS cofins = new COFINS();
 
 		cofins.setCst(Integer.valueOf(tributacao.getCstCOFINS()));

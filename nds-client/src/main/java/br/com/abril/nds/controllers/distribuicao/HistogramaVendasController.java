@@ -335,12 +335,10 @@ public class HistogramaVendasController extends BaseController {
 		
 		List<AnaliseHistogramaDTO> lista = (List<AnaliseHistogramaDTO>)session.getAttribute(HISTOGRAMA_SESSION_ATTRIBUTE);
 		
-		AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
-		
 		if (lista==null || lista.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
- "A última pesquisa realizada não obteve resultado.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "A última pesquisa realizada não obteve resultado.");
 		}
+        AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
 		
 		if(fileType.equals(FileType.XLS)){
 			RodapeHistogramaVendaDTO rodapeDTO = montarRodapeParaXLS(footer, abrangenciaDistribuicao, abrangenciaVenda, eficienciaVenda);

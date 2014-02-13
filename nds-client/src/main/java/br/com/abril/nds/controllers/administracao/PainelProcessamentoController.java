@@ -9,7 +9,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -297,12 +298,13 @@ public class PainelProcessamentoController extends BaseController {
 		int quantidade = 0;
 		try {
 			lista = painelProcessamentoService.listarDetalhesInterface(Long.parseLong(idLogProcessamento));
-			quantidade = lista.size();
 			
 			if (lista == null || lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 			}
 			
+            quantidade = lista.size();
+
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -408,7 +410,7 @@ public class PainelProcessamentoController extends BaseController {
 		return filtro;
 	}
 	
-	                                /**
+	                                    /**
      * Configura a paginação dos filtros
      * 
      * @param filtro
@@ -466,7 +468,7 @@ public class PainelProcessamentoController extends BaseController {
 		return filtro;
 	}
 	
-	                                /**
+	                                    /**
      * Configura a paginação dos filtros
      * 
      * @param filtro
@@ -507,7 +509,8 @@ public class PainelProcessamentoController extends BaseController {
 		}
 		
         result.use(Results.json())
-                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
+.from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
                         "result").recursive().serialize();
 	}
 	
@@ -526,7 +529,8 @@ public class PainelProcessamentoController extends BaseController {
 		interfaceExecucaoService.executarTodasInterfacesMDCEmOrdem(getUsuarioLogado());
 		
         result.use(Results.json())
-                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
+.from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),
                         "result").recursive().serialize();
 	}
 	

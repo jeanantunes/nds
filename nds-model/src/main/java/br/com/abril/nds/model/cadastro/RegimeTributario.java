@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.fiscal.notafiscal;
+package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import br.com.abril.nds.model.cadastro.TributoAliquota;
 
 @Entity
 @Table(name="REGIME_TRIBUTARIO")
@@ -37,7 +35,7 @@ public class RegimeTributario implements Serializable {
 	@Column(name="ativo")
 	private boolean ativo;
 	
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	@JoinTable(	name = "regime_tributario_tributo_aliquota", 
 				joinColumns = {@JoinColumn(name = "regime_tributario_id")}, 
 				inverseJoinColumns = {@JoinColumn(name = "tributo_aliquota_id")})
