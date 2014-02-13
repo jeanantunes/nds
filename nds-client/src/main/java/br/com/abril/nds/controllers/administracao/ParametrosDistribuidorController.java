@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -754,6 +755,13 @@ public class ParametrosDistribuidorController extends BaseController {
 	public void mensagemControleAprovacao(){
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Ao desmarcar a opção [Utiliza Controle de Aprovação] não serão mais exibidos os avisos de pendências das funcionalidades abaixo !"),"result").recursive().serialize();
+	}
+	
+	@Post
+	public void obterTributosPeloRegimeTributario() {
+		
+		List<TributoAliquota> tributos = null;
+		result.use(FlexiGridJson.class).from(tributos).serialize();	
 	}
 	
 	private enum TipoOperacaoDiferenciada {
