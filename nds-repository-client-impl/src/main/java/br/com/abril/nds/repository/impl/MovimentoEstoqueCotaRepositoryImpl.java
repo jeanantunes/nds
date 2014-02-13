@@ -3448,17 +3448,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" 	then (mec.qtde) ");
 		sql.append(" 	else (-mec.qtde) end ");
 		sql.append(" ) as reparte ");
+		
 		sql.append(" from MovimentoEstoqueCota mec ");
+		
 		sql.append(" join mec.cota cota ");
+		
 		sql.append(" join mec.lancamento lancamento ");
+		
 		sql.append(" join mec.tipoMovimento tipoMovimento ");
+		
 		sql.append(" join mec.produtoEdicao produtoEdicao ");
+		
 		sql.append(" join lancamento.estudo estudo ");
+		
 		sql.append(" join estudo.estudoCotas estudoCota ");
-		sql.append(" join estudoCota.cota cota ");
+		
 		sql.append(" where lancamento.id = :idLancamento ");
+		
 		sql.append(" and produtoEdicao.id = :idProdutoEdicao ");
-		sql.append(" group by cota ");
+		
+		sql.append(" and cota.id = estudoCota.cota.id ");
+		
+		sql.append(" group by mec.cota.id ");
 		
 		Query query = this.getSession().createQuery(sql.toString());
 		
