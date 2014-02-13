@@ -1589,6 +1589,7 @@ new ValidacaoVO(TipoMensagem.WARNING,
 	}
 
 	@Override
+	@Transactional
 	public List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
 		
         if (codigoBoxDe == null && codigoBoxAte == null)

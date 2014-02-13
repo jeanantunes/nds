@@ -221,16 +221,16 @@ public class CotaServiceImpl implements CotaService {
 	private EnderecoPDVRepository enderecoPDVRepository;
 	
 	@Autowired
-	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Autowired
-	ParametroSistemaRepository parametroSistemaRepository;
+	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Autowired
-	FileService fileService;
+	private FileService fileService;
 		
 	@Autowired
 	private RotaRepository rotaRepository;
@@ -266,13 +266,13 @@ public class CotaServiceImpl implements CotaService {
 	private UsuarioService usuarioService; 
 	
 	@Autowired
-	DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
+	private DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
 		
 	@Autowired
-	MixCotaProdutoService mixCotaProdutoService;
+	private MixCotaProdutoService mixCotaProdutoService;
 
 	@Autowired
-	FixacaoReparteService fixacaoReparteService;	
+	private FixacaoReparteService fixacaoReparteService;	
 	
 	@Autowired
 	private CotaBaseService cotaBaseService;
