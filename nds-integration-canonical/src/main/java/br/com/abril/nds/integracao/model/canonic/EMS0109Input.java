@@ -130,6 +130,10 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	
 	private String codigoSubGrupoEditorial;
 	
+	private String codigoICD;
+	
+	private String segmento;
+	
 	/**
 	 * Construtor Padrao
 	 */
@@ -596,8 +600,28 @@ public class EMS0109Input extends IntegracaoDocument implements Serializable {
 	public String getCodigoSubGrupoEditorial() {
 		return codigoSubGrupoEditorial;
 	}
+	
+	@Field(offset=260, length=6)
+    public String getCodigoICD() {
+        return codigoICD;
+    }
 
-	/**
+    
+    public void setCodigoICD(String codigoICD) {
+        this.codigoICD = codigoICD;
+    }
+
+    @Field(offset=266, length=30)
+    public String getSegmento() {
+        return segmento;
+    }
+
+    
+    public void setSegmento(String segmento) {
+        this.segmento = segmento;
+    }
+
+    /**
 	 * @param codigoDistribuidor the codigoDistribuidor to set
 	 */
 	public void setCodigoDistribuidor(String codigoDistribuidor) {

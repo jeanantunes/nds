@@ -95,7 +95,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 	private StringBuilder queryConsultaPainelMonitor(FiltroMonitorNfeDTO filtro, StringBuilder hql, boolean isCount, boolean isPagination, boolean isGroup){
 		
 		hql.append(" FROM NotaFiscal as notaFiscal")
-		.append(" JOIN notaFiscal.usuario as usuario");
+		.append(" JOIN notaFiscal.usuario as usuario")
+		.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoEmitente.documento as documento")
+		.append(" LEFT JOIN notaFiscal.notaFiscalInformacoes.identificacaoDestinatario.documento as dest");
 		if(	(filtro.getBox()!=null) || filtro.getDataInicial() != null || filtro.getDataFinal() != null ||
 				(filtro.getDocumentoPessoa() != null && !filtro.getDocumentoPessoa().isEmpty() ) || 
 				(filtro.getTipoNfe() != null && !filtro.getTipoNfe().isEmpty() ) || 
@@ -118,9 +120,9 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 		if(filtro.getNumeroDocumento() != null){
 			if(filtro.getDocumentoPessoa() !=null && !filtro.getDocumentoPessoa().isEmpty()) {
 				if(filtro.getDocumentoPessoa().equalsIgnoreCase("cpf")){
-					hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao = 'f' ");
+					hql.append(" AND dest.documento = :documento");
 				}else{
-					hql.append(" AND NOTA_FISCAL_NOVO.DOCUMENTO_DESTINATARIO = :documento AND PESSOA_DESTINATARIO.TIPO = 'F' ");
+					hql.append(" AND documento.documento = :documento");
 				}
 			}
 		}
@@ -175,7 +177,11 @@ public class NotaFiscalRepositoryImpl extends AbstractRepositoryModel<NotaFiscal
 
 		if(filtro.getDocumentoPessoa()!=null && !filtro.getDocumentoPessoa().isEmpty()) {
 			if(filtro.getNumeroDocumento() != null){
-				query.setParameter("documento", filtro.getDocumentoPessoa());				
+				if(filtro.getDocumentoPessoa().equalsIgnoreCase("cpf")){
+					query.setParameter("documento", filtro.getDocumentoPessoa());				
+				}else{
+					query.setParameter("documento", filtro.getDocumentoPessoa());
+				}
 			}
 		}
 

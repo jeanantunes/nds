@@ -32,6 +32,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ImpressaoNFEService;
+import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.builders.DanfeBuilder;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -67,6 +68,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private NFeService nFeService;
 
 	@Transactional
 	public List<ProdutoDTO> obterProdutosExpedicaoConfirmada(FiltroImpressaoNFEDTO filtro) {
@@ -160,8 +164,9 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 			}else{
 				LOGGER.info("obter Nota de envio sem chave de acesso ");
 				
-				
-			
+					
+					
+					
 			}
 		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade())) {
 			LOGGER.info("PRESTADOR_SERVICO ..... ");
