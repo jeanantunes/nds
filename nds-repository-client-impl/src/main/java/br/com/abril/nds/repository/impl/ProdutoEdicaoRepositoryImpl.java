@@ -53,7 +53,6 @@ import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.StringUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -1074,7 +1073,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
-				"select 'De "+de+" a "+ate+"' as faixaVenda," +
+				"select concat('De ', :de, ' a ', :ate) as faixaVenda," +
 				" sum(reparteTotal) / :qtdEdicoes as repTotal, " +
 				" (sum(reparteTotal) / :qtdEdicoes) / count(distinct COTA_ID) as repMedio, " +
 				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / :qtdEdicoes as vdaTotal, " +
@@ -1105,22 +1104,21 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 				" count(distinct COTA_ID) as qtdeCotas, " +
 				" group_concat(distinct COTA_ID) as idCotaStr, " +
-				" group_concat(distinct cotasEsmagadas) as idCotasEsmagadas," +
+				" group_concat(cotasEsmagadas) as idCotasEsmagadas," +
 				" count(distinct cotasEsmagadas) as cotasEsmagadas, " +
-				" sum(vdEsmag) as vendaEsmagadas, " +
+				//" sum(vdEsmag) as vendaEsmagadas, " +
 				" sum(cotaAtiva) as qtdeCotasAtivas, " +
-				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda" +
+				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda, " +
+				" :de as faixaDe, " +
+				" :ate as faixaAte " +
 
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
-				" ( select DISTINCT " +
-				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate " +
-				"	and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
+				" ( select  " +
+				"	case when (estoqueProdutoCota.QTDE_DEVOLVIDA = 0) and estoqueProdutoCota.QTDE_RECEBIDA between :de and :ate " +
+				"	then cota2_.numero_cota else null end as cotasEsmagadas, " +
 				
-				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between :deMargem and :ate " +
-				"	and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida)) else 0 end as vdEsmag," +
-				
-				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
+				"   case when sum(estoqueProdutoCota.QTDE_DEVOLVIDA) = sum(estoqueProdutoCota.QTDE_RECEBIDA) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
 					" estoqueProdutoCota.ID as col_2_0_, " +
@@ -1244,26 +1242,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		queryStringProdutoEdicao += " where " +
 									"	produto4_.CODIGO= :produtoCodigo " +
-									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))";
+									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))" +
+									"	and (estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) between :de and :ate ";
 
 		if(!whereList.isEmpty()){
 			queryStringProdutoEdicao += " and "+StringUtils.join(whereList, " and ");
 
 		}
 
-		queryStringProdutoEdicao += " group by numero_cota " +
-									" having round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) >= :de" +  
-									" and round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) <= :ate";
+		queryStringProdutoEdicao += " group by numero_cota  "+
+									"   ";
 
 		queryStringProdutoEdicao+=") as HIST";
 
 		SQLQuery query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
-		query.setParameter("produtoCodigo", Util.padLeft(codigoProduto, "0", 8));
+		query.setParameter("produtoCodigo", codigoProduto);
 		query.setParameter("qtdEdicoes", edicoes.length);
 		query.setParameterList("nrEdicoes", edicoes);
-		query.setParameter("deMargem", de - 0.5);
+		//query.setParameter("deMargem", de - 0.5);
 
 		setParameters(query, parameterMap);
 
@@ -1840,4 +1838,38 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 
+
+	@Override
+	public BigDecimal obterVendaEsmagadaMedia(Intervalo<Integer> faixa,
+			String codigoProduto, String[] edicoes, Integer numeroCotaEsmagada) {
+		
+		StringBuilder hql = new StringBuilder("select sum(epc.QTDE_RECEBIDA) / count(pe.ID) " +
+				" from ESTOQUE_PRODUTO_COTA epc " +
+				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +
+				" join PRODUTO p on (p.ID = pe.PRODUTO_ID) " +
+				" join COTA c on (c.ID = epc.COTA_ID) " +
+				" where p.CODIGO = :codigoProduto " +
+				" and pe.NUMERO_EDICAO in (:edicoes) " +
+				" and epc.QTDE_DEVOLVIDA = 0 " +
+				" and c.NUMERO_COTA = :numeroCotaEsmagada ");
+		
+		if (faixa != null){
+			
+			hql.append(" and epc.QTDE_RECEBIDA between :de and :ate ");
+		}
+		
+		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		
+		if (faixa != null){
+		
+			query.setParameter("de", faixa.getDe());
+			query.setParameter("ate", faixa.getAte());
+		}
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameterList("edicoes", edicoes);
+		query.setParameter("numeroCotaEsmagada", numeroCotaEsmagada);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

@@ -122,8 +122,7 @@ public class CapaServiceImpl implements CapaService {
 
 	@Override
 	@Transactional
-	public void saveCapa(String codigoProduto, long numeroEdicao,
-			String contentType, InputStream inputStream) {		
+	public void saveCapa(String codigoProduto, long numeroEdicao, String contentType, InputStream inputStream) {		
 		String docName = getDocName(codigoProduto, numeroEdicao);
 		
 		couchDbClient.saveAttachment(inputStream, docName + FileType.JPG.getExtension(), contentType, getDocName(codigoProduto, numeroEdicao),null);

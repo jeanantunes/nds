@@ -365,4 +365,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
     public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto);
     
     public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD);
+
+	public BigDecimal obterVendaEsmagadaMedia(Intervalo<Integer> faixa,
+			String codigoProduto, String[] edicoes, Integer numeroCotaEsmagada);
 }
