@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 -<!-- histogramaPosEstudo -->
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
 <script type="text/javascript" src="scripts/histogramaPosEstudo.js"></script>
@@ -39,31 +40,31 @@ $(function(){
 <div class="areaBts">
   <div class="area">
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' id="alterarFaixaReparte" title='Alterar Faixa'>
+      <a href="javascript:;" isEdicao="true" rel='tipsy' id="alterarFaixaReparte" title='Alterar Faixa'>
         <img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />
       </a>
     </span>
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' id="analiseEstudo" title='Análise'>
+      <a href="javascript:;" isEdicao="true" rel='tipsy' id="analiseEstudo" title='Análise'>
         <img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />
 
       </a>
     </span>
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' id="recalcularEstudo" title='Recalcular Estudo'>
+      <a href="javascript:;" isEdicao="true" rel='tipsy' id="recalcularEstudo" title='Recalcular Estudo'>
         <img src="images/ico_add_novo.gif" alt="Recalcular Estudo" hspace="5" border="0" />
 
       </a>
     </span>
 
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' id="baseEstudo" title='Base de estudo'>
+      <a href="javascript:;" isEdicao="true" rel='tipsy' id="baseEstudo" title='Base de estudo'>
         <img src="images/ico_estudo_complementar.gif" alt="Divergências" hspace="5" border="0" />
 
       </a>
     </span>
     <span class="bt_novos">
-      <a href="javascript:;" rel='tipsy' id="excluirEstudo" title='Excluir Estudo'>
+      <a href="javascript:;" isEdicao="true" rel='tipsy' id="excluirEstudo" title='Excluir Estudo'>
         <img src="images/ico_excluir.gif" alt="Excluir Estudo" hspace="5" border="0" />
 
       </a>
