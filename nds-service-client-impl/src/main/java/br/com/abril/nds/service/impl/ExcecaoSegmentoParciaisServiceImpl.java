@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.ProdutoNaoRecebidoDTO;
 import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.repository.ExcecaoSegmentoParciaisRepository;
 import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
 import br.com.abril.nds.service.ProdutoService;

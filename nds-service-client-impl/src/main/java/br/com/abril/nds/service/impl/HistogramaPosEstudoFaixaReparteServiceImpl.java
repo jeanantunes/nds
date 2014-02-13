@@ -11,8 +11,7 @@ import br.com.abril.nds.repository.HistogramaPosEstudoRepository;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 
 @Service
-public class HistogramaPosEstudoFaixaReparteServiceImpl implements
-		HistogramaPosEstudoFaixaReparteService {
+public class HistogramaPosEstudoFaixaReparteServiceImpl implements HistogramaPosEstudoFaixaReparteService {
 
 	@Autowired
 	private HistogramaPosEstudoRepository histogramaPosEstudoRepository;
@@ -26,7 +25,6 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements
 	@Transactional
 	@Override
 	public List<Long> obterIdEdicoesBase(Long idEstudo) {
-		// TODO Auto-generated method stub
 		return histogramaPosEstudoRepository.obterListaIdProdEdicoesBaseEstudo(idEstudo);
 	}
 
