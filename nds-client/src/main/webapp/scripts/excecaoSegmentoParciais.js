@@ -401,7 +401,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						
 						$.each(result.rows, function(index, row) {
 							
-							var link = '<img style="cursor:pointer" title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" onclick="excecaoSegmentoParciaisController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');" />';
+							var link = '<img style="cursor:pointer" title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" isEdicao="true" onclick="excecaoSegmentoParciaisController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');" />';
 							
 							row.cell.acao = link;
 						});

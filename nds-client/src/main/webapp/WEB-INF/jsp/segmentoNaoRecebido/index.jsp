@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="scripts/segmentoNaoRecebido.js" /></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
@@ -38,7 +39,7 @@
   <div class="area">
     <div class="porSegmento" style="display:none;">
       <span class="bt_novos">
-        <a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirCotaSegmentoNaoRecebido()" rel="tipsy" title="Confirmar">
+        <a href="javascript:;" isEdicao="true" onclick="segmentoNaoRecebidoController.incluirCotaSegmentoNaoRecebido()" rel="tipsy" title="Confirmar">
           <img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
         </a>
       </span>
@@ -65,7 +66,7 @@
         </a>
       </span>
       <span class="bt_novos">
-        <a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirSegmento()" rel="tipsy" title="Confirmar">
+        <a href="javascript:;" isEdicao="true" onclick="segmentoNaoRecebidoController.incluirSegmento()" rel="tipsy" title="Confirmar">
           <img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
         </a>
       </span>

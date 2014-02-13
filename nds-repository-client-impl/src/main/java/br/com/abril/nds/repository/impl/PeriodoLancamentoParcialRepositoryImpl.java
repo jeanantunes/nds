@@ -175,7 +175,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		}
 		
 		if(filtro.getStatus() != null) { 
-			hql.append(" and  periodo.status=:status ");
+			hql.append(" and  periodo.lancamento.status=:status ");
 		}
 		
 		return hql.toString();

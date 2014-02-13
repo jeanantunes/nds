@@ -32,10 +32,14 @@ import javax.persistence.TemporalType;
 @Table(name = "PERIODO_LANCAMENTO_PARCIAL")
 @SequenceGenerator(name = "PERIODO_LANCAMENTO_PARCIAL_SEQ", initialValue = 1, allocationSize = 1)
 public class PeriodoLancamentoParcial implements Serializable {
+<<<<<<< HEAD
 	
 	/**
 	 * 
 	 */
+=======
+
+>>>>>>> DGBti/master
 	private static final long serialVersionUID = 2248452950369852623L;
 
 	@Id

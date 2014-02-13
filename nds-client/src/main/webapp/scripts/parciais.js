@@ -53,6 +53,7 @@ var ParciaisController = $.extend(true, {
 		$('#dataInicial', ParciaisController.workspace).mask("99/99/9999");
 		$('#dataFinal', ParciaisController.workspace).mask("99/99/9999");
 		$('#lancamentoNovaRed', ParciaisController.workspace).mask("99/99/9999");
+		$( "#dataRecolhimentoManual", ParciaisController.workspace).mask("99/99/9999");
 
 		$("#nomeProduto", ParciaisController.workspace).autocomplete({source: ""});
 		$("#edicaoProduto", ParciaisController.workspace).autocomplete({source: ""});
@@ -72,6 +73,7 @@ var ParciaisController = $.extend(true, {
 			
 			ParciaisController.codigoProduto = ParciaisController.get('codigoProduto');
 			ParciaisController.numEdicao = ParciaisController.get('edicaoProduto');
+			ParciaisController.nomeProduto = ParciaisController.get('nomeProduto');
 			
 			ParciaisController.pesquisarPeriodosParciais();
 		} else {
@@ -255,6 +257,7 @@ var ParciaisController = $.extend(true, {
 		$.each(result.rows, function(index,row){
 		
 			row.cell.acao="";
+			row.cell.numeroLancamento = row.cell.numeroLancamento ? row.cell.numeroLancamento : "-";
 			
 			if(index > 0){	
 				isExcluir = (index != indexUtimoRegistro);
