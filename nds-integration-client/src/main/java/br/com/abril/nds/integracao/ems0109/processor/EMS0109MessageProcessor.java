@@ -470,7 +470,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
             produto.setTipoSegmentoProduto(getTipoSegmento(input.getSegmento()));
             this.ndsiLoggerFactory.getLogger().logInfo(message,
                     EventoExecucaoEnum.INF_DADO_ALTERADO,
-                    "Atualizacao do Tipo de Segmento do Produto para: " + input.getCodigoICD());
+                    "Atualizacao do Tipo de Segmento do Produto para: " + input.getSegmento());
         }
 		
 		Fornecedor produtoFornecedor = produto.getFornecedor();
