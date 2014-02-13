@@ -102,27 +102,13 @@ public class HistoricoDescontoLogistica {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((dataInicioVigencia == null) ? 0 : dataInicioVigencia
-						.hashCode());
-		result = prime
-				* result
-				+ ((dataProcessamento == null) ? 0 : dataProcessamento
-						.hashCode());
-		result = prime * result
-				+ ((descricao == null) ? 0 : descricao.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime
-				* result
-				+ ((percentualDesconto == null) ? 0 : percentualDesconto
-						.hashCode());
-		result = prime
-				* result
-				+ ((percentualPrestacaoServico == null) ? 0
-						: percentualPrestacaoServico.hashCode());
-		result = prime * result
-				+ ((tipoDesconto == null) ? 0 : tipoDesconto.hashCode());
+		result = prime * result + ((this.getDataInicioVigencia() == null) ? 0 : this.getDataInicioVigencia().hashCode());
+		result = prime * result + ((this.getDataProcessamento() == null) ? 0 : this.getDataProcessamento().hashCode());
+		result = prime * result + ((this.getDescricao() == null) ? 0 : this.getDescricao().hashCode());
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getPercentualDesconto() == null) ? 0 : this.getPercentualDesconto().hashCode());
+		result = prime * result + ((this.getPercentualPrestacaoServico() == null) ? 0 : this.getPercentualPrestacaoServico().hashCode());
+		result = prime * result + ((this.getTipoDesconto() == null) ? 0 : this.getTipoDesconto().hashCode());
 		return result;
 	}
 
@@ -135,41 +121,41 @@ public class HistoricoDescontoLogistica {
 		if (getClass() != obj.getClass())
 			return false;
 		HistoricoDescontoLogistica other = (HistoricoDescontoLogistica) obj;
-		if (dataInicioVigencia == null) {
-			if (other.dataInicioVigencia != null)
+		if (this.getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!dataInicioVigencia.equals(other.dataInicioVigencia))
+		} else if (!this.getId().equals(other.getId()))
 			return false;
-		if (dataProcessamento == null) {
-			if (other.dataProcessamento != null)
+		if (this.getDataInicioVigencia() == null) {
+			if (other.getDataInicioVigencia() != null)
 				return false;
-		} else if (!dataProcessamento.equals(other.dataProcessamento))
+		} else if (!this.getDataInicioVigencia().equals(other.getDataInicioVigencia()))
 			return false;
-		if (descricao == null) {
-			if (other.descricao != null)
+		if (this.getDataProcessamento() == null) {
+			if (other.getDataProcessamento() != null)
 				return false;
-		} else if (!descricao.equals(other.descricao))
+		} else if (!this.getDataProcessamento().equals(other.getDataProcessamento()))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (this.getDescricao() == null) {
+			if (other.getDescricao() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!this.getDescricao().equals(other.getDescricao()))
 			return false;
-		if (percentualDesconto == null) {
-			if (other.percentualDesconto != null)
+		if (this.getPercentualDesconto() == null) {
+			if (other.getPercentualDesconto() != null)
 				return false;
-		} else if (!percentualDesconto.equals(other.percentualDesconto))
+		} else if (!this.getPercentualDesconto().equals(other.getPercentualDesconto()))
 			return false;
-		if (percentualPrestacaoServico == null) {
-			if (other.percentualPrestacaoServico != null)
+		if (this.getPercentualPrestacaoServico() == null) {
+			if (other.getPercentualPrestacaoServico() != null)
 				return false;
-		} else if (!percentualPrestacaoServico
-				.equals(other.percentualPrestacaoServico))
+		} else if (!this.getPercentualPrestacaoServico()
+				.equals(other.getPercentualPrestacaoServico()))
 			return false;
-		if (tipoDesconto == null) {
-			if (other.tipoDesconto != null)
+		if (this.getTipoDesconto() == null) {
+			if (other.getTipoDesconto() != null)
 				return false;
-		} else if (!tipoDesconto.equals(other.tipoDesconto))
+		} else if (!this.getTipoDesconto().equals(other.getTipoDesconto()))
 			return false;
 		return true;
 	}

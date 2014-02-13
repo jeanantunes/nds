@@ -153,6 +153,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 * 
 	 * @return DanfeDTO
 	 */
+	@Transactional
 	private DanfeDTO obterDadosDANFE(NfeVO nfe) {
 		
 		DanfeDTO danfe = new DanfeDTO();
@@ -217,6 +218,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	}
 	
 	@Override
+	@Transactional
 	public void cancelarNfe(FiltroMonitorNfeDTO filtro) throws FileNotFoundException, IOException {
 		
 		
