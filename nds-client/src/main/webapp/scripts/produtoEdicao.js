@@ -414,6 +414,12 @@ var produtoEdicaoController =$.extend(true,  {
 				sortable : false,
 				align : 'right'
 			}, {
+				display : 'Promocional',
+				name : 'repartePromocional',
+				width : 55,
+				sortable : false,
+				align : 'right'
+			}, {
 				display : 'A&ccedil;&atilde;o',
 				name : 'acao',
 				width : 60,
@@ -914,6 +920,12 @@ var produtoEdicaoController =$.extend(true,  {
 		
 		linhasDestacadas = [];
 		
+		if (result.rows && result.rows.length > 1) {
+
+			$("#produtoEdicaoController-repartePrevisto", produtoEdicaoController.workspace).attr("disabled", "disabled");
+			$("#produtoEdicaoController-repartePromocional", produtoEdicaoController.workspace).attr("disabled", "disabled");
+		}
+		
 		$.each(result.rows, function(index, row) {
 			
 			if(row.cell.numeroLancamento == undefined) {
@@ -924,9 +936,30 @@ var produtoEdicaoController =$.extend(true,  {
 				row.cell.numeroPeriodo = " - ";
 			}
 			
-			if(row.cell.reparte == undefined) {
-				row.cell.reparte = "";
+			var reparte = row.cell.reparte;
+			var repartePromocional = row.cell.repartePromocional;
+
+			if(reparte == undefined) {
+				reparte = "";
 			}
+
+			if(repartePromocional == undefined) {
+				repartePromocional = "";
+			}
+			
+			row.cell.reparte = "<input type='text' value='" + reparte  + "'"
+							 + " name='reparteLancamento' "
+							 + " style='width: 45px' "
+							 + "' onchange='produtoEdicaoController.atualizarLancamento(" 
+							 + "{ idLancamento: " + row.cell.idLancamento + ", reparte: $(this).val() }"
+							 + ")' />";
+			
+			row.cell.repartePromocional = "<input type='text' value='" + repartePromocional  + "'"
+									    + " name='reparteLancamento' "
+									    + " style='width: 45px' "
+									    + "' onchange='produtoEdicaoController.atualizarLancamento(" 
+									    + "{ idLancamento: " + row.cell.idLancamento + ", repartePromocional: $(this).val() }"
+									    + ")' />";
 			
 			if (row.cell.destacarLinha) {
 				linhasDestacadas.push(index + 1);
@@ -940,6 +973,18 @@ var produtoEdicaoController =$.extend(true,  {
 		return result;
 	},
 	
+	atualizarLancamento: function(lancamento) {
+		
+		if (!lancamento) {
+			return;
+		}
+
+		$.postJSON(
+			contextPath + '/cadastro/edicao/atualizarReparteLancamento',
+			lancamento
+		);
+	},
+	
 	onSuccessLancamentosPeriodo : function() {
 		
 		$(linhasDestacadas).each(function(i, item){
@@ -947,6 +992,8 @@ var produtoEdicaoController =$.extend(true,  {
 			 $(id, this.workspace).removeClass("erow").addClass("gridLinhaDestacada");
 			 $(id, this.workspace).children("td").removeClass("sorted");
 		});
+		
+		$("input[name='reparteLancamento']").numeric();
 	},
 	
 	iniciaTab: function(){
