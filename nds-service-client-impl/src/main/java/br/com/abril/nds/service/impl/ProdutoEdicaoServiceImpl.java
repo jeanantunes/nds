@@ -1191,6 +1191,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return dto;
 	}
 
+	@Transactional
 	public Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo) {
 
 		Integer ultimoNumeroLancamento = null;
@@ -1369,6 +1370,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
 		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 	}
@@ -1494,11 +1496,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
 	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, Long.valueOf(numeroEdicao)));
 	}
 
     @Override
+    @Transactional
     public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
         return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
     }
