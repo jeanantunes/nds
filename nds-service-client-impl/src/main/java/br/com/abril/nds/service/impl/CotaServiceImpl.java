@@ -221,16 +221,16 @@ public class CotaServiceImpl implements CotaService {
 	private EnderecoPDVRepository enderecoPDVRepository;
 	
 	@Autowired
-	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Autowired
-	ParametroSistemaRepository parametroSistemaRepository;
+	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Autowired
-	FileService fileService;
+	private FileService fileService;
 		
 	@Autowired
 	private RotaRepository rotaRepository;
@@ -266,13 +266,13 @@ public class CotaServiceImpl implements CotaService {
 	private UsuarioService usuarioService; 
 	
 	@Autowired
-	DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
+	private DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
 		
 	@Autowired
-	MixCotaProdutoService mixCotaProdutoService;
+	private MixCotaProdutoService mixCotaProdutoService;
 
 	@Autowired
-	FixacaoReparteService fixacaoReparteService;	
+	private FixacaoReparteService fixacaoReparteService;	
 	
 	@Autowired
 	private CotaBaseService cotaBaseService;
@@ -2139,6 +2139,7 @@ public class CotaServiceImpl implements CotaService {
      * @return comboTiposCota: Tipos de cota padrão.
      */
 	@Override
+	@Transactional
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota() {
 		List<ItemDTO<TipoCota,String>> comboTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
 		for (TipoCota itemTipoCota: TipoCota.values()){
@@ -2973,6 +2974,7 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
 	}
 	
+	@Transactional
 	@Override
 	public boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota) {
 
@@ -3057,6 +3059,7 @@ public class CotaServiceImpl implements CotaService {
    * @return boolean
    */
   @Override  
+  @Transactional
   public boolean isCotaAlteradaNaData(Cota cota, Date data){
 	  
       boolean isAlteracaoTipoCotaNaDataAtual = (cota.getAlteracaoTipoCota()!=null && 

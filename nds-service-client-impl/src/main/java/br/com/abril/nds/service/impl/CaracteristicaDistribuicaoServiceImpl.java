@@ -16,8 +16,7 @@ import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
 
 @Service
-public class CaracteristicaDistribuicaoServiceImpl implements
-		CaracteristicaDistribuicaoService {
+public class CaracteristicaDistribuicaoServiceImpl implements CaracteristicaDistribuicaoService {
 	
 	@Autowired
 	private TipoClassificacaoProdutoRepository tipoClassificacaoProdutoRepository;
