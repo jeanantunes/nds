@@ -1205,6 +1205,7 @@ public class DescontoServiceImpl implements DescontoService {
 	}
 
 	@Override
+	@Transactional
 	public Map<String, DescontoDTO> obterDescontosMapPorLancamentoProdutoEdicao(
 			Long lancamentoId, Long produtoEdicaoId) {
 		

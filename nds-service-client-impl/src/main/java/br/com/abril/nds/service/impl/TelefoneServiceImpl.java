@@ -71,6 +71,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 	}
 	
 	@Override
+	@Transactional
 	public void removerTelefones(Collection<Long> listaTelefones) {
 		try {
 			

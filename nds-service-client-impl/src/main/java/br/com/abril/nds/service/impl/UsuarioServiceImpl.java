@@ -124,6 +124,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public boolean verificarUsuarioSupervisor(String usuario, String senha) {
 		
 		try {

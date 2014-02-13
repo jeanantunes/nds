@@ -70,15 +70,16 @@ public class HistogramaPosEstudoController extends BaseController{
     @Path("/index")
 	public void histogramaPosEstudo(String codigoProduto, String edicao) {
 	    if (codigoProduto != null && !codigoProduto.isEmpty() && edicao != null && !edicao.isEmpty()) {
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
-		String modoAnalise = "NORMAL";
-		if (produtoEdicao.isParcial()) {
-		    modoAnalise = "PARCIAL";
-		}
-		result.include("modoAnalise", modoAnalise);
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
+			String modoAnalise = "NORMAL";
+			
+			if (produtoEdicao.isParcial()) {
+			    modoAnalise = "PARCIAL";
+			}
+			
+			result.include("modoAnalise", modoAnalise);
 	    }
 	}
-
 
     @Post
     @Transactional

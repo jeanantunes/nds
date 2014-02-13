@@ -1378,6 +1378,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
+	@Transactional
 	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, 
 			boolean ignorarUnificacao) {
 		
