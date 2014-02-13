@@ -1242,29 +1242,28 @@ var mixCotaProdutoController = $.extend(true, {
 		    	   $("#formUploadLoteMix").ajaxSubmit({
 					
 						success: function(responseText, statusText, xhr, $form)  { 
+						
+							if(responseText === null) {
+								exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+							} else {
 							
-//							console.log(responseText.mixCotaDTOInconsistente);
-							
-							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
-							if(typeof(mensagens)!='undefined'){
-								var tipoMensagem = mensagens.tipoMensagem;
-								var listaMensagens = mensagens.listaMensagens;
-								
-								if (tipoMensagem && listaMensagens) {
+								var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+								if(typeof(mensagens)!='undefined'){
+									var tipoMensagem = mensagens.tipoMensagem;
+									var listaMensagens = mensagens.listaMensagens;
 									
-									if (tipoMensagem != 'SUCCESS') {
+									if (tipoMensagem && listaMensagens) {
 										
-										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+										if (tipoMensagem != 'SUCCESS') {
+											
+											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+										}
+										$(this).dialog( "close" );
+										exibirMensagem(tipoMensagem, listaMensagens);	
 									}
-									$(this).dialog( "close" );
-									exibirMensagem(tipoMensagem, listaMensagens);	
-								}
-								
-							}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
-								
-								if(responseText.mixCotaDTOInconsistente.length==0){
-									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
-								}else{
+									
+								}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
+																		
 									var a = new Array();
 									a.push("O arquivo possui [" + responseText.mixCotaDTOInconsistente.length + "] registros incosistentes:");
 									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
@@ -1274,22 +1273,18 @@ var mixCotaProdutoController = $.extend(true, {
 												+", Reparte Maximo["+responseText.mixCotaDTOInconsistente[int].reparteMaximo+"] : "+responseText.mixCotaDTOInconsistente[int].error);
 									}
 									exibirMensagemDialog("WARNING", a);
+									return;
 									
 								}
-								
 							}
 							
-							$(this).dialog("close");
+							$('#modalUploadArquivoMix').dialog('close');
 							
-							/*if($("#radio").attr('checked') == 'checked'){
-								$(".mixCotasGrid").flexReload();
-							}else{
-								$(".mixProdutosGrid").flexReload();
-							}*/
+							mixCotaProdutoController.pesquisarPorProduto();							
 							
 						}, 
 						type: 'POST',
-						dataType: 'json'//,
+						dataType: 'json'
 					});
 		    	   
 		       }

@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,7 +126,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumeroDaCota(Integer.valueOf(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
+		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto(), filtroCota.getClassificacaoProduto()) ;
 		return resultado; 
 	}
 	
@@ -143,7 +143,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
             throw new ValidacaoException(TipoMensagem.WARNING, "Já existe fixação para esta cota["
                     +
                     fixacaoReparteDTO.getCotaFixadaString() +
- "], produto[" + fixacaoReparteDTO.getProdutoFixado()
+                    "], produto[" + fixacaoReparteDTO.getProdutoFixado()
                     + "] e classificação[" +
                     descricao + "]");
         }
@@ -207,7 +207,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		FixacaoReparte fixacaoReparte;
 		Cota cota = cotaRepository.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
 		Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
-        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.buscarPorId(fixacaoReparteDTO.getClassificacaoProdutoId());
+        TipoClassificacaoProduto classificacaoProduto = tipoClassificacaoProdutoRepository.obterPorClassificacao(fixacaoReparteDTO.getClassificacaoProduto());
 
         // Esta validação nao faz mais sentido como está... talvez varrer todas
         // as possiveis edições involvidas?
@@ -229,14 +229,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
 		fixacaoReparte.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial());
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal());
-
-        Long classificacaoProdutoId = fixacaoReparteDTO.getClassificacaoProdutoId();
         
-        if (classificacaoProdutoId.compareTo(NumberUtils.LONG_ZERO) > 0) {
-            TipoClassificacaoProduto tipoClassificacaoProduto = new TipoClassificacaoProduto();
-            tipoClassificacaoProduto.setId(classificacaoProdutoId);
-            fixacaoReparte.setClassificacaoProdutoEdicao(tipoClassificacaoProduto);
-        }
+        if (classificacaoProduto != null) 
+            fixacaoReparte.setClassificacaoProdutoEdicao(classificacaoProduto);        
 
 		return fixacaoReparte;
 	}

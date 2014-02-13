@@ -684,8 +684,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			param.put("roteiro",filtro.getRoteiro());
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			param.put("codigoCidadeIBGE",filtro.getCodMunicipio());
+		if(filtro.getDescMunicipio()!= null){
+			param.put("cidadeCota",filtro.getDescMunicipio());
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){
@@ -719,9 +719,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			hql.append(" JOIN produto.fornecedores fornecedor ");
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			hql.append(" JOIN pdv.enderecos enderecoPDV ")
-				.append(" JOIN enderecoPDV.endereco endereco ");
+		if(filtro.getDescMunicipio()!= null){
+			hql.append(" JOIN cota.enderecos enderecoCota ")
+				.append(" JOIN enderecoCota.endereco endereco ");
 		}
 		
 		hql.append(" WHERE ")
@@ -764,8 +764,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			hql.append(" AND roteiro.id =:roteiro ");
 		}
 		
-		if(filtro.getCodMunicipio()!= null){
-			hql.append(" AND endereco.codigoCidadeIBGE =:codigoCidadeIBGE ");
+		if(filtro.getDescMunicipio()!= null){
+			hql.append(" AND endereco.cidade =:cidadeCota ");
 		}
 		
 		if(filtro.getCodTipoPontoPDV()!= null){
@@ -2019,11 +2019,11 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0)) - "
+				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE is null,coalesce(ec_.QTDE_EFETIVA,0),if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0))) - "
 				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0)) + "			
 				+ " 		sum(if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0)) as exemplares, "	 		
 				+ "	        sum(pe_.PRECO_VENDA * ( "
-				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0) - " 
+				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE is null,coalesce(ec_.QTDE_EFETIVA,0),if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:gruposFaltaSobra), ec_.QTDE_EFETIVA, 0)) - " 
 				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposFalta), mec.QTDE,0) + 		 "
 				+ "				if(tipo_mov.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposSobra), mec.QTDE,0)) "
 				+ "			) as total, " 
@@ -2034,6 +2034,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
+				+ "	    left outer join "
+				+ "	        BOX box1_  "
+				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
 				+ "	        ESTUDO_COTA ec_  "
 				+ "	            on cota_.ID=ec_.COTA_ID  "
@@ -2284,6 +2287,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		query.setParameter("tipoCota", tipoCota);
 		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaTipoDTO.class));
 
 		query.setFirstResult( (rp * page) - rp);
@@ -2304,6 +2311,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" where (pdv.caracteristicas.pontoPrincipal=true or pdv.caracteristicas.pontoPrincipal is null) ");
 		hql.append(" and (enderecoCota.principal=true or enderecoCota.principal is null) ");		
 		hql.append(" and cota.tipoDistribuicaoCota=:tipoCota ");
+		hql.append(" and cota.situacaoCadastro in (:situacoesCadastro) ");
 	}
 
 	private void gerarOrderByObterCotaPorTipo(StringBuilder hql,
@@ -2340,6 +2348,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("tipoCota", tipoCota);
+		
+		query.setParameterList(
+			"situacoesCadastro", 
+				Arrays.asList(SituacaoCadastro.ATIVO, SituacaoCadastro.SUSPENSO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}
@@ -2924,7 +2936,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas,
+			Intervalo<Integer> faixa, Integer qtdDevolvido) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -2934,7 +2947,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
-		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
+		hql.append(" avg(estoqueProdutoCota.qtdeRecebida) as reparteMedio, ");
 		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" produto.codigo as codigoProduto ");
@@ -2942,15 +2955,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		//hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+		//hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		//hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
-		hql.append(" tipoMovimento.id = 21 and ");
+		//hql.append(" tipoMovimento.id = 21 and ");
+		boolean useAnd = false;
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
@@ -2979,12 +2993,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			}
 			
 			hql.append(")");
+			
+			useAnd = true;
 		}
 		
 		if (cotas != null && cotas.size() != 0) {
 			
+			hql.append(useAnd ? " and " : " where ");
+			
             // Populando o in ('','') do código produto
-			hql.append(" and cota.numeroCota in ( ");
+			hql.append(" cota.numeroCota in ( ");
 			for (int i = 0; i < cotas.size(); i++) {
 				
 				hql.append(cotas.get(i).getNumeroCota());
@@ -2995,6 +3013,20 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			}
 			
 			hql.append(" )");
+			
+			useAnd = true;
+		}
+		
+		if (faixa != null){
+			
+			hql.append(useAnd ? " and " : " where ");
+			hql.append(" estoqueProdutoCota.qtdeRecebida between :de and :ate ");
+		}
+		
+		if (qtdDevolvido != null){
+			
+			hql.append(useAnd ? " and " : " where ");
+			hql.append(" estoqueProdutoCota.qtdeDevolvida = :qtdDevolvido ");
 		}
 		
 		hql.append(" GROUP BY cota.numeroCota ");
@@ -3002,6 +3034,17 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		this.setParameters(query, parameters);
+		
+		if (faixa != null){
+			
+			query.setParameter("de", new BigInteger(faixa.getDe().toString()));
+			query.setParameter("ate", new BigInteger(faixa.getAte().toString()));
+		}
+		
+		if (qtdDevolvido != null){
+			
+			query.setParameter("qtdDevolvido", BigInteger.valueOf(qtdDevolvido.longValue()));
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
 		

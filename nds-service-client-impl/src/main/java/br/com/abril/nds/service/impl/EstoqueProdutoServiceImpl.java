@@ -50,7 +50,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Long buscarEstoqueProdutoRecolhimentoCount(FiltroEstoqueProdutosRecolhimento filtro) {
 		
 		if (filtro == null || filtro.getDataRecolhimento() == null){
@@ -62,9 +62,8 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	}
 
 	@Override
-	@Transactional
-	public List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(
-			FiltroEstoqueProdutosRecolhimento filtro) {
+	@Transactional(readOnly = true)
+	public List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(FiltroEstoqueProdutosRecolhimento filtro) {
 		
 		if (filtro == null || filtro.getDataRecolhimento() == null){
 			

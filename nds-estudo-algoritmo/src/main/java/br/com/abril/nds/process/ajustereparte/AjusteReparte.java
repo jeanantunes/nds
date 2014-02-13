@@ -57,7 +57,7 @@ public class AjusteReparte extends ProcessoAbstrato {
 				}
 			
 		    	cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		    	cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+		    	cota.setClassificacao(ClassificacaoCota.Ajuste);
 		    	cotasComReparteJaCalculado.add(cota);
 		    }
 	    

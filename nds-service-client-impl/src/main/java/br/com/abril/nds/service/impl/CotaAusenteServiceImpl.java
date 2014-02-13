@@ -335,7 +335,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					//Retira do estoque da distribuidora a quantidade diponível a ser enviada de volta p/ cota ausente
 					
 					//Lança movimento para restituir o saldo do distribuidor
-					this.movimentoEstoqueService.gerarMovimentoEstoque(cotaAusente.getData(), 
+					this.movimentoEstoqueService.gerarMovimentoEstoque(null, 
 							                                           movimento.getProdutoEdicao().getId(), 
 																	   idUsuario, 
 																	   qtdeARestaurarCotaAusenteSuplementar, 
@@ -453,7 +453,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 					GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				data, produtoEdicao.getId(), 
+				null, produtoEdicao.getId(), 
 					idUsuario, qtdeRateio, tipoMovimento);
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(

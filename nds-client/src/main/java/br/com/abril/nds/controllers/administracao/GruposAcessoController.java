@@ -148,7 +148,9 @@ public class GruposAcessoController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void excluirGrupoPermissao(Long codigoGrupo) {
 		grupoPermissaoService.excluir(codigoGrupo);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Grupo de Permissões excluído com Sucesso."),"result").recursive().serialize();
+        result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Grupo de Permissões excluído com Sucesso."), "result")
+                .recursive().serialize();
 	}
 	
 	/**
@@ -189,12 +191,12 @@ public class GruposAcessoController extends BaseController {
 
 		if (grupoPermissaoDTO.getNome() == null || grupoPermissaoDTO.getNome().isEmpty()) {
 			listaMensagemValidacao
-					.add("O preenchimento do campo nome é obrigatório!");
+.add("O preenchimento do campo nome é obrigatório!");
 		}
 
 		if (grupoPermissaoDTO.getPermissoes() == null || grupoPermissaoDTO.getPermissoes().isEmpty()) {
 			listaMensagemValidacao
-					.add("É necessário selecionar ao menos uma permissão!");
+.add("É necessário selecionar ao menos uma permissão!");
 		}
 
 		if (!listaMensagemValidacao.isEmpty()) {
@@ -229,7 +231,9 @@ public class GruposAcessoController extends BaseController {
 		
 		grupoPermissaoService.salvar(grupoPermissao);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Grupo de Permissões salvo com Sucesso."),"result").recursive().serialize();
+        result.use(Results.json()).from(
+                new ValidacaoVO(TipoMensagem.SUCCESS, "Grupo de Permissões salvo com Sucesso."), "result").recursive()
+                .serialize();
 		
 	}
 
@@ -316,14 +320,15 @@ public class GruposAcessoController extends BaseController {
 	
 	// USUARIOS
 	
-	/**
-	 * Retorna a lista de usuários
-	 * @param usuario
-	 * @param rp
-	 * @param page
-	 * @param sortname
-	 * @param sortorder
-	 */
+	        /**
+     * Retorna a lista de usuários
+     * 
+     * @param usuario
+     * @param rp
+     * @param page
+     * @param sortname
+     * @param sortorder
+     */
 	@Get
 	@Path("/pesquisarUsuarios")
 	public void pesquisarUsuarios(Usuario usuario, int rp, int page, String sortname, String sortorder) {
@@ -339,30 +344,30 @@ public class GruposAcessoController extends BaseController {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 
 		if (usuario.getNome() == null || usuario.getNome().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo nome é obrigatório!");
+            listaMensagemValidacao.add("O preenchimento do campo nome é obrigatório!");
 		}
 
 		if (usuario.getLogin() == null || usuario.getLogin().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo login é obrigatório!");
+            listaMensagemValidacao.add("O preenchimento do campo login é obrigatório!");
 		} else {
 			if ((usuario.getId() == null || usuario.getId() == 0) && usuarioService.existeUsuario(usuario.getLogin())) {
-				listaMensagemValidacao.add("Login de usuário já existente no sistema!");
+                listaMensagemValidacao.add("Login de usuário já existente no sistema!");
 			}
 		}
 
 		if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo e-mail é obrigatório!");
+            listaMensagemValidacao.add("O preenchimento do campo e-mail é obrigatório!");
 		} else {
 
 			if (!Util.validarEmail(usuario.getEmail())) {
-				listaMensagemValidacao.add("E-mail inválido!");
+                listaMensagemValidacao.add("E-mail inválido!");
 			}
 
 		}
 
 		if ( (usuario.getPermissoes() == null || usuario.getPermissoes().isEmpty()) && 
 			 (usuario.getIdsGrupos() == null || usuario.getIdsGrupos().isEmpty()) ) {
-			listaMensagemValidacao.add("É necessário selecionar ao menos uma permissão e/ou grupo!");
+            listaMensagemValidacao.add("É necessário selecionar ao menos uma permissão e/ou grupo!");
 		}
 
 		if (!listaMensagemValidacao.isEmpty()) {
@@ -372,10 +377,11 @@ public class GruposAcessoController extends BaseController {
 
 	}
 
-	/**
-	 * @return
-	 */
-	private UsuarioDTO criptografarSenhas(UsuarioDTO usuarioDTO) {
+	    /**
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    private UsuarioDTO criptografarSenhas(UsuarioDTO usuarioDTO) throws NoSuchAlgorithmException {
 		
 		if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty())
 			usuarioDTO.setSenha(Util.md5(usuarioDTO.getSenha()));
@@ -389,16 +395,16 @@ public class GruposAcessoController extends BaseController {
 	private void validarAlteracaoSenhas(UsuarioDTO usuarioDTO) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		if (usuarioDTO.getSenha() == null || usuarioDTO.getSenha().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo senha é obrigatório!");
+            listaMensagemValidacao.add("O preenchimento do campo senha é obrigatório!");
 		}
 
 		if (usuarioDTO.getConfirmaSenha() == null || usuarioDTO.getConfirmaSenha().isEmpty()) {
-			listaMensagemValidacao.add("O preenchimento do campo confirma senha é obrigatório!");
+            listaMensagemValidacao.add("O preenchimento do campo confirma senha é obrigatório!");
 		}
 
 		if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty() && usuarioDTO.getConfirmaSenha() != null && !usuarioDTO.getConfirmaSenha().isEmpty()) {
 			if (!usuarioDTO.getConfirmaSenha().equals(usuarioDTO.getSenha())) {
-				listaMensagemValidacao.add("Os campos nova senha e confirmação de senha não correspondem!");
+                listaMensagemValidacao.add("Os campos nova senha e confirmação de senha não correspondem!");
 			}
 		}
 
@@ -411,7 +417,7 @@ public class GruposAcessoController extends BaseController {
 	@Post
 	@Path("/alterarSenha")
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
-	public void alterarSenha(UsuarioDTO usuarioDTO) {
+    public void alterarSenha(UsuarioDTO usuarioDTO) throws NoSuchAlgorithmException {
 		usuarioDTO = this.criptografarSenhas(usuarioDTO);
 		validarAlteracaoSenhas(usuarioDTO);
 		
@@ -466,7 +472,8 @@ public class GruposAcessoController extends BaseController {
 
 		usuarioService.salvar(usuario);
 
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário salvo com Sucesso."),"result").recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Usuário salvo com Sucesso."), "result")
+                .recursive().serialize();
 	}
 	
 	/**
@@ -582,7 +589,8 @@ public class GruposAcessoController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void excluirUsuario(Long codigoUsuario) {
 		usuarioService.excluir(codigoUsuario);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário excluído com Sucesso."),"result").recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Usuário excluído com Sucesso."),
+                "result").recursive().serialize();
 	}
 	
 	
@@ -621,7 +629,7 @@ public class GruposAcessoController extends BaseController {
 	}
 
 	
-	// REGRAS (PERMISSÕES)
+    // REGRAS (PERMISSÕES)
 	
 	/**
 	 * Retorna a lista de regras do sistema

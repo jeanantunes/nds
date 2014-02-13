@@ -1,9 +1,32 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.*;
+import br.com.abril.nds.dto.ClassificacaoNaoRecebidaDTO;
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.FixacaoReparteCotaDTO;
+import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.FixacaoReparteHistoricoDTO;
+import br.com.abril.nds.dto.FixacaoReparteProdutoDTO;
+import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.ProdutoRecebidoDTO;
+import br.com.abril.nds.dto.QuantidadePdvCotaDTO;
+import br.com.abril.nds.dto.RepartePDVDTO;
+import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
@@ -15,9 +38,15 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.*;
+import br.com.abril.nds.service.ClassificacaoNaoRecebidaService;
+import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
+import br.com.abril.nds.service.FixacaoReparteService;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RepartePdvService;
+import br.com.abril.nds.service.SegmentoNaoRecebidoService;
+import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -25,19 +54,13 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.*;
+import br.com.caelum.vraptor.Get;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Resource
 @Path("/distribuicao/fixacaoReparte")
@@ -650,8 +673,11 @@ public class FixacaoReparteController extends BaseController {
 			
 			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
-			
-			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
+            if (tipoSegProd == null) {
+                return "Produto [" + prd.getNome() + "] não possui Tipo Segmento cadastrado.";
+            }
+
+            loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
 				if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
 					
 					for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {

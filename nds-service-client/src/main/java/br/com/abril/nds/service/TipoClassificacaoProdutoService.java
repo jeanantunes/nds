@@ -9,4 +9,6 @@ public interface TipoClassificacaoProdutoService {
 	List<TipoClassificacaoProduto> obterTodos();
 	
 	TipoClassificacaoProduto buscarPorId(Long id);
+
+    TipoClassificacaoProduto obterPorClassificacao(String classificacao);
 }

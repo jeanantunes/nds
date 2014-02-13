@@ -61,33 +61,26 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
-			FiltroSegmentoNaoRecebidoDTO filtro) {
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(filtro);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(
-			FiltroSegmentoNaoRecebidoDTO filtro) {
+	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		return segmentoNaoRecebidoRepo.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
 	}
 
 	@Override
 	@Transactional
-	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
-			Cota cota) {
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(Cota cota) {
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
 	}
 	
 	@Override
 	@Transactional
-	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosCotaBase(
-			Long idCota) {
-		
-		
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosCotaBase(Long idCota) {
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCotaBase(idCota);
 	}
 	 
-
 }
