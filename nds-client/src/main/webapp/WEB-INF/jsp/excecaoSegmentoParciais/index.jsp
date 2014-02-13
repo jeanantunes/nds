@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="scripts/autoCompleteController.js" ></script>
 	<script type="text/javascript" src="scripts/excecaoSegmentoParciais.js" ></script>
@@ -82,7 +83,7 @@
         </a>
       </span>
       <span class="bt_novos">
-        <a href="javascript:;" id="inserirCotaNaExcecao" rel="tipsy" title="Confirmar">
+        <a href="javascript:;" isEdicao="true" id="inserirCotaNaExcecao" rel="tipsy" title="Confirmar">
           <img src="images/ico_check.gif" hspace="5" border="0" />
         </a>
       </span>
@@ -106,7 +107,7 @@
         </a>
       </span>
       <span class="bt_novos">
-        <a href="javascript:;" id="inserirExcecaoDeProdutos" rel="tipsy" title="Confirmar"> 
+        <a href="javascript:;" isEdicao="true" id="inserirExcecaoDeProdutos" rel="tipsy" title="Confirmar"> 
           <img src="images/ico_check.gif" hspace="5" border="0" />
         </a>
       </span>
