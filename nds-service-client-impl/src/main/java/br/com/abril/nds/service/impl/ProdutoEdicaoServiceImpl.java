@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1186,6 +1187,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return dto;
 	}
 
+	@Transactional
 	public Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo) {
 
 		Integer ultimoNumeroLancamento = null;
@@ -1364,6 +1366,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
 		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 	}
@@ -1377,8 +1380,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes){
+	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,
+			String codigoProduto,String[] faixasVenda, String[] edicoes){
 
+		if (codigoProduto != null){
+			
+			codigoProduto = Util.padLeft(codigoProduto, "0", 8);
+		}
+		
 		List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
 
 		String[] newFaixasVenda = new String[faixasVenda.length + 1];
@@ -1391,7 +1400,29 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		for (int i = 0; i < newFaixasVenda.length; i++) {
 			String[] faixa = newFaixasVenda[i].split("-");
-			AnaliseHistogramaDTO obj = produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
+			AnaliseHistogramaDTO obj = 
+				produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
+						filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
+			
+			if (obj.getIdCotasEsmagadas() != null && !obj.getIdCotasEsmagadas().isEmpty()){
+			
+				String[] cotasEsmagadas = obj.getIdCotasEsmagadas().split(",");
+				
+				BigDecimal vendaEsmagMedia = BigDecimal.ZERO;
+				for (String idCota : cotasEsmagadas){
+				
+					BigDecimal venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(
+							new Intervalo<Integer>(Integer.valueOf(faixa[0]), Integer.valueOf(faixa[1])), codigoProduto, edicoes, Integer.valueOf(idCota));
+					
+					if (venda != null){
+					
+						vendaEsmagMedia = vendaEsmagMedia.add(venda.setScale(0, RoundingMode.CEILING));
+					}
+				}
+				
+				obj.setVendaEsmagadas(vendaEsmagMedia);
+			}
+			
 			obj.executeScaleValues(edicoes.length);
 
 			if (i == newFaixasVenda.length - 1) {
@@ -1489,11 +1520,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
 	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, Long.valueOf(numeroEdicao)));
 	}
 
     @Override
+    @Transactional
     public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
         return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
     }

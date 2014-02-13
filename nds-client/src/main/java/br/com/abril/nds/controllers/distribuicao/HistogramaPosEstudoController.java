@@ -3,9 +3,10 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.abril.nds.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
@@ -19,8 +20,14 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
+import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.caelum.vraptor.Path;
@@ -28,10 +35,10 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
-import org.springframework.transaction.annotation.Transactional;
 
 @Path("/distribuicao/histogramaPosEstudo")
 @Resource
+@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO)
 public class HistogramaPosEstudoController extends BaseController{
 	
 	private String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999"}; 
@@ -63,21 +70,25 @@ public class HistogramaPosEstudoController extends BaseController{
     @Path("/index")
 	public void histogramaPosEstudo(String codigoProduto, String edicao) {
 	    if (codigoProduto != null && !codigoProduto.isEmpty() && edicao != null && !edicao.isEmpty()) {
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
-		String modoAnalise = "NORMAL";
-		if (produtoEdicao.isParcial()) {
-		    modoAnalise = "PARCIAL";
-		}
-		result.include("modoAnalise", modoAnalise);
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
+			String modoAnalise = "NORMAL";
+			
+			if (produtoEdicao.isParcial()) {
+			    modoAnalise = "PARCIAL";
+			}
+			
+			result.include("modoAnalise", modoAnalise);
 	    }
 	}
 
-
     @Post
     @Transactional
+    @Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO)
     public void excluirEstudo(long id) {
         matrizDistribuicaoService.removeEstudo(id);
-        result.use(Results.json()).withoutRoot().from(new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!")).recursive().serialize();
+        result.use(Results.json()).withoutRoot().from(
+                new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!")).recursive()
+                .serialize();
     }
 
     @Post
@@ -98,7 +109,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		
 		if (segmento == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário cadastrar um segmento para o produto.");
+            throw new ValidacaoException(TipoMensagem.WARNING, "É necessário cadastrar um segmento para o produto.");
 		}
 		
 		TipoSegmentoProdutoDTO segmentoDTO = new TipoSegmentoProdutoDTO();
@@ -137,15 +148,19 @@ public class HistogramaPosEstudoController extends BaseController{
 			faixaIterator = faixaReparteInicial;
 		}
 		
+		List<Long> listaIdEdicaoBaseEstudo = histogramaPosEstudoFaixaReparteService.obterIdEdicoesBase(Long.valueOf(estudoId));
+		
 		for (String faixas : faixaIterator) {
 			int faixaDe = Integer.parseInt(faixas.split("-")[0]);
 			int faixaAte = Integer.parseInt(faixas.split("-")[1]);
-			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId);
+			
+			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId, listaIdEdicaoBaseEstudo);
+			
 			base.add(baseEstudoAnaliseFaixaReparteDTO);
 		}
 		
-		// última faixa
-		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId);
+        // última faixa
+		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId, listaIdEdicaoBaseEstudo);
 		base.add(baseEstudoAnaliseFaixaReparteDTO);
 		
 		TableModel<CellModelKeyValue<HistogramaPosEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();

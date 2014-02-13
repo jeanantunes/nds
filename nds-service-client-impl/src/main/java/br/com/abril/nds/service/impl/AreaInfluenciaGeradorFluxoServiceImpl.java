@@ -14,8 +14,7 @@ import br.com.abril.nds.repository.AreaInfluenciaGeradorFluxoRepository;
 import br.com.abril.nds.service.AreaInfluenciaGeradorFluxoService;
 
 @Service
-public class AreaInfluenciaGeradorFluxoServiceImpl implements
-		AreaInfluenciaGeradorFluxoService {
+public class AreaInfluenciaGeradorFluxoServiceImpl implements AreaInfluenciaGeradorFluxoService {
 
 	@Autowired
 	private AreaInfluenciaGeradorFluxoRepository areaInfluenciaGeradorFluxoRepository; 

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -220,16 +221,16 @@ public class CotaServiceImpl implements CotaService {
 	private EnderecoPDVRepository enderecoPDVRepository;
 	
 	@Autowired
-	TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 	
 	@Autowired
-	ParametroSistemaRepository parametroSistemaRepository;
+	private ParametroSistemaRepository parametroSistemaRepository;
 	
 	@Autowired
-	FileService fileService;
+	private FileService fileService;
 		
 	@Autowired
 	private RotaRepository rotaRepository;
@@ -265,13 +266,13 @@ public class CotaServiceImpl implements CotaService {
 	private UsuarioService usuarioService; 
 	
 	@Autowired
-	DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
+	private DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
 		
 	@Autowired
-	MixCotaProdutoService mixCotaProdutoService;
+	private MixCotaProdutoService mixCotaProdutoService;
 
 	@Autowired
-	FixacaoReparteService fixacaoReparteService;	
+	private FixacaoReparteService fixacaoReparteService;	
 	
 	@Autowired
 	private CotaBaseService cotaBaseService;
@@ -1214,7 +1215,9 @@ public class CotaServiceImpl implements CotaService {
 		processarTitularidadeCota(cota, cotaDTO);
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
-		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao().getRecebeComplementar());
+		cotaDTO.setRecebeComplementar(
+			cota.getParametroDistribuicao() == null ? false : 
+				cota.getParametroDistribuicao().getRecebeComplementar());
 		
 		return cotaDTO;
 	}
@@ -1366,6 +1369,11 @@ public class CotaServiceImpl implements CotaService {
 		Cota cota  = cotaRepository.buscarPorId(idCota);
 	
 		try{	
+			
+			for (HistoricoSituacaoCota hist : cota.getHistoricos()){
+				
+				this.historicoSituacaoCotaRepository.remover(hist);
+			}
 			
 			cotaRepository.remover(cota);
 			
@@ -2131,6 +2139,7 @@ public class CotaServiceImpl implements CotaService {
      * @return comboTiposCota: Tipos de cota padrão.
      */
 	@Override
+	@Transactional
 	public List<ItemDTO<TipoCota, String>> getComboTiposCota() {
 		List<ItemDTO<TipoCota,String>> comboTiposCota =  new ArrayList<ItemDTO<TipoCota,String>>();
 		for (TipoCota itemTipoCota: TipoCota.values()){
@@ -2686,10 +2695,11 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas, final String sortorder, final String sortname) {
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, 
+			List<Cota> cotas, final String sortorder, final String sortname, Intervalo<Integer> faixa) {
 		Collections.sort(listProdutoEdicaoDto);
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);  
+		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas, faixa, faixa == null ? null : 0);  
 		
 		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
 			
@@ -2698,7 +2708,8 @@ public class CotaServiceImpl implements CotaService {
 			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
 				ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
 				
-				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
+				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(
+					produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
 				
 				if (dto != null) {
 					qtdEdicaoVendida++;
@@ -2765,6 +2776,22 @@ public class CotaServiceImpl implements CotaService {
 			}
 			
 			setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
+			
+			String[] edicoes = new String[listProdutoEdicaoDto.size()];
+			
+			for (int i = 0 ; i < listProdutoEdicaoDto.size() ; i++){
+				edicoes[i] = listProdutoEdicaoDto.get(i).getNumeroEdicao().toString();
+			}
+			
+			BigDecimal venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(
+					faixa, analiseHistoricoDTO.getCodigoProduto(), 
+					edicoes,
+					analiseHistoricoDTO.getNumeroCota());
+			
+			if (venda != null){
+			
+				analiseHistoricoDTO.setVendaMedia(venda.setScale(0, RoundingMode.CEILING).doubleValue());
+			}
 		}
 		
 		formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
@@ -2877,7 +2904,6 @@ public class CotaServiceImpl implements CotaService {
 		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd6Venda());
 		
 		analiseHistoricoDTO.setReparteMedio(reparteMedio / qtdEdicoes);
-		analiseHistoricoDTO.setVendaMedia(vendaMedia / qtdEdicoes);
 	}
 
 	@Transactional(readOnly = true)
@@ -2948,6 +2974,7 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
 	}
 	
+	@Transactional
 	@Override
 	public boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota) {
 
@@ -3032,6 +3059,7 @@ public class CotaServiceImpl implements CotaService {
    * @return boolean
    */
   @Override  
+  @Transactional
   public boolean isCotaAlteradaNaData(Cota cota, Date data){
 	  
       boolean isAlteracaoTipoCotaNaDataAtual = (cota.getAlteracaoTipoCota()!=null && 

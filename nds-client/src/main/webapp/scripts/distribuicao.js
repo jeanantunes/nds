@@ -144,8 +144,7 @@ function Distribuicao(tela) {
 		
 		if(dto.basesCalculo)
 			D.montarComboBaseCalculo(dto.basesCalculo);
-				
-		console.log(dto);
+		
 		$("input[name='numCotaUpload']").val(dto.numCota);
 		
 		D.set('numCota',				dto.numCota);

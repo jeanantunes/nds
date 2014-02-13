@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}"/>
 <head>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/autoCompleteController.js"></script>
@@ -36,7 +37,7 @@ $(function() {
 		<div class="area">
 			<div class='porCota' style="display: none;">
 				<span class="bt_novos" >
-					<a href="javascript:;" id="confirmarInclusaoDaClassificacaoNaCota" rel='tipsy' title="Confirmar">
+					<a href="javascript:;" isEdicao="true" id="confirmarInclusaoDaClassificacaoNaCota" rel='tipsy' title="Confirmar">
 						<img src="images/ico_check.gif" hspace="5" border="0" />
 					</a>
 				</span>
@@ -54,7 +55,7 @@ $(function() {
 			</div>
 			<div class='porClassificacao' style="display: none;">
 				<span class="bt_novos">
-					<a href="javascript:;" id="confirmarInclusaoDaCotaNaClassificacaoNaoRecebida" rel='tipsy' title="Confirmar">
+					<a href="javascript:;" isEdicao="true" id="confirmarInclusaoDaCotaNaClassificacaoNaoRecebida" rel='tipsy' title="Confirmar">
 						<img src="images/ico_check.gif" hspace="5" border="0" />
 					</a>
 				</span>

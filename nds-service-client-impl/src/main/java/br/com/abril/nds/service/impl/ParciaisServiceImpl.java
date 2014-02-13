@@ -913,6 +913,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 	
 	@Override
+	@Transactional
 	public void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte) {
 		
 		Lancamento proximoLancamento =
@@ -928,6 +929,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 	
+	@Transactional
 	public Lancamento getProximoLancamentoPeriodo(Lancamento lancamento) {
 		
 		PeriodoLancamentoParcial periodoLancamentoParcial =

@@ -120,15 +120,13 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		
 	}
 
-
 	@Override
+	@Transactional
 	public Boolean verificarCoincidenciaEntreCotas(Long estudoBase,Long estudoSomado) {
 		
 		Long count = estudoGeradoRepository.countDeCotasEntreEstudos(estudoBase,estudoSomado);
 		
 		return (count>0);
 	}
-	
-	
 	
 }

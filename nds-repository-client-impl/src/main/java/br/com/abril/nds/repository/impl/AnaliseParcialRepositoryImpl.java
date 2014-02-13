@@ -59,12 +59,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
         sql.append("       ifnull((select round(epc.qtde_recebida, 0) ");
         sql.append("                 from estoque_produto_cota epc ");
-        sql.append("                 join lancamento l on l.produto_edicao_id = epc.produto_edicao_id ");
-        sql.append("                 join produto_edicao pe on pe.id = l.produto_edicao_id ");
-        sql.append("                 join produto p on p.id = pe.produto_id ");
+        sql.append("                 join produto_edicao ped on epc.produto_edicao_id = ped.id ");
         sql.append("                where epc.cota_id = c.id ");
-        sql.append("                  and p.id = p.id ");
-        sql.append("                order by pe.numero_edicao desc ");
+        sql.append("                  and ped.produto_id = p.id ");
+        sql.append("                order by ped.numero_edicao desc ");
         sql.append("                limit 0, 1), 0) ultimoReparte ");
         sql.append("  from estudo_cota_gerado ec ");
         sql.append("  left join cota c on (c.id = ec.cota_id) ");
@@ -96,14 +94,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 paramsWhere.add(queryDTO.getFilterSortFrom());
                 paramsWhere.add(queryDTO.getFilterSortTo());
 
-                sql.append(" left join ranking_segmento ranking on ranking.cota_id = c.id ");
-                sql.append(" and ranking.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento) ");
+                sql.append(" left join ranking_segmento ranking on (ranking.cota_id = c.id and p.TIPO_SEGMENTO_PRODUTO_ID = ranking.TIPO_SEGMENTO_PRODUTO_ID) ");
                 order.append(" ranking.qtde desc ");
             }
 
             if (queryDTO.possuiOrdenacaoNMaiores()) {
-                sql.append(" left join ranking_segmento ranking on ranking.cota_id = c.id ");
-                sql.append(" and ranking.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento) ");
+            	sql.append(" left join ranking_segmento ranking on (ranking.cota_id = c.id and p.TIPO_SEGMENTO_PRODUTO_ID = ranking.TIPO_SEGMENTO_PRODUTO_ID) ");
                 order.append(" ranking.qtde desc ");
 
                 limit.append(" limit ");
@@ -113,7 +109,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             }
 
             if (queryDTO.possuiPercentualDeVenda()) {
-                sql.append(" left join estoque_produto_cota epc on epc.cota_id = ec.cota_id and epc.produto_edicao_id = e.produto_edicao_id ");
+                sql.append(" left join estoque_produto_cota epc on (epc.cota_id = ec.cota_id and epc.produto_edicao_id = e.produto_edicao_id) ");
                 where.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between ? and ?");
                 paramsWhere.add(queryDTO.getFilterSortFrom());
                 paramsWhere.add(queryDTO.getFilterSortTo());
@@ -125,35 +121,35 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         if (queryDTO.possuiElemento()) {
             if (queryDTO.elementoIsTipoPontoVenda()) {
-                sql.append(" join pdv on pdv.cota_id = c.id and pdv.tipo_ponto_pdv_id = ? ");
+                sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1 and pdv.tipo_ponto_pdv_id = ?) ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsGeradoorDeFluxo()) {
-                sql.append(" join pdv on pdv.cota_id = c.id ");
-                sql.append(" join gerador_fluxo_pdv gfp on gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = ? ");
+                sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1) ");
+                sql.append(" join gerador_fluxo_pdv gfp on (gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = ?) ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsBairro()) {
-                sql.append(" join pdv on pdv.cota_id = c.id ");
+                sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1) ");
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
-                sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = '");
+                sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.bairro = '");
                 sql.append(queryDTO.getValorElemento());
-                sql.append("' ");
+                sql.append("') ");
             }
             if (queryDTO.elementoIsRegiao()) {
-                sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = c.id and rcr.regiao_id = ? ");
+                sql.append(" join registro_cota_regiao as rcr on (rcr.cota_id = c.id and rcr.regiao_id = ?) ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsAreaDeInfluencia()) {
-                sql.append(" join pdv on pdv.cota_id = c.id and pdv.area_influencia_pdv_id = ? ");
+                sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1 and pdv.area_influencia_pdv_id = ?) ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsDistrito()) {
-                sql.append(" join pdv on pdv.cota_id = c.id ");
+                sql.append(" join pdv on (pdv.cota_id = c.id and pdv.PONTO_PRINCIPAL = 1) ");
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
-                sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.uf = '");
+                sql.append(" join endereco on (endereco.id = endereco_pdv.endereco_id and endereco.uf = '");
                 sql.append(queryDTO.getValorElemento());
-                sql.append("' ");
+                sql.append("') ");
             }
             if (queryDTO.elementoIsCotasAVista()) {
                 sql.append(" join parametro_cobranca_cota pcc on pcc.cota_id = c.id ");
@@ -163,6 +159,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             }
             if (queryDTO.elementoIsCotasNovas()) {
                 where.append(" and ec.classificacao "+ (queryDTO.getValorElemento().equals("1") ? "=" : "<>") +" 'S' ");
+            }
+            if (queryDTO.elementoTipoDistribuicaoCota()) {
+            	where.append(" and c.TIPO_DISTRIBUICAO_COTA = ? ");
+            	paramsWhere.add(queryDTO.getValorElemento().toUpperCase());
             }
         }
 

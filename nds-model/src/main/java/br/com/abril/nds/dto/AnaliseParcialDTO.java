@@ -32,7 +32,7 @@ public class AnaliseParcialDTO implements Serializable {
     @Export(label = "Legenda", alignment = Alignment.LEFT, exhibitionOrder = 6)
     private String leg;
 
-    @Export(label = "Juramento", alignment = Alignment.LEFT, exhibitionOrder = 7)
+    @Export(label = "Juramentado", alignment = Alignment.LEFT, exhibitionOrder = 7)
     private BigInteger juramento;
 
     @Export(label = "Media Venda", alignment = Alignment.LEFT, exhibitionOrder = 8)

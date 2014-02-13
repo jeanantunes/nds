@@ -171,6 +171,10 @@ public class AnaliseParcialQueryDTO {
 	public boolean elementoIsCotasNovas() {
 		return getTipoElemento().equals("cotas_novas");
 	}
+	
+	public boolean elementoTipoDistribuicaoCota() {
+		return getTipoElemento().equals("tipo_distribuicao_cota");
+	}
 
 	public Long getFaixaDe() {
 	    return faixaDe;

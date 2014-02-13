@@ -954,17 +954,14 @@ public class PdvServiceImpl implements PdvService {
      *            - Periodos já selecionados
      * @return - períodos que ainda podem ser selecionados
      */
-    public List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(
-            List<PeriodoFuncionamentoDTO> selecionados) {
+    public List<TipoPeriodoFuncionamentoPDV> getPeriodosPossiveis(List<PeriodoFuncionamentoDTO> selecionados) {
 
         List<TipoPeriodoFuncionamentoPDV> possiveis = new ArrayList<TipoPeriodoFuncionamentoPDV>();
 
-        for (TipoPeriodoFuncionamentoPDV periodo : TipoPeriodoFuncionamentoPDV
-                .values()) {
+        for (TipoPeriodoFuncionamentoPDV periodo : TipoPeriodoFuncionamentoPDV.values()) {
 
             try {
-                selecionados.add(new PeriodoFuncionamentoDTO(periodo, null,
-                        null));
+                selecionados.add(new PeriodoFuncionamentoDTO(periodo, null, null));
                 validarPeriodos(selecionados);
                 selecionados.remove(selecionados.size() - 1);
 
@@ -1066,26 +1063,21 @@ public class PdvServiceImpl implements PdvService {
      * @throws Exception
      *             - Exceção ao encontrar registro duplicado.
      */
-    private void validarDuplicidadeDePeriodo(
-            List<TipoPeriodoFuncionamentoPDV> periodos) {
+	private void validarDuplicidadeDePeriodo(List<TipoPeriodoFuncionamentoPDV> periodos) {
 
-        for (TipoPeriodoFuncionamentoPDV item : periodos) {
-            int count = 0;
-            for (TipoPeriodoFuncionamentoPDV itemComparado : periodos) {
-                if (item.equals(itemComparado)) {
-                    count++;
-                    if (count > 1) {
-                        throw new ValidacaoException(
-                                TipoMensagem.WARNING,
-                                "O período "
-                                        + item.getDescricao()
-                                        + " foi incluido a lista mais de uma vez.");
-                    }
-                }
-            }
-        }
+		for (TipoPeriodoFuncionamentoPDV item : periodos) {
+			int count = 0;
+			for (TipoPeriodoFuncionamentoPDV itemComparado : periodos) {
+				if (item.equals(itemComparado)) {
+					count++;
+					if (count > 1) {
+						throw new ValidacaoException(TipoMensagem.WARNING, "O período " + item.getDescricao()+ " foi incluido a lista mais de uma vez.");
+					}
+				}
+			}
+		}
 
-    }
+	}
 
     /**
      * ENDERECO
@@ -1486,8 +1478,7 @@ public class PdvServiceImpl implements PdvService {
     @Override
     @Transactional(readOnly = true)
     public List<PdvDTO> obterPdvsHistoricoTitularidade(FiltroPdvDTO filtro) {
-        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository
-                .obterPDVsHistoricoTitularidade(filtro);
+        List<HistoricoTitularidadeCotaPDV> pdvs = pdvRepository.obterPDVsHistoricoTitularidade(filtro);
         return new ArrayList<PdvDTO>(HistoricoTitularidadeCotaDTOAssembler.toPdvDTOCollection(pdvs));
     }
 
@@ -1605,7 +1596,8 @@ public class PdvServiceImpl implements PdvService {
 		return this.pdvRepository.obterPDVs(numeroCota);
 	}
 
-	@Override
+    @Transactional
+    @Override
 	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxoOrdenado() {
 		return this.tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoOrdenado();
 	}
