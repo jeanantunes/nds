@@ -46,8 +46,7 @@ $(function(){
 	<form>
 		<fieldset>
 			<legend>Transferência para Suplementar</legend>
-			<p>O reparte das cotas selecionadas serão transferidos para
-				Suplementar</p>
+			<p>O reparte das cotas selecionadas serão transferidos para Suplementar</p>
 		</fieldset>
 	</form>
 </div>
@@ -75,7 +74,7 @@ $(function(){
 		<table width="1000px" border="0" cellpadding="2" cellspacing="1"
 			class="filtro">
 			<tr>
-				<td width="91">Destinatário:</td>
+				<td width="91">Destinat&aacute;rio:</td>
 				<td width="204"><c:forEach items="${tiposDestinatarios}"
 						var="tipoDestinatario" varStatus="status">
 						<input type="radio" name="tipoDestinatario"
@@ -94,7 +93,7 @@ $(function(){
 				<td width="212"></td>
 			</tr>
 			<tr>
-				<td width="100">Nat. de Operação:</td>
+				<td width="100">Nat. de Opera&ccedil;&atilde;o:</td>
 				<td width="195"><select id="geracaoNfe-filtro-naturezaOperacao"
 					name="naturezaOperacao"
 					style="width: 250px; font-size: 11px !important">
@@ -106,7 +105,7 @@ $(function(){
 					<input type="text" id="geracaoNfe-filtro-movimentoDe" name="movimentoDe" style="width: 76px;" class="input-date" />&nbsp;&nbsp;At&eacute;&nbsp;
 					<input type="text" id="geracaoNfe-filtro-movimentoAte" name="movimentoAte" style="width: 76px;" class="input-date" />
 				</td>
-				<td width="80">Data Emissão:</td>
+				<td width="80">Data Emiss&atilde;o:</td>
 				<td width="212">
 					<input name="geracaoNfe-filtro-dataEmissao" type="text" id="geracaoNfe-filtro-dataEmissao" style="width: 80px;" class="input-date" />
 				</td>
