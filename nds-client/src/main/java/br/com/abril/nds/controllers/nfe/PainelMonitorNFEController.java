@@ -411,7 +411,7 @@ public class PainelMonitorNFEController extends BaseController {
 	
 	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
 		PaginacaoVO paginacao = new PaginacaoVO();
-		paginacao.setOrdenacao(Ordenacao.ASC);
+		paginacao.setOrdenacao(sortorder.equalsIgnoreCase(Ordenacao.ASC.name()) ? Ordenacao.ASC : Ordenacao.DESC);
 	    paginacao.setPaginaAtual(page);
 	    paginacao.setQtdResultadosPorPagina(rp);
 	    paginacao.setSortOrder(sortorder);

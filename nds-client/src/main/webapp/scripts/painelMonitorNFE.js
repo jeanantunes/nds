@@ -20,7 +20,7 @@ var PainelMonitorNFE = $.extend(true, {
 			colModel : colunas,
 			preProcess: PainelMonitorNFE.executarPreProcessamento,
 			dataType : 'json',
-			sortname : "codigo",
+			sortname : "numero",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -153,7 +153,7 @@ var PainelMonitorNFE = $.extend(true, {
 		];
 		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexOptions({
-			url: contextPath + "/nfe/painelMonitorNFe/pesquisar", params: params
+			url: this.path + 'pesquisar', params: params
 		});
 		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexReload();
@@ -184,7 +184,7 @@ var PainelMonitorNFE = $.extend(true, {
 
 			var linha = $(value);
 			
-			var colunaSelecao = linha.find("td")[11];
+			var colunaSelecao = linha.find("td")[9];
 			
 			$(colunaSelecao).find("div").find('input[name="checkgroup"]', PainelMonitorNFE.workspace).attr("checked",true);
 			
@@ -199,7 +199,7 @@ var PainelMonitorNFE = $.extend(true, {
 
 			var linha = $(value);
 
-			var colunaSelecao = linha.find("td")[11];
+			var colunaSelecao = linha.find("td")[9];
 			
 			$(colunaSelecao).find("div").find('input[name="checkgroup"]', PainelMonitorNFE.workspace).attr("checked",false);
 			
