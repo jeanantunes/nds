@@ -82,6 +82,7 @@ public class CapaServiceImpl implements CapaService {
 	}
 
 	@Override
+	@Transactional
 	public InputStream getCapaInputStream(String codigoProduto,long numeroEdicao) {
 		String docName = getDocName(codigoProduto, numeroEdicao);
 		String fileName = getCapaFileName(docName);
@@ -107,6 +108,7 @@ public class CapaServiceImpl implements CapaService {
 	}
 	
 	@Override
+	@Transactional
 	public void saveCapa(String codigoProduto, long numeroEdicao,
 			Attachment attachment) {
 		String docName = getDocName(codigoProduto, numeroEdicao);
@@ -120,6 +122,7 @@ public class CapaServiceImpl implements CapaService {
 	}
 
 	@Override
+	@Transactional
 	public void saveCapa(String codigoProduto, long numeroEdicao,
 			String contentType, InputStream inputStream) {		
 		String docName = getDocName(codigoProduto, numeroEdicao);
