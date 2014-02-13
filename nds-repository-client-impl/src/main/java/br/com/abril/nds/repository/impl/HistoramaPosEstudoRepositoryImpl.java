@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.List;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -19,7 +21,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 	}
 	
 	@Override
-	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId) {
+	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId, List<Long> listaIdEdicaoBase) {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT '").append(faixaDe).append(" a ").append(faixaAte).append("' faixaReparte, ");
@@ -55,7 +57,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("                       COUNT(*) QTDE_EDICOES ");
 		sql.append("                  FROM estoque_produto_cota EPE ");
 		sql.append("                  JOIN COTA C ON C.ID = EPE.COTA_ID "); 
-		sql.append("                  WHERE EPE.PRODUTO_EDICAO_ID IN (SELECT PRODUTO_EDICAO_ID FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID) ");
+		sql.append("                  WHERE EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ");
 		sql.append("                 GROUP BY C.ID, C.NUMERO_COTA) EST ON EST.ID = REP.ID ");
 		sql.append("         WHERE REP.REPARTE BETWEEN :DE AND :ATE GROUP BY NUMERO_COTA) TES ");
 		
@@ -64,11 +66,27 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		query.setParameter("ESTUDO_ID", estudoId);
 		query.setParameter("DE", faixaDe);
 		query.setParameter("ATE", faixaAte);
+		query.setParameterList("EDICOES_BASES", listaIdEdicaoBase);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(HistogramaPosEstudoAnaliseFaixaReparteDTO.class));
 
 		HistogramaPosEstudoAnaliseFaixaReparteDTO resultado = (HistogramaPosEstudoAnaliseFaixaReparteDTO) query.uniqueResult();
 		
 		return resultado;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> obterListaIdProdEdicoesBaseEstudo(Long idEstudo) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT PRODUTO_EDICAO_ID FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("ESTUDO_ID", idEstudo);
+		
+		return (List<Long>) query.list();
 	}
 }
