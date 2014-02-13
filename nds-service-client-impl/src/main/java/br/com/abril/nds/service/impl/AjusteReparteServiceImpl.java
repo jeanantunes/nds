@@ -78,6 +78,7 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 	}
 
 	@Override
+	@Transactional
 	public Integer buscarVendaMedia() {
 		return this.ajusteRepository.vendaMedia();
 	}

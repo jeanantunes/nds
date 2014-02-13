@@ -62,7 +62,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/histogramaVendas")
-//@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
+@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 public class HistogramaVendasController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroHistogramaVendas";
@@ -104,7 +104,7 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private ProdutoService produtoService;
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
+    @Path("/")
 	public void index(){
 		
 		result.include("componenteList", ComponentesPDV.values());

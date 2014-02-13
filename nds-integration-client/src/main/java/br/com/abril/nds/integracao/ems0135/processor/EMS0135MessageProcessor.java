@@ -238,7 +238,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
                 produtoEdicao.setPeso(100L);
                 produtoEdicao.setPossuiBrinde(false);
                 produtoEdicao.setPermiteValeDesconto(false);
-                produtoEdicao.setParcial(true);
+                produtoEdicao.setParcial(false);
                 produtoEdicao.setAtivo(true);
                 produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
                 produtoEdicao.setPrecoPrevisto(new BigDecimal(inputItem.getPreco()));

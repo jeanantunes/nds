@@ -45,11 +45,13 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/classificacaoNaoRecebida")
+@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
 public class ClassificacaoNaoRecebidaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroClassificacaoNaoRecebidaDTO";
 	
-	private static final ValidacaoVO VALIDACAO_VO_MENSAGEM_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
+    private static final ValidacaoVO VALIDACAO_VO_MENSAGEM_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS,
+            "Operação realizada com sucesso.");
 	
 	@Autowired
 	private Result result;
@@ -69,7 +71,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse; 
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
+    @Path("/")
 	public void index(){
 		this.carregarComboClassificacao();
 	}
@@ -108,6 +110,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	}
 	
 	@Post
+    @Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA_ALTERACAO)
 	public void inserirCotaNaClassificacaoNaoRecebida(Integer[] numerosCota, FiltroClassificacaoNaoRecebidaDTO filtro){
 		validarEntradaFiltroClassificacao(filtro);
 		
@@ -131,6 +134,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	}
 	
 	@Post
+    @Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA_ALTERACAO)
 	public void inserirClassificacaoNaCota(Long[] idsTipoClassificacaoProduto, FiltroClassificacaoNaoRecebidaDTO filtro){
 		validarEntradaFiltroCota(filtro);
 
@@ -192,6 +196,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	}
 	
 	@Post
+    @Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA_ALTERACAO)
 	public void excluirClassificacaoNaoRecebida(Long id){
 		this.classificacaoNaoRecebidaService.excluirClassificacaoNaoRecebida(id);
 		
@@ -211,13 +216,13 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 		if (porCota) {
 			listaDto = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(filtro);
 			classDto = ClassificacaoNaoRecebidaDTO.class;
-			fileName = "Classificações_não_recebidas";
+            fileName = "Classificações_não_recebidas";
 		}else {
 			listaDto = this.classificacaoNaoRecebidaService.obterCotasQueNaoRecebemClassificacao(filtro);
 			classDto = CotaQueNaoRecebeClassificacaoDTO.class;
-			fileName = "Cotas_que_não_recebem_classificação";
+            fileName = "Cotas_que_não_recebem_classificação";
 		}
-		FileExporter.to(fileName, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaDto,
+        FileExporter.to(fileName, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaDto,
 				classDto, this.httpResponse);
 		
 		result.nothing();
@@ -242,12 +247,12 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	private void validarEntradaFiltroCota(FiltroClassificacaoNaoRecebidaDTO filtro) {
 		if((filtro.getCotaDto().getNumeroCota() == null || filtro.getCotaDto().getNumeroCota() == 0) && 
 				(filtro.getCotaDto().getNomePessoa() == null || filtro.getCotaDto().getNomePessoa().trim().isEmpty()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome da cota é obrigatório.");		
+            throw new ValidacaoException(TipoMensagem.WARNING, "Código ou nome da cota é obrigatório.");
 	}
 	
 	private void validarEntradaFiltroClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro) {
 		if(filtro.getIdTipoClassificacaoProduto() == null || filtro.getIdTipoClassificacaoProduto() == 0)
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma Classificação foi selecionada.");		
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma Classificação foi selecionada.");
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -291,8 +296,8 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 
 		for (TipoClassificacaoProduto tipoClassificacaoProduto : listaTipoClassificacaoProduto) {
 
-			// Preenchendo a lista que irá representar o combobox de área de
-			// influência na view
+            // Preenchendo a lista que irá representar o combobox de área de
+            // influência na view
 			listaTipoClassificacaoProdutoCombo.add(new ItemDTO<Long, String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 		}
 

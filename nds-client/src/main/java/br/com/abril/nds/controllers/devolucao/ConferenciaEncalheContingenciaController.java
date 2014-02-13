@@ -4,8 +4,10 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -15,6 +17,7 @@ import br.com.caelum.vraptor.Result;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalheContingencia")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 public class ConferenciaEncalheContingenciaController extends BaseController {
 
 	@Autowired

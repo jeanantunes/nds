@@ -46,7 +46,52 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 	@Autowired
 	private DataSource dataSource;
-
+	
+	private StringBuilder getSQLDescontoLogistica(){
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" ( ");
+		
+		sql.append("    CASE WHEN PE.DESCONTO_LOGISTICA_ID IS NOT NULL THEN ");
+		
+		sql.append("    ( ");
+		
+		sql.append("       SELECT DL.PERCENTUAL_DESCONTO ");
+		
+		sql.append("       FROM DESCONTO_LOGISTICA DL");
+		
+		sql.append("       WHERE DL.ID = PE.DESCONTO_LOGISTICA_ID ");
+		
+		sql.append("    ) ");
+		
+		sql.append("    ELSE ");
+		
+		sql.append("    ( ");
+		
+        sql.append("       CASE WHEN PR.DESCONTO_LOGISTICA_ID IS NOT NULL THEN ");
+		
+        sql.append("       ( ");
+		
+		sql.append("          SELECT DL.PERCENTUAL_DESCONTO ");
+		
+		sql.append("          FROM DESCONTO_LOGISTICA DL");
+		
+		sql.append("          WHERE DL.ID = PR.DESCONTO_LOGISTICA_ID ");
+		
+		sql.append("       ) ");
+		
+		sql.append("       ELSE 0 END");
+		
+		sql.append("    ) ");
+		
+		sql.append("    END ");
+		
+		sql.append(" ) ");
+		
+		return sql;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
@@ -65,17 +110,45 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("			WHEN LCTO.ID IS NOT NULL ");
 		sql.append("			THEN LCTO.DATA_LCTO_DISTRIBUIDOR ");
 		sql.append("			ELSE MEC.DATA END AS dataLancamento, ");
-		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
-		sql.append(" 	COALESCE(MEC.VALOR_DESCONTO, 0) AS desconto, ");
-		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) AS precoDesconto, ");
-		sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
-		sql.append("	  ) AS reparte, ");
-		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) ");
-		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
-		sql.append("		   ) AS total, ");
-		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) ");
-		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
-		sql.append("		   ) AS totalDesconto ");
+		
+		if (filtro.getIdCota() != null){
+		
+			sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
+			
+			sql.append(" 	COALESCE(MEC.VALOR_DESCONTO, 0) AS desconto, ");
+			
+			sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) AS precoDesconto, ");
+			
+			sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("	  ) AS reparte, ");
+			
+			sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) ");
+			sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("		   ) AS total, ");
+			
+			sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) ");
+			sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("		   ) AS totalDesconto ");
+		}
+		else{
+			
+            sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
+			
+			sql.append(" 	COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) AS desconto, ");
+			
+			sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) - COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0) AS precoDesconto, ");
+			
+			sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("	  ) AS reparte, ");
+			
+			sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) ");
+			sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("		   ) AS total, ");
+			
+			sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) - COALESCE((MEC.PRECO_VENDA * "+this.getSQLDescontoLogistica()+")/100, 0) ");
+			sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("		   ) AS totalDesconto ");
+		}
 		
 		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
@@ -158,7 +231,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		};
 		
 		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
-				
 	}
 	
 	private void setarFromWhereConsultaConsignado(StringBuilder sql, FiltroConsultaConsignadoCotaDTO filtro){
@@ -447,7 +519,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if (filtro.getIdCota() == null) {
 
 			sql.append(" SELECT (totalGeral.total) AS totalDesconto FROM (  ");
-			sql.append(" SELECT	sum(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) ");
+			sql.append(" SELECT	sum(   COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) + COALESCE((COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) * "+this.getSQLDescontoLogistica()+")/100, 0)   ");
 			sql.append("		*(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
 			sql.append("		   )) AS total ");
 		} else {

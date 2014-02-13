@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -30,8 +31,10 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "PERIODO_LANCAMENTO_PARCIAL")
 @SequenceGenerator(name = "PERIODO_LANCAMENTO_PARCIAL_SEQ", initialValue = 1, allocationSize = 1)
-public class PeriodoLancamentoParcial {
-	
+public class PeriodoLancamentoParcial implements Serializable {
+
+	private static final long serialVersionUID = 2248452950369852623L;
+
 	@Id
 	@GeneratedValue(generator = "PERIODO_LANCAMENTO_PARCIAL_SEQ")
 	@Column(name = "ID")
