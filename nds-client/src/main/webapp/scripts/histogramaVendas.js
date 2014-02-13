@@ -169,6 +169,7 @@ var histogramaVendasController = $.extend(true, {
 			return;
 		}
 		
+		
 		var codigoProduto = undefined, nomeProduto = undefined, json;
 		$.each(
 			$(".checkEdicao:checked", histogramaVendasController.workspace), 
@@ -239,6 +240,7 @@ var histogramaVendasController = $.extend(true, {
 					$("#histogramaVendasContent", histogramaVendasController.workspace).hide();
 					$('#analiseHistogramaVendasContent', histogramaVendasController.workspace).html(data);
 					anaLiseHistogramaController.iniciarGridAnalise();
+					bloquearItensEdicao(histogramaVendasController.workspace);
 				}
 	    	}
 		);
@@ -392,5 +394,5 @@ var histogramaVendasController = $.extend(true, {
 		$('.filtroPracaAtendida', histogramaVendasController.workspace).hide();
 		$('.filtroComponentes', histogramaVendasController.workspace).show();
 	}
-});
+},BaseController);
 //@ sourceURL=histogramaVendas.js

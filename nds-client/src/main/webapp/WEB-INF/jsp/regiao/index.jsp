@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
@@ -58,31 +59,31 @@ function removeProdutoEscohido(idx){
 <div class="areaBts">
 	<div class="area">
 		<span class="bt_novos">
-			<a href="javascript:;" onclick="regiaoController.addNovaRegiao();" rel="tipsy" title="Nova Região">
+			<a href="javascript:;" isEdicao="true" onclick="regiaoController.addNovaRegiao();" rel="tipsy" title="Nova Região">
 				<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 			</a>
 		</span>
 		<div class="grids" style="display:none;">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="regiaoController.addCotasRegAutomatica();" rel="tipsy" title="Região Automática">
+				<a href="javascript:;" isEdicao="true" onclick="regiaoController.addCotasRegAutomatica();" rel="tipsy" title="Região Automática">
 					<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 				</a>
 			</span>
 
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="regiaoController.cotasLote();" rel="tipsy" title="Adicionar em Lote">
+				<a href="javascript:;" isEdicao="true" onclick="regiaoController.cotasLote();" rel="tipsy" title="Adicionar em Lote">
 					<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 				</a>
 			</span>
 
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="regiaoController.manutencaoRegiao();" rel="tipsy" title="Manutenção">
+				<a href="javascript:;" isEdicao="true" onclick="regiaoController.manutencaoRegiao();" rel="tipsy" title="Manutenção">
 					<img src="${pageContext.request.contextPath}/images/bt_administracao.png" hspace="5" border="0" />
 				</a>
 			</span>
 
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="regiaoController.popupAddCotaRegiao();" rel="tipsy" title="Adicionar Cota">
+				<a href="javascript:;" isEdicao="true" onclick="regiaoController.popupAddCotaRegiao();" rel="tipsy" title="Adicionar Cota">
 					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />
 				</a>
 			</span>

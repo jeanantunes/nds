@@ -1736,7 +1736,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			GrupoMovimentoEstoque.SOBRA_DE.name(),
 			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
 			GrupoMovimentoEstoque.SOBRA_EM.name(),
-			GrupoMovimentoEstoque.SOBRA_EM_COTA.name()
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+			GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+			GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name()
 		);
 	}
 	
@@ -1746,7 +1749,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			GrupoMovimentoEstoque.FALTA_DE.name(),
 			GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
 			GrupoMovimentoEstoque.FALTA_EM.name(),
-			GrupoMovimentoEstoque.FALTA_EM_COTA.name()
+			GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+			GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+			GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name()
 		);
 	}
 	
@@ -1756,7 +1761,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			GrupoMovimentoEstoque.SOBRA_DE.name(),
 			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
 			GrupoMovimentoEstoque.SOBRA_EM.name(),
-			GrupoMovimentoEstoque.SOBRA_EM_COTA.name()
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name()
 		);
 	}
 	
@@ -1925,7 +1931,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		+ "	    inner join "
 		+ "	        LANCAMENTO lancamento_  "
 		+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
-		+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+		+ "	            and e_.ID=lancamento_.ESTUDO_ID  "
 		+ "	    inner join "
 		+ "	        PRODUTO_EDICAO pe_  "
 		+ "	            on e_.PRODUTO_EDICAO_ID=pe_.ID  "
@@ -2046,7 +2052,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	    inner join "
 				+ "	        LANCAMENTO lancamento_  "
 				+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
-				+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+				+ "	            and e_.ID=lancamento_.ESTUDO_ID  "
 				+ "	    left join "
 				+ "	        MOVIMENTO_ESTOQUE_COTA mec  "
 				+ "	            on mec.LANCAMENTO_ID=lancamento_.id "
@@ -2143,8 +2149,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
 		query.setParameterList("statusNaoEmitiveis", new String[]{StatusLancamento.PLANEJADO.name(), StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name()});
-		
-		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			query.setParameterList("idFornecedores", filtro.getIdFornecedores());

@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -361,7 +362,7 @@ $(function(){
 							<div class="areaBts">
 								<div class="area">
 									<span class="bt_novos">
-										<a href="javascript:;" onclick="ajusteReparteController.incluirAjuste();" rel="tipsy" title="Novo">
+										<a href="javascript:;" isEdicao="true" onclick="ajusteReparteController.incluirAjuste();" rel="tipsy" title="Novo">
 											<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" />
 
 										</a>
