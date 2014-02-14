@@ -21,11 +21,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
-import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
+import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.ProdutoBaseSugeridaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -47,7 +47,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	private Result result;
 	
 	@Autowired
-	private EstudoProdutoEdicaoBaseRepository estudoProdutoEdicaoBaseRepository;
+	private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService; 
 	
 	@Autowired
 	private ProdutoService produtoService;
@@ -62,7 +62,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	private HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService;
 	
 	@Autowired
-	private ProdutoBaseSugeridaRepository baseSugeridaRepository;
+	private ProdutoBaseSugeridaService baseSugeridaService;
 
     @Autowired
     private MatrizDistribuicaoService matrizDistribuicaoService;
@@ -176,7 +176,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	
 	@Post
 	public void carregarGridBaseSugerida(long estudoId){
-		List<ProdutoBaseSugeridaDTO> baseSugeridaDTO = baseSugeridaRepository.obterBaseSugerida(estudoId);
+		List<ProdutoBaseSugeridaDTO> baseSugeridaDTO = baseSugeridaService.obterBaseSugerida(estudoId);
 		
 		TableModel<CellModelKeyValue<ProdutoBaseSugeridaDTO>> tableModel = new TableModel<>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(baseSugeridaDTO));
@@ -189,7 +189,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	@Post
 	public void carregarGridBaseEstudo(long estudoId){
 
-		List<EdicaoBaseEstudoDTO> estudoProdutoEdicaoBaseDTO = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudoId);
+		List<EdicaoBaseEstudoDTO> estudoProdutoEdicaoBaseDTO = estudoProdutoEdicaoBaseService.obterEdicoesBase(estudoId);
 		
 		TableModel<CellModelKeyValue<EdicaoBaseEstudoDTO>> tableModel = new TableModel<>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(estudoProdutoEdicaoBaseDTO));
