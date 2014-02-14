@@ -140,7 +140,7 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		}
 		
 		if(filtro.getStatus() != null) { 
-			hql.append( " and  lancamentoParcial.status=:status ");
+			hql.append( " and  lancamento.status=:status ");
 		}
 
 		return hql.toString();
