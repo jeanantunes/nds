@@ -1191,6 +1191,7 @@ var COTA_CNPJ = $.extend(true, {
         $("#inscricaoMunicipal", this.workspace).val(result.inscricaoMunicipal);
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
+        $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         
@@ -1288,6 +1289,7 @@ var COTA_CNPJ = $.extend(true, {
         $("#inscricaoMunicipal", this.workspace).val("");
         $("#emailNF", this.workspace).val("");
         $("#emiteNFE", this.workspace).attr("checked", null);
+        $("#contribuinteICMS", this.workspace).attr("checked", null);
         $("#classificacaoSelecionada", this.workspace).val("");
         $("#historicoPrimeiraCota", this.workspace).val("").disable();
         $("#historicoPrimeiraPorcentagem", this.workspace).val("" ).disable();
@@ -1412,6 +1414,7 @@ var COTA_CPF = $.extend(true, {
         $("#natural", this.workspace).val(result.natural);
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
+        $("#contribuinteICMS", this.workspace).attr("checked", (result.contribuinteICMS == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
         $('[name="cotaDTO.tipoDistribuicaoCota"]', this.workspace).val(result.tipoDistribuicaoCota);
         

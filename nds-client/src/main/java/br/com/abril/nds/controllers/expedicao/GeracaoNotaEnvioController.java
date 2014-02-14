@@ -245,6 +245,7 @@ public class GeracaoNotaEnvioController extends BaseController {
     public void getArquivoNotaEnvio() {
 
 		try {
+			
 		    byte[] notasGeradas = this.getNotas();
 	
 		    if (notasGeradas != null) {
@@ -264,12 +265,11 @@ public class GeracaoNotaEnvioController extends BaseController {
 				session.setAttribute(COTAS_ID, null);
 		
 				result.use(Results.nothing());
-	
 		    }
 		} catch (ValidacaoException e) {
             LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 		    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-		}catch (Exception e) {
+		} catch (Exception e) {
             LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}

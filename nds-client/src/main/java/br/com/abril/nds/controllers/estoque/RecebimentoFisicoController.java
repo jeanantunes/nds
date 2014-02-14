@@ -48,6 +48,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -100,6 +101,9 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Autowired
 	private TipoNotaFiscalService tipoNotaService;
@@ -1533,9 +1537,10 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	/**
 	 * Valida Itens da Nota
+	 * @param nota 
 	 * @param itens
 	 */
-	private void validaItensNota(List<RecebimentoFisicoDTO> itens){
+	private void validaItensNota(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens){
 
 		//VALIDAÇÃO ITENS
 		if (itens!=null && itens.size() > 0){
@@ -1580,6 +1585,15 @@ public class RecebimentoFisicoController extends BaseController {
 				if (item.getValorTotal()==null && item.getValorTotalString() == null){
 					throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Valor] do ítem "+linha+" é obrigatório!");
 				}
+				
+				Fornecedor fornecedor = this.produtoService.obterFornecedorPorCodigoProduto(item.getCodigoProduto());
+				
+				if (!fornecedor.getId().equals(nota.getFornecedor())) {
+					
+					throw new ValidacaoException(
+						TipoMensagem.WARNING,
+						"O fornecedor do ítem " + linha + " deve ser o mesmo fornecedor informado na nota!");
+				}
 			}
 		}
 		else{
@@ -1591,7 +1605,7 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/validarValorTotalNotaFiscal")
 	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
 		
-		this.validaItensNota(itens);
+		this.validaItensNota(nota, itens);
 		
 		if(nota != null && nota.getValorTotal() == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O valor total da nota deve ser maior que 0.");
@@ -1640,7 +1654,7 @@ public class RecebimentoFisicoController extends BaseController {
 	public void incluirNota(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
 
 		this.validaCabecalhoNota(nota);
-		this.validaItensNota(itens);
+		this.validaItensNota(nota, itens);
 		
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
