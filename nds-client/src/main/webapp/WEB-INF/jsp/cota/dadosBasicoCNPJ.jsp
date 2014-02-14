@@ -4,7 +4,7 @@
  <form name="formDadosBasicoCnpj" id="formDadosBasicoCnpj">
  <fieldset style="width:880px!important; margin:5px;">
  <legend>Dados Cadastrais</legend>
-  <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;">
+  <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;" border="0">
   <tr>
       <td><strong>Cota:</strong></td>
       <td><input name="cotaDTO.numeroCota" id="numeroCotaCNPJ" maxlength="16" type="text" style="width:100px" />
@@ -39,8 +39,8 @@
     <tr>
       <td>E-mail NF-e:</td>
       <td><input type="text" style="width:230px" maxlength="200" name="cotaDTO.emailNF" id="emailNF" onblur="MANTER_COTA.validarEmail('#emailNF')" /></td>
-      <td>Emite NF-e?</td>
-      <td><input type="checkbox" name="cotaDTO.emiteNFE" id="emiteNFE" /></td>
+      <td>&Eacute; contr. do ICMS?&nbsp;<input type="checkbox" name="cotaDTO.contribuinteICMS" id="contribuinteICMS" /> </td>
+      <td>Exige Nota fiscal?&nbsp;<input type="checkbox" name="cotaDTO.emiteNFE" id="emiteNFE" /></td>
     </tr>
     <tr>
       <td>Status:</td>

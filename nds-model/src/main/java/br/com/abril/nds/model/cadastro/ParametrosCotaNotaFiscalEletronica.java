@@ -16,6 +16,9 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 	@Column( name="EMAIL_NF_E", nullable = true)
 	private String emailNotaFiscalEletronica;
 
+	@Column( name="CONTRIBUINTE_ICMS", nullable = true)
+	private Boolean contribuinteICMS;
+	
 	/**
 	 * @return the emiteNotaFiscalEletronica
 	 */
@@ -43,6 +46,12 @@ public class ParametrosCotaNotaFiscalEletronica implements Serializable {
 	public void setEmailNotaFiscalEletronica(String emailNotaFiscalEletronica) {
 		this.emailNotaFiscalEletronica = emailNotaFiscalEletronica;
 	}
-	
-	
+
+	public Boolean getContribuinteICMS() {
+		return contribuinteICMS;
+	}
+
+	public void setContribuinteICMS(Boolean contribuinteICMS) {
+		this.contribuinteICMS = contribuinteICMS;
+	}
 }

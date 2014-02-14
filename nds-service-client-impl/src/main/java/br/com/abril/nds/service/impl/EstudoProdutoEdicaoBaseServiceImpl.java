@@ -11,8 +11,7 @@ import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 
 @Service
-public class EstudoProdutoEdicaoBaseServiceImpl implements
-		EstudoProdutoEdicaoBaseService {
+public class EstudoProdutoEdicaoBaseServiceImpl implements EstudoProdutoEdicaoBaseService {
 
 	@Autowired
 	private EstudoProdutoEdicaoBaseRepository estudoProdutoEdicaoBaseRepository;

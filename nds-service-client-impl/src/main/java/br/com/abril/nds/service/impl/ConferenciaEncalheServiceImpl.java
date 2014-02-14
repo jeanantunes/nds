@@ -259,17 +259,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 		if (cota == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
- "Cota não encontrada.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
 		}
 
-		boolean indEmiteNfe = (cota.getParametrosCotaNotaFiscalEletronica() != null && cota
-				.getParametrosCotaNotaFiscalEletronica
-
-				().getEmiteNotaFiscalEletronica() != null) ? cota
-				.getParametrosCotaNotaFiscalEletronica
-
-				().getEmiteNotaFiscalEletronica() : false;
+		boolean indEmiteNfe = (cota.getParametrosCotaNotaFiscalEletronica() != null && 
+				cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() != null) ? 
+				cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false;
 
 		return indEmiteNfe;
 

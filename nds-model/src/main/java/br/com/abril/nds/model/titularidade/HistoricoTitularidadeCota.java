@@ -100,6 +100,12 @@ public class HistoricoTitularidadeCota implements Serializable {
     private boolean emiteNfe;
     
     /**
+     * Flag indicando se a cota emite NFE
+     */
+    @Column(name = "CONTRIBUINTE_ICMS")
+    private boolean contribuinteICMS;
+    
+    /**
      * Email de utilização da NFE
      */
     @Column(name = "EMAIL_NFE")
@@ -342,8 +348,16 @@ public class HistoricoTitularidadeCota implements Serializable {
     public void setEmiteNfe(boolean emiteNfe) {
         this.emiteNfe = emiteNfe;
     }
+    
+    public boolean isContribuinteICMS() {
+		return contribuinteICMS;
+	}
 
-    /**
+	public void setContribuinteICMS(boolean contribuinteICMS) {
+		this.contribuinteICMS = contribuinteICMS;
+	}
+
+	/**
      * @return the emailNfe
      */
     public String getEmailNfe() {
@@ -852,4 +866,28 @@ public class HistoricoTitularidadeCota implements Serializable {
         return outros;
     }
 
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HistoricoTitularidadeCota other = (HistoricoTitularidadeCota) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 }
