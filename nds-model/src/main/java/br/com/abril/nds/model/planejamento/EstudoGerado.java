@@ -240,5 +240,55 @@ public class EstudoGerado implements Serializable {
 	public void setLiberado(Boolean liberado) {
 		this.liberado = liberado;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getEstudoCotas() == null) ? 0 : this.getEstudoCotas().hashCode());
+		result = prime * result + ((this.getIdEstudoOrigemCopia() == null) ? 0 : this.getIdEstudoOrigemCopia().hashCode());
+		result = prime * result + ((this.getLancamentos() == null) ? 0 : this.getLancamentos().hashCode());
+		result = prime * result + ((this.getProdutoEdicao() == null) ? 0 : this.getProdutoEdicao().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstudoGerado other = (EstudoGerado) obj;
+		if (this.getEstudoCotas() == null) {
+			if (other.getEstudoCotas() != null)
+				return false;
+		} else if (!this.getEstudoCotas().equals(other.getEstudoCotas()))
+			return false;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getIdEstudoOrigemCopia() == null) {
+			if (other.getIdEstudoOrigemCopia() != null)
+				return false;
+		} else if (!this.getIdEstudoOrigemCopia().equals(other.getIdEstudoOrigemCopia()))
+			return false;
+		if (this.getLancamentos() == null) {
+			if (other.getLancamentos() != null)
+				return false;
+		} else if (!this.getLancamentos().equals(other.getLancamentos()))
+			return false;
+		if (this.getProdutoEdicao() == null) {
+			if (other.getProdutoEdicao() != null)
+				return false;
+		} else if (!this.getProdutoEdicao().equals(other.getProdutoEdicao()))
+			return false;
+		return true;
+	}
+	
 	
 }
