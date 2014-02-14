@@ -31,11 +31,11 @@ import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCotaGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
-import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -79,7 +79,7 @@ public class AnaliseParcialController extends BaseController {
     private HttpSession session;
 
     @Autowired
-    private TipoClassificacaoProdutoRepository tipoClassificacaoProdutoRepository;
+    private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 
     @Autowired
     private ProdutoService produtoService;
@@ -105,7 +105,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);
         result.include("dataLancamentoEdicao", dataLancamentoEdicao);
-        result.include("classificacaoList", tipoClassificacaoProdutoRepository.obterTodos());
+        result.include("classificacaoList", tipoClassificacaoProdutoService.obterTodos());
 
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
@@ -263,8 +263,7 @@ public class AnaliseParcialController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
         }
 
-        FileExporter.to("Analise do Estudo", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class,
-                this.httpResponse);
+        FileExporter.to("Analise do Estudo", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class, this.httpResponse);
 
         result.nothing();
     }

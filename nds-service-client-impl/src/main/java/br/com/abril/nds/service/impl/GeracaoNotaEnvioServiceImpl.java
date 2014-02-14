@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -43,6 +44,7 @@ import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -233,14 +235,23 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					
 		for(MovimentoEstoqueCota mec : listaMovimentoEstoqueCota) {
 			
-			ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
+			Lancamento lancamento = mec.getLancamento();
 			
 			ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
+			
+			if (lancamento.getEstudo() == null) {
+				
+				throw new ValidacaoException(
+					TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
+			}
+			
+			ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
+			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			itemNotaEnvio.setSequenciaMatrizLancamento(mec.getLancamento().getSequenciaMatriz());
+			itemNotaEnvio.setSequenciaMatrizLancamento(lancamento.getSequenciaMatriz());
 			
-			for(EstudoCota ec : mec.getLancamento().getEstudo().getEstudoCotas()) {
+			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
 				if(ec.getCota().getNumeroCota().equals(mec.getCota().getNumeroCota()) 
 						&& ec.getEstudo().getProdutoEdicao().getId().equals(mec.getProdutoEdicao().getId())) {
 					itemNotaEnvio.setEstudoCota(ec);
@@ -761,7 +772,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			  }
 		};
 		
-		return  Lists.newArrayList(Collections2.filter(itens, movimentoEstoqueCotaPredicate));
+		 Collection<MovimentoEstoqueCota> filteredCollection = 
+			Collections2.filter(itens, movimentoEstoqueCotaPredicate);
+		
+		 if (filteredCollection != null) {
+			 return  Lists.newArrayList(filteredCollection);
+		 } else {
+			 return new ArrayList<>();
+		 }
 	}
 	
 	/*
@@ -1169,8 +1187,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			validarRoteirizacaoCota(filtro, listaIdCotas);
 			
 			listaNotaEnvio = this.gerar(listaIdCotas, filtro, null,null, null);
-		} catch (Exception e) {
-			throw e;
 		} finally {
 			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		}
