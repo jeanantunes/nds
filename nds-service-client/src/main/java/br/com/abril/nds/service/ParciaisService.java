@@ -83,6 +83,8 @@ public interface ParciaisService {
 	 */
 	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
+	Date obterDataUtilMaisProxima(Date data);
+	
 	List<RedistribuicaoParcialDTO> obterRedistribuicoesParciais(Long idPeriodo);
 	
 	void incluirRedistribuicaoParcial(RedistribuicaoParcialDTO redistribuicaoParcialDTO);
