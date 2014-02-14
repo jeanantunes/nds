@@ -1198,10 +1198,9 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setNumeroCota(cota.getNumeroCota());
 		cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
 		cotaDTO.setDataInclusao(cota.getInicioAtividade());
-		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null)
-				?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
-		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
-				?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
+		cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null) ? cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
+		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() != null) ? cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
+		cotaDTO.setContribuinteICMS((cota.getParametrosCotaNotaFiscalEletronica() != null && cota.getParametrosCotaNotaFiscalEletronica().getContribuinteICMS() != null) ? cota.getParametrosCotaNotaFiscalEletronica().getContribuinteICMS():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
 		
 		if (cota.getTipoDistribuicaoCota() != null) {
@@ -1408,7 +1407,7 @@ public class CotaServiceImpl implements CotaService {
 		if(cotaDto.getIdCota()!= null){
 			cota = cotaRepository.buscarPorId(cotaDto.getIdCota());
 		}
-		
+			
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		boolean incluirPDV = false;
@@ -1617,7 +1616,7 @@ public class CotaServiceImpl implements CotaService {
 	    		
 	    paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
 	    paramNFE.setEmiteNotaFiscalEletronica(cotaDto.isEmiteNFE());
-	    
+	    paramNFE.setContribuinteICMS(cotaDto.isContribuinteICMS());
 	    return paramNFE;
 	}
 	

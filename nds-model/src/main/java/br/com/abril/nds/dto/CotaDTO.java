@@ -42,6 +42,7 @@ public class CotaDTO implements Serializable {
     private String inscricaoMunicipal;
     private String emailNF;
     private boolean emiteNFE;
+    private boolean contribuinteICMS;
     private Date inicioPeriodo;
     private Date fimPeriodo;
     private Integer historicoPrimeiraCota;
@@ -758,4 +759,12 @@ public class CotaDTO implements Serializable {
     public void setFxQuantidadeExemplares(Integer fxQuantidadeExemplares) {
         this.fxQuantidadeExemplares = fxQuantidadeExemplares;
     }
+
+	public boolean isContribuinteICMS() {
+		return contribuinteICMS;
+	}
+
+	public void setContribuinteICMS(boolean contribuinteICMS) {
+		this.contribuinteICMS = contribuinteICMS;
+	}
 }

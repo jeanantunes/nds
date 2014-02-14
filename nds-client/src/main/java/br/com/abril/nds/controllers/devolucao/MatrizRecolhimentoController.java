@@ -148,8 +148,12 @@ public class MatrizRecolhimentoController extends BaseController {
             porFornenedor = new ArrayList<Long>();
             porFornenedor.add(listaIdsFornecedores.get(i));
             
-            if (balanceamentoRecolhimento == null) {
-                balanceamentoRecolhimento = this.obterBalanceamentoRecolhimento(anoNumeroSemana, porFornenedor,
+            if (balanceamentoRecolhimento == null || 
+            	balanceamentoRecolhimento.getMatrizRecolhimento() == null ||
+            	balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()
+            	) {
+                
+            	balanceamentoRecolhimento = this.obterBalanceamentoRecolhimento(anoNumeroSemana, porFornenedor,
                         TipoBalanceamentoRecolhimento.AUTOMATICO, false);
                 
             } else {
