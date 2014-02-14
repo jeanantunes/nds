@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name="TRIBUTOS_ALIQUOTAS")
 public class TributoAliquota implements Serializable {
 
-	enum TipoAliquota {
+	public enum TipoAliquota {
 		PERCENTUAL("Percentual", "%"),
 		VALOR("Valor", "$");
 		

@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -35,7 +36,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -759,10 +759,11 @@ public class ParametrosDistribuidorController extends BaseController {
 	}
 	
 	@Post
-	public void obterTributosPeloRegimeTributario() {
+	public void obterTributosPeloRegimeTributario(Long regimeTributarioId) {
 		
-		List<TributoAliquota> tributos = null;
-		result.use(FlexiGridJson.class).from(tributos).serialize();	
+		List<TributoAliquotaDTO> tributos = regimeTributarioService.obterTributosPeloRegimeTributario(regimeTributarioId);
+		
+		result.use(Results.json()).withoutRoot().from(tributos).serialize();	
 	}
 	
 	private enum TipoOperacaoDiferenciada {

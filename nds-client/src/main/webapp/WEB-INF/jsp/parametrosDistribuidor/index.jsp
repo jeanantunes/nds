@@ -43,8 +43,17 @@
 	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
 	$('.camposEspecificosRegimeEspecial').hide();
 	</c:if>
-	
-	
+	/*
+	$(document).ready(function() {
+		$.each($('#regimeTributario option', this.workspace), function(key, value) {
+			 if($(value).val() == ${parametrosDistribuidor.regimeTributario.id}) {
+				 $(value).attr('selected', true);
+			 } else {
+				 $(value).removeAttr('selected');
+			 }
+			 console.log(key + ' ' + $(value).val()+ ' ' + $(value).text())
+		});
+    });*/
 	//${parametrosDistribuidor.regimeTributario.id}
 	//${parametrosDistribuidor.tipoAtividade.descricao}
 	
@@ -72,7 +81,7 @@
 		   value="${parametrosDistribuidor.endereco.tipoEndereco}" />
 		   
     <input type="hidden" id="regimeTributarioHidden"
-		   value="${parametrosDistribuidor.regimeTributario}" />
+		   value="${parametrosDistribuidor.regimeTributario.id}" />
 		   		  
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />

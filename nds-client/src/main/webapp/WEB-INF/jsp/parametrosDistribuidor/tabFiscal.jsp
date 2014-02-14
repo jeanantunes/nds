@@ -12,7 +12,7 @@
 							<td width="35%">Tipo Prestador:</td>
 							<td><select name="tipoAtividade" id="tipoAtividade" style="width: 150px;">
 									<c:forEach var="tipoPrestador" items="${listaTipoPrestador}">
-										<option value="${tipoPrestador.key}" <c:if test="${parametrosDistribuidor.tipoAtividade.descricao == tipoPrestador.value}">selected="selected"</c:if>>${tipoPrestador.value} - ${parametrosDistribuidor.tipoAtividade.descricao} ${tipoPrestador.value}</option>
+										<option value="${tipoPrestador.key}" <c:if test="${parametrosDistribuidor.tipoAtividade.descricao == tipoPrestador.value}">selected="selected"</c:if>>${tipoPrestador.value}</option>
 									</c:forEach>
 							</select></td>
 							<td width="35%"></td>
@@ -20,13 +20,12 @@
 						</tr>
 						<tr>
 							<td width="35%">Regime Tributário:</td>
-							<td><select name="regimeTributario" id="regimeTributario"
-								style="width: 150px;">
+							<td><select name="regimeTributario" id="regimeTributario" onchange="parametrosDistribuidorController.obterTributosPeloRegimeTributario()" style="width: 150px;">
 									<c:forEach var="regimeTributario" items="${listaRegimeTributario}">
-										<option value="${regimeTributario.key}" <c:if test="${parametrosDistribuidor.regimeTributario.id == regimeTributario.key}">selected="selected"</c:if>>${regimeTributario.value} - ${parametrosDistribuidor.regimeTributario.id} ${regimeTributario.key}</option>
+										<option value="${regimeTributario.key}" <c:if test="${parametrosDistribuidor.regimeTributario.id == regimeTributario.key}">selected="selected"</c:if>>${regimeTributario.value}</option>
 									</c:forEach>
 							</select></td>
-							<td width="35%"></td>
+							<td width="35%"><table id="regimeTributarioTributos"></table></td>
 							<td></td>
 						</tr>
 						<tr>

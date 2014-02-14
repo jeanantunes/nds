@@ -39,7 +39,7 @@ public class RegimeTributario implements Serializable {
 	@JoinTable(	name = "regime_tributario_tributo_aliquota", 
 				joinColumns = {@JoinColumn(name = "regime_tributario_id")}, 
 				inverseJoinColumns = {@JoinColumn(name = "tributo_aliquota_id")})
-	private List<TributoAliquota> tributoAliquota;
+	private List<TributoAliquota> tributosAliquotas;
 
 	public Long getId() {
 		return id;
@@ -71,6 +71,14 @@ public class RegimeTributario implements Serializable {
 
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
+	}
+
+	public List<TributoAliquota> getTributosAliquotas() {
+		return tributosAliquotas;
+	}
+
+	public void setTributosAliquotas(List<TributoAliquota> tributosAliquotas) {
+		this.tributosAliquotas = tributosAliquotas;
 	}
 	
 }
