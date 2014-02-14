@@ -310,7 +310,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 				break;
 			}			
 			
-			dtRecolhimento = this.obterDataRecolhimentoIdeal(DateUtil.adicionarDias(dtRecolhimento,peb));
+			dtRecolhimento = this.obterDataRecolhimentoUtil(dtRecolhimento,peb);
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
@@ -334,27 +334,33 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 	
-	private Date obterDataRecolhimentoIdeal(Date dataRecolhimento) {
+	private Date obterDataRecolhimentoUtil(Date dataRecolhimento, Integer peb) {
 		
-		boolean diaUtil = this.calendarioService.isDiaUtil(dataRecolhimento);
+		return this.obterDataUtilMaisProxima(DateUtil.adicionarDias(dataRecolhimento,peb));
+	}
+
+	@Transactional(readOnly=true)
+	public Date obterDataUtilMaisProxima(Date data) {
+		
+		boolean diaUtil = this.calendarioService.isDiaUtil(data);
 		
 		if (diaUtil) {
 			
-			return dataRecolhimento;
+			return data;
 		}
 		
-		Date dataRecolhimentoPosterior = this.obterProximaData(dataRecolhimento, 1);
+		Date dataRecolhimentoPosterior = this.obterProximaData(data, 1);
 		
-		long difDiasPosterior = DateUtil.obterDiferencaDias(dataRecolhimento, dataRecolhimentoPosterior);
+		long difDiasPosterior = DateUtil.obterDiferencaDias(data, dataRecolhimentoPosterior);
 		
 		if (difDiasPosterior == 1) {
 			
 			return dataRecolhimentoPosterior;
 		}
 		
-		Date dataRecolhimentoAntecipada = this.obterProximaData(dataRecolhimento, -1);
+		Date dataRecolhimentoAntecipada = this.obterProximaData(data, -1);
 		
-		long difDiasAntecipada = DateUtil.obterDiferencaDias(dataRecolhimento, dataRecolhimentoAntecipada);
+		long difDiasAntecipada = DateUtil.obterDiferencaDias(data, dataRecolhimentoAntecipada);
 		
 		return (difDiasAntecipada < difDiasPosterior)
 					? dataRecolhimentoAntecipada : dataRecolhimentoPosterior;
