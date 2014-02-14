@@ -91,7 +91,8 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		hql.append("select notaFiscal")
 		.append(" from NotaFiscal notaFiscal")
 		.append(" where")
-		.append(" notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal in (:numerosNotas) ");
+		.append(" notaFiscal.notaFiscalInformacoes.informacaoEletronica.chaveAcesso is not null ")
+		.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.numeroDocumentoFiscal in (:numerosNotas) ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("numerosNotas", filtro.getNumerosNotas());
