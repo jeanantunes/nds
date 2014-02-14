@@ -166,32 +166,6 @@ public class EstudoCotaGerado implements Serializable {
     public void setReparteMinimo(BigInteger reparteMinimo) {
 	this.reparteMinimo = reparteMinimo;
     }
-
-    @Override
-    public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((id == null) ? 0 : id.hashCode());
-	return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	EstudoCotaGerado other = (EstudoCotaGerado) obj;
-	
-	if(id==null && other.id==null)
-		return false;
-	
-	if (id!=null && !id.equals(other.id))
-	    return false;
-	return true;
-    }
     
     public TipoEstudoCota getTipoEstudo() {
 		return tipoEstudo;
@@ -288,5 +262,42 @@ public class EstudoCotaGerado implements Serializable {
 	public void setCotaNova(Boolean cotaNova) {
 		this.cotaNova = cotaNova;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.getId() == null) ? 0 : this.getId().hashCode());
+		result = prime * result + ((this.getCota() == null) ? 0 : this.getCota().hashCode());
+		result = prime * result + ((this.getEstudo() == null) ? 0 : this.getEstudo().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EstudoCotaGerado other = (EstudoCotaGerado) obj;
+		if (this.getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!this.getId().equals(other.getId()))
+			return false;
+		if (this.getCota() == null) {
+			if (other.getCota() != null)
+				return false;
+		} else if (!this.getCota().equals(other.getCota()))
+			return false;
+		if (this.getEstudo() == null) {
+			if (other.getEstudo() != null)
+				return false;
+		} else if (!this.getEstudo().equals(other.getEstudo()))
+			return false;
+		
+		return true;
+	}
 }

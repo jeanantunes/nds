@@ -121,9 +121,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 
 	@Transactional
 	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
-
 		return impressaoNFeRepository.buscarNotasParaImpressaoNFe(filtro);
-		
 	}
 
 	@Transactional
@@ -164,8 +162,14 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 			}else{
 				LOGGER.info("obter Nota de envio sem chave de acesso ");
 				
-					
-					
+				/**
+				 * 
+				 * Nota de Envio Buscar quando houver chave de acesso
+				 * 
+				 * 
+				 */
+				
+				this.impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
 					
 			}
 		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade())) {
