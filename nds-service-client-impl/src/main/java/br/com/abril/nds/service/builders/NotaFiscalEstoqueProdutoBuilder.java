@@ -5,7 +5,6 @@ import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroViewNotaFiscalDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nfe.NotaFiscalNds;
@@ -14,7 +13,6 @@ import br.com.abril.nds.model.fiscal.nota.Identificacao;
 import br.com.abril.nds.model.fiscal.nota.Identificacao.FormaPagamento;
 import br.com.abril.nds.model.fiscal.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalEndereco;
-import br.com.abril.nds.model.fiscal.notafiscal.NotaFiscalPessoaJuridica;
 
 public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 	
@@ -98,8 +96,6 @@ public class NotaFiscalEstoqueProdutoBuilder implements Serializable {
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setNumeroDocumentoFiscal(1L);
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDataEmissao(new Date());
-		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setSerie(1);
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setTipoOperacao(TipoOperacao.SAIDA);
 		

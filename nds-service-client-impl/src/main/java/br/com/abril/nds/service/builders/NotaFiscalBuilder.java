@@ -203,8 +203,6 @@ public class NotaFiscalBuilder implements Serializable {
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setDigitoVerificadorChaveAcesso(0L);
 		
-		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setSerie(1);
-		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao().setTipoOperacao(TipoOperacao.SAIDA);
 		
 		notaFiscal2.getNotaFiscalInformacoes().getIdentificacao();
