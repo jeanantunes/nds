@@ -1515,7 +1515,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "resu
 	}
 	
 	@Post
-	public void veificarCobrancaGerada(){
+	public void verificarCobrancaGerada(){
 		
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
