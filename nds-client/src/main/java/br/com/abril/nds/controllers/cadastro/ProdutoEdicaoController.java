@@ -384,6 +384,12 @@ public class ProdutoEdicaoController extends BaseController {
 				}else{
 					List<String> mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto(), null);	
 					
+					try {
+					    produtoEdicaoService.tratarInformacoesAdicionaisProdutoEdicaoArquivo(prodEdicao);
+					} catch(ValidacaoException ex) {
+					    mensagens.add(ex.getMessage());
+					}
+					
 					if(!mensagens.isEmpty()){
 						
 						if(prodEdicao.getNumeroEdicao() != null){
@@ -415,7 +421,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 	}
 
-	private void addProdEdicaoLote(List<ProdutoEdicaoDTO> listaEdicaoDto, List<String> listaMensagem) {
+    private void addProdEdicaoLote(List<ProdutoEdicaoDTO> listaEdicaoDto, List<String> listaMensagem) {
 		
 		for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
 			
@@ -429,9 +435,11 @@ public class ProdutoEdicaoController extends BaseController {
 				
 			} 
 			catch (Exception e) {
-				
-                listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
-                        + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
+			    if(e instanceof ValidacaoException)
+			        listaMensagem.add(e.getMessage());
+			    else
+			        listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
+			                + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
 			
 			} 
 			
