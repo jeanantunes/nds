@@ -1503,5 +1503,36 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
     }
 
+    @Override
+    public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(ProdutoEdicaoDTO dto) {
+        
+        if(dto.getCodigoProduto()==null)
+            return;
+        
+        Produto produto = produtoRepository.obterProdutoPorCodigoProdin(dto.getCodigoProduto());
+        
+        if(produto==null)
+            return;
+        
+        if(produto.getDescontoLogistica()==null)
+            throw new ValidacaoException(TipoMensagem.WARNING, "O produto inserido não possui desconto cadastrado.");
+        
+        dto.setDesconto(produto.getDescontoLogistica().getPercentualDesconto());
+        
+        if(dto.getPacotePadrao()==null)
+            dto.setPacotePadrao(produto.getPacotePadrao());
+        
+        if(dto.getPeb()==null)
+            dto.setPeb(produto.getPeb());
+        
+        if(dto.getPeso()==null)
+            dto.setPeso(produto.getPeso());
+        
+        dto.setPossuiBrinde(false);
+        dto.setPermiteValeDesconto(false);
+        dto.setOrigemInterface(false);
+        dto.setNumeroLancamento(1);        
+        
+    }
 }
 

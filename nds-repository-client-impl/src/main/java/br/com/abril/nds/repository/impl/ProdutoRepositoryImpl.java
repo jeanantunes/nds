@@ -1,5 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
+import static org.apache.commons.lang.StringUtils.left;
+import static org.apache.commons.lang.StringUtils.leftPad;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,9 +23,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoRepository;
-
-import static org.apache.commons.lang.StringUtils.left;
-import static org.apache.commons.lang.StringUtils.leftPad;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 

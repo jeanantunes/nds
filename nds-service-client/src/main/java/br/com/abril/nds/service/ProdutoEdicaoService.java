@@ -213,5 +213,7 @@ public interface ProdutoEdicaoService {
     BigInteger obterReparteDisponivel(Long idProdutoEdicao);
 	
     Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo);
+ 
+    public void tratarInformacoesAdicionaisProdutoEdicaoArquivo(ProdutoEdicaoDTO prodEdicao);
 	
 }
