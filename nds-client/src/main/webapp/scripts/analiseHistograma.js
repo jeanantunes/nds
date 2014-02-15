@@ -221,7 +221,7 @@ var anaLiseHistogramaController = $.extend(true, {
 					
 					if(parseInt(rowCell.qtdeCotas)>0){
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+
-						index+",'idCotasEsmagadas'");\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
+						index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);

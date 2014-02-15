@@ -230,10 +230,4 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setMediaEdPresente(BigDecimal mediaEdPresente) {
 		this.mediaEdPresente = mediaEdPresente;
 	}
-	public void setFaixaDe(Integer faixaDe) {
-		this.faixaDe = faixaDe;
-	}
-	public void setFaixaAte(Integer faixaAte) {
-		this.faixaAte = faixaAte;
-	}
 }
