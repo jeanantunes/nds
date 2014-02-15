@@ -438,4 +438,19 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return ultimoCodigoRegional;
 	}
+    
+    @Override
+	@Transactional(readOnly = true)
+	public Fornecedor obterFornecedorPorCodigoProduto(String codigoProduto) {
+
+		Produto produto = this.obterProdutoPorCodigo(codigoProduto);
+        
+		if (produto == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
+		}
+		
+        return produto.getFornecedor();
+	}
+    
 }

@@ -319,6 +319,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 * @see br.com.abril.nds.service.MovimentoEstoqueCotaService#envioConsignadoNotaCancelada(br.com.abril.nds.model.fiscal.nota.NotaFiscal)
 	 */
 	@Override
+	@Transactional
 	public void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada) {
 		
 		TipoMovimentoEstoque tipoMovimento = 
@@ -346,6 +347,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	}
 	
 	@Override
+	@Transactional
 	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
 														   Long idProdutoEdicao) {
 		

@@ -360,5 +360,24 @@ public class LancamentoServiceImpl implements LancamentoService {
         }
         this.lancamentoRepository.remover(lancamento);
     }
+    
+    @Override
+    @Transactional
+    public void atualizarReparteLancamento(Long idLancamento, BigInteger reparte, BigInteger repartePromocional) {
+    	
+    	Lancamento lancamento = this.obterPorId(idLancamento);
+    	
+    	if (reparte != null ) {
+    	
+    		lancamento.setReparte(reparte);
+    	}
+    	
+    	if (repartePromocional != null) {
+    		
+    		lancamento.setRepartePromocional(repartePromocional);
+    	}
+    	
+    	this.lancamentoRepository.merge(lancamento);
+    }
 
 }

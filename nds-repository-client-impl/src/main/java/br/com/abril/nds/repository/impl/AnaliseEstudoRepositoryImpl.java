@@ -38,9 +38,9 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" prodEdicao.parcial as permiteParcial, ");
 //		hql.append(" estudo.status AS statusEstudo, ");
 		hql.append(" estudo.liberado AS statusGeradoOuLiberado, ");
-		hql.append(" estudo.dataLancamento AS dataLancamento ");
+		hql.append(" lancamento.dataLancamentoDistribuidor AS dataLancamento ");
 		
-		hql.append(" FROM EstudoGerado estudo ");
+		hql.append(" FROM EstudoGerado estudo, Lancamento lancamento ");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
 		hql.append(" JOIN prodEdicao.produto as produto ");
 		hql.append(" left JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
@@ -76,6 +76,8 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		StringBuilder hql = new StringBuilder();
 		
+		hql.append(" AND estudo.lancamentoID = lancamento.id");
+		
 		if(filtro.getNumEstudo() !=null && filtro.getNumEstudo() > 0){
 			hql.append(" AND estudo.id = :NUM_ESTUDO ");
 		}
@@ -91,7 +93,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 			hql.append(" AND tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
 		}
 		if(filtro.getDataLancamento() != null){
-			hql.append(" AND estudo.dataLancamento = :DATA_LANCAMENTO ");
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :DATA_LANCAMENTO ");
 		}
 		
 		return hql.toString();

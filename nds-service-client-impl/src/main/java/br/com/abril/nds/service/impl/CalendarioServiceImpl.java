@@ -712,6 +712,7 @@ public class CalendarioServiceImpl implements CalendarioService {
      * @return Date
      */
     @Override
+    @Transactional
     public Date obterProximaDataDiaUtil(Date data) {
         
         Calendar c = Calendar.getInstance();

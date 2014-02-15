@@ -204,6 +204,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#listarProcessos()
 	 */
 	@Override
+	@Transactional
 	public List<ProcessoDTO> listarProcessos() {
 		
 		Date dataOperacao = this. distribuidorService.obterDataOperacaoDistribuidor();
@@ -494,6 +495,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 * @see br.com.abril.nds.service.PainelProcessamentoService#obterEstadoOperacional()
 	 */
 	@Override
+	@Transactional
 	public String obterEstadoOperacional() {
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 

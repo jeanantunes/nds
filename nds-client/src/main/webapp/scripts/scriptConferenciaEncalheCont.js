@@ -104,8 +104,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 	atribuirAtalhos: function(){
 		$(document.body).unbind();
 		
+		var permissaoAlteracao = ($('#permissaoAlteracao',workspace).val()=="true");
+		
 		$(document.body).bind('keydown.adicionarProduto', jwerty.event('F2',function() {
-			
+			if(!permissaoAlteracao){
+				exibirAcessoNegado();
+				return;
+			}
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.limparCamposNovoEncalhe();
@@ -114,7 +119,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 		}));
 		
 		$(document.body).bind('keydown.popUpNotaFiscal', jwerty.event('F6',function() {
-			
+			if(!permissaoAlteracao){
+				exibirAcessoNegado();
+				return;
+			}
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.popup_notaFiscal();
@@ -124,7 +132,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		
 		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8',function() {
-			
+			if(!permissaoAlteracao){
+				exibirAcessoNegado();
+				return;
+			}
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
@@ -140,7 +151,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 		}));
 		
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			
+			if(!permissaoAlteracao){
+				exibirAcessoNegado();
+				return;
+			}
 			if (!ConferenciaEncalheCont.modalAberta){
 
 				ConferenciaEncalheCont.processandoConferenciaEncalhe = true;
@@ -148,7 +162,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.veificarCobrancaGerada);
+					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
 				}, 1000);
 			}
 			
@@ -1426,9 +1440,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	},
 	
-	veificarCobrancaGerada: function(){
+	verificarCobrancaGerada: function(){
 		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarCobrancaGerada', null,
 		
 			function(conteudo){
 			
