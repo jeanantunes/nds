@@ -434,7 +434,11 @@ var analiseParcialController = $.extend(true, {
                 }
             }
             
-            $saldoreparte.text(parseInt($saldoreparte.val(), 10) - reparteSubtraido);
+            var saldoReparteAtualizado = parseInt($saldoreparte.val(), 10) - reparteSubtraido;
+            
+            $saldoreparte.text(saldoReparteAtualizado);
+            
+            $saldoreparte.val(saldoReparteAtualizado);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
