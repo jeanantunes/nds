@@ -35,7 +35,7 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
-import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
+import br.com.abril.nds.service.DistribuicaoVendaMediaService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
@@ -96,7 +96,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private EstrategiaService estrategiaService;
 
     @Autowired
-    private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
+    private DistribuicaoVendaMediaService distribuicaoVendaMediaService;
 
     @Autowired
     private EstudoAlgoritmoService estudoAlgoritmoService;
@@ -152,7 +152,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    selecionados.clear();
 
 	    for (EdicaoBaseEstrategia base : estrategia.getBasesEstrategia()) {
-		selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProdutoEdicao().getProduto().getCodigo(), null, base.getProdutoEdicao().getNumeroEdicao(), base.getProdutoEdicao().getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto().getId() : null, false));
+                selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProdutoEdicao().getProduto()
+                        .getCodigo(), null, base.getProdutoEdicao().getNumeroEdicao(), base.getProdutoEdicao()
+                        .getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto()
+                        .getId() : null, false));
 	    }
 	} else {
 	    EstudoTransient estudoTemp = new EstudoTransient();
@@ -163,9 +166,12 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
 		    if (base.isParcial()) {
-			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisarEdicoesParciais(base.getProduto().getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
+                        selecionados.addAll(distribuicaoVendaMediaService.pesquisarEdicoesParciais(base.getProduto()
+                                .getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
 		    } else {
-			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), base.getTipoClassificacaoProduto() != null ? base.getTipoClassificacaoProduto().getId() : null, false));
+                        selecionados.addAll(distribuicaoVendaMediaService.pesquisar(base.getProduto().getCodigo(),
+                                null, base.getNumeroEdicao(), base.getTipoClassificacaoProduto() != null ? base
+                                        .getTipoClassificacaoProduto().getId() : null, false));
 		    }
 		}
 	    } catch (Exception e) {
@@ -233,7 +239,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
     	filtro.setCodigo(produto.getCodigoICD());
     	
-    	List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(filtro);
+        List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaService.pesquisar(filtro);
 	
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
@@ -353,7 +359,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
 
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode ter mais do que "
+                + QTD_MAX_PRODUTO_EDICAO + " bases."));
 	}
 
 	for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
@@ -365,7 +372,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 
 	if (qtdEdicoesAbertas > 1) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+                    "Não é possível utilizar mais que uma edição base aberta."));
 	}
     
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
@@ -375,7 +383,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	try {
 		produto.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(dataLancamento));
 		} catch (ParseException e) {
-		    throw new Exception("Data de lançamento em formato incorreto.");
+            throw new Exception("Data de lançamento em formato incorreto.");
 		}
 	
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
@@ -420,11 +428,26 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	for (TipoClassificacaoProduto tipoClassificacaoProduto : listaTipoClassificacaoProduto) {
 
-	    // Preenchendo a lista que irá representar o combobox de área de
-	    // influência na view
+            // Preenchendo a lista que irá representar o combobox de área de
+            // influência na view
 	    listaTipoClassificacaoProdutoCombo.add(new ItemDTO<Long, String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 	}
 
 	result.include("listaTipoClassificacao", listaTipoClassificacaoProdutoCombo);
+    }
+    
+    /**
+     * @return the distribuicaoVendaMediaService
+     */
+    public DistribuicaoVendaMediaService getDistribuicaoVendaMediaService() {
+        return distribuicaoVendaMediaService;
+    }
+    
+    /**
+     * @param distribuicaoVendaMediaService the distribuicaoVendaMediaService to
+     *            set
+     */
+    public void setDistribuicaoVendaMediaService(DistribuicaoVendaMediaService distribuicaoVendaMediaService) {
+        this.distribuicaoVendaMediaService = distribuicaoVendaMediaService;
     }
 }

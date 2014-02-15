@@ -22,28 +22,28 @@ import br.com.abril.nds.service.RepartePdvService;
 public class RepartePdvServiceImpl implements RepartePdvService{
 
 	@Autowired
-	RepartePDVRepository repartePDVRepository;
+	private RepartePDVRepository repartePDVRepository;
 
     @Autowired
-    FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
+    private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
 	
 	@Autowired
-	FixacaoReparteRepository fixacaoReparteRepository;
+	private FixacaoReparteRepository fixacaoReparteRepository;
 	
 	@Autowired
-	MixCotaProdutoRepository mixCotaProdutoRepository;
+	private MixCotaProdutoRepository mixCotaProdutoRepository;
 	
 	@Autowired
-	CotaRepository  cotaRepository;
+	private CotaRepository  cotaRepository;
 	
 	@Autowired
-	ProdutoRepository produtoRepository;
+	private ProdutoRepository produtoRepository;
 	
 	@Autowired
-	ProdutoService produtoService;
+	private ProdutoService produtoService;
 	
 	@Autowired
-	PdvRepository pdvRepository;
+	private PdvRepository pdvRepository;
 
 	@Transactional
 	@Override

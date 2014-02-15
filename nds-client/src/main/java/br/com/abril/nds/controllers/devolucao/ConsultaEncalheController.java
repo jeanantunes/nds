@@ -559,10 +559,15 @@ public class ConsultaEncalheController extends BaseController {
 			
 			} else {
 				
-				recolhimento = consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA;
-				
+				if(consultaEncalheDTO.getRecolhimento() != null) {
+					
+					recolhimento = consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA;
+					
+				} else {
+					
+					recolhimento = "";
+				}
 			}
-
 			
 			consultaEncalheVO = new ConsultaEncalheVO();
 			

@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -511,21 +512,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	private Lancamento obterLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao) {
-		
-		Lancamento lancamento = null;
-		
+
 		if (produtoEdicao.getLancamentos().isEmpty() || ModoTela.REDISTRIBUICAO.equals(dto.getModoTela())) {
-			lancamento = new Lancamento();
+			return new Lancamento();
 		} else {
-			for (Lancamento lancto: produtoEdicao.getLancamentos()) {
-				if (lancamento == null 
-						|| DateUtil.isDataInicialMaiorDataFinal(lancto.getDataLancamentoDistribuidor(), lancamento.getDataLancamentoDistribuidor())) {
-					lancamento = lancto;
-				}
-			}
+			return lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());	
 		}
-		
-		return lancamento;
 	}
 	
 	private boolean isLancamentoBalanceadoRecolhimento(Lancamento lancamento) {
@@ -865,9 +857,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
 		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
 		
-		BigInteger repartePrevisto = dto.getRepartePrevisto() == null ? BigInteger.ZERO : dto.getRepartePrevisto();
 		BigInteger repartePromocional = dto.getRepartePromocional() == null ? BigInteger.ZERO : dto.getRepartePromocional();
-		lancamento.setReparte(repartePrevisto);
+		
+		if (lancamento.getId() == null || dto.getRepartePrevisto() != null) {
+		
+			lancamento.setReparte(dto.getRepartePrevisto());
+		}
+
 		lancamento.setRepartePromocional(repartePromocional);
 		lancamento.setUsuario(usuario);
 		
@@ -1191,6 +1187,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		return dto;
 	}
 
+	@Transactional
 	public Integer obterNumeroLancamento(Long idProdutoEdicao, Long idPeriodo) {
 
 		Integer ultimoNumeroLancamento = null;
@@ -1246,7 +1243,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	private void carregarInformacaoLancamentos(ProdutoEdicaoDTO dto,ProdutoEdicao produtoEdicao) {
 		
-		Lancamento uLancamento = lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());
+		Lancamento uLancamento = lService.obterPrimeiroLancamentoDaEdicao(produtoEdicao.getId());//TODO
 
 		if (uLancamento != null) {
 			
@@ -1369,6 +1366,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
 		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 	}
@@ -1382,8 +1380,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes){
+	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,
+			String codigoProduto,String[] faixasVenda, String[] edicoes){
 
+		if (codigoProduto != null){
+			
+			codigoProduto = Util.padLeft(codigoProduto, "0", 8);
+		}
+		
 		List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
 
 		String[] newFaixasVenda = new String[faixasVenda.length + 1];
@@ -1396,7 +1400,52 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		for (int i = 0; i < newFaixasVenda.length; i++) {
 			String[] faixa = newFaixasVenda[i].split("-");
-			AnaliseHistogramaDTO obj = produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
+			AnaliseHistogramaDTO obj = 
+				produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
+						filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
+			
+			String cotasEsmagadas = "";
+			BigInteger qtdCotaEsmag = BigInteger.ZERO;
+			if (obj.getIdCotaStr() != null && !obj.getIdCotaStr().isEmpty()){
+			
+				String[] cotas = obj.getIdCotaStr().split(",");
+				
+				BigDecimal vendaEsmagMedia = BigDecimal.ZERO;
+				for (String numeroCota : cotas){
+				
+					BigDecimal venda = null;
+					BigDecimal sumVenda = BigDecimal.ZERO;
+					BigInteger qtdEdicao = BigInteger.ZERO;
+					
+					for (String edc : edicoes){
+						
+						venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(codigoProduto, 
+								Integer.valueOf(edc), Integer.valueOf(numeroCota));
+						
+						if (venda != null){
+							
+							qtdEdicao = qtdEdicao.add(BigInteger.ONE);
+							sumVenda = sumVenda.add(venda);
+						} else if (this.produtoEdicaoRepository.cotaTemProduto(
+									codigoProduto, Integer.valueOf(edc), Integer.valueOf(numeroCota))) {
+							
+							qtdEdicao = qtdEdicao.add(BigInteger.ONE);
+						}
+					}
+					
+					if (!sumVenda.equals(BigDecimal.ZERO)){
+					
+						vendaEsmagMedia = vendaEsmagMedia.add(sumVenda.divide(new BigDecimal(qtdEdicao), 2, RoundingMode.HALF_DOWN));
+						cotasEsmagadas+=("," + numeroCota);
+						qtdCotaEsmag = qtdCotaEsmag.add(BigInteger.ONE);
+					}
+				}
+				
+				obj.setIdCotasEsmagadas(cotasEsmagadas);
+				obj.setVendaEsmagadas(vendaEsmagMedia);
+				obj.setCotasEsmagadas(qtdCotaEsmag);
+			}
+			
 			obj.executeScaleValues(edicoes.length);
 
 			if (i == newFaixasVenda.length - 1) {
@@ -1494,11 +1543,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 
 	@Override
+	@Transactional
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
 	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, Long.valueOf(numeroEdicao)));
 	}
 
     @Override
+    @Transactional
     public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
         return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
     }

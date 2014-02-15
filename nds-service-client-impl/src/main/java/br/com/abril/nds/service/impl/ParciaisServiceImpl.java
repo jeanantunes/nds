@@ -93,7 +93,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	private void validarDataRecolhimentoPeriodoManual(LancamentoParcial lancamento, Date dataRecolhimento) {
 
 		if (!this.calendarioService.isDiaUtil(dataRecolhimento)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data de lançamento não é um dia util.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data de recolhimento não é um dia util.");
 		}
 
 		if (DateUtil.isDataInicialMaiorIgualDataFinal(dataRecolhimento, lancamento.getRecolhimentoFinal())) {
@@ -167,7 +167,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			if (TipoLancamento.REDISTRIBUICAO.equals(lancamento.getTipoLancamento())
 					&& DateUtil.isDataInicialMaiorDataFinal(novaDataLancamento, lancamento.getDataLancamentoDistribuidor())) {
 
-				throw new ValidacaoException(TipoMensagem.WARNING, "Existe redistribuição cadastrada.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "A data selecionada interfere em uma redistribuição já cadastrada.");
 			}
 		}
 	}
@@ -310,7 +310,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 				break;
 			}			
 			
-			dtRecolhimento = this.obterDataRecolhimentoIdeal(DateUtil.adicionarDias(dtRecolhimento,peb));
+			dtRecolhimento = this.obterDataRecolhimentoUtil(dtRecolhimento,peb);
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
 				
@@ -334,27 +334,33 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 	
-	private Date obterDataRecolhimentoIdeal(Date dataRecolhimento) {
+	private Date obterDataRecolhimentoUtil(Date dataRecolhimento, Integer peb) {
 		
-		boolean diaUtil = this.calendarioService.isDiaUtil(dataRecolhimento);
+		return this.obterDataUtilMaisProxima(DateUtil.adicionarDias(dataRecolhimento,peb));
+	}
+
+	@Transactional(readOnly=true)
+	public Date obterDataUtilMaisProxima(Date data) {
+		
+		boolean diaUtil = this.calendarioService.isDiaUtil(data);
 		
 		if (diaUtil) {
 			
-			return dataRecolhimento;
+			return data;
 		}
 		
-		Date dataRecolhimentoPosterior = this.obterProximaData(dataRecolhimento, 1);
+		Date dataRecolhimentoPosterior = this.obterProximaData(data, 1);
 		
-		long difDiasPosterior = DateUtil.obterDiferencaDias(dataRecolhimento, dataRecolhimentoPosterior);
+		long difDiasPosterior = DateUtil.obterDiferencaDias(data, dataRecolhimentoPosterior);
 		
 		if (difDiasPosterior == 1) {
 			
 			return dataRecolhimentoPosterior;
 		}
 		
-		Date dataRecolhimentoAntecipada = this.obterProximaData(dataRecolhimento, -1);
+		Date dataRecolhimentoAntecipada = this.obterProximaData(data, -1);
 		
-		long difDiasAntecipada = DateUtil.obterDiferencaDias(dataRecolhimento, dataRecolhimentoAntecipada);
+		long difDiasAntecipada = DateUtil.obterDiferencaDias(data, dataRecolhimentoAntecipada);
 		
 		return (difDiasAntecipada < difDiasPosterior)
 					? dataRecolhimentoAntecipada : dataRecolhimentoPosterior;
@@ -523,7 +529,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	
 	private void reajustarProximoPeriodo(PeriodoLancamentoParcial proximoPeriodo,Date dataLancamento, Date dataRecolhimentoPeriodoAnterior) {
 
-		if (dataRecolhimentoPeriodoAnterior == null) {
+		if (proximoPeriodo == null || dataRecolhimentoPeriodoAnterior == null) {
 
 			return;
 		}
@@ -913,6 +919,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 	
 	@Override
+	@Transactional
 	public void atualizarReparteDoProximoLancamentoPeriodo(Lancamento lancamento, Usuario usuario, BigInteger reparte) {
 		
 		Lancamento proximoLancamento =
@@ -928,6 +935,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 	
+	@Transactional
 	public Lancamento getProximoLancamentoPeriodo(Lancamento lancamento) {
 		
 		PeriodoLancamentoParcial periodoLancamentoParcial =

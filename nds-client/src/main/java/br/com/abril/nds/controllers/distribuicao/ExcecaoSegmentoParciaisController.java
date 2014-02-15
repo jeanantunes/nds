@@ -55,6 +55,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicao/excecaoSegmentoParciais")
 @Resource()
+@Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS)
 public class ExcecaoSegmentoParciaisController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroExcecaoSegmentoParciaisDTO";
@@ -89,7 +90,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	@Autowired
 	private TipoClassificacaoProdutoService classificacao;
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS)
+    @Path("/")
 	public void index(){
 		this.carregarComboClassificacao();
 	}
@@ -168,6 +169,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	}
 	
 	@Post
+    @Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS_ALTERACAO)
 	public void excluirExcecaoProduto(Long id){
 		this.excecaoSegmentoParciaisService.excluirExcecaoProduto(id);
 		
@@ -175,17 +177,13 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	}
 	
 	@Post
+    @Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS_ALTERACAO)
 	public void inserirExcecaoProdutoNaCota(String[] listaIdProduto, FiltroExcecaoSegmentoParciaisDTO filtro){
 		ExcecaoProdutoCota element = null;
 		Cota cota = null;
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		TipoExcecao tipoExcecao = null;
 		
-	/*	if (listaIdProduto.length == 0 ) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum produto selecionado.");
-		}
-		
-		validarEntradaFiltroCota(filtro);*/
 
 		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
 			cota = (cotaService.obterPorNumeroDaCota(filtro.getCotaDto().getNumeroCota()));
@@ -203,8 +201,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		for (String idProduto : listaIdProduto) {
 			element = new ExcecaoProdutoCota();
-//			element.setProduto(produtoService.obterProdutoPorID(idProduto));
-			//codigo ICD vindo da tela
 			element.setCodigoICD(idProduto);
 			
 			
@@ -226,6 +222,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	}
 	
 	@Post
+    @Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS_ALTERACAO)
 	public void inserirCotaNaExcecao(Integer[] listaNumeroCota, FiltroExcecaoSegmentoParciaisDTO filtro){
 		ExcecaoProdutoCota element;
 		Produto produto = null;
@@ -313,7 +310,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		Produto produto = null;
 		TipoSegmentoProduto tipoSegmentoProduto = null;
 		ArrayList<Object> objects = new ArrayList<>();
-		Long idClassificacao;
 				
 		produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
@@ -326,7 +322,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 			objects.add(tipoSegmentoProduto);
 		}else {
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto
-                    + "\" não encontrado!");
+                + "\" não encontrado!");
 		}	
 		
 		result.use(Results.json()).from(objects, "result").serialize();
@@ -391,7 +387,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 			classDto = CotaQueRecebeExcecaoDTO.class;
 			fileName = "Cotas_que_Recebem_Excecao";
 		}
-		FileExporter.to(fileName, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaDto,
+        FileExporter.to(fileName, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, listaDto,
 				classDto, this.httpResponse);
 		
 		result.nothing();

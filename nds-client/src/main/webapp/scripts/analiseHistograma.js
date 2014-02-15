@@ -216,10 +216,12 @@ var anaLiseHistogramaController = $.extend(true, {
 					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
 					rowCell.partReparte =  (rowCell.repTotal /lastRow.cell.repTotal) || 0;
 					rowCell.percVenda =  (rowCell.vdaTotal /rowCell.repTotal) || 0;
-					rowCell.faixaVenda="<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+rowCell.faixaVenda+"</a>";						
+					rowCell.faixaVenda="<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
+					"De " + row.cell.faixaDe + " a " + row.cell.faixaAte +"</a>";						
 					
 					if(parseInt(rowCell.qtdeCotas)>0){
-						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
+						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+
+						index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
@@ -335,9 +337,12 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		$.post(url, params, function(data){
 		      if(data){
+		    	  
 		    	  $("#analiseHistogramaVendasContent", anaLiseHistogramaController.workspace).hide();
 		    	  $("#analiseHistoricoVendasContent", anaLiseHistogramaController.workspace).html(data).show();
+		    	  
 		    	  anaLiseHistogramaController.montarDados();
+		    	  
 		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
 		    	  
 		    	  if ($(resultadoAnalise[idx].cell.faixaVenda).text() === 'De 0 a 0') {

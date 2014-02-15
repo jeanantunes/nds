@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -286,7 +285,9 @@ public class HistoricoVendaController extends BaseController {
 		
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, sortorder, sortname);
+		List<AnaliseHistoricoDTO> listAnaliseHistorico = 
+			cotaService.buscarHistoricoCotas(
+				listProdutoEdicaoDTO, listCota, sortorder, sortname);
 		
 		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
 		

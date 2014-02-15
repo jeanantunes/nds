@@ -38,23 +38,23 @@ import br.com.abril.nds.service.EstudoComplementarService;
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
 
     @Autowired
-    EstudoGeradoRepository estudoGeradoRepository;
+    private EstudoGeradoRepository estudoGeradoRepository;
 
     @Autowired
-    ProdutoRepository produtoRepository;
+    private ProdutoRepository produtoRepository;
 
     @Autowired
-    ProdutoEdicaoRepository produtoEdicaoRepository;
+    private ProdutoEdicaoRepository produtoEdicaoRepository;
 
 
     @Autowired
-    EstudoCotaGeradoRepository estudoCotaGeradoRepository;
+    private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
 
     @Autowired
-    EstudoComplementarRepository estudoComplementarRepository;
+    private EstudoComplementarRepository estudoComplementarRepository;
 
     @Autowired
-    InformacoesProdutoRepository informacoesProdutoRepository;
+    private InformacoesProdutoRepository informacoesProdutoRepository;
 
     @Override
     @Transactional(readOnly = true)

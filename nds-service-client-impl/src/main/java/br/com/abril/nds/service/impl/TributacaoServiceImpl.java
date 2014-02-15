@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.fiscal.nota.COFINS;
@@ -39,6 +40,7 @@ public class TributacaoServiceImpl implements TributacaoService {
 	private TributacaoRepository tributacaoRepository;
 
 	@Override
+	@Transactional
 	public EncargoFinanceiroProduto calcularTributoProduto(
 			String codigoEmpresa, TipoOperacao tipoOperacao, String ufOrigem,
 			String ufDestino, int naturezaOperacao,

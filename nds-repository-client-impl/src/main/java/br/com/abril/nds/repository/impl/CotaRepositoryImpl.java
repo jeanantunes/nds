@@ -1736,7 +1736,10 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			GrupoMovimentoEstoque.SOBRA_DE.name(),
 			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
 			GrupoMovimentoEstoque.SOBRA_EM.name(),
-			GrupoMovimentoEstoque.SOBRA_EM_COTA.name()
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name(),
+			GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+			GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name()
 		);
 	}
 	
@@ -1746,7 +1749,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			GrupoMovimentoEstoque.FALTA_DE.name(),
 			GrupoMovimentoEstoque.FALTA_DE_COTA.name(),
 			GrupoMovimentoEstoque.FALTA_EM.name(),
-			GrupoMovimentoEstoque.FALTA_EM_COTA.name()
+			GrupoMovimentoEstoque.FALTA_EM_COTA.name(),
+			GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name(),
+			GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name()
 		);
 	}
 	
@@ -1756,7 +1761,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			GrupoMovimentoEstoque.SOBRA_DE.name(),
 			GrupoMovimentoEstoque.SOBRA_DE_COTA.name(),
 			GrupoMovimentoEstoque.SOBRA_EM.name(),
-			GrupoMovimentoEstoque.SOBRA_EM_COTA.name()
+			GrupoMovimentoEstoque.SOBRA_EM_COTA.name(),
+			GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE.name()
 		);
 	}
 	
@@ -1925,7 +1931,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		+ "	    inner join "
 		+ "	        LANCAMENTO lancamento_  "
 		+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
-		+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+		+ "	            and e_.ID=lancamento_.ESTUDO_ID  "
 		+ "	    inner join "
 		+ "	        PRODUTO_EDICAO pe_  "
 		+ "	            on e_.PRODUTO_EDICAO_ID=pe_.ID  "
@@ -2046,7 +2052,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 				+ "	    inner join "
 				+ "	        LANCAMENTO lancamento_  "
 				+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
-				+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+				+ "	            and e_.ID=lancamento_.ESTUDO_ID  "
 				+ "	    left join "
 				+ "	        MOVIMENTO_ESTOQUE_COTA mec  "
 				+ "	            on mec.LANCAMENTO_ID=lancamento_.id "
@@ -2143,8 +2149,6 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
 		query.setParameterList("statusNaoEmitiveis", new String[]{StatusLancamento.PLANEJADO.name(), StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.CANCELADO.name()});
-		
-		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
@@ -2946,7 +2950,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
-		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
+		hql.append(" avg(estoqueProdutoCota.qtdeRecebida) as reparteMedio, ");
 		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" produto.codigo as codigoProduto ");
@@ -2954,15 +2958,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
-		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		//hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+		//hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		//hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
-		hql.append(" tipoMovimento.id = 21 and ");
+		//hql.append(" tipoMovimento.id = 21 and ");
+		boolean useAnd = false;
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
@@ -2991,12 +2996,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			}
 			
 			hql.append(")");
+			
+			useAnd = true;
 		}
 		
 		if (cotas != null && cotas.size() != 0) {
 			
+			hql.append(useAnd ? " and " : " where ");
+			
             // Populando o in ('','') do código produto
-			hql.append(" and cota.numeroCota in ( ");
+			hql.append(" cota.numeroCota in ( ");
 			for (int i = 0; i < cotas.size(); i++) {
 				
 				hql.append(cotas.get(i).getNumeroCota());
@@ -3007,6 +3016,8 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			}
 			
 			hql.append(" )");
+			
+			useAnd = true;
 		}
 		
 		hql.append(" GROUP BY cota.numeroCota ");

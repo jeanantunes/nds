@@ -62,6 +62,7 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 	}
 	
 	@Override
+	@Transactional
 	public List<TipoClassificacaoProduto> buscarClassificacaoProduto() {
 		return tipoClassificacaoProduto.buscarTodos();
 	}

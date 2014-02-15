@@ -746,6 +746,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * Monta o perídodo de recolhimento de acordo com a semana informada.
      */
 	@Override
+	@Transactional
 	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
 		int codigoInicioSemana = 
@@ -855,6 +856,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
+	@Transactional
 	public void verificaDataOperacao(Date data) {
 		
 		Calendar cal = Calendar.getInstance();
@@ -1087,6 +1089,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
+	@Transactional
 	public void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
 												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
 												TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
@@ -1455,6 +1458,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 
+	@Transactional
 	public void validarLancamentoParaReabertura(List<Date> datasConfirmadas) {
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterRecolhimentosConfirmados(datasConfirmadas);

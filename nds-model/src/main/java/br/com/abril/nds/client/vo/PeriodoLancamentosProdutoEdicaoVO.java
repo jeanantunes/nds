@@ -31,6 +31,8 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	
 	private BigInteger reparte;
 	
+	private BigInteger repartePromocional;
+	
 	private boolean destacarLinha;
 	
     private Long idLancamento;
@@ -116,6 +118,20 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	 */
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+	}
+
+	/**
+	 * @return the repartePromocional
+	 */
+	public BigInteger getRepartePromocional() {
+		return repartePromocional;
+	}
+
+	/**
+	 * @param repartePromocional the repartePromocional to set
+	 */
+	public void setRepartePromocional(BigInteger repartePromocional) {
+		this.repartePromocional = repartePromocional;
 	}
 
 	/**

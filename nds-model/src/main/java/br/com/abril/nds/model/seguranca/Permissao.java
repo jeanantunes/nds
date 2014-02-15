@@ -135,6 +135,10 @@ public enum Permissao {
 	ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO_ALTERACAO("Informações do Produto",	 							Permissao.ROLE_DISTRIBUICAO, true),
 	ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO("Informações do Produto",	 									   	Permissao.ROLE_DISTRIBUICAO, ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO_ALTERACAO, true, null),
 	
+	ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO("Histograma Pré Análise",                             Permissao.ROLE_DISTRIBUICAO, true),
+	ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO("Histograma Pré Análise",                                       Permissao.ROLE_DISTRIBUICAO, ROLE_DISTRIBUICAO_HISTOGRAMA_POS_ESTUDO_ALTERACAO, true, null),
+
+	
 	
 	ROLE_ESTOQUE_ALTERACAO("Estoque",																	  	null, true),
 	ROLE_ESTOQUE("Estoque",																	  			   	null, ROLE_ESTOQUE_ALTERACAO, true, null),
