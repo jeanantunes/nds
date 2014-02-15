@@ -940,11 +940,11 @@ var produtoEdicaoController =$.extend(true,  {
 			var repartePromocional = row.cell.repartePromocional;
 
 			if(reparte == undefined) {
-				reparte = "";
+				reparte = 0;
 			}
 
 			if(repartePromocional == undefined) {
-				repartePromocional = "";
+				repartePromocional = 0;
 			}
 			
 			row.cell.reparte = "<input type='text' value='" + reparte  + "'"
