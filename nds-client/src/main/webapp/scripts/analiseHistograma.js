@@ -221,7 +221,7 @@ var anaLiseHistogramaController = $.extend(true, {
 					
 					if(parseInt(rowCell.qtdeCotas)>0){
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+
-						index+",'idCotasEsmagadas',"+ row.cell.faixaDe +","+ row.cell.faixaAte +");\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
+						index+",'idCotasEsmagadas'");\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
@@ -319,7 +319,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		});
 	},
 	
-	executarAnaliseHistoricoVenda:function(idx, propriedade, de, ate){
+	executarAnaliseHistoricoVenda:function(idx, propriedade){
 		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(','),
 			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico",
 			params = new Array(),
@@ -343,14 +343,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		    	  
 		    	  anaLiseHistogramaController.montarDados();
 		    	  
-		    	  var options = new Object();
-		    	  
-		    	  if (de && ate){
-			    	  options.params = [{name:'de', value: de},
-			    						{name:'ate', value: ate}];
-		    	  }
-		    	  
-		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload(options);
+		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
 		    	  
 		    	  if ($(resultadoAnalise[idx].cell.faixaVenda).text() === 'De 0 a 0') {
 		    		  analiseHistoricoVendaController.isFaixaZero = true;

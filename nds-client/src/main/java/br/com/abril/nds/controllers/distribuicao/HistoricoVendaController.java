@@ -43,7 +43,6 @@ import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.util.Util;
@@ -281,19 +280,14 @@ public class HistoricoVendaController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post
-	public void carregarGridAnaliseHistorico(String sortorder, String sortname, Integer de, Integer ate){
+	public void carregarGridAnaliseHistorico(String sortorder, String sortname){
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		Intervalo<Integer> faixa = null;
-		if (de != null && ate != null){
-			faixa = new Intervalo<Integer>(de, ate);
-		}
-		
 		List<AnaliseHistoricoDTO> listAnaliseHistorico = 
 			cotaService.buscarHistoricoCotas(
-				listProdutoEdicaoDTO, listCota, sortorder, sortname, faixa);
+				listProdutoEdicaoDTO, listCota, sortorder, sortname);
 		
 		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
 		
@@ -381,7 +375,7 @@ public class HistoricoVendaController extends BaseController {
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null, null);
+		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
 		try {
 			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,

@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2695,10 +2694,10 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, 
-			List<Cota> cotas, final String sortorder, final String sortname, Intervalo<Integer> faixa) {
+			List<Cota> cotas, final String sortorder, final String sortname) {
 		Collections.sort(listProdutoEdicaoDto);
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas, faixa, faixa == null ? null : 0);  
+		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
 		
 		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
 			
@@ -2775,22 +2774,6 @@ public class CotaServiceImpl implements CotaService {
 			}
 			
 			setMediaVendaEReparte(qtdEdicaoVendida, analiseHistoricoDTO);
-			
-			String[] edicoes = new String[listProdutoEdicaoDto.size()];
-			
-			for (int i = 0 ; i < listProdutoEdicaoDto.size() ; i++){
-				edicoes[i] = listProdutoEdicaoDto.get(i).getNumeroEdicao().toString();
-			}
-			
-			BigDecimal venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(
-					faixa, analiseHistoricoDTO.getCodigoProduto(), 
-					edicoes,
-					analiseHistoricoDTO.getNumeroCota());
-			
-			if (venda != null){
-			
-				analiseHistoricoDTO.setVendaMedia(venda.setScale(0, RoundingMode.CEILING).doubleValue());
-			}
 		}
 		
 		formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
@@ -2903,6 +2886,7 @@ public class CotaServiceImpl implements CotaService {
 		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd6Venda());
 		
 		analiseHistoricoDTO.setReparteMedio(reparteMedio / qtdEdicoes);
+		analiseHistoricoDTO.setVendaMedia(vendaMedia / qtdEdicoes);
 	}
 
 	@Transactional(readOnly = true)
