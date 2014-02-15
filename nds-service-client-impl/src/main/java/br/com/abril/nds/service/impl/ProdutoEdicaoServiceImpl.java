@@ -1404,23 +1404,46 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
 						filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
 			
-			if (obj.getIdCotasEsmagadas() != null && !obj.getIdCotasEsmagadas().isEmpty()){
+			String cotasEsmagadas = "";
+			BigInteger qtdCotaEsmag = BigInteger.ZERO;
+			if (obj.getIdCotaStr() != null && !obj.getIdCotaStr().isEmpty()){
 			
-				String[] cotasEsmagadas = obj.getIdCotasEsmagadas().split(",");
+				String[] cotas = obj.getIdCotaStr().split(",");
 				
 				BigDecimal vendaEsmagMedia = BigDecimal.ZERO;
-				for (String idCota : cotasEsmagadas){
+				for (String numeroCota : cotas){
 				
-					BigDecimal venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(
-							new Intervalo<Integer>(Integer.valueOf(faixa[0]), Integer.valueOf(faixa[1])), codigoProduto, edicoes, Integer.valueOf(idCota));
+					BigDecimal venda = null;
+					BigDecimal sumVenda = BigDecimal.ZERO;
+					BigInteger qtdEdicao = BigInteger.ZERO;
 					
-					if (venda != null){
+					for (String edc : edicoes){
+						
+						venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(codigoProduto, 
+								Integer.valueOf(edc), Integer.valueOf(numeroCota));
+						
+						if (venda != null){
+							
+							qtdEdicao = qtdEdicao.add(BigInteger.ONE);
+							sumVenda = sumVenda.add(venda);
+						} else if (this.produtoEdicaoRepository.cotaTemProduto(
+									codigoProduto, Integer.valueOf(edc), Integer.valueOf(numeroCota))) {
+							
+							qtdEdicao = qtdEdicao.add(BigInteger.ONE);
+						}
+					}
 					
-						vendaEsmagMedia = vendaEsmagMedia.add(venda.setScale(0, RoundingMode.CEILING));
+					if (!sumVenda.equals(BigDecimal.ZERO)){
+					
+						vendaEsmagMedia = vendaEsmagMedia.add(sumVenda.divide(new BigDecimal(qtdEdicao), 2, RoundingMode.HALF_DOWN));
+						cotasEsmagadas+=("," + numeroCota);
+						qtdCotaEsmag = qtdCotaEsmag.add(BigInteger.ONE);
 					}
 				}
 				
+				obj.setIdCotasEsmagadas(cotasEsmagadas);
 				obj.setVendaEsmagadas(vendaEsmagMedia);
+				obj.setCotasEsmagadas(qtdCotaEsmag);
 			}
 			
 			obj.executeScaleValues(edicoes.length);

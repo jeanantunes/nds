@@ -1071,18 +1071,25 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@Override
 	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de, Integer ate,String[] edicoes) {
 
+		String queryQtdEdicoesPresentes = " (select count(distinct _pe.ID) " +
+				" from ESTOQUE_PRODUTO_COTA _epc " +
+				" join PRODUTO_EDICAO _pe on (_pe.ID = _epc.PRODUTO_EDICAO_ID) " +
+				" join PRODUTO _p on (_p.ID = _pe.PRODUTO_ID) " +
+				" join COTA _c on (_c.ID = _epc.COTA_ID) " +
+				" where _p.CODIGO = :produtoCodigo " +
+				" and _pe.NUMERO_EDICAO in (:nrEdicoes)) ";
+		
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
 				"select concat('De ', :de, ' a ', :ate) as faixaVenda," +
-				" sum(reparteTotal) / :qtdEdicoes as repTotal, " +
-				" (sum(reparteTotal) / :qtdEdicoes) / count(distinct COTA_ID) as repMedio, " +
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / :qtdEdicoes as vdaTotal, " +
-				" (sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / :qtdEdicoes) / count(distinct COTA_ID) as vdaMedio, " +
-				" ((sum(HIST.qtde_Recebida - hist.qtde_Devolvida) / :qtdEdicoes) / (sum(reparteTotal) / :qtdEdicoes)) * 100 as percVenda, " +
+				" sum(reparteTotal) / "+ queryQtdEdicoesPresentes +" as repTotal, " +
+				" (sum(reparteTotal) / "+ queryQtdEdicoesPresentes +") / count(distinct COTA_ID) as repMedio, " +
+				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +" as vdaTotal, " +
+				" (sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +" ) / count(distinct COTA_ID) as vdaMedio, " +
+				" ((sum(HIST.qtde_Recebida - hist.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +") / (sum(reparteTotal) / " + queryQtdEdicoesPresentes + ")) * 100 as percVenda, " +
 
 				// encalheMedio = ((rep total-vda nominal)/qte.cotas)
-				// " (sum(reparteTotal)-sum(HIST.qtde_Recebida - HIST.qtde_Devolvida))/count(HIST.COTA_ID) as encalheMedio, " +
-				" (avg(HIST.qtde_Devolvida) / :qtdEdicoes) as encalheMedio , " + 
+				" (avg(HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +") as encalheMedio , " + 
 
                 // Part Reparte – participação do reparte desta faixa de venda
                 // em relação ao reparte total da edição
@@ -1104,19 +1111,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 				" count(distinct COTA_ID) as qtdeCotas, " +
 				" group_concat(distinct COTA_ID) as idCotaStr, " +
-				" group_concat(cotasEsmagadas) as idCotasEsmagadas," +
-				" count(distinct cotasEsmagadas) as cotasEsmagadas, " +
-				//" sum(vdEsmag) as vendaEsmagadas, " +
 				" sum(cotaAtiva) as qtdeCotasAtivas, " +
 				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda, " +
 				" :de as faixaDe, " +
-				" :ate as faixaAte " +
+				" :ate as faixaAte, " +
+				" sum(hist.mediaEdPresente) as mediaEdPresente" +
 
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select  " +
-				"	case when (estoqueProdutoCota.QTDE_DEVOLVIDA = 0) and estoqueProdutoCota.QTDE_RECEBIDA between :de and :ate " +
-				"	then cota2_.numero_cota else null end as cotasEsmagadas, " +
 				
 				"   case when sum(estoqueProdutoCota.QTDE_DEVOLVIDA) = sum(estoqueProdutoCota.QTDE_RECEBIDA) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
@@ -1125,13 +1128,14 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 					" cota2_.numero_cota as COTA_ID, " +
 					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
 					" sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
-					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA " +
+					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
+					
+					" (sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentes +" as mediaEdPresente" +
 
 					" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
-					" 	left outer join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
-					" 	left outer join LANCAMENTO lancamento on produtoEdicao.ID=lancamento.PRODUTO_EDICAO_ID " +
-					" 	left outer join PRODUTO produto4_ on produtoEdicao.PRODUTO_ID=produto4_.ID " +
-					" 	left outer join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
+					" 	join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
+					" 	join PRODUTO produto4_ on produtoEdicao.PRODUTO_ID=produto4_.ID " +
+					" 	join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
 
 
 		// Adicionando filtro
@@ -1153,20 +1157,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				&& filtro.getInserirComponentes().equalsIgnoreCase("checked")
 				&& !filtro.getComponente().equalsIgnoreCase("-1")) {
 
-			// JOIN'S Relacionados ao componente/elemento
-			/*
-			 * " join pdvs.segmetacao segmentacao " +
-			 * " join segmetacao.TipoPontoPDV " +
-			 * " join segmetacao.areaInfluenciaPDV " +
-			 */
-
 			switch (ComponentesPDV.values()[Integer.parseInt(filtro
 					.getComponente())]) {
 			case TIPO_PONTO_DE_VENDA:
-				/*queryStringProdutoEdicao += 
-							" join pdvs.segmentacao segmentacao "
-						  + " join segmentacao.tipoPontoPDV ";*/
-
+				
 				whereList.add(" estoqueProdutoCota.cota_id in (select distinct cota.id from cota inner " +
 								"join pdv on pdv.cota_id = cota.id where tipo_ponto_pdv_id = :codigoTipoPontoPDV) ");
 				parameterMap.put("codigoTipoPontoPDV",
@@ -1175,8 +1169,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case AREA_DE_INFLUENCIA:
 
-				/*queryStringProdutoEdicao += " join pdvs.segmentacao segmentacao "
-						+ " join segmentacao.areaInfluenciaPDV ";*/
 				whereList.add(" estoqueProdutoCota.cota_id in (select distinct cota.id from cota inner " +
 								" join pdv on pdv.cota_id = cota.id where AREA_INFLUENCIA_PDV_ID = :codigoAreaInfluenciaPDV) ");
 				parameterMap.put("codigoAreaInfluenciaPDV",
@@ -1242,16 +1234,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		queryStringProdutoEdicao += " where " +
 									"	produto4_.CODIGO= :produtoCodigo " +
-									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))" +
-									"	and (estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) between :de and :ate ";
+									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))";
 
 		if(!whereList.isEmpty()){
 			queryStringProdutoEdicao += " and "+StringUtils.join(whereList, " and ");
 
 		}
 
-		queryStringProdutoEdicao += " group by numero_cota  "+
-									"   ";
+		queryStringProdutoEdicao += " group by numero_cota "
+								   +" having mediaEdPresente between :de and :ate ";
 
 		queryStringProdutoEdicao+=") as HIST";
 
@@ -1259,9 +1250,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
 		query.setParameter("produtoCodigo", codigoProduto);
-		query.setParameter("qtdEdicoes", edicoes.length);
 		query.setParameterList("nrEdicoes", edicoes);
-		//query.setParameter("deMargem", de - 0.5);
 
 		setParameters(query, parameterMap);
 
@@ -1840,36 +1829,65 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 
 	@Override
-	public BigDecimal obterVendaEsmagadaMedia(Intervalo<Integer> faixa,
-			String codigoProduto, String[] edicoes, Integer numeroCotaEsmagada) {
+	public BigDecimal obterVendaEsmagadaMedia(String codigoProduto, Integer numeroEdicao, 
+			Integer numeroCotaEsmagada) {
 		
-		StringBuilder hql = new StringBuilder("select sum(epc.QTDE_RECEBIDA) / count(pe.ID) " +
+		SQLQuery query = this.getSession().createSQLQuery("select sum(epc.QTDE_RECEBIDA) " +
+				" from ESTOQUE_PRODUTO_COTA epc " +
+				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +
+				" join PRODUTO p on (p.ID = pe.PRODUTO_ID) " +
+				" join COTA c on (c.ID = epc.COTA_ID) " +
+				" where p.CODIGO = :codigoProduto " +
+				" and pe.NUMERO_EDICAO = :numeroEdicao " +
+				" and epc.QTDE_DEVOLVIDA = 0 " +
+				" and c.NUMERO_COTA = :numeroCotaEsmagada ");
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameter("numeroCotaEsmagada", numeroCotaEsmagada);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public int obterQtdEdicoesPresentes(String codigoProduto, String[] edicoes, 
+			Integer numeroCotaEsmagada) {
+		
+		SQLQuery query = this.getSession().createSQLQuery("select count(distinct pe.ID) " +
 				" from ESTOQUE_PRODUTO_COTA epc " +
 				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +
 				" join PRODUTO p on (p.ID = pe.PRODUTO_ID) " +
 				" join COTA c on (c.ID = epc.COTA_ID) " +
 				" where p.CODIGO = :codigoProduto " +
 				" and pe.NUMERO_EDICAO in (:edicoes) " +
-				" and epc.QTDE_DEVOLVIDA = 0 " +
 				" and c.NUMERO_COTA = :numeroCotaEsmagada ");
-		
-		if (faixa != null){
-			
-			hql.append(" and epc.QTDE_RECEBIDA between :de and :ate ");
-		}
-		
-		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
-		
-		if (faixa != null){
-		
-			query.setParameter("de", faixa.getDe());
-			query.setParameter("ate", faixa.getAte());
-		}
 		
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameterList("edicoes", edicoes);
 		query.setParameter("numeroCotaEsmagada", numeroCotaEsmagada);
 		
-		return (BigDecimal) query.uniqueResult();
+		return ((BigInteger) query.uniqueResult()).intValue();
+	}
+
+
+	@Override
+	public boolean cotaTemProduto(String codigoProduto, Integer numeroEdicao,
+			Integer numeroCota) {
+		
+		SQLQuery query = this.getSession().createSQLQuery(
+				"select count(pe.ID) " +
+				" from ESTOQUE_PRODUTO_COTA epc " +
+				" join PRODUTO_EDICAO pe on (pe.ID = epc.PRODUTO_EDICAO_ID) " +
+				" join PRODUTO p on (p.ID = pe.PRODUTO_ID) " +
+				" join COTA c on (c.ID = epc.COTA_ID) " +
+				" where p.CODIGO = :codigoProduto " +
+				" and pe.NUMERO_EDICAO = :numeroEdicao " +
+				" and c.NUMERO_COTA = :numeroCota ");
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		query.setParameter("numeroCota", numeroCota);
+		
+		return ((BigInteger) query.uniqueResult()).compareTo(BigInteger.ZERO) > 0;
 	}
 }
