@@ -6,7 +6,7 @@ var analiseParcialController = $.extend(true, {
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
-    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
+    inputReparteSugerido: '<input #disabled reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" ajustado="#ajustado" quantidadeAjuste="#quantidadeAjuste" value="#value" class="reparteSugerido" />',
     tipoExibicao : 'NORMAL',
 
     exibirMsg: function(tipo, texto) {
@@ -411,8 +411,13 @@ var analiseParcialController = $.extend(true, {
 
     atualizaReparte : function(input) {
     	
+    	if (!$('#saldo_reparte').val() || $('#saldo_reparte').val() == ""){
+    		
+    		$('#saldo_reparte').val(0);
+    	}
+    	
         var $saldoreparte = $('#saldo_reparte');
-        var saldoReparte = parseInt($saldoreparte.text());
+        var saldoReparte = parseInt($saldoreparte.val());
         var $input_reparte = $(input);
         var numeroCota = $input_reparte.attr('numeroCota');
         var reparteDigitado = $input_reparte.val();
@@ -428,7 +433,8 @@ var analiseParcialController = $.extend(true, {
                     return;
                 }
             }
-            $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
+            
+            $saldoreparte.text(parseInt($saldoreparte.val(), 10) - reparteSubtraido);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
@@ -509,8 +515,11 @@ var analiseParcialController = $.extend(true, {
         }
         analiseParcialController.edicoesBase = resultado.rows[0].cell.edicoesBase;
 
+        var totalSaldoReparte = 0;
+        
         // atualização dos valores da grid
         for (var i = 0; i < resultado.rows.length; i++) {
+        	
             var cell = resultado.rows[i].cell;
             var numCota = cell.cota;
             var input = analiseParcialController.inputReparteSugerido.toString()
@@ -518,6 +527,8 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#value/g, cell.reparteSugerido)
                             .replace(/#repEstudo/g, cell.reparteEstudo)
                             .replace(/#disabled/g, disabled ? 'disabled':'')
+                            .replace(/#ajustado/g, cell.ajustado)
+                            .replace(/#quantidadeAjuste/g, cell.quantidadeAjuste)
                             .replace(/#redReparte/g, analiseParcialController.calculaPercentualReducaoReparte(cell.reparteEstudo, cell.reparteSugerido));
             cell.reparteSugerido = input;
             
@@ -551,8 +562,15 @@ var analiseParcialController = $.extend(true, {
                     cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
                     cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda || 0;
                 }
-            }
+            }   
+            
+            totalSaldoReparte += parseInt(cell.quantidadeAjuste);
         }
+        
+        $("#saldo_reparte").val(totalSaldoReparte);
+        
+        $("#saldo_reparte").text(totalSaldoReparte);
+        
         return resultado;
     },
 
@@ -615,8 +633,11 @@ var analiseParcialController = $.extend(true, {
 
         //insere asterisco para marcações de reparteSugerido != reparteEstudo
         $('table#baseEstudoGridParcial tr td[abbr="reparteSugerido"] div input').each(function(){
-            var $this = $(this);
-            if ($this.attr('reparteInicial') != $this.attr('reparteAtual')) {
+            
+        	var $this = $(this);
+            
+            if (($this.attr('reparteInicial') != $this.attr('reparteAtual'))||($this.attr('ajustado') == "true")) {
+            	
                 $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
             }
         });

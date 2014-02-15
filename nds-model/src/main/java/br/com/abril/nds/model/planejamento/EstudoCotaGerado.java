@@ -94,6 +94,9 @@ public class EstudoCotaGerado implements Serializable {
     
     @Column(name = "COTA_NOVA")
     private Boolean cotaNova;
+    
+    @Column(name = "REPARTE_INICIAL")
+    private BigInteger reparteInicial;
 
     public EstudoCotaGerado() {
 
@@ -167,7 +170,7 @@ public class EstudoCotaGerado implements Serializable {
 	this.reparteMinimo = reparteMinimo;
     }
 
-    @Override
+	@Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
@@ -288,5 +291,12 @@ public class EstudoCotaGerado implements Serializable {
 	public void setCotaNova(Boolean cotaNova) {
 		this.cotaNova = cotaNova;
 	}
-	
+
+	public BigInteger getReparteInicial() {
+		return reparteInicial;
+	}
+
+	public void setReparteInicial(BigInteger reparteInicial) {
+		this.reparteInicial = reparteInicial;
+	}
 }
