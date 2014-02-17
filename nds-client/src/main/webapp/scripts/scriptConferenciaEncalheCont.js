@@ -162,7 +162,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 				
 				setTimeout(function() {
-					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.veificarCobrancaGerada);
+					ConferenciaEncalheCont.atualizarValoresGridInteira(ConferenciaEncalheCont.verificarCobrancaGerada);
 				}, 1000);
 			}
 			
@@ -1440,9 +1440,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	},
 	
-	veificarCobrancaGerada: function(){
+	verificarCobrancaGerada: function(){
 		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarCobrancaGerada', null,
 		
 			function(conteudo){
 			

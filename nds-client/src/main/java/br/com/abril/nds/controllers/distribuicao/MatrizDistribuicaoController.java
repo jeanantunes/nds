@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -23,7 +24,6 @@ import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
@@ -42,6 +42,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.SomarEstudosService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -106,7 +107,7 @@ public class MatrizDistribuicaoController extends BaseController {
     private ProdutoService produtoService;
 
     @Autowired
-    private ProdutoEdicaoDAO produtoEdicaoDAO;
+    private ProdutoEdicaoAlgoritimoService produtoEdicaoAlgoritimoService;
 
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
     private static final String LISTA_DE_DUPLICACOES = "LISTA_DE_DUPLICACOES";
@@ -262,7 +263,7 @@ public class MatrizDistribuicaoController extends BaseController {
         if (buscarProduto == null || buscarProduto.isEmpty()) {
 
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo
-                    + "] não encontrado."));
+                + "] não encontrado."));
         }
 
 
@@ -536,7 +537,7 @@ public class MatrizDistribuicaoController extends BaseController {
                 if (qtdDuplicacoes > MAX_DUPLICACOES_PERMITIDAS) {
 
                     throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não é permitido mais do que "
-                            + MAX_DUPLICACOES_PERMITIDAS + " duplicações"));
+                        + MAX_DUPLICACOES_PERMITIDAS + " duplicações"));
                 }
             }
         }
@@ -618,7 +619,9 @@ public class MatrizDistribuicaoController extends BaseController {
 
         EstudoTransient estudoTemp = new EstudoTransient();
 
-        ProdutoEdicaoEstudo prod = produtoEdicaoDAO.getProdutoEdicaoEstudo(produtoDistribuicaoVO.getCodigoProduto(), produtoDistribuicaoVO.getNumeroEdicao().longValue(), produtoDistribuicaoVO.getIdLancamento() == null ? null : produtoDistribuicaoVO.getIdLancamento().longValue());
+        ProdutoEdicaoEstudo prod = produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(produtoDistribuicaoVO
+                .getCodigoProduto(), produtoDistribuicaoVO.getNumeroEdicao().longValue(), produtoDistribuicaoVO
+                .getIdLancamento() == null ? null : produtoDistribuicaoVO.getIdLancamento().longValue());
         estudoTemp.setProdutoEdicaoEstudo(prod);
 
         definicaoBases.executar(estudoTemp);
@@ -649,7 +652,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
             if (obterProdutoPorCodigo.getIsGeracaoAutomatica() == null || obterProdutoPorCodigo.getIsGeracaoAutomatica() == false) {
                 naoPermiteGeracaoAutomaticaList.add(produtoDistribuicaoVO);
-                msgErro.add("Produto " + produtoDistribuicaoVO.getCodigoProduto() + " não permite geração automática de estudo.");
+                msgErro.add("Produto " + produtoDistribuicaoVO.getCodigoProduto()
+                    + " não permite geração automática de estudo.");
             }
         }
         produtoDistribuicaoVOs.removeAll(naoPermiteGeracaoAutomaticaList);
@@ -686,7 +690,7 @@ public class MatrizDistribuicaoController extends BaseController {
         if (!produto.getIsGeracaoAutomatica()) {
 
             throw new ValidacaoException(TipoMensagem.WARNING, "Produto " + produto.getCodigo()
-                    + " não pode ser gerado pela geração automatica");
+                + " não pode ser gerado pela geração automatica");
         }
     }
 

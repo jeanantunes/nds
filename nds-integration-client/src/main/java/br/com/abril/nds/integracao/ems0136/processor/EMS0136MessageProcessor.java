@@ -258,6 +258,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO);
 		statusLancamentos.add(StatusLancamento.BALANCEADO);
 		statusLancamentos.add(StatusLancamento.EXPEDIDO);
+		statusLancamentos.add(StatusLancamento.FECHADO);
 		
 		if(!statusLancamentos.contains(lancamento.getStatus())){
 			

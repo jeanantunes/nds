@@ -855,7 +855,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 						orderByColumn = " valorComDesconto ";
 						break;
 					default:
-						orderByColumn = " dataDoRecolhimentoDistribuidor ";
+						orderByColumn = " CHAMADA_ENCALHE.DATA_RECOLHIMENTO ";
 						break;
 				}
 			
@@ -865,7 +865,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				sql.append(paginacao.getOrdenacao().toString());
 			}
 		} else {
-			sql.append(" order by dataDoRecolhimentoDistribuidor ");
+			sql.append(" order by CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
