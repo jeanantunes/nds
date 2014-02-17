@@ -8,17 +8,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.dto.*;
+import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
-import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
-import br.com.abril.nds.dto.EstrategiaDTO;
-import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -112,6 +109,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
     
     @Autowired
     private ProdutoService prodService;
+
+    @Autowired
+    private EstudoProdutoEdicaoBaseRepository estudoProdutoEdicaoBaseRepository;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -128,6 +128,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    result.include("estudo", estudo);
 	    produtoEdicao = estudo.getProdutoEdicao();
         produto = estudo.getProdutoEdicao().getProduto();
+        lancamentoId = estudo.getLancamentoID();
     } else {
         produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
         produto = produtoEdicao.getProduto();
@@ -157,12 +158,17 @@ public class DistribuicaoVendaMediaController extends BaseController {
                         .getTipoClassificacaoProduto() != null ? base.getProdutoEdicao().getTipoClassificacaoProduto()
                         .getId() : null, false));
 	    }
-	} else {
-	    EstudoTransient estudoTemp = new EstudoTransient();
-	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
-	    try {
-		definicaoBases.executar(estudoTemp);
-		selecionados.clear();
+    } else if (estudo != null) {
+        List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudo.getId());
+        for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
+            selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(edicaoBaseEstudoDTO.getCodigoProduto(), edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false));
+        }
+    } else {
+        EstudoTransient estudoTemp = new EstudoTransient();
+        estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
+        try {
+            definicaoBases.executar(estudoTemp);
+            selecionados.clear();
 
 		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
 		    if (base.isParcial()) {

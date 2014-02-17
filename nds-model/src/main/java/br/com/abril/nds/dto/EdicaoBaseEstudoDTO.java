@@ -7,7 +7,7 @@ public class EdicaoBaseEstudoDTO {
 	private String codigoProduto;
 	private String nomeProduto;
 	private BigInteger numeroEdicao;
-	private Integer peso;
+	private BigInteger peso;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -33,11 +33,11 @@ public class EdicaoBaseEstudoDTO {
 		this.numeroEdicao = numeroEdicao;
 	}
 
-	public Integer getPeso() {
+	public BigInteger getPeso() {
 		return peso;
 	}
 
-	public void setPeso(Integer peso) {
+	public void setPeso(BigInteger peso) {
 		this.peso = peso;
 	}
 
