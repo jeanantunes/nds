@@ -8,14 +8,18 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import br.com.abril.nds.dto.*;
-import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
+import br.com.abril.nds.dto.EstrategiaDTO;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -32,6 +36,7 @@ import br.com.abril.nds.model.planejamento.EstudoGerado;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
+import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.service.DistribuicaoVendaMediaService;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstrategiaService;
@@ -161,7 +166,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
     } else if (estudo != null) {
         List<EdicaoBaseEstudoDTO> edicaoBaseEstudoDTOs = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudo.getId());
         for (EdicaoBaseEstudoDTO edicaoBaseEstudoDTO : edicaoBaseEstudoDTOs) {
-            selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(edicaoBaseEstudoDTO.getCodigoProduto(), edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null, false));
+                selecionados.addAll(distribuicaoVendaMediaService.pesquisar(edicaoBaseEstudoDTO.getCodigoProduto(),
+                        edicaoBaseEstudoDTO.getNomeProduto(), edicaoBaseEstudoDTO.getNumeroEdicao().longValue(), null,
+                        false));
         }
     } else {
         EstudoTransient estudoTemp = new EstudoTransient();
