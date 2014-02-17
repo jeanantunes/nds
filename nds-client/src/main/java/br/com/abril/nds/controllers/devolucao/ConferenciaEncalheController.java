@@ -580,6 +580,14 @@ public class ConferenciaEncalheController extends BaseController {
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(false);
 	}
 	
+	/**
+	 * Obtém no banco de dados as informações da 
+	 * conferencia de encalhe da cota em questão
+	 * e setta em session.
+	 * 
+	 * @param numeroCota
+	 * @param indConferenciaContingencia
+	 */
 	private void recarregarInfoConferenciaEncalheCotaEmSession(Integer numeroCota, boolean indConferenciaContingencia) {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
@@ -1212,6 +1220,7 @@ public class ConferenciaEncalheController extends BaseController {
 																         this.getSetConferenciaEncalheExcluirFromSession(), 
 																         this.getUsuarioLogado(),
 																         indConferenciaContingencia);
+	        
 
 		} catch (EncalheSemPermissaoSalvarException e) {
             LOGGER.error(
@@ -1228,6 +1237,8 @@ public class ConferenciaEncalheController extends BaseController {
                     "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
 		}
+		
+		limparDadosSessao();
 	}
 
 	    /**
@@ -1286,7 +1297,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
 		this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive()
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive()
                 .serialize();
 	}
 	
@@ -1942,7 +1953,6 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		} else {
 			this.comparValorTotalCEQuantidade(qtdCEInformado);
 		}
-			
 		
 		
 	}
