@@ -138,6 +138,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Date dataRecolhimentoReal;
 	private Integer semanaRecolhimento;
 	private Boolean origemInterface;
+	private Boolean lancamentoExcluido;
 	private String editor;
 	private String caracteristicaProduto;
 	
@@ -588,6 +589,15 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
+	
+	public Boolean isLancamentoExcluido() {
+		return lancamentoExcluido;
+	}
+
+	public void setLancamentoExcluido(Boolean lancamentoExcluido) {
+		this.lancamentoExcluido = lancamentoExcluido;
+	}
+
 	/**
 	 * @return the descricaoDesconto
 	 */

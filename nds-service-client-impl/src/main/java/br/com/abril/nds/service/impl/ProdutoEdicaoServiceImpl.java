@@ -1145,6 +1145,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			 */
 			dto.setStatusSituacao(situacaoProdutoEdicao);
 			
+			dto.setLancamentoExcluido(dto.getDataLancamento() == null);
+			
 		} else {
 			
 			obterProdutoEdicaoDTOManual(codigoProduto, produto, dto);
