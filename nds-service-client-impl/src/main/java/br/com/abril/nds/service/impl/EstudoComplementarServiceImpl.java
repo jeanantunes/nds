@@ -146,6 +146,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "reparte", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 	    nova.setEstudo(estudo1);
 	    nova.setReparte(reparte);
+	    nova.setReparteInicial(reparte);
 	    nova.setClassificacao("CP");
 	    cotas.add(nova);
 	    

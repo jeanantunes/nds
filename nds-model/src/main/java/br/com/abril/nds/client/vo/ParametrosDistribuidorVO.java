@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -27,7 +28,9 @@ public class ParametrosDistribuidorVO {
     // Frame Endereço
     private EnderecoVO endereco = new EnderecoVO();
     // Frame Fiscal
-    private TipoAtividade regimeTributario;
+    private RegimeTributario regimeTributario;
+    
+    private TipoAtividade tipoAtividade;
     
     private boolean possuiRegimeEspecialDispensaInterna;
     
@@ -307,18 +310,26 @@ public class ParametrosDistribuidorVO {
     /**
      * @return the regimeTributario
      */
-    public TipoAtividade getRegimeTributario() {
+    public RegimeTributario getRegimeTributario() {
         return regimeTributario;
     }
 
     /**
      * @param regimeTributario the regimeTributario to set
      */
-    public void setRegimeTributario(TipoAtividade regimeTributario) {
+    public void setRegimeTributario(RegimeTributario regimeTributario) {
         this.regimeTributario = regimeTributario;
     }
     
-    public boolean isPossuiRegimeEspecialDispensaInterna() {
+    public TipoAtividade getTipoAtividade() {
+		return tipoAtividade;
+	}
+
+	public void setTipoAtividade(TipoAtividade tipoAtividade) {
+		this.tipoAtividade = tipoAtividade;
+	}
+
+	public boolean isPossuiRegimeEspecialDispensaInterna() {
         return possuiRegimeEspecialDispensaInterna;
     }
 

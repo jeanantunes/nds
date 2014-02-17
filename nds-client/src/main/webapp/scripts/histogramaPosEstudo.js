@@ -642,7 +642,18 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 
 	recalcularEstudo : function (){
-		var urlAnalise = contextPath + '/distribuicaoVendaMedia/index?estudoId=' + $('#codigoEstudoFs').text();
+		var urlAnalise = contextPath + '/distribuicaoVendaMedia/index';
+        urlAnalise += '?estudoId=' + $('#codigoEstudoFs').text();
+//        urlAnalise += '&codigoProduto=' + $('#codigoProdutoFs').text();
+//        urlAnalise += '&edicao=' + $('#edicaoProdutoFs').text();
+//        urlAnalise += '&lancamentoId=';
+//        urlAnalise += '&juramentado=';
+//        urlAnalise += '&suplementar=';
+//        urlAnalise += '&lancado=';
+//        urlAnalise += '&promocional=';
+//        urlAnalise += '&sobra=' + $('#fieldSetResumoReservaTecnica').text().replace(/[^-0-9]/g, '');
+//        urlAnalise += '&repDistrib=' + $('#fieldSetResumoReparteDistribuida').text().replace(/\D/g, '');
+
 		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
 	}
 

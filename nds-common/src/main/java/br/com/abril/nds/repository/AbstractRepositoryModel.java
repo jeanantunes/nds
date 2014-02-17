@@ -134,9 +134,11 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	
 	protected Session getSession() {
 		try {
-			return sessionFactory.getCurrentSession();
-		} catch (Exception e) {
 			
+			return sessionFactory.getCurrentSession();
+			
+		} catch (Exception e) {
+			System.out.println("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n");
 		}
 		
 		return null; // sessionFactory.openSession();
@@ -153,6 +155,5 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			
 		}
 	}
-	
 	
 }

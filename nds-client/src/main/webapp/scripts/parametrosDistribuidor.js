@@ -751,6 +751,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listPercentualExcedente2\\.pdv', this.workspace)
 		.numeric();
 		
+		parametrosDistribuidorController.obterTributosPeloRegimeTributario();
 		// fim F2
 		
 	},
@@ -829,7 +830,71 @@ var parametrosDistribuidorController = $.extend(true, {
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 					   });
 		 }
-	 }
+	 },
+	 
+	 obterTributosPeloRegimeTributario : function() {
+		 
+		 var params = [];
+		 
+		 $('#regimeTributarioTributos').html('');
+		 
+		 params.push({name: 'regimeTributarioId', value: $('#regimeTributario', this.workspace).val()});
+		 $.postJSON(this.path + "obterTributosPeloRegimeTributario", params,
+		 function (result) {
+	 
+			 var myTR = $('<tr>');
+			 $.each(result, function(key, value) {
+
+				 var tributo = '';
+				 var input;
+				 
+				 
+				 $.each(value, function(k, v) {
+					 //console.log(k +' - '+ value[k]);
+					 var myTD = $('<td>');
+					 if(k == 'tributo') {
+						 tributo = value[k];
+					 }
+					 
+					 if(k == 'valor' || k == 'id' || k == 'tributoId') {
+						 
+						 if(k == 'valor') {
+							 input = $('<input>').attr({
+								    type: 'text',
+								    id: k + tributo,
+								    name: tributo,
+								    value: floatToPrice(value[k])
+							 });
+						 }
+						 
+						 if(k == 'id' || k == 'tributoId') {
+							 input = $('<input>').attr({
+								    type: 'hidden',
+								    id: k + value['tributo'],
+								    name: k + value['tributo'],
+								    value: value[k]
+							 });
+							 
+						 }
+						 
+						 myTD.append(input);
+						 myTR.append(myTD);
+						 
+					 } else {
+						 
+						 if(k == 'tributoDescricao') {
+							 myTD.text(value[k] +':');
+							 myTR.append(myTD);
+						 }
+						 
+					 }
+					 
+				 });
+				 
+			 });
+			 $('#regimeTributarioTributos').append(myTR);
+		 });
+	 },
 	 
 }, BaseController);
 

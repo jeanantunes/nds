@@ -282,7 +282,7 @@ var ParciaisController = $.extend(true, {
 		data.push({name:'filtro.idFornecedor',		value: ParciaisController.get("idFornecedor")});
 		data.push({name:'filtro.dataInicial',		value: ParciaisController.get("dataInicial")});
 		data.push({name:'filtro.dataFinal',			value: ParciaisController.get("dataFinal")});
-		data.push({name:'filtro.status',			value: ParciaisController.get("status")});
+//		data.push({name:'filtro.status',			value: ParciaisController.get("status")});
 		
 		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected').text()});
 		
@@ -951,7 +951,7 @@ var ParciaisController = $.extend(true, {
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 180,
+					width : 260,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -966,13 +966,13 @@ var ParciaisController = $.extend(true, {
 					width : 180,
 					sortable : true,
 					align : 'left'
-				}, {
+				}, /*{
 					display : 'Status',
 					name : 'statusParcial',
 					width : 80,
 					sortable : true,
 					align : 'left'
-				}, {
+				},*/ {
 					display : 'Ação',
 					name : 'acao',
 					width : 40,

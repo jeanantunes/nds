@@ -43,6 +43,19 @@
 	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
 	$('.camposEspecificosRegimeEspecial').hide();
 	</c:if>
+	/*
+	$(document).ready(function() {
+		$.each($('#regimeTributario option', this.workspace), function(key, value) {
+			 if($(value).val() == ${parametrosDistribuidor.regimeTributario.id}) {
+				 $(value).attr('selected', true);
+			 } else {
+				 $(value).removeAttr('selected');
+			 }
+			 console.log(key + ' ' + $(value).val()+ ' ' + $(value).text())
+		});
+    });*/
+	//${parametrosDistribuidor.regimeTributario.id}
+	//${parametrosDistribuidor.tipoAtividade.descricao}
 	
 </script>
 
@@ -68,7 +81,7 @@
 		   value="${parametrosDistribuidor.endereco.tipoEndereco}" />
 		   
     <input type="hidden" id="regimeTributarioHidden"
-		   value="${parametrosDistribuidor.regimeTributario}" />
+		   value="${parametrosDistribuidor.regimeTributario.id}" />
 		   		  
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
@@ -92,7 +105,7 @@
    	    <legend>Parâmetros do Distribuidor</legend>
         <div id="tabDistribuidor">
 			<ul>
-				<li><a href="#tabCadastro">Cadastro / Fiscal</a></li>
+				<li><a href="#tabCadastro">Cadastro</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabDistribuicao">Distribuição</a></li>
