@@ -47,12 +47,14 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 							.append(" 	join movimentoSub.lancamento lancamentoSub ")
 							.append("   join lancamentoSub.periodoLancamentoParcial periodoSub ")
 							.append("   join lancamentoSub.produtoEdicao produtoEdicaoSub ")
+							.append("   left join movimentoSub.movimentoEstoqueCotaFuro movFuro ")
 							.append(" 	where produtoEdicaoSub.id = produtoEdicao.id ")
+							.append(" 	and periodoSub.id = periodo.id ")
 							.append("	and lancamentoSub.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ")
 							.append(" 	and	lancamentoSub.dataRecolhimentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor ")
 							.append(" 	and tipoMovimentoSub.grupoMovimentoEstoque in (:gruposMovimentoEstoqueLancamento) ")
 							.append(" 	and lancamentoSub.tipoLancamento in ( :%s ) ")
-							.append(" 	and movimentoSub.movimentoEstoqueCotaFuro is null ) as %s , " );
+							.append(" 	and movFuro is null ) as %s , " );
 							
 		StringBuilder hql = new StringBuilder();
 		
@@ -66,7 +68,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			.append("  		lancamento.id as idLancamento, ")
 			.append(" 		periodo.id as idPeriodo, ");
 		
-		hql.append(String.format(templateHqlReparte.toString(),"tipoLancamentos", "reparte"));
+		hql.append(String.format(templateHqlReparte.toString(),"tipoLancamento", "reparte"));
 		
 		hql.append(String.format(templateHqlReparte.toString(),"tipoLancamentoRedistribuicao", "suplementacao"));
 		
@@ -76,11 +78,13 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			.append(" 	join movimentoSub.lancamento lancamentoSub ")
 			.append("   join lancamentoSub.periodoLancamentoParcial periodoSub ")
 			.append("   join lancamentoSub.produtoEdicao produtoEdicaoSub ")
+			.append("   left join movimentoSub.movimentoEstoqueCotaFuro movFuro ")
 			.append(" 	where produtoEdicaoSub.id = produtoEdicao.id ")
+			.append(" 	and periodoSub.id = periodo.id ")
 			.append("	and lancamentoSub.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ")
 			.append(" 	and	lancamentoSub.dataRecolhimentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor ")
 			.append(" 	and tipoMovimentoSub.grupoMovimentoEstoque in (:gruposMovimentoEstoqueEncalhe) ")
-			.append(" 	and movimentoSub.movimentoEstoqueCotaFuro is null ) as encalhe , " );
+			.append(" 	and movFuro is null ) as encalhe , " );
 		
 		hql.append(" ( select COALESCE(sum(item.qtdeVendaApurada),0) ") 
 			.append(" from ItemChamadaEncalheFornecedor item  ")
@@ -113,13 +117,14 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 							  GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR,
 							  GrupoMovimentoEstoque.COMPRA_ENCALHE,
 							  GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR,
+							  GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
 							  GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE,
 							  GrupoMovimentoEstoque.VENDA_ENCALHE,
 							  GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR));
 				
 		query.setParameterList("tipoLancamentoRedistribuicao",Arrays.asList(TipoLancamento.REDISTRIBUICAO));
 				
-		query.setParameterList("tipoLancamentos", Arrays.asList(TipoLancamento.REDISTRIBUICAO,TipoLancamento.LANCAMENTO));
+		query.setParameterList("tipoLancamento", Arrays.asList(TipoLancamento.LANCAMENTO));
 				
 		query.setParameterList("gruposMovimentoEstoqueEncalhe", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE));
 		
@@ -167,15 +172,15 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		}
 		
 		if(filtro.getDataInicialDate() != null) { 
-			hql.append( " and  periodo.lancamento.dataLancamentoDistribuidor>=:dtInicial ");
+			hql.append( " and  lancamento.dataLancamentoDistribuidor>=:dtInicial ");
 		}
 		
 		if(filtro.getDataFinalDate() != null) { 
-			hql.append( " and  periodo.lancamento.dataRecolhimentoDistribuidor<=:dtFinal ");
+			hql.append( " and  lancamento.dataRecolhimentoDistribuidor<=:dtFinal ");
 		}
 		
 		if(filtro.getStatus() != null) { 
-			hql.append(" and  periodo.lancamento.status=:status ");
+			hql.append(" and  lancamento.status=:status ");
 		}
 		
 		return hql.toString();

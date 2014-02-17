@@ -57,7 +57,12 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("                       COUNT(*) QTDE_EDICOES ");
 		sql.append("                  FROM estoque_produto_cota EPE ");
 		sql.append("                  JOIN COTA C ON C.ID = EPE.COTA_ID "); 
-		sql.append("                  WHERE EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ");
+		
+		if (listaIdEdicaoBase !=null && !listaIdEdicaoBase.isEmpty()){
+		    
+			sql.append("                  WHERE EPE.PRODUTO_EDICAO_ID IN (:EDICOES_BASES) ");
+		}
+		
 		sql.append("                 GROUP BY C.ID, C.NUMERO_COTA) EST ON EST.ID = REP.ID ");
 		sql.append("         WHERE REP.REPARTE BETWEEN :DE AND :ATE GROUP BY NUMERO_COTA) TES ");
 		
@@ -66,7 +71,11 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		query.setParameter("ESTUDO_ID", estudoId);
 		query.setParameter("DE", faixaDe);
 		query.setParameter("ATE", faixaAte);
-		query.setParameterList("EDICOES_BASES", listaIdEdicaoBase);
+		
+		if (listaIdEdicaoBase !=null && !listaIdEdicaoBase.isEmpty()){
+			
+		    query.setParameterList("EDICOES_BASES", listaIdEdicaoBase);
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(HistogramaPosEstudoAnaliseFaixaReparteDTO.class));
 

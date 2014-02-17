@@ -68,6 +68,8 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	private Integer faixaAte;
 	
+	private BigDecimal mediaEdPresente;
+	
 	public String getFaixaVenda() {
 		return faixaVenda;
 	}
@@ -222,5 +224,10 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setFaixaAte(BigInteger faixaAte) {
 		this.faixaAte = faixaAte.intValue();
 	}
-	
+	public BigDecimal getMediaEdPresente() {
+		return mediaEdPresente;
+	}
+	public void setMediaEdPresente(BigDecimal mediaEdPresente) {
+		this.mediaEdPresente = mediaEdPresente;
+	}
 }

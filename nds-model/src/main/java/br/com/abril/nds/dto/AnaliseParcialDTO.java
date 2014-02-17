@@ -45,7 +45,9 @@ public class AnaliseParcialDTO implements Serializable {
     private String descricaoLegenda;
     private BigInteger reparteEstudo;
     private BigInteger reparteEstudoOrigemCopia;
-
+    private Boolean ajustado;
+    private BigInteger quantidadeAjuste;
+    
     public String getDescricaoLegenda() {
         return descricaoLegenda;
     }
@@ -299,4 +301,20 @@ public class AnaliseParcialDTO implements Serializable {
             this.reparteEstudoOrigemCopia = reparteEstudoOrigemCopia.toBigInteger();
         }
     }
+
+	public Boolean getAjustado() {
+		return ajustado;
+	}
+
+	public void setAjustado(Boolean ajustado) {
+		this.ajustado = ajustado;
+	}
+
+	public BigInteger getQuantidadeAjuste() {
+		return quantidadeAjuste;
+	}
+
+	public void setQuantidadeAjuste(BigInteger quantidadeAjuste) {
+		this.quantidadeAjuste = quantidadeAjuste;
+	}
 }

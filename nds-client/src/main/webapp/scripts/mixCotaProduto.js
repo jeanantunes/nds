@@ -1265,7 +1265,7 @@ var mixCotaProdutoController = $.extend(true, {
 								}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
 																		
 									var a = new Array();
-									a.push("O arquivo possui [" + responseText.mixCotaDTOInconsistente.length + "] registros incosistentes:");
+									a.push("O arquivo possui [" + responseText.mixCotaDTOInconsistente.length + "] registros inconsistentes:");
 									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
 										a.push("Produto["+responseText.mixCotaDTOInconsistente[int].codigoProduto+"]"
 												+", Cota["+responseText.mixCotaDTOInconsistente[int].numeroCota+"]"
@@ -1279,9 +1279,6 @@ var mixCotaProdutoController = $.extend(true, {
 							}
 							
 							$('#modalUploadArquivoMix').dialog('close');
-							
-							mixCotaProdutoController.pesquisarPorProduto();							
-							
 						}, 
 						type: 'POST',
 						dataType: 'json'

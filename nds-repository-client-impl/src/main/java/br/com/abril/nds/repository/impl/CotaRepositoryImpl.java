@@ -2940,8 +2940,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas,
-			Intervalo<Integer> faixa, Integer qtdDevolvido) {
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -3021,34 +3020,11 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			useAnd = true;
 		}
 		
-		if (faixa != null){
-			
-			hql.append(useAnd ? " and " : " where ");
-			hql.append(" estoqueProdutoCota.qtdeRecebida between :de and :ate ");
-		}
-		
-		if (qtdDevolvido != null){
-			
-			hql.append(useAnd ? " and " : " where ");
-			hql.append(" estoqueProdutoCota.qtdeDevolvida = :qtdDevolvido ");
-		}
-		
 		hql.append(" GROUP BY cota.numeroCota ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		this.setParameters(query, parameters);
-		
-		if (faixa != null){
-			
-			query.setParameter("de", new BigInteger(faixa.getDe().toString()));
-			query.setParameter("ate", new BigInteger(faixa.getAte().toString()));
-		}
-		
-		if (qtdDevolvido != null){
-			
-			query.setParameter("qtdDevolvido", BigInteger.valueOf(qtdDevolvido.longValue()));
-		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistoricoDTO.class));
 		

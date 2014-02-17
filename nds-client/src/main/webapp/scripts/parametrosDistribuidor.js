@@ -845,7 +845,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			 var myTR = $('<tr>');
 			 $.each(result, function(key, value) {
 
-				 var tributo;
+				 var tributo = '';
 				 var input;
 				 
 				 
@@ -862,7 +862,7 @@ var parametrosDistribuidorController = $.extend(true, {
 							 input = $('<input>').attr({
 								    type: 'text',
 								    id: k + tributo,
-								    name: k + tributo,
+								    name: tributo,
 								    value: floatToPrice(value[k])
 							 });
 						 }

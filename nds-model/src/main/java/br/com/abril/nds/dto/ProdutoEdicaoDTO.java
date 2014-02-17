@@ -40,7 +40,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String classificacao;
 	
 	@XlsMapper(value="pacote_padrao")
-	private int pacotePadrao;
+	private Integer pacotePadrao;
 	
 	@XlsMapper(value="nome_comercial_produto")
 	private String nomeComercial;
@@ -78,7 +78,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private BigDecimal precoVenda;
 	private BigDecimal desconto;
 	private BigDecimal precoComDesconto;
-	private int peb;
+	private Integer peb;
 	private BigDecimal precoCusto;
 	private Long peso;
 	private Long idProduto;
@@ -138,6 +138,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Date dataRecolhimentoReal;
 	private Integer semanaRecolhimento;
 	private Boolean origemInterface;
+	private Boolean lancamentoExcluido;
 	private String editor;
 	private String caracteristicaProduto;
 	
@@ -230,16 +231,16 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-	public int getPacotePadrao() {
+	public Integer getPacotePadrao() {
 		return pacotePadrao;
 	}
-	public void setPacotePadrao(int pacotePadrao) {
+	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
-	public int getPeb() {
+	public Integer getPeb() {
 		return peb;
 	}
-	public void setPeb(int peb) {
+	public void setPeb(Integer peb) {
 		this.peb = peb;
 	}
 	public BigDecimal getPrecoCusto() {
@@ -588,6 +589,15 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setOrigemInterface(Boolean origemInterface) {
 		this.origemInterface = origemInterface;
 	}
+	
+	public Boolean isLancamentoExcluido() {
+		return lancamentoExcluido;
+	}
+
+	public void setLancamentoExcluido(Boolean lancamentoExcluido) {
+		this.lancamentoExcluido = lancamentoExcluido;
+	}
+
 	/**
 	 * @return the descricaoDesconto
 	 */

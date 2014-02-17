@@ -377,7 +377,7 @@ public interface CotaService {
 	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, 
-			List<Cota> cotas, final String sortorder, final String sortname, Intervalo<Integer> faixa);
+			List<Cota> cotas, final String sortorder, final String sortname);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	

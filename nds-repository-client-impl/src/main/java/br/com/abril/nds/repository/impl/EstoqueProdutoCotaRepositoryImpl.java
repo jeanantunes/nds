@@ -231,16 +231,15 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			sql.append("  			join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
 			sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
 			sql.append(" 			left join tipo_classificacao_produto tcp on tcp.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID");
-
-            if (!classificacaoProduto.equalsIgnoreCase("-1")) {
-                sql.append(" 			and tcp.ID = :classificacaoProduto");
-            }
-
             sql.append(" where cota_id = :cotaBusca ");
             sql.append(" and produto.CODIGO_ICD = :produtoBusca ");
-			sql.append("	group by edicao order by edicao desc limit 6");
-			
-			
+
+            if (!classificacaoProduto.equalsIgnoreCase("-1")) {
+                sql.append(" and tcp.ID = :classificacaoProduto");
+            }
+
+            sql.append("	group by edicao order by edicao desc limit 6");
+
 			SQLQuery query = getSession().createSQLQuery(sql.toString());
 			
 			query.setParameter("cotaBusca", cota.getId());
