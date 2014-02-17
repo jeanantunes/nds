@@ -68,6 +68,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.escondeGrid = function() { 
 		$("#gridMatrizDistribuicao", _workspace).hide();
 		$("#btnsMatrizDistribuicao", _workspace).hide();
+
+		var erros = new Array();
+        erros[0] = "Não foram encontrados resultados.";
+        exibirMensagemDialog('WARNING',   erros,"");
 		
 	},
 
