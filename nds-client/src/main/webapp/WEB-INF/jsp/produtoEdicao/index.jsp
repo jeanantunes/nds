@@ -137,6 +137,12 @@ fieldset {
 					<input type="hidden" id="produtoEdicaoController-idProdutoEdicao"
 						name="produtoEdicaoDTO.id" /> <input type="hidden"
 						id="produtoEdicaoController-modoTela" name="modoTela" />
+						
+					<input type="hidden" id="produtoEdicaoController-origemInterface"
+						   name="produtoEdicaoDTO.origemInterface" >
+						   
+					<input type="hidden" id="produtoEdicaoController-lancamentoExcluido"
+						   name="produtoEdicaoDTO.lancamentoExcluido" >
 
 					<div class="ldPesq">
 						<fieldset id="produtoEdicaoController-pesqProdutos"

@@ -763,6 +763,8 @@ var produtoEdicaoController =$.extend(true,  {
 						produtoEdicaoController.prepararTela(id, codigoProduto, modoTela);
 						
 						if (result) {
+							
+							$("#produtoEdicaoController-origemInterface", this.workspace).val(result.origemInterface);
 							$("#produtoEdicaoController-modoTela", this.workspace).val(modoTela);
 							$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 							$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
@@ -819,6 +821,10 @@ var produtoEdicaoController =$.extend(true,  {
 								 $("#produtoEdicaoController-dataLancamento").val("");
 								 $("#produtoEdicaoController-dataLancamento").removeAttr("disabled");
 								 $("#produtoEdicaoController-istrac29").val(true);
+								 $("#produtoEdicaoController-lancamentoExcluido", this.workspace).val(true);
+							} else {
+								
+								$("#produtoEdicaoController-lancamentoExcluido", this.workspace).val(false);
 							}
 							
 							/*
