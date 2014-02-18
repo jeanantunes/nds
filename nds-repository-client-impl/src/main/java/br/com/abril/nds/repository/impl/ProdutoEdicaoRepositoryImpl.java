@@ -1082,9 +1082,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
 				"select concat('De ', :de, ' a ', :ate) as faixaVenda," +
-				" sum(reparteTotal) / "+ queryQtdEdicoesPresentes +" as repTotal, " +
 				" (sum(reparteTotal) / "+ queryQtdEdicoesPresentes +") / count(distinct COTA_ID) as repMedio, " +
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +" as vdaTotal, " +
 				" (sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +" ) / count(distinct COTA_ID) as vdaMedio, " +
 				" ((sum(HIST.qtde_Recebida - hist.qtde_Devolvida) / "+ queryQtdEdicoesPresentes +") / (sum(reparteTotal) / " + queryQtdEdicoesPresentes + ")) * 100 as percVenda, " +
 
@@ -1115,27 +1113,35 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda, " +
 				" :de as faixaDe, " +
 				" :ate as faixaAte, " +
-				" sum(hist.mediaEdPresente) as mediaEdPresente" +
+				" sum(hist.mediaEdPresente) as mediaEdPresente, " +
+				" group_concat(distinct hist.cotaEsmagada) as idCotasEsmagadas, " +
+				" count(distinct hist.cotaEsmagada) as cotasEsmagadas, " +
+				" sum(hist.vendaEsmagada) as vendaEsmagadas " +
 
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select  " +
 				
-				"   case when sum(estoqueProdutoCota.QTDE_DEVOLVIDA) = sum(estoqueProdutoCota.QTDE_RECEBIDA) then 1 else 0 end as qtdeCotasSemVenda," +
+				" 	case when sum(estoqueProdutoCota.QTDE_DEVOLVIDA) = sum(estoqueProdutoCota.QTDE_RECEBIDA) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
-					" estoqueProdutoCota.ID as col_2_0_, " +
-					" cota2_.numero_cota as COTA_ID, " +
-					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
-					" sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
-					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
-					
-					" (sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentes +" as mediaEdPresente" +
-
-					" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
-					" 	join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
-					" 	join PRODUTO produto4_ on produtoEdicao.PRODUTO_ID=produto4_.ID " +
-					" 	join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
+				" 	estoqueProdutoCota.ID as col_2_0_, " +
+				" 	cota2_.numero_cota as COTA_ID, " +
+				" 	sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
+				" 	sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
+				
+				" 	(sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentes +" as mediaEdPresente, " +
+				
+				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentes +") = " +
+				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentes +")) then cota2_.NUMERO_COTA else null end as cotaEsmagada, " +
+				
+				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentes +") = " +
+				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentes +")) then round(sum(estoqueProdutoCota.QTDE_RECEBIDA) /"+ queryQtdEdicoesPresentes +") else 0 end as vendaEsmagada " +
+				
+				" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
+				" 	join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
+				" 	join PRODUTO produto4_ on produtoEdicao.PRODUTO_ID=produto4_.ID " +
+				" 	join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
 
 
 		// Adicionando filtro

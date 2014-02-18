@@ -16,6 +16,7 @@ public enum TipoDiferenca {
 	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em", GrupoMovimentoEstoque.FALTA_EM_COTA),
 	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de", GrupoMovimentoEstoque.SOBRA_DE_COTA),
 	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em", GrupoMovimentoEstoque.SOBRA_EM_COTA),
+	SOBRA_ENVIO_PARA_COTA(GrupoMovimentoEstoque.SOBRA_ENVIO_PARA_COTA, "Sobra envio para Cota"),
 	SOBRA_DE_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA, "Sobra DE direcionada para Cota", GrupoMovimentoEstoque.SOBRA_DE_COTA),
 	SOBRA_EM_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA, "Sobra EM direcionada para Cota", GrupoMovimentoEstoque.SOBRA_EM_COTA),
 	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),

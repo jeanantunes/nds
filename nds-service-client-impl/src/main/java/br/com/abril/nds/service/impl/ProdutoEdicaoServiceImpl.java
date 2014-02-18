@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -1147,6 +1148,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			 */
 			dto.setStatusSituacao(situacaoProdutoEdicao);
 			
+			dto.setLancamentoExcluido(dto.getDataLancamento() == null);
+			
 		} else {
 			
 			obterProdutoEdicaoDTOManual(codigoProduto, produto, dto);
@@ -1392,76 +1395,111 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
 
-		String[] newFaixasVenda = new String[faixasVenda.length + 1];
+		String[] newFaixasVenda = new String[faixasVenda.length];
 
 		for (int i = 0; i < faixasVenda.length; i++) {
 			newFaixasVenda[i] = faixasVenda[i];
 		}
+		
+		List<ProdutoEdicaoDTO> lstPrDTO = new ArrayList<ProdutoEdicaoDTO>();
+		for (String strEd : edicoes){
+			
+			ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+			dto.setCodigoProduto(codigoProduto);
+			dto.setNumeroEdicao(Long.valueOf(strEd));
+			lstPrDTO.add(dto);
+		}
 
-		newFaixasVenda[faixasVenda.length] = "0-999999";
-
+		BigDecimal reparteTotal = BigDecimal.ZERO;
+		BigDecimal reparteMedioTotal = BigDecimal.ZERO;
+		BigDecimal vendaTotal = BigDecimal.ZERO;
+		BigDecimal vendaMediaTotal = BigDecimal.ZERO;
+		BigDecimal partReparte = BigDecimal.ZERO;
+		BigDecimal partVenda = BigDecimal.ZERO;
+		BigInteger qtdeCotas = BigInteger.ZERO;
+		BigInteger cotasEsmagadas = BigInteger.ZERO;
+		BigDecimal vendaEsmagadas = BigDecimal.ZERO;
+		BigDecimal qtdeCotasSemVenda = BigDecimal.ZERO;
 		for (int i = 0; i < newFaixasVenda.length; i++) {
 			String[] faixa = newFaixasVenda[i].split("-");
 			AnaliseHistogramaDTO obj = 
 				produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(
 						filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
 			
-			String cotasEsmagadas = "";
-			BigInteger qtdCotaEsmag = BigInteger.ZERO;
-			if (obj.getIdCotaStr() != null && !obj.getIdCotaStr().isEmpty()){
+			List<Integer> cotas = new ArrayList<Integer>();
+			if (!obj.getIdCotaStr().isEmpty()){
 			
-				String[] cotas = obj.getIdCotaStr().split(",");
+				for (String strCota : obj.getIdCotaStr().split(",")){
+					cotas.add(Integer.valueOf(strCota));
+				}
+			}
+			
+			if (!cotas.isEmpty()){
+			
+				List<AnaliseHistoricoDTO> historico = 
+						this.cotaService.buscarHistoricoCotas(lstPrDTO, cotas, null, null);
 				
-				BigDecimal vendaEsmagMedia = BigDecimal.ZERO;
-				for (String numeroCota : cotas){
+				Double vendaMedia = 0d, reparteMedio = 0d;
 				
-					BigDecimal venda = null;
-					BigDecimal sumVenda = BigDecimal.ZERO;
-					BigInteger qtdEdicao = BigInteger.ZERO;
+				for (AnaliseHistoricoDTO anaDTO : historico){
 					
-					for (String edc : edicoes){
+					if (anaDTO.getVendaMedia() != null){
 						
-						venda = this.produtoEdicaoRepository.obterVendaEsmagadaMedia(codigoProduto, 
-								Integer.valueOf(edc), Integer.valueOf(numeroCota));
-						
-						if (venda != null){
-							
-							qtdEdicao = qtdEdicao.add(BigInteger.ONE);
-							sumVenda = sumVenda.add(venda);
-						} else if (this.produtoEdicaoRepository.cotaTemProduto(
-									codigoProduto, Integer.valueOf(edc), Integer.valueOf(numeroCota))) {
-							
-							qtdEdicao = qtdEdicao.add(BigInteger.ONE);
-						}
+						vendaMedia += anaDTO.getVendaMedia();
 					}
 					
-					if (!sumVenda.equals(BigDecimal.ZERO)){
-					
-						vendaEsmagMedia = vendaEsmagMedia.add(sumVenda.divide(new BigDecimal(qtdEdicao), 2, RoundingMode.HALF_DOWN));
-						cotasEsmagadas+=("," + numeroCota);
-						qtdCotaEsmag = qtdCotaEsmag.add(BigInteger.ONE);
+					if (anaDTO.getReparteMedio() != null){
+						
+						reparteMedio += anaDTO.getReparteMedio();
 					}
 				}
 				
-				obj.setIdCotasEsmagadas(cotasEsmagadas);
-				obj.setVendaEsmagadas(vendaEsmagMedia);
-				obj.setCotasEsmagadas(qtdCotaEsmag);
+				obj.setVdaTotal(new BigDecimal(vendaMedia));
+				obj.setRepTotal(new BigDecimal(reparteMedio));
 			}
 			
 			obj.executeScaleValues(edicoes.length);
-
-			if (i == newFaixasVenda.length - 1) {
-				obj.setFaixaVenda("Total:");
-
-				obj.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
-				obj.setReparteDistribuido(this.movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
-			}
-
+			
 			if(obj!=null){
 				list.add(obj);
 			}
+			
+			reparteTotal = reparteTotal.add(obj.getRepTotal());
+			vendaTotal = vendaTotal.add(obj.getVdaTotal());
+			qtdeCotas = qtdeCotas.add(obj.getQtdeCotas());
+			cotasEsmagadas = cotasEsmagadas.add(obj.getCotasEsmagadas());
+			vendaEsmagadas = vendaEsmagadas.add(obj.getVendaEsmagadas());
+			reparteMedioTotal = reparteMedioTotal.add(obj.getRepMedio());
+			vendaMediaTotal = vendaMediaTotal.add(obj.getVdaMedio());
+			partReparte = partReparte.add(obj.getPartReparte());
+			partVenda = partVenda.add(obj.getPartVenda());
+			
+			if (obj.getQtdeCotasSemVenda() != null){
+				qtdeCotasSemVenda = qtdeCotasSemVenda.add(obj.getQtdeCotasSemVenda());
+			}
 		}
-
+		
+		AnaliseHistogramaDTO totalizar = new AnaliseHistogramaDTO();
+		totalizar.setFaixaDe(BigInteger.ZERO);
+		totalizar.setFaixaAte(new BigInteger("999999"));
+		totalizar.setFaixaVenda("Total");
+		totalizar.setRepTotal(reparteTotal);
+		totalizar.setVdaTotal(vendaTotal);
+		totalizar.setQtdeCotas(qtdeCotas);
+		totalizar.setCotasEsmagadas(cotasEsmagadas);
+		totalizar.setVendaEsmagadas(vendaEsmagadas);
+		totalizar.setQtdeCotasSemVenda(qtdeCotasSemVenda);
+		totalizar.setRepMedio(reparteMedioTotal);
+		totalizar.setVdaMedio(vendaMediaTotal);
+		totalizar.setPercVenda(vendaTotal.divide(reparteTotal, RoundingMode.HALF_EVEN));
+		totalizar.setEncalheMedio(reparteTotal.subtract(vendaTotal).divide(new BigDecimal(qtdeCotas), RoundingMode.HALF_EVEN));
+		totalizar.setPartReparte(partReparte);
+		totalizar.setPartVenda(partVenda);
+		totalizar.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
+		totalizar.setReparteDistribuido(this.movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
+		
+		list.add(totalizar);
+		
 		return list;
 	}
 

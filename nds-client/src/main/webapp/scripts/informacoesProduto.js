@@ -318,9 +318,11 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 
         switch (matrizDistribuicao.tabSomarCopiarEstudos) {
             case 'somar':
+                $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
                 $('#somarEstudo-estudoPesquisa').val(numeroEstudo).change();
                 return;
             case 'copiar':
+                $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
                 $('#copiarEstudo-estudoPesquisa').val(numeroEstudo).change();
                 return;
         }

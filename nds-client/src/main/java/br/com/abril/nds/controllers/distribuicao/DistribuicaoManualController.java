@@ -110,6 +110,8 @@ public class DistribuicaoManualController extends BaseController {
 		    estudoCota.setQtdePrevista(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
 		    estudoCota.setReparte(cotaDTO.getQtdeEfetiva());
+		    estudoCota.setReparteInicial(cotaDTO.getQtdeEfetiva());
+		    estudoCota.setClassificacao("IN");
 		    estudo.getEstudoCotas().add(estudoCota);
 		}
 		estudoService.gravarEstudo(estudo);

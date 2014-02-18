@@ -30,7 +30,8 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -2940,7 +2941,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Integer> numeroCotas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -2950,17 +2951,12 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
-		hql.append(" avg(estoqueProdutoCota.qtdeRecebida) as reparteMedio, ");
-		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" produto.codigo as codigoProduto ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
-		//hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-		//hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
-		//hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
@@ -3000,22 +2996,12 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 			useAnd = true;
 		}
 		
-		if (cotas != null && cotas.size() != 0) {
+		if (numeroCotas != null && numeroCotas.size() != 0) {
 			
 			hql.append(useAnd ? " and " : " where ");
 			
-            // Populando o in ('','') do código produto
-			hql.append(" cota.numeroCota in ( ");
-			for (int i = 0; i < cotas.size(); i++) {
-				
-				hql.append(cotas.get(i).getNumeroCota());
-				
-				if (cotas.size() != i + 1) {
-					hql.append(","); 
-				}
-			}
-			
-			hql.append(" )");
+            hql.append(" cota.numeroCota in (:numeroCotas)");
+			parameters.put("numeroCotas", numeroCotas);
 			
 			useAnd = true;
 		}

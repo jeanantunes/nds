@@ -37,4 +37,13 @@ public interface UsuarioService {
 	public void alterarSenha(Usuario usuario);
 
 	public boolean verificarUsuarioSupervisor(String usuario, String senha);
+
+    /**
+     * @deprecated Use {@link #isNotSupervisor()} instead
+     */
+    public abstract Boolean isSupervisor(String login);
+
+    public abstract Boolean isSupervisor();
+
+    public abstract Boolean isNotSupervisor();
 }
