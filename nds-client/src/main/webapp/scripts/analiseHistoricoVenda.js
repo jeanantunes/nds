@@ -210,24 +210,6 @@ var analiseHistoricoVendaController = $.extend(true, {
 	},
 	
 	preProcessAnaliseGrid : function preProcessAnaliseGrid(result){
-		var resumo = {
-				qtdCota  : 0,
-				qtdPdv  :  0,
-				reparteMedio : 0,
-				vendaMedia : 0,
-				ed1Rep : 0,
-				ed1Venda : 0,
-				ed2Rep :  0,
-				ed2Venda : 0,
-				ed3Rep :  0,
-				ed3Venda : 0,
-				ed4Rep :  0,
-				ed4Venda : 0,
-				ed5Rep :  0,
-				ed5Venda : 0,
-				ed6Rep :  0,
-				ed6Venda : 0
-		};
 		
 		for ( var index in result.rows) {
 			row = result.rows[index];
@@ -236,126 +218,50 @@ var analiseHistoricoVendaController = $.extend(true, {
 			link = '<a href="javascript:;" onclick="analiseHistoricoVendaController.popup_cotas_detalhes('+row.cell.numeroCota+');" style="cursor:pointer">'+row.cell.nomePessoa+'</a>';
 			row.cell.nomePessoa = link;
 			
-			resumo.reparteMedio  = parseFloat(Math.round(resumo.reparteMedio)) + parseFloat(Math.round(row.cell.reparteMedio ||  0));
-			resumo.vendaMedia = parseFloat(Math.round(resumo.vendaMedia)) + parseFloat(Math.round(row.cell.vendaMedia ||  0));
-			resumo.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
-			resumo.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
-			resumo.ed1Rep += parseInt((row.cell.ed1Reparte  ||  0));
-			resumo.ed1Venda +=  parseInt((row.cell.ed1Venda ||  0));
-			resumo.ed2Rep +=  parseInt((row.cell.ed2Reparte ||  0));
-			resumo.ed2Venda +=  parseInt((row.cell.ed2Venda ||  0));
-			resumo.ed3Rep +=  parseInt((row.cell.ed3Reparte ||  0));
-			resumo.ed3Venda +=  parseInt((row.cell.ed3Venda ||  0));
-			resumo.ed4Rep +=  parseInt((row.cell.ed4Reparte ||  0));
-			resumo.ed4Venda +=  parseInt((row.cell.ed4Venda ||  0));
-			resumo.ed5Rep +=  parseInt((row.cell.ed5Reparte ||  0));
-			resumo.ed5Venda +=  parseInt((row.cell.ed5Venda ||  0));
-			resumo.ed6Rep +=  parseInt((row.cell.ed6Reparte ||  0));
-			resumo.ed6Venda +=  parseInt((row.cell.ed6Venda || 0));
+			row.cell.ed1Reparte = row.cell.ed1Reparte || row.cell.ed1Reparte == 0 ? row.cell.ed1Reparte : "";
+			row.cell.ed1Venda = row.cell.ed1Venda || row.cell.ed1Venda == 0 ? row.cell.ed1Venda : "";
+			row.cell.ed2Reparte = row.cell.ed2Reparte || row.cell.ed2Reparte == 0 ? row.cell.ed2Reparte : "";
+			row.cell.ed2Venda = row.cell.ed2Venda || row.cell.ed2Venda == 0 ? row.cell.ed2Venda : "";
+			row.cell.ed3Reparte = row.cell.ed3Reparte || row.cell.ed3Reparte == 0 ? row.cell.ed3Reparte : "";
+			row.cell.ed3Venda = row.cell.ed3Venda || row.cell.ed3Venda == 0 ? row.cell.ed3Venda : "";
+			row.cell.ed4Reparte = row.cell.ed4Reparte || row.cell.ed4Reparte == 0 ? row.cell.ed4Reparte : "";
+			row.cell.ed4Venda = row.cell.ed4Venda || row.cell.ed4Venda == 0 ? row.cell.ed4Venda : "";
+			row.cell.ed5Reparte = row.cell.ed5Reparte || row.cell.ed5Reparte == 0 ? row.cell.ed5Reparte : "";
+			row.cell.ed5Venda = row.cell.ed5Venda || row.cell.ed5Venda == 0 ? row.cell.ed5Venda : "";
+			row.cell.ed6Reparte = row.cell.ed6Reparte || row.cell.ed6Reparte == 0 ? row.cell.ed6Reparte : "";
+			row.cell.ed6Venda = row.cell.ed6Venda || row.cell.ed6Venda == 0 ? row.cell.ed6Venda : "";
 			
 			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
 			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
 			
 		}
 		
-		analiseHistoricoVendaController.calcularMediaVendaEReparteCota(resumo);
-		
-		
-		if(resumo.ed1Rep == 0){
-			resumo.ed1Rep = "";
-		}
-		if(resumo.ed1Venda == 0){
-			resumo.ed1Venda = "";
-		}
-		
-		if(resumo.ed2Rep == 0){
-			resumo.ed2Rep = "";
-		}
-		if(resumo.ed2Venda == 0){
-			resumo.ed2Venda = "";
-		}
-		
-		if(resumo.ed3Rep == 0){
-			resumo.ed3Rep = "";
-		}
-		if(resumo.ed3Venda == 0){
-			resumo.ed3Venda = "";
-		}
-		
-		if(resumo.ed4Rep == 0){
-			resumo.ed4Rep = "";
-		}
-		if(resumo.ed4Venda == 0){
-			resumo.ed4Venda = "";
-		}
-		
-		if(resumo.ed5Rep == 0){
-			resumo.ed5Rep = "";
-		}
-		if(resumo.ed5Venda == 0){
-			resumo.ed5Venda = "";
-		}
-		
-		if(resumo.ed6Rep == 0){
-			resumo.ed6Rep = "";
-		}
-		if(resumo.ed6Venda == 0){
-			resumo.ed6Venda = "";
-		}
-		if(resumo.reparteMedio == 0){
-			resumo.reparteMedio = "";
-		}
-		if(resumo.vendaMedia == 0){
-			resumo.vendaMedia = "";
-		}
+		var resumo = result.rows[result.rows.length - 1].cell;
 		
 		html = '<td width="50" >Qtde Cotas:</td>' +
-		        '<td width="103" >' + resumo.qtdCota + '</td>' +
+		        '<td width="103" >' + resumo.numeroCota + '</td>' +
 		        '<td width="30" align="right">' + resumo.qtdPdv + '</td>' +
 		        '<td width="32" align="right">' + resumo.reparteMedio + '</td>' +
 		        '<td width="32" align="right">' + (analiseHistoricoVendaController.isFaixaZero ? 0 : resumo.vendaMedia) + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed1Rep + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed1Venda + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed2Rep + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed2Venda + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed3Rep + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed3Venda + '</span></td>' +
-		        '<td width="32" align="right">' + resumo.ed4Rep + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed4Venda + '</span></td>' +
-		        '<td width="32" align="right">' + resumo.ed5Rep + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed5Venda + '</span></td>' +
-		        '<td width="32" align="right">' + resumo.ed6Rep + '</td>' +
-		        '<td width="32" align="right">' + resumo.ed6Venda + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed1Reparte ? resumo.ed1Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed1Venda ? resumo.ed1Venda : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed2Reparte ? resumo.ed2Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed2Venda ? resumo.ed2Venda : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed3Reparte ? resumo.ed3Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed3Venda ? resumo.ed3Venda : '') + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed4Reparte ? resumo.ed4Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed4Venda ? resumo.ed4Venda : '') + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed5Reparte ? resumo.ed5Reparte: '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed5Venda ? resumo.ed5Venda : '') + '</span></td>' +
+		        '<td width="32" align="right">' + (resumo.ed6Reparte ? resumo.ed6Reparte : '') + '</td>' +
+		        '<td width="32" align="right">' + (resumo.ed6Venda ? resumo.ed6Venda : '') + '</span></td>' +
 		        '<td width="15" >&nbsp;</td>';
 		 
 		 $('#rodapeAnaliseHistorico', analiseHistoricoVendaController.workspace).html(html);
 		 
+		 result.rows.splice(result.rows.length - 1, 1);
+		 
 		 return result;
-	},
-
-	calcularMediaVendaEReparteCota : function(resumo){
-		if (!resumo.reparteMedio && !resumo.vendaMedia){
-			var qtdEdicoes,
-				reparteMedio = 0,
-				vendaMedia = 0;
-	
-			if (typeof histogramaVendasController !== "undefined" && typeof histogramaVendasController.edicoesEscolhidas_HistogramaVenda !== "undefined") {
-				// EMS 2029
-				 qtdEdicoes = histogramaVendasController.edicoesEscolhidas_HistogramaVenda.length;
-			}else{
-				// EMS 2028
-				qtdEdicoes = historicoVendaController.Grids.EdicaoSelecionadaGrid.tableModel.rows.length;
-			}
-			
-			
-			for ( var i = 1; i <= qtdEdicoes + 1; i++) {
-				reparteMedio += resumo['ed' + i + 'Rep'];
-				vendaMedia += resumo['ed' + i + 'Venda'];
-			}
-			
-			resumo.reparteMedio  = parseInt(Math.round(reparteMedio / qtdEdicoes)); 
-			resumo.vendaMedia = parseInt(Math.round(vendaMedia / qtdEdicoes));
-		}
 	},
 	
 	// PopUp visulizado quando o usuário clica no nome da cota dentro do Grid Principal

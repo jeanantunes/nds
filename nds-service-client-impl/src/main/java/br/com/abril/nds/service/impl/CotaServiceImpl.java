@@ -2695,7 +2695,7 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, 
-			List<Cota> cotas, final String sortorder, final String sortname) {
+			List<Integer> cotas, final String sortorder, final String sortname) {
 		Collections.sort(listProdutoEdicaoDto);
 		
 		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
@@ -2714,61 +2714,61 @@ public class CotaServiceImpl implements CotaService {
 					qtdEdicaoVendida++;
 					if (i == 0) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().intValue());
 						}
 						
 						if(dto.getQtdeVendas() != null){
-							analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().toString());
+							analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().intValue());
 						}
 					}
 					
 					if (i == 1) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd2Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd2Reparte(dto.getReparte().intValue());
 						}
 						
 						if(dto.getQtdeVendas() != null){
-							analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().toString());
+							analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().intValue());
 						}
 					}
 					
 					if (i == 2) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd3Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd3Reparte(dto.getReparte().intValue());
 						}
 						
 						if(dto.getQtdeVendas() != null){
-							analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().toString());
+							analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().intValue());
 						}
 					}
 					
 					if (i == 3) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd4Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd4Reparte(dto.getReparte().intValue());
 						}
 						
 						if(dto.getQtdeVendas() != null){
-							analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().toString());
+							analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().intValue());
 						}
 					}
 					
 					if (i == 4) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd5Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd5Reparte(dto.getReparte().intValue());
 						}
 						
 						if(dto.getQtdeVendas() != null){
-							analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().toString());
+							analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().intValue());
 						}
 					}
 					
 					if (i == 5) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().intValue());
 						}
 						
 						if(dto.getQtdeVendas() != null){
-							analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().toString());
+							analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().intValue());
 						}
 					}
 				}
@@ -2784,48 +2784,16 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	private void formatarListaHistoricoVenda(List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
-		for (AnaliseHistoricoDTO dto : listAnaliseHistoricoDTO) {			
-
-			if(dto.getEd1Reparte().equals("0")){
-				dto.setEd1Reparte("");
-                if(dto.getEd1Venda().equals("0")){
-                    dto.setEd1Venda("");
-                }
-            }
-			if(dto.getEd2Reparte().equals("0")){
-				dto.setEd2Reparte("");
-                if(dto.getEd2Venda().equals("0")){
-                    dto.setEd2Venda("");
-                }
-            }
-			if(dto.getEd3Reparte().equals("0")){
-				dto.setEd3Reparte("");
-                if(dto.getEd3Venda().equals("0")){
-                    dto.setEd3Venda("");
-                }
-            }
-			if(dto.getEd4Reparte().equals("0")){
-				dto.setEd4Reparte("");
-                if(dto.getEd4Venda().equals("0")){
-                    dto.setEd4Venda("");
-                }
-            }
-			if(dto.getEd5Reparte().equals("0")){
-				dto.setEd5Reparte("");
-                if(dto.getEd5Venda().equals("0")){
-                    dto.setEd5Venda("");
-                }
-            }
-			if(dto.getEd6Reparte().equals("0")){
-				dto.setEd6Reparte("");
-                if(dto.getEd6Venda().equals("0")){
-                    dto.setEd6Venda("");
-                }
-            }
+		
+		for (AnaliseHistoricoDTO dto : listAnaliseHistoricoDTO) {
+			
 			if(dto.getReparteMedio() == 0){
+				
 				dto.setReparteMedio(null);
 			}
+			
 			if(dto.getVendaMedia() == 0){
+				
 				dto.setVendaMedia(null);
 			}
 		}
@@ -2872,22 +2840,23 @@ public class CotaServiceImpl implements CotaService {
 		Double reparteMedio = 0.0;
 		Double vendaMedia = 0.0;
 		
-		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd1Reparte());
-		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd2Reparte());
-		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd3Reparte());
-		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd4Reparte());
-		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd5Reparte());
-		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd6Reparte());
+		reparteMedio += analiseHistoricoDTO.getEd1Reparte() == null ? 0 : analiseHistoricoDTO.getEd1Reparte();
+		reparteMedio += analiseHistoricoDTO.getEd2Reparte() == null ? 0 : analiseHistoricoDTO.getEd2Reparte();
 		
-		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd1Venda());
-		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd2Venda());
-		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd3Venda());
-		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd4Venda());
-		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd5Venda());
-		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd6Venda());
+		reparteMedio += analiseHistoricoDTO.getEd3Reparte() == null ? 0 : analiseHistoricoDTO.getEd3Reparte();
+		reparteMedio += analiseHistoricoDTO.getEd4Reparte() == null ? 0 : analiseHistoricoDTO.getEd4Reparte();
+		reparteMedio += analiseHistoricoDTO.getEd5Reparte() == null ? 0 : analiseHistoricoDTO.getEd5Reparte();
+		reparteMedio += analiseHistoricoDTO.getEd6Reparte() == null ? 0 : analiseHistoricoDTO.getEd6Reparte();
 		
-		analiseHistoricoDTO.setReparteMedio(reparteMedio / qtdEdicoes);
-		analiseHistoricoDTO.setVendaMedia(vendaMedia / qtdEdicoes);
+		vendaMedia += analiseHistoricoDTO.getEd1Venda() == null ? 0 : analiseHistoricoDTO.getEd1Venda();
+		vendaMedia += analiseHistoricoDTO.getEd2Venda() == null ? 0 : analiseHistoricoDTO.getEd2Venda();
+		vendaMedia += analiseHistoricoDTO.getEd3Venda() == null ? 0 : analiseHistoricoDTO.getEd3Venda();
+		vendaMedia += analiseHistoricoDTO.getEd4Venda() == null ? 0 : analiseHistoricoDTO.getEd4Venda();
+		vendaMedia += analiseHistoricoDTO.getEd5Venda() == null ? 0 : analiseHistoricoDTO.getEd5Venda();
+		vendaMedia += analiseHistoricoDTO.getEd6Venda() == null ? 0 : analiseHistoricoDTO.getEd6Venda();
+		
+		analiseHistoricoDTO.setReparteMedio((double)Math.round(reparteMedio / qtdEdicoes));
+		analiseHistoricoDTO.setVendaMedia((double)Math.round(vendaMedia / qtdEdicoes));
 	}
 
 	@Transactional(readOnly = true)
