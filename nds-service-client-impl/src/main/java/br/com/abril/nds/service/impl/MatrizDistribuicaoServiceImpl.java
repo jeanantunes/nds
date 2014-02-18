@@ -555,6 +555,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    	cota.setReparte(BigInteger.ZERO);
 		    }
 		    
+		    cota.setReparteInicial(cota.getReparte());
+		    
 		    retorno.add(cota);
 		}
 	return retorno;
@@ -820,6 +822,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			} else {
 				cota.setQtdeEfetiva(cota.getReparte());
 				cota.setQtdePrevista(cota.getReparte());
+				cota.setReparteInicial(cota.getReparte());
 			}
 			estudoCotaGeradoRepository.adicionar(cota);
 		}
