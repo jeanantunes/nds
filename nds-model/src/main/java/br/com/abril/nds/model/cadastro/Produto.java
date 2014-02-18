@@ -627,6 +627,14 @@ public class Produto implements Serializable {
 		this.codigoICD = codigoICD;			
 	}
 	
+	public List<Tributacao> getProdutoTributacao() {
+		return produtoTributacao;
+	}
+
+	public void setProdutoTributacao(List<Tributacao> produtoTributacao) {
+		this.produtoTributacao = produtoTributacao;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

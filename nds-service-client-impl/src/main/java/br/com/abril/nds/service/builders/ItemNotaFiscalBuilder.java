@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.Tributacao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscal;
 import br.com.abril.nds.model.fiscal.OrigemItemNotaFiscalMovimentoEstoqueCota;
@@ -196,11 +197,36 @@ public class ItemNotaFiscalBuilder  {
 		detalheNotaFiscal.getProdutoServico().setValorTotalBruto(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto().multiply(new BigDecimal(movimentoEstoqueCota.getQtde())));
 		detalheNotaFiscal.getProdutoServico().setValorUnitario(movimentoEstoqueCota.getValoresAplicados().getPrecoComDesconto());
 		detalheNotaFiscal.getProdutoServico().setProdutoEdicao(new ProdutoEdicao(movimentoEstoqueCota.getProdutoEdicao().getId()));
+		for(Tributacao t : movimentoEstoqueCota.getProdutoEdicao().getProduto().getProdutoTributacao()) {
+			detalheNotaFiscal.getProdutoServico().setCst(t.getCstA().toString() + t.getCst().toString());
+			if("ICMS".equals(t.getTributo())) {
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaICMS(t.getValorAliquota());
+			}
+			if("IPI".equals(t.getTributo())) {
+				detalheNotaFiscal.getProdutoServico().setValorAliquotaIPI(t.getValorAliquota());
+			}
+		}
 		
 		//FIXME: Ajustar o codigo Excessao do ipi
 		detalheNotaFiscal.getProdutoServico().setExtipi(0L);
-		//FIXME: Ajustar CFOP
-		detalheNotaFiscal.getProdutoServico().setCfop(0);
+
+		String cfop = "";
+		if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getPais()
+				.equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getPais())) {
+			
+			if(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario().getEndereco().getUf()
+					.equals(notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente().getEndereco().getUf())) {
+				cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopEstado();
+			} else {
+				cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopOutrosEstados();
+			}
+			
+		} else {
+			
+			cfop = notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getCfopExterior();
+		}
+		
+		detalheNotaFiscal.getProdutoServico().setCfop(Integer.valueOf(cfop));
 		
 		movimentoEstoqueCota.setNotaFiscalEmitida(true);
 		

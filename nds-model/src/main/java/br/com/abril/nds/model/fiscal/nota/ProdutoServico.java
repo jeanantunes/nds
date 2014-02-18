@@ -99,6 +99,13 @@ public class ProdutoServico implements Serializable {
 	private Integer cfop;
 	
 	/**
+	 * CFOP
+	 */
+	@Column(name="CST", length=4, nullable=false)
+	@XmlElement(name="CST")
+	private String cst;
+	
+	/**
 	 * uCom
 	 */
 	@Column(name="UNIDADE_COMERCIAL", length=6, nullable=false)
@@ -159,6 +166,12 @@ public class ProdutoServico implements Serializable {
 	 */
 	@Column(name="VALOR_OUTROS", precision=18, scale=4, nullable=true)
 	private BigDecimal valorOutros;
+	
+	@Column(name="VALOR_ALIQUOTA_ICMS", precision=13, scale=4, nullable=false)
+	private BigDecimal valorAliquotaICMS;
+	
+	@Column(name="VALOR_ALIQUOTA_IPI", precision=13, scale=4, nullable=false)
+	private BigDecimal valorAliquotaIPI;
 	
 	@ManyToMany
 	@JoinTable( joinColumns = {			
@@ -281,6 +294,14 @@ public class ProdutoServico implements Serializable {
 		this.cfop = cfop;
 	}
 
+	public String getCst() {
+		return cst;
+	}
+
+	public void setCst(String cst) {
+		this.cst = cst;
+	}
+
 	/**
 	 * @return the unidade
 	 */
@@ -396,6 +417,22 @@ public class ProdutoServico implements Serializable {
 		this.valorOutros = valorOutros;
 	}
 	
+	public BigDecimal getValorAliquotaICMS() {
+		return valorAliquotaICMS;
+	}
+
+	public void setValorAliquotaICMS(BigDecimal valorAliquotaICMS) {
+		this.valorAliquotaICMS = valorAliquotaICMS;
+	}
+
+	public BigDecimal getValorAliquotaIPI() {
+		return valorAliquotaIPI;
+	}
+
+	public void setValorAliquotaIPI(BigDecimal valorAliquotaIPI) {
+		this.valorAliquotaIPI = valorAliquotaIPI;
+	}
+
 	/**
 	 * @return the listaMovimentoEstoqueCota
 	 */
