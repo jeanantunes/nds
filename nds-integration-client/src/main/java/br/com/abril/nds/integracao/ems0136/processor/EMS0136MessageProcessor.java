@@ -27,6 +27,7 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
@@ -41,7 +42,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private PeriodoLancamentoParcialRepository periodoLancamentoParcialRepository;
-	
+
+	@Autowired
+	private ParciaisService parciaisService;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {}
@@ -87,13 +90,16 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	
 	private Lancamento processarLancamento(EMS0136Input input,ProdutoEdicao produtoEdicao, Lancamento lancamento) {
 		
+		Date dataLancamento = this.parciaisService.obterDataUtilMaisProxima(input.getDataLancamento());
+		Date dataRecolhimento = this.parciaisService.obterDataUtilMaisProxima(input.getDataRecolhimento());
+
 		if(lancamento == null){
 			
-			lancamento = this.criarNovoLancamento(input.getDataRecolhimento(), input.getDataLancamento(), produtoEdicao);
+			lancamento = this.criarNovoLancamento(dataRecolhimento, dataLancamento, produtoEdicao);
 		}
 		else{
 			
-			this.atualizarDatasLancamento(lancamento, input.getDataRecolhimento(), input.getDataLancamento());
+			this.atualizarDatasLancamento(lancamento, dataRecolhimento, dataLancamento);
 		}
 		
 		return lancamento;
@@ -103,9 +109,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		LancamentoParcial lancamentoParcial = this.consultarLancalmentoParcial(produtoEdicao);
 		
+		Date dataLancamento = this.parciaisService.obterDataUtilMaisProxima(input.getDataLancamento());
+		Date dataRecolhimento = this.parciaisService.obterDataUtilMaisProxima(input.getDataRecolhimento());
+		
 		if(lancamentoParcial == null){
 			
-			lancamentoParcial = this.criarNovoLancamentoParcial(produtoEdicao, input);			
+			lancamentoParcial = this.criarNovoLancamentoParcial(produtoEdicao, input, dataLancamento, dataRecolhimento);			
 		}
 		
 		return lancamentoParcial;
@@ -181,7 +190,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				periodoLancamentoParcialRepository.obterRedistribuicoesPosterioresAoLancamento(periodo.getId(), dataLancamento);
 		
 		if(!redistribuicoesPosteriores.isEmpty()){
-		
+			
+			dataLancamento = this.parciaisService.obterDataUtilMaisProxima(dataLancamento);
+			dataRecolhimento = this.parciaisService.obterDataUtilMaisProxima(dataRecolhimento);
+			
 			int numeroLancamento = 2;
 			
 			for(Lancamento item : redistribuicoesPosteriores){
@@ -246,6 +258,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		statusLancamentos.add(StatusLancamento.EM_BALANCEAMENTO);
 		statusLancamentos.add(StatusLancamento.BALANCEADO);
 		statusLancamentos.add(StatusLancamento.EXPEDIDO);
+		statusLancamentos.add(StatusLancamento.FECHADO);
 		
 		if(!statusLancamentos.contains(lancamento.getStatus())){
 			
@@ -353,7 +366,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		return (LancamentoParcial) parcial;
 	}
 	
-	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicao produtoEdicao, EMS0136Input input){
+	private LancamentoParcial criarNovoLancamentoParcial(ProdutoEdicao produtoEdicao, EMS0136Input input, Date dataLancamento, Date dataRecolhimento){
 
 		LancamentoParcial parcial = new LancamentoParcial();
 		
@@ -363,9 +376,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		parcial.setStatus(status);
 		
-		parcial.setLancamentoInicial(input.getDataLancamento());
+		parcial.setLancamentoInicial(dataLancamento);
 		
-		parcial.setRecolhimentoFinal(input.getDataRecolhimento());
+		parcial.setRecolhimentoFinal(dataRecolhimento);
 		
 		return (LancamentoParcial) this.getSession().merge(parcial);
 	}
@@ -425,7 +438,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private Lancamento criarNovoLancamento(Date dataRecolhimento,Date dataLancamento,ProdutoEdicao produtoEdicao){
 
 		Lancamento lancamento = new Lancamento();
-	
+
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataLancamentoDistribuidor(dataLancamento);

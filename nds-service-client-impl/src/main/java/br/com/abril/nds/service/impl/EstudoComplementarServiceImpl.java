@@ -38,23 +38,23 @@ import br.com.abril.nds.service.EstudoComplementarService;
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
 
     @Autowired
-    EstudoGeradoRepository estudoGeradoRepository;
+    private EstudoGeradoRepository estudoGeradoRepository;
 
     @Autowired
-    ProdutoRepository produtoRepository;
+    private ProdutoRepository produtoRepository;
 
     @Autowired
-    ProdutoEdicaoRepository produtoEdicaoRepository;
+    private ProdutoEdicaoRepository produtoEdicaoRepository;
 
 
     @Autowired
-    EstudoCotaGeradoRepository estudoCotaGeradoRepository;
+    private EstudoCotaGeradoRepository estudoCotaGeradoRepository;
 
     @Autowired
-    EstudoComplementarRepository estudoComplementarRepository;
+    private EstudoComplementarRepository estudoComplementarRepository;
 
     @Autowired
-    InformacoesProdutoRepository informacoesProdutoRepository;
+    private InformacoesProdutoRepository informacoesProdutoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -146,6 +146,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "reparte", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 	    nova.setEstudo(estudo1);
 	    nova.setReparte(reparte);
+	    nova.setReparteInicial(reparte);
 	    nova.setClassificacao("CP");
 	    cotas.add(nova);
 	    

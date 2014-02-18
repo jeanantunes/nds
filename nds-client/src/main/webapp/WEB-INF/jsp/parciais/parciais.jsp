@@ -331,17 +331,19 @@
 				<!-- Data até -->
 				<input class="campoDePesquisa" id="dataFinal" type="text" name="dataFinal" style="width:80px;"/></td>
 
-              <td>Status:</td>
-              <td>
+<!--               <td>Status:</td> -->
+<!--               <td> -->
 				              
-				<!-- Status -->              
-				<select class="campoDePesquisa" id="status" name="select2" style="width:140px;">
-				  <option selected="selected" value="">Todos</option>
-				   <c:forEach items="${listaStatus}" var="status">
-				      		<option value="${status.key}">${status.value}</option>	
-				    </c:forEach>
-				</select>
-				</td>
+<!-- 				Status               -->
+<!-- 				<select class="campoDePesquisa" id="status" name="select2" style="width:140px;"> -->
+<!-- 				  <option selected="selected" value="">Todos</option> -->
+<%-- 				   <c:forEach items="${listaStatus}" var="status"> --%>
+<%-- 				      		<option value="${status.key}">${status.value}</option>	 --%>
+<%-- 				    </c:forEach> --%>
+<!-- 				</select> -->
+<!-- 				</td> -->
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td width="200"><span class="bt_novos"><a href="javascript:;" onclick=" ParciaisController.cliquePesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0"/></a></span></td>
             </tr>

@@ -20,9 +20,10 @@ import br.com.abril.nds.service.AcumuloDividasService;
  * Implementação do serviço responsável pelo acumulo de dívidas.
  * 
  * @author Discover Technology
- *
+ * 
  */
 @Service
+@Transactional(readOnly = true)
 public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 
 	@Autowired
@@ -47,7 +48,7 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+
 	public void criarAcumuloDivida(AcumuloDivida acumuloDivida) {
 
 		this.acumuloDividasRepository.adicionar(acumuloDivida);
@@ -57,7 +58,7 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+    @Transactional(readOnly = false)
 	public AcumuloDivida atualizarAcumuloDivida(AcumuloDivida acumuloDivida) {
 
 		return this.acumuloDividasRepository.merge(acumuloDivida);
@@ -67,7 +68,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional(readOnly=true)
 	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota) {
 
 		BigInteger numeroAcumulo = this.acumuloDividasRepository.obterNumeroMaximoAcumuloCota(idCota);
@@ -79,7 +79,7 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+    @Transactional(readOnly = false)
 	public void quitarDividasAcumuladas(Date dataPagamento, Divida dividaAtual) {
 		
 		if (dividaAtual == null) 			
@@ -112,7 +112,6 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional(readOnly = true)
 	public BigInteger obterNumeroDeAcumulosDivida(Long idConsolidadoFinanceiroCota) {
 		
 		BigInteger numeroDeAcumulosDivida =

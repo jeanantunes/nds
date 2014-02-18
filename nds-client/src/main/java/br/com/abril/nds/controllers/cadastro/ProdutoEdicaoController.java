@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.cadastro;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,8 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Strings;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DetalheProdutoVO;
@@ -68,6 +67,8 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
+
+import com.google.common.base.Strings;
 
 @Resource
 @Path("/cadastro/edicao")
@@ -287,6 +288,19 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	@Post
+	public void atualizarReparteLancamento(Long idLancamento, BigInteger reparte, BigInteger repartePromocional) {
+		
+		if (idLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lançamento não existe.");
+		}
+		
+		this.lancamentoService.atualizarReparteLancamento(idLancamento, reparte, repartePromocional);
+		
+		this.result.nothing();
+	}
+	
+	@Post
 	public void salvar(UploadedFile imagemCapa,
 			ProdutoEdicaoDTO produtoEdicaoDTO, ModoTela modoTela,boolean istrac29) {
 			
@@ -370,6 +384,12 @@ public class ProdutoEdicaoController extends BaseController {
 				}else{
 					List<String> mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto(), null);	
 					
+					try {
+					    produtoEdicaoService.tratarInformacoesAdicionaisProdutoEdicaoArquivo(prodEdicao);
+					} catch(ValidacaoException ex) {
+					    mensagens.add(ex.getMessage());
+					}
+					
 					if(!mensagens.isEmpty()){
 						
 						if(prodEdicao.getNumeroEdicao() != null){
@@ -401,7 +421,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 	}
 
-	private void addProdEdicaoLote(List<ProdutoEdicaoDTO> listaEdicaoDto, List<String> listaMensagem) {
+    private void addProdEdicaoLote(List<ProdutoEdicaoDTO> listaEdicaoDto, List<String> listaMensagem) {
 		
 		for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
 			
@@ -415,9 +435,11 @@ public class ProdutoEdicaoController extends BaseController {
 				
 			} 
 			catch (Exception e) {
-				
-                listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
-                        + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
+			    if(e instanceof ValidacaoException)
+			        listaMensagem.add(e.getMessage());
+			    else
+			        listaMensagem.add("Produto " + prodEdicao.getCodigoProduto() + " com a Edição "
+			                + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
 			
 			} 
 			
@@ -512,24 +534,30 @@ public class ProdutoEdicaoController extends BaseController {
             listaMensagens.add("Código do produto inválido!");
 		}
 		
-		if(dto.getDataLancamentoPrevisto()!=null) {
-            if (!this.calendarioService.isDiaOperante(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor(),
-                    OperacaoDistribuidor.DISTRIBUICAO)) {
-                listaMensagens.add("Data de lançamento prevista deve ser um dia operante!");
+		if (!dto.isOrigemInterface()) {
+		
+			if(dto.getDataLancamentoPrevisto()!=null) {
+	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamentoPrevisto(), dto.getIdFornecedor(),
+	                    OperacaoDistribuidor.DISTRIBUICAO)) {
+	                listaMensagens.add("Data de lançamento prevista deve ser um dia operante!");
+				}
+			}
+			
+			if(dto.getDataRecolhimentoPrevisto()!=null) {
+	            if (!this.calendarioService.isDiaOperante(dto.getDataRecolhimentoPrevisto(), dto.getIdFornecedor(),
+	                    OperacaoDistribuidor.RECOLHIMENTO)) {
+	                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
+				}
 			}
 		}
+
+		if (!dto.isOrigemInterface() || dto.isLancamentoExcluido()) {
 		
-		if(dto.getDataLancamento()!=null) {
-            if (!this.calendarioService.isDiaOperante(dto.getDataLancamento(), dto.getIdFornecedor(),
-                    OperacaoDistribuidor.DISTRIBUICAO)) {
-                listaMensagens.add("Data de lançamento deve ser um dia operante!");
-			}
-		}
-		
-		if(dto.getDataRecolhimentoPrevisto()!=null) {
-            if (!this.calendarioService.isDiaOperante(dto.getDataRecolhimentoPrevisto(), dto.getIdFornecedor(),
-                    OperacaoDistribuidor.RECOLHIMENTO)) {
-                listaMensagens.add("Data de recolhimento deve ser um dia operante!");
+			if(dto.getDataLancamento()!=null) {
+	            if (!this.calendarioService.isDiaOperante(dto.getDataLancamento(), dto.getIdFornecedor(),
+	                    OperacaoDistribuidor.DISTRIBUICAO)) {
+	                listaMensagens.add("Data de lançamento deve ser um dia operante!");
+				}
 			}
 		}
 		
@@ -726,7 +754,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 	}
 	
-	                                                                                        /**
+	/**
      * Obtém todos os períodos de lançamento da edição do produto
      * 
      * @param produtoEdicaoId
@@ -761,6 +789,7 @@ public class ProdutoEdicaoController extends BaseController {
 			periodoLancamento.setDataRecolhimentoPrevista(lancamento.getDataRecolhimentoPrevista());
 			periodoLancamento.setStatus(lancamento.getStatus().getDescricao());
 			periodoLancamento.setReparte(lancamento.getReparte());
+			periodoLancamento.setRepartePromocional(lancamento.getRepartePromocional());
 			
 			if (numerosPeriodo.contains(numeroPeriodo)) {
 				periodoLancamento.setDestacarLinha(true);

@@ -21,6 +21,8 @@ public class RedistribuicaoParcialDTO implements Serializable {
 	private Date dataLancamento;
 	
 	private Date dataRecolhimento;
+	
+	private String nomeProduto;
 
 	public Long getIdLancamentoRedistribuicao() {
 		return idLancamentoRedistribuicao;
@@ -69,7 +71,19 @@ public class RedistribuicaoParcialDTO implements Serializable {
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
-	
-	
+
+	/**
+	 * @return the nomeProduto
+	 */
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	/**
+	 * @param nomeProduto the nomeProduto to set
+	 */
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
 	
 }

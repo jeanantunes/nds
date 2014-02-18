@@ -32,7 +32,7 @@ public class AnaliseParcialDTO implements Serializable {
     @Export(label = "Legenda", alignment = Alignment.LEFT, exhibitionOrder = 6)
     private String leg;
 
-    @Export(label = "Juramento", alignment = Alignment.LEFT, exhibitionOrder = 7)
+    @Export(label = "Juramentado", alignment = Alignment.LEFT, exhibitionOrder = 7)
     private BigInteger juramento;
 
     @Export(label = "Media Venda", alignment = Alignment.LEFT, exhibitionOrder = 8)
@@ -45,7 +45,9 @@ public class AnaliseParcialDTO implements Serializable {
     private String descricaoLegenda;
     private BigInteger reparteEstudo;
     private BigInteger reparteEstudoOrigemCopia;
-
+    private Boolean ajustado;
+    private BigInteger quantidadeAjuste;
+    
     public String getDescricaoLegenda() {
         return descricaoLegenda;
     }
@@ -299,4 +301,20 @@ public class AnaliseParcialDTO implements Serializable {
             this.reparteEstudoOrigemCopia = reparteEstudoOrigemCopia.toBigInteger();
         }
     }
+
+	public Boolean getAjustado() {
+		return ajustado;
+	}
+
+	public void setAjustado(Boolean ajustado) {
+		this.ajustado = ajustado;
+	}
+
+	public BigInteger getQuantidadeAjuste() {
+		return quantidadeAjuste;
+	}
+
+	public void setQuantidadeAjuste(BigInteger quantidadeAjuste) {
+		this.quantidadeAjuste = quantidadeAjuste;
+	}
 }

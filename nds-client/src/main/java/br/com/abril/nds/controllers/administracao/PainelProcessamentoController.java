@@ -410,7 +410,7 @@ public class PainelProcessamentoController extends BaseController {
 		return filtro;
 	}
 	
-	                                    /**
+	                                        /**
      * Configura a paginação dos filtros
      * 
      * @param filtro
@@ -468,7 +468,7 @@ public class PainelProcessamentoController extends BaseController {
 		return filtro;
 	}
 	
-	                                    /**
+	                                        /**
      * Configura a paginação dos filtros
      * 
      * @param filtro
@@ -493,6 +493,7 @@ public class PainelProcessamentoController extends BaseController {
 	 * Executa uma interface
 	 * @param classeInterface
 	 */
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
 	public void executarInterface(String idInterface) throws Exception {
 		
 		if (this.interfaceExecucaoService.isInterfaceProdin(idInterface)) {
@@ -518,6 +519,7 @@ public class PainelProcessamentoController extends BaseController {
 	 * Executa uma interface
 	 * @param classeInterface
 	 */
+    @Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO_ALTERACAO)
 	public void executarTodasInterfacesEmOrdem() throws Exception {
 		
 		interfaceExecucaoService.executarTodasInterfacesProdinEmOrdem(

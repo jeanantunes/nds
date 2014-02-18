@@ -92,6 +92,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
         return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId);
     }
@@ -221,17 +222,20 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
 	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota);
     }
     
     @Override
+    @Transactional
     public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte) {
         analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);
     }
 
     @Override
+    @Transactional
     public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
         return analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
     }
@@ -244,6 +248,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
@@ -253,6 +258,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public BigDecimal calcularPercentualAbrangencia(Long estudoId) {
         int cotasAtivas = cotaRepository.obterCotasAtivas();
         int cotasComReparte = estudoGeradoRepository.obterCotasComRepartePorIdEstudo(estudoId);
@@ -316,11 +322,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {
         return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto);
     }
 
     @Override
+    @Transactional
     public List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
         List<AnaliseEstudoDetalhesDTO> list = new LinkedList<>();
 
@@ -371,11 +379,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    @Transactional
     public Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo) {
         return analiseParcialRepository.buscarCotasPorTipoDistribuicao(tipo);
     }
 
     @Override
+    @Transactional
     public BigInteger atualizaReparteTotalESaldo(Long idEstudo, Integer reparteTotal) {
         analiseParcialRepository.atualizaReparteTotalESaldo(idEstudo, reparteTotal);
         return estudoGeradoRepository.buscarPorId(idEstudo).getSobra();

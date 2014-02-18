@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -166,5 +167,7 @@ public interface LancamentoService {
      */
     public abstract void removerLancamento(Long id);
 	
+    
+    void atualizarReparteLancamento(Long idLancamento, BigInteger reparte, BigInteger repartePromocional);
 }
  

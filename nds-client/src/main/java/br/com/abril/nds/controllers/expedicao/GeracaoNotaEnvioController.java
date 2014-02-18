@@ -255,31 +255,31 @@ this.getNDSFileHeader(), filtro,
     public void getArquivoNotaEnvio() {
 
 		try {
+			
 		    byte[] notasGeradas = this.getNotas();
 	
 		    if (notasGeradas != null) {
 	
-			DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-	
-			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-	
-			OutputStream output;
-	
-			output = this.httpResponse.getOutputStream();
-	
-			output.write(notasGeradas);
-	
-			httpResponse.getOutputStream().close();
-	
-			session.setAttribute(COTAS_ID, null);
-	
-			result.use(Results.nothing());
-	
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+		
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+		
+				OutputStream output;
+		
+				output = this.httpResponse.getOutputStream();
+		
+				output.write(notasGeradas);
+		
+				httpResponse.getOutputStream().close();
+		
+				session.setAttribute(COTAS_ID, null);
+		
+				result.use(Results.nothing());
 		    }
 		} catch (ValidacaoException e) {
             LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 		    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-		}catch (Exception e) {
+		} catch (Exception e) {
             LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}

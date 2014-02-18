@@ -1803,6 +1803,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 
 	@Override
+	@Transactional
 	public boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
 
 		List<ProdutoLancamentoDTO> listaverificadaConfirmada = this.lancamentoRepository
@@ -2047,6 +2048,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 
 	@Override
+	@Transactional
 	public void verificaDataOperacao(Date data) {
 
 		Calendar cal = Calendar.getInstance();
@@ -2076,6 +2078,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 
 	@Override
+	@Transactional
 	public void validarDiaSemanaDistribuicaoFornecedores(Date dataDistribuicao) {
 
 		List<DistribuicaoFornecedor> listaDistribuicaoFornecedores = this.distribuidorRepository
@@ -2273,15 +2276,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
 		}
-	}
-
-	public FornecedorRepository getFornecedorRepository() {
-		return fornecedorRepository;
-	}
-
-	public void setFornecedorRepository(
-			FornecedorRepository fornecedorRepository) {
-		this.fornecedorRepository = fornecedorRepository;
 	}
 
 }

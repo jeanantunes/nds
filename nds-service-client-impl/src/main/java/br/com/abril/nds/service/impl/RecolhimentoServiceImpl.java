@@ -37,7 +37,6 @@ import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -500,19 +499,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
-				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
-					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
-				
-				List<EstoqueProdutoCota> estoqueProdutoCotaCompraSuplementar = 
-						this.estoqueProdutoCotaRepository.buscarEstoqueProdutoCotaCompraSuplementar(idLancamento);
-				
-				listaEstoqueProdutoCota.addAll(estoqueProdutoCotaCompraSuplementar);
-				
-				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
-
-                    throw new ValidacaoException(TipoMensagem.WARNING, "Estoque produto cota não encontrado!");
-				}
-
 				ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 				
 				List<CotaReparteDTO> cotasReparte =	this.movimentoEstoqueCotaRepository.obterReparte(idLancamento, produtoEdicao.getId());
@@ -746,6 +732,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
      * Monta o perídodo de recolhimento de acordo com a semana informada.
      */
 	@Override
+	@Transactional
 	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
 		int codigoInicioSemana = 
@@ -855,6 +842,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
+	@Transactional
 	public void verificaDataOperacao(Date data) {
 		
 		Calendar cal = Calendar.getInstance();
@@ -1087,6 +1075,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 	
+	@Transactional
 	public void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
 												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
 												TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
@@ -1455,6 +1444,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 	}
 
+	@Transactional
 	public void validarLancamentoParaReabertura(List<Date> datasConfirmadas) {
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterRecolhimentosConfirmados(datasConfirmadas);

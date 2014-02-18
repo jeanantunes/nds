@@ -21,7 +21,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -112,20 +113,20 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String IND_COTA_EMITE_NFE = "IND_COTA_EMITE_NFE";
 	
-	    /*
+	            /*
      * Conferência de encalhe da cota que foi iniciada porém ainda não foi
      * salva.
      */
 	private static final String CONF_ENC_COTA_STATUS_INICIADA_NAO_SALVA = "INICIADA_NAO_SALVA";
 	
 	
-	    /*
+	            /*
      * Conferência de encalhe da cota que foi iniciada e já foi salva.
      */
 	private static final String CONF_ENC_COTA_STATUS_INICIADA_SALVA = "INICIADA_SALVA";
 	
 	
-	    /*
+	            /*
      * Nenhuma conferência de encalhe da cota iniciada em aberto.
      */
 	private static final String CONF_ENC_COTA_STATUS_NAO_INICIADA = "NAO_INICIADA";
@@ -279,7 +280,7 @@ public class ConferenciaEncalheController extends BaseController {
 			mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
 	}
 	
-	    /**
+	            /**
      * Realiza a remoção da trava da session do usuario com conferencia de
      * encalhe
      */
@@ -354,7 +355,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
                 " Não é possível iniciar a conferência de encalhe para esta cota, "
-                        + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
+                    + " a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario + " ] ");
 	
 		
 	}
@@ -412,7 +413,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	    /**
+	            /**
      * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de
      * uma cota sem ter salvo (ou finalizado) os dados de uma conferência em
      * andamento.
@@ -464,7 +465,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(CustomMapJson.class).put(IND_COTA_EMITE_NFE, emiteNfe).serialize();
 	}
 	
-	    /**
+	            /**
      * Valida informações basicas antes de iniciar o recolhimento:
      * 
      * - Se a cota existe.
@@ -517,7 +518,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	    /**
+	            /**
      * Ponto de inicio de uma conferência de encalhe.
      * 
      * Realiza validações antes do inicio da operação de encalhe da cota.
@@ -552,7 +553,8 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				this.result.use(CustomMapJson.class)
 				.put("IND_COTA_RECOLHE_NA_DATA", "N")
-                        .put("msg", "Cota não possui recolhimento planejado para a data de operação atual.")
+.put("msg",
+                        "Cota não possui recolhimento planejado para a data de operação atual.")
                         .serialize();
 			
 			}
@@ -561,7 +563,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	    /**
+	            /**
      * Cria em session flag para indicar que os registros de conferencia de
      * encalhe da cota que estão em session ainda não foram alterados pelo
      * usuario.
@@ -571,7 +573,7 @@ public class ConferenciaEncalheController extends BaseController {
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(true);
 	}
 	
-	    /**
+	            /**
      * Cria em session flag para indicar que os registros de conferencia de
      * encalhe da cota que estão em session já foram alterados pelo usuario.
      */
@@ -580,6 +582,13 @@ public class ConferenciaEncalheController extends BaseController {
 		statusConferenciaEncalhe.setIndConferenciaEncalheCotaSalva(false);
 	}
 	
+	        /**
+     * Obtém no banco de dados as informações da conferencia de encalhe da cota
+     * em questão e setta em session.
+     * 
+     * @param numeroCota
+     * @param indConferenciaContingencia
+     */
 	private void recarregarInfoConferenciaEncalheCotaEmSession(Integer numeroCota, boolean indConferenciaContingencia) {
 		
 		InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
@@ -750,7 +759,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 
-	    /**
+	            /**
      * Obtém o objeto do tipo ConferenciaEncalheDTO que esta na lista de
      * conferencia em session com idProdutoEdicao ou codigoSM igual ao passado
      * por parâmetro.
@@ -1107,48 +1116,50 @@ public class ConferenciaEncalheController extends BaseController {
 			String usuario, String senha, boolean indConferenciaContingencia,
 			Long produtoEdicaoId){
 		
-		if (usuario != null){
-			
-			boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
-			
-			if (permitir){
-				
-				this.result.use(Results.json()).from("").serialize();
-				return;
-			}
-			
-            throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
-		} else {
-			
-			List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
-			
-			for (ConferenciaEncalheDTO dto : listaConferencia){
-				
-				if (produtoEdicaoId != null){
-					
-					if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())){
-						
-						if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)){
-							
-                            this.result.use(Results.json())
-                                    .from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
-							return;
-						}
-					}
-				} else {
-					
-					if (idConferencia.equals(dto.getIdConferenciaEncalhe())){
-						
-						if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)){
-							
-                            this.result.use(Results.json())
-                                    .from("Venda negativa no encalhe, permissão requerida.", "result").serialize();
-							return;
-						}
-					}
-				}
-			}
-		}
+        if (usuarioService.isNotSupervisor()) {
+            if (usuario != null) {
+                
+                boolean permitir = this.usuarioService.verificarUsuarioSupervisor(usuario, senha);
+                
+                if (permitir) {
+                    
+                    this.result.use(Results.json()).from("").serialize();
+                    return;
+                }
+                
+                throw new ValidacaoException(TipoMensagem.WARNING, "Usuário/senha inválido(s)");
+            } else {
+                
+                List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
+                
+                for (ConferenciaEncalheDTO dto : listaConferencia) {
+                    
+                    if (produtoEdicaoId != null) {
+                        
+                        if (produtoEdicaoId.equals(dto.getIdProdutoEdicao())) {
+                            
+                            if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)) {
+                                
+                                this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
+                                        "result").serialize();
+                                return;
+                            }
+                        }
+                    } else {
+                        
+                        if (idConferencia.equals(dto.getIdConferenciaEncalhe())) {
+                            
+                            if (this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia)) {
+                                
+                                this.result.use(Results.json()).from("Venda negativa no encalhe, permissão requerida.",
+                                        "result").serialize();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
@@ -1212,6 +1223,7 @@ public class ConferenciaEncalheController extends BaseController {
 																         this.getSetConferenciaEncalheExcluirFromSession(), 
 																         this.getUsuarioLogado(),
 																         indConferenciaContingencia);
+	        
 
 		} catch (EncalheSemPermissaoSalvarException e) {
             LOGGER.error(
@@ -1222,15 +1234,18 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		} catch (ConferenciaEncalheFinalizadaException e) {
             LOGGER.error(
-                    "Conferência não pode ser salvar, finalize a operação para não perder os dados: " + e.getMessage(),
+"Conferência não pode ser salvar, finalize a operação para não perder os dados: "
+                + e.getMessage(),
                     e);
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
 			
 		}
+		
+		limparDadosSessao();
 	}
 
-	    /**
+	            /**
      * Salva os dados da conferência de encalhe.
      */
 	@Post
@@ -1286,7 +1301,8 @@ public class ConferenciaEncalheController extends BaseController {
 		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
 		this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive()
+new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
+                "result").recursive()
                 .serialize();
 	}
 	
@@ -1515,7 +1531,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "resu
 	}
 	
 	@Post
-	public void veificarCobrancaGerada(){
+	public void verificarCobrancaGerada(){
 		
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
@@ -1690,7 +1706,7 @@ new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "resu
 		} else {
 			
 			this.result.use(Results.json()).from(
-new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result")
+                    new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result")
                     .recursive().serialize();
 		}
 	}
@@ -1853,7 +1869,7 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		
 	}
 	
-	    /**
+	            /**
      * Verifica se o valor total da nota fiscal informada é igual ao valor de
      * encalhe conferido na operação.
      * 
@@ -1892,7 +1908,7 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		}
 	}
 	
-	    /**
+	            /**
      * Verifica se o valor total de chamada encalhe informado é igual ao valor
      * de encalhe conferido na operação.
      * 
@@ -1942,12 +1958,11 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		} else {
 			this.comparValorTotalCEQuantidade(qtdCEInformado);
 		}
-			
 		
 		
 	}
 	
-	    /**
+	            /**
      * Compara se o valor de qtde de itens de encalhe apontado pelo jornaleiro é
      * igual ao contabilizado na operação de conferência de encalhe.
      * 
@@ -1979,7 +1994,7 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 	}
 
 	
-	    /**
+	            /**
      * Compara se o valor monetario de encalhe apontado pelo jornaleiro é igual
      * ao contabilizado na operação de conferência de encalhe.
      * 
@@ -2125,7 +2140,7 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		
 	}
 	
-	    /**
+	            /**
      * Carrega o mapa passado como parâmetro com o seguinte valores:
      * 
      * valorEncalhe = total do encalhe conferido até o momento nesta operação.
@@ -2214,7 +2229,7 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		}
 	}
 	
-	    /**
+	            /**
      * Processa a quantidade informada pelo usuario, validando quando um produto
      * CROMO é informado.
      * 
@@ -2358,7 +2373,7 @@ new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada.
 		return conferenciaEncalheDTO;
 	}
 	
-	    /**
+	            /**
      * Obtém tableModel para grid OutrosValores (Debitos e Creditos da cota).
      * 
      * @param listaDebitoCreditoCota

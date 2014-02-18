@@ -22,6 +22,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -130,7 +131,7 @@ public class ParciaisController extends BaseController {
 		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
 		
 		for (Fornecedor fornecedor : listaFornecedor) {
-			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+			listaFornecedoresCombo.add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getNomeFantasia()));
 		}
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
@@ -143,10 +144,8 @@ public class ParciaisController extends BaseController {
 				
 		List<ItemDTO<String, String>> listaComboStatus = new ArrayList<ItemDTO<String,String>>();
 		
-		for (StatusLancamentoParcial status : StatusLancamentoParcial.values()) {
-			if(!StatusLancamentoParcial.CANCELADO.equals(status)){
-				listaComboStatus.add(new ItemDTO<String, String>( status.name(), status.toString() ));
-			}
+		for (StatusLancamento status : StatusLancamento.values()) {
+			listaComboStatus.add(new ItemDTO<String, String>( status.name(), status.getDescricao()));
 		}
 		
 		result.include("listaStatus",listaComboStatus );

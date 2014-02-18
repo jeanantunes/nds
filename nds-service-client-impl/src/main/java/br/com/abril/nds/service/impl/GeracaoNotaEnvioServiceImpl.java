@@ -3,6 +3,8 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -42,6 +44,7 @@ import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -63,6 +66,10 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Intervalo;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 @Service
 public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
@@ -131,9 +138,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
-				filtro.getIntervaloMovimento(), null);
-		
+		 		
+		this.validarRoteirizacaoCota(filtro,this.getIdsCotaIntervalo(filtro));
+			
 		if (filtro.getIdRoteiro() != null) {
 			filtro.setFiltroRoteiroEspecial(TipoRoteiro.ESPECIAL.equals(this.roteiroRepository.buscarPorId(filtro.getIdRoteiro()).getTipoRoteiro()));
 		}
@@ -151,9 +158,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
-				filtro.getIntervaloMovimento(), null);
-
+		this.validarRoteirizacaoCota(filtro,this.getIdsCotaIntervalo(filtro));
+	
 		if (filtro.getIdRoteiro() != null) {
 			filtro.setFiltroRoteiroEspecial(TipoRoteiro.ESPECIAL.equals(this.roteiroRepository.buscarPorId(filtro.getIdRoteiro()).getTipoRoteiro()));
 		}
@@ -229,14 +235,23 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					
 		for(MovimentoEstoqueCota mec : listaMovimentoEstoqueCota) {
 			
-			ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
+			Lancamento lancamento = mec.getLancamento();
 			
 			ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
+			
+			if (lancamento.getEstudo() == null) {
+				
+				throw new ValidacaoException(
+					TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
+			}
+			
+			ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
+			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			itemNotaEnvio.setSequenciaMatrizLancamento(mec.getLancamento().getSequenciaMatriz());
+			itemNotaEnvio.setSequenciaMatrizLancamento(lancamento.getSequenciaMatriz());
 			
-			for(EstudoCota ec : mec.getLancamento().getEstudo().getEstudoCotas()) {
+			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
 				if(ec.getCota().getNumeroCota().equals(mec.getCota().getNumeroCota()) 
 						&& ec.getEstudo().getProdutoEdicao().getId().equals(mec.getProdutoEdicao().getId())) {
 					itemNotaEnvio.setEstudoCota(ec);
@@ -501,17 +516,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional(readOnly = false)
 	public List<NotaEnvio> visualizar(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
-		
-		situacoesCadastro.add(SituacaoCadastro.ATIVO);
-		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
+		List<Long> listaIdCotas = this.getIdsCotaIntervalo(filtro);
 
-		List<Long> listaIdCotas = 
-				this.cotaRepository.obterIdCotasEntre(filtro.getIntervaloCota(), filtro.getIntervaloBox(),
-													  situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
-													  null, null, null, null);
-
-		
 		validarRoteirizacaoCota(filtro, listaIdCotas);
 		
 		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
@@ -752,6 +758,31 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 	
 	/*
+	 * Retorna uma lista com os movimentos estoque cota filtrados, onde os movimentos estoque cota não tiveram itens de nota de envio gerados
+	 */
+	private List<MovimentoEstoqueCota> filtraItensSemItemNotaEnvioGerado(List<MovimentoEstoqueCota> itens){
+		
+		if(itens == null || itens.isEmpty()){
+			return null;
+		}
+		
+		Predicate<MovimentoEstoqueCota> movimentoEstoqueCotaPredicate = new Predicate<MovimentoEstoqueCota>() {
+			  public boolean apply(MovimentoEstoqueCota mvCota) {
+			    return mvCota.getItemNotaEnvio() == null ;
+			  }
+		};
+		
+		 Collection<MovimentoEstoqueCota> filteredCollection = 
+			Collections2.filter(itens, movimentoEstoqueCotaPredicate);
+		
+		 if (filteredCollection != null) {
+			 return  Lists.newArrayList(filteredCollection);
+		 } else {
+			 return new ArrayList<>();
+		 }
+	}
+	
+	/*
 	 * Efetua o processamento das notas de envio já geradas
 	 */
 	private List<ItemNotaEnvio> processarNotasDeEnvioGeradas(Cota cota, 
@@ -765,6 +796,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(
 					cota.getId(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores(),
 					GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		
+		listaMovimentoEstoqueCota = this.filtraItensSemItemNotaEnvioGerado(listaMovimentoEstoqueCota);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota, filtro.getIntervaloMovimento(), descontos);
 
@@ -1131,9 +1164,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	public List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro) {
 		
 		List<NotaEnvio> listaNotaEnvio = null;
-		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
-		situacoesCadastro.add(SituacaoCadastro.ATIVO);
-		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 
 		if(TRAVA_GERACAO_NE != null && TRAVA_GERACAO_NE.get("neCotasSendoGeradas") != null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
@@ -1143,10 +1173,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		try {
 			
-			List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
-					filtro.getIntervaloCota(), filtro.getIntervaloBox(),
-					situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
-					null, null, null, null);
+			List<Long> listaIdCotas = this.getIdsCotaIntervalo(filtro);
 			
 			List<Long> idCotasAusentes =
 				this.cotaAusenteRepository.obterIdsCotasAusentesNoPeriodo(
@@ -1159,10 +1186,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 			validarRoteirizacaoCota(filtro, listaIdCotas);
 			
-			listaNotaEnvio = this.gerar(listaIdCotas, filtro, null,
-					null, null);
-		} catch (Exception e) {
-			throw e;
+			listaNotaEnvio = this.gerar(listaIdCotas, filtro, null,null, null);
 		} finally {
 			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		}
@@ -1170,54 +1194,38 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return listaNotaEnvio;
 	}
 
-	private void validarRoteirizacaoCota(FiltroConsultaNotaEnvioDTO filtro,
-			List<Long> listaIdCotas) {
+	private void validarRoteirizacaoCota(FiltroConsultaNotaEnvioDTO filtro,List<Long> listaIdCotas) {
+		
 		List<String> cotasSemRoteirizacao = new ArrayList<String>();
 		
 		for (Long idCota : listaIdCotas) {
 			
 			Cota cota = cotaRepository.buscarPorId(idCota);
 
-			Long idRota = filtro.getIdRota();
-
-			if (idRota == null) {
-
-				Long idRoteiro = null;
-
-				if(cota.getBox() != null) {
-					
-					List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
-
-					if(roteiros != null) {
-						for (Roteiro r : roteiros) {
-		
-							if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-		
-								idRoteiro = r.getId();
-							}
-						}
-					}
-
-					try {
-						idRota = (Long) cota.getBox().getRoteirizacao()
-								.getRoteiro(idRoteiro).getRotas().get(0).getId();
-					} catch (Exception e) {
-						if(cotasSemRoteirizacao.size() == 0) {
-							cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
-						}
-						StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
-						cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
-					}
-					
-				} else {
-					throw new ValidacaoException(TipoMensagem.WARNING, "Cota com problemas de Roteirização: Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
+			if(cota.getBox() == null) {
+				
+				if(cotasSemRoteirizacao.size() == 0) {
+					cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
 				}
+				StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
+				cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
 			}
-			
 		}
 		
 		if(cotasSemRoteirizacao.size() > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, cotasSemRoteirizacao);
 		}
+	}
+	
+	private List<Long> getIdsCotaIntervalo(FiltroConsultaNotaEnvioDTO filtro){
+		
+		List<SituacaoCadastro> situacoesCadastro = 
+				Arrays.asList(SituacaoCadastro.ATIVO,SituacaoCadastro.SUSPENSO);
+		
+		List<Long> listaIdCotas = 
+				this.cotaRepository.obterIdCotasEntre(filtro.getIntervaloCota(), filtro.getIntervaloBox(),
+													  situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
+													  null, null, null, null);
+		return listaIdCotas;
 	}
 }

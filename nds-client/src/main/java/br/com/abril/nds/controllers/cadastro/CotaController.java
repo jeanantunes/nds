@@ -164,7 +164,6 @@ public class CotaController extends BaseController {
 	private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
 
 	@Path("/")
-
 	public void index() {
 		
 		this.financeiroController.preCarregamento();
@@ -179,7 +178,7 @@ public class CotaController extends BaseController {
 		return (enderecoPendente==null || !enderecoPendente);
 	}
 	
-	            /**
+	                /**
      * Obtem e seta os dados de endereço e telefone na sessão.
      * 
      * @param idCota - identificador da cota
@@ -221,7 +220,7 @@ public class CotaController extends BaseController {
         session.setAttribute(LISTA_TELEFONES_EXIBICAO, telefones);
     }
 
-	            /**
+	                /**
      * Processa os dados de endereço, obtem os dados da sessão, grava os dados
      * no banco de dados e atualiza os dados na sessão
      * 
@@ -252,7 +251,7 @@ public class CotaController extends BaseController {
 		return true;
 	}
 
-	            /**
+	                /**
      * Processa os dados de telefone, obtem os dados da sessão, grava os dados
      * no banco de dados e atualiza os dados na sessão
      * 
@@ -288,7 +287,7 @@ public class CotaController extends BaseController {
 		return true;
 	}
 	
-	            /**
+	                /**
      * Obtem os dados de telefone da sessão para atuaização e inclusão
      * 
      * @return Map<Integer, TelefoneAssociacaoDTO>
@@ -305,7 +304,7 @@ public class CotaController extends BaseController {
 		return telefonesSessao;
 	}
 
-	            /**
+	                /**
      * 
      * Obtem os dados de telefone da sessão para serem removidos
      * 
@@ -333,7 +332,7 @@ public class CotaController extends BaseController {
 		pesquisarPorNumero(Integer.valueOf(codigo));
 	}
 	
-	            /**
+	                /**
      * Efetua consulta de cota pelo número informado
      * 
      * @param numeroCota - número da cota
@@ -490,7 +489,7 @@ public class CotaController extends BaseController {
 		pesquisarPorNome(nome);
 	}
 	
-	            /**
+	                /**
      * Limpa os dados da sessão após o usúario fechar ou cancelar a operação de
      * cadastro ou edição de uma cota
      */
@@ -502,7 +501,7 @@ public class CotaController extends BaseController {
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	            /**
+	                /**
      * Retorna os dados de uma pessoa/cota referente o número do CNPJ informado
      * 
      * @param numeroCnpj - número CNPJ
@@ -535,7 +534,7 @@ public class CotaController extends BaseController {
 
 	}
 	
-	            /**
+	                /**
      * Retorna os dados de uma pessoa/cota referente o número do CPF informado
      * 
      * @param numeroCPF - número CPF
@@ -574,7 +573,7 @@ public class CotaController extends BaseController {
 
 	}
 
-	            /**
+	                /**
      * Retorna os dados default para inclusão de uma nova cota.
      * 
      * @return DadosCotaVO
@@ -593,7 +592,7 @@ public class CotaController extends BaseController {
 		return dadosCotaVO;
 	}
 
-	            /**
+	                /**
      * Prepara os dados default para inclusão de uma nova cota para CNPJ
      */
 	@Post
@@ -604,7 +603,7 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
 	}
 	
-	            /**
+	                /**
      * Prepara os dados default para inclusão de uma nova cota para CPF
      */
 	@Post
@@ -615,7 +614,7 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
 	}
 
-	            /**
+	                /**
      * Retorna uma lista de classificação de espectativa de faturamento da cota
      * 
      * @return List<ItemDTO<String, String>>
@@ -813,7 +812,7 @@ public class CotaController extends BaseController {
 	
 	}
 	
-	            /**
+	                /**
      * 
      * Prepara os dados de uma cota para edição.
      * 
@@ -833,7 +832,7 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
-	            /**
+	                /**
      * Exclui uma cota, informada pelo usúario
      * 
      * @param idCota - identificador da cota
@@ -899,7 +898,7 @@ public class CotaController extends BaseController {
 				Constantes.PARAM_MSGS).recursive().serialize();	
 	}
 	
-	            /**
+	                /**
      * Salva os endereços da cota informada
      * 
      * @param idCota - identificador da cota
@@ -951,7 +950,7 @@ public class CotaController extends BaseController {
 		}
 	}
 	
-	            /**
+	                /**
      * Obtem os fornecedores que não possui associação com a cota informada
      * 
      * @param idCota -identificador da cota
@@ -988,7 +987,7 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(dtos,"result").recursive().serialize();
 	}
 	
-	            /**
+	                /**
      * Retorna uma lista de fornecedores para exibição na tela
      * 
      * @param fornecedores - lista de fornecedores
@@ -1008,7 +1007,7 @@ public class CotaController extends BaseController {
 	}
 	
 	
-	            /**
+	                /**
      * Descontos da cota: Obtem os tipos de desconto por produto relacionados à
      * cota
      * 
@@ -1097,7 +1096,7 @@ public class CotaController extends BaseController {
 		
 	}
 
-	            /**
+	                /**
      * Valida se o número da cota informada para histórico base é ativo.
      * 
      * @param numeroCota - número da cota
@@ -1119,7 +1118,7 @@ public class CotaController extends BaseController {
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
-	            /**
+	                /**
      * Efetua a pesquisa das cotas cadastradas no sistema, possibiltando a
      * exclusão, visualização e edição.
      * 
@@ -1232,7 +1231,7 @@ public class CotaController extends BaseController {
 		
 	}
 	
-	            /**
+	                /**
      * Retorna uma lista de cotaVO para renderização das informaçoes do grid na
      * tela
      * 
@@ -1264,7 +1263,7 @@ public class CotaController extends BaseController {
 		return listaRetorno;
 	}
 	
-	            /**
+	                /**
      * Retorna o número do CPF ou CNPJ com mascara.
      * 
      * @param numeroCpfCnpj - número do CPF ou CNPJ
@@ -1299,7 +1298,7 @@ public class CotaController extends BaseController {
 		return (valor == null)?"":valor.toString();
 	}
 	
-	            /**
+	                /**
      * Configura paginação do grid de pesquisa.
      * 
      * @param filtro
@@ -1320,7 +1319,7 @@ public class CotaController extends BaseController {
 		}
 	}
 	
-	            /**
+	                /**
      * Executa tratamento de paginação em função de alteração do filtro de
      * pesquisa.
      * 
@@ -1339,7 +1338,7 @@ public class CotaController extends BaseController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	}
 	
-	            /**
+	                /**
      * Carrega dados de Distribuição da cota
      * 
      * @param idCota - Código da cota
@@ -1395,7 +1394,7 @@ public class CotaController extends BaseController {
 		}
 	}
 
-	            /**
+	                /**
      * Persiste no banco os dados de Distribuição da cota
      * 
      * @param distribuicao - DTO que representa os dados de distribuição da cota
@@ -1435,7 +1434,7 @@ public class CotaController extends BaseController {
 		}	
 	}
 
-	            /**
+	                /**
      * Valida os dados de Distribuição da Cota ao salvar.
      * 
      * @param distribuicao - DTO que representa os dados de distribuição da cota
@@ -1473,7 +1472,7 @@ public class CotaController extends BaseController {
 		}
 	}
 
-	            /**
+	                /**
      * Valida o período de carência informado.
      * 
      * @param inicioPeriodoCarenciaFormatado - início do período de carência
@@ -1563,7 +1562,7 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		return comboBaseCalculo;
 	}
 	
-	            /**
+	                /**
      * Recarrega os dados de endereço referente a cota.
      * 
      * @param idCota - identificador da cota
@@ -1583,7 +1582,7 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	            /**
+	                /**
      * Recarrega os dados de telefone referente a cota.
      * 
      * @param idCota - identificador da cota
@@ -1603,7 +1602,7 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		this.result.use(Results.json()).from("", "result").serialize();
 	}
 	
-	            /**
+	                /**
      * Obtem os endereços da sessão referente a cota informada
      * 
      * @param idCota - identificador da cota
@@ -1618,7 +1617,7 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		}
 	}
 	
-	            /**
+	                /**
      * Obtem os telefones da sessão referente a cota informada
      * 
      * @param idCota - identificador da cota
@@ -1630,7 +1629,7 @@ TipoMensagem.WARNING, "O fim do Período de Carência deve ser preenchido!");
 		this.session.setAttribute(LISTA_TELEFONES_EXIBICAO, listaTelefoneAssociacao);
 	}
 	
-	            /**
+	                /**
      * Limpa os dados da sessão referente a telefone e endereço.
      */
 	private void limparDadosSession(){

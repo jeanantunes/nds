@@ -573,6 +573,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	}
 
 	@Override
+	@Transactional
 	public FormaCobranca obterFormaCobrancaPrincipalCota(Integer numeroCota) {
 		
 		Long idCota = this.cotaRepository.obterIdPorNumeroCota(numeroCota);

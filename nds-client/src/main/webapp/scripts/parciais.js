@@ -53,6 +53,7 @@ var ParciaisController = $.extend(true, {
 		$('#dataInicial', ParciaisController.workspace).mask("99/99/9999");
 		$('#dataFinal', ParciaisController.workspace).mask("99/99/9999");
 		$('#lancamentoNovaRed', ParciaisController.workspace).mask("99/99/9999");
+		$( "#dataRecolhimentoManual", ParciaisController.workspace).mask("99/99/9999");
 
 		$("#nomeProduto", ParciaisController.workspace).autocomplete({source: ""});
 		$("#edicaoProduto", ParciaisController.workspace).autocomplete({source: ""});
@@ -72,6 +73,7 @@ var ParciaisController = $.extend(true, {
 			
 			ParciaisController.codigoProduto = ParciaisController.get('codigoProduto');
 			ParciaisController.numEdicao = ParciaisController.get('edicaoProduto');
+			ParciaisController.nomeProduto = ParciaisController.get('nomeProduto');
 			
 			ParciaisController.pesquisarPeriodosParciais();
 		} else {
@@ -255,6 +257,7 @@ var ParciaisController = $.extend(true, {
 		$.each(result.rows, function(index,row){
 		
 			row.cell.acao="";
+			row.cell.numeroLancamento = row.cell.numeroLancamento ? row.cell.numeroLancamento : "-";
 			
 			if(index > 0){	
 				isExcluir = (index != indexUtimoRegistro);
@@ -279,7 +282,7 @@ var ParciaisController = $.extend(true, {
 		data.push({name:'filtro.idFornecedor',		value: ParciaisController.get("idFornecedor")});
 		data.push({name:'filtro.dataInicial',		value: ParciaisController.get("dataInicial")});
 		data.push({name:'filtro.dataFinal',			value: ParciaisController.get("dataFinal")});
-		data.push({name:'filtro.status',			value: ParciaisController.get("status")});
+//		data.push({name:'filtro.status',			value: ParciaisController.get("status")});
 		
 		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected').text()});
 		
@@ -948,7 +951,7 @@ var ParciaisController = $.extend(true, {
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 180,
+					width : 260,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -963,13 +966,13 @@ var ParciaisController = $.extend(true, {
 					width : 180,
 					sortable : true,
 					align : 'left'
-				}, {
+				}, /*{
 					display : 'Status',
 					name : 'statusParcial',
 					width : 80,
 					sortable : true,
 					align : 'left'
-				}, {
+				},*/ {
 					display : 'Ação',
 					name : 'acao',
 					width : 40,

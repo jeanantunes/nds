@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.HistoricoDescontoLogistica;
 import br.com.abril.nds.repository.HistoricoDescontoLogisticaRepository;
@@ -15,6 +16,7 @@ public class HistoricoDescontoLogisticaServiceImpl implements HistoricoDescontoL
 	@Autowired
 	private HistoricoDescontoLogisticaRepository historicoDescontoLogisticaRepository;
 	
+	@Transactional
 	public HistoricoDescontoLogistica obterDesconto(Integer tipoDesconto, Date dataInicioVigencia){
 		
 		return historicoDescontoLogisticaRepository.obterHistoricoDesconto(tipoDesconto, dataInicioVigencia);
