@@ -18,6 +18,7 @@ import java.util.Set;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1020,6 +1021,30 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				break;
 				
+			case SOBRA_DE_DIRECIONADA_COTA:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_DE);
+				
+				break;
+				
+			case SOBRA_EM_DIRECIONADA_COTA:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM);
+				
+				break;
+				
+			case SOBRA_ENVIO_PARA_COTA:
+				
+				parametroNumeroDiasLancamento = 
+					this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+						TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM);
+				
+				break;
+				
 			default:
 				
 				parametroNumeroDiasLancamento = null;
@@ -1095,6 +1120,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		GrupoMovimentoEstoque grupoMovimentoEstoque = null;
 		
 		TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
+
+		this.tratarSobrasDirecionadasParaCota(
+			diferenca, tipoDiferenca, idUsuario, isAprovacaoAutomatica, 
+			validarTransfEstoqueDiferenca, dataLancamento, origem
+		);
 		
 		StatusIntegracao statusIntegracao = null;
 		
@@ -1130,6 +1160,39 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			diferenca.getProdutoEdicao().getId(), idUsuario,
 				diferenca.getQtde(), tipoMovimentoEstoque, 
 					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
+	}
+	
+	private void tratarSobrasDirecionadasParaCota(Diferenca diferenca, 
+			                                      TipoDiferenca tipoDiferenca, 
+												  Long idUsuario,
+ 												  boolean isAprovacaoAutomatica, 
+												  boolean validarTransfEstoqueDiferenca,
+												  Date dataLancamento, Origem origem) {
+
+		List<TipoDiferenca> tiposDiferencaSobraCota = 
+				Arrays.asList(
+					TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA, 
+					TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA
+				);
+
+		if (tiposDiferencaSobraCota.contains(tipoDiferenca)) {
+			
+			try {
+			
+				Diferenca diferencaSaidaDistribuidor = (Diferenca) BeanUtils.cloneBean(diferenca);
+				
+				diferencaSaidaDistribuidor.setTipoDiferenca(TipoDiferenca.SOBRA_ENVIO_PARA_COTA);
+				
+				this.gerarMovimentoEstoque(
+					diferencaSaidaDistribuidor, idUsuario, isAprovacaoAutomatica, 
+					validarTransfEstoqueDiferenca, dataLancamento, origem
+				);
+
+			} catch (Exception e) {
+				
+				throw new IllegalArgumentException(e);
+			}
+		}
 	}
 	
 	private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(TipoDiferenca tipoDiferenca) {

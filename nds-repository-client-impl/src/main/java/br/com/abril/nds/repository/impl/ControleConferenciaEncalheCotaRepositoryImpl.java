@@ -138,6 +138,24 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
 		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
 		
+		sql.append("	inner join COTA on ");
+		sql.append("	( COTA.ID = CHAMADA_ENCALHE_COTA.COTA_ID) ");
+		
+		sql.append("	inner join BOX on ");
+		sql.append("	( BOX.ID = COTA.BOX_ID) ");
+		
+		sql.append("	inner join ROTEIRIZACAO on ");
+		sql.append("	( ROTEIRIZACAO.BOX_ID = BOX.ID) ");
+		
+		sql.append("	inner join ROTEIRO on ");
+		sql.append("	( ROTEIRO.ROTEIRIZACAO_ID = ROTEIRIZACAO.ID) ");
+		
+		sql.append("	inner join ROTA on ");
+		sql.append("	( ROTA.ROTEIRO_ID = ROTEIRO.ID) ");
+		
+		sql.append("	inner join ROTA_PDV on ");
+		sql.append("	( ROTA.ID = ROTA_PDV.ROTA_ID) ");
+		
 		sql.append("	where	");
 		
 		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
@@ -152,6 +170,8 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
+		sql.append("	ORDER BY BOX.NOME, ROTEIRO.ORDEM, ROTA.ORDEM, ROTA_PDV.ORDEM ");
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 

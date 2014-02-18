@@ -13,13 +13,6 @@ function analisar(){
 
 </script>
 
-	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-                <span class="ui-state-default ui-corner-all" style="float:right;">
-                <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
-				<b>Box < evento > com < status >.</b></p>
-	</div>
-	
 	<span id="copiarEstudo-idLancamento" style="display: none;"></span>
 	<span id="copiarEstudo-idCopia" style="display: none;"></span>
 
