@@ -27,6 +27,7 @@ import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
 import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.TiposNotasFiscaisParametrosVO;
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -58,6 +59,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.model.cadastro.TributoAliquota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -82,6 +84,8 @@ import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.TributacaoRepository;
+import br.com.abril.nds.repository.TributoAliquotaRepository;
 import br.com.abril.nds.service.GrupoPermissaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -166,6 +170,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	@Autowired
 	private RegimeTributarioRepository regimeTributarioRepository;
+	
+	@Autowired
+	private TributoAliquotaRepository tributoAliquotaRepository;
 	
 	@PostConstruct
 	public void initCouchDbClient() {
@@ -980,6 +987,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			
 		} else {
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
+		}
+		
+		distribuidor.setRegimeTributario(parametrosDistribuidor.getRegimeTributario());
+		
+		for(TributoAliquotaDTO taDTO : parametrosDistribuidor.getTributosAliquotas()) {
+			
+			TributoAliquota ta = tributoAliquotaRepository.buscarPorId(taDTO.getId());
+			ta.setValor(taDTO.getValor());
+			tributoAliquotaRepository.alterar(ta);
+			
 		}
 		
 		if(parametrosDistribuidor.isPossuiRegimeEspecialDispensaInterna()) {

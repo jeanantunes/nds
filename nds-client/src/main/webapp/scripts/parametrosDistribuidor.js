@@ -197,7 +197,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaFaltaEm', value: $('#prazoAvisoPrevioValidadeGarantiaFaltaEm', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.prazoAvisoPrevioValidadeGarantiaSobraEm', value: $('#prazoAvisoPrevioValidadeGarantiaSobraEm', this.workspace).is(':checked')},
 			
-			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
+			{name:'parametrosDistribuidor.regimeTributario.id', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.possuiRegimeEspecialDispensaInterna', value: $('#possuiRegimeEspecialDispensaInterna', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.numeroDispositivoLegal', value: $('#numeroDispositivoLegal', this.workspace).val()},
 			{name:'parametrosDistribuidor.dataLimiteVigenciaRegimeEspecial', value: $('#dataLimiteVigenciaRegimeEspecial', this.workspace).val()},
@@ -264,6 +264,13 @@ var parametrosDistribuidorController = $.extend(true, {
 		$.each(itensTiposNotasFiscais, function(index, value) {
 			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].nome', value: itensTiposNotasFiscais[index]});
 			data.push({name:'parametrosDistribuidor.tiposNotasFiscais[].valor', value: $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val() != undefined ? $('input[name='+ itensTiposNotasFiscais[index] +']:checked').val() : -1});
+		});
+		
+		
+		$.each($('#regimeTributarioTributos input[type=text]'), function(key, value) {
+			data.push({name:'parametrosDistribuidor.tributosAliquotas[].id', value: $('#id' + value.name).val()});
+			data.push({name:'parametrosDistribuidor.tributosAliquotas[].tributoId', value: $('#tributoId' + value.name).val()});
+			data.push({name:'parametrosDistribuidor.tributosAliquotas[].valor', value: $('#valor' + value.name).val()});
 		});
 		
 		$.postJSON(parametrosDistribuidorController.path + "gravar",
@@ -342,25 +349,11 @@ var parametrosDistribuidorController = $.extend(true, {
 	    }
 	    
 	    if(arrayMensagemWarning.length > 0) {
-		exibirMensagem('WARNING', arrayMensagemWarning);
+	    	exibirMensagem('WARNING', arrayMensagemWarning);
 	    } else {
 		
-		$("#dialog-confirm", this.workspace).dialog({
-			resizable: false,
-			height:160,
-			width:400,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					parametrosDistribuidorController.gravar();
-					$(this).dialog("close");
-				},
-				"Cancelar": function() {
-					$(this).dialog("close");
-				}
-			}, 
-			form: $("#dialog-confirm", this.workspace).parents("form")
-		});
+	    	$("#confirmarParametrosDistribuidor").dialog("open");
+			
 	    }
 	},
 	
@@ -475,6 +468,24 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 	
 	init: function() {
+		
+		$("#confirmarParametrosDistribuidor").dialog({
+			autoOpen: false,
+			resizable: false,
+			height:160,
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$("#confirmarParametrosDistribuidor").dialog("close");
+					parametrosDistribuidorController.gravar();						
+				},
+				"Cancelar": function() {
+					$("#confirmarParametrosDistribuidor").dialog("close");
+				}
+			}, 
+			//form: $("#dialog-confirm", this.workspace).parents("form")
+		});
 		
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg();
 		$('#informacoesComplementaresContrato', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
@@ -842,58 +853,79 @@ var parametrosDistribuidorController = $.extend(true, {
 		 $.postJSON(this.path + "obterTributosPeloRegimeTributario", params,
 		 function (result) {
 	 
-			 var myTR = $('<tr>');
+			 var impTR = $('<tr>');
 			 $.each(result, function(key, value) {
 
 				 var tributo = '';
-				 var input;
-				 
+				 var input = '';
 				 
 				 $.each(value, function(k, v) {
 					 //console.log(k +' - '+ value[k]);
-					 var myTD = $('<td>');
+					 var impTD = $('<td>');
 					 if(k == 'tributo') {
 						 tributo = value[k];
 					 }
 					 
-					 if(k == 'valor' || k == 'id' || k == 'tributoId') {
-						 
-						 if(k == 'valor') {
-							 input = $('<input>').attr({
-								    type: 'text',
-								    id: k + tributo,
-								    name: tributo,
-								    value: floatToPrice(value[k])
-							 });
-						 }
-						 
-						 if(k == 'id' || k == 'tributoId') {
-							 input = $('<input>').attr({
-								    type: 'hidden',
-								    id: k + value['tributo'],
-								    name: k + value['tributo'],
-								    value: value[k]
-							 });
-							 
-						 }
-						 
-						 myTD.append(input);
-						 myTR.append(myTD);
-						 
-					 } else {
-						 
-						 if(k == 'tributoDescricao') {
-							 myTD.text(value[k] +':');
-							 myTR.append(myTD);
-						 }
-						 
+					 switch(k) {
+					 
+					 	case 'valor':
+					 		input = $('<input>').attr({
+							    type: 'text',
+							    id: k + tributo,
+							    name: tributo,
+							    style: 'width: 30px',
+							    value: floatToPrice(value[k])
+					 		});
+					 		break;
+					 	
+					 	case 'id':
+					 	case 'tributoId':
+					 		input = $('<input>').attr({
+							    type: 'hidden',
+							    id: k + value['tributo'],
+							    name: k + value['tributo'],
+							    value: value[k]
+					 		});
+					 		break;
+					 		
+					 	case 'tributoDescricao':
+					 		input = value[k] +':';
+					 		break;
+					 		
+					 	case 'tipoAliquota':
+					 		tipoAliquota = (value[k] == "Percentual") ? '%' : '$';
+					 		input = '';
+					 		break;
+					 	
+					 	default:
+					 		input = '';
+					 }
+					 
+					 if(input != '') {
+						 impTD.append(input);
+						 impTR.append(impTD);
 					 }
 					 
 				 });
 				 
+				 impTD = $('<td>');
+				 impTD.append(tipoAliquota);
+				 impTR.append(impTD);
+				 
 			 });
-			 $('#regimeTributarioTributos').append(myTR);
+			 $('#regimeTributarioTributos').append(impTR);
+			 
 		 });
+		 
+		 setTimeout(function() {
+			 $.each($('#regimeTributarioTributos input[type=text]'), function(key, value) {
+				 $("#valor"+ value.name, this.workspace).maskMoney({
+					 thousands:'.', 
+					 decimal:',' 
+				 }); 
+			 });
+		 }, 100);
+		 
 	 },
 	 
 }, BaseController);
