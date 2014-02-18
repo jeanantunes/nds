@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.EstrategiaDTO;
@@ -43,6 +42,7 @@ import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.ProdutoEdicaoAlgoritimoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RoteiroService;
@@ -110,7 +110,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
     
     @Autowired
-    private ProdutoEdicaoDAO produtoEdicaoDAO;
+    private ProdutoEdicaoAlgoritimoService produtoEdicaoAlgoritimoService;
     
     @Autowired
     private ProdutoService prodService;
@@ -172,7 +172,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
         }
     } else {
         EstudoTransient estudoTemp = new EstudoTransient();
-        estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId() : null));
+            estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoAlgoritimoService.getProdutoEdicaoEstudo(
+                    produto.getCodigo(), produtoEdicao.getNumeroEdicao(), lancamento != null ? lancamento.getId()
+                            : null));
         try {
             definicaoBases.executar(estudoTemp);
             selecionados.clear();

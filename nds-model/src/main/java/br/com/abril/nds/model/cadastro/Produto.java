@@ -55,6 +55,10 @@ public class Produto implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name="DATA_CRIACAO", nullable=true)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataCriacao;
+	
 	@Column(name = "CODIGO", unique = true, length = 30)
 	private String codigo;
 	
@@ -568,7 +572,16 @@ public class Produto implements Serializable {
 		this.descricaoDesconto = descricaoDesconto;
 	}
 
-	/**
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
+
+    
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    /**
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário
