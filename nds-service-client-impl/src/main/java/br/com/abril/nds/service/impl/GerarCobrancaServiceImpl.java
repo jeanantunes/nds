@@ -916,11 +916,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		Cota cotaUnificadora = this.cotaUnificacaoRepository.obterCotaUnificadoraPorCota(cota.getNumeroCota());
+		cotaUnificadora = cotaUnificadora == null ? cota : cotaUnificadora;
 		
-		if (cotaUnificadora == null || !consolidadosCotaUnficacao.containsKey(cotaUnificadora)){
-			
-			cotaUnificadora = cotaUnificadora == null ? cota : cotaUnificadora;
-			
+		
+		if (!consolidadosCotaUnficacao.containsKey(cotaUnificadora)){
 			consolidadosCotaUnficacao.put(
 				cotaUnificadora, 
 				new ArrayList<GerarCobrancaHelper>());
