@@ -855,7 +855,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 						orderByColumn = " valorComDesconto ";
 						break;
 					default:
-						orderByColumn = " CHAMADA_ENCALHE.DATA_RECOLHIMENTO ";
+						orderByColumn = " CHAMADA_ENCALHE.DATA_RECOLHIMENTO, CHAMADA_ENCALHE.SEQUENCIA ";
 						break;
 				}
 			
@@ -865,7 +865,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				sql.append(paginacao.getOrdenacao().toString());
 			}
 		} else {
-			sql.append(" order by CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
+			sql.append(" order by CHAMADA_ENCALHE.DATA_RECOLHIMENTO, CHAMADA_ENCALHE.SEQUENCIA ");
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -917,7 +917,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				dto.setFornecedor(rs.getString("fornecedor"));
 				dto.setDataMovimento(rs.getDate("dataMovimento"));
 				dto.setIndPossuiObservacaoConferenciaEncalhe(rs.getBoolean("indObservacaoConferenciaEncalhe"));
-				dto.setRecolhimento(rs.getObject("diaRecolhimento") != null ? (int) (rs.getObject("diaRecolhimento")) : null);
+				dto.setRecolhimento(rs.getObject("diaRecolhimento") != null ? (Long) (rs.getObject("diaRecolhimento")) : null);
 				
 				return dto;
 			}
@@ -1002,6 +1002,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		subSqlIndObservacao.append(" 	and CONFERENCIA_ENCALHE_0.OBSERVACAO is not null ");
 		
+		StringBuilder subSqlDiaRecolhimento = new StringBuilder();
+		
+		subSqlDiaRecolhimento.append(" SELECT CONFERENCIA_ENCALHE_0.DIA_RECOLHIMENTO ");
+		subSqlDiaRecolhimento.append(" 	FROM CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_0 ");
+		subSqlDiaRecolhimento.append(" 	WHERE CONFERENCIA_ENCALHE_0.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+		
+		if (filtro.getIdCota() != null) {
+			subSqlDiaRecolhimento.append(" 	and CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id ");
+		}
+		
+		subSqlDiaRecolhimento.append(" 	and CONFERENCIA_ENCALHE_0.DIA_RECOLHIMENTO is not null limit 1 ");
 		
 		StringBuffer sql = new StringBuffer();
 
@@ -1042,7 +1053,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 			sql.append(" (" + subSqlIndObservacao + ") AS indObservacaoConferenciaEncalhe, ");
 			
-			sql.append(" CONFERENCIA_ENCALHE.DIA_RECOLHIMENTO AS diaRecolhimento, ");
+			sql.append(" (" + subSqlDiaRecolhimento + ") AS diaRecolhimento, ");
 			
 			sql.append(" cota.TIPO_COTA as tipoCota, ");
 					
