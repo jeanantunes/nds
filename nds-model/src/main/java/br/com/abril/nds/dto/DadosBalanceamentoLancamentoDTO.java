@@ -40,6 +40,18 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	private Set<Date> datasExpedicaoConfirmada;
 	
 	private Intervalo<Date> periodoDistribuicao;
+	
+	private Set<Date> datasBalanceaveis;
+	
+	private Set<Date> datasNaoBalanceaveis;
+
+	public Set<Date> getDatasNaoBalanceaveis() {
+		return datasNaoBalanceaveis;
+	}
+
+	public void setDatasNaoBalanceaveis(Set<Date> datasNaoBalanceaveis) {
+		this.datasNaoBalanceaveis = datasNaoBalanceaveis;
+	}
 
 	/**
 	 * Construtor padrão.
@@ -165,6 +177,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDatasExpedicaoConfirmada(Set<Date> datasExpedicaoConfirmada) {
 		this.datasExpedicaoConfirmada = datasExpedicaoConfirmada;
+	}
+
+	/**
+	 * @return the datasExpedicaoConfirmada
+	 */
+	public Set<Date> getDatasBalanceaveis() {
+		return datasBalanceaveis;
+	}
+
+	/**
+	 * @param datasExpedicaoConfirmada the datasExpedicaoConfirmada to set
+	 */
+	public void setDatasBalanceaveis(Set<Date> datasBalanceaveis) {
+		this.datasBalanceaveis = datasBalanceaveis;
 	}
 
 	/**
