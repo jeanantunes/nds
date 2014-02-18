@@ -539,6 +539,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			PeriodoLancamentoParcial periodo =
 				this.criarNovoPeriodoLancamentoParcial(lancamentoParcial);
 			
+			periodo = periodoLancamentoParcialRepository.merge(periodo);
+			
 			lancamento.setPeriodoLancamentoParcial(periodo);
 			
 			lancamentoRepository.merge(lancamento);
@@ -1616,6 +1618,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         if(dto.getPeso()==null)
             dto.setPeso(produto.getPeso());
+        
+        String parcial = dto.getRecolhimentoParcial();
+        
+        if("SIM".equalsIgnoreCase(parcial) || "TRUE".equalsIgnoreCase(parcial)  || "PARCIAL".equalsIgnoreCase(parcial))
+            dto.setParcial(true);
+        else
+            dto.setParcial(false);
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(100, 1, 1);
+        
+        Date ano0100 = calendar.getTime();
+        
+        if(DateUtil.isDataInicialMaiorDataFinal(ano0100, dto.getDataLancamentoPrevisto()) 
+                || DateUtil.isDataInicialMaiorDataFinal(ano0100, dto.getDataRecolhimentoPrevisto()))
+            throw new  ValidacaoException(TipoMensagem.WARNING, "Data em formato incorreto. Ano deve ser escrito por extenso. Ex: '10/10/2010'");
         
         dto.setPossuiBrinde(false);
         dto.setPermiteValeDesconto(false);
