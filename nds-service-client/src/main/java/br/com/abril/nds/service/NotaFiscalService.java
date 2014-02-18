@@ -63,7 +63,7 @@ public interface NotaFiscalService {
 	 * 
 	 * @param dadosRetornoNFE - dados de retorno da nota fiscal
 	 */
-	void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
+	NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE);
 	
 	/**
 	 * Cancela uma nota fiscal.

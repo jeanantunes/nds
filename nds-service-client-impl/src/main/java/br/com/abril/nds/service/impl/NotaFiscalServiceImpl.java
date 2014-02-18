@@ -44,6 +44,7 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
@@ -175,7 +176,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private NotaFiscalNdsRepository notaFiscalNdsRepository;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -375,7 +376,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public void denegarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 		atualizaRetornoNFe(dadosRetornoNFE);
-
 	}
 
 	/*
@@ -387,8 +387,37 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
-		atualizaRetornoNFe(dadosRetornoNFE);
+	public NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
+		
+		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
+		
+		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
+		
+		
+		switch (tipoImpressao) {
+			
+			case MODELO_1:
+				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
+					// criar nota de envio
+					
+				}
+				
+				
+				
+				break;
+				
+			case MODELO_2:
+				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
+					// criar nota de envio
+					
+				}
+				break;	
+				
+			default:
+				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
+		}
+		
+		return notaFiscal;
 	}
 
 	/**
@@ -396,8 +425,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * 
 	 * @param dadosRetornoNFE
 	 */
-	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
-
+	private NotaFiscal atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
+		
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getNumeroNotaFiscal());
 
 		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
@@ -406,7 +435,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
 			informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 		}
-
+		
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
 
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
@@ -420,8 +449,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
 		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
-		this.notaFiscalRepository.merge(notaFiscal);	
-
+		return this.notaFiscalRepository.merge(notaFiscal);	
 	}
 
 	/*
@@ -536,13 +564,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 	}
 
-	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao)
-			throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		StringBuilder sBuilder = new StringBuilder();
 
-		NFEExporter nfeExporter = new NFEExporter();
+		// NFEExporter nfeExporter = new NFEExporter();
 
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 

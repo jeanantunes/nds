@@ -83,7 +83,6 @@ public class GeracaoNFeController extends BaseController {
 	@Autowired
 	private HttpServletRequest request;
 	
-	
 	@Autowired
 	private NaturezaOperacaoService naturezaOperacaoService;
 	
@@ -203,8 +202,7 @@ public class GeracaoNFeController extends BaseController {
 		}
 	}
 
-	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp,
-			int page) {
+	private PaginacaoVO carregarPaginacao(String sortname, String sortorder, int rp, int page) {
 		PaginacaoVO paginacao = new PaginacaoVO();
 		paginacao.setOrdenacao(Ordenacao.ASC);
 	    paginacao.setPaginaAtual(page);

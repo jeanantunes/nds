@@ -581,9 +581,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		// Data Emissão:	...		
-		if(filtro.getDataEmissao() != null) {
-			hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao =:dataEmissao ");
-		}
+		// if(filtro.getDataEmissao() != null) {
+			// hql.append(" AND notaFiscal.notaFiscalInformacoes.identificacao.dataEmissao =:dataEmissao ");
+		// }
 		
 		// Intervalo data de Movimento...
 		if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
@@ -649,9 +649,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		// Data Emissão:	...		
-		if(filtro.getDataEmissao() != null) {
-			query.setParameter("dataEmissao", filtro.getDataEmissao());
-		}
+		// if(filtro.getDataEmissao() != null) {
+			// query.setParameter("dataEmissao", filtro.getDataEmissao());
+		// }
 		
 		if(filtro.getIdCotaInicial() != null && filtro.getIdCotaFinal() != null) {
 			query.setParameter("numeroCotaInicial", filtro.getIdCotaInicial().intValue());
