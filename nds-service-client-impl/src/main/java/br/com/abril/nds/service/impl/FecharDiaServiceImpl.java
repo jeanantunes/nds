@@ -10,7 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1766,7 +1767,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     @Transactional(readOnly = true)
     public List<Diferenca> obterDiferencas(Date data) {
         Objects.requireNonNull(data, "Data para recuperação das diferenças não deve ser nula!");
-        return diferencaRepository.obterDiferencas(data);
+        return diferencaRepository.obterDiferencas(data,StatusConfirmacao.CONFIRMADO);
     }
 	
 	 /**
