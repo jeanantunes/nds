@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -339,6 +340,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
+	
+	List<LancamentoDTO> obterDatasStatusAgrupados(FiltroLancamentoDTO filtro,Intervalo<Date> intervalo);
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
 

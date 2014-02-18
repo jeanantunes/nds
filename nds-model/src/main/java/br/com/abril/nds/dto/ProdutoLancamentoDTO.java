@@ -85,7 +85,16 @@ public class ProdutoLancamentoDTO implements Serializable {
   	
   	private boolean cancelado;
 	
+  	private boolean alterado;
 
+
+	public boolean isAlterado() {
+		return alterado;
+	}
+
+	public void setAlterado(boolean alterado) {
+		this.alterado = alterado;
+	}
 
 	public boolean isCancelado() {
 		return cancelado;
