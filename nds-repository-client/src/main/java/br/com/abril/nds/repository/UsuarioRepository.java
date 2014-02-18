@@ -22,4 +22,6 @@ public interface UsuarioRepository extends Repository<Usuario, Long> {
 	public void alterarSenha(Usuario usuario);
 
 	public boolean verificarUsuarioSupervisor(String usuario, String senha);
+
+    public abstract Boolean isSupervisor(String login);
 }
