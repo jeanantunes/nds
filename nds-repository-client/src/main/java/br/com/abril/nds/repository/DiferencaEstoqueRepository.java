@@ -115,4 +115,6 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	 */
 	Long obterQuantidadeDadosParaImpressaoNaData(Date data);
 	
+	List<Diferenca> obterDiferencas(Date data, StatusConfirmacao... statusConfirmacao);
+	
 }
