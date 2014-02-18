@@ -188,29 +188,25 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		List<Cota> cotas = this.notaFiscalNdsRepository.obterConjuntoCotasNotafiscal(filtro);
 		
 		for (Cota cota : cotas) {
+			
 			NotaFiscal notaFiscal = new NotaFiscal();
 			
 			notaFiscal.setUsuario(usuarioService.getUsuarioLogado());
 			
-			// NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			NotaFiscalBuilder.popularDadosDistribuidor(notaFiscal, distribuidor, filtro);
 			
 			NotaFiscalBuilder.popularDadosTransportadora(notaFiscal, distribuidor, filtro);
 			
-			// NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
 			NotaFiscalBuilder.montarHeaderNotaFiscal(notaFiscal, cota);
 			
-			// EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			EmitenteDestinatarioBuilder.montarEnderecoEmitenteDestinatario(notaFiscal, cota);
 			
-			// NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			NaturezaOperacaoBuilder.montarNaturezaOperacao(notaFiscal, naturezaOperacao);
 			
 			// obter os movimentos de cada cota
 			filtro.setIdCota(cota.getId());
 			List<MovimentoEstoqueCota> movimentosEstoqueCota = this.notaFiscalNdsRepository.obterMovimentosEstoqueCota(filtro);
 			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueCota) {
-				// ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 				ItemNotaFiscalBuilder.montaItemNotaFiscal(notaFiscal, movimentoEstoqueCota);
 			}
 			

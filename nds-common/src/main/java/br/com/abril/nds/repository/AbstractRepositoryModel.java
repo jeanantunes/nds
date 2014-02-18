@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <K> tipo do identificador do repositório
  */
 public abstract class AbstractRepositoryModel<T, K extends Serializable> extends AbstractRepository implements Repository<T, K> {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRepositoryModel.class);
 	
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -138,7 +142,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 			return sessionFactory.getCurrentSession();
 			
 		} catch (Exception e) {
-			System.out.println("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n");
+			LOGGER.error("\n\nFaltando @Transaction: "+ InformacoesTransaction.getInfo() +"\n\n");
 		}
 		
 		return null; // sessionFactory.openSession();

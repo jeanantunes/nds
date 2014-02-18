@@ -1213,9 +1213,7 @@ public class CotaServiceImpl implements CotaService {
 		processarTitularidadeCota(cota, cotaDTO);
 		
 		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
-		cotaDTO.setRecebeComplementar(
-			cota.getParametroDistribuicao() == null ? false : 
-				cota.getParametroDistribuicao().getRecebeComplementar());
+		cotaDTO.setRecebeComplementar(cota.getParametroDistribuicao() == null || cota.getParametroDistribuicao().getRecebeComplementar() == null ? false : cota.getParametroDistribuicao().getRecebeComplementar());
 		
 		return cotaDTO;
 	}

@@ -246,8 +246,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		
 		validarCadastroDistribuidor(parametrosDistribuidor);
-		parametrosDistribuidorService.salvarDistribuidor(
-			parametrosDistribuidor, imgLogotipo, contentType);
+		parametrosDistribuidorService.salvarDistribuidor(parametrosDistribuidor, imgLogotipo, contentType);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}

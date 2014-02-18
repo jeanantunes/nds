@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.TributoAliquotaDTO;
 import br.com.abril.nds.model.cadastro.RegimeTributario;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
@@ -180,6 +181,7 @@ public class ParametrosDistribuidorVO {
     private String chamadaoValorConsignado;
     
     private List<TiposNotasFiscaisParametrosVO> tiposNotasFiscais;
+    private List<TributoAliquotaDTO> tributosAliquotas;
 
     // Aba Distribuição
     // Grid Distribuição
@@ -1289,6 +1291,14 @@ public class ParametrosDistribuidorVO {
 		this.tiposNotasFiscais = tiposNotasFiscais;
 	}
 	
+	public List<TributoAliquotaDTO> getTributosAliquotas() {
+		return tributosAliquotas;
+	}
+
+	public void setTributosAliquotas(List<TributoAliquotaDTO> tributosAliquotas) {
+		this.tributosAliquotas = tributosAliquotas;
+	}
+
 	public boolean isGeracaoAutomaticaEstudo() {
 		return geracaoAutomaticaEstudo;
 	}

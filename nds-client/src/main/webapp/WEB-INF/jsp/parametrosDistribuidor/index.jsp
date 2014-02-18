@@ -43,19 +43,6 @@
 	<c:if test="${!parametrosDistribuidor.possuiRegimeEspecialDispensaInterna}">
 	$('.camposEspecificosRegimeEspecial').hide();
 	</c:if>
-	/*
-	$(document).ready(function() {
-		$.each($('#regimeTributario option', this.workspace), function(key, value) {
-			 if($(value).val() == ${parametrosDistribuidor.regimeTributario.id}) {
-				 $(value).attr('selected', true);
-			 } else {
-				 $(value).removeAttr('selected');
-			 }
-			 console.log(key + ' ' + $(value).val()+ ' ' + $(value).text())
-		});
-    });*/
-	//${parametrosDistribuidor.regimeTributario.id}
-	//${parametrosDistribuidor.tipoAtividade.descricao}
 	
 </script>
 
@@ -64,12 +51,6 @@
 <body>
 
 <form id="salvarParametrosDistribuidor">
-</form>
-
-<form id="confirmarParametrosDistribuidor">
-	<div id="dialog-confirm" title="Salvar Parâmetro do Distribuidor">
-		<p>Confirma os Parâmetros do Distribuidor?</p>
-	</div>
 </form>
 
 <form action="<c:url value='/administracao/parametrosDistribuidor/salvarLogo' />" id="formParamentrosDistribuidor"
@@ -155,10 +136,8 @@
 	</div>
 </form>
 
-<form id="confirmarParametrosDistribuidor">
-	<div id="dialog-confirm" title="Salvar Parâmetro do Distribuidor">
-		<p>Confirma os Parâmetros do Distribuidor?</p>
-	</div>
-</form>
+<div id="confirmarParametrosDistribuidor" title="Salvar Parâmetro do Distribuidor">
+	<p>Confirma os Parâmetros do Distribuidor?</p>
+</div>
 
 </body>
