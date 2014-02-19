@@ -639,7 +639,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		}
 		
 		// tipo da nota fiscal		
-		if(filtro.getIdNaturezaOperacao() !=null && !"".equals(filtro.getIdNaturezaOperacao())) {
+		if(filtro.getIdNaturezaOperacao() != null && filtro.getIdNaturezaOperacao().longValue() > 0) {
 			 query.setParameter("tipoNota", filtro.getIdNaturezaOperacao()); 
 		}
 		
