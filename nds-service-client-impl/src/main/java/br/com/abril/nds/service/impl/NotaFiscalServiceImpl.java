@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -404,7 +405,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			case MODELO_1:
 			case MODELO_2:
 				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
-					this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
+					if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+						this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);						
+					}
 				}
 				
 				break;
