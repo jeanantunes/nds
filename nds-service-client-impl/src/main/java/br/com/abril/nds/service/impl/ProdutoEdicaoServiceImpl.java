@@ -379,7 +379,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         return Long.valueOf(count);
     }
     
-	                                    /**
+	                                        /**
      * Insere os dados de desconto relativos ao produto edição em questão.
      * 
      * @param produtoEdicao
@@ -474,7 +474,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
                     !FileType.GIF.getContentType().equalsIgnoreCase(contentType)  &&
                     !FileType.PNG.getContentType().equalsIgnoreCase(contentType)) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
- "O formato da imagem da capa não é válido!");
+                        "O formato da imagem da capa não é válido!");
             }
             
             capaService.saveCapa(produtoEdicao.getId(), contentType, imgInputStream);
@@ -615,7 +615,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         }
     }
     
-	                                    /**
+	                                        /**
      * Aplica todas as regras de validação para o cadastro de uma Edição.
      * 
      * @param dto
@@ -623,7 +623,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
      */
     private void validarProdutoEdicao(final ProdutoEdicaoDTO dto, final ProdutoEdicao produtoEdicao) {
         
-		                                                                        /*
+		                                                                                /*
          * Regra: Os campos abaixos só podem ser alterados caso a Edição ainda
          * não tenha sido publicado pelo distribuidor: - Código da Edição; -
          * Número da Edição;
@@ -675,7 +675,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         // Nota: Conforme conversado com o Cesar e Paulo Bacherini em
         // 05/11/2012, dois produtos diferentes podem sim ter o mesmo código de
         // barras
-		                                                                        /*
+		                                                                                /*
          * List<ProdutoEdicao> lstPeCodBarra =
          * this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoDeBarra(
          * dto.getCodigoDeBarras(), produtoEdicao.getId()); if (lstPeCodBarra !=
@@ -697,7 +697,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
          */
     }
     
-	                                    /**
+	                                        /**
      * Salva ou atualiza um ProdutoEdicao.<br>
      * . Os campos permitidos no cenário de gravação ou alteração de um
      * ProdutoEdição criado por um Distribuidor:
@@ -843,7 +843,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         return produtoEdicao;
     }
     
-	                                    /**
+	                                        /**
      * Salva o lançamento.
      * 
      * @param lancamento
@@ -1404,10 +1404,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         
         final String[] newFaixasVenda = new String[faixasVenda.length];
         
-        for (int i = 0; i < faixasVenda.length; i++) {
-            newFaixasVenda[i] = faixasVenda[i];
-        }
         
+        System.arraycopy(faixasVenda, 0, newFaixasVenda, 0, faixasVenda.length);
+
         final List<ProdutoEdicaoDTO> lstPrDTO = new ArrayList<ProdutoEdicaoDTO>();
         for (final String strEd : edicoes){
             
@@ -1566,7 +1565,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
             throw new ValidacaoException(new ValidacaoVO(
                     TipoMensagem.WARNING,
                     "O produto " + produtoEdicao.getProduto().getNome()
-                    + " não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
+                + " não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
         }
         
         return porcentagemDesconto;
