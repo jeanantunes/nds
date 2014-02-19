@@ -16,6 +16,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.ManyToAny;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.dto.auditoria.AtributoDTO;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
@@ -23,6 +25,8 @@ import br.com.abril.nds.enums.TipoOperacaoSQL;
 import br.com.caelum.vraptor.Path;
 
 public class AuditoriaUtil {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditoriaUtil.class);
 
 	private static final String EXCLUDED_FIELD = "serialVersionUID";
 	
@@ -33,6 +37,10 @@ public class AuditoriaUtil {
 	private static final String CONTROLLERS_PACKAGE = "br.com.abril.nds.controllers";
 	
 	private static final String SLASH = "/";
+    
+    private AuditoriaUtil() {
+        
+    }
 
 	public static AuditoriaDTO generateAuditoriaDTO(Object newEntity, Object oldEntity, String entityType, Thread currentThread, 
 													Object user, TipoOperacaoSQL tipoOperacaoAuditoria) {
@@ -97,8 +105,10 @@ public class AuditoriaUtil {
 				result.addAll(entityToDTO(field.get(entity), field.getType()));
 				
 			} catch (IllegalArgumentException e) {
+                LOGGER.debug(e.getMessage(), e);
 				continue;
 			} catch (IllegalAccessException e) {
+                LOGGER.debug(e.getMessage(), e);
 				continue;
 			}
 		}
@@ -125,8 +135,10 @@ public class AuditoriaUtil {
 				result.add(atributo);
 				
 			} catch (IllegalArgumentException e) {
+                LOGGER.debug(e.getMessage(), e);
 				continue;
 			} catch (IllegalAccessException e) {
+                LOGGER.debug(e.getMessage(), e);
 				continue;
 			}
 		}
@@ -136,7 +148,7 @@ public class AuditoriaUtil {
 	
 	private static String getURLFromController(Thread currentThread) {
 
-		String url = "";
+        StringBuilder url = new StringBuilder();
 
 		StackTraceElement[] stackTraceElements = currentThread.getStackTrace();
 
@@ -152,17 +164,18 @@ public class AuditoriaUtil {
 				String pathValueFromClass = getPathValueFromClass(fullyQualifiedClassName);
 
 				String pathValueFromMethod = getPathValueFromMethod(fullyQualifiedClassName, methodName);
-
-				url = pathValueFromClass 
-					+ (pathValueFromClass.endsWith(SLASH) || pathValueFromMethod.startsWith(SLASH) 
-							? "" : SLASH)
-					+ ((pathValueFromMethod == null || pathValueFromMethod.isEmpty()) ? methodName : pathValueFromMethod);
 				
+                if (!pathValueFromClass.endsWith(SLASH) && !pathValueFromMethod.startsWith(SLASH)) {
+                    url.append(SLASH);
+                }
+                
+                url.append(((pathValueFromMethod == null || pathValueFromMethod.isEmpty()) ? methodName
+                        : pathValueFromMethod));
 				break;
 			}
 		}
 
-		return url;
+        return url.toString();
 	}
 
 	private static List<String> getNDSStackTrace(Thread currentThread) {
@@ -245,7 +258,7 @@ public class AuditoriaUtil {
 			return pathValue;
 
 		} catch (ClassNotFoundException e) {
-
+            LOGGER.debug(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -276,7 +289,7 @@ public class AuditoriaUtil {
 			return pathValue;
 
 		} catch (ClassNotFoundException e) {
-
+            LOGGER.debug(e.getMessage(), e);
 			return null;
 		}
 	}
