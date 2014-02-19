@@ -545,7 +545,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         if (cotaAusenteEncalheDTO.isOperacaoDiferenciada()) {
             cotaAusenteEncalheDTO.setAcao((cotaAusenteEncalheDTO.getAcao() == null || cotaAusenteEncalheDTO.getAcao()
                     .trim().isEmpty()) ? "Operação Diferenciada" : cotaAusenteEncalheDTO.getAcao()
-                            + " / Operação Diferenciada");
+                + " / Operação Diferenciada");
         }
         
     }
@@ -615,10 +615,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
         
         final List<ChamadaEncalhe> chamadasEncalheAPostergarList = new ArrayList<>(chamadasEncalheAPostergarSet);
         Collections.sort(chamadasEncalheAPostergarList, new Comparator<ChamadaEncalhe>() {
-
+            
             @Override
             public int compare(final ChamadaEncalhe o1, final ChamadaEncalhe o2) {
-                return (o1.getSequencia() == o2.getSequencia() ? 0 : (o1.getSequencia() < o2.getSequencia() ? -1 : 1));
+                return (o1.getSequencia().equals(o2.getSequencia()) ? 0 : (o1.getSequencia() < o2.getSequencia() ? -1
+                        : 1));
             }
         });
         
@@ -1325,7 +1326,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
             final String sortorder, final String sortname, final Integer page, final Integer rp) {
         
         Integer startSearch = null;
-        if (page != null || rp != null) {
+        if (page != null && rp != null) {
             startSearch = page * rp - rp;
         }
         
