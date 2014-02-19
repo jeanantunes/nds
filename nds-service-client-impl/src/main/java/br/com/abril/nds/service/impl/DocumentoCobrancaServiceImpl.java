@@ -197,7 +197,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return arquivo;
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Retorna um grupo de documentos de cobrança.
@@ -226,7 +226,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return arquivo ;
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Retorna uma lista com os nosso número referente as cobranças.
@@ -245,7 +245,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return list;
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Envia um tipo de cobrança por email.
@@ -273,7 +273,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         emailService.enviar(assunto,mensagem,destinatarios,anexoEmail);
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Retorna o documento de cobrança gerado pelo Ireport
@@ -295,7 +295,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return gerarDocumentoIreport(list);
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Retorna um grupo de documentos de cobrança gerado pelo Ireport
@@ -317,7 +317,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return  JasperRunManager.runReportToPdf(path, map, jrDataSource);
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Retorna as informações do distribuidor para montagem dos parâmetros do
@@ -360,7 +360,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return map;
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Obtem descrição concatenada do endereço do distribuidor
@@ -389,7 +389,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return descricao.toString();
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Monta a estrutura do objeto para impressão no Ireport
@@ -420,7 +420,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return impressaoDTO;
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Atribui os dados da cota para a impressão
@@ -473,7 +473,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Atribui os dados do Banco para a impressão
@@ -503,7 +503,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
     }
     
-	                                    /**
+	                                        /**
      * BOLETO/COBRANCA
      * 
      * Gera documento de cobrança
@@ -628,7 +628,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return ord;
     }
     
-	                                    /**
+	                                        /**
      * SLIP
      * 
      * Ordena lista de produtos da impressão por dia
@@ -736,7 +736,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return dataOperacaoConferencia.getTime();
     }
     
-	                                    /**
+	                                        /**
      * SLIP
      * 
      * Obtem todos os dados da impressão do Slip
@@ -916,7 +916,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
     @Transactional
     public byte[] gerarSlipTxtMatricial(final SlipDTO slipDTO){
         
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         final ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
         Integer ultimoDia = null;
         
@@ -1061,7 +1061,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         e.quebrarLinhaEscape();
     }
     
-	                                    /**
+	                                        /**
      * SLIP
      * 
      * Adiciona informações da composição da cobrança no Slip
@@ -1167,7 +1167,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return gerarSlipTxtMatricial(slipDTO);
     }
     
-	                                    /**
+	                                        /**
      * SLIP
      * 
      * Gera Slip da Cobrança
@@ -1201,7 +1201,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         }
     }
     
-	                                    /**
+	                                        /**
      * SLIP
      * 
      * Gera Slip da Cobrança
@@ -1402,7 +1402,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return qtdeTotal.toString();
     }
     
-	                                    /**
+	                                        /**
      * RECIBO
      * 
      * Gera um relatório à partir de um Objeto com atributos e listas definidas
@@ -1436,7 +1436,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }
     
-	                                    /**
+	                                        /**
      * RECIBO
      * 
      * Gera Recibo da Cobrança
