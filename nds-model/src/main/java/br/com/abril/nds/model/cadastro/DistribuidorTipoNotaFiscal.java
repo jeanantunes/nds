@@ -49,7 +49,7 @@ public class DistribuidorTipoNotaFiscal {
 	
 	@OneToMany
 	@JoinTable(
-	            name="TIPO_NOTA_NATUREZA_OPERACAO",
+	            name="DISTRIBUIDOR_TIPO_NOTA_NATUREZA_OPERACAO",
 	            joinColumns={
 	            		@JoinColumn(table="DISTRIBUIDOR_NOTA_FISCAL_TIPOS", name="TIPO_NOTA_ID", referencedColumnName="id", nullable=false)
 	                    },

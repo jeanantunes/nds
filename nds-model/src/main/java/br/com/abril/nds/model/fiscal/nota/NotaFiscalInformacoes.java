@@ -128,7 +128,7 @@ public class NotaFiscalInformacoes implements Serializable {
 	private boolean notaImpressa;
 	
 	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique=true)
+	@JoinColumn(name="NOTA_FISCAL_VALOR_CALCULADO_ID", unique = true)
 	private NotaFiscalValorCalculado notaFiscalValoresCalculados = new NotaFiscalValorCalculado();
 	
 	@Column(name = "INFORMACOES_ADICIONAIS")
