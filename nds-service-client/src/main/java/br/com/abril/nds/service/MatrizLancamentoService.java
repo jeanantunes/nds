@@ -71,7 +71,7 @@ public interface MatrizLancamentoService {
 	
 	boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
 
-	TreeMap<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(
+	TreeMap<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(Date dataSalvar, List<Long> idsFornecedores,
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuario);
 	
 	void validarDiaSemanaDistribuicaoFornecedores(Date dataDistribuicao);
