@@ -304,7 +304,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                         if (fornecedor == null) {
                             
                             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                                    "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
+                            "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
                         }
                         
                         parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
@@ -385,7 +385,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     
                     Cobranca cobranca = null;
                     
-                    switch (formaCobranca.getTipoCobranca()) {
+                    final TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
+                    switch (tipoCobranca) {
                     case BOLETO:
                         cobranca = new Boleto();
                         break;
@@ -403,23 +404,24 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                     case OUTROS:
                         cobranca = new CobrancaDinheiro();
                         break;
+                    default:
+                        break;
                     }
                     
-                    cobranca.setCota(cota);
-                    cobranca.setBanco(formaCobranca.getBanco());
-                    cobranca.setDivida(divida);
-                    cobranca.setDataEmissao(dataAtual);
-                    cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
-                    cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
-                    cobranca.setValor(valorTotalParcela);
-                    cobranca.setEncargos(parcelaNegociacao.getEncargos());
-                    
-                    dividaRepository.adicionar(divida);
-                    
-                    cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataAtual, banco.getNumeroBanco(), null,
-                            divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
-                    
-                    cobrancaRepository.adicionar(cobranca);
+                    if (cobranca != null) {
+                        cobranca.setCota(cota);
+                        cobranca.setBanco(formaCobranca.getBanco());
+                        cobranca.setDivida(divida);
+                        cobranca.setDataEmissao(dataAtual);
+                        cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
+                        cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
+                        cobranca.setValor(valorTotalParcela);
+                        cobranca.setEncargos(parcelaNegociacao.getEncargos());
+                        dividaRepository.adicionar(divida);
+                        cobranca.setNossoNumero(Util.gerarNossoNumero(numeroCota, dataAtual, banco.getNumeroBanco(),
+                                null, divida.getId(), banco.getAgencia(), banco.getConta(), banco.getCarteira()));
+                        cobrancaRepository.adicionar(cobranca);
+                    }
                 }
             }
             
@@ -522,7 +524,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
                 if (parcelaNegociacao.getDataVencimento() == null) {
                     
                     msgs.add("Data de vencimento da parcela " + (parcelas.indexOf(parcelaNegociacao) + 1)
-                            + " inválido.");
+                        + " inválido.");
                 }
                 
                 final MovimentoFinanceiroCota mov = parcelaNegociacao.getMovimentoFinanceiroCota();
@@ -837,13 +839,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         final BigDecimal valorSelecionado = filtro.getValorSelecionado();
         
         Collections.sort(parcelas, new Comparator<CalculaParcelasVO>() {
-
+            
             @Override
             public int compare(final CalculaParcelasVO o1, final CalculaParcelasVO o2) {
                 return o1.getNumParcela().compareTo(o2.getNumParcela());
             }
         });
-        final Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
+
         
         BigDecimal valorParcelasModificadas = BigDecimal.ZERO;
         final Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
@@ -870,7 +872,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         BigDecimal valorTotal = BigDecimal.ZERO;
         
         final FormaCobranca formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-        
+        final Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
         for (int i = 0; i < parcelas.size(); i++) {
             
             final CalculaParcelasVO calculaParcelasVO = parcelas.get(i);
@@ -919,32 +921,6 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
         return parcelas;
     }
     
-    /**
-     * @param filtro
-     * @param valorParcela
-     * @param dataBase
-     * @param numeroParcela
-     * @param parcela
-     * @return
-     */
-    private Date calculaParcela(final FiltroCalculaParcelas filtro, final BigDecimal valorParcela, final Date dataBase,
-            final int numeroParcela, final CalculaParcelasVO parcela, final Banco banco, final Cota cota,
-            final FormaCobranca formaCobranca) {
-        return calculaParcela(filtro, valorParcela, dataBase, numeroParcela, parcela, formaCobranca);
-    }
-    
-    /**
-     * @param filtro
-     * @param valorParcela
-     * @param dataBase
-     * @param numeroParcela
-     * @param parcela
-     * @return
-     */
-    private Date calculaParcela(final FiltroCalculaParcelas filtro, final BigDecimal valorParcela, final Date dataBase,
-            final int numeroParcela, final CalculaParcelasVO parcela, final Cota cota, final FormaCobranca formaCobranca) {
-        return calculaParcela(filtro, valorParcela, dataBase, numeroParcela, parcela, formaCobranca);
-    }
     
     /**
      * @param filtro
