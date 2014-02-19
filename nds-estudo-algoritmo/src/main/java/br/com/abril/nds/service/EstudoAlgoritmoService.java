@@ -9,10 +9,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.MonthDay;
 import org.joda.time.Years;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,337 +67,345 @@ import br.com.abril.nds.vo.ValidacaoVO;
  */
 @Service
 public class EstudoAlgoritmoService {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
-
+    
     @Autowired
     private EstudoDAO estudoDAO;
-
+    
     @Autowired
     private DefinicaoBasesDAO definicaoBasesDAO;
-
+    
     @Autowired
     private ProdutoEdicaoDAO produtoEdicaoDAO;
-
+    
     @Autowired
     private DefinicaoBases definicaoBases;
-
+    
     @Autowired
     private VerificarTotalFixacoes verificarTotalFixacoes;
-
+    
     @Autowired
     private AjusteReparte ajusteReparte;
-
+    
     @Autowired
     private RedutorAutomatico redutorAutomatico;
-
+    
     @Autowired
     private ReparteMinimo reparteMinimo;
-
+    
     @Autowired
     private ReparteProporcional reparteProporcional;
-
+    
     @Autowired
     private EncalheMaximo encalheMaximo;
-
+    
     @Autowired
     private ComplementarAutomatico complementarAutomatico;
-
+    
     @Autowired
     private CalcularReparte calcularReparte;
-
+    
     @Autowired
     private AjusteFinalReparte ajusteFinalReparte;
-
+    
     @Autowired
     private CorrecaoVendas correcaoVendas;
-
+    
     @Autowired
     private Medias medias;
-
+    
     @Autowired
     private VendaMediaFinal vendaMediaFinal;
-
+    
     @Autowired
     private Bonificacoes bonificacoes;
-
+    
     @Autowired
     private JornaleirosNovos jornaleirosNovos;
-
-    public static void calculate(EstudoTransient estudo) {
+    
+    public static void calculate(final EstudoTransient estudo) {
         // Somatória da venda média de todas as cotas e
         // Somatória de reparte das edições abertas de todas as cotas
-	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
-	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
-	estudo.setTotalPDVs(BigDecimal.ZERO);
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
-		    ClassificacaoCota.RedutorAutomatico)) {
-		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
-	    }
-	    estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
-	    if (cota.getQuantidadePDVs() != null) {
-		estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
-	    }
-	}
+        estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
+        estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
+        estudo.setTotalPDVs(BigDecimal.ZERO);
+        for (final CotaEstudo cota : estudo.getCotas()) {
+            if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
+                    ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
+                estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+            }
+            estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(
+                    cota.getSomaReparteEdicoesAbertas()));
+            if (cota.getQuantidadePDVs() != null) {
+                estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
+            }
+        }
     }
-
-    public static void somarVendaMedia(EstudoTransient estudo) {
-	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
-		    ClassificacaoCota.RedutorAutomatico)) {
-		if (cota.getVendaMedia() != null) {
-		    estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
-		}
-	    }
-	}
+    
+    public static void somarVendaMedia(final EstudoTransient estudo) {
+        estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
+        for (final CotaEstudo cota : estudo.getCotas()) {
+            if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
+                    ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
+                if (cota.getVendaMedia() != null) {
+                    estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+                }
+            }
+        }
     }
-
-    public void carregarParametros(EstudoTransient estudo) {
-	estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo
-		.getProdutoEdicaoEstudo().getNumeroEdicao(), estudo.getProdutoEdicaoEstudo().getIdLancamento()));
-	if (estudo.getPacotePadrao() == null) {
-	    estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
-	}
-	estudo.getProdutoEdicaoEstudo().setPacotePadrao(0);
-	estudoDAO.carregarParametrosDistribuidor(estudo);
-	estudoDAO.carregarPercentuaisExcedente(estudo);
+    
+    public void carregarParametros(final EstudoTransient estudo) {
+        estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo()
+                .getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao(), estudo
+                .getProdutoEdicaoEstudo().getIdLancamento()));
+        if (estudo.getPacotePadrao() == null) {
+            estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
+        }
+        estudo.getProdutoEdicaoEstudo().setPacotePadrao(0);
+        estudoDAO.carregarParametrosDistribuidor(estudo);
+        estudoDAO.carregarPercentuaisExcedente(estudo);
     }
-
-    public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(ProdutoEdicaoEstudo edicao) {
+    
+    public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(final ProdutoEdicaoEstudo edicao) {
         LOGGER.info("Buscando edições para estudo.");
-	return definicaoBasesDAO.getEdicoesBases(edicao);
+        return definicaoBasesDAO.getEdicoesBases(edicao);
     }
-
-    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoEstudo edicao) throws Exception {
-	List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
-
-	if (!listaEdicoesBase.isEmpty()) {
-	    return listaEdicoesBase;
-	}
-
-	listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
-	if (listaEdicoesBase.isEmpty()) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+    
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(final ProdutoEdicaoEstudo edicao) throws Exception {
+        List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
+        
+        if (!listaEdicoesBase.isEmpty()) {
+            return listaEdicoesBase;
+        }
+        
+        listaEdicoesBase = definicaoBasesDAO
+                .listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
+        if (listaEdicoesBase.isEmpty()) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
                     "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
-	}
-	return listaEdicoesBase;
+        }
+        return listaEdicoesBase;
     }
-
-    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
-	return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
+    
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(final ProdutoEdicaoEstudo edicao) {
+        return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
     }
-
-    private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicaoEstudo edicao) {
-	List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
-	Date dataLancamento = edicao.getDataLancamento();
-	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
-	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_15));
-	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
-	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_15));
-	return periodoVeraneio;
+    
+    private List<LocalDate> getDatasPeriodoVeraneio(final ProdutoEdicaoEstudo edicao) {
+        final List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
+        final Date dataLancamento = edicao.getDataLancamento();
+        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
+        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_15));
+        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
+        periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_15));
+        return periodoVeraneio;
     }
-
-    private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
-	List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
-	Date dataLancamento = edicao.getDataLancamento();
-	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
-	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_19));
-	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.FEVEREIRO_16));
-	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_19));
-	return periodoSaidaVeraneio;
+    
+    private List<LocalDate> getDatasPeriodoSaidaVeraneio(final ProdutoEdicaoEstudo edicao) {
+        final List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
+        final Date dataLancamento = edicao.getDataLancamento();
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_19));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.FEVEREIRO_16));
+        periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_19));
+        return periodoSaidaVeraneio;
     }
-
-    private LocalDate parseLocalDate(Date dataLancamento, Years anosSubtrair, DataReferencia dataReferencia) {
-	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
+    
+    private LocalDate parseLocalDate(final Date dataLancamento, final Years anosSubtrair, final DataReferencia dataReferencia) {
+        return MonthDay.parse(dataReferencia.getData()).toLocalDate(
+                LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
     }
-
-    public static BigInteger arredondarPacotePadrao(EstudoTransient estudo, BigDecimal reparte) {
-	if (reparte != null && estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null &&
-		estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
-	    return reparte.divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger()
-		    .multiply(estudo.getPacotePadrao());
-	} else {
-	    return reparte.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-	}
+    
+    public static BigInteger arredondarPacotePadrao(final EstudoTransient estudo, final BigDecimal reparte) {
+        if (reparte == null) {
+            return BigInteger.ZERO;
+        } else if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null
+                && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
+            return reparte.divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger()
+                    .multiply(estudo.getPacotePadrao());
+        } else {
+            return reparte.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+        }
     }
-
-    public void gravarEstudo(EstudoTransient estudo) {
-	estudoDAO.gravarEstudo(estudo);
+    
+    public void gravarEstudo(final EstudoTransient estudo) {
+        estudoDAO.gravarEstudo(estudo);
     }
-
-    public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte, Usuario usuario) throws Exception {
-
-	return gerarEstudoAutomatico(null, produto, reparte, usuario);
+    
+    public EstudoTransient gerarEstudoAutomatico(final ProdutoEdicaoEstudo produto, final BigInteger reparte,
+            final Usuario usuario) throws Exception {
+        
+        return gerarEstudoAutomatico(null, produto, reparte, usuario);
     }
-
-    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto, BigInteger reparte,
-	    Usuario usuario) throws Exception {
-
+    
+    public EstudoTransient gerarEstudoAutomatico(final DistribuicaoVendaMediaDTO distribuicaoVendaMedia,
+            final ProdutoEdicaoEstudo produto, final BigInteger reparte, final Usuario usuario) throws Exception {
+        
         LOGGER.debug("Iniciando execução do estudo.");
-	EstudoTransient estudo = new EstudoTransient();
-	estudo.setDataCadastro(new Date());
-	estudo.setDataLancamento(produto.getDataLancamento());
-	estudo.setStatusEstudo("ESTUDO_FECHADO");
-	estudo.setUsuario(usuario);
-	estudo.setProdutoEdicaoEstudo(produto);
-	estudo.setReparteDistribuir(reparte);
-	estudo.setReparteDistribuirInicial(reparte);
-
-	estudo.setDistribuicaoPorMultiplos(0); // valor default
-	estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor default
-
-	if (distribuicaoVendaMedia != null) {
-	    estudo.setBonificacoes(distribuicaoVendaMedia.getBonificacoes());
-	    estudo.setReparteDistribuir(distribuicaoVendaMedia.getReparteDistribuir());
-	    estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
-	    estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
-	    estudo.setComplementarAutomatico(distribuicaoVendaMedia.getComplementarAutomatico());
-	    estudo.setUsarFixacao(distribuicaoVendaMedia.isUsarFixacao());
-	    estudo.setDistribuicaoVendaMediaDTO(distribuicaoVendaMedia);
-	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
-	    
-	    // ordenando cotas pela data de lancamento
-	    Collections.sort(distribuicaoVendaMedia.getBases(), new Comparator<ProdutoEdicaoDTO>() {
-
-		@Override
-		public int compare(ProdutoEdicaoDTO o1, ProdutoEdicaoDTO o2) {
-		    return o2.getDataLancamento().compareTo(o1.getDataLancamento());
-		}
-	    });
-	    
-	    for (ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
-		ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
-		ed.setProduto(new Produto());
-		ed.setId(base.getId());
-		ed.getProduto().setCodigo(base.getCodigoProduto());
-		ed.getProduto().setId(base.getIdProduto());
-		ed.setNumeroEdicao(base.getNumeroEdicao());
-		ed.setIndicePeso(new BigDecimal(base.getPeso()));
-		ed.setPeriodo(base.getPeriodo());
-		ed.setParcial(base.isParcial());
-		ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
-		edicoesBase.add(ed);
-	    }
-	    estudo.setEdicoesBase(edicoesBase);
-	    if (distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null) {
-		estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
-	    }
-	    
-	    // verificacao se o reparte minimo e multiplo do pacote padrao
-	    // TODO: melhorar logica ou encontrar alguma funcao da api mais simples
-	    if (estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0 &&
-		    estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(BigInteger.ZERO) > 0) {
-		BigDecimal quebrado = new BigDecimal(estudo.getReparteMinimo()).
-			divide(new BigDecimal(estudo.getPacotePadrao()), 4, BigDecimal.ROUND_HALF_UP);
-		BigDecimal inteiro = new BigDecimal(estudo.getReparteMinimo()).
-			divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
-		if (quebrado.compareTo(inteiro) != 0) {
-		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
- String.format(
+        final EstudoTransient estudo = new EstudoTransient();
+        estudo.setDataCadastro(new Date());
+        estudo.setDataLancamento(produto.getDataLancamento());
+        estudo.setStatusEstudo("ESTUDO_FECHADO");
+        estudo.setUsuario(usuario);
+        estudo.setProdutoEdicaoEstudo(produto);
+        estudo.setReparteDistribuir(reparte);
+        estudo.setReparteDistribuirInicial(reparte);
+        
+        estudo.setDistribuicaoPorMultiplos(0); // valor default
+        estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor
+        // default
+        
+        if (distribuicaoVendaMedia != null) {
+            estudo.setBonificacoes(distribuicaoVendaMedia.getBonificacoes());
+            estudo.setReparteDistribuir(distribuicaoVendaMedia.getReparteDistribuir());
+            estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
+            estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
+            estudo.setComplementarAutomatico(distribuicaoVendaMedia.getComplementarAutomatico());
+            estudo.setUsarFixacao(distribuicaoVendaMedia.isUsarFixacao());
+            estudo.setDistribuicaoVendaMediaDTO(distribuicaoVendaMedia);
+            final LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
+            
+            // ordenando cotas pela data de lancamento
+            Collections.sort(distribuicaoVendaMedia.getBases(), new Comparator<ProdutoEdicaoDTO>() {
+                
+                @Override
+                public int compare(final ProdutoEdicaoDTO o1, final ProdutoEdicaoDTO o2) {
+                    return o2.getDataLancamento().compareTo(o1.getDataLancamento());
+                }
+            });
+            
+            for (final ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
+                final ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
+                ed.setProduto(new Produto());
+                ed.setId(base.getId());
+                ed.getProduto().setCodigo(base.getCodigoProduto());
+                ed.getProduto().setId(base.getIdProduto());
+                ed.setNumeroEdicao(base.getNumeroEdicao());
+                ed.setIndicePeso(new BigDecimal(base.getPeso()));
+                ed.setPeriodo(base.getPeriodo());
+                ed.setParcial(base.isParcial());
+                ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
+                edicoesBase.add(ed);
+            }
+            estudo.setEdicoesBase(edicoesBase);
+            if (distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null) {
+                estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
+            }
+            
+            // verificacao se o reparte minimo e multiplo do pacote padrao
+            // TODO: melhorar logica ou encontrar alguma funcao da api mais
+            // simples
+            if (estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0
+                    && estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(BigInteger.ZERO) > 0) {
+                final BigDecimal quebrado = new BigDecimal(estudo.getReparteMinimo()).divide(new BigDecimal(estudo
+                        .getPacotePadrao()), 4, BigDecimal.ROUND_HALF_UP);
+                final BigDecimal inteiro = new BigDecimal(estudo.getReparteMinimo()).divide(new BigDecimal(estudo
+                        .getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
+                if (quebrado.compareTo(inteiro) != 0) {
+                    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format(
                             "O reparte mínimo deve ser múltiplo de %s.", estudo.getPacotePadrao())));
-		}
-	    }
-	}
-
+                }
+            }
+        }
+        
         // carregando parâmetros do banco de dados
-	carregarParametros(estudo);
-
-	definicaoBases.executar(estudo);
-
-	verificarTotalFixacoes.executar(estudo);
-
-	calculate(estudo);
-
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    correcaoVendas.executar(cota, estudo);
-
-	    medias.executar(cota);
-	}
-	bonificacoes.executar(estudo);
-	
-	jornaleirosNovos.executar(estudo);
-	
-	vendaMediaFinal.executar(estudo);
-	
-	somarVendaMedia(estudo);
-
-	ajusteReparte.executar(estudo);
-
-	redutorAutomatico.executar(estudo);
-
-	reparteMinimo.executar(estudo);
-
-	reparteProporcional.executar(estudo);
-
-	encalheMaximo.executar(estudo);
-
-	complementarAutomatico.executar(estudo);
-
-	calcularReparte.executar(estudo);
-
+        carregarParametros(estudo);
+        
+        definicaoBases.executar(estudo);
+        
+        verificarTotalFixacoes.executar(estudo);
+        
+        calculate(estudo);
+        
+        for (final CotaEstudo cota : estudo.getCotas()) {
+            correcaoVendas.executar(cota, estudo);
+            
+            medias.executar(cota);
+        }
+        bonificacoes.executar(estudo);
+        
+        jornaleirosNovos.executar(estudo);
+        
+        vendaMediaFinal.executar(estudo);
+        
+        somarVendaMedia(estudo);
+        
+        ajusteReparte.executar(estudo);
+        
+        redutorAutomatico.executar(estudo);
+        
+        reparteMinimo.executar(estudo);
+        
+        reparteProporcional.executar(estudo);
+        
+        encalheMaximo.executar(estudo);
+        
+        complementarAutomatico.executar(estudo);
+        
+        calcularReparte.executar(estudo);
+        
         // processo que faz os ajustes finais e grava as informações no banco de
         // dados
-	ajusteFinalReparte.executar(estudo);
-
+        ajusteFinalReparte.executar(estudo);
+        
         LOGGER.debug("Execução do estudo concluída");
-	return estudo;
+        return estudo;
     }
-
-    public boolean isCotaDentroDoComponenteElemento(ComponentesPDV componente, String[] elementos, CotaEstudo cota) {
-	boolean retorno = false;
-	if (componente != null && elementos != null) {
-	    if (componente.equals(ComponentesPDV.AREA_DE_INFLUENCIA)) {
-		for (String elemento : elementos) {
-		    if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(elemento))) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.BAIRRO)) {
-		for (String elemento : elementos) {
-		    if (cota.getBairros().contains(elemento)) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.COTAS_A_VISTA)) {
-		for (String elemento : elementos) {
-		    if (cota.getTiposCota().contains(elemento)) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS)) {
-		for (String elemento : elementos) {
-		    if ((cota.isNova() && elemento.equals("1")) || (!cota.isNova() && elemento.equals("0"))) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.DISTRITO)) {
-		for (String elemento : elementos) {
-		    if (cota.getEstados().contains(elemento)) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.GERADOR_DE_FLUXO)) {
-		for (String elemento : elementos) {
-		    if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(elemento))) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.REGIAO)) {
-		for (String elemento : elementos) {
-		    if (cota.getRegioes().contains(Integer.parseInt(elemento))) {
-			retorno = true;
-		    }
-		}
-	    } else if (componente.equals(ComponentesPDV.TIPO_PONTO_DE_VENDA)) {
-		for (String elemento : elementos) {
-		    if (cota.getTiposPontoPdv().contains(Integer.parseInt(elemento))) {
-			retorno = true;
-		    }
-		}
-	    }
-	}
-	return retorno;
+    
+    public boolean isCotaDentroDoComponenteElemento(final ComponentesPDV componente, final String[] elementos, final CotaEstudo cota) {
+        boolean retorno = false;
+        if (componente != null && elementos != null) {
+            if (componente.equals(ComponentesPDV.AREA_DE_INFLUENCIA)) {
+                for (final String elemento : elementos) {
+                    if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(elemento))) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.BAIRRO)) {
+                for (final String elemento : elementos) {
+                    if (cota.getBairros().contains(elemento)) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.COTAS_A_VISTA)) {
+                for (final String elemento : elementos) {
+                    if (cota.getTiposCota().contains(elemento)) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS)) {
+                for (final String elemento : elementos) {
+                    if ((cota.isNova() && "1".equals(elemento)) || (!cota.isNova() && "0".equals(elemento))) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.DISTRITO)) {
+                for (final String elemento : elementos) {
+                    if (cota.getEstados().contains(elemento)) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.GERADOR_DE_FLUXO)) {
+                for (final String elemento : elementos) {
+                    if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(elemento))) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.REGIAO)) {
+                for (final String elemento : elementos) {
+                    if (cota.getRegioes().contains(Integer.parseInt(elemento))) {
+                        retorno = true;
+                    }
+                }
+            } else if (componente.equals(ComponentesPDV.TIPO_PONTO_DE_VENDA)) {
+                for (final String elemento : elementos) {
+                    if (cota.getTiposPontoPdv().contains(Integer.parseInt(elemento))) {
+                        retorno = true;
+                    }
+                }
+            }
+        }
+        return retorno;
     }
 }
