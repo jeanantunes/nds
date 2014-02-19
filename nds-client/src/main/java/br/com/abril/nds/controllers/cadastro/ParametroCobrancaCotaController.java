@@ -72,478 +72,474 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/cota/parametroCobrancaCota")
 public class ParametroCobrancaCotaController extends BaseController {
-
+    
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ParametroCobrancaCotaController.class);
-	
-	private Result result;
-
-	@Autowired
-	private ParametroCobrancaCotaService parametroCobrancaCotaService;
-
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
-
-	@Autowired
-	private BancoService bancoService;
-
-	@Autowired
-	private CotaService cotaService;
-
-	@Autowired
-	private ParametrosDistribuidorService parametroDistribuidorService;
-
-	@Autowired
-	private Validator validator;	
-
-	@Autowired
-	private FileService fileService;
-
-	@Autowired
-	private EntregadorService entregadorService;
-
-	@Autowired
-	private ServletContext servletContext;
-
-	@Autowired
-	private HttpSession session;
-
-	@Autowired
-	private ParametroSistemaService parametroSistemaService;
-
-	@Autowired
-	private FormaCobrancaService formaCobrancaService;
-
-	private HttpServletResponse httpResponse;
-
-	private static List<ItemDTO<TipoCobranca,String>> listaTiposCobranca = new ArrayList<ItemDTO<TipoCobranca,String>>();
-
-	private static List<ItemDTO<TipoCota,String>> listaTiposCota = new ArrayList<ItemDTO<TipoCota,String>>();
-
-	public static final FileType[] extensoesAceitas = {FileType.DOC, FileType.DOCX, FileType.BMP,
-		FileType.GIF, FileType.PDF, FileType.JPEG,
-		FileType.JPG, FileType.PNG};
-
-
-	                            /**
-     * Constante que representa o nome do atributo com os dados de 'cota
-     * cobranca' armazenado na sessão para serem persistidos na base.
+    
+    private final Result result;
+    
+    @Autowired
+    private ParametroCobrancaCotaService parametroCobrancaCotaService;
+    
+    @Autowired
+    private PoliticaCobrancaService politicaCobrancaService;
+    
+    @Autowired
+    private BancoService bancoService;
+    
+    @Autowired
+    private CotaService cotaService;
+    
+    @Autowired
+    private ParametrosDistribuidorService parametroDistribuidorService;
+    
+    @Autowired
+    private Validator validator;
+    
+    @Autowired
+    private FileService fileService;
+    
+    @Autowired
+    private EntregadorService entregadorService;
+    
+    @Autowired
+    private ServletContext servletContext;
+    
+    @Autowired
+    private HttpSession session;
+    
+    @Autowired
+    private ParametroSistemaService parametroSistemaService;
+    
+    @Autowired
+    private FormaCobrancaService formaCobrancaService;
+    
+    private final HttpServletResponse httpResponse;
+    
+    private List<ItemDTO<TipoCobranca, String>> listaTiposCobranca = new ArrayList<ItemDTO<TipoCobranca, String>>();
+    
+    private List<ItemDTO<TipoCota, String>> listaTiposCota = new ArrayList<ItemDTO<TipoCota, String>>();
+    
+    private static final FileType[] extensoesAceitas = { FileType.DOC, FileType.DOCX, FileType.BMP,
+        FileType.GIF, FileType.PDF, FileType.JPEG,
+        FileType.JPG, FileType.PNG};
+    
+    
+    
+    private static final String CONTRATO_UPLOADED = "contratoUploaded";
+    
+    
+    /**
+     * Construtor da classe
+     * @param result
+     * @param session
+     * @param httpResponse
      */
-	public static String ATRIBUTO_SESSAO_FINANCEIRO_SALVAR = "financeiroSalvarSessao";
-
-	private static final String CONTRATO_UPLOADED = "contratoUploaded";
-
-
-	/**
-	 * Construtor da classe
-	 * @param result
-	 * @param session
-	 * @param httpResponse
-	 */
-	public ParametroCobrancaCotaController(Result result, HttpServletResponse httpResponse) {
-		this.result = result;
-		this.httpResponse = httpResponse;
-	}
-
-	                            /**
+    public ParametroCobrancaCotaController(final Result result, final HttpServletResponse httpResponse) {
+        this.result = result;
+        this.httpResponse = httpResponse;
+    }
+    
+	                                                        /**
      * Método de chamada da página Pré-carrega itens da pagina com informações
      * default.
      */
-	@Get
-	public void index() {
-
-	}
-
-
-	                            /**
+    @Get
+    public void index() {
+        
+    }
+    
+    
+	                                                        /**
      * Método de Pré-carregamento de itens da pagina com informações default.
      */
-	public void preCarregamento(){
-
-		listaTiposCobranca = this.carregaTiposCobrancaDistribuidor();
-
-		listaTiposCota = this.cotaService.getComboTiposCota();
-
-		result.include("listaBancos", bancoService.getComboBancos(true));
-
-		result.include("listaTiposCobranca",listaTiposCobranca);
-
-		result.include("listaTiposCota",listaTiposCota);
-	}
-
-	                            /**
+    public void preCarregamento(){
+        
+        listaTiposCobranca = this.carregaTiposCobrancaDistribuidor();
+        
+        listaTiposCota = cotaService.getComboTiposCota();
+        
+        result.include("listaBancos", bancoService.getComboBancos(true));
+        
+        result.include("listaTiposCobranca",listaTiposCobranca);
+        
+        result.include("listaTiposCota",listaTiposCota);
+    }
+    
+	                                                        /**
      * Carrega somente os tipos de cobrança configurados nas formas de cobrança
      * do distribuidor
      */
-	private List<ItemDTO<TipoCobranca,String>> carregaTiposCobrancaDistribuidor(){
-
-		List<TipoCobranca> tcs = this.politicaCobrancaService.obterTiposCobrancaDistribuidor();
-
-		if (tcs == null){
-
-			return null;
-		}
-
-		List<ItemDTO<TipoCobranca,String>> comboTiposCobranca = new ArrayList<ItemDTO<TipoCobranca,String>>();
-
-		for (TipoCobranca tc : tcs){
-
-			ItemDTO<TipoCobranca, String> itemDTO = new ItemDTO<TipoCobranca,String>(tc, tc.getDescTipoCobranca());
-
-			comboTiposCobranca.add(itemDTO);	
-		}
-
-		return comboTiposCobranca;
-	}
-
-	                            /**
+    private List<ItemDTO<TipoCobranca,String>> carregaTiposCobrancaDistribuidor(){
+        
+        final List<TipoCobranca> tcs = politicaCobrancaService.obterTiposCobrancaDistribuidor();
+        
+        if (tcs == null){
+            
+            return null;
+        }
+        
+        final List<ItemDTO<TipoCobranca,String>> comboTiposCobranca = new ArrayList<ItemDTO<TipoCobranca,String>>();
+        
+        for (final TipoCobranca tc : tcs){
+            
+            final ItemDTO<TipoCobranca, String> itemDTO = new ItemDTO<TipoCobranca,String>(tc, tc.getDescTipoCobranca());
+            
+            comboTiposCobranca.add(itemDTO);
+        }
+        
+        return comboTiposCobranca;
+    }
+    
+	                                                        /**
      * Obter tipos de cobrança das formas de cobrança utilizadas pelo
      * distribuidor para carregar combo
      */
-	@Post
-	@Path("/obterTiposCobranca")
-	public void obterTiposCobranca(){
-
-		List<ItemDTO<TipoCobranca,String>> comboTiposCobranca = this.carregaTiposCobrancaDistribuidor();
-
-		result.use(Results.json()).from(comboTiposCobranca, "result").recursive().serialize();
-	}
-
-	                            /**
+    @Post
+    @Path("/obterTiposCobranca")
+    public void obterTiposCobranca(){
+        
+        final List<ItemDTO<TipoCobranca,String>> comboTiposCobranca = this.carregaTiposCobrancaDistribuidor();
+        
+        result.use(Results.json()).from(comboTiposCobranca, "result").recursive().serialize();
+    }
+    
+	                                                        /**
      * Método de Pré-carregamento de fornecedores relacionados com a Cota.
      * 
      * @param idCota
      */
-	@Post
-	@Path("/fornecedoresCota")
-	public void fornecedoresCota(Long idCota, ModoTela modoTela, Long idFormaPagto){
-		List<ItemDTO<Long,String>> listaFornecedores;
-		
-		if (ModoTela.CADASTRO_COTA == modoTela) {
-			
-			listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
-			
-		} else {
-			
-			List<FornecedorDTO> fornecedores = parametroCobrancaCotaService.obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
-			
-			listaFornecedores = new ArrayList<ItemDTO<Long, String>>(fornecedores.size());
-			
-			for (FornecedorDTO fornecedorDTO : fornecedores) {
-				listaFornecedores.add(new ItemDTO<Long, String>(fornecedorDTO.getIdFornecedor(), fornecedorDTO.getRazaoSocial()));
-			}
-		}
-		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
-	}
-
-	@Post
-	@Path("/carregarBancos")
-	public void carregarBancos(){
-		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
-	}
-
-	                            /**
+    @Post
+    @Path("/fornecedoresCota")
+    public void fornecedoresCota(final Long idCota, final ModoTela modoTela, final Long idFormaPagto){
+        List<ItemDTO<Long,String>> listaFornecedores;
+        
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            
+            listaFornecedores = parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
+            
+        } else {
+            
+            final List<FornecedorDTO> fornecedores = parametroCobrancaCotaService.obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
+            
+            listaFornecedores = new ArrayList<ItemDTO<Long, String>>(fornecedores.size());
+            
+            for (final FornecedorDTO fornecedorDTO : fornecedores) {
+                listaFornecedores.add(new ItemDTO<Long, String>(fornecedorDTO.getIdFornecedor(), fornecedorDTO.getRazaoSocial()));
+            }
+        }
+        result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();
+    }
+    
+    @Post
+    @Path("/carregarBancos")
+    public void carregarBancos(){
+        result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
+    }
+    
+	                                                        /**
      * Método responsável por obter os parametros de cobranca da Cota para a aba
      * 'Financeiro'.
      * 
      * @throws Mensagens de Validação.
      * @param idCota
      */
-	@Post
-	@Path("/obterParametroCobranca")
-	public void obterParametroCobranca(Long idCota, ModoTela modoTela, Long idHistorico) {
-
-		validar();
-
-		if (idCota == null) {
+    @Post
+    @Path("/obterParametroCobranca")
+    public void obterParametroCobranca(final Long idCota, final ModoTela modoTela, final Long idHistorico) {
+        
+        validar();
+        
+        if (idCota == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "O código da cota informado náo é válido.");
-		}
-
-		ParametroCobrancaCotaDTO parametroCobranca;
-		if (ModoTela.CADASTRO_COTA == modoTela) {
-
-			parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
-
-		} else {
-
-			parametroCobranca = parametroCobrancaCotaService.obterParametrosCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
-
-		}
-
-		if (parametroCobranca != null) { 
-
-			this.result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
-		
-		} else {
-			
-			this.result.nothing();
-		}
-	}
-	
-	@Post
-	@Path("/obterParametroCobrancaDistribuidor")
-	public void obterParametroCobrancaDistribuidor(String op) {
-
-		if(op==null || op.isEmpty() || op.equals("-1"))
+        }
+        
+        ParametroCobrancaCotaDTO parametroCobranca;
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            
+            parametroCobranca = parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
+            
+        } else {
+            
+            parametroCobranca = parametroCobrancaCotaService.obterParametrosCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
+            
+        }
+        
+        if (parametroCobranca != null) {
+            
+            result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
+            
+        } else {
+            
+            result.nothing();
+        }
+    }
+    
+    @Post
+    @Path("/obterParametroCobrancaDistribuidor")
+    public void obterParametroCobrancaDistribuidor(final String op) {
+        
+        if(op==null || op.isEmpty() || op.equals("-1")) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Pagamento não selecionado.");
-		
-		TipoCobranca tipoCobranca = TipoCobranca.valueOf(op);
-		
-		List<PoliticaCobranca> politicasCobranca = politicaCobrancaService.obterDadosPoliticaCobranca(tipoCobranca);
-				
-		ParametroCobrancaDTO parametroCobranca = null;
-				
-		if(!politicasCobranca.isEmpty())
-			parametroCobranca = this.politicaCobrancaService.obterDadosPoliticaCobranca(politicasCobranca.get(0).getId());
-		
-		FormaCobrancaDTO forma = new FormaCobrancaDTO();
-		
-		if(parametroCobranca!=null) {
-			forma = new FormaCobrancaDTO();
-			forma.setTipoCobranca(parametroCobranca.getTipoCobranca());
-			forma.setTipoFormaCobranca(parametroCobranca.getTipoFormaCobranca());
-			forma.setIdBanco(parametroCobranca.getIdBanco());
-			forma.setRecebeEmail(parametroCobranca.isEnvioEmail());
-			forma.setDomingo(parametroCobranca.isDomingo());
-			forma.setSegunda(parametroCobranca.isSegunda());
-			forma.setTerca(parametroCobranca.isTerca());
-			forma.setQuarta(parametroCobranca.isQuarta());
-			forma.setQuinta(parametroCobranca.isQuinta());
-			forma.setSexta(parametroCobranca.isSexta());
-			forma.setSabado(parametroCobranca.isSabado());
-			forma.setFornecedoresId(parametroCobranca.getFornecedoresId());
-		}
-		
-		result.use(Results.json()).from(forma,"result").recursive().serialize();
-	}
-
-	                            /**
+        }
+        
+        final TipoCobranca tipoCobranca = TipoCobranca.valueOf(op);
+        
+        final List<PoliticaCobranca> politicasCobranca = politicaCobrancaService.obterDadosPoliticaCobranca(tipoCobranca);
+        
+        ParametroCobrancaDTO parametroCobranca = null;
+        
+        if(!politicasCobranca.isEmpty()) {
+            parametroCobranca = politicaCobrancaService.obterDadosPoliticaCobranca(politicasCobranca.get(0).getId());
+        }
+        
+        FormaCobrancaDTO forma = new FormaCobrancaDTO();
+        
+        if(parametroCobranca!=null) {
+            forma = new FormaCobrancaDTO();
+            forma.setTipoCobranca(parametroCobranca.getTipoCobranca());
+            forma.setTipoFormaCobranca(parametroCobranca.getTipoFormaCobranca());
+            forma.setIdBanco(parametroCobranca.getIdBanco());
+            forma.setRecebeEmail(parametroCobranca.isEnvioEmail());
+            forma.setDomingo(parametroCobranca.isDomingo());
+            forma.setSegunda(parametroCobranca.isSegunda());
+            forma.setTerca(parametroCobranca.isTerca());
+            forma.setQuarta(parametroCobranca.isQuarta());
+            forma.setQuinta(parametroCobranca.isQuinta());
+            forma.setSexta(parametroCobranca.isSexta());
+            forma.setSabado(parametroCobranca.isSabado());
+            forma.setFornecedoresId(parametroCobranca.getFornecedoresId());
+        }
+        
+        result.use(Results.json()).from(forma,"result").recursive().serialize();
+    }
+    
+	                                                        /**
      * Método responsável por obter os dados da uma forma de cobranca do
      * parametro de cobranca da Cota para a aba 'Financeiro'.
      * 
      * @throws Mensagens de Validação.
      * @param idFormaCobranca
      */
-	@Post
-	@Path("/obterFormaCobranca")
-	public void obterFormaCobranca(Long idFormaCobranca, ModoTela modoTela) {
-		FormaCobrancaDTO formaCobranca = null;
-		validar();
-		if (idFormaCobranca == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
- "O código da forma de cobrança informado náo é válido.");
-		}
-
-		if (ModoTela.CADASTRO_COTA == modoTela) {
-			formaCobranca = this.parametroCobrancaCotaService
-					.obterDadosFormaCobranca(idFormaCobranca);
-		} else {
-			formaCobranca = parametroCobrancaCotaService
-					.obterFormaPagamentoHistoricoTitularidade(idFormaCobranca);
-		}
-
-		if (formaCobranca == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
+    @Post
+    @Path("/obterFormaCobranca")
+    public void obterFormaCobranca(final Long idFormaCobranca, final ModoTela modoTela) {
+        FormaCobrancaDTO formaCobranca = null;
+        validar();
+        if (idFormaCobranca == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "O código da forma de cobrança informado náo é válido.");
+        }
+        
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            formaCobranca = parametroCobrancaCotaService
+                    .obterDadosFormaCobranca(idFormaCobranca);
+        } else {
+            formaCobranca = parametroCobrancaCotaService
+                    .obterFormaPagamentoHistoricoTitularidade(idFormaCobranca);
+        }
+        
+        if (formaCobranca == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING,
                     "Nenhuma forma de cobrança encontrada para o código de forma de cobrança.");
-		}
-
-		result.use(Results.json()).from(formaCobranca, "result").recursive()
-		.serialize();
-	}
-	
-	@Post
-	public void obterQtdFormaCobrancaCota(Long id){
-		int qtdFormaCobranca = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(id);
-
-		result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
-	}
-
-	                            /**
+        }
+        
+        result.use(Results.json()).from(formaCobranca, "result").recursive()
+        .serialize();
+    }
+    
+    @Post
+    public void obterQtdFormaCobrancaCota(final Long id){
+        final int qtdFormaCobranca = parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(id);
+        
+        result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
+    }
+    
+	                                                        /**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * 
      * @param idCota
      */
-	@Post
-	@Path("/obterFormasCobranca")
-	public void obterFormasCobranca(Long idCota, ModoTela modoTela, Long idHistorico){
-		List<FormaCobrancaDTO> listaFormasCobranca = null;
-		int qtdeRegistros;
-
-		if (ModoTela.CADASTRO_COTA == modoTela) {
-			//VALIDACOES
-			validar();	
-
-			//BUSCA FORMAS DE COBRANCA DA COTA
-			listaFormasCobranca = this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
-			qtdeRegistros = listaFormasCobranca != null ? listaFormasCobranca.size() : 0;
-
-		} else {
-			listaFormasCobranca = parametroCobrancaCotaService.obterFormasCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
-			qtdeRegistros = listaFormasCobranca.size();
-		}
-
-		TableModel<CellModelKeyValue<FormaCobrancaDTO>> tableModel =
-				new TableModel<CellModelKeyValue<FormaCobrancaDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
-		tableModel.setPage(1);
-		tableModel.setTotal(qtdeRegistros);
-
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-	}
-
-
-	                            /**
+    @Post
+    @Path("/obterFormasCobranca")
+    public void obterFormasCobranca(final Long idCota, final ModoTela modoTela, final Long idHistorico){
+        List<FormaCobrancaDTO> listaFormasCobranca = null;
+        int qtdeRegistros;
+        
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+            //VALIDACOES
+            validar();
+            
+            //BUSCA FORMAS DE COBRANCA DA COTA
+            listaFormasCobranca = parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
+            qtdeRegistros = listaFormasCobranca != null ? listaFormasCobranca.size() : 0;
+            
+        } else {
+            listaFormasCobranca = parametroCobrancaCotaService.obterFormasCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
+            qtdeRegistros = listaFormasCobranca.size();
+        }
+        
+        final TableModel<CellModelKeyValue<FormaCobrancaDTO>> tableModel =
+                new TableModel<CellModelKeyValue<FormaCobrancaDTO>>();
+        
+        tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormasCobranca));
+        tableModel.setPage(1);
+        tableModel.setTotal(qtdeRegistros);
+        
+        result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+    }
+    
+    
+	                                                        /**
      * Método responsável por obter os dados default da forma de cobranca
      * principal dos parametros de cobrança do distribuidor.
      * 
      * @throws Mensagens de Validação.
      */
-	@Post
-	@Path("/obterFormaCobrancaDefault")
-	public void obterFormaCobrancaDefault() {
-
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-
-		if (politicaPrincipal==null){
+    @Post
+    @Path("/obterFormaCobrancaDefault")
+    public void obterFormaCobrancaDefault() {
+        
+        final PoliticaCobranca politicaPrincipal = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+        
+        if (politicaPrincipal==null){
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma forma de cobrança default encontrada.");
-		}
-
-		ParametroCobrancaDTO parametroCobrancaDistribuidor = this.politicaCobrancaService.obterDadosPoliticaCobranca(politicaPrincipal.getId());
-
-		result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
-	}
-
-	                            /**
+        }
+        
+        final ParametroCobrancaDTO parametroCobrancaDistribuidor = politicaCobrancaService.obterDadosPoliticaCobranca(politicaPrincipal.getId());
+        
+        result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
+    }
+    
+	                                                        /**
      * Método responsável por postar os dados do parametro de cobrança da cota.
      * 
      * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou
      *            alterados pelo usuário
      */
-	@Post
-	@Path("/postarParametroCobranca")
-	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
-
-		validarParametroCobrancaCota(parametroCobranca);
-		
-		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
+    @Post
+    @Path("/postarParametroCobranca")
+    public void postarParametroCobranca(final ParametroCobrancaCotaDTO parametroCobranca){
+        
+        validarParametroCobrancaCota(parametroCobranca);
+        
+        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
             // A cota sempre terá uma forma de cobrança a forma de cobrança
             // principal do Distribuidor
-			parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
-			
-		} else {
-			this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
-		}
-		
-		this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
-		
-		this.cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
-		
+            parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
+            
+        } else {
+            parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+        }
+        
+        this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+        
+        cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
+        
         result.use(Results.json())
-                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
-                        Constantes.PARAM_MSGS).recursive().serialize();
-	}
-
-
-	private void validarParametroCobrancaCota(ParametroCobrancaCotaDTO parametroCobranca) {
-		
-		if(parametroCobranca.getTipoCota() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
-		}
-
-		if(parametroCobranca.getIdFornecedor() == null) {
+.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),
+                Constantes.PARAM_MSGS).recursive().serialize();
+    }
+    
+    
+    private void validarParametroCobrancaCota(final ParametroCobrancaCotaDTO parametroCobranca) {
+        
+        if(parametroCobranca.getTipoCota() == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
+        }
+        
+        if(parametroCobranca.getIdFornecedor() == null) {
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
-		}
-	}
-
-	                            /**
+        }
+    }
+    
+	                                                        /**
      * Formata os dados de FormaCobranca, apagando valores que não são
      * compatíveis com o Tipo de Cobranca escolhido.
      * 
      * @param formaCobranca
      */
-	private FormaCobrancaDTO formatarFormaCobranca(FormaCobrancaDTO formaCobranca){
-
-		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.SEMANAL)){
-			
-			formaCobranca.setDiaDoMes(null);
-			formaCobranca.setPrimeiroDiaQuinzenal(null);
-			formaCobranca.setSegundoDiaQuinzenal(null);
-		}
-
-		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.MENSAL)){
-			
-			formaCobranca.setDomingo(false);
-			formaCobranca.setSegunda(false);
-			formaCobranca.setTerca(false);
-			formaCobranca.setQuarta(false);
-			formaCobranca.setQuinta(false);
-			formaCobranca.setSexta(false);
-			formaCobranca.setSabado(false);
-			formaCobranca.setPrimeiroDiaQuinzenal(null);
-			formaCobranca.setSegundoDiaQuinzenal(null);
-		}
-
-		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
-			
-			formaCobranca.setDomingo(false);
-			formaCobranca.setSegunda(false);
-			formaCobranca.setTerca(false);
-			formaCobranca.setQuarta(false);
-			formaCobranca.setQuinta(false);
-			formaCobranca.setSexta(false);
-			formaCobranca.setSabado(false);
-			formaCobranca.setDiaDoMes(null);
-			formaCobranca.setPrimeiroDiaQuinzenal(null);
-			formaCobranca.setSegundoDiaQuinzenal(null);
-		}
-
-		if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.QUINZENAL)){
-			
-			formaCobranca.setDomingo(false);
-			formaCobranca.setSegunda(false);
-			formaCobranca.setTerca(false);
-			formaCobranca.setQuarta(false);
-			formaCobranca.setQuinta(false);
-			formaCobranca.setSexta(false);
-			formaCobranca.setSabado(false);
-			formaCobranca.setDiaDoMes(null);
-		}
-
-		if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.BOLETO))||(formaCobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO))){
-			
-			formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-			formaCobranca.setContaDigito("");
-		}
-		else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DEPOSITO)){
-			
-			formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-			formaCobranca.setContaDigito("");
-		}
-		else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))||((formaCobranca.getTipoCobranca().equals(TipoCobranca.OUTROS)))){
-			
-			formaCobranca.setNumBanco("");
-			formaCobranca.setNomeBanco("");
-			formaCobranca.setAgencia(null);
-			formaCobranca.setAgenciaDigito("");
-			formaCobranca.setConta(null);
-			formaCobranca.setContaDigito("");
-			formaCobranca.setIdBanco(null);
-		}
-		
-		return formaCobranca;
-	}
-
-	                            /**
+    private FormaCobrancaDTO formatarFormaCobranca(final FormaCobrancaDTO formaCobranca){
+        
+        if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.SEMANAL)){
+            
+            formaCobranca.setDiaDoMes(null);
+            formaCobranca.setPrimeiroDiaQuinzenal(null);
+            formaCobranca.setSegundoDiaQuinzenal(null);
+        }
+        
+        if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.MENSAL)){
+            
+            formaCobranca.setDomingo(false);
+            formaCobranca.setSegunda(false);
+            formaCobranca.setTerca(false);
+            formaCobranca.setQuarta(false);
+            formaCobranca.setQuinta(false);
+            formaCobranca.setSexta(false);
+            formaCobranca.setSabado(false);
+            formaCobranca.setPrimeiroDiaQuinzenal(null);
+            formaCobranca.setSegundoDiaQuinzenal(null);
+        }
+        
+        if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+            
+            formaCobranca.setDomingo(false);
+            formaCobranca.setSegunda(false);
+            formaCobranca.setTerca(false);
+            formaCobranca.setQuarta(false);
+            formaCobranca.setQuinta(false);
+            formaCobranca.setSexta(false);
+            formaCobranca.setSabado(false);
+            formaCobranca.setDiaDoMes(null);
+            formaCobranca.setPrimeiroDiaQuinzenal(null);
+            formaCobranca.setSegundoDiaQuinzenal(null);
+        }
+        
+        if (formaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.QUINZENAL)){
+            
+            formaCobranca.setDomingo(false);
+            formaCobranca.setSegunda(false);
+            formaCobranca.setTerca(false);
+            formaCobranca.setQuarta(false);
+            formaCobranca.setQuinta(false);
+            formaCobranca.setSexta(false);
+            formaCobranca.setSabado(false);
+            formaCobranca.setDiaDoMes(null);
+        }
+        
+        if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.BOLETO))||(formaCobranca.getTipoCobranca().equals(TipoCobranca.BOLETO_EM_BRANCO))){
+            
+            formaCobranca.setNumBanco("");
+            formaCobranca.setNomeBanco("");
+            formaCobranca.setAgencia(null);
+            formaCobranca.setAgenciaDigito("");
+            formaCobranca.setConta(null);
+            formaCobranca.setContaDigito("");
+        } else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DEPOSITO)) {
+            
+            formaCobranca.setNumBanco("");
+            formaCobranca.setNomeBanco("");
+            formaCobranca.setAgencia(null);
+            formaCobranca.setAgenciaDigito("");
+            formaCobranca.setConta(null);
+            formaCobranca.setContaDigito("");
+        } else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))
+            || ((formaCobranca.getTipoCobranca().equals(TipoCobranca.OUTROS)))) {
+            
+            formaCobranca.setNumBanco("");
+            formaCobranca.setNomeBanco("");
+            formaCobranca.setAgencia(null);
+            formaCobranca.setAgenciaDigito("");
+            formaCobranca.setConta(null);
+            formaCobranca.setContaDigito("");
+            formaCobranca.setIdBanco(null);
+        }
+        
+        return formaCobranca;
+    }
+    
+	                                                        /**
      * Método responsável por persistir os dados da forma de cobranca no banco
      * de dados.
      * 
@@ -551,260 +547,259 @@ public class ParametroCobrancaCotaController extends BaseController {
      * @param tipoFormaCobranca
      * @param listaIdsFornecedores
      */
-	@Post
-	@Path("/postarFormaCobranca")
-	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, String tipoFormaCobranca, List<Long> listaIdsFornecedores, ParametroCobrancaCotaDTO parametroCobranca){	
-
-		if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
-			formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
-		}
-
-		if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
-			formaCobranca.setFornecedoresId(listaIdsFornecedores);
-		}
-
-		formaCobranca = formatarFormaCobranca(formaCobranca);
-
-		validarFormaCobranca(formaCobranca);
-
+    @Post
+    @Path("/postarFormaCobranca")
+    public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, final String tipoFormaCobranca, final List<Long> listaIdsFornecedores, final ParametroCobrancaCotaDTO parametroCobranca){
+        
+        if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
+            formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
+        }
+        
+        if ((listaIdsFornecedores!=null)&&(listaIdsFornecedores.size()>0)){
+            formaCobranca.setFornecedoresId(listaIdsFornecedores);
+        }
+        
+        formaCobranca = formatarFormaCobranca(formaCobranca);
+        
+        validarFormaCobranca(formaCobranca);
+        
         // Caso a cota não possua formas de cobrança, informa que essa cobrança
         // veio pelo distribuidor
-		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
-			formaCobranca.setParametroDistribuidor(true);
-		}
-		
-		if(parametroCobranca != null 
-				&& parametroCobranca.getIdCota() != null
-				&& parametroCobranca.getValorMinimo() != null
-				&& parametroCobranca.getIdFornecedor() != null) {
-			
-			validarParametroCobrancaCota(parametroCobranca);
-			
-			parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
-		}
-			
-		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);	
-
+        if (parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
+            formaCobranca.setParametroDistribuidor(true);
+        }
+        
+        if(parametroCobranca != null
+                && parametroCobranca.getIdCota() != null
+                && parametroCobranca.getValorMinimo() != null
+                && parametroCobranca.getIdFornecedor() != null) {
+            
+            validarParametroCobrancaCota(parametroCobranca);
+            
+            parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+        }
+        
+        parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);
+        
         result.use(Results.json())
-                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."), Constantes.PARAM_MSGS)
+.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),
+                Constantes.PARAM_MSGS)
                 .recursive().serialize();
-	}
-
-	@Post
-	public void carregarArquivoContrato(Long idCota, int numeroCota) {
-
-		File tempDir = this.getTemporaryDirUpload(numeroCota);
-
-		ContratoVO contrato = this.parametroCobrancaCotaService.obterArquivoContratoRecebido(idCota, tempDir);
-
-		if (contrato != null) {
-			this.session.setAttribute(CONTRATO_UPLOADED, contrato);
-			this.result.include("isRecebido", contrato.isRecebido());
-
-			File arquivo = contrato.getTempFile();
-
-			String fileName = "";
-
-			if (arquivo != null) {
-
-				fileName = arquivo.getName();
-				this.result.include("fileName", fileName);
-			}
-
-			Map<String, Object> mapa = new TreeMap<String, Object>();
-
-			if (fileName != null) {
-				mapa.put("fileName", fileName);
-			}
-
-			if (contrato != null) {
-				mapa.put("isRecebido", contrato.isRecebido());
-			}
-
-			result.use(CustomJson.class).from(mapa).serialize();
-		} else {
-			this.session.removeAttribute(CONTRATO_UPLOADED);
-			this.result.nothing();
-		}
-	}
-
-	                            /**
+    }
+    
+    @Post
+    public void carregarArquivoContrato(final Long idCota, final int numeroCota) {
+        
+        final File tempDir = this.getTemporaryDirUpload(numeroCota);
+        
+        final ContratoVO contrato = parametroCobrancaCotaService.obterArquivoContratoRecebido(idCota, tempDir);
+        
+        if (contrato != null) {
+            session.setAttribute(CONTRATO_UPLOADED, contrato);
+            result.include("isRecebido", contrato.isRecebido());
+            
+            final File arquivo = contrato.getTempFile();
+            
+            String fileName = null;
+            final Map<String, Object> mapa = new TreeMap<String, Object>();
+            if (arquivo != null) {
+                fileName = arquivo.getName();
+                mapa.put("fileName", fileName);
+                result.include("fileName", fileName);
+            }
+            
+            mapa.put("isRecebido", contrato.isRecebido());
+            
+            result.use(CustomJson.class).from(mapa).serialize();
+        } else {
+            session.removeAttribute(CONTRATO_UPLOADED);
+            result.nothing();
+        }
+    }
+    
+	                                                        /**
      * Método responsável por desativar Forma de Cobranca
      * 
      * @param idFormaCobranca
      */
-	@Post
-	@Path("/excluirFormaCobranca")
-	public void excluirFormaCobranca(Long idFormaCobranca){	
-
-		this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);	
-
+    @Post
+    @Path("/excluirFormaCobranca")
+    public void excluirFormaCobranca(final Long idFormaCobranca){
+        
+        parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);
+        
         result.use(Results.json())
-                .from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."), Constantes.PARAM_MSGS)
+.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),
+                Constantes.PARAM_MSGS)
                 .recursive().serialize();
-	}
-
-	/**
-	 * Exibe o  em formato PDF.
-	 * @param idCota
-	 * @throws Exception
-	 */
-	@Get
-	@Path("/imprimeContrato")
-	public void imprimeContrato(Long idCota, Date dataInicio, Date dataTermino, boolean isRecebido) throws Exception {
-
-		byte[] bytes = null;
-
-		ContratoVO contrato = (ContratoVO) (this.session.getAttribute(CONTRATO_UPLOADED));
-
-		File arquivo = null;
-
-		String contentType = "application/pdf";
-		String extension = ".pdf";
-
-		if (contrato != null) {
-
-			arquivo = contrato.getTempFile();
-
-			contrato.setDataInicio(dataInicio);
-			contrato.setDataTermino(dataTermino);
-			contrato.setIdCota(idCota);
-			contrato.setRecebido(isRecebido);
-
-		} else {
-			contrato = new ContratoVO(dataInicio, dataTermino, isRecebido, idCota);
-		}
-
-		if (isRecebido && (arquivo != null)) {
-			bytes = this.obterArquivoAnexo();
-
-			extension = FileImportUtil.getExtensionFile(arquivo.getName());
-			contentType = FileImportUtil.getContentTypeByExtension(extension);
-
-		} else {
-			try {
-				bytes = this.parametroCobrancaCotaService.geraImpressaoContrato(idCota, dataInicio, dataTermino);
-			} catch (ValidacaoException e) {
-				result.forwardTo(ErrorController.class).showError(e);
-			}
-		}
-
-		this.session.setAttribute(CONTRATO_UPLOADED, contrato);
-		
-		if(bytes != null && bytes.length > 0) {
-			this.httpResponse.setContentType(contentType);
-			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato"+extension);
-	
-			OutputStream output = this.httpResponse.getOutputStream();
-			output.write(bytes);
-	
-			httpResponse.flushBuffer();
-		}
-	}
-
-	                            /**
+    }
+    
+    /**
+     * Exibe o  em formato PDF.
+     * @param idCota
+     * @throws Exception
+     */
+    @Get
+    @Path("/imprimeContrato")
+    public void imprimeContrato(final Long idCota, final Date dataInicio, final Date dataTermino, final boolean isRecebido) throws Exception {
+        
+        byte[] bytes = null;
+        
+        ContratoVO contrato = (ContratoVO) (session.getAttribute(CONTRATO_UPLOADED));
+        
+        File arquivo = null;
+        
+        String contentType = "application/pdf";
+        String extension = ".pdf";
+        
+        if (contrato != null) {
+            
+            arquivo = contrato.getTempFile();
+            
+            contrato.setDataInicio(dataInicio);
+            contrato.setDataTermino(dataTermino);
+            contrato.setIdCota(idCota);
+            contrato.setRecebido(isRecebido);
+            
+        } else {
+            contrato = new ContratoVO(dataInicio, dataTermino, isRecebido, idCota);
+        }
+        
+        if (isRecebido && (arquivo != null)) {
+            bytes = this.obterArquivoAnexo();
+            
+            extension = FileImportUtil.getExtensionFile(arquivo.getName());
+            contentType = FileImportUtil.getContentTypeByExtension(extension);
+            
+        } else {
+            try {
+                bytes = parametroCobrancaCotaService.geraImpressaoContrato(idCota, dataInicio, dataTermino);
+            } catch (final ValidacaoException e) {
+                
+                LOGGER.error(e.getMessage(), e);
+                result.forwardTo(ErrorController.class).showError(e);
+            }
+        }
+        
+        session.setAttribute(CONTRATO_UPLOADED, contrato);
+        
+        if(bytes != null && bytes.length > 0) {
+            httpResponse.setContentType(contentType);
+            httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato"+extension);
+            
+            final OutputStream output = httpResponse.getOutputStream();
+            output.write(bytes);
+            
+            httpResponse.flushBuffer();
+        }
+    }
+    
+	                                                        /**
      * @return obtém arquivo anexo
      */
-	private byte[] obterArquivoAnexo() {
-
-		ContratoVO contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
-
-		File arquivoAnexo = contrato.getTempFile();
-
-		byte[] arquivo = null;
-
-		try {
-
-			FileInputStream fis = FileUtils.openInputStream(arquivoAnexo);
-
-			arquivo = IOUtils.toByteArray(fis);
-
-			fis.close();
-
-		} catch (IOException e) {
+    private byte[] obterArquivoAnexo() {
+        
+        final ContratoVO contrato = (ContratoVO) session.getAttribute(CONTRATO_UPLOADED);
+        
+        final File arquivoAnexo = contrato.getTempFile();
+        
+        byte[] arquivo = null;
+        
+        try {
+            
+            final FileInputStream fis = FileUtils.openInputStream(arquivoAnexo);
+            
+            arquivo = IOUtils.toByteArray(fis);
+            
+            fis.close();
+            
+        } catch (final IOException e) {
             
             LOGGER.error(e.getMessage(), e);
-		}
-
-		return arquivo;
-	}
-	
-	private boolean salvarContrato(Date inicioContrato, Date terminoContrato){
-		
-		if (this.session.getAttribute(CONTRATO_UPLOADED) != null) {
-
-			ContratoVO contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
-			if(contrato != null) {
-				contrato.setDataInicio(inicioContrato);
-				contrato.setDataTermino(terminoContrato);
-			}
-
-			this.parametroCobrancaCotaService.salvarContrato(contrato.getIdCota(), contrato.isRecebido(), contrato.getDataInicio(), contrato.getDataTermino());
-
-			File file = contrato.getTempFile();
-
-			if (file != null) {
-
-				ParametroSistema pathContrato =
-						this.parametroSistemaService.buscarParametroPorTipoParametro(
-								TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
-
-				Cota cota = this.cotaService.obterPorId(contrato.getIdCota());
-
-				File path = new File(pathContrato.getValor(), cota.getNumeroCota().toString());
-
-				path.mkdirs();
-
-				this.fileService.limparDiretorio(path);
-				
-				File novoArquivo = new File(path, file.getName());
-
-				FileOutputStream fos = null;
-				
-				FileInputStream fis = null;
-				
-				try {
-					this.fileService.persistirTemporario(path.toString());
-					
-					fos = new FileOutputStream(novoArquivo);
-
-					fis = new FileInputStream(file);
-
-					IOUtils.copyLarge(fis, fos);
-					
-					this.fileService.eliminarReal(path.getAbsolutePath());
-
-				} catch (IOException e) {
-					
-                    LOGGER.error("Falha ao persistir contrato anexo", e);
-
-					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
-				} finally {
-					
-					if(fis != null)
-						try {
-							fis.close();
-						} catch (IOException e) {
-                            LOGGER.error("Falha ao fechar o arquivo", e);
-						}
-
-					if(fos != null)
-						try {
-							fos.close();
-						} catch (IOException e) {
-                            LOGGER.error("Falha ao fechar o arquivo", e);
-						}
-				}
-			}
-			
-			return true;
-		}
-		
-		return false;
-	}
-
-
-	                            /**
+        }
+        
+        return arquivo;
+    }
+    
+    private boolean salvarContrato(final Date inicioContrato, final Date terminoContrato){
+        
+        if (session.getAttribute(CONTRATO_UPLOADED) != null) {
+            
+            final ContratoVO contrato = (ContratoVO) session.getAttribute(CONTRATO_UPLOADED);
+            if(contrato != null) {
+                contrato.setDataInicio(inicioContrato);
+                contrato.setDataTermino(terminoContrato);
+                parametroCobrancaCotaService.salvarContrato(contrato.getIdCota(), contrato.isRecebido(), contrato
+                        .getDataInicio(), contrato.getDataTermino());
+                
+                
+                
+                final File file = contrato.getTempFile();
+                
+                if (file != null) {
+                    
+                    final ParametroSistema pathContrato =
+                            parametroSistemaService.buscarParametroPorTipoParametro(
+                                    TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
+                    
+                    final Cota cota = cotaService.obterPorId(contrato.getIdCota());
+                    
+                    final File path = new File(pathContrato.getValor(), cota.getNumeroCota().toString());
+                    
+                    path.mkdirs();
+                    
+                    fileService.limparDiretorio(path);
+                    
+                    final File novoArquivo = new File(path, file.getName());
+                    
+                    FileOutputStream fos = null;
+                    
+                    FileInputStream fis = null;
+                    
+                    try {
+                        fileService.persistirTemporario(path.toString());
+                        
+                        fos = new FileOutputStream(novoArquivo);
+                        
+                        fis = new FileInputStream(file);
+                        
+                        IOUtils.copyLarge(fis, fos);
+                        
+                        fileService.eliminarReal(path.getAbsolutePath());
+                        
+                    } catch (final IOException e) {
+                        
+                        LOGGER.error("Falha ao persistir contrato anexo", e);
+                        
+                        throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
+                    } finally {
+                        
+                        if(fis != null) {
+                            try {
+                                fis.close();
+                            } catch (final IOException e) {
+                                LOGGER.error("Falha ao fechar o arquivo", e);
+                            }
+                        }
+                        
+                        if(fos != null) {
+                            try {
+                                fos.close();
+                            } catch (final IOException e) {
+                                LOGGER.error("Falha ao fechar o arquivo", e);
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        
+        return false;
+    }
+    
+    
+	                                                        /**
      * Método responsável por postar os dados da aba financeiro que são
      * específicos da cota.
      * 
@@ -812,327 +807,331 @@ public class ParametroCobrancaCotaController extends BaseController {
      * @param terminoContrato
      * @param tipoCota
      */
-	@Post
-	@Path("/salvarFinanceiroEspecificoDaCota")
-	public void salvarFinanceiroEspecificoDaCota(Long idCota, Date inicioContrato, Date terminoContrato, TipoCota tipoCota) {
-
-		String msg1 = "";
-		String msg2 = "";
-		String msg = "";
-		
-		if (this.salvarContrato(inicioContrato, terminoContrato)){
-			
-			msg1 = "Contrato";
-		}
-		
-        if (this.cotaService.salvarTipoCota(idCota, tipoCota)){
-			
-        	msg2 = "Tipo da cota";
-		}
+    @Post
+    @Path("/salvarFinanceiroEspecificoDaCota")
+    public void salvarFinanceiroEspecificoDaCota(final Long idCota, final Date inicioContrato, final Date terminoContrato, final TipoCota tipoCota) {
         
-        if (!msg1.equals("") || !msg2.equals("")){
-        	
-        	if (msg1.equals("")){
-        		
-        		msg1=msg2;
-        		
-        		msg2="";
-        	}
-        	
-        	msg = (msg1+(!msg2.equals("")?" e "+msg2:"")+" cadastrado com sucesso.");
+        String msg1 = "";
+        String msg2 = "";
+        String msg = "";
+        
+        if (this.salvarContrato(inicioContrato, terminoContrato)){
             
-        	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, msg),Constantes.PARAM_MSGS).recursive().serialize();
+            msg1 = "Contrato";
         }
         
-		result.nothing();
-	}
-
-	@Post
-	public void uploadContratoAnexo(UploadedFile uploadedFile, String numeroCota) throws IOException {
-
-		if (uploadedFile == null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Falha ao carregar arquivo!"));
-
-		this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
-
-		ContratoVO contrato = new ContratoVO();
-
-		if (this.session.getAttribute(CONTRATO_UPLOADED) != null) {
-
-			contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
-
-			File arquivo = contrato.getTempFile();
-
-			if (arquivo != null && arquivo.exists()) {
-				arquivo.delete();
-			}
-		}
-
-		String fileName = uploadedFile.getFileName();
-
-		File diretorio = this.getTemporaryDirUpload(Integer.parseInt(numeroCota));
-
-		File arquivo = new File(diretorio, fileName);
-
-		FileOutputStream fileOutStream = null;;
-
-		diretorio.mkdirs();
-
-		try {
-
-			fileOutStream = new FileOutputStream(arquivo);
-
-			IOUtils.copyLarge(uploadedFile.getFile(), fileOutStream);
-
-		} catch (IOException ioe) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Falha ao gravar o arquivo em disco!");
-		} finally {
-			try {
-				if (fileOutStream != null) {
-					fileOutStream.close();
-				}
-			} catch (Exception e) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Falha ao gravar o arquivo em disco!");
-			}
-		}
-
-		Cota cota = this.cotaService.obterPorNumeroDaCota(Integer.valueOf(numeroCota));
-
-		contrato.setIdCota(cota.getId());
-		contrato.setTempFile(arquivo);
-		contrato.setRecebido(true);
-		this.session.setAttribute(CONTRATO_UPLOADED, contrato);
-
-		result.use(PlainJSONSerialization.class).from(fileName, "fileName").recursive().serialize();
-	}
-
-	/**
-	 * Remove arquivo anexo
-	 */
-	@Post("/removerUpload.json")
-	public void removerUpload() {
-
-		ContratoVO contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
-
-		if (contrato != null) {
-
-			File arquivo = contrato.getTempFile();
-
-			if(arquivo != null && arquivo.delete()) {
-
-				contrato.setTempFile(null);
-				contrato.setRecebido(false);
-			}
-		}
-
-		result.nothing();
-	}
-
-	                            /**
+        if (cotaService.salvarTipoCota(idCota, tipoCota)){
+            
+            msg2 = "Tipo da cota";
+        }
+        
+        if (!msg1.equals("") || !msg2.equals("")){
+            
+            if (msg1.equals("")){
+                
+                msg1=msg2;
+                
+                msg2="";
+            }
+            
+            msg = (msg1+(!msg2.equals("")?" e "+msg2:"")+" cadastrado com sucesso.");
+            
+            result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, msg),Constantes.PARAM_MSGS).recursive().serialize();
+        }
+        
+        result.nothing();
+    }
+    
+    @Post
+    public void uploadContratoAnexo(final UploadedFile uploadedFile, final String numeroCota) throws IOException {
+        
+        if (uploadedFile == null) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Falha ao carregar arquivo!"));
+        }
+        
+        fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
+        
+        ContratoVO contrato = new ContratoVO();
+        
+        if (session.getAttribute(CONTRATO_UPLOADED) != null) {
+            
+            contrato = (ContratoVO) session.getAttribute(CONTRATO_UPLOADED);
+            
+            final File arquivo = contrato.getTempFile();
+            
+            if (arquivo != null && arquivo.exists()) {
+                arquivo.delete();
+            }
+        }
+        
+        final String fileName = uploadedFile.getFileName();
+        
+        final File diretorio = this.getTemporaryDirUpload(Integer.parseInt(numeroCota));
+        
+        final File arquivo = new File(diretorio, fileName);
+        
+        FileOutputStream fileOutStream = null;;
+        
+        diretorio.mkdirs();
+        
+        try {
+            
+            fileOutStream = new FileOutputStream(arquivo);
+            
+            IOUtils.copyLarge(uploadedFile.getFile(), fileOutStream);
+            
+        } catch (final IOException ioe) {
+            LOGGER.error(ioe.getMessage(), ioe);
+            throw new ValidacaoException(TipoMensagem.ERROR,
+                    "Falha ao gravar o arquivo em disco!");
+        } finally {
+            try {
+                if (fileOutStream != null) {
+                    fileOutStream.close();
+                }
+            } catch (final Exception e) {
+                
+                LOGGER.error(e.getMessage(), e);
+                throw new ValidacaoException(TipoMensagem.ERROR,
+                        "Falha ao gravar o arquivo em disco!");
+            }
+        }
+        
+        final Cota cota = cotaService.obterPorNumeroDaCota(Integer.valueOf(numeroCota));
+        
+        contrato.setIdCota(cota.getId());
+        contrato.setTempFile(arquivo);
+        contrato.setRecebido(true);
+        session.setAttribute(CONTRATO_UPLOADED, contrato);
+        
+        result.use(PlainJSONSerialization.class).from(fileName, "fileName").recursive().serialize();
+    }
+    
+    /**
+     * Remove arquivo anexo
+     */
+    @Post("/removerUpload.json")
+    public void removerUpload() {
+        
+        final ContratoVO contrato = (ContratoVO) session.getAttribute(CONTRATO_UPLOADED);
+        
+        if (contrato != null) {
+            
+            final File arquivo = contrato.getTempFile();
+            
+            if(arquivo != null && arquivo.delete()) {
+                
+                contrato.setTempFile(null);
+                contrato.setRecebido(false);
+            }
+        }
+        
+        result.nothing();
+    }
+    
+	                                                        /**
      * Obtém um diretório temporario para upload
      * 
      * @param numeroCota
      * @return diretorio temporario
      */
-	private File getTemporaryDirUpload(int numeroCota) {
-
-		String pathAplicacao = servletContext.getRealPath("");
-
-		pathAplicacao = pathAplicacao.replace("\\", "/");
-
-		File diretorioContratos = new File(pathAplicacao, "contratos");
-
-		String diretorioCotaTemp = numeroCota+File.separator+"temp";
-
-		return new File(diretorioContratos, diretorioCotaTemp);
-	}
-
-	                            /**
+    private File getTemporaryDirUpload(final int numeroCota) {
+        
+        String pathAplicacao = servletContext.getRealPath("");
+        
+        pathAplicacao = pathAplicacao.replace("\\", "/");
+        
+        final File diretorioContratos = new File(pathAplicacao, "contratos");
+        
+        final String diretorioCotaTemp = numeroCota+File.separator+"temp";
+        
+        return new File(diretorioContratos, diretorioCotaTemp);
+    }
+    
+	                                                        /**
      * Método responsável pela validação dos dados e rotinas.
      */
-	public void validar(){
-
-		if (validator.hasErrors()) {
-			List<String> mensagens = new ArrayList<String>();
-			for (Message message : validator.getErrors()) {
-				mensagens.add(message.getMessage());
-			}
-			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
-			throw new ValidacaoException(validacao);
-		}
-	}
-
-
-	                            /**
+    public void validar(){
+        
+        if (validator.hasErrors()) {
+            final List<String> mensagens = new ArrayList<String>();
+            for (final Message message : validator.getErrors()) {
+                mensagens.add(message.getMessage());
+            }
+            final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
+            throw new ValidacaoException(validacao);
+        }
+    }
+    
+    
+	                                                        /**
      * Método responsável pela validação dos dados da Forma de Cobranca.
      * 
      * @param formaCobranca
      */
-	public void validarFormaCobranca(FormaCobrancaDTO formaCobranca){
-
-		//validar();
-
-		if(formaCobranca.getTipoCobranca()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
-		}
-
-		if (formaCobranca.getTipoFormaCobranca()==null){
+    public void validarFormaCobranca(final FormaCobrancaDTO formaCobranca){
+        
+        //validar();
+        
+        if(formaCobranca.getTipoCobranca()==null){
+            throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Tipo de Pagamento.");
+        }
+        
+        if (formaCobranca.getTipoFormaCobranca()==null){
             throw new ValidacaoException(TipoMensagem.WARNING, "Selecione um tipo de concentração de Pagamentos.");
-		}
-
-		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-			if (formaCobranca.getDiaDoMes()==null){
+        }
+        
+        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+            if (formaCobranca.getDiaDoMes()==null){
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
-			}
-			else{
-				if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
+            }
+            else{
+                if ((formaCobranca.getDiaDoMes()>31)||(formaCobranca.getDiaDoMes()<1)){
                     throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
-				}
-			}
-		}
-
-		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
-			if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
+                }
+            }
+        }
+        
+        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+            if ((formaCobranca.getPrimeiroDiaQuinzenal()==null) || (formaCobranca.getSegundoDiaQuinzenal()==null)){
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
-			}
-			else{
-				if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
+            }
+            else{
+                if ((formaCobranca.getPrimeiroDiaQuinzenal()>31)||(formaCobranca.getPrimeiroDiaQuinzenal()<1)||(formaCobranca.getSegundoDiaQuinzenal()>31)||(formaCobranca.getSegundoDiaQuinzenal()<1)){
                     throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
-				}
-			}
-		}
-
-		if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-			if((!formaCobranca.isDomingo())&&
-					(!formaCobranca.isSegunda())&&
-					(!formaCobranca.isTerca())&&
-					(!formaCobranca.isQuarta())&&
-					(!formaCobranca.isQuinta())&&
-					(!formaCobranca.isSexta())&&
-					(!formaCobranca.isSabado())){
+                }
+            }
+        }
+        
+        if(formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+            if((!formaCobranca.isDomingo())&&
+                    (!formaCobranca.isSegunda())&&
+                    (!formaCobranca.isTerca())&&
+                    (!formaCobranca.isQuarta())&&
+                    (!formaCobranca.isQuinta())&&
+                    (!formaCobranca.isSexta())&&
+                    (!formaCobranca.isSabado())){
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o tipo de cobrança Semanal é necessário marcar ao menos um dia da semana.");
-			}
-		}
-
-		if (formaCobranca.getIdBanco()==null){
-			if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
-					(formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
-					(formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-					(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
-					(formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
+            }
+        }
+        
+        if (formaCobranca.getIdBanco()==null){
+            if ((formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)||
+                    (formaCobranca.getTipoCobranca()==TipoCobranca.DEPOSITO)){
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário a escolha de um Banco.");
-			}
-		}
-
-		if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
-				(formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
-
+            }
+        }
+        
+        if ((formaCobranca.getTipoCobranca()==TipoCobranca.CHEQUE)||
+                (formaCobranca.getTipoCobranca()==TipoCobranca.TRANSFERENCIA_BANCARIA)){
+            
             if (StringUtils.isEmpty(formaCobranca.getNomeBanco())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o nome do Banco.");
-			}
+            }
             if (StringUtils.isEmpty(formaCobranca.getNumBanco())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o numero do Banco.");
-			}
-
+            }
+            
             if (formaCobranca.getConta() == null) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Conta.");
-			}
+            }
             if (StringUtils.isEmpty(formaCobranca.getContaDigito())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Conta.");
-			}
-
+            }
+            
             if (formaCobranca.getAgencia() == null) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o numero da Agência.");
-			}
+            }
             if (StringUtils.isEmpty(formaCobranca.getAgenciaDigito())) {
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Para o Tipo de Cobrança selecionado é necessário digitar o dígito da Agência.");
-			}
-		}
-
-		if (formaCobranca.isRecebeEmail()){
-			Cota cota = this.cotaService.obterPorId(formaCobranca.getIdCota());
-			if (cota.getPessoa().getEmail()==null){
+            }
+        }
+        
+        if (formaCobranca.isRecebeEmail()){
+            final Cota cota = cotaService.obterPorId(formaCobranca.getIdCota());
+            if (cota.getPessoa().getEmail()==null){
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Cadastre um e-mail para a cota ou desmarque a opção de envio de email.");
-			}
-		}
-
-		if ((formaCobranca.getFornecedoresId()!=null)&&(formaCobranca.getFornecedoresId().size()>0)){
-
+            }
+        }
+        
+        if ((formaCobranca.getFornecedoresId()!=null)&&(formaCobranca.getFornecedoresId().size()>0)){
+            
             // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
             // DA CONCENTRAÇÃO SEMANAL
-			if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
-																		   formaCobranca.getIdCota(),
-																		   formaCobranca.getFornecedoresId(),
-																		   formaCobranca.getTipoFormaCobranca(),
-																		   formaCobranca.isDomingo(),
-																		   formaCobranca.isSegunda(),
-																		   formaCobranca.isTerca(),
-																		   formaCobranca.isQuarta(),
-																		   formaCobranca.isQuinta(),
-																		   formaCobranca.isSexta(),
-																		   formaCobranca.isSabado())){
-
+            if (formaCobranca.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
+                if (!formaCobrancaService.validarFormaCobrancaSemanal(formaCobranca.getIdFormaCobranca(),
+                        formaCobranca.getIdCota(),
+                        formaCobranca.getFornecedoresId(),
+                        formaCobranca.getTipoFormaCobranca(),
+                        formaCobranca.isDomingo(),
+                        formaCobranca.isSegunda(),
+                        formaCobranca.isTerca(),
+                        formaCobranca.isQuarta(),
+                        formaCobranca.isQuinta(),
+                        formaCobranca.isSexta(),
+                        formaCobranca.isSabado())){
+                    
                     throw new ValidacaoException(TipoMensagem.WARNING,
                             "Esta forma de cobrança já está configurada para a Cota.");
-				}
-			}
-
+                }
+            }
+            
             // VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA
             // DA CONCENTRAÇÃO MENSAL
-			else{
-				if (!this.formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
-																		  formaCobranca.getIdCota(),
-																		  formaCobranca.getFornecedoresId(),
-																		  formaCobranca.getTipoFormaCobranca(),
-																		  Arrays.asList(formaCobranca.getDiaDoMes(),
-																				        formaCobranca.getPrimeiroDiaQuinzenal(),
-																				        formaCobranca.getSegundoDiaQuinzenal()))){
-
+            else{
+                if (!formaCobrancaService.validarFormaCobrancaMensal(formaCobranca.getIdFormaCobranca(),
+                        formaCobranca.getIdCota(),
+                        formaCobranca.getFornecedoresId(),
+                        formaCobranca.getTipoFormaCobranca(),
+                        Arrays.asList(formaCobranca.getDiaDoMes(),
+                                formaCobranca.getPrimeiroDiaQuinzenal(),
+                                formaCobranca.getSegundoDiaQuinzenal()))){
+                    
                     throw new ValidacaoException(TipoMensagem.WARNING,
                             "Esta forma de cobrança já está configurada para a Cota.");
-				}
-			}
-		}	
-	}
-
-	@Post("/calcularDataTermino.json")
-	public void calcularDataTermino(Date dataInicio) {
-
-		ParametrosDistribuidorVO parametrosDistribuidor = this.parametroDistribuidorService.getParametrosDistribuidor();
-
-		if(parametrosDistribuidor.getPrazoContrato() == null) {
-			result.nothing();
-			return;
-		}
-		
-		int prazoContratoEmMeses = parametrosDistribuidor.getPrazoContrato();
-
-		Calendar dataTermino = Calendar.getInstance();
-
-		dataTermino.setTime(dataInicio);
-
-		dataTermino.add(Calendar.MONTH, prazoContratoEmMeses);
-
-		result.use(Results.json()).from(dataTermino.getTime(),"dataTermino").recursive().serialize();
-	}
-
-	@Post
-	public void verificarEntregador(Long idCota){
-
-		result.use(Results.json()).from(this.entregadorService.verificarEntregador(idCota), "result").serialize();
-	}
+                }
+            }
+        }
+    }
+    
+    @Post("/calcularDataTermino.json")
+    public void calcularDataTermino(final Date dataInicio) {
+        
+        final ParametrosDistribuidorVO parametrosDistribuidor = parametroDistribuidorService.getParametrosDistribuidor();
+        
+        if(parametrosDistribuidor.getPrazoContrato() == null) {
+            result.nothing();
+            return;
+        }
+        
+        final int prazoContratoEmMeses = parametrosDistribuidor.getPrazoContrato();
+        
+        final Calendar dataTermino = Calendar.getInstance();
+        
+        dataTermino.setTime(dataInicio);
+        
+        dataTermino.add(Calendar.MONTH, prazoContratoEmMeses);
+        
+        result.use(Results.json()).from(dataTermino.getTime(),"dataTermino").recursive().serialize();
+    }
+    
+    @Post
+    public void verificarEntregador(final Long idCota){
+        
+        result.use(Results.json()).from(entregadorService.verificarEntregador(idCota), "result").serialize();
+    }
 }

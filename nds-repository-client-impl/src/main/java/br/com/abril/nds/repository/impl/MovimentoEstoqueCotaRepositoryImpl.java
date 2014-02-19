@@ -3438,16 +3438,29 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append(" join mec.produtoEdicao produtoEdicao ");
 		
+		sql.append(" left join mec.movimentoEstoqueCotaFuro mecFuro ");
+		
 		sql.append(" where lancamento.id = :idLancamento ");
 		
 		sql.append(" and produtoEdicao.id = :idProdutoEdicao ");
+		
+		sql.append(" and mecFuro.id is null ");
+		
+		sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
 		
 		sql.append(" group by mec.cota.id ");
 		
 		Query query = this.getSession().createQuery(sql.toString());
 		
 		query.setParameter("idLancamento", idLancamento);
+		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameterList(
+			"gruposMovimentoReparte", 
+				Arrays.asList(
+					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
+						GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE));
 		
 		query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
 		
