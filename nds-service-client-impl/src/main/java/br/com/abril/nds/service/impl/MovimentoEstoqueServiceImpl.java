@@ -77,7 +77,7 @@ import br.com.abril.nds.util.MathUtil;
 public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MovimentoEstoqueServiceImpl.class);
-
+    
     @Autowired
     private EstoqueProdutoRespository estoqueProdutoRespository;
     
@@ -241,7 +241,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
     }
     
-	        /**
+	            /**
      * Obtem Objeto com Lista de movimentos de estoque referentes à reparte e
      * Map de edicoes com saidas e entradas diversas
      * 
@@ -310,7 +310,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
         if(listaMovimentoCota==null || listaMovimentoCota.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Cota '" + cota.getNumeroCota()
-                    + "' não possui reparte na data.");
+                + "' não possui reparte na data.");
         }
         
         final TipoMovimentoEstoque tipoMovimento =
@@ -500,41 +500,41 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 movimentoEstoque.setDataCriacao(dataOperacao);
             }
             movimentoEstoque.setAprovadoAutomaticamente(tipoMovimentoEstoque.isAprovacaoAutomatica());
-        }
-        movimentoEstoque.setUsuario(new Usuario(idUsuario));
-        movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
-        movimentoEstoque.setQtde(quantidade);
-        movimentoEstoque.setOrigem(origem);
-        
-        
-        if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica) {
+
+            movimentoEstoque.setUsuario(new Usuario(idUsuario));
+            movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
+            movimentoEstoque.setQtde(quantidade);
+            movimentoEstoque.setOrigem(origem);
             
-            movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
-            movimentoEstoque.setAprovador(new Usuario(idUsuario));
-            movimentoEstoque.setDataAprovacao(distribuidorService.obterDataOperacaoDistribuidor());
             
-            /*
-             * 04/10/2013 - Regra adicionada a pedido do Ronaldo Pataro
-             * Se o Regime de Recolhimento e o Tipo forem "Parcial" deve ser direcionado para o Estoque de Lancamentos
-             * exceto se for Tipo "Final", que deve ir para o estoque de recolhimento
-             * 
-             */
-            final ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-            if(pe.isParcial()) {
-                for(final Lancamento l : pe.getLancamentos()) {
-                    if(l.getPeriodoLancamentoParcial() != null
-                            && l.getPeriodoLancamentoParcial().getTipo().equals(TipoLancamentoParcial.PARCIAL)) {
-                        tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+            if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatica) {
+                
+                movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
+                movimentoEstoque.setAprovador(new Usuario(idUsuario));
+                movimentoEstoque.setDataAprovacao(distribuidorService.obterDataOperacaoDistribuidor());
+                
+                /*
+                 * 04/10/2013 - Regra adicionada a pedido do Ronaldo Pataro
+                 * Se o Regime de Recolhimento e o Tipo forem "Parcial" deve ser direcionado para o Estoque de Lancamentos
+                 * exceto se for Tipo "Final", que deve ir para o estoque de recolhimento
+                 * 
+                 */
+                final ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+                if(pe.isParcial()) {
+                    for(final Lancamento l : pe.getLancamentos()) {
+                        if(l.getPeriodoLancamentoParcial() != null
+                                && l.getPeriodoLancamentoParcial().getTipo().equals(TipoLancamentoParcial.PARCIAL)) {
+                            tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+                        }
                     }
                 }
+                
+                final Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);
+                
+                movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
+                
             }
-            
-            final Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);
-            
-            movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
-            
         }
-        
         if (statusIntegracao != null) {
             
             movimentoEstoque.setStatusIntegracao(statusIntegracao);
@@ -829,8 +829,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                             + produtoEdicao.getProduto().getCodigo() + " - "
                             + produtoEdicao.getProduto().getNomeComercial()
                             + " - " + produtoEdicao.getNumeroEdicao()
-                            + "] nos estoques \"Lançamento, Devolução Encalhe e Suplementar\", "
-                            + "insuficientes para movimentação.");
+                + "] nos estoques \"Lançamento, Devolução Encalhe e Suplementar\", "
+                + "insuficientes para movimentação.");
         }
     }
     
@@ -848,7 +848,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     + " - " + produtoEdicao.getProduto().getNomeComercial() + " - "
                     + produtoEdicao.getNumeroEdicao()
                     + "] no estoque \"" + tipoEstoque.getDescricao()
-                    + "\", insuficiente para movimentação.", CodigoErro.SALDO_ESTOQUE_DISTRIBUIDOR_INSUFICIENTE);
+                + "\", insuficiente para movimentação.", CodigoErro.SALDO_ESTOQUE_DISTRIBUIDOR_INSUFICIENTE);
         }
     }
     
@@ -862,7 +862,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     "Saldo do produto [" + produtoEdicao.getProduto().getCodigo()
                     + " - " + produtoEdicao.getProduto().getNomeComercial() + " - "
                     + produtoEdicao.getNumeroEdicao()
-                    + "] no estoque da cota, insuficiente para movimentação.");
+ + "] no estoque da cota, insuficiente para movimentação.");
         }
     }
     
@@ -1144,7 +1144,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         
     }
     
-	        /**
+	            /**
      * Persistem os dados de reparte de histórico de vendas
      * 
      * @param idUsuario
@@ -1191,7 +1191,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
         }
     }
     
-	        /**
+	            /**
      * Persistem os dados de encalhe de histórico de vendas
      * 
      * @param idUsuario
@@ -1345,7 +1345,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                 
                 final ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
                 
-				                                /**
+				                                                /**
                  * A busca dos descontos é feita diretamente no Map, por chave,
                  * agilizando o retorno do resultado
                  */
@@ -1354,7 +1354,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
                     descontoDTO = descontoService.obterDescontoPor(descontos, idCota, produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
                 } catch (final Exception e) {
                     final String msg = "Produto sem desconto: " + produtoEdicao.getProduto().getCodigo() + " / "
-                        + produtoEdicao.getNumeroEdicao();
+                            + produtoEdicao.getNumeroEdicao();
                     LOGGER.error(msg, e);
                     throw new ValidacaoException(TipoMensagem.ERROR, msg);
                 }
