@@ -109,7 +109,7 @@ public class FecharDiaController extends BaseController {
     @Autowired
     private HttpSession session;
     
-    private Date dataOperacao;
+    private static Date dataOperacao;
     
     private static final String FECHAMENTO_DIARIO_DTO_SESSION_KEY = "FECHAMENTO_DIARIO_DTO_SESSION_KEY";
     
