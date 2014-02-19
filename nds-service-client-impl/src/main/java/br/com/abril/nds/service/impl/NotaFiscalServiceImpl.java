@@ -38,6 +38,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
@@ -92,6 +93,7 @@ import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
@@ -99,7 +101,6 @@ import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -177,6 +178,9 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Autowired
 	private NotaFiscalNdsRepository notaFiscalNdsRepository;
 
+	
+	@Autowired
+	private GeracaoNotaEnvioService geracaoNotaEnvioService;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -391,30 +395,22 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
 		
-		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
+		Distribuidor distribuidor = distribuidorRepository.obter();
 		
+		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
 		
 		switch (tipoImpressao) {
 			
 			case MODELO_1:
+			case MODELO_2:
 				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
-					// criar nota de envio
-					
+					this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
 				}
-				
-				
 				
 				break;
 				
-			case MODELO_2:
-				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
-					// criar nota de envio
-					
-				}
-				break;	
-				
 			default:
-				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração da nota de envio!");
 		}
 		
 		return notaFiscal;
