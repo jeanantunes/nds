@@ -446,7 +446,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			} else {
 				
-				qtd = 0l;
+				qtd = fechamento.getFisico() == null ? 0l : fechamento.getFisico();
 			}
 			
 			FechamentoEncalhePK id = new FechamentoEncalhePK();
