@@ -82,16 +82,16 @@ public class AlteracaoCotaController extends BaseController {
     @Autowired
     private HttpServletResponse httpResponse;
     
-    public static final FileType[] extensoesAceitas = { FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF,
-            FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG };
+    private static final FileType[] EXTENSOES_ACEITAS = { FileType.DOC, FileType.DOCX, FileType.BMP, FileType.GIF,
+        FileType.PDF, FileType.JPEG, FileType.JPG, FileType.PNG };
     
-    private Result result;
+    private final Result result;
     
     private static final String NOME_DEFAULT_TERMO_ADESAO = "termo_adesao.pdf";
     
     private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
     
-    public AlteracaoCotaController(Result result) {
+    public AlteracaoCotaController(final Result result) {
         super();
         this.result = result;
     }
@@ -102,7 +102,7 @@ public class AlteracaoCotaController extends BaseController {
         result.include("listBairros", enderecoService.obterBairrosCotas());
         result.include("listMunicipios", enderecoService.obterMunicipiosCotas());
         
-        List<Integer> listaVencimento = new ArrayList<Integer>();
+        final List<Integer> listaVencimento = new ArrayList<Integer>();
         for (int i = 1; i < 31; i++) {
             listaVencimento.add(i);
         }
@@ -117,16 +117,16 @@ public class AlteracaoCotaController extends BaseController {
     
     @Post
     @Path("/buscarBairroPorCidade.json")
-    public void buscarBairroPorCidade(String cidade) {
-        List<String> bairros = enderecoService.obterBairrosPorCidade(cidade);
+    public void buscarBairroPorCidade(final String cidade) {
+        final List<String> bairros = enderecoService.obterBairrosPorCidade(cidade);
         result.use(CustomJson.class).from(bairros).serialize();
     }
     
     @Post("/pesquisarAlteracaoCota.json")
-    public void pesquisarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname,
-            String sortorder, int rp, int page) {
+    public void pesquisarAlteracaoCota(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final String sortname,
+            final String sortorder, final int rp, final int page) {
         
-        PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
+        final PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortname);
         if ("DESC".equalsIgnoreCase(sortorder)) {
             paginacao.setOrdenacao(PaginacaoVO.Ordenacao.ASC);
         } else {
@@ -136,140 +136,152 @@ public class AlteracaoCotaController extends BaseController {
         
         filtroAlteracaoCotaDTO.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtroAlteracaoCotaDTO.getNomeCota()));
         
-        List<ConsultaAlteracaoCotaDTO> listaCotas = this.alteracaoCotaService
+        final List<ConsultaAlteracaoCotaDTO> listaCotas = alteracaoCotaService
                 .pesquisarAlteracaoCota(filtroAlteracaoCotaDTO);
         
         if (listaCotas == null || listaCotas.isEmpty()) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
         }
         
-        final int qtdCotas = this.alteracaoCotaService.contarAlteracaoCota(filtroAlteracaoCotaDTO);
+        final int qtdCotas = alteracaoCotaService.contarAlteracaoCota(filtroAlteracaoCotaDTO);
         
-        this.result.use(FlexiGridJson.class).from(listaCotas).total(qtdCotas).page(page).serialize();
+        result.use(FlexiGridJson.class).from(listaCotas).total(qtdCotas).page(page).serialize();
         
     }
     
     @Post
     @Rules(Permissao.ROLE_CADASTRO_ALTERACAO_COTA_ALTERACAO)
-    public void carregarCamposAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, int page, int rp) {
+    public void carregarCamposAlteracao(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final String sortname, final int page, final int rp) {
         
-        List<Fornecedor> listaFornecedoresAtivos = fornecedorService.obterFornecedores();
-        List<ItemDTO<Long, String>> fornecedoresAtivos = getFornecedores(listaFornecedoresAtivos);
+        final List<Fornecedor> listaFornecedoresAtivos = fornecedorService.obterFornecedores();
+        final List<ItemDTO<Long, String>> fornecedoresAtivos = getFornecedores(listaFornecedoresAtivos);
         
         // Carregará os dados apenas se o usuário selecionar uma linha do grid
         // p/ alteração.
-        if (filtroAlteracaoCotaDTO != null && filtroAlteracaoCotaDTO.getListaLinhaSelecao() != null
-            && filtroAlteracaoCotaDTO.getListaLinhaSelecao().size() == 1) {
-            
-            List<ItemDTO<Long, String>> listFornecedoresCota = new ArrayList<ItemDTO<Long, String>>();
-            
-            Long cotaId = filtroAlteracaoCotaDTO.getListaLinhaSelecao().get(0);
-            
-            Cota cota = cotaService.obterPorId(cotaId);
-            
-            if (cotaId != null) {
-                listFornecedoresCota = getFornecedores(fornecedorService.obterFornecedoresCota(cotaId));
-                removerFornecedorAssociadoLista(listFornecedoresCota, fornecedoresAtivos);
+        if (filtroAlteracaoCotaDTO != null) {
+            if (filtroAlteracaoCotaDTO.getListaLinhaSelecao() != null
+                    && filtroAlteracaoCotaDTO.getListaLinhaSelecao().size() == 1) {
+                
+                List<ItemDTO<Long, String>> listFornecedoresCota = new ArrayList<ItemDTO<Long, String>>();
+                
+                final Long cotaId = filtroAlteracaoCotaDTO.getListaLinhaSelecao().get(0);
+                
+                final Cota cota = cotaService.obterPorId(cotaId);
+                
+                if (cotaId != null) {
+                    listFornecedoresCota = getFornecedores(fornecedorService.obterFornecedoresCota(cotaId));
+                    removerFornecedorAssociadoLista(listFornecedoresCota, fornecedoresAtivos);
+                }
+                
+                final FiltroModalFornecedor filtroModalFornecedor = filtroAlteracaoCotaDTO.getFiltroModalFornecedor();
+                if (filtroModalFornecedor != null) {
+                    filtroModalFornecedor.setListFornecedores(fornecedoresAtivos);
+                    filtroModalFornecedor.setListaFornecedorAssociado(listFornecedoresCota);
+                }
+                if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro() != null) {
+                    filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIsSugereSuspensao(cota.isSugereSuspensao());
+                }
+                if (cota.getParametroCobranca() != null) {
+                    preencherFiltroFinanceiro(filtroAlteracaoCotaDTO, cota);
+                }
+                if (cota.getParametroDistribuicao() != null) {
+                    preencherFiltroDistribuicao(filtroAlteracaoCotaDTO, cota);
+                }
+                
+            } else {
+                filtroAlteracaoCotaDTO.getFiltroModalFornecedor().setListFornecedores(fornecedoresAtivos);
             }
-
-            FiltroModalFornecedor filtroModalFornecedor = filtroAlteracaoCotaDTO.getFiltroModalFornecedor();
-            if (filtroModalFornecedor != null) {
-                filtroModalFornecedor.setListFornecedores(fornecedoresAtivos);
-                filtroModalFornecedor.setListaFornecedorAssociado(listFornecedoresCota);
-            }
-            if (filtroAlteracaoCotaDTO.getFiltroModalFinanceiro() != null) {
-                filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIsSugereSuspensao(cota.isSugereSuspensao());
-            }
-            if (cota.getParametroCobranca() != null) {
-                preencherFiltroFinanceiro(filtroAlteracaoCotaDTO, cota);
-            }
-            if (cota.getParametroDistribuicao() != null) {
-                preencherFiltroDistribuicao(filtroAlteracaoCotaDTO, cota);
-            }
-            
-        } else {
-            filtroAlteracaoCotaDTO.getFiltroModalFornecedor().setListFornecedores(fornecedoresAtivos);
         }
         
-        this.result.use(Results.json()).from(filtroAlteracaoCotaDTO, "filtroAlteracaoCotaDTO").recursive().serialize();
+        result.use(Results.json()).from(filtroAlteracaoCotaDTO, "filtroAlteracaoCotaDTO").recursive().serialize();
     }
     
-    private List<ItemDTO<Long, String>> getFornecedores(List<Fornecedor> fornecedores) {
+    private List<ItemDTO<Long, String>> getFornecedores(final List<Fornecedor> fornecedores) {
         
-        List<ItemDTO<Long, String>> itensFornecedor = new ArrayList<ItemDTO<Long, String>>();
+        final List<ItemDTO<Long, String>> itensFornecedor = new ArrayList<ItemDTO<Long, String>>();
         
-        for (Fornecedor fornecedor : fornecedores) {
+        for (final Fornecedor fornecedor : fornecedores) {
             
             itensFornecedor
-                    .add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+            .add(new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
         }
         
         return itensFornecedor;
     }
     
     @Post
-    public void salvarAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
+    public void salvarAlteracao(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {
         
         if (filtroAlteracaoCotaDTO.getFiltroModalFornecedor() != null
-            && filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados() != null
-            && filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados().isEmpty()) {
+                && filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados() != null
+                && filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados().isEmpty()) {
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos 1 Fornecedor");
         }
         
-        this.alteracaoCotaService.salvarAlteracoes(filtroAlteracaoCotaDTO);
+        alteracaoCotaService.salvarAlteracoes(filtroAlteracaoCotaDTO);
         
-        this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."),
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."),
                 Constantes.PARAM_MSGS).recursive().serialize();
     }
     
-    public void preencherFiltroFinanceiro(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
+    public void preencherFiltroFinanceiro(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
         
         // FINANCEIRO
-        if (cota.getParametroCobranca().getFatorVencimento() != null)
+        if (cota.getParametroCobranca().getFatorVencimento() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setIdVencimento(
                     cota.getParametroCobranca().getFatorVencimento());
+        }
         
-        if (cota.getParametroCobranca().getValorMininoCobranca() != null)
+        if (cota.getParametroCobranca().getValorMininoCobranca() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrMinimo(
                     String.valueOf(cota.getParametroCobranca().getValorMininoCobranca()));
+        }
         if (cota.getParametroCobranca().getPoliticaSuspensao() != null) {
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null)
+            if (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setQtdDividaEmAberto(
                         cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida());
+            }
             
-            if (cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null)
+            if (cota.getParametroCobranca().getPoliticaSuspensao().getValor() != null) {
                 filtroAlteracaoCotaDTO.getFiltroModalFinanceiro().setVrDividaEmAberto(
                         String.valueOf(cota.getParametroCobranca().getPoliticaSuspensao().getValor()));
+            }
         }
         
     }
     
-    public void preencherFiltroDistribuicao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota) {
+    public void preencherFiltroDistribuicao(final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, final Cota cota) {
         
-        if (cota.getParametroDistribuicao().getAssistenteComercial() != null)
+        if (cota.getParametroDistribuicao().getAssistenteComercial() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmAssitPromoComercial(
                     cota.getParametroDistribuicao().getAssistenteComercial());
+        }
         
-        if (cota.getParametroDistribuicao().getGerenteComercial() != null)
+        if (cota.getParametroDistribuicao().getGerenteComercial() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setNmGerenteComercial(
                     cota.getParametroDistribuicao().getGerenteComercial());
+        }
         
-        if (cota.getParametroDistribuicao().getObservacao() != null)
+        if (cota.getParametroDistribuicao().getObservacao() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setObservacao(
                     cota.getParametroDistribuicao().getObservacao());
+        }
         
-        if (cota.getParametroDistribuicao().getRepartePorPontoVenda() != null)
+        if (cota.getParametroDistribuicao().getRepartePorPontoVenda() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRepartePontoVenda(
                     cota.getParametroDistribuicao().getRepartePorPontoVenda());
+        }
         
-        if (cota.getParametroDistribuicao().getSolicitaNumAtras() != null)
+        if (cota.getParametroDistribuicao().getSolicitaNumAtras() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsSolicitacaoNumAtrasoInternet(
                     cota.getParametroDistribuicao().getSolicitaNumAtras());
+        }
         
-        if (cota.getParametroDistribuicao().getRecebeRecolheParciais() != null)
+        if (cota.getParametroDistribuicao().getRecebeRecolheParciais() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setIsRecebeRecolheProdutosParciais(
                     cota.getParametroDistribuicao().getRecebeRecolheParciais());
+        }
         
         // Tipo Entrega
         if (cota.getParametroDistribuicao().getDescricaoTipoEntrega() != null) {
@@ -277,114 +289,133 @@ public class AlteracaoCotaController extends BaseController {
                     cota.getParametroDistribuicao().getDescricaoTipoEntrega());
             
             if (cota.getParametroDistribuicao().getDescricaoTipoEntrega().equals(DescricaoTipoEntrega.ENTREGA_EM_BANCA)) {
-                if (cota.getParametroDistribuicao().getUtilizaTermoAdesao() != null)
+                if (cota.getParametroDistribuicao().getUtilizaTermoAdesao() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesao(
                             cota.getParametroDistribuicao().getUtilizaTermoAdesao());
-                if (cota.getParametroDistribuicao().getTermoAdesaoRecebido() != null)
+                }
+                if (cota.getParametroDistribuicao().getTermoAdesaoRecebido() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTermoAdesaoRecebido(
                             cota.getParametroDistribuicao().getTermoAdesaoRecebido());
+                }
                 // TODO arquivo
-                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null)
+                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregaBanca(
                             cota.getParametroDistribuicao().getPercentualFaturamento());
-                if (cota.getParametroDistribuicao().getTaxaFixa() != null)
+                }
+                if (cota.getParametroDistribuicao().getTaxaFixa() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setTaxaFixaEntregaBanca(
                             cota.getParametroDistribuicao().getTaxaFixa());
-                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null)
+                }
+                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregaBanca(
                             cota.getParametroDistribuicao().getInicioPeriodoCarencia());
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null)
+                }
+                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregaBanca(
                             cota.getParametroDistribuicao().getFimPeriodoCarencia());
+                }
             } else {
-                if (cota.getParametroDistribuicao().getUtilizaProcuracao() != null)
+                if (cota.getParametroDistribuicao().getUtilizaProcuracao() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracao(
                             cota.getParametroDistribuicao().getUtilizaProcuracao());
-                if (cota.getParametroDistribuicao().getProcuracaoRecebida() != null)
+                }
+                if (cota.getParametroDistribuicao().getProcuracaoRecebida() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setProcuracaoRecebida(
                             cota.getParametroDistribuicao().getProcuracaoRecebida());
-                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null)
+                }
+                if (cota.getParametroDistribuicao().getPercentualFaturamento() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setPercentualFaturamentoEntregador(
                             cota.getParametroDistribuicao().getPercentualFaturamento());
-                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null)
+                }
+                if (cota.getParametroDistribuicao().getInicioPeriodoCarencia() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaInicioEntregador(
                             cota.getParametroDistribuicao().getInicioPeriodoCarencia());
-                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null)
+                }
+                if (cota.getParametroDistribuicao().getFimPeriodoCarencia() != null) {
                     filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().setCarenciaFimEntregador(
                             cota.getParametroDistribuicao().getFimPeriodoCarencia());
+                }
             }
         }
         
         // --Emissao Documentos
-        if (cota.getParametroDistribuicao().getSlipImpresso() != null)
+        if (cota.getParametroDistribuicao().getSlipImpresso() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipImpresso(
                     cota.getParametroDistribuicao().getSlipImpresso());
+        }
         
-        if (cota.getParametroDistribuicao().getSlipEmail() != null)
+        if (cota.getParametroDistribuicao().getSlipEmail() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsSlipEmail(
                     cota.getParametroDistribuicao().getSlipEmail());
+        }
         
-        if (cota.getParametroDistribuicao().getBoletoImpresso() != null)
+        if (cota.getParametroDistribuicao().getBoletoImpresso() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoImpresso(
                     cota.getParametroDistribuicao().getBoletoImpresso());
+        }
         
-        if (cota.getParametroDistribuicao().getBoletoEmail() != null)
+        if (cota.getParametroDistribuicao().getBoletoEmail() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoEmail(
                     cota.getParametroDistribuicao().getBoletoEmail());
+        }
         
-        if (cota.getParametroDistribuicao().getBoletoSlipImpresso() != null)
+        if (cota.getParametroDistribuicao().getBoletoSlipImpresso() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipImpresso(
                     cota.getParametroDistribuicao().getBoletoSlipImpresso());
+        }
         
-        if (cota.getParametroDistribuicao().getBoletoSlipEmail() != null)
+        if (cota.getParametroDistribuicao().getBoletoSlipEmail() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsBoletoSlipEmail(
                     cota.getParametroDistribuicao().getBoletoSlipEmail());
+        }
         
-        if (cota.getParametroDistribuicao().getReciboImpresso() != null)
+        if (cota.getParametroDistribuicao().getReciboImpresso() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboImpresso(
                     cota.getParametroDistribuicao().getReciboImpresso());
+        }
         
-        if (cota.getParametroDistribuicao().getReciboEmail() != null)
+        if (cota.getParametroDistribuicao().getReciboEmail() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsReciboEmail(
                     cota.getParametroDistribuicao().getReciboEmail());
+        }
         
-        if (cota.getParametroDistribuicao().getNotaEnvioImpresso() != null)
+        if (cota.getParametroDistribuicao().getNotaEnvioImpresso() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioImpresso(
                     cota.getParametroDistribuicao().getNotaEnvioImpresso());
+        }
         
-        if (cota.getParametroDistribuicao().getNotaEnvioEmail() != null)
+        if (cota.getParametroDistribuicao().getNotaEnvioEmail() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsNotaEnvioEmail(
                     cota.getParametroDistribuicao().getNotaEnvioEmail());
+        }
         
-        if (cota.getParametroDistribuicao().getChamadaEncalheImpresso() != null)
+        if (cota.getParametroDistribuicao().getChamadaEncalheImpresso() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc()
-                    .setIsChamdaEncalheImpresso(cota.getParametroDistribuicao().getChamadaEncalheImpresso());
+            .setIsChamdaEncalheImpresso(cota.getParametroDistribuicao().getChamadaEncalheImpresso());
+        }
         
-        if (cota.getParametroDistribuicao().getChamadaEncalheEmail() != null)
+        if (cota.getParametroDistribuicao().getChamadaEncalheEmail() != null) {
             filtroAlteracaoCotaDTO.getFiltroModalDistribuicao().getFiltroCheckDistribEmisDoc().setIsChamdaEncalheEmail(
                     cota.getParametroDistribuicao().getChamadaEncalheEmail());
+        }
         
     }
     
-    private static void removerFornecedorAssociadoLista(List<ItemDTO<Long, String>> listFornecedoresCota,
-            List<ItemDTO<Long, String>> fornecedoresAtivos) {
+    private static void removerFornecedorAssociadoLista(final List<ItemDTO<Long, String>> listFornecedoresCota,
+            final List<ItemDTO<Long, String>> fornecedoresAtivos) {
         
-        if (listFornecedoresCota != null && listFornecedoresCota.size() > 0 && fornecedoresAtivos != null
-            && fornecedoresAtivos.size() > 0) {
+        if (listFornecedoresCota != null && !listFornecedoresCota.isEmpty() && fornecedoresAtivos != null
+                && !fornecedoresAtivos.isEmpty()) {
             
             for (int i = 0; i < listFornecedoresCota.size(); i++) {
-                ItemDTO<Long, String> fornecedorCota = listFornecedoresCota.get(i);
+                final ItemDTO<Long, String> fornecedorCota = listFornecedoresCota.get(i);
                 if (fornecedorCota != null) {
-
-                    if (fornecedoresAtivos.size() == 0) {
-                        break;
-                    }
+                    
                     for (int j = 0; j < fornecedoresAtivos.size(); j++) {
-                        ItemDTO<Long, String> fornecedor = fornecedoresAtivos.get(j);
+                        final ItemDTO<Long, String> fornecedor = fornecedoresAtivos.get(j);
                         if (fornecedor != null && fornecedor.getKey().compareTo(fornecedorCota.getKey()) == 0) {
                             fornecedoresAtivos.remove(j);
                             break;
-                            
                         }
                     }
                 }
@@ -393,80 +424,80 @@ public class AlteracaoCotaController extends BaseController {
     }
     
     @Post
-    public void uploadTermoAdesao(UploadedFile uploadedFileTermo, FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO)
+    public void uploadTermoAdesao(final UploadedFile uploadedFileTermo, final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO)
             throws IOException {
-        for (Long cotaId : filtroAlteracaoCotaDTO.getListaLinhaSelecao()) {
+        for (final Long cotaId : filtroAlteracaoCotaDTO.getListaLinhaSelecao()) {
             upload(uploadedFileTermo, cotaId, TipoParametroSistema.PATH_TERMO_ADESAO);
         }
     }
     
     @Post
-    public void uploadProcuracao(UploadedFile uploadedFileProcuracao, FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO)
+    public void uploadProcuracao(final UploadedFile uploadedFileProcuracao, final FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO)
             throws IOException {
-        for (Long cotaId : filtroAlteracaoCotaDTO.getListaLinhaSelecao()) {
+        for (final Long cotaId : filtroAlteracaoCotaDTO.getListaLinhaSelecao()) {
             upload(uploadedFileProcuracao, cotaId, TipoParametroSistema.PATH_PROCURACAO);
         }
         
     }
     
-    private void upload(UploadedFile uploadedFile, Long numCota, TipoParametroSistema parametroPath) throws IOException {
+    private void upload(final UploadedFile uploadedFile, final Long numCota, final TipoParametroSistema parametroPath) throws IOException {
         
         String fileName = "";
         
         if (uploadedFile != null) {
             
-            this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
+            fileService.validarArquivo(1, uploadedFile, EXTENSOES_ACEITAS);
             
-            ParametroSistema raiz = this.parametroSistemaService
+            final ParametroSistema raiz = parametroSistemaService
                     .buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
             
-            ParametroSistema path = this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);
+            final ParametroSistema path = parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);
             
-            String dirBase = (raiz.getValor() + path.getValor() + numCota.toString()).replace("\\", "/");
+            final String dirBase = (raiz.getValor() + path.getValor() + numCota.toString()).replace("\\", "/");
             
             fileService.setArquivoTemp(dirBase, uploadedFile.getFileName(), uploadedFile.getFile());
             
             fileName = uploadedFile.getFileName();
-            InputStream inputStream = uploadedFile.getFile();
+            final InputStream inputStream = uploadedFile.getFile();
             inputStream.close();
             
         }
         
-        this.result.use(PlainJSONSerialization.class).from(fileName, "result").recursive().serialize();
+        result.use(PlainJSONSerialization.class).from(fileName, "result").recursive().serialize();
     }
     
     @Post
-    public void validarValoresParaDownload(BigDecimal taxa, BigDecimal percentual) {
+    public void validarValoresParaDownload(final BigDecimal taxa, final BigDecimal percentual) {
         
         this.validarPercentualTaxa(percentual, taxa);
         
-        this.result.use(Results.json()).from("", "result").serialize();
+        result.use(Results.json()).from("", "result").serialize();
     }
     
     @Get
-    public void downloadTermoAdesao(Boolean termoAdesaoRecebido, Integer numeroCota, BigDecimal taxa,
-            BigDecimal percentual) throws Exception {
+    public void downloadTermoAdesao(final Boolean termoAdesaoRecebido, final Integer numeroCota, final BigDecimal taxa,
+            final BigDecimal percentual) throws Exception {
         
         download(termoAdesaoRecebido, numeroCota, TipoParametroSistema.PATH_TERMO_ADESAO, taxa, percentual);
     }
     
     @Get
-    public void downloadProcuracao(Boolean procuracaoRecebida, Integer numeroCota) throws Exception {
+    public void downloadProcuracao(final Boolean procuracaoRecebida, final Integer numeroCota) throws Exception {
         
         download(procuracaoRecebida, numeroCota, TipoParametroSistema.PATH_PROCURACAO, null, null);
     }
-
-    private void download(Boolean documentoRecebido, Integer numeroCota, TipoParametroSistema parametroPath,
-            BigDecimal taxa, BigDecimal percentual) throws Exception {
+    
+    private void download(final Boolean documentoRecebido, final Integer numeroCota, final TipoParametroSistema parametroPath,
+            final BigDecimal taxa, final BigDecimal percentual) throws Exception {
         
-        ParametroSistema raiz = this.parametroSistemaService
+        final ParametroSistema raiz = parametroSistemaService
                 .buscarParametroPorTipoParametro(TipoParametroSistema.PATH_ARQUIVOS_DISTRIBUICAO_COTA);
         
-        ParametroSistema path = this.parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);
+        final ParametroSistema path = parametroSistemaService.buscarParametroPorTipoParametro(parametroPath);
         
-        String dirBase = (raiz.getValor() + path.getValor() + numeroCota.toString()).replace("\\", "/");
+        final String dirBase = (raiz.getValor() + path.getValor() + numeroCota.toString()).replace("\\", "/");
         
-        ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
+        final ArquivoDTO dto = fileService.obterArquivoTemp(dirBase);
         
         byte[] arquivo = null;
         
@@ -477,13 +508,13 @@ public class AlteracaoCotaController extends BaseController {
             
             if (TipoParametroSistema.PATH_TERMO_ADESAO.equals(parametroPath)) {
                 
-                arquivo = this.cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
+                arquivo = cotaService.getDocumentoTermoAdesao(numeroCota, taxa, percentual);
                 
                 nomeArquivo = NOME_DEFAULT_TERMO_ADESAO;
                 
             } else {
                 
-                arquivo = this.cotaService.getDocumentoProcuracao(numeroCota);
+                arquivo = cotaService.getDocumentoProcuracao(numeroCota);
                 
                 nomeArquivo = NOME_DEFAULT_PROCURACAO;
             }
@@ -501,17 +532,17 @@ public class AlteracaoCotaController extends BaseController {
             nomeArquivo = dto.getNomeArquivo();
         }
         
-        this.httpResponse.setContentType(contentType);
-        this.httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nomeArquivo);
+        httpResponse.setContentType(contentType);
+        httpResponse.setHeader("Content-Disposition", "attachment; filename=" + nomeArquivo);
         
-        OutputStream output = this.httpResponse.getOutputStream();
+        final OutputStream output = httpResponse.getOutputStream();
         output.write(arquivo);
         
         httpResponse.flushBuffer();
         
     }
     
-    private void validarPercentualTaxa(BigDecimal percentualFaturamento, BigDecimal taxaFixa) {
+    private void validarPercentualTaxa(final BigDecimal percentualFaturamento, final BigDecimal taxaFixa) {
         
         if (percentualFaturamento == null && taxaFixa == null) {
             
@@ -523,9 +554,9 @@ public class AlteracaoCotaController extends BaseController {
     @Post
     public void buscarValorMinimo() {
         
-        List<BigDecimal> valores = parametroCobrancaCotaService.comboValoresMinimos();
+        final List<BigDecimal> valores = parametroCobrancaCotaService.comboValoresMinimos();
         
-        this.result.use(Results.json()).from(valores, "result").serialize();
+        result.use(Results.json()).from(valores, "result").serialize();
     }
-
+    
 }

@@ -140,7 +140,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         this.httpResponse = httpResponse;
     }
     
-	                                                /**
+	                                                        /**
      * Método de chamada da página Pré-carrega itens da pagina com informações
      * default.
      */
@@ -150,7 +150,7 @@ public class ParametroCobrancaCotaController extends BaseController {
     }
     
     
-	                                                /**
+	                                                        /**
      * Método de Pré-carregamento de itens da pagina com informações default.
      */
     public void preCarregamento(){
@@ -166,7 +166,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.include("listaTiposCota",listaTiposCota);
     }
     
-	                                                /**
+	                                                        /**
      * Carrega somente os tipos de cobrança configurados nas formas de cobrança
      * do distribuidor
      */
@@ -191,7 +191,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         return comboTiposCobranca;
     }
     
-	                                                /**
+	                                                        /**
      * Obter tipos de cobrança das formas de cobrança utilizadas pelo
      * distribuidor para carregar combo
      */
@@ -204,7 +204,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(comboTiposCobranca, "result").recursive().serialize();
     }
     
-	                                                /**
+	                                                        /**
      * Método de Pré-carregamento de fornecedores relacionados com a Cota.
      * 
      * @param idCota
@@ -237,7 +237,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
     }
     
-	                                                /**
+	                                                        /**
      * Método responsável por obter os parametros de cobranca da Cota para a aba
      * 'Financeiro'.
      * 
@@ -314,7 +314,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(forma,"result").recursive().serialize();
     }
     
-	                                                /**
+	                                                        /**
      * Método responsável por obter os dados da uma forma de cobranca do
      * parametro de cobranca da Cota para a aba 'Financeiro'.
      * 
@@ -355,7 +355,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
     }
     
-	                                                /**
+	                                                        /**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * 
      * @param idCota
@@ -390,7 +390,7 @@ public class ParametroCobrancaCotaController extends BaseController {
     }
     
     
-	                                                /**
+	                                                        /**
      * Método responsável por obter os dados default da forma de cobranca
      * principal dos parametros de cobrança do distribuidor.
      * 
@@ -411,7 +411,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.use(Results.json()).from(parametroCobrancaDistribuidor,"result").recursive().serialize();
     }
     
-	                                                /**
+	                                                        /**
      * Método responsável por postar os dados do parametro de cobrança da cota.
      * 
      * @param cotaCobranca: Data Transfer Object com os dados cadastrados ou
@@ -454,7 +454,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                /**
+	                                                        /**
      * Formata os dados de FormaCobranca, apagando valores que não são
      * compatíveis com o Tipo de Cobranca escolhido.
      * 
@@ -516,8 +516,7 @@ public class ParametroCobrancaCotaController extends BaseController {
             formaCobranca.setAgenciaDigito("");
             formaCobranca.setConta(null);
             formaCobranca.setContaDigito("");
-        }
-        else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DEPOSITO)){
+        } else if (formaCobranca.getTipoCobranca().equals(TipoCobranca.DEPOSITO)) {
             
             formaCobranca.setNumBanco("");
             formaCobranca.setNomeBanco("");
@@ -525,8 +524,8 @@ public class ParametroCobrancaCotaController extends BaseController {
             formaCobranca.setAgenciaDigito("");
             formaCobranca.setConta(null);
             formaCobranca.setContaDigito("");
-        }
-        else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))||((formaCobranca.getTipoCobranca().equals(TipoCobranca.OUTROS)))){
+        } else if ((formaCobranca.getTipoCobranca().equals(TipoCobranca.DINHEIRO))
+            || ((formaCobranca.getTipoCobranca().equals(TipoCobranca.OUTROS)))) {
             
             formaCobranca.setNumBanco("");
             formaCobranca.setNomeBanco("");
@@ -540,7 +539,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         return formaCobranca;
     }
     
-	                                                /**
+	                                                        /**
      * Método responsável por persistir os dados da forma de cobranca no banco
      * de dados.
      * 
@@ -618,7 +617,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                /**
+	                                                        /**
      * Método responsável por desativar Forma de Cobranca
      * 
      * @param idFormaCobranca
@@ -695,7 +694,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         }
     }
     
-	                                                /**
+	                                                        /**
      * @return obtém arquivo anexo
      */
     private byte[] obterArquivoAnexo() {
@@ -732,67 +731,67 @@ public class ParametroCobrancaCotaController extends BaseController {
                 contrato.setDataTermino(terminoContrato);
                 parametroCobrancaCotaService.salvarContrato(contrato.getIdCota(), contrato.isRecebido(), contrato
                         .getDataInicio(), contrato.getDataTermino());
-            }
-            
-            
-            final File file = contrato.getTempFile();
-            
-            if (file != null) {
                 
-                final ParametroSistema pathContrato =
-                        parametroSistemaService.buscarParametroPorTipoParametro(
-                                TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
                 
-                final Cota cota = cotaService.obterPorId(contrato.getIdCota());
                 
-                final File path = new File(pathContrato.getValor(), cota.getNumeroCota().toString());
+                final File file = contrato.getTempFile();
                 
-                path.mkdirs();
-                
-                fileService.limparDiretorio(path);
-                
-                final File novoArquivo = new File(path, file.getName());
-                
-                FileOutputStream fos = null;
-                
-                FileInputStream fis = null;
-                
-                try {
-                    fileService.persistirTemporario(path.toString());
+                if (file != null) {
                     
-                    fos = new FileOutputStream(novoArquivo);
+                    final ParametroSistema pathContrato =
+                            parametroSistemaService.buscarParametroPorTipoParametro(
+                                    TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
                     
-                    fis = new FileInputStream(file);
+                    final Cota cota = cotaService.obterPorId(contrato.getIdCota());
                     
-                    IOUtils.copyLarge(fis, fos);
+                    final File path = new File(pathContrato.getValor(), cota.getNumeroCota().toString());
                     
-                    fileService.eliminarReal(path.getAbsolutePath());
+                    path.mkdirs();
                     
-                } catch (final IOException e) {
+                    fileService.limparDiretorio(path);
                     
-                    LOGGER.error("Falha ao persistir contrato anexo", e);
+                    final File novoArquivo = new File(path, file.getName());
                     
-                    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
-                } finally {
+                    FileOutputStream fos = null;
                     
-                    if(fis != null) {
-                        try {
-                            fis.close();
-                        } catch (final IOException e) {
-                            LOGGER.error("Falha ao fechar o arquivo", e);
+                    FileInputStream fis = null;
+                    
+                    try {
+                        fileService.persistirTemporario(path.toString());
+                        
+                        fos = new FileOutputStream(novoArquivo);
+                        
+                        fis = new FileInputStream(file);
+                        
+                        IOUtils.copyLarge(fis, fos);
+                        
+                        fileService.eliminarReal(path.getAbsolutePath());
+                        
+                    } catch (final IOException e) {
+                        
+                        LOGGER.error("Falha ao persistir contrato anexo", e);
+                        
+                        throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
+                    } finally {
+                        
+                        if(fis != null) {
+                            try {
+                                fis.close();
+                            } catch (final IOException e) {
+                                LOGGER.error("Falha ao fechar o arquivo", e);
+                            }
                         }
-                    }
-                    
-                    if(fos != null) {
-                        try {
-                            fos.close();
-                        } catch (final IOException e) {
-                            LOGGER.error("Falha ao fechar o arquivo", e);
+                        
+                        if(fos != null) {
+                            try {
+                                fos.close();
+                            } catch (final IOException e) {
+                                LOGGER.error("Falha ao fechar o arquivo", e);
+                            }
                         }
                     }
                 }
             }
-            
             return true;
         }
         
@@ -800,7 +799,7 @@ public class ParametroCobrancaCotaController extends BaseController {
     }
     
     
-	                                                /**
+	                                                        /**
      * Método responsável por postar os dados da aba financeiro que são
      * específicos da cota.
      * 
@@ -930,7 +929,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         result.nothing();
     }
     
-	                                                /**
+	                                                        /**
      * Obtém um diretório temporario para upload
      * 
      * @param numeroCota
@@ -949,7 +948,7 @@ public class ParametroCobrancaCotaController extends BaseController {
         return new File(diretorioContratos, diretorioCotaTemp);
     }
     
-	                                                /**
+	                                                        /**
      * Método responsável pela validação dos dados e rotinas.
      */
     public void validar(){
@@ -965,7 +964,7 @@ public class ParametroCobrancaCotaController extends BaseController {
     }
     
     
-	                                                /**
+	                                                        /**
      * Método responsável pela validação dos dados da Forma de Cobranca.
      * 
      * @param formaCobranca
