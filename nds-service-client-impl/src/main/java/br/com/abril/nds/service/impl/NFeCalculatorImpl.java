@@ -34,8 +34,16 @@ public class NFeCalculatorImpl implements NFeCalculator {
 	}
 
 	public BigDecimal calculate(ICMSST icms) {
-		BigDecimal taxValue = calculate(icms);
 		
+		BigDecimal taxValue = icms.getValor();
+		validate(icms.getAliquota(), icms.getValorBaseCalculo());
+
+		if (taxValue==null) {
+			taxValue = internalCalculate(icms.getValorBaseCalculo(), icms.getAliquota());
+			logger.debug("Valor calculado do ICMSST: {}.", taxValue);
+			return taxValue;
+		}
+		logger.warn("Valor nao recalculado do ICMSST: {}.", taxValue);
 		
 		return taxValue;
 	}

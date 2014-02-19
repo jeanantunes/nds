@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ import br.com.abril.nds.dto.NfeImpressaoWrapper;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -86,44 +89,47 @@ public class NFeServiceImpl implements NFeService {
      * 
      * @return byte[] - Bytes das DANFES
      */
-	@Transactional
-	public byte[] obterDanfesPDF(List<NotaFiscal> listaNfeImpressao, boolean indEmissaoDepec) {
-
-		List<NfeVO> nfes = new ArrayList<NfeVO>();
-		for(NotaFiscal nf : listaNfeImpressao) {
-			NfeVO nfe = new NfeVO();
-			nfe.setIdNotaFiscal(nf.getId());
-			nfes.add(nfe);
-		}
-		
-		return monitorNFEService.obterDanfes(nfes, indEmissaoDepec);
-
-	}
-	
-	@Transactional
-	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA, Intervalo<Date> intervaloLancamento) {
-				
-		List<NfeImpressaoWrapper> listaNEWrapper = new ArrayList<NfeImpressaoWrapper>();
-
-		for(NotaEnvio ne :  listaNfeImpressaoNE) {
-
-			NfeImpressaoDTO nfeImpressao = obterDadosNENECA(ne);
-
-			if(nfeImpressao!=null) {
-				
-				if(intervaloLancamento != null)
-					nfeImpressao.setDataLancamentoDeAte(this.getStringDataDeAte(intervaloLancamento));
-				
-				listaNEWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
-			}
-
-		}
-
-		try {
-
-			return gerarDocumentoIreportNE(listaNEWrapper, false);
-
-		} catch(Exception e) {
+    @Override
+    @Transactional
+    public byte[] obterDanfesPDF(final List<NotaFiscal> listaNfeImpressao, final boolean indEmissaoDepec) {
+        
+        final List<NfeVO> nfes = new ArrayList<NfeVO>();
+        for(final NotaFiscal nf : listaNfeImpressao) {
+            final NfeVO nfe = new NfeVO();
+            nfe.setIdNotaFiscal(nf.getId());
+            nfes.add(nfe);
+        }
+        
+        return monitorNFEService.obterDanfes(nfes, indEmissaoDepec);
+        
+    }
+    
+    @Override
+    @Transactional
+    public byte[] obterNEsPDF(final List<NotaEnvio> listaNfeImpressaoNE, final boolean isNECA, final Intervalo<Date> intervaloLancamento) {
+        
+        final List<NfeImpressaoWrapper> listaNEWrapper = new ArrayList<NfeImpressaoWrapper>();
+        
+        for(final NotaEnvio ne :  listaNfeImpressaoNE) {
+            
+            final NfeImpressaoDTO nfeImpressao = obterDadosNENECA(ne);
+            
+            if(nfeImpressao!=null) {
+                
+                if(intervaloLancamento != null) {
+                    nfeImpressao.setDataLancamentoDeAte(this.getStringDataDeAte(intervaloLancamento));
+                }
+                
+                listaNEWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
+            }
+            
+        }
+        
+        try {
+            
+            return gerarDocumentoIreportNE(listaNEWrapper, false);
+            
+        } catch(final Exception e) {
             LOGGER.error("Falha na geração dos arquivos NE!" + e.getMessage(), e);
             throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
@@ -254,10 +260,188 @@ public class NFeServiceImpl implements NFeService {
 	    /**
      * Carrega e retorna um objeto DANFE com os dados pertinentes a notaFiscal
      * passada como parâmetro.
+=======
+        }
+    }
+    
+    @Override
+    @Transactional(readOnly=true)
+    public NotaFiscal obterNotaFiscalPorId(final NotaFiscal notaFiscal) {
+        return notaFiscalRepository.buscarPorId(notaFiscal.getId());
+    }
+    
+    @Override
+    @Transactional(readOnly=true)
+    public NotaEnvio obterNotaEnvioPorId(final NotaEnvio notaEnvio) {
+        return notaEnvioRepository.buscarPorId(notaEnvio.getNumero());
+    }
+    
+    @Override
+    @Transactional
+    public NotaFiscal mergeNotaFiscal(final NotaFiscal notaFiscal) {
+        return notaFiscalRepository.merge(notaFiscal);
+    }
+    
+    @Override
+    @Transactional
+    public NotaEnvio mergeNotaEnvio(final NotaEnvio notaEnvio) {
+        return notaEnvioRepository.merge(notaEnvio);
+    }
+    
+    private NfeImpressaoDTO obterDadosNENECA(final NotaEnvio ne) {
+        final NfeImpressaoDTO nfeImpressao = new NfeImpressaoDTO();
+        
+        //TODO: concluir
+        final NotaEnvio notaEnvio = notaEnvioRepository.buscarPorId(ne.getNumero());
+        
+        if(notaEnvio == null) {
+            return null;
+        }
+        
+        carregarNEDadosPrincipais(nfeImpressao, notaEnvio);
+        
+        carregarNEDadosEmissor(nfeImpressao, notaEnvio);
+        
+        carregarNEDadosDestinatario(nfeImpressao, notaEnvio);
+        
+        carregarNEDadosItens(nfeImpressao, notaEnvio);
+        
+        return nfeImpressao;
+        
+    }
+    
+    
+    
+    private static String tratarTelefone(final String telefone) {
+        return StringUtils.rightPad(telefone, 10);
+    }
+    
+    private static String tratarCep(final String cep) {
+        return StringUtils.rightPad(cep, 8);
+    }
+    
+    protected URL obterDiretorioReports() {
+        
+        final URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+        
+        return urlDanfe;
+    }
+    
+    private byte[] gerarDocumentoIreportNE(final List<NfeImpressaoWrapper> list, final boolean indEmissaoDepec) throws JRException, URISyntaxException {
+        
+        final JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
+        
+        final URL diretorioReports = obterDiretorioReports();
+        
+        final TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = distribuidorRepository.tipoImpressaoNENECADANFE();
+        
+        String path = diretorioReports.toURI().getPath();
+        
+        if (TipoImpressaoNENECADANFE.MODELO_1.equals(tipoImpressaoNENECADANFE)) {
+            
+            path += "/ne_modelo1_wrapper.jasper";
+            
+        } else if (TipoImpressaoNENECADANFE.MODELO_2.equals(tipoImpressaoNENECADANFE)) {
+            
+            path += "/ne_modelo2_wrapper.jasper";
+            
+        } else if (TipoImpressaoNENECADANFE.DANFE.equals(tipoImpressaoNENECADANFE)) {
+            
+            path += "/danfeWrapper.jasper";
+            
+        } else {
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
+        }
+        
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        
+        InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+        
+        if(inputStream == null) {
+            inputStream = new ByteArrayInputStream(new byte[0]);
+        }
+        
+        parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+        parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
+        parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+        
+        return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+    }
+    
+    /**
+     * Carrega os dados principais da DANFE
      * 
+     * @param nfeImpressao
      * @param nfe
+     * @param notaEnvio
+     */
+    private void carregarNEDadosPrincipais(final NfeImpressaoDTO nfeImpressao, final NotaEnvio notaEnvio) {
+        
+        //FIXME: Alterado o ordenador por motivos de performance
+        final List<ItemNotaEnvio> lista = new ArrayList<ItemNotaEnvio>(notaEnvio.getListaItemNotaEnvio());
+        Collections.sort(lista, new Comparator<ItemNotaEnvio>() {
+            
+            @Override
+            public int compare(final ItemNotaEnvio o1, final ItemNotaEnvio o2) {
+                if(o1 != null && o2 != null && o1.getEstudoCota() != null && o2.getEstudoCota() != null
+                        && o1.getEstudoCota().getEstudo() != null && o2.getEstudoCota().getEstudo() != null) {
+                    if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() < o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
+                        return -1;
+                    }
+                    if(o1.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime() > o2.getEstudoCota().getEstudo().getLancamento().getDataLancamentoDistribuidor().getTime()){
+                        return 1;
+                    }
+                }
+                if(o1 != null && o2 != null && o1.getEstudoCota() != null) {
+                    return -1;
+                }
+                return 0;
+            }
+            
+        });
+        
+        Date dataLancamento = null;
+        
+        if(lista.get(0) != null
+                && lista.get(0).getEstudoCota() != null
+                && lista.get(0).getEstudoCota().getEstudo() != null
+                && lista.get(0).getEstudoCota().getEstudo().getDataLancamento() != null) {
+            dataLancamento = lista.get(0).getEstudoCota().getEstudo().getDataLancamento();
+        } else {
+            dataLancamento = notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
+        }
+        
+        final Long numeroNF 	    		= notaEnvio.getNumero();
+        final String chave 				= notaEnvio.getChaveAcesso();
+        final Date dataEmissao 			= notaEnvio.getDataEmissao();
+        
+        BigDecimal valorLiquido  	= BigDecimal.ZERO;
+        
+        for(final ItemNotaEnvio ine : notaEnvio.getListaItemNotaEnvio()) {
+            valorLiquido = valorLiquido.add(ine.getPrecoCapa());
+        }
+        
+        final BigDecimal valorDesconto	= BigDecimal.ZERO;
+        
+        final String ambiente 	= ""; //TODO obter campo
+        final String versao		= ""; //TODO obter campo
+        
+        nfeImpressao.setNumeroNF(numeroNF);
+        nfeImpressao.setDataEmissao(dataEmissao);
+        nfeImpressao.setAmbiente(ambiente);
+        nfeImpressao.setChave(chave);
+        nfeImpressao.setVersao(versao);
+        nfeImpressao.setValorLiquido(valorLiquido);
+        nfeImpressao.setValorDesconto(valorDesconto);
+        nfeImpressao.setDataLancamento(dataLancamento);
+    }
+    
+    /**
+     * Carrega os dados do emissor na DANFE
      * 
-     * @return DanfeDTO
+     * @param danfe
+     * @param notaEnvio
      */
 //	private NfeImpressaoDTO obterDadosNFe(NfeVO nfe) {
 //
