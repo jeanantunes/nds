@@ -689,14 +689,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
 		
-		//TODO Certo
         BigDecimal media = BigDecimal.ZERO;
 		
 		for (BigDecimal bigDecimal : mapaExpectativaEncalheTotalDiaria.values()) {
 			media = media.add(bigDecimal);
 		}
 		
-		//dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.divide(new BigDecimal(""+dadosRecolhimento.getDatasRecolhimentoFornecedor().size())).longValue());
 		dadosRecolhimento.addMediaRecolhimentoDistribuidor(media.longValue()/dadosRecolhimento.getDatasRecolhimentoFornecedor().size());
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
