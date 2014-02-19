@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,8 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.fiscal.nota.DetalheNotaFiscal;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.CotaAusenteRepository;
@@ -672,12 +676,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				if(itemNotaEnvio.getMovimentosProdutoSemEstudo() != null && !itemNotaEnvio.getMovimentosProdutoSemEstudo().isEmpty()) {
 					
 					for(MovimentoEstoqueCota mec : itemNotaEnvio.getMovimentosProdutoSemEstudo()) {
-						
-						
 						mec.setItemNotaEnvio(itemNotaEnvio);
 						
 						if (mec.getLancamento() != null){
-							
 							seqMatrizlancamento = mec.getLancamento().getSequenciaMatriz();
 						}
 
@@ -1228,5 +1229,82 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 													  situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
 													  null, null, null, null);
 		return listaIdCotas;
+	}
+	
+	public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
+		
+		// criar nota de envio            
+		// verificar se e consolidada 
+		
+		NotaEnvio notaEnvio = popularNotaEnvioAtravesNotaFiscal(notaFiscal);
+		this.notaEnvioRepository.merge(notaEnvio);
+	}
+	
+	private NotaEnvio popularNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal){
+		
+		NotaEnvio notaEnvio = new NotaEnvio();
+		notaEnvio.setNotaFiscalID(notaFiscal.getId());
+		notaEnvio.setChaveAcesso(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso());
+		notaEnvio.setDataEmissao(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getDataEmissao());
+		notaEnvio.setNotaImpressa(false);
+		
+		// populate de bean de nota de envio
+		this.populateIdentificacaoEmitente(notaFiscal, notaEnvio);
+		this.populateIdentificacaoDestinatario(notaFiscal, notaEnvio);
+		notaEnvio.setListaItemNotaEnvio(this.criarItessNotaEnvio(notaFiscal));
+		return notaEnvio;
+	}
+	
+	
+	private void populateIdentificacaoEmitente(NotaFiscal notaFiscal, NotaEnvio notaEnvio){
+		
+		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
+		
+		try {
+			BeanUtils.copyProperties(identificacaoEmitente, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoEmitente());
+		} catch (IllegalAccessException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoEmitente");
+		} catch (InvocationTargetException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoEmitente");
+		}
+		
+		notaEnvio.setEmitente(identificacaoEmitente);
+	}
+	
+	private void populateIdentificacaoDestinatario(NotaFiscal notaFiscal, NotaEnvio notaEnvio){
+		
+		IdentificacaoDestinatario identificacaoDestinatario = new IdentificacaoDestinatario();
+		
+		try {
+			BeanUtils.copyProperties(identificacaoDestinatario, notaFiscal.getNotaFiscalInformacoes().getIdentificacaoDestinatario());
+		} catch (IllegalAccessException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoDestinatario");
+		} catch (InvocationTargetException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao realizar a copia dos objetos " + " - " + "metodo populateIdentificacaoDestinatario");
+		}
+		
+		notaEnvio.setDestinatario(identificacaoDestinatario);
+	}
+	
+	private List<ItemNotaEnvio> criarItessNotaEnvio(NotaFiscal notaFiscal){
+		
+		List<ItemNotaEnvio> lisItemNotaEnvios = new ArrayList<>();
+		
+		ItemNotaEnvio itemNotaEnvio = new ItemNotaEnvio();
+		
+		for (DetalheNotaFiscal item : notaFiscal.getNotaFiscalInformacoes().getDetalhesNotaFiscal()) {
+			itemNotaEnvio.setProdutoEdicao(item.getProdutoServico().getProdutoEdicao());
+			itemNotaEnvio.setCodigoProduto(item.getProdutoServico().getProdutoEdicao().getProduto().getCodigo());
+			itemNotaEnvio.setNumeroEdicao(item.getProdutoServico().getProdutoEdicao().getNumeroEdicao());
+			itemNotaEnvio.setPublicacao(item.getProdutoServico().getProdutoEdicao().getProduto().getNome());
+			itemNotaEnvio.setDesconto(item.getProdutoServico().getProdutoEdicao().getDesconto());
+			itemNotaEnvio.setReparte(item.getProdutoServico().getQuantidade());
+			itemNotaEnvio.setPrecoCapa(item.getProdutoServico().getProdutoEdicao().getPrecoVenda());
+			lisItemNotaEnvios.add(itemNotaEnvio);
+		}
+		
+		return lisItemNotaEnvios;
+		
+		
 	}
 }

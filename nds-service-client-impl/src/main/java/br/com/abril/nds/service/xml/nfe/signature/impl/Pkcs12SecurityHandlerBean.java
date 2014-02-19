@@ -78,10 +78,10 @@ public class Pkcs12SecurityHandlerBean extends AbstractSecurityHandlerBean {
 				throw new RuntimeException("Nao existe chave particular no armazem designado.");
 			}
 		} catch (FileNotFoundException e) {
-			logger.warn("Armaz�m n�o localizado em {}.", getLocation());
+			logger.warn("Armazém não localizado em {}.", getLocation());
 		} catch (Exception e) {
-			logger.warn("Erro ao abrir armaz�m localizado em {}.", getLocation());
-			throw new RuntimeException("Erro ao abrir armaz�m, ", e);
+			logger.warn("Erro ao abrir armazém localizado em {}.", getLocation());
+			throw new RuntimeException("Erro ao abrir armazém, ", e);
 		}
 		
 	}

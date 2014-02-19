@@ -352,6 +352,15 @@ public class DividaServiceImpl implements DividaService {
 		List<Cobranca> listaCobrancas = 
 			this.cobrancaRepository.obterCobrancasPorIDS(listaIdsCobranca);
 		
+		for(Cobranca cobranca : listaCobrancas) {
+		
+				if (!cobranca.getDataVencimento().before(dataPostergacao)) {
+
+					throw new ValidacaoException(
+					TipoMensagem.WARNING, "A data da postergação tem de ser maior que a data de vencimento.");
+				}
+		}
+		
 		BigDecimal encargos = BigDecimal.ZERO;
 		
 		FormaCobranca formaCobrancaPrincipal = 

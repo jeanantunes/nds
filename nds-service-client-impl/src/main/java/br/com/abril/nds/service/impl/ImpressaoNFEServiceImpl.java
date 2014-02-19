@@ -161,23 +161,15 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 				
 			}else{
 				LOGGER.info("obter Nota de envio sem chave de acesso ");
-				
 				/**
-				 * 
 				 * Nota de Envio Buscar quando houver chave de acesso
-				 * 
-				 * 
 				 */
 				
 				this.impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
 					
 			}
-		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade())) {
+		}else if(TipoAtividade.PRESTADOR_SERVICO.equals(distribuidor.getTipoAtividade()) || TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
 			LOGGER.info("PRESTADOR_SERVICO ..... ");
-			
-			
-		}else if(TipoAtividade.PRESTADOR_FILIAL.equals(distribuidor.getTipoAtividade())) {
-			LOGGER.info("PRESTADOR_FILIAL ..... ");
 			
 			
 		}else{

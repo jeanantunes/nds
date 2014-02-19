@@ -135,7 +135,10 @@ public class MatrizLancamentoController extends BaseController {
     
     @Post
     @Path("/salvar")
-    public void salvar() {
+    public void salvar(Date dataLancamento, List<Long> idsFornecedores) {
+        
+    	//Solicitado para salvar somente no dia
+
         
         this.verificarExecucaoInterfaces();
         
@@ -153,7 +156,7 @@ public class MatrizLancamentoController extends BaseController {
         TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
         TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = this.matrizLancamentoService
-                .salvarMatrizLancamento(matrizLancamento, getUsuarioLogado());
+                .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
         
         matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
         
@@ -639,8 +642,18 @@ public class MatrizLancamentoController extends BaseController {
         TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
         List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar = new ArrayList<ProdutoLancamentoDTO>();
+        List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterarAux = new ArrayList<ProdutoLancamentoDTO>();
         
         this.montarListasParaAlteracaoMapa(produtosLancamento, listaProdutoLancamentoAlterar);
+        
+        listaProdutoLancamentoAlterarAux =  this.cloneObject(listaProdutoLancamentoAlterar);
+        //Remove lancamentos expedidos de serem alterados TRAC 105
+        for (ProdutoLancamentoDTO produtoLancamentoDTO: listaProdutoLancamentoAlterarAux){
+        	if(produtoLancamentoDTO.getStatus().equals(StatusLancamento.EXPEDIDO)
+        	|| produtoLancamentoDTO.getStatus().equals(StatusLancamento.BALANCEADO)){
+        		listaProdutoLancamentoAlterar.remove(produtoLancamentoDTO);
+        	}
+        }
         
         this.removerEAdicionarMapa(matrizLancamento, listaProdutoLancamentoAlterar, novaData);
         
@@ -721,12 +734,20 @@ public class MatrizLancamentoController extends BaseController {
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
+            System.out.println(produtoLancamentoDTO.getNomeProduto());
+			System.out.println(produtoLancamentoDTO.getStatusLancamento());
+			System.out.println(produtoLancamentoDTO.isAlterado());
+			System.out.println(produtoLancamentoDTO.getNovaDataLancamento());
+			
             if (produtosLancamentoDTO.isEmpty()) {
                 
                 matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
                 
             } else {
-                
+            	produtoLancamentoDTO.setAlterado(true);
+            	produtoLancamentoDTO.setStatus(StatusLancamento.CONFIRMADO);
+            	produtoLancamentoDTO.setStatusLancamento(StatusLancamento.CONFIRMADO.name());
+            	produtoLancamentoDTO.setDataLancamentoDistribuidor(novaData);
                 matrizLancamento.put(produtoLancamentoDTO.getNovaDataLancamento(), produtosLancamentoDTO);
             }
         }
@@ -742,6 +763,7 @@ public class MatrizLancamentoController extends BaseController {
             }
             
             produtoLancamentoAdicionar.setNovaDataLancamento(novaData);
+            produtoLancamentoAdicionar.setStatus(StatusLancamento.CONFIRMADO);
             
             matrizLancamentoService.tratarAgrupamentoPorProdutoDataLcto(produtoLancamentoAdicionar, produtosLancamento);
             
@@ -864,6 +886,10 @@ public class MatrizLancamentoController extends BaseController {
         }
         
         produtoBalanceamentoVO.setPeb(produtoLancamentoDTO.getPeb());
+        
+        produtoBalanceamentoVO.setStatusLancamento(produtoLancamentoDTO.getStatusLancamento());
+        
+        produtoBalanceamentoVO.setFornecedorId(produtoLancamentoDTO.getIdFornecedor());
         
         if (validarStatusParaExclusaoLancamento(produtoLancamentoDTO.getStatus())) {
             
@@ -1284,7 +1310,7 @@ public class MatrizLancamentoController extends BaseController {
             
             if (confirmacaoVO.isConfirmado()) {
                 
-                if (!this.distribuidorService.obterDataOperacaoDistribuidor().after(data)) {
+                if (this.distribuidorService.obterDataOperacaoDistribuidor().before(data)) {
                     
                     datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
                 }

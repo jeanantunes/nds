@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -56,8 +57,11 @@ public class NotaEnvio implements Serializable {
 	@Embedded
 	private IdentificacaoDestinatario destinatario;
 
-	@OneToMany(mappedBy = "itemNotaEnvioPK.notaEnvio")
+	@OneToMany(mappedBy = "itemNotaEnvioPK.notaEnvio", cascade=CascadeType.ALL)
 	private List<ItemNotaEnvio> listaItemNotaEnvio;
+	
+	@Column(name = "NOTA_FISCAL_ID", nullable = false)
+	private Long notaFiscalID;
 
 	/**
 	 * @return the numero
@@ -185,4 +189,11 @@ public class NotaEnvio implements Serializable {
 		this.notaImpressa = notaImpressa;
 	}
 
+	public Long getNotaFiscalID() {
+		return notaFiscalID;
+	}
+
+	public void setNotaFiscalID(Long notaFiscalID) {
+		this.notaFiscalID = notaFiscalID;
+	}
 }

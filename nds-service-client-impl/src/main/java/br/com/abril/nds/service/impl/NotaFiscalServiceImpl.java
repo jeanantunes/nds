@@ -38,12 +38,14 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
@@ -91,6 +93,7 @@ import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneFornecedorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
@@ -98,7 +101,6 @@ import br.com.abril.nds.service.TributacaoService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -175,7 +177,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 	@Autowired
 	private NotaFiscalNdsRepository notaFiscalNdsRepository;
+
 	
+	@Autowired
+	private GeracaoNotaEnvioService geracaoNotaEnvioService;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -375,7 +380,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	@Transactional
 	public void denegarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
 		atualizaRetornoNFe(dadosRetornoNFE);
-
 	}
 
 	/*
@@ -387,8 +391,29 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public void autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
-		atualizaRetornoNFe(dadosRetornoNFE);
+	public NotaFiscal autorizarNotaFiscal(RetornoNFEDTO dadosRetornoNFE) {
+		
+		TipoImpressaoNENECADANFE tipoImpressao = distribuidorRepository.tipoImpressaoNENECADANFE();
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+		NotaFiscal notaFiscal = atualizaRetornoNFe(dadosRetornoNFE);
+		
+		switch (tipoImpressao) {
+			
+			case MODELO_1:
+			case MODELO_2:
+				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
+					this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
+				}
+				
+				break;
+				
+			default:
+				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração da nota de envio!");
+		}
+		
+		return notaFiscal;
 	}
 
 	/**
@@ -396,8 +421,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * 
 	 * @param dadosRetornoNFE
 	 */
-	private void atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
-
+	private NotaFiscal atualizaRetornoNFe(RetornoNFEDTO dadosRetornoNFE) {
+		
 		NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(dadosRetornoNFE.getNumeroNotaFiscal());
 
 		InformacaoEletronica informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
@@ -406,7 +431,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(new InformacaoEletronica());
 			informacaoEletronica = notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica();
 		}
-
+		
 		informacaoEletronica.setChaveAcesso(dadosRetornoNFE.getChaveAcesso());
 
 		RetornoComunicacaoEletronica retornoComunicacaoEletronica = new RetornoComunicacaoEletronica();
@@ -420,8 +445,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.getNotaFiscalInformacoes().setInformacaoEletronica(informacaoEletronica);
 		notaFiscal.getNotaFiscalInformacoes().setStatusProcessamentoInterno(StatusProcessamentoInterno.RETORNADA);
 
-		this.notaFiscalRepository.merge(notaFiscal);	
-
+		return this.notaFiscalRepository.merge(notaFiscal);	
 	}
 
 	/*
@@ -536,13 +560,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		}
 	}
 
-	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao)
-			throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	private String gerarArquivoNota(List<NotaFiscal> notasFiscaisParaExportacao) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		StringBuilder sBuilder = new StringBuilder();
 
-		NFEExporter nfeExporter = new NFEExporter();
+		// NFEExporter nfeExporter = new NFEExporter();
 
 		for (NotaFiscal notaFiscal : notasFiscaisParaExportacao) {
 

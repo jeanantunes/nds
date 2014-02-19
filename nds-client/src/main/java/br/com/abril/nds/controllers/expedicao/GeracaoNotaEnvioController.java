@@ -220,8 +220,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
 	
-            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-                    "Não foram encontrado itens para exportar"));
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 		}
 	
 		byte[] notasGeradas = null;
