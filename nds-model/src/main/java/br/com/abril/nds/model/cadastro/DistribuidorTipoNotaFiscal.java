@@ -1,9 +1,12 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,8 +20,20 @@ import br.com.abril.nds.model.fiscal.NaturezaOperacao;
 
 @Entity
 @Table(name="DISTRIBUIDOR_NOTA_FISCAL_TIPOS")
-public class DistribuidorTipoNotaFiscal {
+public class DistribuidorTipoNotaFiscal implements Serializable {
 
+	private static final long serialVersionUID = 4479735364063319531L;
+
+	public enum DistribuidorGrupoNotaFiscal {
+		
+		NOTA_FISCAL_ENVIO_PARA_COTA,
+		NOTA_FISCAL_DEVOLUCAO_PELA_COTA,
+		NOTA_FISCAL_VENDA,
+		NOTA_FISCAL_DEVOLUCAO_AO_FORNECEDOR,
+		NOTA_FISCAL_SIMBOLICA_VENDA_FORNECEDOR
+		
+	}
+	
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -28,6 +43,10 @@ public class DistribuidorTipoNotaFiscal {
 	
 	@Column(name="NOME_CAMPO_TELA")
 	private String nomeCampoTela;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="GRUPO_NOTA_FISCAL")
+	private DistribuidorGrupoNotaFiscal grupoNotaFiscal;
 	
 	@OneToOne
 	@JoinColumn(name="NOTA_FISCAL_TIPO_EMISSAO_ID")
@@ -78,6 +97,14 @@ public class DistribuidorTipoNotaFiscal {
 
 	public void setNomeCampoTela(String nomeCampoTela) {
 		this.nomeCampoTela = nomeCampoTela;
+	}
+
+	public DistribuidorGrupoNotaFiscal getGrupoNotaFiscal() {
+		return grupoNotaFiscal;
+	}
+
+	public void setGrupoNotaFiscal(DistribuidorGrupoNotaFiscal grupoNotaFiscal) {
+		this.grupoNotaFiscal = grupoNotaFiscal;
 	}
 
 	public Distribuidor getDistribuidor() {
