@@ -37,7 +37,7 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
-import br.com.abril.nds.dto.TipoMovimentoDTO.GrupoOperacao;
+import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -1243,10 +1243,12 @@ public class LancamentoRepositoryImpl extends
 
 		sql.append(" left join ");
 		sql.append(" ESTUDO estudo ");
-		sql.append(" on (estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append(" AND (estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA OR estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_DISTRIBUIDOR)) ");
-		//sql.append(" AND estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
-
+		sql.append(" on estudo.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		
+		sql.append(" left join ");
+		sql.append(" ESTUDO_GERADO ");
+		sql.append(" estudoGerado  on estudoGerado.ID = estudo.ID AND estudoGerado.liberado = 1 ");
+		
 		sql.append(" left join ");
 		sql.append(" PERIODO_LANCAMENTO_PARCIAL periodoLancamentoParcial ");
 		sql.append(" on periodoLancamentoParcial.ID = lancamento.PERIODO_LANCAMENTO_PARCIAL_ID ");
@@ -1822,16 +1824,41 @@ public class LancamentoRepositoryImpl extends
 
 		return new TreeSet<Date>(retorno);
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<LancamentoDTO> obterDatasStatusAgrupados(FiltroLancamentoDTO filtro,Intervalo<Date> intervalo) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT DISTINCT lancamento.dataLancamentoDistribuidor as dataDistribuidor,lancamento.status as statusLancamento ");
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		hql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		hql.append(" AND lancamento.status <> 'FECHADO' ");
+		hql.append(" GROUP BY  lancamento.dataLancamentoDistribuidor, lancamento.status ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("dataInicio", intervalo.getDe());
+		query.setParameter("dataFim", intervalo.getAte());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				LancamentoDTO.class));
+		
+		return (List<LancamentoDTO>) query.list();
+
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(
 			Date dataRecolhimentoDistribuidor, List<StatusLancamento> status) {
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT lancamento ");
-		hql.append(" FROM Lancamento as lancamento");
-		hql.append(" WHERE lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
-		hql.append(" and lancamento.status in (:status) ");
+		hql.append(" SELECT DISTINCT lancamento.dataLancamentoDistribuidor,lancamento.status ");
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		hql.append(" GROUP BY  lancamento.dataLancamentoDistribuidor, lancamento.status ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("dataRecolhimentoDistribuidor",

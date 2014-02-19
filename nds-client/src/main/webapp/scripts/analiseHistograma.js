@@ -23,8 +23,6 @@ var anaLiseHistogramaController = $.extend(true, {
 			rowCell.repTotal = formatarMilhar(Math.round(rowCell.repTotal));
 			rowCell.vdaTotal = formatarMilhar(Math.round(rowCell.vdaTotal));
 			
-			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
-			
 			if (cotasEsmagadasFormatado == "0") {
 				rowCell.cotasEsmagadas = 0;
 			}
@@ -211,29 +209,29 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				anaLiseHistogramaController.buildResumoEstudo(lastRow);
 				
+				var ultimo = data.rows.length - 1;
+				
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
 					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
 					rowCell.partReparte =  (rowCell.repTotal /lastRow.cell.repTotal) || 0;
 					rowCell.percVenda =  (rowCell.vdaTotal /rowCell.repTotal) || 0;
-					rowCell.faixaVenda="<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
-					"De " + row.cell.faixaDe + " a " + row.cell.faixaAte +"</a>";						
 					
-					if(parseInt(rowCell.qtdeCotas)>0){
+					if (index == ultimo){
+						
+						rowCell.faixaVenda = rowCell.faixaVenda;
+					} else {
+						
+						rowCell.faixaVenda = "<a class='histogramafaixaVenda' href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+
+						"De " + row.cell.faixaDe + " a " + row.cell.faixaAte + "</a>";
+					}					
+					
+					if(parseInt(rowCell.qtdeCotas)>0 && index != ultimo){
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+
 						index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
-				});
-				
-				lastRow.cell.repTotal = 0;
-				lastRow.cell.vdaTotal = 0;
-				$.each(data.rows, function(index, row) {
-					if (lastRow.id !== row.id) {
-						lastRow.cell.repTotal += parseInt(row.cell.repTotal);
-						lastRow.cell.vdaTotal += parseInt(row.cell.vdaTotal);
-					}
 				});
 
 				return data;
