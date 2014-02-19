@@ -39,9 +39,9 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.NotaFiscalTipoEmissao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -132,7 +132,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -406,7 +406,13 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			case MODELO_2:
 				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
 					if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
-						this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);						
+						NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.buscarPorId(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId());
+						
+						for(DistribuidorTipoNotaFiscal distribuidorTipoNotaFiscal : distribuidor.getTiposNotaFiscalDistribuidor()){
+							if(distribuidorTipoNotaFiscal.getNaturezaOperacao().contains(naturezaOperacao)){
+								this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);						
+							}
+						}
 					}
 				}
 				
