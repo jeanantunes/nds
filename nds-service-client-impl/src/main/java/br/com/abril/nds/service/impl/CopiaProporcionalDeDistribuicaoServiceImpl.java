@@ -120,6 +120,8 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 					estudoCota.setReparte(BigInteger.ZERO);
 				}
 				
+				estudoCota.setReparteInicial(estudoCota.getReparte());
+				
 				if (StringUtil.isEmpty(estudoCota.getClassificacao())) {
 					estudoCota.setClassificacao("");
 				}
@@ -210,6 +212,7 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
 			cota.setReparte(repCalculado);
+			cota.setReparteInicial(repCalculado);
 			cota.setId(null);
 			cota.setEstudo(estudoCopia);
 			estudoCotaGeradoRepository.adicionar(cota);
@@ -251,6 +254,8 @@ public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporci
 				reparte = estudoCota.getReparte().intValue() + valorRetirado;
 				valorPrincipal -= (valorRetirado < 0)? (valorRetirado * -1):valorRetirado;
 				estudoCota.setReparte(new BigInteger(reparte.toString()));
+				estudoCota.setReparteInicial(new BigInteger(reparte.toString()));
+				
 			}
 			
 			i--;

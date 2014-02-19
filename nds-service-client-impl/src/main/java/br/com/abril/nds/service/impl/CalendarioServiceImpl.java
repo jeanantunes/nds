@@ -24,6 +24,8 @@ import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,8 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 @Service
 public class CalendarioServiceImpl implements CalendarioService {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(CalendarioServiceImpl.class);
+    
     @Autowired
     protected FeriadoRepository feriadoRepository;
     
@@ -63,15 +67,15 @@ public class CalendarioServiceImpl implements CalendarioService {
     
     @Autowired
     private DistribuidorRepository distribuidorRepository;
-
+    
     @Autowired
     private DistribuicaoFornecedorService distribuicaoFornecedorService;
     
     @Override
     @Transactional(readOnly = true)
-    public Date adicionarDiasUteis(Date data, int numDias) {
+    public Date adicionarDiasUteis(final Date data, final int numDias) {
         
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
         if (numDias == 0) {
@@ -100,9 +104,9 @@ public class CalendarioServiceImpl implements CalendarioService {
     
     @Override
     @Transactional(readOnly = true)
-    public Date adicionarDiasRetornarDiaUtil(Date data, int numDias) {
+    public Date adicionarDiasRetornarDiaUtil(final Date data, final int numDias) {
         
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         
         if (numDias == 0) {
             
@@ -117,9 +121,9 @@ public class CalendarioServiceImpl implements CalendarioService {
     
     @Override
     @Transactional(readOnly = true)
-    public Date subtrairDiasUteis(Date data, int numDias) {
+    public Date subtrairDiasUteis(final Date data, final int numDias) {
         
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
         for (int i = 0; i < numDias; i++) {
@@ -136,9 +140,9 @@ public class CalendarioServiceImpl implements CalendarioService {
     
     @Override
     @Transactional(readOnly = true)
-    public Date subtrairDiasUteisComOperacao(Date data, int numDias) {
+    public Date subtrairDiasUteisComOperacao(final Date data, final int numDias) {
         
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
         for (int i = 0; i < numDias; i++) {
@@ -153,53 +157,54 @@ public class CalendarioServiceImpl implements CalendarioService {
         
         return cal.getTime();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public boolean isDiaOperante(Date data, Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
+    public boolean isDiaOperante(final Date data, final Long idFornecedor, final OperacaoDistribuidor operacaoDistribuidor) {
         
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
         
-        List<Integer> dias = this.distribuicaoFornecedorService
+        final List<Integer> dias = distribuicaoFornecedorService
                 .obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor);
         
-        int codigoDiaCorrente = cal.get(Calendar.DAY_OF_WEEK);
+        final int codigoDiaCorrente = cal.get(Calendar.DAY_OF_WEEK);
         
         if (dias.contains(codigoDiaCorrente)) {
-            return !this.feriadoRepository.isNaoOpera(data);
+            return !feriadoRepository.isNaoOpera(data);
         }
         return false;
         
     }
     
+    @Override
     @Transactional
-    public boolean isDiaUtil(Date data) {
+    public boolean isDiaUtil(final Date data) {
         
         if (data == null) {
             
             return false;
         }
         
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(data);
-
+        
         return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal));
     }
     
-    protected boolean isFeriado(Calendar cal) {
+    protected boolean isFeriado(final Calendar cal) {
         
         if (cal != null) {
             
-            return this.feriadoRepository.isFeriado(cal.getTime());
+            return feriadoRepository.isFeriado(cal.getTime());
         }
         
         return false;
     }
     
-    private void tratarTipoFeriado(CalendarioFeriadoDTO calendarioFeriado) {
+    private void tratarTipoFeriado(final CalendarioFeriadoDTO calendarioFeriado) {
         
-        TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
+        final TipoFeriado tipoFeriado = calendarioFeriado.getTipoFeriado();
         
         if (TipoFeriado.FEDERAL.equals(tipoFeriado)) {
             calendarioFeriado.setUfSigla(null);
@@ -221,18 +226,19 @@ public class CalendarioServiceImpl implements CalendarioService {
      * 
      * @param feriadoDTO
      */
+    @Override
     @Transactional
-    public void cadastrarFeriado(CalendarioFeriadoDTO feriadoDTO) {
+    public void cadastrarFeriado(final CalendarioFeriadoDTO feriadoDTO) {
         
         tratarTipoFeriado(feriadoDTO);
         
-        Date data = feriadoDTO.getDataFeriado();
-        String descricao = feriadoDTO.getDescricaoFeriado();
-        TipoFeriado tipoFeriado = feriadoDTO.getTipoFeriado();
-        boolean indOpera = feriadoDTO.isIndOpera();
-        boolean indRepeteAnualmente = feriadoDTO.isIndRepeteAnualmente();
-        boolean indEfetuaCobranca = feriadoDTO.isIndEfetuaCobranca();
-        String localidade = feriadoDTO.getLocalidade();
+        final Date data = feriadoDTO.getDataFeriado();
+        final String descricao = feriadoDTO.getDescricaoFeriado();
+        final TipoFeriado tipoFeriado = feriadoDTO.getTipoFeriado();
+        final boolean indOpera = feriadoDTO.isIndOpera();
+        final boolean indRepeteAnualmente = feriadoDTO.isIndRepeteAnualmente();
+        final boolean indEfetuaCobranca = feriadoDTO.isIndEfetuaCobranca();
+        final String localidade = feriadoDTO.getLocalidade();
         
         Feriado feriado = null;
         String uf = null;
@@ -295,11 +301,11 @@ public class CalendarioServiceImpl implements CalendarioService {
      * @throws ValidacaoException caso já exista um feriado com repetição anual
      *             com o mesmo tipo dia e mês já cadastrado
      */
-    private void verificarFeriadoAnualExistente(Feriado feriado) {
+    private void verificarFeriadoAnualExistente(final Feriado feriado) {
         
-        Date data = feriado.getData();
+        final Date data = feriado.getData();
         
-        TipoFeriado tipoFeriado = feriado.getTipoFeriado();
+        final TipoFeriado tipoFeriado = feriado.getTipoFeriado();
         
         Feriado existente;
         
@@ -316,10 +322,11 @@ public class CalendarioServiceImpl implements CalendarioService {
         }
     }
     
+    @Override
     @Transactional
-    public void excluirFeriado(Long idFeriado) {
+    public void excluirFeriado(final Long idFeriado) {
         
-        Feriado feriado = this.feriadoRepository.buscarPorId(idFeriado);
+        final Feriado feriado = feriadoRepository.buscarPorId(idFeriado);
         
         this.validarExclusaoFeriado(feriado);
         
@@ -327,7 +334,7 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
-    private void validarExclusaoFeriado(Feriado feriado) {
+    private void validarExclusaoFeriado(final Feriado feriado) {
         
         if (feriado == null) {
             throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum feriado encontrado");
@@ -341,7 +348,7 @@ public class CalendarioServiceImpl implements CalendarioService {
     
     private String obterUfDistribuidor() {
         
-        EnderecoDistribuidor endDistribuidor = distribuidorRepository.obterEnderecoPrincipal();
+        final EnderecoDistribuidor endDistribuidor = distribuidorRepository.obterEnderecoPrincipal();
         
         if (endDistribuidor == null || endDistribuidor.getEndereco() == null
                 || endDistribuidor.getEndereco().getUf() == null || endDistribuidor.getEndereco().getUf().isEmpty()) {
@@ -354,18 +361,19 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
+    @Override
     @Transactional
-    public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(Date dataFeriado) {
+    public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoDataEspecifica(final Date dataFeriado) {
         
-        Calendar dataPesquisa = Calendar.getInstance();
+        final Calendar dataPesquisa = Calendar.getInstance();
         dataPesquisa.setTime(dataFeriado);
-        int ano = dataPesquisa.get(Calendar.YEAR);
+        final int ano = dataPesquisa.get(Calendar.YEAR);
         
-        List<CalendarioFeriadoDTO> listaCalendarioFeriado = feriadoRepository
+        final List<CalendarioFeriadoDTO> listaCalendarioFeriado = feriadoRepository
                 .obterListaCalendarioFeriadoDataEspecifica(dataFeriado);
         
         if (listaCalendarioFeriado != null && !listaCalendarioFeriado.isEmpty()) {
-            for (CalendarioFeriadoDTO feriado : listaCalendarioFeriado) {
+            for (final CalendarioFeriadoDTO feriado : listaCalendarioFeriado) {
                 feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
             }
         }
@@ -374,16 +382,17 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
+    @Override
     @Transactional
-    public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(int mes, int ano) {
+    public List<CalendarioFeriadoDTO> obterListaCalendarioFeriadoMensal(final int mes, final int ano) {
         
-        List<CalendarioFeriadoDTO> listaFeriado = feriadoRepository.obterListaCalendarioFeriadoMensal(mes, ano);
+        final List<CalendarioFeriadoDTO> listaFeriado = feriadoRepository.obterListaCalendarioFeriadoMensal(mes, ano);
         
         if (listaFeriado == null || listaFeriado.isEmpty()) {
             return listaFeriado;
         }
         
-        for (CalendarioFeriadoDTO feriado : listaFeriado) {
+        for (final CalendarioFeriadoDTO feriado : listaFeriado) {
             feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
         }
         
@@ -391,13 +400,13 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
-    private Date obterDataComAnoPesquisa(Date data, int anoPesquisa) {
+    private Date obterDataComAnoPesquisa(final Date data, final int anoPesquisa) {
         
         if (data == null) {
             return null;
         }
         
-        Calendar novaData = Calendar.getInstance();
+        final Calendar novaData = Calendar.getInstance();
         
         novaData.setTime(data);
         
@@ -407,7 +416,7 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
-    public void validarAlteracaoFeriado(Feriado feriado) {
+    public void validarAlteracaoFeriado(final Feriado feriado) {
         
         if (Origem.INTERFACE.equals(feriado.getOrigem())) {
             
@@ -417,30 +426,31 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
+    @Override
     @Transactional
-    public Map<Date, String> obterListaDataFeriado(int anoVigencia) {
+    public Map<Date, String> obterListaDataFeriado(final int anoVigencia) {
         
-        Calendar calendarInicial = Calendar.getInstance();
+        final Calendar calendarInicial = Calendar.getInstance();
         calendarInicial.clear();
         calendarInicial.set(anoVigencia, Calendar.JANUARY, 1);
         
-        Calendar calendarFinal = Calendar.getInstance();
+        final Calendar calendarFinal = Calendar.getInstance();
         calendarFinal.clear();
         calendarFinal.set(anoVigencia, Calendar.DECEMBER, 31);
         
-        Date dataInicial = calendarInicial.getTime();
+        final Date dataInicial = calendarInicial.getTime();
         
-        Date dataFinal = calendarFinal.getTime();
+        final Date dataFinal = calendarFinal.getTime();
         
-        List<CalendarioFeriadoDTO> listaDataFeriado = feriadoRepository.obterListaCalendarioFeriadoPeriodo(dataInicial,
+        final List<CalendarioFeriadoDTO> listaDataFeriado = feriadoRepository.obterListaCalendarioFeriadoPeriodo(dataInicial,
                 dataFinal);
         
-        Map<Date, String> mapaFeriado = new HashMap<Date, String>();
+        final Map<Date, String> mapaFeriado = new HashMap<Date, String>();
         
-        Calendar calendarNovo = Calendar.getInstance();
-        Calendar calendarIterado = Calendar.getInstance();
+        final Calendar calendarNovo = Calendar.getInstance();
+        final Calendar calendarIterado = Calendar.getInstance();
         
-        for (CalendarioFeriadoDTO calendario : listaDataFeriado) {
+        for (final CalendarioFeriadoDTO calendario : listaDataFeriado) {
             
             calendarIterado.clear();
             calendarIterado.setTime(calendario.getDataFeriado());
@@ -459,38 +469,38 @@ public class CalendarioServiceImpl implements CalendarioService {
     
     protected URL obterDiretorioReports() {
         
-        URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports/");
+        final URL urlDanfe = Thread.currentThread().getContextClassLoader().getResource("reports/");
         
         return urlDanfe;
     }
     
-    private byte[] gerarDocumentoExcel(List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper, int anoFeriado,
-            InputStream logoDistribuidor) throws URISyntaxException, JRException {
+    private byte[] gerarDocumentoExcel(final List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper, final int anoFeriado,
+            final InputStream logoDistribuidor) throws URISyntaxException, JRException {
         
-        JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaCalendarioFeriadoWrapper);
+        final JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaCalendarioFeriadoWrapper);
         
-        URL diretorioReports = obterDiretorioReports();
+        final URL diretorioReports = obterDiretorioReports();
         
-        String path = diretorioReports.toURI().getPath() + "/relatorio_calendario_feriado.jasper";
+        final String path = diretorioReports.toURI().getPath() + "/relatorio_calendario_feriado.jasper";
         
-        String nomeDistribuidor = this.distribuidorRepository.obterRazaoSocialDistribuidor();
+        final String nomeDistribuidor = distribuidorRepository.obterRazaoSocialDistribuidor();
         
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<String, Object>();
         
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
         parameters.put("LOGO", JasperUtil.getImagemRelatorio(logoDistribuidor));
         parameters.put("NOME_DISTRIBUIDOR", nomeDistribuidor);
         
-        JasperPrint jasperPrint = JasperFillManager.fillReport(path, parameters, jrDataSource);
+        final JasperPrint jasperPrint = JasperFillManager.fillReport(path, parameters, jrDataSource);
         
-        JRXlsExporter exporter = new JRXlsExporter();
+        final JRXlsExporter exporter = new JRXlsExporter();
         
-        ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
+        final ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
         
         exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
         exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, xlsReport);
-        // exporter.setParameter(JRExporterParameter.OUTPUT_FILE, "C:JSP");
+        
         exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "relatorio_cadastro_feriado.xls");
         
         exporter.exportReport();
@@ -499,18 +509,18 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
-    private byte[] gerarDocumentoPDF(List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper, int anoFeriado,
-            InputStream logoDistribuidor) throws JRException, URISyntaxException {
+    private byte[] gerarDocumentoPDF(final List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper, final int anoFeriado,
+            final InputStream logoDistribuidor) throws JRException, URISyntaxException {
         
-        JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaCalendarioFeriadoWrapper);
+        final JRDataSource jrDataSource = new JRBeanCollectionDataSource(listaCalendarioFeriadoWrapper);
         
-        URL diretorioReports = obterDiretorioReports();
+        final URL diretorioReports = obterDiretorioReports();
         
-        String path = diretorioReports.toURI().getPath() + "/relatorio_calendario_feriado.jasper";
+        final String path = diretorioReports.toURI().getPath() + "/relatorio_calendario_feriado.jasper";
         
-        String nomeDistribuidor = this.distribuidorRepository.obterRazaoSocialDistribuidor();
+        final String nomeDistribuidor = distribuidorRepository.obterRazaoSocialDistribuidor();
         
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<String, Object>();
         
         parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
         parameters.put("ANO_FERIADO", String.valueOf(anoFeriado));
@@ -520,8 +530,8 @@ public class CalendarioServiceImpl implements CalendarioService {
         return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
     }
     
-    private List<CalendarioFeriadoWrapper> obterListaCalendarioFeriadoWrapper(TipoPesquisaFeriado tipoPesquisaFeriado,
-            int mes, int ano) {
+    private List<CalendarioFeriadoWrapper> obterListaCalendarioFeriadoWrapper(final TipoPesquisaFeriado tipoPesquisaFeriado,
+            final int mes, final int ano) {
         
         List<CalendarioFeriadoDTO> listaCalendarioFeriado = null;
         
@@ -530,7 +540,7 @@ public class CalendarioServiceImpl implements CalendarioService {
             listaCalendarioFeriado = obterFeriadosPorAno(ano);
             
             if (listaCalendarioFeriado != null && !listaCalendarioFeriado.isEmpty()) {
-                for (CalendarioFeriadoDTO feriado : listaCalendarioFeriado) {
+                for (final CalendarioFeriadoDTO feriado : listaCalendarioFeriado) {
                     feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
                 }
                 // Ordena pela data do feriado
@@ -543,29 +553,29 @@ public class CalendarioServiceImpl implements CalendarioService {
             
             listaCalendarioFeriado = feriadoRepository.obterListaCalendarioFeriadoMensal(mes, ano);
             
-            if (listaCalendarioFeriado != null && !listaCalendarioFeriado.isEmpty()) {
-                for (CalendarioFeriadoDTO feriado : listaCalendarioFeriado) {
+            if (!listaCalendarioFeriado.isEmpty()) {
+                for (final CalendarioFeriadoDTO feriado : listaCalendarioFeriado) {
                     feriado.setDataFeriado(obterDataComAnoPesquisa(feriado.getDataFeriado(), ano));
                 }
             }
             
         }
         
-        List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper = new LinkedList<CalendarioFeriadoWrapper>();
+        final List<CalendarioFeriadoWrapper> listaCalendarioFeriadoWrapper = new LinkedList<CalendarioFeriadoWrapper>();
         
-        Map<Integer, List<CalendarioFeriadoDTO>> mapaFeriadosPorMes = new LinkedHashMap<Integer, List<CalendarioFeriadoDTO>>();
+        final Map<Integer, List<CalendarioFeriadoDTO>> mapaFeriadosPorMes = new LinkedHashMap<Integer, List<CalendarioFeriadoDTO>>();
         
-        Calendar novaData = Calendar.getInstance();
+        final Calendar novaData = Calendar.getInstance();
         
-        for (CalendarioFeriadoDTO calendario : listaCalendarioFeriado) {
+        for (final CalendarioFeriadoDTO calendario : listaCalendarioFeriado) {
             
-            Date dataFeriado = calendario.getDataFeriado();
+            final Date dataFeriado = calendario.getDataFeriado();
             
             novaData.setTime(dataFeriado);
             
-            int mesFeriado = novaData.get(Calendar.MONTH);
+            final int mesFeriado = novaData.get(Calendar.MONTH);
             
-            int diaSemana = novaData.get(Calendar.DAY_OF_WEEK);
+            final int diaSemana = novaData.get(Calendar.DAY_OF_WEEK);
             
             calendario.setDiaSemana(SemanaUtil.obterDiaSemana(diaSemana));
             
@@ -583,11 +593,11 @@ public class CalendarioServiceImpl implements CalendarioService {
             
         }
         
-        for (Entry<Integer, List<CalendarioFeriadoDTO>> entry : mapaFeriadosPorMes.entrySet()) {
+        for (final Entry<Integer, List<CalendarioFeriadoDTO>> entry : mapaFeriadosPorMes.entrySet()) {
             
-            String descricaoMes = DateUtil.obterDecricaoMes(entry.getKey());
+            final String descricaoMes = DateUtil.obterDecricaoMes(entry.getKey());
             
-            CalendarioFeriadoWrapper cFeriadoWrapper = new CalendarioFeriadoWrapper();
+            final CalendarioFeriadoWrapper cFeriadoWrapper = new CalendarioFeriadoWrapper();
             
             cFeriadoWrapper.setDescricaoMes(descricaoMes);
             
@@ -600,31 +610,33 @@ public class CalendarioServiceImpl implements CalendarioService {
         return listaCalendarioFeriadoWrapper;
     }
     
+    @Override
     @Transactional
-    public List<CalendarioFeriadoDTO> obterFeriadosPorAno(int ano) {
+    public List<CalendarioFeriadoDTO> obterFeriadosPorAno(final int ano) {
         
         List<CalendarioFeriadoDTO> listaCalendarioFeriado;
         
-        Calendar calendarInicial = Calendar.getInstance();
+        final Calendar calendarInicial = Calendar.getInstance();
         calendarInicial.clear();
         calendarInicial.set(ano, Calendar.JANUARY, 1);
         
-        Calendar calendarFinal = Calendar.getInstance();
+        final Calendar calendarFinal = Calendar.getInstance();
         calendarFinal.clear();
         calendarFinal.set(ano, Calendar.DECEMBER, 31);
         
-        Date dataInicial = calendarInicial.getTime();
+        final Date dataInicial = calendarInicial.getTime();
         
-        Date dataFinal = calendarFinal.getTime();
+        final Date dataFinal = calendarFinal.getTime();
         
         listaCalendarioFeriado = feriadoRepository.obterListaCalendarioFeriadoPeriodo(dataInicial, dataFinal);
         
         return listaCalendarioFeriado;
     }
     
+    @Override
     @Transactional
-    public byte[] obterRelatorioCalendarioFeriado(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado, int mes,
-            int ano, InputStream logoDistribuidor) {
+    public byte[] obterRelatorioCalendarioFeriado(final FileType fileType, final TipoPesquisaFeriado tipoPesquisaFeriado, final int mes,
+            final int ano, final InputStream logoDistribuidor) {
         
         try {
             
@@ -642,14 +654,15 @@ public class CalendarioServiceImpl implements CalendarioService {
             
             return null;
             
-        } catch (Exception e) {
-            
+        } catch (final Exception e) {
+            LOGGER.error("Falha ao gerar relatorio de feriados", e);
             throw new ValidacaoException(TipoMensagem.WARNING, "Falha ao gerar relatorio de feriados");
             
         }
         
     }
     
+    @Override
     @Transactional
     public List<String> obterListaLocalidadePdv() {
         
@@ -657,23 +670,25 @@ public class CalendarioServiceImpl implements CalendarioService {
         
     }
     
+    @Override
     @Transactional(readOnly = true)
-    public boolean isFeriadoSemOperacao(Date data) {
+    public boolean isFeriadoSemOperacao(final Date data) {
         
         if (data == null) {
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
         }
         
-        List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.ESTADUAL, TipoFeriado.FEDERAL);
+        final List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.ESTADUAL, TipoFeriado.FEDERAL);
         
-        List<Feriado> feriados = this.feriadoRepository.obterFeriados(data, tiposFeriado, false);
+        final List<Feriado> feriados = feriadoRepository.obterFeriados(data, tiposFeriado, false);
         
         return !feriados.isEmpty();
     }
     
+    @Override
     @Transactional(readOnly = true)
-    public boolean isFeriadoMunicipalSemOperacao(Date data) {
+    public boolean isFeriadoMunicipalSemOperacao(final Date data) {
         
         if (data == null) {
             
@@ -682,15 +697,15 @@ public class CalendarioServiceImpl implements CalendarioService {
         
         boolean feriadoMunicipalSemOperacao = false;
         
-        List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.MUNICIPAL);
+        final List<TipoFeriado> tiposFeriado = Arrays.asList(TipoFeriado.MUNICIPAL);
         
-        List<Feriado> feriados = this.feriadoRepository.obterFeriados(data, tiposFeriado, false);
+        final List<Feriado> feriados = feriadoRepository.obterFeriados(data, tiposFeriado, false);
         
         if (!feriados.isEmpty()) {
             
-            String localidadeDistribuidor = this.distribuidorRepository.cidadeDistribuidor();
+            final String localidadeDistribuidor = distribuidorRepository.cidadeDistribuidor();
             
-            for (Feriado feriado : feriados) {
+            for (final Feriado feriado : feriados) {
                 
                 if (localidadeDistribuidor != null && feriado.getLocalidade() != null
                         && feriado.getLocalidade().toUpperCase().equals(localidadeDistribuidor.toUpperCase())) {
@@ -715,11 +730,11 @@ public class CalendarioServiceImpl implements CalendarioService {
     @Transactional
     public Date obterProximaDataDiaUtil(Date data) {
         
-        Calendar c = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance();
         
         c.setTime(data);
         
-        if (this.feriadoRepository.isFeriado(data) || DateUtil.isSabadoDomingo(c)) {
+        if (feriadoRepository.isFeriado(data) || DateUtil.isSabadoDomingo(c)) {
             
             data = this.obterProximaDataDiaUtil(DateUtil.adicionarDias(data, 1));
         }
