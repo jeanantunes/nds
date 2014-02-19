@@ -84,7 +84,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		return (!conts.isEmpty())?conts.size():0L;
 	}
 	
-	public ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(boolean isAgrupamentoPorBox, 
+	@Override
+    public ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(boolean isAgrupamentoPorBox, 
 			                                                 boolean isDetalhesResumo,
 			                                                 FiltroResumoExpedicaoDTO filtro) {
 
@@ -145,7 +146,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<ExpedicaoDTO> obterResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -183,7 +185,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public Long obterQuantidadeResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
 		
 		Query query = getSession().createSQLQuery(getHqlResumoLancamento(false, true, filtro));
@@ -195,7 +198,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		return (!conts.isEmpty())?conts.size():0L;
 	}
 	
-	public ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
+	@Override
+    public ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -252,6 +256,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 											 StatusLancamento.EM_RECOLHIMENTO.name(),
 											 StatusLancamento.RECOLHIDO.name(),
 											 StatusLancamento.FECHADO.name()));
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 
 	}
 	
@@ -426,7 +432,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				  .append(" INNER JOIN COTA cota  ON mec.COTA_ID=cota.ID ")
 				  .append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				  .append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
-				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ");
+				  .append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ")
+				  .append(" AND tp.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
 		
 		return innerQuery;
 	}
