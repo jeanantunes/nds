@@ -897,18 +897,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("#lancamentosProgramadosGrid", _workspace).flexigrid({
 			colModel : [  {
-				display : 'F',
-				name : 'fornecedorId',
-				width : 5,
-				sortable : true,
-				align : 'center'
-			},{	
-				display : 'Status',
-				name : 'statusLancamento',
-				width : 55,
-				sortable : true,
-				align : 'center'
-			},{
 				display : 'Código',
 				name : 'codigoProdutoFormatado',
 				width : 45,
@@ -917,7 +905,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
-				width : 100,
+				width : 134,
 				sortable : true,
 				align : 'left'
 			}, {
