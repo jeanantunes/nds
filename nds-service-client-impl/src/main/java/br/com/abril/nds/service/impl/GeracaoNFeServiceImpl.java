@@ -81,6 +81,9 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	@Autowired
+	private GeracaoNFeService geracaoNFeService;
+	
 	@Override
 	@Transactional
 	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,
@@ -151,13 +154,28 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		 */
 		List<NotaFiscal> notas = new ArrayList<NotaFiscal>();
 		Distribuidor distribuidor = this.obterInformacaoDistribuidor();
+		
+		if(distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+			if(new Date().getTime() < distribuidor.getDataLimiteVigenciaRegimeEspecial().getTime()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "A data limite de vigincia do regime especial expirou!" );
+			}
+		}
+		
 		NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.obterNaturezaOperacao(filtro.getIdNaturezaOperacao());
 		
 		switch (naturezaOperacao.getTipoDestinatario()) {
 		
 			case COTA:
 			case DISTRIBUIDOR:
-				this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao);
+				
+				if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+					this.gerarNotasFiscaisCotas(filtro, notas, distribuidor, naturezaOperacao);
+				}else{
+					
+					
+
+				}
+				
 				break;
 				
 			case FORNECEDOR:			
