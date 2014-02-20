@@ -13,6 +13,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -39,310 +41,314 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/administracao/cadastroCalendario")
 @Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 public class CadastroCalendarioController extends BaseController {
-	
-	@Autowired
-	private CalendarioService calendarioService;
-	
-	@Autowired
-	private Result result;
-	
-	private final String FILTRO_PESQUISA = "filtroPesquisaCalendario";
-	
-	@Autowired
-	private HttpSession session;
-	
-	@Autowired
-	private HttpServletResponse response;
-
-	
-	public CadastroCalendarioController() {
-		
-	}
-	
-	@Path("/")
-	public void index(){
-		
-		adicionarAnoCorrentePesquisa();
-		
-		carregarComboTipoFeriado();
-		
-		carregarComboMunicipio();
-		
-	}
-	
-	private void carregarComboTipoFeriado() {
-		
-		List<String> tiposFeriado = new LinkedList<String>();
-		
-		tiposFeriado.add(TipoFeriado.FEDERAL.name());
-		tiposFeriado.add(TipoFeriado.ESTADUAL.name());
-		tiposFeriado.add(TipoFeriado.MUNICIPAL.name());
-		
-		this.result.include("tiposFeriado", tiposFeriado);
-		
-	}
-	
-	private void carregarComboMunicipio() {
-		
-		List<String> listaLocalidade = calendarioService.obterListaLocalidadePdv();
-		
-		this.result.include("listaLocalidade", listaLocalidade);
-		
-	}
-	
-	private void validarCadastroFeriado(
-			String dtFeriado, 
-			String descTipoFeriado, 
-			String descricao,
-			String idLocalidade) {
-		
-		List<String> msgErro = new ArrayList<String>();
-		
-		if (!DateUtil.isValidDate(dtFeriado, "dd/MM/yyyy")) {
-			msgErro.add("Data do feriado inválida.");
-		} 
-		
-		if(descricao == null || descricao.isEmpty()) {
-			msgErro.add("Nenhuma descrição para o feriado.");
-		}
-		
-		TipoFeriado tipoFeriado = null;
-		
-		try {
-			tipoFeriado = TipoFeriado.valueOf(descTipoFeriado);
-		} catch(Exception e) {
-			msgErro.add("Nenhuma tipo de feriado selecionado.");
-		}
-		
-		if(tipoFeriado != null && TipoFeriado.MUNICIPAL.equals(tipoFeriado)) {
-			if(idLocalidade == null) {
-				msgErro.add("Nenhum município associado ao feriado Municipal.");
-			}
-		}
-		
-		if(!msgErro.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgErro));
-		}
-	}
-
-	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
-	public void excluirCadastroFeriado(Long idFeriado) {
-				
-		calendarioService.excluirFeriado(idFeriado);
-		result.use(Results.json()).from("Feriado excluído com sucesso").serialize();
-	}
-
-	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
-	public void cadastrarFeriado(
-			Long idFeriado,
-			String dtFeriado, 
-			String descTipoFeriado, 
-			String descricao,
-			String idLocalidade,
-			boolean indOpera, 
-			boolean indEfetuaCobranca,
-			boolean indRepeteAnualmente			
-			){
-		
-		validarCadastroFeriado(dtFeriado, descTipoFeriado, descricao, idLocalidade);
-		
-		CalendarioFeriadoDTO calendarioFeriado = new CalendarioFeriadoDTO();
-		
-		calendarioFeriado.setIdFeriado(idFeriado);
-		calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
-		calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
-		calendarioFeriado.setDescricaoFeriado(descricao);
-		
-		calendarioFeriado.setIndOpera(indOpera);
-		calendarioFeriado.setIndEfetuaCobranca(indEfetuaCobranca);
-		calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
-
-		calendarioFeriado.setLocalidade(idLocalidade);
-		
-		calendarioService.cadastrarFeriado(calendarioFeriado);
-		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Novo feriado gravado com sucesso"), "result").recursive().serialize();
-		
-	}
-	
-	public void obterListaCalendarioFeriado(String data) {
-		
-		validarFormatoDataRecolhimento(data);
-		
-		List<CalendarioFeriadoDTO> listaCalendarioFeriado =  calendarioService.obterListaCalendarioFeriadoDataEspecifica(DateUtil.parseDataPTBR(data));
-		
-		result.use(FlexiGridJson.class).from(listaCalendarioFeriado).total(listaCalendarioFeriado.size()).page(1).serialize();
-	
-	}
-	
-	
-	private void validarFormatoDataRecolhimento(String dataRecolhimento){
-		
-		if (!DateUtil.isValidDate(dataRecolhimento, "dd/MM/yyyy")) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
-		} 
-	}
-	
-	public void obterFeriadosDoMes(int mes) {
-		
-		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) session.getAttribute(FILTRO_PESQUISA);
-		
-		if(filtro == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Dados da pesquisa inválidos.");
-		}
-		
-		filtro.setMesFeriado(mes);
-		
-		session.setAttribute(FILTRO_PESQUISA, filtro);
-		
-		List<CalendarioFeriadoDTO> listaCalendarioFeriado = calendarioService.obterListaCalendarioFeriadoMensal(filtro.getMesFeriado(), filtro.getAnoFeriado());
-
-		result.use(FlexiGridJson.class).from(listaCalendarioFeriado).total(listaCalendarioFeriado.size()).page(1).serialize();
-		
-	}
-	
-	public void gerarRelatorioCalendario(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado) throws IOException {
-		
-		FiltroCalendarioFeriado filtroCalendario = (FiltroCalendarioFeriado) this.session.getAttribute(FILTRO_PESQUISA);
-		
-		if (filtroCalendario == null) {
-			result.redirectTo("index");
-			return;
-		}
-		
-		byte[] relatorio 
-			= calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado, 
-					filtroCalendario.getMesFeriado(), 
-					filtroCalendario.getAnoFeriado(),getLogoDistribuidor());
-		
-		escreverArquivoParaResponse(relatorio, "relatorio-feriado", fileType);
-		
-	}
-	
-	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo, FileType fileType) throws IOException {
-		
-		this.response.setContentType(fileType.getContentType());
-		this.response.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +fileType.getExtension());
-		
-		OutputStream output = this.response.getOutputStream();
-		
-		output.write(arquivo);
-
-		response.getOutputStream().close();
-		
-		result.use(Results.nothing());
-		
-	}
-	
-	public void exportarArquivo(FileType fileType, TipoPesquisaFeriado tipoPesquisaFeriado) {
-			
-		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) this.session.getAttribute(FILTRO_PESQUISA);
-		
-		if (filtro == null) {
-			result.redirectTo("index");
-			return;
-		}
-		
-		List<CalendarioFeriadoDTO> listaFeriados;
-		
-		if (tipoPesquisaFeriado.equals(TipoPesquisaFeriado.FERIADO_MENSAL)) {
-			listaFeriados =
-				this.calendarioService.obterListaCalendarioFeriadoMensal(filtro.getMesFeriado(), 
-						filtro.getAnoFeriado());
-		} else {
-		
-			listaFeriados = this.calendarioService.obterFeriadosPorAno(filtro.getAnoFeriado());
-		}
-		
-		if (listaFeriados != null && !listaFeriados.isEmpty()) {
-		
-			try {
-					
-				FileExporter.to("relatorio-feriado", fileType).inHTTPResponse(
-					this.getNDSFileHeader(), null, null, listaFeriados, 
-				CalendarioFeriadoDTO.class, this.response);
-				
-			} catch (Exception e) {
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao gerar o arquivo!"));
-			}
-		}
-	
-		this.result.use(Results.nothing());
-	}
-	
-	public void obterFeriados(int anoVigencia) {
-		
-		if(anoVigencia == 0) {
-			anoVigencia = getAnoCorrente();
-		}
-		
-		FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) this.session.getAttribute(FILTRO_PESQUISA);
-		
-		if (filtro == null) {
-			filtro = new FiltroCalendarioFeriado();			
-			session.setAttribute(FILTRO_PESQUISA, filtro);
-		}
-		
-		filtro.setAnoFeriado(anoVigencia);
-		
-		Map<Date, String> mapaFeriados = calendarioService.obterListaDataFeriado(filtro.getAnoFeriado());
-		
-		Map<String, Object> resposta = new HashMap<String, Object>();
-
-		resposta.put("datasDestacar", mapaFeriados);
-		
-		resposta.put("anoVigencia", Integer.valueOf(anoVigencia));
-		
-		result.use(CustomJson.class).from(resposta).serialize();
-	
-	}
-	
-	private void adicionarAnoCorrentePesquisa() {
-		result.include("anoCorrente", getAnoCorrente());
-	}
-
-	private Integer getAnoCorrente() {
-		return Calendar.getInstance().get(Calendar.YEAR);
-	}
-	
-	/**
-	 * Filtro da pesquisa dos feriados.
-	 */
-	class FiltroCalendarioFeriado {
-		
-		private int anoFeriado;
-		
-		private int mesFeriado;
-		
-		private Date dataFeriado;
-
-		public int getAnoFeriado() {
-			return anoFeriado;
-		}
-
-		public void setAnoFeriado(int anoFeriado) {
-			this.anoFeriado = anoFeriado;
-		}
-
-		public int getMesFeriado() {
-			return mesFeriado;
-		}
-
-		public void setMesFeriado(int mesFeriado) {
-			this.mesFeriado = mesFeriado;
-		}
-
-		public Date getDataFeriado() {
-			return dataFeriado;
-		}
-
-		public void setDataFeriado(Date dataFeriado) {
-			this.dataFeriado = dataFeriado;
-		}
-		
-		
-	}
-	
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CadastroCalendarioController.class);
+    
+    @Autowired
+    private CalendarioService calendarioService;
+    
+    @Autowired
+    private Result result;
+    
+    private static final String FILTRO_PESQUISA = "filtroPesquisaCalendario";
+    
+    @Autowired
+    private HttpSession session;
+    
+    @Autowired
+    private HttpServletResponse response;
+    
+    
+    public CadastroCalendarioController() {
+        
+    }
+    
+    @Path("/")
+    public void index(){
+        
+        adicionarAnoCorrentePesquisa();
+        
+        carregarComboTipoFeriado();
+        
+        carregarComboMunicipio();
+        
+    }
+    
+    private void carregarComboTipoFeriado() {
+        
+        final List<String> tiposFeriado = new LinkedList<String>();
+        
+        tiposFeriado.add(TipoFeriado.FEDERAL.name());
+        tiposFeriado.add(TipoFeriado.ESTADUAL.name());
+        tiposFeriado.add(TipoFeriado.MUNICIPAL.name());
+        
+        result.include("tiposFeriado", tiposFeriado);
+        
+    }
+    
+    private void carregarComboMunicipio() {
+        
+        final List<String> listaLocalidade = calendarioService.obterListaLocalidadePdv();
+        
+        result.include("listaLocalidade", listaLocalidade);
+        
+    }
+    
+    private void validarCadastroFeriado(
+            final String dtFeriado,
+            final String descTipoFeriado,
+            final String descricao,
+            final String idLocalidade) {
+        
+        final List<String> msgErro = new ArrayList<String>();
+        
+        if (!DateUtil.isValidDate(dtFeriado, "dd/MM/yyyy")) {
+            msgErro.add("Data do feriado inválida.");
+        }
+        
+        if(descricao == null || descricao.isEmpty()) {
+            msgErro.add("Nenhuma descrição para o feriado.");
+        }
+        
+        TipoFeriado tipoFeriado = null;
+        
+        try {
+            tipoFeriado = TipoFeriado.valueOf(descTipoFeriado);
+        } catch(final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            msgErro.add("Nenhuma tipo de feriado selecionado.");
+        }
+        
+        if (tipoFeriado != null && TipoFeriado.MUNICIPAL.equals(tipoFeriado) && idLocalidade == null) {
+            msgErro.add("Nenhum município associado ao feriado Municipal.");
+            
+        }
+        
+        if(!msgErro.isEmpty()) {
+            throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, msgErro));
+        }
+    }
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
+    public void excluirCadastroFeriado(final Long idFeriado) {
+        
+        calendarioService.excluirFeriado(idFeriado);
+        result.use(Results.json()).from("Feriado excluído com sucesso").serialize();
+    }
+    
+    @Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
+    public void cadastrarFeriado(
+            final Long idFeriado,
+            final String dtFeriado,
+            final String descTipoFeriado,
+            final String descricao,
+            final String idLocalidade,
+            final boolean indOpera,
+            final boolean indEfetuaCobranca,
+            final boolean indRepeteAnualmente
+            ){
+        
+        validarCadastroFeriado(dtFeriado, descTipoFeriado, descricao, idLocalidade);
+        
+        final CalendarioFeriadoDTO calendarioFeriado = new CalendarioFeriadoDTO();
+        
+        calendarioFeriado.setIdFeriado(idFeriado);
+        calendarioFeriado.setDataFeriado(DateUtil.parseDataPTBR(dtFeriado));
+        calendarioFeriado.setTipoFeriado(TipoFeriado.valueOf(descTipoFeriado));
+        calendarioFeriado.setDescricaoFeriado(descricao);
+        
+        calendarioFeriado.setIndOpera(indOpera);
+        calendarioFeriado.setIndEfetuaCobranca(indEfetuaCobranca);
+        calendarioFeriado.setIndRepeteAnualmente(indRepeteAnualmente);
+        
+        calendarioFeriado.setLocalidade(idLocalidade);
+        
+        calendarioService.cadastrarFeriado(calendarioFeriado);
+        
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Novo feriado gravado com sucesso"), "result").recursive().serialize();
+        
+    }
+    
+    public void obterListaCalendarioFeriado(final String data) {
+        
+        validarFormatoDataRecolhimento(data);
+        
+        final List<CalendarioFeriadoDTO> listaCalendarioFeriado =  calendarioService.obterListaCalendarioFeriadoDataEspecifica(DateUtil.parseDataPTBR(data));
+        
+        result.use(FlexiGridJson.class).from(listaCalendarioFeriado).total(listaCalendarioFeriado.size()).page(1).serialize();
+        
+    }
+    
+    
+    private void validarFormatoDataRecolhimento(final String dataRecolhimento){
+        
+        if (!DateUtil.isValidDate(dataRecolhimento, "dd/MM/yyyy")) {
+            
+            throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida!");
+        }
+    }
+    
+    public void obterFeriadosDoMes(final int mes) {
+        
+        final FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) session.getAttribute(FILTRO_PESQUISA);
+        
+        if(filtro == null) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Dados da pesquisa inválidos.");
+        }
+        
+        filtro.setMesFeriado(mes);
+        
+        session.setAttribute(FILTRO_PESQUISA, filtro);
+        
+        final List<CalendarioFeriadoDTO> listaCalendarioFeriado = calendarioService.obterListaCalendarioFeriadoMensal(filtro.getMesFeriado(), filtro.getAnoFeriado());
+        
+        result.use(FlexiGridJson.class).from(listaCalendarioFeriado).total(listaCalendarioFeriado.size()).page(1).serialize();
+        
+    }
+    
+    public void gerarRelatorioCalendario(final FileType fileType, final TipoPesquisaFeriado tipoPesquisaFeriado) throws IOException {
+        
+        final FiltroCalendarioFeriado filtroCalendario = (FiltroCalendarioFeriado) session.getAttribute(FILTRO_PESQUISA);
+        
+        if (filtroCalendario == null) {
+            result.redirectTo("index");
+            return;
+        }
+        
+        final byte[] relatorio
+        = calendarioService.obterRelatorioCalendarioFeriado(fileType, tipoPesquisaFeriado,
+                filtroCalendario.getMesFeriado(),
+                filtroCalendario.getAnoFeriado(),getLogoDistribuidor());
+        
+        escreverArquivoParaResponse(relatorio, "relatorio-feriado", fileType);
+        
+    }
+    
+    private void escreverArquivoParaResponse(final byte[] arquivo, final String nomeArquivo, final FileType fileType) throws IOException {
+        
+        response.setContentType(fileType.getContentType());
+        response.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +fileType.getExtension());
+        
+        final OutputStream output = response.getOutputStream();
+        
+        output.write(arquivo);
+        
+        response.getOutputStream().close();
+        
+        result.use(Results.nothing());
+        
+    }
+    
+    public void exportarArquivo(final FileType fileType, final TipoPesquisaFeriado tipoPesquisaFeriado) {
+        
+        final FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) session.getAttribute(FILTRO_PESQUISA);
+        
+        if (filtro == null) {
+            result.redirectTo("index");
+            return;
+        }
+        
+        List<CalendarioFeriadoDTO> listaFeriados;
+        
+        if (tipoPesquisaFeriado.equals(TipoPesquisaFeriado.FERIADO_MENSAL)) {
+            listaFeriados =
+                    calendarioService.obterListaCalendarioFeriadoMensal(filtro.getMesFeriado(),
+                            filtro.getAnoFeriado());
+        } else {
+            
+            listaFeriados = calendarioService.obterFeriadosPorAno(filtro.getAnoFeriado());
+        }
+        
+        if (listaFeriados != null && !listaFeriados.isEmpty()) {
+            
+            try {
+                
+                FileExporter.to("relatorio-feriado", fileType).inHTTPResponse(
+                        this.getNDSFileHeader(), null, null, listaFeriados,
+                        CalendarioFeriadoDTO.class, response);
+                
+            } catch (final Exception e) {
+                final String msg = "Erro ao gerar o arquivo!";
+                LOGGER.error(msg, e);
+                throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, msg));
+            }
+        }
+        
+        result.use(Results.nothing());
+    }
+    
+    public void obterFeriados(int anoVigencia) {
+        final int ano;
+        if(anoVigencia == 0) {
+            anoVigencia = getAnoCorrente();
+        }
+        
+        FiltroCalendarioFeriado filtro = (FiltroCalendarioFeriado) session.getAttribute(FILTRO_PESQUISA);
+        
+        if (filtro == null) {
+            filtro = new FiltroCalendarioFeriado();
+            session.setAttribute(FILTRO_PESQUISA, filtro);
+        }
+        
+        filtro.setAnoFeriado(anoVigencia);
+        
+        final Map<Date, String> mapaFeriados = calendarioService.obterListaDataFeriado(filtro.getAnoFeriado());
+        
+        final Map<String, Object> resposta = new HashMap<String, Object>();
+        
+        resposta.put("datasDestacar", mapaFeriados);
+        
+        resposta.put("anoVigencia", Integer.valueOf(anoVigencia));
+        
+        result.use(CustomJson.class).from(resposta).serialize();
+        
+    }
+    
+    private void adicionarAnoCorrentePesquisa() {
+        result.include("anoCorrente", getAnoCorrente());
+    }
+    
+    private Integer getAnoCorrente() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+    
+    /**
+     * Filtro da pesquisa dos feriados.
+     */
+    static class FiltroCalendarioFeriado {
+        
+        private int anoFeriado;
+        
+        private int mesFeriado;
+        
+        private Date dataFeriado;
+        
+        public int getAnoFeriado() {
+            return anoFeriado;
+        }
+        
+        public void setAnoFeriado(final int anoFeriado) {
+            this.anoFeriado = anoFeriado;
+        }
+        
+        public int getMesFeriado() {
+            return mesFeriado;
+        }
+        
+        public void setMesFeriado(final int mesFeriado) {
+            this.mesFeriado = mesFeriado;
+        }
+        
+        public Date getDataFeriado() {
+            return dataFeriado;
+        }
+        
+        public void setDataFeriado(final Date dataFeriado) {
+            this.dataFeriado = dataFeriado;
+        }
+        
+        
+    }
+    
+    
 }

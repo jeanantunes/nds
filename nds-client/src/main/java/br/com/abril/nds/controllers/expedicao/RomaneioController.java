@@ -202,13 +202,13 @@ public class RomaneioController extends BaseController {
 	private void carregarComboBox() {
 		List<Box> boxs = boxService.buscarPorTipo(TipoBox.LANCAMENTO);
 		
-			List<ItemDTO<Long, String>> lista =
-				new ArrayList<ItemDTO<Long,String>>();
+			List<ItemDTO<Integer, String>> lista =
+				new ArrayList<ItemDTO<Integer,String>>();
 		
 		for (Box box : boxs) {
 			
 			lista.add(
-				new ItemDTO<Long, String>(box.getId(), box.getNome()));
+				new ItemDTO<Integer, String>(box.getCodigo(), box.getNome()));
 		}
 		
 		result.include("listaBox", lista);
