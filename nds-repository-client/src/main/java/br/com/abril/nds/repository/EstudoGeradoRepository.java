@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -34,4 +35,5 @@ public interface EstudoGeradoRepository extends Repository<EstudoGerado, Long> {
 
 	Long obterUltimoAutoIncrement();
 	
+	BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo);	
 }
