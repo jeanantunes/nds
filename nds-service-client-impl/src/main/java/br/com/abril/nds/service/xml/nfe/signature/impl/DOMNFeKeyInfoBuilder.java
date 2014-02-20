@@ -11,6 +11,7 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.service.xml.nfe.signature.KeyInfoBuilder;
 
