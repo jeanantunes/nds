@@ -69,12 +69,12 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
     
+    @Autowired
+    private DataSource dataSource;
+    
     public MovimentoEstoqueCotaRepositoryImpl() {
         super(MovimentoEstoqueCota.class);
     }
-    
-    @Autowired
-    private DataSource dataSource;
     
     /**
      * FROM: Consignado da cota com chamada de encalhe ou produto conta firme
@@ -145,7 +145,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return hql.toString();
     }
     
-	                                        /**
+	                                                    /**
      * FROM: À Vista da cota sem chamada de encalhe e produtos diferentes de
      * conta firme
      * 
@@ -283,7 +283,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                        /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista
@@ -318,7 +318,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                        /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista ou consignados com conferencia prevista no
@@ -356,7 +356,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                        /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição e Conferência de Encalhe ou com Produtos Conta Firme
@@ -434,7 +434,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                                        /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que forão estornados Considera
      * movimentos de estoque provenientes dos fluxos de Venda de Encalhe e
      * Suplementar
@@ -590,11 +590,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         parameters.put("isPostergado", false);
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
-        Integer qtde = namedParameterJdbcTemplate.queryForInt(sql.toString(), parameters);
+        final Integer qtde = namedParameterJdbcTemplate.queryForInt(sql.toString(), parameters);
         
-        qtde = (qtde == null) ? 0 : qtde;
-        
-        return qtde;
+        return qtde == null ? 0 : qtde;
     }
     
     @Override
@@ -934,7 +932,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 dto.setFornecedor(rs.getString("fornecedor"));
                 dto.setDataMovimento(rs.getDate("dataMovimento"));
                 dto.setIndPossuiObservacaoConferenciaEncalhe(rs.getBoolean("indObservacaoConferenciaEncalhe"));
-                dto.setRecolhimento(rs.getObject("diaRecolhimento") != null ? (Long) (rs.getObject("diaRecolhimento")) : null);
+                dto.setRecolhimento(rs.getObject("diaRecolhimento") != null ? (Long) rs.getObject("diaRecolhimento") : null);
                 
                 return dto;
             }
@@ -1303,7 +1301,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
         
-        return (qtde == null) ? 0 : qtde.intValue();
+        return qtde == null ? 0 : qtde.intValue();
         
     }
     
@@ -1380,7 +1378,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-	                                        /**
+	                                                    /**
      * Obtém hql para pesquisa de ContagemDevolucao.
      * 
      * @param filtro
@@ -1561,7 +1559,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-	                                        /**
+	                                                    /**
      * Carrega os parâmetros da pesquisa de ContagemDevolucao e retorna o objeto
      * Query.
      * 
@@ -1727,7 +1725,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final BigDecimal valor = (BigDecimal) query.uniqueResult();
         
-        return (valor == null) ? BigDecimal.ZERO : valor;
+        return valor == null ? BigDecimal.ZERO : valor;
         
     }
     
@@ -2186,6 +2184,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             break;
         default:
             nome = " codigoProduto ";
+            break;
         }
         
         hql.append( " order by " + nome + sortOrder + " ");
@@ -2305,6 +2304,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         case CODIGO_BOX:
             nome = " codigoBox ";
             break;
+        default:
+            break;
+
         }
         hql.append( " order by " + nome + sortOrder + " ");
     }
@@ -2879,9 +2881,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
         
         final int qtdeIteracao =
-                (GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal)
-                        || GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal))
-                        ? 2 : 1 ;
+                GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal)
+                || GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal)
+                ? 2 : 1 ;
         int i = 0;
         while (i < qtdeIteracao) {
             final StringBuilder sql = new StringBuilder("");
