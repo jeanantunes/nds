@@ -36,7 +36,8 @@ public class FechamentoDiarioLancamentoSuplementarRepositoryImpl extends Abstrac
 			.append(" COALESCE(f.quantidadeVenda,0) as quantidadeVenda, ")
 			.append(" COALESCE(f.saldo,0) as saldo ")
 			.append(" from FechamentoDiarioLancamentoSuplementar f join f.produtoEdicao pe join pe.produto p  ")
-			.append(" where f.fechamentoDiarioConsolidadoSuplementar.fechamentoDiario.dataFechamento=:dataFechamento ");
+			.append(" where f.fechamentoDiarioConsolidadoSuplementar.fechamentoDiario.dataFechamento=:dataFechamento ")
+			.append(" and saldo <> 0 ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -58,7 +59,7 @@ public class FechamentoDiarioLancamentoSuplementarRepositoryImpl extends Abstrac
 		
 		hql.append(" select count(f.id) ")
 			.append(" from FechamentoDiarioLancamentoSuplementar f ")
-			.append(" where f.fechamentoDiarioConsolidadoSuplementar.fechamentoDiario.dataFechamento=:dataFechamento ");
+			.append(" where f.fechamentoDiarioConsolidadoSuplementar.fechamentoDiario.dataFechamento=:dataFechamento and coalesce(f.saldo, 0) <> 0 ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
