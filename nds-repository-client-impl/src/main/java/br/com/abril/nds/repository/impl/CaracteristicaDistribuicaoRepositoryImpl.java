@@ -92,32 +92,32 @@ CaracteristicaDistribuicaoRepository {
         .append(" where  1=1 ");
         
         if(filtro.getCodigoProduto() !=null && filtro.getCodigoProduto() != ""){
-            sql.append(" and pro.codigo_icd = " ).append(filtro.getCodigoProduto());
+            sql.append(" and pro.codigo_icd = " ).append(filtro.getCodigoProduto().trim());
         }
         
         if(filtro.getClassificacaoProduto()!=null && filtro.getClassificacaoProduto()!=""){
-            sql.append(" and upper(tipoclas.descricao) = upper('").append(filtro.getClassificacaoProduto()).append("')");
+            sql.append(" and upper(tipoclas.descricao) = upper('").append(filtro.getClassificacaoProduto().trim()).append("')");
         }
         
         if(filtro.getSegmento()!=null && filtro.getSegmento()!=""){
-            sql.append(" and upper(tiposeg.DESCRICAO) = upper('").append(filtro.getSegmento()).append("')");
+            sql.append(" and upper(tiposeg.DESCRICAO) = upper('").append(filtro.getSegmento().trim()).append("')");
         }
         
         if(filtro.getBrinde()!=null && filtro.getBrinde()!=""){
-            sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper('").append(filtro.getBrinde()).append("')");
+            sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper('").append(filtro.getBrinde().trim()).append("')");
         }
         
         if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!=""){
-            sql.append(" and ped.PRECO_VENDA >=" ).append(filtro.getFaixaPrecoDe()).append("");
+            sql.append(" and ped.PRECO_VENDA >=" ).append(filtro.getFaixaPrecoDe().trim()).append("");
         }
         
         if(filtro.getFaixaPrecoAte()!=null && filtro.getFaixaPrecoAte()!=""){
-            sql.append(" and ped.PRECO_VENDA <=" ).append(filtro.getFaixaPrecoAte()).append("");
+            sql.append(" and ped.PRECO_VENDA <=" ).append(filtro.getFaixaPrecoAte().trim()).append("");
         }
         
         
         //tipo pesquisa publicacao
-        if(filtro.getNomeProduto() !=null && filtro.getNomeProduto()!=""){
+        if(filtro.getNomeProduto() !=null && filtro.getNomeProduto().trim()!=""){
             if(filtro.getOpcaoFiltroPublicacao()){
                 //exato
                 sql.append(" and upper(pro.nome) = ").append(" upper ('").append(filtro.getNomeProduto()).append("')");//exato
