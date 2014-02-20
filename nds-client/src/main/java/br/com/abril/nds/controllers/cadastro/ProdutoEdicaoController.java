@@ -608,16 +608,17 @@ public class ProdutoEdicaoController extends BaseController {
 			}
 			
 			if (dto.getDataLancamentoPrevisto() == null) {
-                listaMensagens.add("Campo 'Data de Lançamento Previsto' deve ser preenchido!");
+                listaMensagens.add("Campo 'Data de Lançamento Previsto' não está em um formato válido.(ex: '21/01/2001')");
 			}
 			if (dto.getDataRecolhimentoPrevisto() == null) {
-				listaMensagens.add("Campo 'Data de Recolhimento Previsto' deve ser preenchido!");
+				listaMensagens.add("Campo 'Data de Recolhimento Previsto' não está em um formato válido.(ex: '21/01/2001')");
 			}
 			
-			if(!validarDataLancamentoMenorRecolhimento(dto)) {
-                listaMensagens
-                        .add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
-			}
+			if(dto.getDataRecolhimentoPrevisto() != null 
+			        && dto.getDataRecolhimentoPrevisto()!=null
+			        &&!validarDataLancamentoMenorRecolhimento(dto))
+                listaMensagens.add(" Campo 'Data de Lançamento Previsto' deve ser menor do que o campo 'Data de Recolhimento Previsto' ");
+			
 			
 			if (!dto.isParcial() && dto.getRepartePrevisto() == null) {
                 listaMensagens.add("Por favor, digite um valor válido para o 'Reparte Previsto'!");
@@ -670,6 +671,7 @@ public class ProdutoEdicaoController extends BaseController {
 	}
 	
 	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
+	    
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
 	}
 	
