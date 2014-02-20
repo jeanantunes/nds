@@ -19,5 +19,23 @@ public class BigIntegerUtil {
 		}		
 		return soma;
 	}
+	
+	public static boolean isMenorQueZero(BigInteger valor) {
+		
+		if(valor!=null && valor.compareTo(BigInteger.ZERO)<0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean isMaiorQueZero(BigInteger valor) {
+		
+		if(valor!=null && valor.compareTo(BigInteger.ZERO)>0) {
+			return true;
+		}
+		
+		return false;
+	}
 
 }

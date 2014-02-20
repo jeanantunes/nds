@@ -16,15 +16,14 @@ public class TipoClassificacaoProdutoRepositoryImpl extends AbstractRepositoryMo
 	public TipoClassificacaoProdutoRepositoryImpl() {
 		super(TipoClassificacaoProduto.class);
 	}
-	@SuppressWarnings("unchecked")
+	
+	
+    @SuppressWarnings("unchecked")
     @Override
 	public List<TipoClassificacaoProduto> obterTodos() {
 
         return getSession().createCriteria(TipoClassificacaoProduto.class).addOrder(Order.asc("id")).list();
 
-//        StringBuilder hql = new StringBuilder(" from TipoClassificacaoProduto tcp order by id");
-//        Query query = getSession().createQuery(hql.toString());
-//        return query.list();
     }
     @Override
     public TipoClassificacaoProduto obterPorClassificacao(String classificacao) {
