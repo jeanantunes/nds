@@ -1048,14 +1048,6 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
             
             break;
             
-        case SOBRA_ENVIO_PARA_COTA:
-            
-            parametroNumeroDiasLancamento =
-            parametroSistemaRepository.buscarParametroPorTipoParametro(
-                    TipoParametroSistema.NUMERO_DIAS_PERMITIDO_LANCAMENTO_SOBRA_EM);
-            
-            break;
-            
         default:
             
             parametroNumeroDiasLancamento = null;
@@ -1210,7 +1202,11 @@ tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
         
         GrupoMovimentoEstoque grupoMovimentoEstoque;
         
-        if (tipoDiferenca.isDiferencaDe()) {
+        if (TipoDiferenca.SOBRA_ENVIO_PARA_COTA.equals(tipoDiferenca)) {
+        	
+        	return tipoDiferenca.getTipoMovimentoEstoque();
+        	
+        } else if (tipoDiferenca.isDiferencaDe()) {
             
             if (tipoDiferenca.isFalta()) {
                 

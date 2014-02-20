@@ -122,6 +122,6 @@ public interface ProdutoService {
 
     String obterCodigoDisponivel();
     
-    Fornecedor obterFornecedorPorCodigoProduto(String codigoProduto);
+    Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto);
 	
 }
