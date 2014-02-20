@@ -69,12 +69,12 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
     
+    @Autowired
+    private DataSource dataSource;
+    
     public MovimentoEstoqueCotaRepositoryImpl() {
         super(MovimentoEstoqueCota.class);
     }
-    
-    @Autowired
-    private DataSource dataSource;
     
     /**
      * FROM: Consignado da cota com chamada de encalhe ou produto conta firme
@@ -145,7 +145,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return hql.toString();
     }
     
-	                    /**
+	                                                    /**
      * FROM: À Vista da cota sem chamada de encalhe e produtos diferentes de
      * conta firme
      * 
@@ -283,7 +283,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                    /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista
@@ -318,7 +318,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                    /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista ou consignados com conferencia prevista no
@@ -356,7 +356,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                    /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição e Conferência de Encalhe ou com Produtos Conta Firme
@@ -434,7 +434,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	                    /**
+	                                                    /**
      * Obtém movimentos de estoque da cota que forão estornados Considera
      * movimentos de estoque provenientes dos fluxos de Venda de Encalhe e
      * Suplementar
@@ -590,11 +590,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         parameters.put("isPostergado", false);
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
-        Integer qtde = namedParameterJdbcTemplate.queryForInt(sql.toString(), parameters);
+        final Integer qtde = namedParameterJdbcTemplate.queryForInt(sql.toString(), parameters);
         
-        qtde = (qtde == null) ? 0 : qtde;
-        
-        return qtde;
+        return qtde == null ? 0 : qtde;
     }
     
     @Override
@@ -790,7 +788,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" where ( ");
         sql.append(" 		(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
-        
         sql.append("        ) ");
         sql.append("		OR CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
         sql.append(" ) ");
@@ -869,8 +866,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             case VALOR_COM_DESCONTO:
                 orderByColumn = " valorComDesconto ";
                 break;
-            default:
+            case RECOLHIMENTO:
                 orderByColumn = " CHAMADA_ENCALHE.DATA_RECOLHIMENTO, CHAMADA_ENCALHE.SEQUENCIA ";
+                break;
+            default:
                 break;
             }
             
@@ -902,13 +901,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         parameters.put("isPostergado", false);
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
-        if(filtro.getPaginacao()!=null) {
+        if (filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null
+                && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+            sql.append(" limit :posicaoInicial, :posicaoFinal");
+            parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
+            parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
             
-            if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-                sql.append(" limit :posicaoInicial, :posicaoFinal");
-                parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
-                parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
-            }
         }
         
         @SuppressWarnings("rawtypes")
@@ -934,7 +932,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                 dto.setFornecedor(rs.getString("fornecedor"));
                 dto.setDataMovimento(rs.getDate("dataMovimento"));
                 dto.setIndPossuiObservacaoConferenciaEncalhe(rs.getBoolean("indObservacaoConferenciaEncalhe"));
-                dto.setRecolhimento(rs.getObject("diaRecolhimento") != null ? (Long) (rs.getObject("diaRecolhimento")) : null);
+                dto.setRecolhimento(rs.getObject("diaRecolhimento") != null ? (Long) rs.getObject("diaRecolhimento") : null);
                 
                 return dto;
             }
@@ -1303,7 +1301,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
         
-        return ((qtde == null) ? 0 : qtde.intValue());
+        return qtde == null ? 0 : qtde.intValue();
         
     }
     
@@ -1380,7 +1378,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-	                    /**
+	                                                    /**
      * Obtém hql para pesquisa de ContagemDevolucao.
      * 
      * @param filtro
@@ -1561,7 +1559,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-	                    /**
+	                                                    /**
      * Carrega os parâmetros da pesquisa de ContagemDevolucao e retorna o objeto
      * Query.
      * 
@@ -1579,13 +1577,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(indBuscaQtd) {
             
-            query = getSession().createSQLQuery(hql.toString())
+            query = getSession().createSQLQuery(hql)
                     .addScalar("quantidadeTotal", StandardBasicTypes.INTEGER)
                     .addScalar("valorTotalGeral", StandardBasicTypes.BIG_DECIMAL);
             
         } else {
             
-            query = getSession().createSQLQuery(hql.toString())
+            query = getSession().createSQLQuery(hql)
                     .addScalar("codigoProduto", StandardBasicTypes.STRING)
                     .addScalar("nomeProduto", StandardBasicTypes.STRING)
                     .addScalar("numeroEdicao", StandardBasicTypes.LONG)
@@ -1727,7 +1725,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final BigDecimal valor = (BigDecimal) query.uniqueResult();
         
-        return ((valor == null) ? BigDecimal.ZERO : valor);
+        return valor == null ? BigDecimal.ZERO : valor;
         
     }
     
@@ -2017,8 +2015,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             hql.append(" join ENTREGADOR entregador ON (entregador.ROTA_ID = rota.ID) ");
         }
         
-        hql.append(" join LANCAMENTO lancamento ON (lancamento.ESTUDO_ID = estudo.ID) ");
-        
         hql.append(" where lancamento.STATUS in (:status) ");
         
         if(filtro.getDataDate() != null) {
@@ -2188,6 +2184,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             break;
         default:
             nome = " codigoProduto ";
+            break;
         }
         
         hql.append( " order by " + nome + sortOrder + " ");
@@ -2196,7 +2193,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Long countObterDadosAbastecimento(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2233,7 +2230,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public List<ProdutoAbastecimentoDTO> obterDetlhesDadosAbastecimento(
             final Long idBox, final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2307,6 +2304,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         case CODIGO_BOX:
             nome = " codigoBox ";
             break;
+        default:
+            break;
+
         }
         hql.append( " order by " + nome + sortOrder + " ");
     }
@@ -2316,7 +2316,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBox(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2374,7 +2374,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoBoxRota(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2434,7 +2434,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBoxRota(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2503,7 +2503,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Long countObterMapaAbastecimentoPorBoxRota(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2541,7 +2541,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoEdicao(
             final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2618,7 +2618,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Long countObterMapaAbastecimentoPorProdutoEdicao(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2659,7 +2659,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(
             final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2735,7 +2735,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Long countObterMapaAbastecimentoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2770,7 +2770,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
             final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2844,7 +2844,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Long countObterMapaDeImpressaoPorProdutoQuebrandoPorCota(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -2881,9 +2881,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         final List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
         
         final int qtdeIteracao =
-                (GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal)
-                        || GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal))
-                        ? 2 : 1 ;
+                GrupoNotaFiscal.NF_DEVOLUCAO_SIMBOLICA.equals(grupoNotaFiscal)
+                || GrupoNotaFiscal.NF_VENDA.equals(grupoNotaFiscal)
+                ? 2 : 1 ;
         int i = 0;
         while (i < qtdeIteracao) {
             final StringBuilder sql = new StringBuilder("");
@@ -3084,7 +3084,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public List<ProdutoAbastecimentoDTO> obterMapaDeAbastecimentoPorEntregador(
             final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -3146,7 +3146,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public Long countObterMapaDeAbastecimentoPorEntregador(
             final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -3178,7 +3178,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public List<ProdutoAbastecimentoDTO> obterMapaDeImpressaoPorEntregador(final FiltroMapaAbastecimentoDTO filtro) {
         
-        final HashMap<String, Object> param = new HashMap<String, Object>();
+        final Map<String, Object> param = new HashMap<String, Object>();
         
         final List<String> statusLancamento = new ArrayList<String>();
         
@@ -3478,16 +3478,29 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         sql.append(" join mec.produtoEdicao produtoEdicao ");
         
+        sql.append(" left join mec.movimentoEstoqueCotaFuro mecFuro ");
+        
         sql.append(" where lancamento.id = :idLancamento ");
         
         sql.append(" and produtoEdicao.id = :idProdutoEdicao ");
+        
+        sql.append(" and mecFuro.id is null ");
+        
+        sql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoReparte) ");
         
         sql.append(" group by mec.cota.id ");
         
         final Query query = this.getSession().createQuery(sql.toString());
         
         query.setParameter("idLancamento", idLancamento);
+        
         query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        
+        query.setParameterList(
+                "gruposMovimentoReparte",
+                Arrays.asList(
+                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
+                        GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE));
         
         query.setResultTransformer(Transformers.aliasToBean(CotaReparteDTO.class));
         

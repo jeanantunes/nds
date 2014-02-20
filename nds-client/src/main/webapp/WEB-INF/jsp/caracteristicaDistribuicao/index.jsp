@@ -60,10 +60,8 @@ $(function(){
 				<td width="86">
 					<select id="classificacao" class="inputField">
 						<option value=""></option>
-						<option value=""></option>
 						<c:forEach var="classificacao" items="${classificacoes}">
-							<option value="<c:out value="${classificacao.descricao}"/>
-							">
+							<option value="<c:out value="${classificacao.descricao}"/>">
 							<c:out value="${classificacao.descricao}"/>
 						</option>
 					</c:forEach>

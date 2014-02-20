@@ -26,6 +26,7 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,7 +109,6 @@ import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EntregadorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
@@ -117,12 +117,10 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
@@ -219,11 +217,6 @@ public class CotaServiceImpl implements CotaService {
     @Autowired
     private EnderecoPDVRepository enderecoPDVRepository;
     
-    @Autowired
-    private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
-    
-    @Autowired
-    private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
     
     @Autowired
     private ParametroSistemaRepository parametroSistemaRepository;
@@ -242,9 +235,6 @@ public class CotaServiceImpl implements CotaService {
     
     @Autowired
     private HistoricoTitularidadeService historicoTitularidadeService;
-    
-    @Autowired
-    private RankingRepository rankingRepository;
     
     @Autowired
     private ParametrosDistribuidorService parametrosDistribuidorService;
@@ -433,11 +423,11 @@ public class CotaServiceImpl implements CotaService {
         
         if (listaEnderecoAssociacaoRemover != null && !listaEnderecoAssociacaoRemover.isEmpty()) {
             
-            this.removerEnderecosCota(cota, listaEnderecoAssociacaoRemover);
+            this.removerEnderecosCota(listaEnderecoAssociacaoRemover);
         }
     }
     
-	                                /**
+    /**
      * ENDERECO
      * 
      * Retorna um Endereco à ser editado ou cadastrado
@@ -471,7 +461,7 @@ public class CotaServiceImpl implements CotaService {
         return endereco;
     }
     
-	                                /**
+    /**
      * ENDERECO
      * 
      * Persiste EnderecoCota e Endereco Valida apenas endereços vinculados à
@@ -510,7 +500,7 @@ public class CotaServiceImpl implements CotaService {
                 enderecoCota.setCota(cota);
             }
             
-            final boolean novoEndereco = (novoEnderecoCota && !enderecoAssociacao.isEnderecoPessoa());
+            final boolean novoEndereco = novoEnderecoCota && !enderecoAssociacao.isEnderecoPessoa();
             
             endereco = this.obterEndereco(enderecoDTO, pessoa, novoEndereco);
             
@@ -528,11 +518,22 @@ public class CotaServiceImpl implements CotaService {
      * ENDERECO
      * 
      * Remove lista de EnderecoCota
+     * 
      * @param cota
      * @param listaEnderecoAssociacao
      */
-    private void removerEnderecosCota(final Cota cota,
-            final List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+    private void removerEnderecosCota(final Cota cota, final List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
+        removerEnderecosCota(listaEnderecoAssociacao);
+    }
+    
+    /**
+     * ENDERECO
+     * 
+     * Remove lista de EnderecoCota
+     * 
+     * @param listaEnderecoAssociacao
+     */
+    private void removerEnderecosCota(final List<EnderecoAssociacaoDTO> listaEnderecoAssociacao) {
         
         final List<EnderecoDTO> listaEndereco = new ArrayList<EnderecoDTO>();
         
@@ -561,7 +562,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                /**
+    /**
      * TELEFONE
      * 
      * Obtém telefones da Cota
@@ -587,17 +588,13 @@ public class CotaServiceImpl implements CotaService {
         
         List<TelefoneAssociacaoDTO> listaTelAssoc =
                 telefoneCotaRepository.buscarTelefonesCota(idCota, idsIgnorar);
-        
         if (listaTelAssoc == null) {
             listaTelAssoc = new ArrayList<TelefoneAssociacaoDTO>();
         } else {
-            for (final TelefoneAssociacaoDTO dto : listaTelAssoc) {
-                
+            for (final TelefoneAssociacaoDTO dto : listaTelAssoc){
                 telRemover.add(dto.getTelefone().getId());
             }
         }
-        
-        
         final List<TelefoneAssociacaoDTO> lista = telefoneService.buscarTelefonesPorIdPessoa(idPessoa, telRemover);
         
         if (lista!= null && !lista.isEmpty()){
@@ -869,7 +866,7 @@ public class CotaServiceImpl implements CotaService {
                 distribuidorRepository.parametrosDistribuidorEmissaoDocumentos();
         
         if (listaParametrosDistribuidorEmissaoDocumentos != null
-            && !listaParametrosDistribuidorEmissaoDocumentos.isEmpty()) {
+                && !listaParametrosDistribuidorEmissaoDocumentos.isEmpty()) {
             
             for (final ParametrosDistribuidorEmissaoDocumento item : listaParametrosDistribuidorEmissaoDocumentos){
                 
@@ -915,6 +912,8 @@ public class CotaServiceImpl implements CotaService {
                         distribuicao.setCeImpresso(item.isUtilizaImpressao());
                         
                         break;
+                    default:
+                        break;
                     }
                 }
             }
@@ -950,17 +949,12 @@ public class CotaServiceImpl implements CotaService {
         }
         
         if(qtdePDVAutomatico) {
-            dto.setQtdePDV( (cota.getPdvs()!=null) ? cota.getPdvs().size() : 0);
+            dto.setQtdePDV( cota.getPdvs()!=null ? cota.getPdvs().size() : 0);
             dto.setQtdeAutomatica(true);
         }
         
-        
-        
-        
         if (parametro == null) {
-            
-            dto = this.setDistribuicaoDefault(dto);
-            return dto;
+            return this.setDistribuicaoDefault(dto);
             
         } else if ((parametro.getSlipImpresso() == null || !parametro.getSlipImpresso())
                 && (parametro.getSlipEmail() == null || !parametro.getSlipEmail())
@@ -1043,7 +1037,7 @@ public class CotaServiceImpl implements CotaService {
         ///////////////////////////////////////////////
         
         
-		                                                                /*
+        /*
          * faço a pesquisa nos parâmetros de distribuidor para comparar ao que
          * foi inserido pelo usuário. Se os parâmetros forem iguais, utilizo o
          * do distribuidor.
@@ -1124,7 +1118,11 @@ public class CotaServiceImpl implements CotaService {
                 parametrosDistribuidorConferenciaCota.setSlipEmail(parametrosDeDistribuicao.isUtilizaEmail());
                 parametrosDistribuidorConferenciaCota.setSlipImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
                 break;
+                
+            default:
+                break;
             }
+            
         }
         
         
@@ -1208,9 +1206,9 @@ public class CotaServiceImpl implements CotaService {
         cotaDTO.setNumeroCota(cota.getNumeroCota());
         cotaDTO.setClassificacaoSelecionada(cota.getClassificacaoEspectativaFaturamento());
         cotaDTO.setDataInclusao(cota.getInicioAtividade());
-        cotaDTO.setEmailNF((cota.getParametrosCotaNotaFiscalEletronica()!= null)
+        cotaDTO.setEmailNF(cota.getParametrosCotaNotaFiscalEletronica()!= null
                 ?cota.getParametrosCotaNotaFiscalEletronica().getEmailNotaFiscalEletronica():"");
-        cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
+        cotaDTO.setEmiteNFE(cota.getParametrosCotaNotaFiscalEletronica()!= null
                 ?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
         cotaDTO.setStatus(cota.getSituacaoCadastro());
         
@@ -1328,7 +1326,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                /**
+    /**
      * Atribui os dados das referencias histórico cota base ao objeto CotaDTO
      * 
      * @param cotaDTO
@@ -1389,12 +1387,11 @@ public class CotaServiceImpl implements CotaService {
             
             cotaRepository.remover(cota);
             
-        }catch (final RuntimeException e) {
-            LOGGER.error("Exclusão não permitida, registro possui dependências!", e);
-            if( e instanceof org.springframework.dao.DataIntegrityViolationException){
-                throw new ValidacaoException(TipoMensagem.ERROR,
-                        "Exclusão não permitida, registro possui dependências!");
-            }
+        } catch (final DataIntegrityViolationException e) {
+            LOGGER.error(e.getMessage(), e);
+            
+            throw new ValidacaoException(TipoMensagem.ERROR, "Exclusão não permitida, registro possui dependências!");
+            
         }
     }
     
@@ -1519,21 +1516,19 @@ public class CotaServiceImpl implements CotaService {
         fileService.persistirTemporario(path);
     }
     
-	                                /**
+    /**
      * Valida os dados referente histórico cota base
      * 
      * @param cotaDto
      */
     private void validarHistoricoCotaBase(final CotaDTO cotaDto) {
         
-        if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
+        if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null && DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(Calendar.getInstance().getTime()))!=0){
             
-            if(DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(Calendar.getInstance().getTime()))!=0){
-                
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Campo [Período] referente à cota base deve ser igual a data da alteração!");
-            }
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Campo [Período] referente à cota base deve ser igual a data da alteração!");
         }
+        
         
         if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() == null ){
             return;
@@ -1557,7 +1552,7 @@ public class CotaServiceImpl implements CotaService {
     
     
     
-	                                /**
+    /**
      * Valida o formato das inforamções referente ao cadastro de uma cota
      * 
      * @param cotaDto
@@ -1584,7 +1579,7 @@ public class CotaServiceImpl implements CotaService {
         
     }
     
-	                                /**
+    /**
      * Persiste dados básicos de um PDV referente a nova cota
      * 
      * @param cota
@@ -1613,7 +1608,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                /**
+    /**
      * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota
      * 
      * @param cota
@@ -1634,7 +1629,7 @@ public class CotaServiceImpl implements CotaService {
         return paramNFE;
     }
     
-	                                /**
+    /**
      * Validas as informações referente ao cadasto de uma nova cota.
      * 
      * @param cotaDto
@@ -1694,7 +1689,7 @@ public class CotaServiceImpl implements CotaService {
         }
         
         if(cotaDto.isEmiteNFE()){
-            if((cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty())){
+            if(cotaDto.getEmailNF() == null || cotaDto.getEmailNF().isEmpty()){
                 mensagensValidacao.add("O preenchimento do campo [E-mail NF-e] é obrigatório!");
             }
         }
@@ -1708,7 +1703,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                /**
+    /**
      * Persiste e retorna os dados da pessoa referente a cota Física ou Jurídica
      * 
      * @param cota
@@ -1738,7 +1733,7 @@ public class CotaServiceImpl implements CotaService {
             ((PessoaJuridica) pessoa).setNomeFantasia(cotaDto.getNomeFantasia());
             ((PessoaJuridica) pessoa).setRazaoSocial(cotaDto.getRazaoSocial());
             
-            pessoa = pessoaJuridicaRepository.merge(((PessoaJuridica) pessoa));
+            pessoa = pessoaJuridicaRepository.merge((PessoaJuridica) pessoa);
         }
         else if (pessoa instanceof  PessoaFisica){
             
@@ -1754,13 +1749,13 @@ public class CotaServiceImpl implements CotaService {
             ((PessoaFisica) pessoa).setNatural(cotaDto.getNatural());
             ((PessoaFisica) pessoa).setCpf(cotaDto.getNumeroCPF().replace(".", "").replace("-", "").trim());
             
-            pessoa = pessoaFisicaRepository.merge(((PessoaFisica) pessoa));
+            pessoa = pessoaFisicaRepository.merge((PessoaFisica) pessoa);
         }
         
         return pessoa;
     }
     
-	                                /**
+    /**
      * Retona uma instância de Pessoa Jurídica ou Física
      * 
      * @param cotaDTO
@@ -1861,7 +1856,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                /**
+    /**
      * Valida os parâmetros referente ao objeto BaseReferenciaCota
      * 
      * @param cotaDto
@@ -1919,7 +1914,7 @@ public class CotaServiceImpl implements CotaService {
         return referenciasCota;
     }
     
-	                                /**
+    /**
      * Retorna um objeto do tipo ReferenciaCota
      * 
      * @param numeroCota - número da cota
@@ -1943,7 +1938,7 @@ public class CotaServiceImpl implements CotaService {
         return referenciaCota;
     }
     
-	                                /**
+    /**
      * Valida se os números de cota informado para histórico cota base são
      * iguais
      * 
@@ -1958,7 +1953,7 @@ public class CotaServiceImpl implements CotaService {
         validarCotaIguais(cotaDTO.getHistoricoTerceiraCota(),cotaDTO.getHistoricoSegundaCota(),cotaDTO.getHistoricoPrimeiraCota());
     }
     
-	                                /**
+    /**
      * Verifica números de cotas iguais
      * 
      * @param param
@@ -1967,15 +1962,14 @@ public class CotaServiceImpl implements CotaService {
      */
     private void validarCotaIguais(final Integer param,final Integer param2, final Integer param3){
         
-        if(param!= null){
-            if(param.equals(param2)|| param.equals(param3)){
-                throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + param + "está incorreta! A cota "
-                    + param + " está duplicada!");
-            }
+        if (param != null && (param.equals(param2) || param.equals(param3))) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + param + "está incorreta! A cota " + param
+                + " está duplicada!");
         }
+        
     }
     
-	                                /**
+    /**
      * Valida se a porcentagem informada nas cotas histórico base obedecem 100
      * porcento.
      * 
@@ -2007,7 +2001,7 @@ public class CotaServiceImpl implements CotaService {
             existeValor = true;
         }
         
-        if(existeValor && (valor.intValue() != 100)){
+        if(existeValor && valor.intValue() != 100){
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "Porcentagem histórico cota base inválido! A porcentagem do histórico cota base deve ser 100%  ");
         }
@@ -2015,7 +2009,7 @@ public class CotaServiceImpl implements CotaService {
     }
     
     private boolean tratarValorReferenciaCota(final Integer numeroCota, final BigDecimal porcentagem){
-        return (numeroCota != null && porcentagem != null);
+        return numeroCota != null && porcentagem != null;
     }
     
     /**
@@ -2027,10 +2021,10 @@ public class CotaServiceImpl implements CotaService {
         
         final BigDecimal dividasEmAberto = dividaService.obterTotalDividasAbertoCota(idCota);
         
-        return (dividasEmAberto!=null && dividasEmAberto.floatValue() > 0);
+        return dividasEmAberto!=null && dividasEmAberto.floatValue() > 0;
     }
     
-	                                /**
+    /**
      * Verifica se o número da cota existente pode ser utilizado por uma nova
      * cota
      * 
@@ -2070,7 +2064,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                /**
+    /**
      * Altera o número da cota e gera um histporico com o número antigo
      * 
      * @param cota - objeto que sofrera a alteração de número de cota
@@ -2097,7 +2091,7 @@ public class CotaServiceImpl implements CotaService {
         
     }
     
-	                                /**
+    /**
      * Retorna um número de sugestão para o cadastro de uma nova cota
      * 
      * @param numeroCota
@@ -2107,7 +2101,7 @@ public class CotaServiceImpl implements CotaService {
      */
     private Integer getNovoNumeroCota(final Integer numeroCota, Integer novoNumeroCota ,Integer numero){
         
-        final Cota cota  = cotaRepository.obterPorNumeroDaCota( (novoNumeroCota == null) ?numeroCota :novoNumeroCota);
+        final Cota cota  = cotaRepository.obterPorNumeroDaCota( novoNumeroCota == null ?numeroCota :novoNumeroCota);
         
         if(cota != null){
             novoNumeroCota = numero * 10000 + numeroCota;
@@ -2142,10 +2136,10 @@ public class CotaServiceImpl implements CotaService {
         final Long qntDiasInativoPermitidoParaReutilizacao =
                 distribuidorService.qntDiasReutilizacaoCodigoCota();
         
-        return (qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao);
+        return qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao;
     }
     
-	                                /**
+    /**
      * Método responsável por obter tipos de cota para preencher combo da camada
      * view
      * 
@@ -2211,7 +2205,7 @@ public class CotaServiceImpl implements CotaService {
         return cotas;
     }
     
-	                                /**
+    /**
      * Descarta Enderecos, Telefones, Garantias e Sócios da Cota na Troca de
      * Titularidade
      * 
@@ -2419,7 +2413,7 @@ public class CotaServiceImpl implements CotaService {
         
         if (enderecoCota != null){
             
-            final String numeroEndereco = (enderecoCota.getEndereco().getNumero()!= null)?enderecoCota.getEndereco().getNumero():"";
+            final String numeroEndereco = enderecoCota.getEndereco().getNumero()!= null?enderecoCota.getEndereco().getNumero():"";
             
             dto.setLogradouroEntrega(enderecoCota.getEndereco().getLogradouro() + ", N&deg; " + numeroEndereco);
             dto.setBairroEntrega(enderecoCota.getEndereco().getBairro());
@@ -2674,7 +2668,7 @@ public class CotaServiceImpl implements CotaService {
         
         final List<DiaSemana> diasSemanaOperacaoDiferenciada = grupoRepository.obterDiasOperacaoDiferenciadaCota(numeroCota);
         
-        return (diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty());
+        return diasSemanaOperacaoDiferenciada != null && !diasSemanaOperacaoDiferenciada.isEmpty();
         
     }
     
@@ -2820,33 +2814,33 @@ public class CotaServiceImpl implements CotaService {
         if(!StringUtils.equals(sortorder, "undefined")){
             
             if(sortname != null){
-                if(sortname.equals("ed1Reparte")){
+                if ("ed1Reparte".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed1Reparte", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed1Venda")){
+                } else if ("ed1Venda".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed1Venda", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed2Reparte")){
+                } else if ("ed2Reparte".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed2Reparte", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed2Venda")){
+                } else if ("ed2Venda".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed2Venda", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed3Reparte")){
+                } else if ("ed3Reparte".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed3Reparte", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed3Venda")){
+                } else if ("ed3Venda".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed3Venda", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed4Reparte")){
+                } else if ("ed4Reparte".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed4Reparte", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed4Venda")){
+                } else if ("ed4Venda".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed4Venda", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed5Reparte")){
+                } else if ("ed5Reparte".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed5Reparte", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed5Venda")){
+                } else if ("ed5Venda".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed5Venda", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed6Reparte")){
+                } else if ("ed6Reparte".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed6Reparte", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("ed6Venda")){
+                } else if ("ed6Venda".equals(sortname)) {
                     ListUtils.orderList(sortorder, "ed6Venda", listAnaliseHistoricoDTO, Integer.class);
-                }else if(sortname.equals("reparteMedio")){
+                } else if ("reparteMedio".equals(sortname)) {
                     ListUtils.orderList(sortorder, "reparteMedio", listAnaliseHistoricoDTO);
-                }else if(sortname.equals("vendaMedia")){
+                } else if ("vendaMedia".equals(sortname)) {
                     ListUtils.orderList(sortorder, "vendaMedia", listAnaliseHistoricoDTO);
                 }
             }
@@ -2859,7 +2853,6 @@ public class CotaServiceImpl implements CotaService {
         
         reparteMedio += analiseHistoricoDTO.getEd1Reparte() == null ? 0 : analiseHistoricoDTO.getEd1Reparte();
         reparteMedio += analiseHistoricoDTO.getEd2Reparte() == null ? 0 : analiseHistoricoDTO.getEd2Reparte();
-        
         reparteMedio += analiseHistoricoDTO.getEd3Reparte() == null ? 0 : analiseHistoricoDTO.getEd3Reparte();
         reparteMedio += analiseHistoricoDTO.getEd4Reparte() == null ? 0 : analiseHistoricoDTO.getEd4Reparte();
         reparteMedio += analiseHistoricoDTO.getEd5Reparte() == null ? 0 : analiseHistoricoDTO.getEd5Reparte();
@@ -2896,20 +2889,17 @@ public class CotaServiceImpl implements CotaService {
         }
         
         try{
-            if(TipoCota.equalsIgnoreCase("A")){
+            if ("A".equalsIgnoreCase(TipoCota)) {
                 mixCotaProdutoService.excluirMixPorCota(idCota);
             }
             
-            if(TipoCota.equalsIgnoreCase("C")){
+            if ("C".equalsIgnoreCase(TipoCota)) {
                 fixacaoReparteService.excluirFixacaoPorCota(idCota);
             }
             
-        }catch (final RuntimeException e) {
-            LOGGER.error("Exclusão não permitida, registro possui dependências!", e);
-            if( e instanceof org.springframework.dao.DataIntegrityViolationException){
-                throw new ValidacaoException(TipoMensagem.ERROR,
-                        "Exclusão não permitida, registro possui dependências!");
-            }
+        } catch (final DataIntegrityViolationException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ValidacaoException(TipoMensagem.ERROR, "Exclusão não permitida, registro possui dependências!");
         }
     }
     
@@ -2950,7 +2940,7 @@ public class CotaServiceImpl implements CotaService {
         
         final TipoDistribuicaoCota tpDistribuicaoCota = obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
         
-        return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
+        return tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota);
     }
     
     @Transactional(readOnly = true)
@@ -2973,7 +2963,7 @@ public class CotaServiceImpl implements CotaService {
             final List<String> msgs = new ArrayList<String>();
             msgs.add("Cotas sem roteirização:");
             for (final CotaDTO cota : cotasSemRoteirizacao) {
-                msgs.add(+cota.getNumeroCota() + " - " + cota.getNomePessoa());
+                msgs.add(cota.getNumeroCota() + " - " + cota.getNomePessoa());
             }
             
             throw new ValidacaoException(TipoMensagem.WARNING, msgs);
@@ -3032,8 +3022,8 @@ public class CotaServiceImpl implements CotaService {
     @Transactional
     public boolean isCotaAlteradaNaData(final Cota cota, final Date data){
         
-        final boolean isAlteracaoTipoCotaNaDataAtual = (cota.getAlteracaoTipoCota()!=null &&
-                cota.getAlteracaoTipoCota().compareTo(data)==0);
+        final boolean isAlteracaoTipoCotaNaDataAtual = cota.getAlteracaoTipoCota()!=null &&
+                cota.getAlteracaoTipoCota().compareTo(data)==0;
         
         return isAlteracaoTipoCotaNaDataAtual;
     }

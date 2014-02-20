@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -109,40 +108,40 @@ public class MatrizLancamentoController extends BaseController {
         
         session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
         
-        List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
-        String data = DateUtil.formatarDataPTBR(new Date());
+        final List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
+        final String data = DateUtil.formatarDataPTBR(new Date());
         result.include("data", data);
         result.include("fornecedores", fornecedores);
     }
     
     @Post
-    public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
+    public void obterMatrizLancamento(final Date dataLancamento, final List<Long> idsFornecedores) {
         
         validarDadosPesquisa(dataLancamento, idsFornecedores);
         
         removerAtributoAlteracaoSessao();
         
-        FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
+        final FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
         
-        ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
+        final ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoLancamento(balanceamentoLancamento);
         
-        this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
+        result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
         
     }
     
     @Post
     @Path("/salvar")
-    public void salvar(Date dataLancamento, List<Long> idsFornecedores) {
+    public void salvar(final Date dataLancamento, final List<Long> idsFornecedores) {
         
-    	//Solicitado para salvar somente no dia
-
+        //Solicitado para salvar somente no dia
+        
         
         this.verificarExecucaoInterfaces();
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -150,23 +149,23 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento
                 .getMatrizLancamento();
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
+        Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = this.matrizLancamentoService
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
                 .salvarMatrizLancamento(dataLancamento,idsFornecedores,matrizLancamento, getUsuarioLogado());
         
         matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
         
         balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
         
-        this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
         
         this.removerAtributoAlteracaoSessao();
         
-        this.result.use(Results.json()).from(
+        result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"),
                 "result").recursive().serialize();
     }
@@ -178,8 +177,8 @@ public class MatrizLancamentoController extends BaseController {
      * @param balanceamentoLancamento
      * @return List<ProdutoLancamentoDTO>
      */
-    private List<ProdutoLancamentoDTO> getListaProdutoBalanceamento(Date data,
-            BalanceamentoLancamentoDTO balanceamentoLancamento) {
+    private List<ProdutoLancamentoDTO> getListaProdutoBalanceamento(final Date data,
+            final BalanceamentoLancamentoDTO balanceamentoLancamento) {
         
         List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<>();
         
@@ -189,7 +188,7 @@ public class MatrizLancamentoController extends BaseController {
             
         } else {
             
-            for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento()
+            for (final Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoLancamento.getMatrizLancamento()
                     .entrySet()) {
                 
                 listaProdutoBalanceamento.addAll(entry.getValue());
@@ -200,10 +199,10 @@ public class MatrizLancamentoController extends BaseController {
     }
     
     @Post
-    public void obterGridMatrizLancamento(String dataLancamentoFormatada, String sortorder, String sortname, int page,
-            int rp) {
+    public void obterGridMatrizLancamento(final String dataLancamentoFormatada, final String sortorder, final String sortname, final int page,
+            final int rp) {
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -220,10 +219,10 @@ public class MatrizLancamentoController extends BaseController {
             data = DateUtil.parseDataPTBR(dataLancamentoFormatada);
         }
         
-        List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(data,
+        final List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(data,
                 balanceamentoLancamento);
         
-        FiltroLancamentoDTO filtro = obterFiltroSessao();
+        final FiltroLancamentoDTO filtro = obterFiltroSessao();
         
         filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
         
@@ -248,9 +247,9 @@ public class MatrizLancamentoController extends BaseController {
     }
     
     private List<ProdutoLancamentoDTO> obterListaLancamentosDTONaoAgrupados(
-            List<ProdutoLancamentoDTO> listaProdutoBalanceamento) {
+            final List<ProdutoLancamentoDTO> listaProdutoBalanceamento) {
         
-        List<ProdutoLancamentoDTO> listaProdutoBalanceamentoClone = this.cloneObject(listaProdutoBalanceamento);
+        final List<ProdutoLancamentoDTO> listaProdutoBalanceamentoClone = this.cloneObject(listaProdutoBalanceamento);
         
         this.removerProdutosAgrupados(listaProdutoBalanceamentoClone);
         
@@ -264,7 +263,7 @@ public class MatrizLancamentoController extends BaseController {
      */
     private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -272,7 +271,7 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(null,
+        final List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(null,
                 balanceamentoLancamento);
         
         return listaProdutoBalanceamento;
@@ -285,9 +284,9 @@ public class MatrizLancamentoController extends BaseController {
      * 
      * @return List<ProdutoLancamentoDTO>
      */
-    private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao(Date dataSelecionada) {
+    private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao(final Date dataSelecionada) {
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -295,7 +294,7 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(dataSelecionada,
+        final List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(dataSelecionada,
                 balanceamentoLancamento);
         
         return listaProdutoBalanceamento;
@@ -303,11 +302,11 @@ public class MatrizLancamentoController extends BaseController {
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
+    public void confirmarMatrizLancamento(final List<Date> datasConfirmadas) {
         
         this.verificarExecucaoInterfaces();
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -317,43 +316,43 @@ public class MatrizLancamentoController extends BaseController {
         
         this.validarDatasConfirmacao(datasConfirmadas.toArray(new Date[] {}));
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamento
                 .getMatrizLancamento();
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
+        Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = matrizLancamentoService
                 .confirmarMatrizLancamento(matrizLancamento, datasConfirmadas, getUsuarioLogado());
         
         matrizLancamento = this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
         
         balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
         
-        this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
         
         this.verificarLancamentosConfirmados();
         
-        this.result.use(Results.json()).from(
+        result.use(Results.json()).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lançamento confirmado com sucesso!"),
                 "result").recursive().serialize();
     }
     
-    private void validarDatasConfirmacao(Date... datasConfirmadas) {
+    private void validarDatasConfirmacao(final Date... datasConfirmadas) {
         
         if (datasConfirmadas == null || datasConfirmadas.length <= 0) {
             
             throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
         }
         
-        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        final Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
         
-        for (Date dataConfirmada : datasConfirmadas) {
+        for (final Date dataConfirmada : datasConfirmadas) {
             
             if (dataConfirmada.compareTo(dataOperacao) < 0) {
                 
                 throw new ValidacaoException(TipoMensagem.WARNING,
                         "Não é possível confirmar uma data menor que a data de operação [ "
-                            + DateUtil.formatarDataPTBR(dataOperacao) + " ]");
+                                + DateUtil.formatarDataPTBR(dataOperacao) + " ]");
             }
         }
     }
@@ -372,9 +371,9 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        FiltroLancamentoDTO filtro = obterFiltroSessao();
+        final FiltroLancamentoDTO filtro = obterFiltroSessao();
         
-        this.matrizLancamentoService.voltarConfiguracaoInicial(filtro.getData(), balanceamentoLancamento,
+        matrizLancamentoService.voltarConfiguracaoInicial(filtro.getData(), balanceamentoLancamento,
                 getUsuarioLogado());
         
         // F2
@@ -386,26 +385,26 @@ public class MatrizLancamentoController extends BaseController {
         
         balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
         
-        ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
+        final ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoLancamento(balanceamentoLancamento);
         
         removerAtributoAlteracaoSessao();
         
-        this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+        result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void perguntarDataConfirmadaOuNao(ProdutoLancamentoDTO produtoLancamento) {
+    public void perguntarDataConfirmadaOuNao(final ProdutoLancamentoDTO produtoLancamento) {
         
-        boolean retornoDataConfirmada = this.matrizLancamentoService.isDataConfirmada(produtoLancamento);
-        this.result.use(Results.json()).from(retornoDataConfirmada).serialize();
+        final boolean retornoDataConfirmada = matrizLancamentoService.isDataConfirmada(produtoLancamento);
+        result.use(Results.json()).from(retornoDataConfirmada).serialize();
     }
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
-            String novaDataFormatada) {
+    public void reprogramarLancamentosSelecionados(final List<ProdutoLancamentoVO> produtosLancamento,
+            final String novaDataFormatada) {
         
         this.verificarExecucaoInterfaces();
         
@@ -413,7 +412,7 @@ public class MatrizLancamentoController extends BaseController {
         
         adicionarAtributoAlteracaoSessao();
         
-        Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+        final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
         
         this.validarDatasConfirmacao(novaData);
         
@@ -423,19 +422,20 @@ public class MatrizLancamentoController extends BaseController {
         
         this.atualizarMapaLancamento(produtosLancamento, novaData);
         
-        this.result.use(Results.json()).from(Results.nothing()).serialize();
+        result.use(Results.json()).from(Results.nothing()).serialize();
     }
     
-    private void removerProdutosAgrupados(List<ProdutoLancamentoDTO> produtosLancamento) {
+    private void removerProdutosAgrupados(final List<ProdutoLancamentoDTO> produtosLancamento) {
         
-        if (produtosLancamento == null)
+        if (produtosLancamento == null) {
             return;
+        }
         
-        Iterator<ProdutoLancamentoDTO> iterator = produtosLancamento.iterator();
+        final Iterator<ProdutoLancamentoDTO> iterator = produtosLancamento.iterator();
         
         while (iterator.hasNext()) {
             
-            ProdutoLancamentoDTO produtoLancamento = iterator.next();
+            final ProdutoLancamentoDTO produtoLancamento = iterator.next();
             
             if (produtoLancamento.isLancamentoAgrupado()) {
                 
@@ -446,21 +446,21 @@ public class MatrizLancamentoController extends BaseController {
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
+    public void reprogramarLancamentoUnico(final ProdutoLancamentoVO produtoLancamento) {
         
         this.verificarExecucaoInterfaces();
         if (produtoLancamento != null) {
-            String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
+            final String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
             
             this.validarDadosReprogramar(novaDataFormatada);
             
             adicionarAtributoAlteracaoSessao();
             
-            Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+            final Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
             
             this.validarDatasConfirmacao(novaData);
             
-            List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
+            final List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
             
             produtosLancamento.add(produtoLancamento);
             
@@ -471,7 +471,7 @@ public class MatrizLancamentoController extends BaseController {
             this.atualizarMapaLancamento(produtosLancamento, novaData);
         }
         
-        this.result.use(Results.json()).from(Results.nothing()).serialize();
+        result.use(Results.json()).from(Results.nothing()).serialize();
     }
     
     /**
@@ -483,15 +483,15 @@ public class MatrizLancamentoController extends BaseController {
      * 
      * @return matriz atualizada
      */
-    private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarMatizComProdutosConfirmados(
-            TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-            TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno) {
+    private Map<Date, List<ProdutoLancamentoDTO>> atualizarMatizComProdutosConfirmados(
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno) {
         
-        for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamentoRetorno.entrySet()) {
+        for (final Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamentoRetorno.entrySet()) {
             
-            Date novaData = entry.getKey();
+            final Date novaData = entry.getKey();
             
-            List<ProdutoLancamentoDTO> produtosLancamentoRetorno = matrizLancamentoRetorno.get(novaData);
+            final List<ProdutoLancamentoDTO> produtosLancamentoRetorno = matrizLancamentoRetorno.get(novaData);
             
             matrizLancamento.put(novaData, produtosLancamentoRetorno);
         }
@@ -505,11 +505,11 @@ public class MatrizLancamentoController extends BaseController {
      */
     private void verificarLancamentosConfirmados() {
         
-        List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
+        final List<ConfirmacaoVO> listaConfirmacao = montarListaDatasConfirmacao();
         
         boolean lancamentosConfirmados = true;
         
-        for (ConfirmacaoVO confirmacao : listaConfirmacao) {
+        for (final ConfirmacaoVO confirmacao : listaConfirmacao) {
             
             if (!confirmacao.isConfirmado()) {
                 
@@ -530,7 +530,7 @@ public class MatrizLancamentoController extends BaseController {
      * 
      * @param data - data para reprogramação
      */
-    private void validarDadosReprogramar(String data) {
+    private void validarDadosReprogramar(final String data) {
         
         if (data == null || data.trim().isEmpty()) {
             
@@ -550,30 +550,30 @@ public class MatrizLancamentoController extends BaseController {
      * @param produtosLancamento - lista de produtos de lançamento
      * @param novaData - nova data de recolhimento
      */
-    private void validarDataReprogramacao(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
+    private void validarDataReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
         
-        this.matrizLancamentoService.verificaDataOperacao(novaData);
+        matrizLancamentoService.verificaDataOperacao(novaData);
         
-        this.matrizLancamentoService.validarDiaSemanaDistribuicaoFornecedores(novaData);
+        matrizLancamentoService.validarDiaSemanaDistribuicaoFornecedores(novaData);
         
-        List<String> listaMensagens = new ArrayList<String>();
+        final List<String> listaMensagens = new ArrayList<String>();
         
         String produtos = "";
         
-        Integer qtdDiasLimiteParaReprogLancamento = this.distribuidorService.qtdDiasLimiteParaReprogLancamento();
+        final Integer qtdDiasLimiteParaReprogLancamento = distribuidorService.qtdDiasLimiteParaReprogLancamento();
         
-        for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
+        for (final ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
-            String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
+            final String dataRecolhimentoPrevistaFormatada = produtoLancamento.getDataRecolhimentoPrevista();
             
             if (dataRecolhimentoPrevistaFormatada == null || dataRecolhimentoPrevistaFormatada.trim().isEmpty()) {
                 
                 continue;
             }
             
-            Date dataRecolhimentoPrevista = DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoPrevista());
+            final Date dataRecolhimentoPrevista = DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoPrevista());
             
-            Date dataLimiteReprogramacao = calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoPrevista,
+            final Date dataLimiteReprogramacao = calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoPrevista,
                     qtdDiasLimiteParaReprogLancamento);
             
             if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
@@ -584,22 +584,22 @@ public class MatrizLancamentoController extends BaseController {
                 
                 produtos += "<tr>" + "<td><u>Produto:</u> " + produtoLancamento.getNomeProduto() + "</td>"
                     + "<td><u>Edição:</u> " + produtoLancamento.getNumeroEdicao() + "</td>"
-                    + "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>" + "</tr>";
+                        + "<td><u>Data recolhimento:</u> " + dataRecolhimentoPrevistaFormatada + "</td>" + "</tr>";
             }
         }
         
         if (!produtos.isEmpty()) {
             
             listaMensagens.add("A nova data de lançamento não deve ultrapassar "
-                + "a data de recolhimento prevista menos a quantidade de dias limite ["
-                + qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):");
+                    + "a data de recolhimento prevista menos a quantidade de dias limite ["
+                    + qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):");
             
             listaMensagens
-                    .add(produtos
-                        + "</table> "
+            .add(produtos
+                    + "</table> "
                         + "Para lançar o produto na data informada, é necessário alterar a data de recolhimento da(s) edição(ões).");
             
-            ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
+            final ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
             
             throw new ValidacaoException(validacao);
         }
@@ -610,7 +610,7 @@ public class MatrizLancamentoController extends BaseController {
      * 
      * @param produtosLancamento - lista de produtos de lançamento
      */
-    private void validarListaParaReprogramacao(List<ProdutoLancamentoVO> produtosLancamento) {
+    private void validarListaParaReprogramacao(final List<ProdutoLancamentoVO> produtosLancamento) {
         
         if (produtosLancamento == null || produtosLancamento.isEmpty()) {
             
@@ -626,9 +626,9 @@ public class MatrizLancamentoController extends BaseController {
      * @param produtosLancamento - lista de produtos a serem alterados
      * @param novaData - nova data de lançamento
      */
-    private void atualizarMapaLancamento(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
+    private void atualizarMapaLancamento(final List<ProdutoLancamentoVO> produtosLancamento, final Date novaData) {
         
-        BalanceamentoLancamentoDTO balanceamentoLancamentoSessao = (BalanceamentoLancamentoDTO) this.session
+        final BalanceamentoLancamentoDTO balanceamentoLancamentoSessao = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamentoSessao == null) {
@@ -636,30 +636,30 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamentoSessao
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao = balanceamentoLancamentoSessao
                 .getMatrizLancamento();
         
-        TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
+        final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento = this.cloneObject(matrizLancamentoSessao);
         
-        List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar = new ArrayList<ProdutoLancamentoDTO>();
+        final List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar = new ArrayList<ProdutoLancamentoDTO>();
         List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterarAux = new ArrayList<ProdutoLancamentoDTO>();
         
         this.montarListasParaAlteracaoMapa(produtosLancamento, listaProdutoLancamentoAlterar);
         
         listaProdutoLancamentoAlterarAux =  this.cloneObject(listaProdutoLancamentoAlterar);
         //Remove lancamentos expedidos de serem alterados TRAC 105
-        for (ProdutoLancamentoDTO produtoLancamentoDTO: listaProdutoLancamentoAlterarAux){
-        	if(produtoLancamentoDTO.getStatus().equals(StatusLancamento.EXPEDIDO)
-        	|| produtoLancamentoDTO.getStatus().equals(StatusLancamento.BALANCEADO)){
-        		listaProdutoLancamentoAlterar.remove(produtoLancamentoDTO);
-        	}
+        for (final ProdutoLancamentoDTO produtoLancamentoDTO: listaProdutoLancamentoAlterarAux){
+            if(produtoLancamentoDTO.getStatus().equals(StatusLancamento.EXPEDIDO)
+                    || produtoLancamentoDTO.getStatus().equals(StatusLancamento.BALANCEADO)){
+                listaProdutoLancamentoAlterar.remove(produtoLancamentoDTO);
+            }
         }
         
         this.removerEAdicionarMapa(matrizLancamento, listaProdutoLancamentoAlterar, novaData);
         
         balanceamentoLancamentoSessao.setMatrizLancamento(matrizLancamento);
         
-        this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamentoSessao);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamentoSessao);
     }
     
     /**
@@ -672,11 +672,11 @@ public class MatrizLancamentoController extends BaseController {
      * @return objeto clonado
      */
     @SuppressWarnings("unchecked")
-    private <T extends Object> T cloneObject(T object) {
+    private <T extends Object> T cloneObject(final T object) {
         
-        byte[] serialized = SerializationUtils.serialize(object);
+        final byte[] serialized = SerializationUtils.serialize(object);
         
-        T objectCloned = (T) SerializationUtils.deserialize(serialized);
+        final T objectCloned = (T) SerializationUtils.deserialize(serialized);
         
         return objectCloned;
     }
@@ -688,20 +688,20 @@ public class MatrizLancamentoController extends BaseController {
      * @param listaProdutoLancamentoAlterar - lista de produtos que serão
      *            alterados
      */
-    private void montarListasParaAlteracaoMapa(List<ProdutoLancamentoVO> produtosLancamento,
-            List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
+    private void montarListasParaAlteracaoMapa(final List<ProdutoLancamentoVO> produtosLancamento,
+            final List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
         
-        List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao = this.getProdutoLancamentoDTOFromMatrizSessao();
+        final List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao = this.getProdutoLancamentoDTOFromMatrizSessao();
         
-        for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
+        for (final ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
             
-            for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoSessao) {
+            for (final ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoSessao) {
                 
                 if (produtoLancamentoDTO.getIdLancamento().equals(Long.valueOf(produtoLancamento.getId()))) {
                     
                     listaProdutoLancamentoAlterar.add(produtoLancamentoDTO);
                     
-                    List<ProdutoLancamentoDTO> produtosLancamentoAgrupados = produtoLancamentoDTO
+                    final List<ProdutoLancamentoDTO> produtosLancamentoAgrupados = produtoLancamentoDTO
                             .getProdutosLancamentoAgrupados();
                     
                     if (!produtosLancamentoAgrupados.isEmpty()) {
@@ -723,37 +723,37 @@ public class MatrizLancamentoController extends BaseController {
      *            alterados
      * @param novaData - nova data de lançamento
      */
-    private void removerEAdicionarMapa(Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-            List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar, Date novaData) {
+    private void removerEAdicionarMapa(final Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+            final List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar, final Date novaData) {
         
         // Remover do mapa
-        for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAlterar) {
+        for (final ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAlterar) {
             
-            List<ProdutoLancamentoDTO> produtosLancamentoDTO = matrizLancamento.get(produtoLancamentoDTO
+            final List<ProdutoLancamentoDTO> produtosLancamentoDTO = matrizLancamento.get(produtoLancamentoDTO
                     .getNovaDataLancamento());
             
             produtosLancamentoDTO.remove(produtoLancamentoDTO);
             
             System.out.println(produtoLancamentoDTO.getNomeProduto());
-			System.out.println(produtoLancamentoDTO.getStatusLancamento());
-			System.out.println(produtoLancamentoDTO.isAlterado());
-			System.out.println(produtoLancamentoDTO.getNovaDataLancamento());
-			
+            System.out.println(produtoLancamentoDTO.getStatusLancamento());
+            System.out.println(produtoLancamentoDTO.isAlterado());
+            System.out.println(produtoLancamentoDTO.getNovaDataLancamento());
+            
             if (produtosLancamentoDTO.isEmpty()) {
                 
                 matrizLancamento.remove(produtoLancamentoDTO.getNovaDataLancamento());
                 
             } else {
-            	produtoLancamentoDTO.setAlterado(true);
-            	produtoLancamentoDTO.setStatus(StatusLancamento.CONFIRMADO);
-            	produtoLancamentoDTO.setStatusLancamento(StatusLancamento.CONFIRMADO.name());
-            	produtoLancamentoDTO.setDataLancamentoDistribuidor(novaData);
+                produtoLancamentoDTO.setAlterado(true);
+                produtoLancamentoDTO.setStatus(StatusLancamento.CONFIRMADO);
+                produtoLancamentoDTO.setStatusLancamento(StatusLancamento.CONFIRMADO.name());
+                produtoLancamentoDTO.setDataLancamentoDistribuidor(novaData);
                 matrizLancamento.put(produtoLancamentoDTO.getNovaDataLancamento(), produtosLancamentoDTO);
             }
         }
         
         // Adicionar no mapa
-        for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAlterar) {
+        for (final ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAlterar) {
             
             List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
             
@@ -773,24 +773,24 @@ public class MatrizLancamentoController extends BaseController {
         }
     }
     
-    private void processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento, FiltroLancamentoDTO filtro) {
+    private void processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento, final FiltroLancamentoDTO filtro) {
         
-        PaginacaoVO paginacao = filtro.getPaginacao();
+        final PaginacaoVO paginacao = filtro.getPaginacao();
         
-        Double valorTotal = this.getValorTotal(listaProdutoLancamento);
+        final Double valorTotal = this.getValorTotal(listaProdutoLancamento);
         
-        List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+        final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
         
         listaProdutoLancamento = PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao
                 .getSortColumn());
         
-        List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+        final List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
         
-        TableModel<CellModelKeyValue<ProdutoLancamentoVO>> tm = new TableModel<CellModelKeyValue<ProdutoLancamentoVO>>();
-        List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
+        final TableModel<CellModelKeyValue<ProdutoLancamentoVO>> tm = new TableModel<CellModelKeyValue<ProdutoLancamentoVO>>();
+        final List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
                 .toCellModelKeyValue(listaProdutoBalanceamentoPaginacaoVO);
         
-        List<Object> resultado = new ArrayList<Object>();
+        final List<Object> resultado = new ArrayList<Object>();
         
         tm.setRows(cells);
         
@@ -806,11 +806,11 @@ public class MatrizLancamentoController extends BaseController {
         
     }
     
-    private Double getValorTotal(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
+    private Double getValorTotal(final List<ProdutoLancamentoDTO> listaProdutoLancamento) {
         
         Double valorTotal = 0.0;
         
-        for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
+        for (final ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
             
             valorTotal += produtoLancamentoDTO.getValorTotal().doubleValue();
         }
@@ -818,11 +818,11 @@ public class MatrizLancamentoController extends BaseController {
         return valorTotal;
     }
     
-    private List<ProdutoLancamentoVO> getProdutosLancamentoVO(List<ProdutoLancamentoDTO> listaProdutoLancamento) {
+    private List<ProdutoLancamentoVO> getProdutosLancamentoVO(final List<ProdutoLancamentoDTO> listaProdutoLancamento) {
         
-        List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = new LinkedList<ProdutoLancamentoVO>();
+        final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = new LinkedList<ProdutoLancamentoVO>();
         
-        for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
+        for (final ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamento) {
             
             listaProdutoBalanceamentoVO.add(getVoProdutoBalanceamento(produtoLancamentoDTO));
         }
@@ -830,9 +830,9 @@ public class MatrizLancamentoController extends BaseController {
         return listaProdutoBalanceamentoVO;
     }
     
-    private ProdutoLancamentoVO getVoProdutoBalanceamento(ProdutoLancamentoDTO produtoLancamentoDTO) {
+    private ProdutoLancamentoVO getVoProdutoBalanceamento(final ProdutoLancamentoDTO produtoLancamentoDTO) {
         
-        ProdutoLancamentoVO produtoBalanceamentoVO = new ProdutoLancamentoVO();
+        final ProdutoLancamentoVO produtoBalanceamentoVO = new ProdutoLancamentoVO();
         
         produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
         
@@ -858,10 +858,11 @@ public class MatrizLancamentoController extends BaseController {
         
         produtoBalanceamentoVO.setValorTotal(CurrencyUtil.formatarValor(produtoLancamentoDTO.getValorTotal()));
         
-        if (produtoLancamentoDTO.getReparteFisico() == null)
+        if (produtoLancamentoDTO.getReparteFisico() == null) {
             produtoBalanceamentoVO.setReparteFisico("0");
-        else
+        } else {
             produtoBalanceamentoVO.setReparteFisico(produtoLancamentoDTO.getReparteFisico().toString());
+        }
         
         if (produtoLancamentoDTO.getDistribuicao() == null) {
             produtoBalanceamentoVO.setDistribuicao("");
@@ -869,18 +870,18 @@ public class MatrizLancamentoController extends BaseController {
             produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao().toString());
         }
         
-        produtoBalanceamentoVO.setBloquearData(this.matrizLancamentoService.isProdutoConfirmado(produtoLancamentoDTO));
+        produtoBalanceamentoVO.setBloquearData(matrizLancamentoService.isProdutoConfirmado(produtoLancamentoDTO));
         
         produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
         
         produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
         
-        String reparteFisico = produtoBalanceamentoVO.getReparteFisico();
-        String distribuicao = produtoBalanceamentoVO.getDistribuicao();
+        final String reparteFisico = produtoBalanceamentoVO.getReparteFisico();
+        final String distribuicao = produtoBalanceamentoVO.getDistribuicao();
         
         if ((reparteFisico.equals("0") || reparteFisico.equals("") || distribuicao.equals("0") || distribuicao
                 .equals(""))
-            && !produtoLancamentoDTO.getStatus().equals(StatusLancamento.EXPEDIDO)) {
+                && !produtoLancamentoDTO.getStatus().equals(StatusLancamento.EXPEDIDO)) {
             
             produtoBalanceamentoVO.setDestacarLinha(true);
         }
@@ -903,19 +904,19 @@ public class MatrizLancamentoController extends BaseController {
         return produtoBalanceamentoVO;
     }
     
-    private boolean validarStatusParaExclusaoLancamento(StatusLancamento status) {
+    private boolean validarStatusParaExclusaoLancamento(final StatusLancamento status) {
         
-        return (StatusLancamento.CONFIRMADO.equals(status) || StatusLancamento.EM_BALANCEAMENTO.equals(status)
-            || StatusLancamento.PLANEJADO.equals(status) || StatusLancamento.FURO.equals(status));
+        return StatusLancamento.CONFIRMADO.equals(status) || StatusLancamento.EM_BALANCEAMENTO.equals(status)
+                || StatusLancamento.PLANEJADO.equals(status) || StatusLancamento.FURO.equals(status);
     }
     
     @Exportable
     public class RodapeDTO {
         
         @Export(label = "Valor Total R$:")
-        private String total;
+        private final String total;
         
-        public RodapeDTO(String total) {
+        public RodapeDTO(final String total) {
             this.total = total;
         }
         
@@ -932,10 +933,10 @@ public class MatrizLancamentoController extends BaseController {
      * @throws IOException Exceção de E/S
      */
     @Get
-    public void exportar(FileType fileType) throws IOException {
+    public void exportar(final FileType fileType) throws IOException {
         
-        String dataSelecionada = (String) session.getAttribute(DATA_ATUAL_SELECIONADA);
-
+        final String dataSelecionada = (String) session.getAttribute(DATA_ATUAL_SELECIONADA);
+        
         Date data = null;
         
         if (dataSelecionada != null && !dataSelecionada.trim().isEmpty()) {
@@ -943,34 +944,34 @@ public class MatrizLancamentoController extends BaseController {
             data = DateUtil.parseDataPTBR(dataSelecionada);
         }
         
-        List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao(data);
+        final List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao(data);
         
-        FiltroLancamentoDTO filtro = obterFiltroSessao();
+        final FiltroLancamentoDTO filtro = obterFiltroSessao();
         
         if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {
             
-            Double valorTotal = getValorTotal(listaProdutoBalanceamento);
+            final Double valorTotal = getValorTotal(listaProdutoBalanceamento);
             
-            List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoBalanceamento);
+            final List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoBalanceamento);
             
-            RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
+            final RodapeDTO rodape = new RodapeDTO(CurrencyUtil.formatarValor(valorTotal));
             
             FileExporter.to("matriz_balanceamento", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodape,
-                    listaProdutoBalanceamentoVO, ProdutoLancamentoVO.class, this.httpResponse);
+                    listaProdutoBalanceamentoVO, ProdutoLancamentoVO.class, httpResponse);
         }
         
         result.nothing();
     }
     
-    private String montarNomeFornecedores(List<Long> idsFornecedores) {
+    private String montarNomeFornecedores(final List<Long> idsFornecedores) {
         
         String nomeFornecedores = "";
         
-        List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
+        final List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
         
         if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
             
-            for (Fornecedor fornecedor : listaFornecedor) {
+            for (final Fornecedor fornecedor : listaFornecedor) {
                 
                 if (!nomeFornecedores.isEmpty()) {
                     
@@ -992,14 +993,14 @@ public class MatrizLancamentoController extends BaseController {
      * 
      * @return - objeto contendo as informações do balanceamento
      */
-    private BalanceamentoLancamentoDTO obterBalanceamentoLancamento(FiltroLancamentoDTO filtro) {
+    private BalanceamentoLancamentoDTO obterBalanceamentoLancamento(final FiltroLancamentoDTO filtro) {
         
-        BalanceamentoLancamentoDTO balanceamento = this.matrizLancamentoService.obterMatrizLancamento(filtro);
+        final BalanceamentoLancamentoDTO balanceamento = matrizLancamentoService.obterMatrizLancamento(filtro);
         
-        this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamento);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamento);
         
         if (balanceamento == null || balanceamento.getMatrizLancamento() == null
-            || balanceamento.getMatrizLancamento().isEmpty()) {
+                || balanceamento.getMatrizLancamento().isEmpty()) {
             
             throw new ValidacaoException(TipoMensagem.WARNING,
                     "Não houve carga de informações para o período escolhido!");
@@ -1014,13 +1015,13 @@ public class MatrizLancamentoController extends BaseController {
      * @param dataPesquisa - data da pesquisa
      * @param listaIdsFornecedores - lista de identificadores de fornecedores
      */
-    private FiltroLancamentoDTO configurarFiltropesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
+    private FiltroLancamentoDTO configurarFiltropesquisa(final Date dataPesquisa, final List<Long> listaIdsFornecedores) {
         
-        FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(dataPesquisa, listaIdsFornecedores);
+        final FiltroLancamentoDTO filtro = new FiltroLancamentoDTO(dataPesquisa, listaIdsFornecedores);
         
         filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
         
-        this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+        session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
         
         return filtro;
     }
@@ -1032,9 +1033,9 @@ public class MatrizLancamentoController extends BaseController {
      * @param dataPesquisa - data da pesquisa
      * @param listaIdsFornecedores - lista de id's dos fornecedores
      */
-    private void validarDadosPesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
+    private void validarDadosPesquisa(final Date dataPesquisa, final List<Long> listaIdsFornecedores) {
         
-        List<String> listaMensagens = new ArrayList<String>();
+        final List<String> listaMensagens = new ArrayList<String>();
         
         if (dataPesquisa == null) {
             
@@ -1058,30 +1059,30 @@ public class MatrizLancamentoController extends BaseController {
      * pesquisa e a lista de id's dos fornecedores.
      */
     private ResultadoResumoBalanceamentoVO obterResultadoResumoLancamento(
-            BalanceamentoLancamentoDTO balanceamentoBalanceamento) {
+            final BalanceamentoLancamentoDTO balanceamentoBalanceamento) {
         
         if (balanceamentoBalanceamento == null || balanceamentoBalanceamento.getMatrizLancamento() == null
-            || balanceamentoBalanceamento.getMatrizLancamento().isEmpty()) {
+                || balanceamentoBalanceamento.getMatrizLancamento().isEmpty()) {
             
             return null;
         }
         
-        List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento = new ArrayList<ResumoPeriodoBalanceamentoVO>();
+        final List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento = new ArrayList<ResumoPeriodoBalanceamentoVO>();
         
-        for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoBalanceamento.getMatrizLancamento()
+        for (final Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : balanceamentoBalanceamento.getMatrizLancamento()
                 .entrySet()) {
             
-            Date dataRecolhimento = entry.getKey();
+            final Date dataRecolhimento = entry.getKey();
             
-            ResumoPeriodoBalanceamentoVO itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoVO();
+            final ResumoPeriodoBalanceamentoVO itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoVO();
             
             itemResumoPeriodoBalanceamento.setData(dataRecolhimento);
             
-            List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
+            final List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
             
             if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
                 
-                boolean exibeDestaque = false;
+                final boolean exibeDestaque = false;
                 
                 Long qtdeTitulos = 0L;
                 Long qtdeTitulosParciais = 0L;
@@ -1090,7 +1091,7 @@ public class MatrizLancamentoController extends BaseController {
                 BigInteger qtdeExemplares = BigInteger.ZERO;
                 BigDecimal valorTotal = BigDecimal.ZERO;
                 
-                for (ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
+                for (final ProdutoLancamentoDTO produtoBalanceamento : listaProdutosRecolhimento) {
                     
                     if (produtoBalanceamento.isLancamentoAgrupado()) {
                         
@@ -1124,8 +1125,8 @@ public class MatrizLancamentoController extends BaseController {
                 
                 if (balanceamentoBalanceamento.getCapacidadeDistribuicao() != null) {
                     
-                    excedeCapacidadeDistribuidor = (balanceamentoBalanceamento.getCapacidadeDistribuicao().compareTo(
-                            qtdeExemplares) == -1);
+                    excedeCapacidadeDistribuidor = balanceamentoBalanceamento.getCapacidadeDistribuicao().compareTo(
+                            qtdeExemplares) == -1;
                 }
                 
                 itemResumoPeriodoBalanceamento.setExcedeCapacidadeDistribuidor(excedeCapacidadeDistribuidor);
@@ -1143,7 +1144,7 @@ public class MatrizLancamentoController extends BaseController {
             resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
         }
         
-        ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
+        final ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
         
         resultadoResumoBalanceamento.setListaResumoPeriodoBalanceamento(resumoPeriodoBalanceamento);
         
@@ -1163,7 +1164,7 @@ public class MatrizLancamentoController extends BaseController {
      */
     private FiltroLancamentoDTO obterFiltroSessao() {
         
-        FiltroLancamentoDTO filtro = (FiltroLancamentoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+        final FiltroLancamentoDTO filtro = (FiltroLancamentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
         
         if (filtro == null) {
             
@@ -1179,25 +1180,25 @@ public class MatrizLancamentoController extends BaseController {
     @Post
     public void obterAgrupamentoDiarioBalanceamento() {
         
-        List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
-        List<ConfirmacaoVO> confirmacoesAuxVO = new ArrayList<>();
+        final List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+        final List<ConfirmacaoVO> confirmacoesAuxVO = new ArrayList<>();
         
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Date data = new Date();
         
-        for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+        for (final ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
             
             try {
                 
                 data = format.parse(confirmacaoVO.getMensagem());
                 
-            } catch (ParseException ex) {
+            } catch (final ParseException ex) {
                 
             }
             
             if (!confirmacaoVO.isConfirmado()) {
                 
-                if (this.distribuidorService.obterDataOperacaoDistribuidor().getTime() <= data.getTime()) {
+                if (distribuidorService.obterDataOperacaoDistribuidor().getTime() <= data.getTime()) {
                     
                     confirmacoesAuxVO.add(confirmacaoVO);
                 }
@@ -1218,7 +1219,7 @@ public class MatrizLancamentoController extends BaseController {
      */
     private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -1226,7 +1227,7 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        List<ConfirmacaoVO> confirmacoesVO = this.matrizLancamentoService
+        final List<ConfirmacaoVO> confirmacoesVO = matrizLancamentoService
                 .obterDatasConfirmacao(balanceamentoLancamento);
         
         return confirmacoesVO;
@@ -1235,14 +1236,14 @@ public class MatrizLancamentoController extends BaseController {
     @Post
     public void verificarBalanceamentosAlterados() {
         
-        Boolean balanceamentoAlterado = (Boolean) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO);
+        Boolean balanceamentoAlterado = (Boolean) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO);
         
         if (balanceamentoAlterado == null) {
             
             balanceamentoAlterado = false;
         }
         
-        this.result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
+        result.use(Results.json()).from(balanceamentoAlterado.toString(), "result").serialize();
     }
     
     /**
@@ -1251,7 +1252,7 @@ public class MatrizLancamentoController extends BaseController {
      */
     private void adicionarAtributoAlteracaoSessao() {
         
-        this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, true);
     }
     
     /**
@@ -1260,14 +1261,14 @@ public class MatrizLancamentoController extends BaseController {
      */
     private void removerAtributoAlteracaoSessao() {
         
-        this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
+        session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO, null);
     }
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
     public void atualizarResumoBalanceamento() {
         
-        BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) this.session
+        final BalanceamentoLancamentoDTO balanceamentoLancamento = (BalanceamentoLancamentoDTO) session
                 .getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
         
         if (balanceamentoLancamento == null) {
@@ -1275,10 +1276,10 @@ public class MatrizLancamentoController extends BaseController {
             throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
         }
         
-        ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
+        final ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this
                 .obterResultadoResumoLancamento(balanceamentoLancamento);
         
-        this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+        result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
     }
     
     private void verificarExecucaoInterfaces() {
@@ -1291,75 +1292,75 @@ public class MatrizLancamentoController extends BaseController {
     @Get
     public void obterDatasConfirmadasReabertura() {
         
-        List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
+        final List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
         
-        List<String> datasConfirmadasReabertura = new ArrayList<>();
+        final List<String> datasConfirmadasReabertura = new ArrayList<>();
         
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Date data = new Date();
         
-        for (ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
+        for (final ConfirmacaoVO confirmacaoVO : confirmacoesVO) {
             
             try {
                 
                 data = format.parse(confirmacaoVO.getMensagem());
                 
-            } catch (ParseException ex) {
+            } catch (final ParseException ex) {
                 
             }
             
             if (confirmacaoVO.isConfirmado()) {
                 
-                if (this.distribuidorService.obterDataOperacaoDistribuidor().before(data)) {
+                if (distribuidorService.obterDataOperacaoDistribuidor().before(data)) {
                     
                     datasConfirmadasReabertura.add(confirmacaoVO.getMensagem());
                 }
             }
         }
         
-        this.result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
+        result.use(Results.json()).from(datasConfirmadasReabertura, "result").serialize();
     }
     
     @Post
-    public void reabrirMatriz(List<Date> datasReabertura, Date dataLancamento, List<Long> idsFornecedores) {
+    public void reabrirMatriz(final List<Date> datasReabertura, final Date dataLancamento, final List<Long> idsFornecedores) {
         
         if (datasReabertura == null || datasReabertura.isEmpty()) {
             
             throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhuma data foi selecionada!"));
         }
-        this.matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
+        matrizLancamentoService.reabrirMatriz(datasReabertura, getUsuarioLogado());
         
         validarDadosPesquisa(dataLancamento, idsFornecedores);
         
         removerAtributoAlteracaoSessao();
         
-        FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
+        final FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
         
         // Recarrega o objeto na sessao
         this.obterBalanceamentoLancamento(filtro);
         
-        this.result.use(PlainJSONSerialization.class).from(
+        result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Reabertura realizada com sucesso!"), "result").recursive()
                 .serialize();
     }
     
     @Post
     @Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-    public void excluirLancamento(ProdutoLancamentoVO produtoLancamento) {
+    public void excluirLancamento(final ProdutoLancamentoVO produtoLancamento) {
         
-        Date data = DateUtil.parseDataPTBR(this.dataCabalistica);
+        final Date data = DateUtil.parseDataPTBR(dataCabalistica);
         
-        Lancamento lancamento = this.lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
+        final Lancamento lancamento = lancamentoRepositoryService.buscarPorId(produtoLancamento.getId());
         
         lancamento.setDataLancamentoDistribuidor(data);
         lancamento.voltarStatusOriginal();
         // atualizarLancamento(produtoLancamento.getId(),data);
         
-        this.lancamentoRepositoryService.merge(lancamento);
+        lancamentoRepositoryService.merge(lancamento);
         
-        this.result.use(PlainJSONSerialization.class).from(
+        result.use(PlainJSONSerialization.class).from(
                 new ValidacaoVO(TipoMensagem.SUCCESS, "Excluido com sucesso!"), "result").recursive().serialize();
         
     }
-
+    
 }
