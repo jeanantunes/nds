@@ -9,10 +9,12 @@ import java.util.Enumeration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import br.com.abril.nds.service.xml.nfe.signature.SecurityCallBack;
 
+@Component
 public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(SimpleSecurityHandlerBean.class);
