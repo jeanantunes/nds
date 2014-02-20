@@ -10,6 +10,8 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Footer;
+import br.com.abril.nds.util.export.FooterType;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -180,7 +182,8 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return precoDescontoFormatado;
 	}
 
-	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 9, columnType = ColumType.MOEDA)
+	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 9, columnType = ColumType.MOEDA, widthPercent = 12.5f)
+	@Footer(label = "Totais", type = FooterType.SUM, columnType = ColumType.MOEDA)
 	public BigDecimal getTotal() {
 		return total;
 	}
@@ -197,7 +200,8 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return totalFormatado;
 	}
 
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA_QUATRO_CASAS, widthPercent = 12.5f)
+	@Footer(type = FooterType.SUM, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	public BigDecimal getTotalDesconto() {
 		return totalDesconto;
 	}
