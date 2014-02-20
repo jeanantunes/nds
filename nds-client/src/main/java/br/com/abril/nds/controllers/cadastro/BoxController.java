@@ -100,7 +100,7 @@ public class BoxController extends BaseController {
         result.use(FlexiGridJson.class).from(boxs).total(quantidade.intValue()).page(page).serialize();
         
     }
-
+    
     @Post
     @Path("/buscaPorId.json")
     @Rules(Permissao.ROLE_CADASTRO_BOX_ALTERACAO)
@@ -195,7 +195,7 @@ public class BoxController extends BaseController {
         
         final List<CotaRotaRoteiroDTO> rotaRoteiroDTOs = boxService.obtemCotaRotaRoteiro(id, sortname, sortorder);
         
-        FileExporter.to("detalhes-box", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, rotaRoteiroDTOs,
+        FileExporter.to("detalhes-box", fileType).inHTTPResponse(this.getNDSFileHeader(), null, rotaRoteiroDTOs,
                 CotaRotaRoteiroDTO.class, httpServletResponse);
         
         result.use(Results.nothing());
@@ -215,7 +215,7 @@ public class BoxController extends BaseController {
         
         final List<BoxDTO> listaBoxs = this.convertBoxToBoxDTO(boxs);
         
-        FileExporter.to("consulta-box", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, listaBoxs,
+        FileExporter.to("consulta-box", fileType).inHTTPResponse(this.getNDSFileHeader(), null, listaBoxs,
                 BoxDTO.class, httpServletResponse);
         
         result.use(Results.nothing());
