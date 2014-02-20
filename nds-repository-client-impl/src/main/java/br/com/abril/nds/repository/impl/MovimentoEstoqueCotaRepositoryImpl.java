@@ -2000,7 +2000,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         hql.append("	join PRODUTO_EDICAO produtoEdicao ON (produtoEdicao.ID = estudo.PRODUTO_EDICAO_ID) ");
         hql.append("	join PRODUTO produto ON (produto.ID = produtoEdicao.PRODUTO_ID) ");
         hql.append("    join PESSOA pessoa ON (pessoa.ID = cota.PESSOA_ID) ");
-        
+        hql.append(" 	join LANCAMENTO lancamento ON (lancamento.ESTUDO_ID = estudo.ID) ");
         hql.append("    join PDV pdv ON (pdv.COTA_ID = cota.ID) ");
         hql.append("    join ROTA_PDV rotaPDV ON (rotaPDV.PDV_ID = pdv.ID) ");
         hql.append("    join ROTA rota ON (rotaPDV.ROTA_ID = rota.ID) ");
