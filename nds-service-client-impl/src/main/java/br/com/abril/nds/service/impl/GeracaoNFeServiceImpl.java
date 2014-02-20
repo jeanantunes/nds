@@ -81,9 +81,6 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	@Autowired
 	private UsuarioService usuarioService;
 	
-	@Autowired
-	private GeracaoNFeService geracaoNFeService;
-	
 	@Override
 	@Transactional
 	public List<CotaExemplaresDTO> busca(Intervalo<Integer> intervaloBox,

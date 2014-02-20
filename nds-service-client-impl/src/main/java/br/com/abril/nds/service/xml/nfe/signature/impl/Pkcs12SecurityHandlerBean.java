@@ -11,10 +11,12 @@ import java.security.cert.X509Certificate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 
 import br.com.abril.nds.service.xml.nfe.signature.SecurityCallBack;
 
+@Service
 public class Pkcs12SecurityHandlerBean extends AbstractSecurityHandlerBean {
     
 	protected static final Logger logger = LoggerFactory.getLogger(Pkcs12SecurityHandlerBean.class);

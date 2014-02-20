@@ -9,6 +9,7 @@ import java.util.Enumeration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 
 import br.com.abril.nds.service.xml.nfe.signature.SecurityCallBack;
@@ -48,8 +49,7 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 			} else {
 				logger.debug("Recuperando credenciais da primeira chave do armazem principal em {}.", System.getProperty("javax.net.ssl.keyStore"));
 				KeyStore ksKeys = KeyStore.getInstance(System.getProperty("javax.net.ssl.keyStoreType"));
-				ksKeys.load(new FileInputStream(System.getProperty("javax.net.ssl.keyStore")), System.getProperty("javax.net.ssl.keyStorePassword")
-						.toCharArray());
+				ksKeys.load(new FileInputStream(System.getProperty("javax.net.ssl.keyStore")), System.getProperty("javax.net.ssl.keyStorePassword").toCharArray());
 				Enumeration<String> aliases = ksKeys.aliases();
 				if (aliases.hasMoreElements()) {
 					String transportAlias = aliases.nextElement();
@@ -57,7 +57,7 @@ public class SimpleSecurityHandlerBean extends AbstractSecurityHandlerBean {
 					logger.debug("Certificado: {}.", ((X509Certificate) certificate).getSubjectDN());
 					privateKey = (PrivateKey) ksKeys.getKey(transportAlias, password);
 				} else {
-					throw new IllegalArgumentException("Armaz�m principal n�o cont�m um certificado v�lido.");
+					throw new IllegalArgumentException("Armazém principal não cont�m um certificado válido.");
 				}
 			}
 		} catch (Exception e) {
