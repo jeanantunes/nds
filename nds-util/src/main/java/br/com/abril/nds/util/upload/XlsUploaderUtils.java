@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,6 +17,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
@@ -159,12 +160,11 @@ public class XlsUploaderUtils {
 				return cell.getBooleanCellValue();
 			case Cell.CELL_TYPE_NUMERIC:
                 if (genericType == String.class) {
-                return ((Double) cell.getNumericCellValue()).intValue(); // Não
-                                                                         // queremos
-                                                                         // casas
-                                                                         // decimais
-                                                                         // nestes
-                                                                         // casos.
+                    Double value = ((Double) cell.getNumericCellValue());
+                    if( value.equals(Math.floor(value)) )
+                        return value.intValue();
+                    else
+                        return  value;                                       
                 }
                 return cell.getNumericCellValue();
 			case Cell.CELL_TYPE_STRING:

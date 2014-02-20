@@ -127,7 +127,7 @@ var historicoVendaController = $.extend(true, {
 			
 			for ( var index in grids.PesqHistoricoGrid.tableModel.rows) {
 				row = grids.PesqHistoricoGrid.tableModel.rows[index];
-				params.push({name : "cotas["+index+"].numeroCota", value :  row.cell.numeroCota});
+				params.push({name : "cotas["+index+"]", value :  row.cell.numeroCota});
 			}
 			
 			for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {

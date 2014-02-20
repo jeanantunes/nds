@@ -31,7 +31,7 @@ public class ConsultaEncalheDTO {
 	
 	private BigDecimal valorComDesconto;
 	
-	private Integer recolhimento;
+	private Long recolhimento;
 	
 	private Long idFornecedor;
 	
@@ -232,9 +232,9 @@ public class ConsultaEncalheDTO {
 	/**
 	 * Obtém recolhimento
 	 *
-	 * @return Integer
+	 * @return Long
 	 */
-	public Integer getRecolhimento() {
+	public Long getRecolhimento() {
 		return recolhimento;
 	}
 
@@ -242,7 +242,7 @@ public class ConsultaEncalheDTO {
 	 * Atribuí recolhimento
 	 * @param recolhimento 
 	 */
-	public void setRecolhimento(Integer recolhimento) {
+	public void setRecolhimento(Long recolhimento) {
 		this.recolhimento = recolhimento;
 	}
 

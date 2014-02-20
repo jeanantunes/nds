@@ -36,6 +36,7 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
@@ -836,22 +837,25 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
 		Integer fatorVencimento = 0;
 		
-		ParametroCobrancaCota parametroCobrancaCota = cota.getParametroCobranca();
+		ParametroCobrancaCota parametroCobrancaCota = formaCobrancaPrincipal.getParametroCobrancaCota();
 		
 		TipoFormaCobranca tipoFormaCobrancaAntiga = null;
 		
 		if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
+			
 			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
 		}
 		else {
 			
-			if(formaCobrancaPrincipal.getPoliticaCobranca() != null && 
-					formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento() != null){
+			PoliticaCobranca politicaCobranca = formaCobrancaPrincipal.getPoliticaCobranca();
+			
+			if(politicaCobranca != null && politicaCobranca.getFatorVencimento() != null){
 				
-				fatorVencimento = formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento();
+				fatorVencimento = politicaCobranca.getFatorVencimento();
 			}
 			
 			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
+			
 			formaCobrancaPrincipal.setTipoFormaCobranca(null);
 		}
 		
@@ -916,11 +920,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		Cota cotaUnificadora = this.cotaUnificacaoRepository.obterCotaUnificadoraPorCota(cota.getNumeroCota());
+		cotaUnificadora = cotaUnificadora == null ? cota : cotaUnificadora;
 		
-		if (cotaUnificadora == null || !consolidadosCotaUnficacao.containsKey(cotaUnificadora)){
-			
-			cotaUnificadora = cotaUnificadora == null ? cota : cotaUnificadora;
-			
+		
+		if (!consolidadosCotaUnficacao.containsKey(cotaUnificadora)){
 			consolidadosCotaUnficacao.put(
 				cotaUnificadora, 
 				new ArrayList<GerarCobrancaHelper>());
