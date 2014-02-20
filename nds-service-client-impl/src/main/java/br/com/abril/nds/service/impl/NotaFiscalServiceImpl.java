@@ -39,6 +39,8 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal;
+import br.com.abril.nds.model.cadastro.DistribuidorTipoNotaFiscal.DistribuidorGrupoNotaFiscal;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
@@ -131,7 +133,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private DistribuidorRepository distribuidorRepository;
 
 	@Autowired
-	private NaturezaOperacaoRepository tipoNotaFiscalRepository;
+	private NaturezaOperacaoRepository naturezaOperacaoRepository;
 
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -404,7 +406,23 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			case MODELO_1:
 			case MODELO_2:
 				if(notaFiscal.getNotaFiscalInformacoes().getInformacaoEletronica().getChaveAcesso() != null){
-					this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);
+					if(!distribuidor.isPossuiRegimeEspecialDispensaInterna()){
+						NaturezaOperacao naturezaOperacao = this.naturezaOperacaoRepository.buscarPorId(notaFiscal.getNotaFiscalInformacoes().getIdentificacao().getNaturezaOperacao().getId());
+						
+						for(DistribuidorTipoNotaFiscal distribuidorTipoNotaFiscal : distribuidor.getTiposNotaFiscalDistribuidor()){
+							if(distribuidorTipoNotaFiscal.getNaturezaOperacao().contains(naturezaOperacao)){
+								
+								if(distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_ENVIO_PARA_COTA) ||
+								   distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_DEVOLUCAO_PELA_COTA) ||
+								   distribuidorTipoNotaFiscal.getGrupoNotaFiscal().equals(DistribuidorGrupoNotaFiscal.NOTA_FISCAL_VENDA)){
+									
+									this.geracaoNotaEnvioService.gerarNotaEnvioAtravesNotaFiscal(notaFiscal);						
+									
+								}
+							
+							}
+						}
+					}
 				}
 				
 				break;

@@ -1249,10 +1249,8 @@ TipoMensagem.ERROR, "Produto: " + produtoEdicao + " não possui estudo.");
         return listaIdCotas;
     }
 
-public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
-		
-		// criar nota de envio            
-		// verificar se e consolidada 
+    @Transactional
+    public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
 		
 		NotaEnvio notaEnvio = popularNotaEnvioAtravesNotaFiscal(notaFiscal);
 		this.notaEnvioRepository.merge(notaEnvio);
@@ -1269,7 +1267,7 @@ public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
 		// populate de bean de nota de envio
 		this.populateIdentificacaoEmitente(notaFiscal, notaEnvio);
 		this.populateIdentificacaoDestinatario(notaFiscal, notaEnvio);
-		notaEnvio.setListaItemNotaEnvio(this.criarItessNotaEnvio(notaFiscal));
+		notaEnvio.setListaItemNotaEnvio(this.criarItensNotaEnvio(notaFiscal));
 		return notaEnvio;
 	}
 	
@@ -1304,7 +1302,7 @@ public void gerarNotaEnvioAtravesNotaFiscal(NotaFiscal notaFiscal) {
 		notaEnvio.setDestinatario(identificacaoDestinatario);
 	}
 	
-	private List<ItemNotaEnvio> criarItessNotaEnvio(NotaFiscal notaFiscal){
+	private List<ItemNotaEnvio> criarItensNotaEnvio(NotaFiscal notaFiscal){
 		
 		List<ItemNotaEnvio> lisItemNotaEnvios = new ArrayList<>();
 		
