@@ -370,7 +370,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		if($("#faixaDe").val() ==''|| $("#faixaAte").val()=='' || $("#faixaDe").val() == undefined || $("#faixaAte").val()==undefined){
 			return false;
 		}else{
-			return $("#faixaDe").val() > $("#faixaAte").val();
+			return floatValue($("#faixaDe").val()) > floatValue($("#faixaAte").val());
 		}
 		 
 	},
