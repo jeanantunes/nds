@@ -145,7 +145,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return hql.toString();
     }
     
-	        /**
+	                                        /**
      * FROM: À Vista da cota sem chamada de encalhe e produtos diferentes de
      * conta firme
      * 
@@ -283,7 +283,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	        /**
+	                                        /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista
@@ -318,7 +318,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	        /**
+	                                        /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição - movimentos à vista ou consignados com conferencia prevista no
@@ -356,7 +356,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	        /**
+	                                        /**
      * Obtém movimentos de estoque da cota que ainda não geraram movimento
      * financeiro Considera movimentos de estoque provenientes dos fluxos de
      * Expedição e Conferência de Encalhe ou com Produtos Conta Firme
@@ -434,7 +434,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return query.list();
     }
     
-	        /**
+	                                        /**
      * Obtém movimentos de estoque da cota que forão estornados Considera
      * movimentos de estoque provenientes dos fluxos de Venda de Encalhe e
      * Suplementar
@@ -483,7 +483,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             final Date dataFinal,
             final OperacaoEstoque operacaoEstoque) {
         
-        final StringBuffer hql = new StringBuffer();
+        final StringBuilder hql = new StringBuilder();
         
         hql.append(" select sum(movimentoEstoqueCota.qtde) ");
         
@@ -522,7 +522,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             final Date dataFinal,
             final OperacaoEstoque operacaoEstoque) {
         
-        final StringBuffer hql = new StringBuffer();
+        final StringBuilder hql = new StringBuilder();
         
         hql.append(" select sum(movimentoEstoqueCota.qtde * produtoEdicao.precoVenda) ");
         
@@ -560,7 +560,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Integer obterQtdeConsultaEncalhe(final FiltroConsultaEncalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         final FiltroConsultaEncalheDTO f = new FiltroConsultaEncalheDTO();
         
@@ -601,7 +601,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @SuppressWarnings("unchecked")
     public ConsultaEncalheDTO obterValorTotalReparteEncalheDataCotaFornecedor(final FiltroConsultaEncalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         final FiltroConsultaEncalheDTO f = new FiltroConsultaEncalheDTO();
         
@@ -674,7 +674,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public BigDecimal obterValorTotalEncalhe(final FiltroConsultaEncalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         sql.append("	SELECT	");
         
@@ -750,9 +750,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         return (BigDecimal) (totalEncalhe == null ? BigDecimal.ZERO : totalEncalhe);
     }
     
-    public StringBuffer getFromWhereConsultaEncalhe(final FiltroConsultaEncalheDTO filtro) {
+    public StringBuilder getFromWhereConsultaEncalhe(final FiltroConsultaEncalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         sql.append(" from CHAMADA_ENCALHE  ");
         sql.append(" inner join CHAMADA_ENCALHE_COTA on (CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
@@ -826,7 +826,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @SuppressWarnings("unchecked")
     public List<ConsultaEncalheDTO> obterListaConsultaEncalhe(final FiltroConsultaEncalheDTO filtro) {
         
-        final StringBuffer sql = obterQueryListaConsultaEncalhe(filtro, false);
+        final StringBuilder sql = obterQueryListaConsultaEncalhe(filtro, false);
         
         final PaginacaoVO paginacao = filtro.getPaginacao();
         
@@ -868,8 +868,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             case VALOR_COM_DESCONTO:
                 orderByColumn = " valorComDesconto ";
                 break;
-            default:
+            case RECOLHIMENTO:
                 orderByColumn = " CHAMADA_ENCALHE.DATA_RECOLHIMENTO, CHAMADA_ENCALHE.SEQUENCIA ";
+                break;
+            default:
                 break;
             }
             
@@ -901,13 +903,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         parameters.put("isPostergado", false);
         parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
         
-        if(filtro.getPaginacao()!=null) {
+        if (filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null
+                && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+            sql.append(" limit :posicaoInicial, :posicaoFinal");
+            parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
+            parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
             
-            if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-                sql.append(" limit :posicaoInicial, :posicaoFinal");
-                parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
-                parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
-            }
         }
         
         @SuppressWarnings("rawtypes")
@@ -943,7 +944,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-    private StringBuffer obterQueryListaConsultaEncalhe(final FiltroConsultaEncalheDTO filtro, final boolean counting) {
+    private StringBuilder obterQueryListaConsultaEncalhe(final FiltroConsultaEncalheDTO filtro, final boolean counting) {
         
         final StringBuilder subSqlVendaProduto = new StringBuilder();
         subSqlVendaProduto.append(" select COALESCE(sum( vp.QNT_PRODUTO ),0) ");
@@ -1030,7 +1031,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         subSqlDiaRecolhimento.append(" 	and CONFERENCIA_ENCALHE_0.DIA_RECOLHIMENTO is not null limit 1 ");
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         if(counting) {
             
@@ -1091,7 +1092,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @SuppressWarnings("unchecked")
     public List<ConsultaEncalheDetalheDTO> obterListaConsultaEncalheDetalhe(final FiltroConsultaEncalheDetalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         sql.append("	select distinct	");
         
@@ -1223,7 +1224,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public Integer obterQtdeConsultaEncalheDetalhe(final FiltroConsultaEncalheDetalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         sql.append("	select count(1) from ( ");
         sql.append("	select distinct	");
@@ -1302,14 +1303,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
         
-        return ((qtde == null) ? 0 : qtde.intValue());
+        return (qtde == null) ? 0 : qtde.intValue();
         
     }
     
     @Override
     public ConsultaEncalheRodapeDTO obterValoresTotais(final FiltroConsultaEncalheDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         
         sql.append("	select ");
         
@@ -1379,7 +1380,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-	        /**
+	                                        /**
      * Obtém hql para pesquisa de ContagemDevolucao.
      * 
      * @param filtro
@@ -1390,7 +1391,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
      */
     private String getConsultaListaContagemDevolucao(final FiltroDigitacaoContagemDevolucaoDTO filtro, final boolean indBuscaTotalParcial, final boolean indBuscaQtd) {
         
-        final StringBuffer sql = new StringBuffer("");
+        final StringBuilder sql = new StringBuilder("");
         
         if (indBuscaQtd){
             
@@ -1560,7 +1561,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
     }
     
-	        /**
+	                                        /**
      * Carrega os parâmetros da pesquisa de ContagemDevolucao e retorna o objeto
      * Query.
      * 
@@ -1578,13 +1579,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         if(indBuscaQtd) {
             
-            query = getSession().createSQLQuery(hql.toString())
+            query = getSession().createSQLQuery(hql)
                     .addScalar("quantidadeTotal", StandardBasicTypes.INTEGER)
                     .addScalar("valorTotalGeral", StandardBasicTypes.BIG_DECIMAL);
             
         } else {
             
-            query = getSession().createSQLQuery(hql.toString())
+            query = getSession().createSQLQuery(hql)
                     .addScalar("codigoProduto", StandardBasicTypes.STRING)
                     .addScalar("nomeProduto", StandardBasicTypes.STRING)
                     .addScalar("numeroEdicao", StandardBasicTypes.LONG)
@@ -1657,7 +1658,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public BigDecimal obterValorTotalGeralContagemDevolucao(
             final FiltroDigitacaoContagemDevolucaoDTO filtro) {
         
-        final StringBuffer sql = new StringBuffer("");
+        final StringBuilder sql = new StringBuilder("");
         
         sql.append(" SELECT ")
         
@@ -1726,7 +1727,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         
         final BigDecimal valor = (BigDecimal) query.uniqueResult();
         
-        return ((valor == null) ? BigDecimal.ZERO : valor);
+        return (valor == null) ? BigDecimal.ZERO : valor;
         
     }
     
@@ -1751,7 +1752,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @SuppressWarnings("unchecked")
     public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(final Date data, final Long idCota, final GrupoMovimentoEstoque grupoMovimentoEstoque){
         
-        final StringBuffer hql = new StringBuffer("");
+        final StringBuilder hql = new StringBuilder("");
         
         hql.append(" from MovimentoEstoqueCota movimento");
         
@@ -1782,7 +1783,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             final Long idCota,
             final GrupoMovimentoEstoque... gruposMovimentoEstoque){
         
-        final StringBuffer hql = new StringBuffer();
+        final StringBuilder hql = new StringBuilder();
         
         hql.append(" select sum( case when (movimento.tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :operacaoEntrada) ");
         
@@ -1839,7 +1840,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
             final Long idCota,
             final List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
         
-        final StringBuffer hql = new StringBuffer("");
+        final StringBuilder hql = new StringBuilder("");
         
         hql.append(" select movimento from MovimentoEstoqueCota movimento ");
         
@@ -1873,7 +1874,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(final Date data, final List<Integer> numCotas, final List<GrupoMovimentoEstoque> gruposMovimentoEstoque){
         
-        final StringBuffer hql = new StringBuffer();
+        final StringBuilder hql = new StringBuilder();
         
         hql.append(" select  cota.id as idCota, ");
         
@@ -2883,7 +2884,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
                         ? 2 : 1 ;
         int i = 0;
         while (i < qtdeIteracao) {
-            final StringBuffer sql = new StringBuffer("");
+            final StringBuilder sql = new StringBuilder("");
             
             sql.append(" SELECT DISTINCT movimentoEstoqueCota ")
             .append(" FROM Lancamento lancamento ");
@@ -2991,7 +2992,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(final Long idCota, final Long idProdutoEdicao, final Long idTipoMovimento) {
         
         
-        final StringBuffer hql = new StringBuffer();
+        final StringBuilder hql = new StringBuilder();
         
         hql.append(" select sum(movimentoEstoqueCota.qtde) ");
         
@@ -3024,7 +3025,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     @Override
     @SuppressWarnings("unchecked")
     public  List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(final Distribuidor distribuidor, final Long idCota, final List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, final Intervalo<Date> periodo, final List<Long> listaFornecedores){
-        final StringBuffer sql = new StringBuffer("SELECT DISTINCT movimentoEstoqueCota ");
+        final StringBuilder sql = new StringBuilder("SELECT DISTINCT movimentoEstoqueCota ");
         sql.append(" FROM MovimentoEstoqueCota movimentoEstoqueCota ");
         
         sql.append("   JOIN movimentoEstoqueCota.lancamento lancamento ");
@@ -3252,7 +3253,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
     public ValoresAplicados obterValoresAplicadosProdutoEdicao(final Integer numeroCota,
             final Long idProdutoEdicao, final Date dataOperacao) {
         
-        final StringBuffer hql = new StringBuffer();
+        final StringBuilder hql = new StringBuilder();
         
         hql.append(" select mec.valoresAplicados ");
         
