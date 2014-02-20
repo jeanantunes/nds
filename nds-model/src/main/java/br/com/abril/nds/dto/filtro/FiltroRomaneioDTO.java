@@ -14,7 +14,7 @@ public class FiltroRomaneioDTO implements Serializable {
 
 	private static final long serialVersionUID = -3783996689743491442L;
 	
-	private Long idBox;
+	private Integer codigoBox;
 	private Long idRoteiro;
 	private Long idRota;
 	private String nomeRota;
@@ -49,12 +49,12 @@ public class FiltroRomaneioDTO implements Serializable {
 		}
 	}
 
-	public Long getIdBox() {
-		return idBox;
+	public Integer getCodigoBox() {
+		return codigoBox;
 	}
 
-	public void setIdBox(Long idBox) {
-		this.idBox = idBox;
+	public void setCodigoBox(Integer codigoBox) {
+		this.codigoBox = codigoBox;
 	}
 
 	public Long getIdRoteiro() {
@@ -104,9 +104,9 @@ public class FiltroRomaneioDTO implements Serializable {
 	
 	public String getBox() {
 		
-		if(getIdBox() != null){
+		if(getCodigoBox() != null){
 			
-			return getIdBox().toString();
+			return getCodigoBox().toString();
 		}else{
 			
 			return "Todos";
