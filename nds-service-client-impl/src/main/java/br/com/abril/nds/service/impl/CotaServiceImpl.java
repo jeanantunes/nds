@@ -427,7 +427,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * ENDERECO
      * 
      * Retorna um Endereco à ser editado ou cadastrado
@@ -461,7 +461,7 @@ public class CotaServiceImpl implements CotaService {
         return endereco;
     }
     
-	                                                                            /**
+    /**
      * ENDERECO
      * 
      * Persiste EnderecoCota e Endereco Valida apenas endereços vinculados à
@@ -562,7 +562,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * TELEFONE
      * 
      * Obtém telefones da Cota
@@ -1037,7 +1037,7 @@ public class CotaServiceImpl implements CotaService {
         ///////////////////////////////////////////////
         
         
-		                                                                                                                                                        /*
+        /*
          * faço a pesquisa nos parâmetros de distribuidor para comparar ao que
          * foi inserido pelo usuário. Se os parâmetros forem iguais, utilizo o
          * do distribuidor.
@@ -1326,7 +1326,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * Atribui os dados das referencias histórico cota base ao objeto CotaDTO
      * 
      * @param cotaDTO
@@ -1516,21 +1516,19 @@ public class CotaServiceImpl implements CotaService {
         fileService.persistirTemporario(path);
     }
     
-	                                                                            /**
+    /**
      * Valida os dados referente histórico cota base
      * 
      * @param cotaDto
      */
     private void validarHistoricoCotaBase(final CotaDTO cotaDto) {
         
-        if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null ){
+        if(cotaDto.getInicioPeriodo() != null && cotaDto.getFimPeriodo() != null && DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(Calendar.getInstance().getTime()))!=0){
             
-            if(DateUtil.removerTimestamp(cotaDto.getInicioPeriodo()).compareTo(DateUtil.removerTimestamp(Calendar.getInstance().getTime()))!=0){
-                
-                throw new ValidacaoException(TipoMensagem.WARNING,
-                        "Campo [Período] referente à cota base deve ser igual a data da alteração!");
-            }
+            throw new ValidacaoException(TipoMensagem.WARNING,
+                    "Campo [Período] referente à cota base deve ser igual a data da alteração!");
         }
+        
         
         if(cotaDto.getInicioPeriodo() == null && cotaDto.getFimPeriodo() == null ){
             return;
@@ -1554,7 +1552,7 @@ public class CotaServiceImpl implements CotaService {
     
     
     
-	                                                                            /**
+    /**
      * Valida o formato das inforamções referente ao cadastro de uma cota
      * 
      * @param cotaDto
@@ -1581,7 +1579,7 @@ public class CotaServiceImpl implements CotaService {
         
     }
     
-	                                                                            /**
+    /**
      * Persiste dados básicos de um PDV referente a nova cota
      * 
      * @param cota
@@ -1610,7 +1608,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota
      * 
      * @param cota
@@ -1631,7 +1629,7 @@ public class CotaServiceImpl implements CotaService {
         return paramNFE;
     }
     
-	                                                                            /**
+    /**
      * Validas as informações referente ao cadasto de uma nova cota.
      * 
      * @param cotaDto
@@ -1705,7 +1703,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * Persiste e retorna os dados da pessoa referente a cota Física ou Jurídica
      * 
      * @param cota
@@ -1757,7 +1755,7 @@ public class CotaServiceImpl implements CotaService {
         return pessoa;
     }
     
-	                                                                            /**
+    /**
      * Retona uma instância de Pessoa Jurídica ou Física
      * 
      * @param cotaDTO
@@ -1858,7 +1856,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * Valida os parâmetros referente ao objeto BaseReferenciaCota
      * 
      * @param cotaDto
@@ -1916,7 +1914,7 @@ public class CotaServiceImpl implements CotaService {
         return referenciasCota;
     }
     
-	                                                                            /**
+    /**
      * Retorna um objeto do tipo ReferenciaCota
      * 
      * @param numeroCota - número da cota
@@ -1940,7 +1938,7 @@ public class CotaServiceImpl implements CotaService {
         return referenciaCota;
     }
     
-	                                                                            /**
+    /**
      * Valida se os números de cota informado para histórico cota base são
      * iguais
      * 
@@ -1955,7 +1953,7 @@ public class CotaServiceImpl implements CotaService {
         validarCotaIguais(cotaDTO.getHistoricoTerceiraCota(),cotaDTO.getHistoricoSegundaCota(),cotaDTO.getHistoricoPrimeiraCota());
     }
     
-	                                                                            /**
+    /**
      * Verifica números de cotas iguais
      * 
      * @param param
@@ -1964,15 +1962,14 @@ public class CotaServiceImpl implements CotaService {
      */
     private void validarCotaIguais(final Integer param,final Integer param2, final Integer param3){
         
-        if(param!= null){
-            if(param.equals(param2)|| param.equals(param3)){
-                throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + param + "está incorreta! A cota "
-                        + param + " está duplicada!");
-            }
+        if (param != null && (param.equals(param2) || param.equals(param3))) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "A cota " + param + "está incorreta! A cota " + param
+                + " está duplicada!");
         }
+        
     }
     
-	                                                                            /**
+    /**
      * Valida se a porcentagem informada nas cotas histórico base obedecem 100
      * porcento.
      * 
@@ -2027,7 +2024,7 @@ public class CotaServiceImpl implements CotaService {
         return dividasEmAberto!=null && dividasEmAberto.floatValue() > 0;
     }
     
-	                                                                            /**
+    /**
      * Verifica se o número da cota existente pode ser utilizado por uma nova
      * cota
      * 
@@ -2067,7 +2064,7 @@ public class CotaServiceImpl implements CotaService {
         }
     }
     
-	                                                                            /**
+    /**
      * Altera o número da cota e gera um histporico com o número antigo
      * 
      * @param cota - objeto que sofrera a alteração de número de cota
@@ -2094,7 +2091,7 @@ public class CotaServiceImpl implements CotaService {
         
     }
     
-	                                                                            /**
+    /**
      * Retorna um número de sugestão para o cadastro de uma nova cota
      * 
      * @param numeroCota
@@ -2142,7 +2139,7 @@ public class CotaServiceImpl implements CotaService {
         return qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao;
     }
     
-	                                                                            /**
+    /**
      * Método responsável por obter tipos de cota para preencher combo da camada
      * view
      * 
@@ -2208,7 +2205,7 @@ public class CotaServiceImpl implements CotaService {
         return cotas;
     }
     
-	                                                                            /**
+    /**
      * Descarta Enderecos, Telefones, Garantias e Sócios da Cota na Troca de
      * Titularidade
      * 
