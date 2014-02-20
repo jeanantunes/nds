@@ -1079,6 +1079,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" where _p.CODIGO = :produtoCodigo " +
 				" and _pe.NUMERO_EDICAO in (:nrEdicoes)) ";
 		
+		String queryQtdEdicoesPresentesPorCota = " (select count(distinct _pe.ID) " +
+				" from ESTOQUE_PRODUTO_COTA _epc " +
+				" join PRODUTO_EDICAO _pe on (_pe.ID = _epc.PRODUTO_EDICAO_ID) " +
+				" join PRODUTO _p on (_p.ID = _pe.PRODUTO_ID) " +
+				" join COTA _c on (_c.ID = _epc.COTA_ID) " +
+				" where _p.CODIGO = :produtoCodigo " +
+				" and _pe.NUMERO_EDICAO in (:nrEdicoes)" +
+				" and _c.NUMERO_COTA = cota2_.NUMERO_COTA) ";
+		
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
 				"select concat('De ', :de, ' a ', :ate) as faixaVenda," +
@@ -1130,13 +1139,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" 	sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
 				" 	sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
 				
-				" 	(sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentes +" as mediaEdPresente, " +
+				" 	(sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / " + queryQtdEdicoesPresentesPorCota +" as mediaEdPresente, " +
 				
 				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentes +") = " +
-				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentes +")) then cota2_.NUMERO_COTA else null end as cotaEsmagada, " +
+				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentesPorCota +")) then cota2_.NUMERO_COTA else null end as cotaEsmagada, " +
 				
 				" 	case when (round((sum(estoqueProdutoCota.QTDE_RECEBIDA) - sum(estoqueProdutoCota.QTDE_DEVOLVIDA)) / "+ queryQtdEdicoesPresentes +") = " +
-				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentes +")) then round(sum(estoqueProdutoCota.QTDE_RECEBIDA) /"+ queryQtdEdicoesPresentes +") else 0 end as vendaEsmagada " +
+				" 	round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / "+ queryQtdEdicoesPresentesPorCota +")) then round(sum(estoqueProdutoCota.QTDE_RECEBIDA) /"+ queryQtdEdicoesPresentesPorCota +") else 0 end as vendaEsmagada " +
 				
 				" from ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
 				" 	join PRODUTO_EDICAO produtoEdicao on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoEdicao.ID " +
@@ -1248,7 +1257,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 
 		queryStringProdutoEdicao += " group by numero_cota "
-								   +" having mediaEdPresente between :de and :ate ";
+								   +" having round(mediaEdPresente) between :de and :ate ";
 
 		queryStringProdutoEdicao+=") as HIST";
 
