@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -243,6 +244,23 @@ public class EstudoGeradoRepositoryImpl extends AbstractRepositoryModel<EstudoGe
 			LOGGER.error(e.getMessage(), e);
 		}
 		return (long1 == null || long1.equals(0L)) ? 1L : long1;
+	}
+
+	@Override
+	public BigDecimal reparteEstudoOriundoDoLancamento(Long idEstudo) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT lancamento.reparte ");
+		sql.append(" FROM estudo_gerado estudo ");
+		sql.append(" INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id ");
+		sql.append(" WHERE estudo.id = :estudoId ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", idEstudo);
+
+		return (BigDecimal) query.uniqueResult();
 	}
 	
 }
