@@ -2842,7 +2842,6 @@ public class CotaServiceImpl implements CotaService {
 		
 		reparteMedio += analiseHistoricoDTO.getEd1Reparte() == null ? 0 : analiseHistoricoDTO.getEd1Reparte();
 		reparteMedio += analiseHistoricoDTO.getEd2Reparte() == null ? 0 : analiseHistoricoDTO.getEd2Reparte();
-		
 		reparteMedio += analiseHistoricoDTO.getEd3Reparte() == null ? 0 : analiseHistoricoDTO.getEd3Reparte();
 		reparteMedio += analiseHistoricoDTO.getEd4Reparte() == null ? 0 : analiseHistoricoDTO.getEd4Reparte();
 		reparteMedio += analiseHistoricoDTO.getEd5Reparte() == null ? 0 : analiseHistoricoDTO.getEd5Reparte();
