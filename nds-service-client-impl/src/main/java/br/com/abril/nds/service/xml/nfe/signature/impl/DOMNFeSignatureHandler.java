@@ -20,6 +20,7 @@ import br.com.abril.nds.service.xml.nfe.signature.SecurityHandler;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureBuilder;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 
+@Service
 public class DOMNFeSignatureHandler implements SignatureHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSignatureHandler.class);

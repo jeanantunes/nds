@@ -23,6 +23,7 @@ import org.w3c.dom.Element;
 
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 
+@Service
 public class DOMNFeFileReader {
 	
 	private DocumentBuilderFactory documentBuilderFactory;
