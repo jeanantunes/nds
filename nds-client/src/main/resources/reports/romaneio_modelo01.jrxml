@@ -6,6 +6,8 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
+	<parameter name="RAZAO_SOCIAL_DISTRIBUIDOR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -66,9 +68,15 @@
 	<pageHeader>
 		<band height="67">
 			<subreport>
-				<reportElement uuid="08b9b537-259e-413a-9f48-b8c6baf8bfeb" x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="67" isPrintWhenDetailOverflows="true" uuid="08b9b537-259e-413a-9f48-b8c6baf8bfeb"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAZAO_SOCIAL_DISTRIBUIDOR">
+					<subreportParameterExpression><![CDATA[$P{RAZAO_SOCIAL_DISTRIBUIDOR}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="NOME_BOX">
 					<subreportParameterExpression><![CDATA[$F{entregaBox}]]></subreportParameterExpression>
@@ -79,11 +87,11 @@
 				<subreportParameter name="NOME_ROTEIRO">
 					<subreportParameterExpression><![CDATA[$F{roteiro}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="NOME_ROTA">
-					<subreportParameterExpression><![CDATA[$F{rota}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="DATA_GERACAO">
 					<subreportParameterExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataGeracao})]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOME_ROTA">
+					<subreportParameterExpression><![CDATA[$F{rota}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "romaneio_page_header.jasper"]]></subreportExpression>
@@ -93,7 +101,7 @@
 	<detail>
 		<band height="440" splitType="Stretch">
 			<subreport runToBottom="true">
-				<reportElement uuid="c42feef6-ae7f-427c-84e1-d7adf92c1cc1" x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="0" y="0" width="802" height="440" isPrintWhenDetailOverflows="true" uuid="c42feef6-ae7f-427c-84e1-d7adf92c1cc1"/>
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>

@@ -50,7 +50,8 @@
     						</td>
 	              			<td width="24">Box:</td>
 								<td width="176">
-							  		<select name="idBox" id="idBox" style="width: 100px;">
+							  		<select name="codigoBox" id="codigoBox" style="width: 100px;"
+							  				onchange="romaneiosController.changeBox()">
 										<option value="" >Todos</option>
 										<c:forEach var="box" items="${listaBox}">
 											<option value="${box.key}">${box.value}</option>
@@ -60,7 +61,8 @@
 								</td>
 	                		<td width="49" align="right">Roteiro:</td>
 	                		<td width="260">
-	                			<select name="idRoteiro" id="idRoteiro" style="width: 200px;">
+	                			<select name="idRoteiro" id="idRoteiro" style="width: 200px;"
+	                					onchange="romaneiosController.changeRoteiro()">
 									<option value="" >Todos</option>
 									<c:forEach var="roteiro" items="${listaRoteiro}">
 										<option value="${roteiro.key}">${roteiro.value}</option>
@@ -69,7 +71,8 @@
 	                		</td>
 	                		<td width="32" align="right">Rota:</td>
 	                		<td colspan="2">
-								<select name="idRota" id="idRota" style="width: 200px;">
+								<select name="idRota" id="idRota" style="width: 200px;"
+										onchange="romaneiosController.changeRota()">
 									<option value="" >Todos</option>
 									<c:forEach var="rota" items="${listaRota}">
 										<option value="${rota.key}">${rota.value}</option>

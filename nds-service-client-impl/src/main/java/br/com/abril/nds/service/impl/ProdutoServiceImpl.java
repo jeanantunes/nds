@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -440,8 +441,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
     
     @Override
-	@Transactional(readOnly = true)
-	public Fornecedor obterFornecedorPorCodigoProduto(String codigoProduto) {
+	@Transactional
+	public Long obterIdFornecedorUnificadorPorCodigoProduto(String codigoProduto) {
 
 		Produto produto = this.obterProdutoPorCodigo(codigoProduto);
         
@@ -450,7 +451,14 @@ public class ProdutoServiceImpl implements ProdutoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto não encontrado!");
 		}
 		
-        return produto.getFornecedor();
+		Fornecedor fornecedor = produto.getFornecedor();
+		
+		if (fornecedor.getFornecedorUnificador() != null) {
+			
+			fornecedor = fornecedor.getFornecedorUnificador();
+		}
+		
+        return fornecedor.getId();
 	}
     
 }
