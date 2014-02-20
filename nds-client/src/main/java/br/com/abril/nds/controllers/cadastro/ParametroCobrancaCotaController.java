@@ -626,12 +626,12 @@ public class ParametroCobrancaCotaController extends BaseController {
     @Path("/excluirFormaCobranca")
     public void excluirFormaCobranca(final Long idFormaCobranca){
         
-        parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);
+        this.parametroCobrancaCotaService.excluirFormaCobranca(idFormaCobranca);	
+    	
+		this.parametroCobrancaCotaService.excluirParametroCobrancaCota(idFormaCobranca);
         
-        result.use(Results.json())
-.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),
-                Constantes.PARAM_MSGS)
-                .recursive().serialize();
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),
+                                                        Constantes.PARAM_MSGS).recursive().serialize();
     }
     
     /**
