@@ -26,11 +26,14 @@ import org.jcp.xml.dsig.internal.dom.DOMReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 
 import br.com.abril.nds.service.xml.nfe.signature.KeyInfoBuilder;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureBuilder;
 
+@Component
 public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, InitializingBean {
 
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSignatureBuilder.class);
@@ -39,8 +42,13 @@ public class DOMNFeSignatureBuilder implements SignatureBuilder<Element>, Initia
 	public static final String C14N_TRANSFORMATION_METHOD = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
 	
 	private List<Transform> transformList;
+	
 	private DigestMethod digestMethod;
+	
+	@Autowired
 	private XMLSignatureFactory signatureFactory;
+	
+	@Autowired
 	private KeyInfoBuilder keyInfoBuilder;
 	
 	public DOMNFeSignatureBuilder() {

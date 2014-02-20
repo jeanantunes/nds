@@ -9,7 +9,8 @@ import javax.xml.crypto.dom.DOMStructure;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -20,12 +21,15 @@ import br.com.abril.nds.service.xml.nfe.signature.SecurityHandler;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureBuilder;
 import br.com.abril.nds.service.xml.nfe.signature.SignatureHandler;
 
-@Service
+@Component
 public class DOMNFeSignatureHandler implements SignatureHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(DOMNFeSignatureHandler.class);
 	
+	@Autowired
 	private SecurityHandler securityHandler;
+	
+	@Autowired
 	private SignatureBuilder<Element> signatureBuilder;
 	
 	public void sign(XMLStructure sourceStructure, String tagNameToSign) throws Exception {
