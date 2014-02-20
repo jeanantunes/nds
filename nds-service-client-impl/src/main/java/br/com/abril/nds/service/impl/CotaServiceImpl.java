@@ -1599,7 +1599,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
-	    /**
+	/**
      * Retorna os parâmetros de notas fiscais eletrônicas referente a uma cota
      * 
      * @param cota
@@ -1620,28 +1620,8 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    return paramNFE;
 	}
-	
-	    /**
-<<<<<<< HEAD
-=======
-    private ParametrosCotaNotaFiscalEletronica getParamNFE(final Cota cota, final CotaDTO cotaDto){
-        
-        ParametrosCotaNotaFiscalEletronica paramNFE = cota.getParametrosCotaNotaFiscalEletronica();
-        
-        if(paramNFE == null){
-            paramNFE = new ParametrosCotaNotaFiscalEletronica();
-        }
-        
-        paramNFE.setEmailNotaFiscalEletronica(cotaDto.getEmailNF());
-        paramNFE.setEmiteNotaFiscalEletronica(cotaDto.isEmiteNFE());
-        
-        return paramNFE;
-    }
     
-	                                /**
->>>>>>> DGBti/master
-=======
->>>>>>> DGBti/master
+	/**
      * Validas as informações referente ao cadasto de uma nova cota.
      * 
      * @param cotaDto
