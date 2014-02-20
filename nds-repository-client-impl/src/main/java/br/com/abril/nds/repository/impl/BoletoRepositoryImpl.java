@@ -107,7 +107,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		sql.append(" COB.ENCARGOS as encargos, ");	
 		
-		sql.append(" COB.VALOR as valor, ");	
+		sql.append(" ROUND(COB.VALOR,2) as valor, ");	
 		
 		sql.append(" COB.TIPO_BAIXA as tipoBaixa, ");	
 		
@@ -163,7 +163,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 
 		sql.append(" COALESCE(BA.VALOR_JUROS,0) + COALESCE(BA.VALOR_MULTA,0) as encargos, ");	
 		
-		sql.append(" BA.VALOR as valor, ");	
+		sql.append(" ROUND(BA.VALOR,2) as valor, ");	
 		
 		sql.append(" BA.TIPO_BAIXA as tipoBaixa, ");	
 		
