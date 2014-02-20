@@ -1215,6 +1215,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as novaDataLancamento, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
 		sql.append(" lancamento.ALTERADO_INTERFACE as alteradoInteface, ");
+		sql.append(" lancamento.TIPO_LANCAMENTO as tipoLancamento, ");
 
 		sql.append(" coalesce( ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
@@ -1335,7 +1336,9 @@ public class LancamentoRepositoryImpl extends
 			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores,
 			String sql) {
 
-		Query query = getSession().createSQLQuery(sql).addScalar("parcial")
+		Query query = getSession().createSQLQuery(sql)
+				.addScalar("tipoLancamento",StandardBasicTypes.STRING)
+				.addScalar("parcial")
 				.addScalar("statusLancamento")
 				.addScalar("idLancamento", StandardBasicTypes.LONG)
 				.addScalar("dataLancamentoPrevista")
@@ -1355,6 +1358,7 @@ public class LancamentoRepositoryImpl extends
 				.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER)
 				.addScalar("idFornecedor", StandardBasicTypes.LONG)
 				.addScalar("peb", StandardBasicTypes.LONG);
+					
 
 		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 
